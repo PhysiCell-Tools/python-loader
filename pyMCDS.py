@@ -4,7 +4,7 @@ import pandas as pd
 import scipy.io as sio
 from pathlib import Path
 
-class MultiCellDS:
+class pyMCDS:
     '''
     This class contains a dictionary of dictionaries that contains all of the 
     output from a single time step of a PhysiCell Model. This class assumes that
@@ -40,7 +40,34 @@ class MultiCellDS:
         cells_df = pd.DataFrame(self.data['discrete_cells'])
         return cells_df
         
+    def get_menv_species_list(self):
+        '''
+        Returns list of chemical species in microenvironment
 
+        Returns
+        -------
+        species_list : array-like (str) [n_species,]
+            Contains names of chemical species in microenvironment
+        '''
+        species_list = []
+        for name in self.data['continuum_variables']:
+            species_list.append(name)
+
+    def get_concentrations(self, species):
+        '''
+        Returns the concentration arrays for the specified chemical species
+        in the microenvironment.
+
+        Returns
+        -------
+        conc_arr : array-like (np.float) [x_voxels, y_voxels, z_voxels]
+            Contains the concentration of the specified chemical in each voxel.
+            The array spatially maps to a meshgrid of the voxel centers.
+        '''
+        conc_arr = self.data['continuum_variables'][species]['data']
+        return conc_arr
+
+        
     def _read_xml(self, xml_file, output_path='.'):
         '''
         Does the actual work of initializing MultiCellDS by parsing the xml

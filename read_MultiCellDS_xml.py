@@ -90,9 +90,9 @@ def read_MultiCellDS_xml(file_name, output_dir = '.'):
     file_node = me_node.find('data').find('filename')
 
     # micro environment data is shape [4+n, len(voxels)] where n is the number
-    # of species being tracked. the first 3 rows represent (x, y, z) of voxel centers. 
-    # The fourth row contains the voxel volume. The 5th row and up will contain values
-    # for that species in that voxel.
+    # of species being tracked. the first 3 rows represent (x, y, z) of voxel 
+    # centers. The fourth row contains the voxel volume. The 5th row and up will
+    # contain values for that species in that voxel.
     me_file = file_node.text
     me_path = output_path / me_file
     try:
@@ -154,18 +154,21 @@ def read_MultiCellDS_xml(file_name, output_dir = '.'):
         else:
             df_labels.append(label.text)
             
-    # load the file, we want it transposed from the matlab format
+    # load the file
     cell_file = cell_node.find('filename').text
     cell_path = output_path / cell_file
     try:
-        cell_data = sio.loadmat(cell_path)['cells'].T
+        cell_data = sio.loadmat(cell_path)['cells']
     except:
         print('Data file', cell_path, 'missing!')
         print('Referenced in', xml_file)
         exit(0)
-        
+
+    for col in range(len(df_labels)):
+        MCDS['discrete_cells'][df_labels[col]] = cell_data[col, :]
+
     # we will save the cell information as a dataframe in the MCDS object
-    cell_df = pd.DataFrame(cell_data, columns=df_labels)
-    MCDS['discrete_cells']['data_df'] = cell_df
+    # cell_df = pd.DataFrame(cell_data, columns=df_labels)
+    # MCDS['discrete_cells']['data_df'] = cell_df
 
     return MCDS
