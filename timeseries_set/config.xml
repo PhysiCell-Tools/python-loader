@@ -1,0 +1,104 @@
+<PhysiCell_settings version="devel-version">
+	<domain>
+		<x_min>-500.0</x_min>
+		<x_max>500.0</x_max>
+		<y_min>-500.0</y_min>
+		<y_max>500.0</y_max>
+		<z_min>-10.0</z_min>
+		<z_max>10.0</z_max>
+		<dx>20.0</dx>
+		<dy>20.0</dy>
+		<dz>20.0</dz>
+		<use_2D>true</use_2D>
+	</domain>
+	
+	<overall>
+		<max_time units="min">7200.0</max_time> 
+		<time_units>min</time_units>
+		<space_units>micron</space_units>
+	</overall>
+	
+	<parallel>
+		<omp_num_threads>4</omp_num_threads>
+	</parallel> 
+	
+	<save>
+		<folder>.</folder>  
+
+		<full_data>
+			<interval units="min">60</interval>
+			<enable>True</enable>
+		</full_data>
+		
+		<SVG>
+			<interval units="min">30</interval>
+			<enable>True</enable>
+		</SVG>
+		
+		<legacy_data>
+			<enable>false</enable>
+		</legacy_data>
+	</save>
+	
+	<user_parameters>
+		<random_seed hidden="true" type="int" units="dimensionless">0</random_seed> 
+		
+		 
+		<resource_D description="resource diffusion coefficient" type="double" units="micron^2/min">100000.0</resource_D>
+		<resource_lambda description="resource decay rate" type="double" units="1/min">0.1</resource_lambda>
+		
+		<quorum_D description="quorum diffusion coefficient" type="double" units="micron^2/min">100000.0</quorum_D>
+		<quorum_lambda description="quorum decay rate" type="double" units="1/min">10.0</quorum_lambda>
+		
+		<death_signal_D description="death signal diffusion coefficient" type="double" units="micron^2/min">40000.0</death_signal_D>
+		<death_signal_lambda description="death signal decay rate" type="double" units="1/min">1.0</death_signal_lambda>
+
+		<signal_D description="attack signal diffusion coefficient" type="double" units="micron^2/min">25000.0</signal_D>
+		<signal_lambda description="attack signal decay rate" type="double" units="1/min">0.1</signal_lambda>
+
+		<poison_D description="poison diffusion coefficient" type="double" units="micron^2/min">50000.0</poison_D>
+		<poison_lambda description="poison decay rate" type="double" units="1/min">20.0</poison_lambda>
+		
+		 
+		<number_of_invaders description="number of randomly placed invaders" type="int" units="none">15</number_of_invaders>
+		<number_of_suppliers description="number of randomly placed suppliers" type="int" units="none">50</number_of_suppliers>
+		<number_of_scouts description="number of randomly placed scouts" type="int" units="none">10</number_of_scouts>
+		<number_of_attackers description="number of randomly placed attackers" type="int" units="none">50</number_of_attackers>
+		
+		
+		<invader_max_birth_rate description="max birth rate for invaders" type="double" units="1/min">0.0028</invader_max_birth_rate> 
+		<invader_max_death_rate description="max death rate for invaders" type="double" units="1/min">0.001</invader_max_death_rate> 
+
+		<invader_persistence_time description="persistence time for invader migration" type="double" units="min">15.0</invader_persistence_time>
+		<invader_migration_speed description="speed of invader cells" type="double" units="micron/min">0.25</invader_migration_speed> 
+		<invader_migration_bias description="invader migration bias" type="double" units="dimensionless">0.5</invader_migration_bias> 
+
+		<invader_secretion_rate description="rate invaders secrete their signals" type="double" units="1/min">100.0</invader_secretion_rate>
+		<invader_quorum_weight description="motile direction = w*grad(Q) - (1-w)*grad(D)" type="double" units="dimensionless">0.1</invader_quorum_weight>
+		
+		 
+		<scout_persistence_time description="persistence time for scout migration" type="double" units="min">15.0</scout_persistence_time>
+		<scout_migration_speed description="speed of scout cells" type="double" units="micron/min">0.5</scout_migration_speed> 
+		<scout_migration_bias description="scout migration bias" type="double" units="dimensionless">0.125</scout_migration_bias> 
+
+		<scout_secretion_rate description="rate scouts secrete their signals" type="double" units="1/min">100.0</scout_secretion_rate>
+		<scout_signal_threshold description="scouts release S if Q &gt; threshold" type="double" units="dimensionless">0.1</scout_signal_threshold>
+		
+		 
+		<attacker_max_birth_rate description="max birth rate for attackers" type="double" units="1/min">0.0005</attacker_max_birth_rate> 
+		<attacker_max_death_rate description="max death rate for attackers" type="double" units="1/min">0.0001</attacker_max_death_rate> 
+
+		<attacker_persistence_time description="persistence time for attacker migration" type="double" units="min">15.0</attacker_persistence_time>
+		<attacker_migration_speed description="speed of attacker cells" type="double" units="micron/min">1.0</attacker_migration_speed> 
+		<attacker_migration_bias description="attacker migration bias" type="double" units="dimensionless">0.25</attacker_migration_bias> 
+
+		<attacker_secretion_rate description="rate attackers secrete their signals" type="double" units="1/min">100.0</attacker_secretion_rate>		
+		<attacker_signal_threshold description="attackers release P if S &gt; threshold" type="double" units="dimensionless">0.1</attacker_signal_threshold>
+		
+		 
+		<supplier_secretion_rate description="rate suppliers release resource" type="double" units="1/min">100.0</supplier_secretion_rate>
+		
+	</user_parameters>
+	
+	
+</PhysiCell_settings>
