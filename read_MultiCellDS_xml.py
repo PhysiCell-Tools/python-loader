@@ -1,4 +1,3 @@
-# %%
 import xml.etree.ElementTree as TE
 import numpy as np
 import pandas as pd

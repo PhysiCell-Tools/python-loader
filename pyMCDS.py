@@ -25,7 +25,7 @@ class pyMCDS:
         Hierarchical container for all of the data retrieved by parsing the xml
         file and the files referenced therein.
     '''
-    def __init__(self, xml_file, output_path):
+    def __init__(self, xml_file, output_path='.'):
         self.data = self._read_xml(xml_file, output_path)
 
     def get_cells_df(self):
@@ -52,6 +52,8 @@ class pyMCDS:
         species_list = []
         for name in self.data['continuum_variables']:
             species_list.append(name)
+        
+        return species_list
 
     def get_concentrations(self, species):
         '''
@@ -67,6 +69,9 @@ class pyMCDS:
         conc_arr = self.data['continuum_variables'][species]['data']
         return conc_arr
 
+    def get_time(self):
+        return self.data['metadata']['current_time']
+
         
     def _read_xml(self, xml_file, output_path='.'):
         '''
@@ -74,7 +79,7 @@ class pyMCDS:
         '''
 
         output_path = Path(output_path)
-        xml_file = output_path / 'output00000001.xml'
+        xml_file = output_path / xml_file
         try:
             tree = TE.parse(xml_file)
         except:
