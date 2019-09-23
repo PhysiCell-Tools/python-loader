@@ -89,9 +89,53 @@ class pyMCDS:
 
         return xx, yy
 
+    def get_linear_coordinates(self):
+        '''
+        Return all of the unique coordinates of voxel centers for x-, y-, and,
+        z-directions in the mesh.
+
+        Returns
+        -------
+        X : ndarray [nx_voxel]
+            ordered x values of voxel centers
+        Y : ndarray [ny_voxel]
+            ordered y values of voxel centers
+        Z : ndarray [nz_voxels]
+            ordered z values of voxel centers
+        '''
+        xx, yy, zz = self.get_mesh()
+
+        X = np.unique(xx)
+        Y = np.unique(yy)
+        Z = np.unique(zz)
+
+        return X, Y, Z
+
+    def get_mesh_spacing(self):
+        '''
+        Returns the space in between voxel centers for the mesh in terms of the
+        mesh's spatial units.
+
+        Returns
+        -------
+        dx : float
+            Distance between voxel centers in the same units as the other 
+            spatial measurements
+        '''
+        X, Y, Z = self.get_linear_coordinates()
+        dx = (X.max() - X.min()) / X.shape[0]
+        dy = (Y.max() - Y.min()) / Y.shape[0]
+        dz = (Z.max() - Z.min()) / Z.shape[0]
+        
+        if np.abs(dx - dy) > 1e-10 or np.abs(dy - dz) > 1e-10 \
+            or np.abs(dx - dz) > 1e-10:
+            print('Warning: grid spacing may be axis dependent.')
+        
+        return round(dx)
+
     ## MICROENVIRONMENT RELATED FUNCTIONS
 
-    def get_menv_species_list(self):
+    def get_substrate_names(self):
         '''
         Returns list of chemical species in microenvironment
 
@@ -153,6 +197,21 @@ class pyMCDS:
         '''
         cells_df = pd.DataFrame(self.data['discrete_cells'])
         return cells_df
+    
+    def get_cell_variables(self):
+        '''
+        Returns the names of all of the cell variables tracked in 'diccrete cells'
+        dictionary
+
+        Returns
+        -------
+        var_list : list (string) [n_variables]
+            Contains the names of the cell variables
+        '''
+        var_list = []
+        for name in self.data['discrete_cells']:
+            var_list.append(name)
+        return var_list
         
     def _read_xml(self, xml_file, output_path='.'):
         '''
@@ -188,6 +247,7 @@ class pyMCDS:
         MCDS['mesh'] = {}
 
         # check for cartesian mesh
+        # THIS DOESNT ACTUALLY DO ANYTHING YET
         cartesian = False
         mesh_type = mesh_node.get('type')
         if mesh_type == 'Cartesian':
@@ -219,7 +279,7 @@ class pyMCDS:
         try:
             initial_mesh = sio.loadmat(voxel_path)['mesh']
         except IOError as e:
-            print('Bad filename reference in {:s}'.format(xml_file))
+            print('Missing file referenced in {}'.format(xml_file))
             raise
 
         # center of voxel specified by first three rows [ x, y, z ]
@@ -245,16 +305,23 @@ class pyMCDS:
         try:
             me_data = sio.loadmat(me_path)['multiscale_microenvironment']
         except IOError as e:
-            print('Bad filename reference in {:s}'.format(xml_file))
+            print('Missing file referenced in {}'.format(xml_file))
             raise
 
         var_children = variables_node.findall('variable')
 
-        for i, species in enumerate(var_children):
+        # we're going to need the linear x, y, and z coordinates later
+        # but we dont need to get them in the loop
+        X, Y, Z = np.unique(xx), np.unique(yy), np.unique(zz)
+
+        for si, species in enumerate(var_children):
             species_name = species.get('name')
             MCDS['continuum_variables'][species_name] = {}
             MCDS['continuum_variables'][species_name]['units'] = species.get(
                 'units')
+
+            # initialize array for concentration data
+            MCDS['continuum_variables'][species_name]['data'] = np.zeros(xx.shape)
 
             # travel down one level on tree
             species = species.find('physical_parameter_set')
@@ -273,9 +340,24 @@ class pyMCDS:
             MCDS['continuum_variables'][species_name]['decay_rate']['units'] \
                 = species.find('decay_rate').get('units')
 
+            ####################################
+            # THIS IS WHAT YOU WERE WORKING ON #
+            ####################################
             # store data from microenvironment file as numpy array
-            MCDS['continuum_variables'][species_name]['data'] \
-                = me_data[4+i, :].reshape(xx.shape)
+            # MCDS['continuum_variables'][species_name]['data'] \
+            #     = me_data[4+i, :].reshape(xx.shape)
+            
+            # iterate over each voxel
+            for vox_idx in range(MCDS['mesh']['voxels']['centers'].shape[1]):
+                # find the center
+                center = MCDS['mesh']['voxels']['centers'][:, vox_idx]
+
+                i = np.where(np.abs(center[0] - X) < 1e-10)[0][0]
+                j = np.where(np.abs(center[1] - Y) < 1e-10)[0][0]
+                k = np.where(np.abs(center[2] - Z) < 1e-10)[0][0]
+
+                MCDS['continuum_variables'][species_name]['data'][j, i, k] \
+                    = me_data[4+si, vox_idx]
 
         # in order to get to the good stuff we have to pass through a few different
         # hierarchal levels
@@ -310,7 +392,7 @@ class pyMCDS:
         try:
             cell_data = sio.loadmat(cell_path)['cells']
         except IOError as e:
-            print('Bad filename reference in {:s}'.format(xml_file))
+            print('Missing file referenced in {}'.format(xml_file))
             raise
 
         for col in range(len(data_labels)):
