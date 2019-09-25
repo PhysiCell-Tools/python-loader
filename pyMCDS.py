@@ -325,6 +325,8 @@ class pyMCDS:
         xml_file = output_path / xml_file
         tree = ET.parse(xml_file)
 
+        print('Reading {}'.format(xml_file))
+
         root = tree.getroot()
         MCDS = {}
 
@@ -379,6 +381,8 @@ class pyMCDS:
                 "No such file or directory:\n'{}' referenced in '{}'".format(voxel_path, xml_file))
             sys.exit(1)
 
+        print('Reading {}'.format(voxel_path))
+
         # center of voxel specified by first three rows [ x, y, z ]
         # volume specified by fourth row
         MCDS['mesh']['voxels'] = {}
@@ -407,6 +411,8 @@ class pyMCDS:
                 "No such file or directory:\n'{}' referenced in '{}'".format(me_path, xml_file))
             sys.exit(1)
 
+        print('Reading {}'.format(me_path))
+
         var_children = variables_node.findall('variable')
 
         # we're going to need the linear x, y, and z coordinates later
@@ -418,6 +424,8 @@ class pyMCDS:
             MCDS['continuum_variables'][species_name] = {}
             MCDS['continuum_variables'][species_name]['units'] = species.get(
                 'units')
+
+            print('Parsing {:s} data'.format(species_name))
 
             # initialize array for concentration data
             MCDS['continuum_variables'][species_name]['data'] = np.zeros(xx.shape)
@@ -488,6 +496,8 @@ class pyMCDS:
             raise FileNotFoundError(
                 "No such file or directory:\n'{}' referenced in '{}'".format(cell_path, xml_file))
             sys.exit(1)
+
+        print('Reading {}'.format(cell_path))
 
         for col in range(len(data_labels)):
             MCDS['discrete_cells'][data_labels[col]] = cell_data[col, :]
