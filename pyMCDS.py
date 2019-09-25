@@ -2,6 +2,7 @@ import xml.etree.ElementTree as ET
 import numpy as np
 import pandas as pd
 import scipy.io as sio
+import sys
 from pathlib import Path
 
 class pyMCDS:
@@ -278,9 +279,10 @@ class pyMCDS:
         voxel_path = output_path / voxel_file
         try:
             initial_mesh = sio.loadmat(voxel_path)['mesh']
-        except IOError as e:
-            print('Missing file referenced in {}'.format(xml_file))
-            raise
+        except:
+            raise FileNotFoundError(
+                "No such file or directory:\n'{}' referenced in '{}'".format(voxel_path, xml_file))
+            sys.exit(1)
 
         # center of voxel specified by first three rows [ x, y, z ]
         # volume specified by fourth row
@@ -302,11 +304,13 @@ class pyMCDS:
         # contain values for that species in that voxel.
         me_file = file_node.text
         me_path = output_path / me_file
+        # Changes here
         try:
             me_data = sio.loadmat(me_path)['multiscale_microenvironment']
-        except IOError as e:
-            print('Missing file referenced in {}'.format(xml_file))
-            raise
+        except:
+            raise FileNotFoundError(
+                "No such file or directory:\n'{}' referenced in '{}'".format(me_path, xml_file))
+            sys.exit(1)
 
         var_children = variables_node.findall('variable')
 
@@ -340,13 +344,7 @@ class pyMCDS:
             MCDS['continuum_variables'][species_name]['decay_rate']['units'] \
                 = species.find('decay_rate').get('units')
 
-            ####################################
-            # THIS IS WHAT YOU WERE WORKING ON #
-            ####################################
-            # store data from microenvironment file as numpy array
-            # MCDS['continuum_variables'][species_name]['data'] \
-            #     = me_data[4+i, :].reshape(xx.shape)
-            
+            # store data from microenvironment file as numpy array            
             # iterate over each voxel
             for vox_idx in range(MCDS['mesh']['voxels']['centers'].shape[1]):
                 # find the center
@@ -391,9 +389,10 @@ class pyMCDS:
         cell_path = output_path / cell_file
         try:
             cell_data = sio.loadmat(cell_path)['cells']
-        except IOError as e:
-            print('Missing file referenced in {}'.format(xml_file))
-            raise
+        except:
+            raise FileNotFoundError(
+                "No such file or directory:\n'{}' referenced in '{}'".format(cell_path, xml_file))
+            sys.exit(1)
 
         for col in range(len(data_labels)):
             MCDS['discrete_cells'][data_labels[col]] = cell_data[col, :]
