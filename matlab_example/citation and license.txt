@@ -1,0 +1,14 @@
+This dataset is posted online with the Creative Commons Attribution 4.0 International (CC BY 4.0) license.
+
+It requires that you cite the source of this dataset for *any* reuse:
+
+A. Ghaffarizadeh, S.H. Friedman, S.M. Mumenthaler, and P. Macklin. 
+PhysiCell: an Open Source Physics-Based Cell Simulator for 3-D Multicellular Systems. 
+PLoS Comput. Biol., 2017 (preprint, in review). DOI: 10.1101/088773.
+
+Please check http://PhysiCell.MathCancer.org for the most recent citation information as 
+this article undergoes peer review. 
+
+For the full text and legal conditions of the CC BY 4.0 license, see: 
+
+https://creativecommons.org/licenses/by/4.0/
