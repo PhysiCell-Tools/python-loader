@@ -11,7 +11,7 @@ class pyMCDS_timeseries:
     Parameters
     ----------
     output_path : string
-        String containing the path (relative or absolute) to the directory 
+        String containing the path (relative or absolute) to the directory
         containing the PhysiCell output files
 
     Attributes
@@ -35,7 +35,7 @@ class pyMCDS_timeseries:
     def get_times(self):
         '''
         Helper function to easily return the cumulative time at each step.
-        
+
         Returns
         -------
         time_array : ndaray (np.float) [n_timesteps,]
@@ -44,7 +44,7 @@ class pyMCDS_timeseries:
         time_array = np.zeros(self.timeseries.shape[0])
         for i in range(len(self.timeseries)):
             time_array[i] = self.timeseries[i].get_time()
-        
+
         return time_array
 
     def plot_menv_total(self, species):
@@ -74,7 +74,7 @@ class pyMCDS_timeseries:
         ax.set_ylabel('Total concentration')
         ax.legend()
         plt.show()
-    
+
     def plot_cell_type_counts(self):
         '''
         Plot the absolute counts of different types of cells over time.
@@ -93,5 +93,3 @@ class pyMCDS_timeseries:
         ax.set_ylabel('# of cells in system')
         ax.legend()
         plt.show()
-
-
