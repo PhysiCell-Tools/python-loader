@@ -14,6 +14,6 @@ print(mcd1.get_time())
 print(mcds.timeseries[0].get_time())
 
 # plotting commands
-chem_list = mcds.timeseries[0].get_menv_species_list()
+chem_list = mcds.timeseries[0].get_substrate_names()
 mcds.plot_menv_total(chem_list)
 mcds.plot_cell_type_counts()
