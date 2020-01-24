@@ -1,5 +1,5 @@
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from pathlib import Path
 from pyMCDS import pyMCDS
 
@@ -83,7 +83,7 @@ class pyMCDS_timeseries:
         unique_types = np.unique(self.timeseries[0].data['discrete_cells']['cell_type'])
         cell_counts = np.zeros((times.shape[0], unique_types.shape[0]))
         for time_i in range(times.shape[0]):
-            df = self.timeseries[time_i].get_cells_df()
+            df = self.timeseries[time_i].get_cell_df()
             counts = df['cell_type'].value_counts()
             cell_counts[time_i, :] = counts
         fig, ax = plt.subplots(figsize=(10, 8))
