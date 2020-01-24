@@ -1,10 +1,10 @@
-import xml.etree.ElementTree as ET
 import numpy as np
 import pandas as pd
+from pathlib import Path
 import scipy.io as sio
 import sys
 import warnings
-from pathlib import Path
+import xml.etree.ElementTree as ET
 
 class pyMCDS:
     """
