@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
-from pyMCDS import pyMCDS
+from .pyMCDS import pyMCDS
 
 class pyMCDS_timeseries:
     '''
