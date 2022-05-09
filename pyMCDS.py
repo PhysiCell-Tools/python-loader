@@ -494,8 +494,8 @@ class pyMCDS:
                         dir_label.append( '_%u' % nn )
                 print("dir_label= ", dir_label )
                 print("label= ",label)
-                print("label.get('size')= ",label.get('size'))
-                for i in range(int(label.get('size'))):
+                print("label.get('size')= ",nlabels)
+                for i in range(nlabels):
                     print( fixed_label + dir_label[i] )
                     data_labels.append(fixed_label + dir_label[i])
             else:
