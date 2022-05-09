@@ -472,21 +472,36 @@ class pyMCDS:
                 cell_node = child
                 break
 
+        print( 'working on discrete cell data...\n')
+
         MCDS['discrete_cells'] = {}
         data_labels = []
         # iterate over 'label's which are children of 'labels' these will be used to
         # label data arrays
+        n = 0; 
         for label in cell_node.find('labels').findall('label'):
             # I don't like spaces in my dictionary keys
             fixed_label = label.text.replace(' ', '_')
-            if int(label.get('size')) > 1:
+            nlabels = int(label.get('size'))
+            if nlabels > 1:
                 # tags to differentiate repeated labels (usually space related)
-                dir_label = ['_x', '_y', '_z']
+                print("n=",n)
+                if( nlabels == 3 ):
+                    dir_label = ['_x', '_y', '_z']
+                else:
+                    dir_label = []; 
+                    for nn in range(100):
+                        dir_label.append( '_%u' % nn )
+                print("dir_label= ", dir_label )
+                print("label= ",label)
+                print("label.get('size')= ",label.get('size'))
                 for i in range(int(label.get('size'))):
+                    print( fixed_label + dir_label[i] )
                     data_labels.append(fixed_label + dir_label[i])
             else:
                 data_labels.append(fixed_label)
-
+            print(fixed_label)
+            n += 1
         # load the file
         cell_file = cell_node.find('filename').text
         cell_path = output_path / cell_file
