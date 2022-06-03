@@ -483,24 +483,34 @@ class pyMCDS:
             # I don't like spaces in my dictionary keys
             fixed_label = label.text.replace(' ', '_')
             nlabels = int(label.get('size'))
-            if nlabels > 1:
+            if nlabels > 1: 
                 # tags to differentiate repeated labels (usually space related)
                 print("n=",n)
-                if( nlabels == 3 ):
+                spatial_type = False; 
+                if( fixed_label == 'position' ):
+                    spatial_type = True; 
+                elif( fixed_label == 'orientation' ):
+                    spatial_type = True; 
+                elif( fixed_label == 'velocity' ):
+                    spatial_type = True; 
+                elif( fixed_label == 'migration_bias_direction' ):
+                    spatial_type = True; 
+                elif( fixed_label == 'motility_vector' ):
+                    spatial_type = True; 
+
+                if( nlabels == 3 and spatial_type == True ):
                     dir_label = ['_x', '_y', '_z']
                 else:
                     dir_label = []; 
                     for nn in range(100):
                         dir_label.append( '_%u' % nn )
-                print("dir_label= ", dir_label )
-                print("label= ",label)
-                print("label.get('size')= ",nlabels)
-                for i in range(nlabels):
-                    print( fixed_label + dir_label[i] )
+                # print( dir_label )
+                for i in range(int(label.get('size'))):
+                    # print( fixed_label + dir_label[i] )
                     data_labels.append(fixed_label + dir_label[i])
             else:
                 data_labels.append(fixed_label)
-            print(fixed_label)
+            # print(fixed_label)
             n += 1
         # load the file
         cell_file = cell_node.find('filename').text
