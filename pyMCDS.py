@@ -485,7 +485,7 @@ class pyMCDS:
             nlabels = int(label.get('size'))
             if nlabels > 1: 
                 # tags to differentiate repeated labels (usually space related)
-                print("n=",n)
+                # print("n=",n)
                 spatial_type = False; 
                 if( fixed_label == 'position' ):
                     spatial_type = True; 
