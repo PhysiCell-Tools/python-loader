@@ -7,12 +7,12 @@
 #  or,
 #  python anim_svg_cycle.py <show_nucleus start_index axes_min axes_max>
 #    i.e., the arguments <...> are optional and have defaults.
-# 
+#
 # Dependencies include matplotlib and numpy. We recommend installing the Anaconda Python3 distribution.
 #
 # Examples (run from directory containing the .svg files):
-#  python anim_svg_cycle.py 
-#  python anim_svg_cycle.py 0 5 700 1300 
+#  python anim_svg_cycle.py
+#  python anim_svg_cycle.py 0 5 700 1300
 #
 # Author: Randy Heiland (except for the circles() function)
 #
@@ -45,7 +45,7 @@ except:
   raise
 from collections import deque
 try:
-  # apparently we need mpl's Qt backend to do keypresses 
+  # apparently we need mpl's Qt backend to do keypresses
 #  matplotlib.use("Qt5Agg")
   matplotlib.use("TkAgg")
   import matplotlib.pyplot as plt
@@ -111,10 +111,10 @@ print("current_idx=",current_idx)
 
 #d={}   # dictionary to hold all (x,y) positions of cells
 
-""" 
+"""
 --- for example ---
 In [141]: d['cell1599'][0:3]
-Out[141]: 
+Out[141]:
 array([[ 4900.  ,  4900.  ],
        [ 4934.17,  4487.91],
        [ 4960.75,  4148.02]])
@@ -135,30 +135,30 @@ count = -1
 #-----------------------------------------------------
 def circles(x, y, s, c='b', vmin=None, vmax=None, **kwargs):
     """
-    See https://gist.github.com/syrte/592a062c562cd2a98a83 
+    See https://gist.github.com/syrte/592a062c562cd2a98a83
 
-    Make a scatter plot of circles. 
+    Make a scatter plot of circles.
     Similar to plt.scatter, but the size of circles are in data scale.
     Parameters
     ----------
     x, y : scalar or array_like, shape (n, )
         Input data
-    s : scalar or array_like, shape (n, ) 
+    s : scalar or array_like, shape (n, )
         Radius of circles.
     c : color or sequence of color, optional, default : 'b'
         `c` can be a single color format string, or a sequence of color
         specifications of length `N`, or a sequence of `N` numbers to be
         mapped to colors using the `cmap` and `norm` specified via kwargs.
-        Note that `c` should not be a single numeric RGB or RGBA sequence 
+        Note that `c` should not be a single numeric RGB or RGBA sequence
         because that is indistinguishable from an array of values
-        to be colormapped. (If you insist, use `color` instead.)  
-        `c` can be a 2-D array in which the rows are RGB or RGBA, however. 
+        to be colormapped. (If you insist, use `color` instead.)
+        `c` can be a 2-D array in which the rows are RGB or RGBA, however.
     vmin, vmax : scalar, optional, default: None
         `vmin` and `vmax` are used in conjunction with `norm` to normalize
         luminance data.  If either are `None`, the min and max of the
         color array is used.
     kwargs : `~matplotlib.collections.Collection` properties
-        Eg. alpha, edgecolor(ec), facecolor(fc), linewidth(lw), linestyle(ls), 
+        Eg. alpha, edgecolor(ec), facecolor(fc), linewidth(lw), linestyle(ls),
         norm, cmap, transform, etc.
     Returns
     -------
@@ -273,8 +273,8 @@ def plot_svg():
       s = circle.attrib['fill']
 #      print("s=",s)
 #      print("type(s)=",type(s))
-      if (s[0:3] == "rgb"):  # if an rgb string, e.g. "rgb(175,175,80)" 
-        rgb = list(map(int, s[4:-1].split(",")))  
+      if (s[0:3] == "rgb"):  # if an rgb string, e.g. "rgb(175,175,80)"
+        rgb = list(map(int, s[4:-1].split(",")))
         rgb[:]=[x/255. for x in rgb]
       else:     # otherwise, must be a color name
         rgb_tuple = mplc.to_rgb(mplc.cnames[s])  # a tuple

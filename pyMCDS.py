@@ -8,11 +8,11 @@ from pathlib import Path
 
 class pyMCDS:
     """
-    This class contains a dictionary of dictionaries that contains all of the 
+    This class contains a dictionary of dictionaries that contains all of the
     output from a single time step of a PhysiCell Model. This class assumes that
     all output files are stored in the same directory. Data is loaded by reading
     the .xml file for a particular timestep.
-    
+
     Parameters
     ----------
     xml_name: str
@@ -28,7 +28,7 @@ class pyMCDS:
         file and the files referenced therein.
     """
     def __init__(self, xml_file, output_path='.'):
-        self.data = self._read_xml(xml_file, output_path)
+        self.data = self._read_xml(xml_file, output_path)  # bue 20220826: output_path is a actually output and input path.
 
     ## METADATA RELATED FUNCTIONS
 
@@ -51,7 +51,7 @@ class pyMCDS:
         Returns
         -------
         splitting : list length=2 if flat=True, else length=3
-            Contains arrays of voxel center coordinates as meshgrid with shape 
+            Contains arrays of voxel center coordinates as meshgrid with shape
             [nx_voxel, ny_voxel, nz_voxel] or [nx_voxel, ny_voxel] if flat=True.
         """
         if flat == True:
@@ -70,13 +70,13 @@ class pyMCDS:
 
     def get_2D_mesh(self):
         """
-        This function returns the x, y meshgrid as two numpy arrays. It is 
+        This function returns the x, y meshgrid as two numpy arrays. It is
         identical to get_mesh with the option flat=True
 
         Returns
         -------
         splitting : list length=2
-            Contains arrays of voxel center coordinates in x and y dimensions 
+            Contains arrays of voxel center coordinates in x and y dimensions
             as meshgrid with shape [nx_voxel, ny_voxel]
         """
         xx = self.data['mesh']['x_coordinates'][:, :, 0]
@@ -99,7 +99,7 @@ class pyMCDS:
         Returns
         -------
         dx : float
-            Distance between voxel centers in the same units as the other 
+            Distance between voxel centers in the same units as the other
             spatial measurements
         """
         centers = self.get_linear_voxels()
@@ -110,19 +110,19 @@ class pyMCDS:
         dx = (X.max() - X.min()) / X.shape[0]
         dy = (Y.max() - Y.min()) / Y.shape[0]
         dz = (Z.max() - Z.min()) / Z.shape[0]
-        
+
         if np.abs(dx - dy) > 1e-10 or np.abs(dy - dz) > 1e-10 \
             or np.abs(dx - dz) > 1e-10:
             print('Warning: grid spacing may be axis dependent.')
-        
+
         return round(dx)
 
     def get_containing_voxel_ijk(self, x, y, z):
         """
         Internal function to get the meshgrid indices for the center of a voxel
-        that contains the given position. 
-        
-        Note that pyMCDS stores meshgrids as 'cartesian' 
+        that contains the given position.
+
+        Note that pyMCDS stores meshgrids as 'cartesian'
         (indexing='xy' in np.meshgrid) which means that we will have
         to use these indices as [j, i, k] on the actual meshgrid objects
 
@@ -161,7 +161,7 @@ class pyMCDS:
         elif z < zz.min():
             warnings.warn('Position out of bounds: z out of bounds in pyMCDS._get_voxel_idx({0}, {1}, {2}). Setting z = z_min!'.format(x, y, z))
             z = zz.min()
-        
+
         i = np.round((x - xx.min()) / ds)
         j = np.round((y - yy.min()) / ds)
         k = np.round((z - zz.min()) / ds)
@@ -186,7 +186,7 @@ class pyMCDS:
             species_list.append(name)
 
         return species_list
-    
+
     def get_concentrations(self, species_name, z_slice=None):
         """
         Returns the concentration array for the specified chemical species
@@ -197,7 +197,7 @@ class pyMCDS:
         ----------
         species_name : str
             Name of the chemical species for which to get concentrations
-        
+
         z_slice : float
             z-axis position to use as plane for 2D output. This value must match
             a plane of voxel centers in the z-axis.
@@ -225,7 +225,7 @@ class pyMCDS:
         """
         Return concentrations of each chemical species inside a particular voxel
         that contains the point described in the arguments.
-        
+
         Parameters
         ----------
         x : float
@@ -234,7 +234,7 @@ class pyMCDS:
             y_position for the point of interest
         z : float
             z_position for the point of interest
-        
+
         Returns
         -------
         concs : array, shape=[n_substrates,]
@@ -246,7 +246,7 @@ class pyMCDS:
 
         for ix in range(len(sub_name_list)):
             concs[ix] = self.get_concentrations(sub_name_list[ix])[j, i, k]
-        
+
         return concs
 
 
@@ -263,7 +263,7 @@ class pyMCDS:
         """
         cells_df = pd.DataFrame(self.data['discrete_cells'])
         return cells_df
-    
+
     def get_cell_variables(self):
         """
         Returns the names of all of the cell variables tracked in ['discrete cells']
@@ -296,7 +296,7 @@ class pyMCDS:
         Returns
         -------
         vox_df : pd.DataFrame, shape=[n_cell_in_voxel, n_variables]
-            cell dataframe containing only cells in the same voxel as the point 
+            cell dataframe containing only cells in the same voxel as the point
             specified by x, y, and z.
         """
         ds = self.get_mesh_spacing()
@@ -447,7 +447,7 @@ class pyMCDS:
             MCDS['continuum_variables'][species_name]['decay_rate']['units'] \
                 = species.find('decay_rate').get('units')
 
-            # store data from microenvironment file as numpy array            
+            # store data from microenvironment file as numpy array
             # iterate over each voxel
             for vox_idx in range(MCDS['mesh']['voxels']['centers'].shape[1]):
                 # find the center
@@ -478,30 +478,30 @@ class pyMCDS:
         data_labels = []
         # iterate over 'label's which are children of 'labels' these will be used to
         # label data arrays
-        n = 0; 
+        n = 0;
         for label in cell_node.find('labels').findall('label'):
             # I don't like spaces in my dictionary keys
             fixed_label = label.text.replace(' ', '_')
             nlabels = int(label.get('size'))
-            if nlabels > 1: 
+            if nlabels > 1:
                 # tags to differentiate repeated labels (usually space related)
                 # print("n=",n)
-                spatial_type = False; 
+                spatial_type = False;
                 if( fixed_label == 'position' ):
-                    spatial_type = True; 
+                    spatial_type = True;
                 elif( fixed_label == 'orientation' ):
-                    spatial_type = True; 
+                    spatial_type = True;
                 elif( fixed_label == 'velocity' ):
-                    spatial_type = True; 
+                    spatial_type = True;
                 elif( fixed_label == 'migration_bias_direction' ):
-                    spatial_type = True; 
+                    spatial_type = True;
                 elif( fixed_label == 'motility_vector' ):
-                    spatial_type = True; 
+                    spatial_type = True;
 
                 if( nlabels == 3 and spatial_type == True ):
                     dir_label = ['_x', '_y', '_z']
                 else:
-                    dir_label = []; 
+                    dir_label = [];
                     for nn in range(100):
                         dir_label.append( '_%u' % nn )
                 # print( dir_label )

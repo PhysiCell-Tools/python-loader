@@ -1,5 +1,5 @@
 #
-# anim_svg_substrate.py:  render/animate PhysiCell .svg (cells) and .mat (substrate) files, 
+# anim_svg_substrate.py:  render/animate PhysiCell .svg (cells) and .mat (substrate) files,
 #                         using left/right arrows on keyboard
 #
 # Note: this version uses the 'scatter' method of matplotlib to plot cells, therefore they will not
@@ -11,7 +11,7 @@
 
 #  or,
 #  pythonw anim_svg_substrate.py show_nucleus start_index svg_xmin svg_xmax svg_ymin svg_ymin xmin xmax ymin ymax scale_radius field_idx
-# 
+#
 # Keyboard arrows: right/left arrows will single step forward/backward; up/down will increment/decrement step size
 #
 # Dependencies include matplotlib and numpy. We recommend installing the Anaconda Python3 distribution.
@@ -19,7 +19,7 @@
 # Example:
 #  pythonw anim_svg_substrate.py 0 0 0 2000 0 2000 -1000 1000 -1000 1000 1 0
 #
-# Author: Randy Heiland 
+# Author: Randy Heiland
 #
 import sys,pathlib
 import xml.etree.ElementTree as ET
@@ -38,7 +38,7 @@ from numpy.random import randn
 
 
 try:
-  # apparently we need mpl's Qt backend to do keypresses 
+  # apparently we need mpl's Qt backend to do keypresses
 #  matplotlib.use("Qt5Agg")
   matplotlib.use("TkAgg")
   import matplotlib.pyplot as plt
@@ -174,8 +174,8 @@ def plot_substrate():
     scipy.io.loadmat(fullname, info_dict)
     M = info_dict['multiscale_microenvironment']
     print('plot_substrate: field_idx=',field_idx)
-    f = M[field_idx,:]   # 
-    
+    f = M[field_idx,:]   #
+
     #N = int(math.sqrt(len(M[0,:])))
     #grid2D = M[0,:].reshape(N,N)
     xgrid = M[0, :].reshape(numy, numx)
@@ -290,8 +290,8 @@ def plot_svg():
       s = circle.attrib['fill']
 #      print("s=",s)
 #      print("type(s)=",type(s))
-      if (s[0:3] == "rgb"):  # if an rgb string, e.g. "rgb(175,175,80)" 
-        rgb = list(map(int, s[4:-1].split(",")))  
+      if (s[0:3] == "rgb"):  # if an rgb string, e.g. "rgb(175,175,80)"
+        rgb = list(map(int, s[4:-1].split(",")))
         rgb[:]=[x/255. for x in rgb]
       else:     # otherwise, must be a color name
         rgb_tuple = mplc.to_rgb(mplc.cnames[s])  # a tuple

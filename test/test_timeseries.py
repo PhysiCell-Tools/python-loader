@@ -1,8 +1,8 @@
 # load library
-from pyMCDS_timeseries import pyMCDS_timeseries
+from physicellloader import pyMCDS_timeseries
 
 # load physicell timeseries data
-mcds = pyMCDS_timeseries('timeseries_set')
+mcds = pyMCDS_timeseries('../timeseries_set')
 
 # command to extract basic timeseries information
 mcds.get_times()
