@@ -5,9 +5,9 @@ https://packaging.python.org/guides/distributing-packages-using-setuptools/
 https://github.com/pypa/sampleproject
 
 pip releasing a next version:
-1. vim ./physicellloader/_version.py  # increase version number in file
-2. git add ./physicellloader/_version.py
-3. git commit -m'@ physicell : next version.'
+1. vim _version.py  # increase version number in file
+2. git add _version.py
+3. git commit -m'@ physicellloader : next version.'
 4. git tag -a v0.0.0 -m'version 0.0.0'
 5. python3 -m build --sdist  # make source distribution
 6. python3 -m build --wheel  # make binary distribution python wheel
@@ -26,7 +26,7 @@ here = pathlib.Path(__file__).parent.resolve()
 long_description = (here / "README.md").read_text(encoding="utf-8")
 
 # Get the version number from the _version.py file
-exec(open('./physicellloader/_version.py').read())
+exec(open('_version.py').read())
 
 # Arguments marked as "Required" below must be included for upload to PyPI.
 # Fields marked as "Optional" may be commented out.
@@ -86,7 +86,7 @@ setup(
 
     # You can just specify package directories manually here if your project is
     # simple. Or you can use find_packages().
-    packages=find_packages(where=".", exclude=(), include=('*',))  # Required
+    packages=find_packages(where=".", exclude=(), include=('*',)),  # Required
 
 
     # Specify which Python versions you support.
