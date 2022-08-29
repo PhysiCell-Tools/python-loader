@@ -74,7 +74,7 @@ setup(
 
     # When your source code is in a subdirectory under the project root, e.g.
     # `src/`, it is necessary to specify the `package_dir` argument.
-    #package_dir={"": "src"},  # Optional
+    package_dir={"": "physicellloader"},  # Optional
     # You can just specify package directories manually here if your project is
     # simple. Or you can use find_packages().
     #
@@ -86,7 +86,7 @@ setup(
 
     # You can just specify package directories manually here if your project is
     # simple. Or you can use find_packages().
-    packages=find_packages(where=".", exclude=(), include=('*',)),  # Required
+    packages=find_packages(where="physicellloader", exclude=(), include=('*',)),  # Required
 
 
     # Specify which Python versions you support.
