@@ -1,5 +1,5 @@
 # load library
-import os
+import pathlib
 import physicellloader
 from physicellloader import pyMCDS_timeseries
 

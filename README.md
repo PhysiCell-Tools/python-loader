@@ -15,18 +15,19 @@ How to install physicellloader?
 pip3 install physicellloader
 ```
 
-How to check the installed version?
-```python
-import physicellloader
-physicellloader.__version__
-```
-
-How to load the bokehheat library?
+How to load the physicellloader library?
 ```python
 from physicellloader import pyMCDS
 from physicellloader import pyMCDS_timeseries
 from physicellloader import read_MultiCellDS_xml
 ```
+
+How to check for the installed physicellloader version?
+```python
+import physicellloader
+physicellloader.__version__
+```
+
 
 ## Tutoreal
 + Ref. http://www.mathcancer.org/blog/python-loader/

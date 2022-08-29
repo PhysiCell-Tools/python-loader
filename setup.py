@@ -74,7 +74,7 @@ setup(
 
     # When your source code is in a subdirectory under the project root, e.g.
     # `src/`, it is necessary to specify the `package_dir` argument.
-    package_dir={"": "physicellloader"},  # Optional
+    #package_dir={"": "src"},  # Optional
     # You can just specify package directories manually here if your project is
     # simple. Or you can use find_packages().
     #
@@ -86,8 +86,7 @@ setup(
 
     # You can just specify package directories manually here if your project is
     # simple. Or you can use find_packages().
-    #packages=find_packages(where="physicellloader", exclude=(), include=('*','*/*')),  # Required
-    packages=find_packages(where="physicellloader"),  # Required
+    packages=find_packages(where=".", exclude=(), include=('*',)),  # Required
 
 
     # Specify which Python versions you support.
@@ -116,9 +115,8 @@ setup(
     # If there are data files included in your packages that need to be
     # installed, specify them here.
     package_data={  # Optional
-        "": ["*.mat", "*.xml", "*.svg"], #"citation and license.txt", "snapshot00003696.svg"],
-        #"matlab_example": ["*.mat", "*.xml", "*.svg"], #"citation and license.txt", "snapshot00003696.svg"],
-        #"timeseries_set": ["*.mat", "*.xml"],
+        "physicellloader.matlab_example": ["*.mat", "*.xml", "*.svg", "citation and license.txt"],
+        "physicellloader.timeseries_set": ["*.mat", "*.xml"],
     },
 
     # Although 'package_data' is the preferred approach, in some case you may
