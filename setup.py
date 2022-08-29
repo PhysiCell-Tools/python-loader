@@ -26,7 +26,7 @@ here = pathlib.Path(__file__).parent.resolve()
 long_description = (here / "README.md").read_text(encoding="utf-8")
 
 # Get the version number from the _version.py file
-exec(open('_version.py').read())
+exec(open('./physicellloader/_version.py').read())
 
 # Arguments marked as "Required" below must be included for upload to PyPI.
 # Fields marked as "Optional" may be commented out.
