@@ -115,8 +115,8 @@ setup(
     # If there are data files included in your packages that need to be
     # installed, specify them here.
     package_data={  # Optional
-        "matlab_example": ["*.mat", "*.xml", "citation and license.txt", "snapshot00003696.svg"],
-        "timeseries_set": ["*.mat", "*.xml"],
+        "": ["matlab_example/*.mat", "matlab_example/*.xml", "matlab_example/citation and license.txt", "matlab_example/snapshot00003696.svg"],
+        "physicellloader": ["timeseries_set/*.mat", "timeseries_set/*.xml"],
     },
 
     # Although 'package_data' is the preferred approach, in some case you may

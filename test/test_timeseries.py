@@ -4,7 +4,7 @@ import physicellloader
 from physicellloader import pyMCDS_timeseries
 
 # load physicell timeseries data
-mcds = pyMCDS_timeseries('/'.join([os.path.dirname(os.path.realpath(physicellloader.__file__)), 'timeseries_set']))
+mcds = pyMCDS_timeseries(str(pathlib.Path(physicellloader.__file__).parent.resolve() / 'timeseries_set'))
 
 # command to extract basic timeseries information
 mcds.get_times()
