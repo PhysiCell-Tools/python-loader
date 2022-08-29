@@ -5,8 +5,8 @@ https://packaging.python.org/guides/distributing-packages-using-setuptools/
 https://github.com/pypa/sampleproject
 
 pip releasing a next version:
-1. vim _version.py  # increase version number in file
-2. git add _version.py
+1. vim physicellloader/_version.py  # increase version number in file
+2. git add physicellloader/_version.py
 3. git commit -m'@ physicellloader : next version.'
 4. git tag -a v0.0.0 -m'version 0.0.0'
 5. python3 -m build --sdist  # make source distribution
