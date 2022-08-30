@@ -2,7 +2,7 @@
 
 ## Abstarct
 
-Python3 data loader for PhysiCell digital snapshots.
+[Python3](https://www.python.org/) data loader for [PhysiCell](http://physicell.org/) digital snapshots.
 
 Additional scripts for plotting PhysiCell output can be found in the `physicell/plotting` directory.
 You can copy these python scripts into your PhysiCell `output` directory and run them there.
