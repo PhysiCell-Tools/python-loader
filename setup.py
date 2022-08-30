@@ -5,9 +5,9 @@ https://packaging.python.org/guides/distributing-packages-using-setuptools/
 https://github.com/pypa/sampleproject
 
 pip releasing a next version:
-1. vim physicellloader/_version.py  # increase version number in file
-2. git add physicellloader/_version.py
-3. git commit -m'@ physicellloader : next version.'
+1. vim physicellloader/VERSION.py  # increase version number in file
+2. git add physicellloader/VERSION.py
+3. git commit -m'@ physicellloader : next release.'
 4. git tag -a v0.0.0 -m'version 0.0.0'
 5. python3 -m build --sdist  # make source distribution
 6. python3 -m build --wheel  # make binary distribution python wheel
@@ -25,8 +25,8 @@ here = pathlib.Path(__file__).parent.resolve()
 # Get the long description from the README file
 long_description = (here / "README.md").read_text(encoding="utf-8")
 
-# Get the version number from the _version.py file
-exec(open('./physicellloader/_version.py').read())
+# Get the version number from the VERSION.py file
+exec(open('./physicellloader/VERSION.py').read())
 
 # Arguments marked as "Required" below must be included for upload to PyPI.
 # Fields marked as "Optional" may be commented out.
