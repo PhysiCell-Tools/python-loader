@@ -9,7 +9,6 @@ You can copy these python scripts into your PhysiCell `output` directory and run
 `anim_svg_substrate.py` additionally requires the `scipy` library and `cells3D_fury.py` additionally requires the `fury` libraries to be installed.
 Both of them can be installed with pip.
 
-
 ## HowTo Guide
 
 How to install physicellloader?
@@ -45,7 +44,7 @@ help(read_MultiCellDS_xml)
 
 
 ## Contributions
-+ implementation: Randy Heiland
++ implementation: Pat Wall, Randy Heiland, Paul Macklin
 
 
 ## Release Notes:
