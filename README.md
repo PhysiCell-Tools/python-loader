@@ -44,7 +44,7 @@ help(read_MultiCellDS_xml)
 
 
 ## Contributions
-+ implementation: Pat Wall, Randy Heiland, Paul Macklin
++ implementation: Patrick Wall, Randy Heiland, Paul Macklin
 
 
 ## Release Notes:
