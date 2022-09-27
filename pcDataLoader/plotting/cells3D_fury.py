@@ -2,7 +2,7 @@ import numpy as np
 from fury import window, actor #, ui
 #import itertools
 #import math
-from physicellloader import pyMCDS
+from pcDataLoder import pyMCDS
 
 mcds = pyMCDS('output00003696.xml', output_path='../matlab_example')  # replace this filename with yours
 print(mcds.get_time())

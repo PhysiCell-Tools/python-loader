@@ -1,19 +1,17 @@
-# %%
-import xml.etree.ElementTree as TE
+import xml.etree.ElementTree as ET
 import numpy as np
-import pandas as pd
+#import pandas as pd
 import scipy.io as sio
 from pathlib import Path
 
-def read_MultiCellDS_xml(file_name, output_dir = '.'):
-    
-    output_path = Path(output_dir)
-    xml_file = output_path / 'output00000001.xml'
-    try:
-        tree = TE.parse(xml_file)
-    except:
-        print('Data File:', xml_file, 'not found!')
-        exit(0)
+
+def read_MultiCellDS_xml(xml_file, output_path='.'):
+    """
+    Parses xml and returns a dictionary
+    """
+    output_path = Path(output_path)
+    xml_file = output_path / xml_file
+    tree = ET.parse(xml_file)
 
     root = tree.getroot()
     MCDS = {}
@@ -40,10 +38,10 @@ def read_MultiCellDS_xml(file_name, output_dir = '.'):
     MCDS['mesh'] = {}
 
     # check for cartesian mesh
-    cartesian = False
-    mesh_type = mesh_node.get('type')
-    if mesh_type == 'Cartesian':
-        cartesian = True
+    #cartesian = False
+    #mesh_type = mesh_node.get('type')
+    #if mesh_type == 'Cartesian':
+    #    cartesian = True
 
     # while we're at it, find the mesh
     coord_str = mesh_node.find('x_coordinates').text
@@ -71,9 +69,9 @@ def read_MultiCellDS_xml(file_name, output_dir = '.'):
     try:
         initial_mesh = sio.loadmat(voxel_path)['mesh']
     except:
-        print('Data file', voxel_path, 'missing!')
-        print('Referenced in', xml_file)
-        exit(0)
+        raise FileNotFoundError(
+            "No such file or directory:\n'{}' referenced in '{}'".format(voxel_path, xml_file))
+        sys.exit(1)
 
     # center of voxel specified by first three rows [ x, y, z ]
     # volume specified by fourth row
@@ -90,25 +88,35 @@ def read_MultiCellDS_xml(file_name, output_dir = '.'):
     file_node = me_node.find('data').find('filename')
 
     # micro environment data is shape [4+n, len(voxels)] where n is the number
-    # of species being tracked. the first 3 rows represent (x, y, z) of voxel centers. 
-    # The fourth row contains the voxel volume. The 5th row and up will contain values
-    # for that species in that voxel.
+    # of species being tracked. the first 3 rows represent (x, y, z) of voxel
+    # centers. The fourth row contains the voxel volume. The 5th row and up will
+    # contain values for that species in that voxel.
     me_file = file_node.text
     me_path = output_path / me_file
+    # Changes here
     try:
         me_data = sio.loadmat(me_path)['multiscale_microenvironment']
     except:
-        print('Data file', me_path, 'missing!')
-        print('Referenced in', xml_file)
-        exit(0)
+        raise FileNotFoundError(
+            "No such file or directory:\n'{}' referenced in '{}'".format(me_path, xml_file))
+        sys.exit(1)
 
     var_children = variables_node.findall('variable')
 
-    for i, species in enumerate(var_children):
+    # we're going to need the linear x, y, and z coordinates later
+    # but we dont need to get them in the loop
+    X, Y, Z = np.unique(xx), np.unique(yy), np.unique(zz)
+
+    for si, species in enumerate(var_children):
         species_name = species.get('name')
         MCDS['continuum_variables'][species_name] = {}
-        MCDS['continuum_variables'][species_name]['units'] = species.get('units')
-        
+        MCDS['continuum_variables'][species_name]['units'] = species.get(
+            'units')
+
+        # initialize array for concentration data
+        MCDS['continuum_variables'][species_name]['data'] = np.zeros(
+            xx.shape)
+
         # travel down one level on tree
         species = species.find('physical_parameter_set')
 
@@ -125,10 +133,19 @@ def read_MultiCellDS_xml(file_name, output_dir = '.'):
             = float(species.find('decay_rate').text)
         MCDS['continuum_variables'][species_name]['decay_rate']['units'] \
             = species.find('decay_rate').get('units')
-        
+
         # store data from microenvironment file as numpy array
-        MCDS['continuum_variables'][species_name]['data'] \
-            = me_data[4+i, :].reshape(xx.shape)
+        # iterate over each voxel
+        for vox_idx in range(MCDS['mesh']['voxels']['centers'].shape[1]):
+            # find the center
+            center = MCDS['mesh']['voxels']['centers'][:, vox_idx]
+
+            i = np.where(np.abs(center[0] - X) < 1e-10)[0][0]
+            j = np.where(np.abs(center[1] - Y) < 1e-10)[0][0]
+            k = np.where(np.abs(center[2] - Z) < 1e-10)[0][0]
+
+            MCDS['continuum_variables'][species_name]['data'][j, i, k] \
+                = me_data[4+si, vox_idx]
 
     # in order to get to the good stuff we have to pass through a few different
     # hierarchal levels
@@ -143,29 +160,34 @@ def read_MultiCellDS_xml(file_name, output_dir = '.'):
             break
 
     MCDS['discrete_cells'] = {}
-    df_labels = []
+    data_labels = []
     # iterate over 'label's which are children of 'labels' these will be used to
-    # label dataframe columns
+    # label data arrays
     for label in cell_node.find('labels').findall('label'):
+        # I don't like spaces in my dictionary keys
+        fixed_label = label.text.replace(' ', '_')
         if int(label.get('size')) > 1:
+            # tags to differentiate repeated labels (usually space related)
             dir_label = ['_x', '_y', '_z']
             for i in range(int(label.get('size'))):
-                df_labels.append(label.text + dir_label[i])
+                data_labels.append(fixed_label + dir_label[i])
         else:
-            df_labels.append(label.text)
-            
-    # load the file, we want it transposed from the matlab format
+            data_labels.append(fixed_label)
+
+    # load the file
     cell_file = cell_node.find('filename').text
     cell_path = output_path / cell_file
     try:
-        cell_data = sio.loadmat(cell_path)['cells'].T
+        cell_data = sio.loadmat(cell_path)['cells']
     except:
-        print('Data file', cell_path, 'missing!')
-        print('Referenced in', xml_file)
-        exit(0)
-        
+        raise FileNotFoundError(
+            "No such file or directory:\n'{}' referenced in '{}'".format(cell_path, xml_file))
+        sys.exit(1)
+
     # we will save the cell information as a dataframe in the MCDS object
-    cell_df = pd.DataFrame(cell_data, columns=df_labels)
-    MCDS['discrete_cells']['data_df'] = cell_df
+    #cell_df = pd.DataFrame(cell_data, columns=df_labels)
+
+    for col in range(len(data_labels)):
+        MCDS['discrete_cells'][data_labels[col]] = cell_data[col, :]
 
     return MCDS

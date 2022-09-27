@@ -5,9 +5,9 @@ https://packaging.python.org/guides/distributing-packages-using-setuptools/
 https://github.com/pypa/sampleproject
 
 pip releasing a next version:
-1. vim physicellloader/VERSION.py  # increase version number in file
-2. git add physicellloader/VERSION.py
-3. git commit -m'@ physicellloader : next release.'
+1. vim pcDataLoder/VERSION.py  # increase version number in file
+2. git add pcDataLoder/VERSION.py
+3. git commit -m'@ pcDataLoder : next release.'
 4. git tag -a v0.0.0 -m'version 0.0.0'
 5. python3 -m build --sdist  # make source distribution
 6. python3 -m build --wheel  # make binary distribution python wheel
@@ -26,14 +26,14 @@ here = pathlib.Path(__file__).parent.resolve()
 long_description = (here / "README.md").read_text(encoding="utf-8")
 
 # Get the version number from the VERSION.py file
-exec(open('./physicellloader/VERSION.py').read())
+exec(open('./pcDataLoder/VERSION.py').read())
 
 # Arguments marked as "Required" below must be included for upload to PyPI.
 # Fields marked as "Optional" may be commented out.
 
 setup(
     # the basics
-    name="physicellloader",  # Required
+    name="pcDataLoder",  # Required
     version=__version__,  # Required
 
     # description
@@ -115,8 +115,8 @@ setup(
     # If there are data files included in your packages that need to be
     # installed, specify them here.
     package_data={  # Optional
-        "physicellloader.matlab_example": ["*.mat", "*.xml", "*.svg", "citation and license.txt"],
-        "physicellloader.timeseries_set": ["*.mat", "*.xml"],
+        "pcDataLoder.data_snapshot": ["*.mat", "*.xml", "*.svg", "citation and license.txt"],
+        "pcDataLoder.data_timeseries": ["*.mat", "*.xml"],
     },
 
     # Although 'package_data' is the preferred approach, in some case you may

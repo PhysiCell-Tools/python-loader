@@ -1,13 +1,13 @@
 # load library
 import pathlib
-import physicellloader
-from physicellloader import pyMCDS
-from physicellloader import read_MultiCellDS_xml
+import pcDataLoader
+from pcDataLoader import pyMCDS
+from pcDataLoader import read_MultiCellDS_xml
 
 # load physicell data
-mcds1 = pyMCDS('output00000001.xml', output_path=str(pathlib.Path(physicellloader.__file__).parent.resolve() / 'timeseries_set'))
-mcds2 = pyMCDS('output00000002.xml', output_path=str(pathlib.Path(physicellloader.__file__).parent.resolve() / 'timeseries_set'))
-mcds3 = read_MultiCellDS_xml('output00000004.xml', output_path=str(pathlib.Path(physicellloader.__file__).parent.resolve() / 'timeseries_set'))
+mcds1 = pyMCDS('output00000001.xml', output_path=str(pathlib.Path(pcDataLoader.__file__).parent.resolve() / 'data_timeseries'))
+mcds2 = pyMCDS('output00000002.xml', output_path=str(pathlib.Path(pcDataLoader.__file__).parent.resolve() / 'data_timeseries'))
+mcds3 = read_MultiCellDS_xml('output00000004.xml', output_path=str(pathlib.Path(pcDataLoader.__file__).parent.resolve() / 'data_timeseries'))
 
 # commands to extract basic information
 print(mcds1.get_time())
