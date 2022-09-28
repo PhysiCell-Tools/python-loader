@@ -117,8 +117,7 @@ To be developed.
 
 
 ## About Documentation:
-+ [what nobody tells you about documentation](https://www.youtube.com/watch?v=azf6yzuJt54)
-Within the pcDataLoader library, I try to stick to the policy lined out by Daniele Procida in his talk at the PyCon 2017 in Portland, Oregon.
+Within the pcDataLoader library, I try to stick to the policy lined out by Daniele Procida in his "[what nobody tells you about documentation:](https://www.youtube.com/watch?v=azf6yzuJt54)" talk at PyCon 2017 in Portland, Oregon.
 
 
 ## Contributions:
