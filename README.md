@@ -30,50 +30,50 @@ Note: there can only be one version of pcDataLoader installed in each python3 en
 
 ## HowTo Guide - branch v2 specific:
 
-**How to install the latest pcDataLoder from the v2 branch?**
+**How to install the latest pcDataLoader from the v2 branch?**
 ```bash
-pip3 install "pcDataLoder<3"
+pip3 install "pcDataLoader<3"
 ```
 
-**How to update to the latest pcDataLoder from the v2 branch?**\
+**How to update to the latest pcDataLoader from the v2 branch?**\
 This works, even when you have a v3 branch installation.
 ```bash
-pip3 install -U "pcDataLoder<3"
+pip3 install -U "pcDataLoader<3"
 ```
 
 
 ## HowTo Guide - branch v3 specific:
 
-**How to install the latest pcDataLoder from the v3 branch?**
+**How to install the latest pcDataLoader from the v3 branch?**
 ```bash
-pip3 install pcDataLoder
+pip3 install pcDataLoader
 ```
 
-**How to update to the latest pcDataLoder from the v3 branch?**\
+**How to update to the latest pcDataLoader from the v3 branch?**\
 This works, even when you have a v2 branch installation.
 ```bash
-pip3 install -U pcDataLoder
+pip3 install -U pcDataLoader
 ```
 
 
 ## HowTo Guide - branch generic:
 
-**How to uninstall pcDataLoder from your python3 environment?**
+**How to uninstall pcDataLoader from your python3 environment?**
 ```bash
-pip3 uninstall pcDataLoder
+pip3 uninstall pcDataLoader
 ```
 
-**How to check for the current installed pcDataLoder version?**
+**How to check for the current installed pcDataLoader version?**
 ```python3
-import pcDataLoder
-pcDataLoder.__version__
+import pcDataLoader
+pcDataLoader.__version__
 ```
 
-**How to load the pcDataLoder library?**
+**How to load the pcDataLoader library?**
 ```python3
-from pcDataLoder import pyMCDS
-from pcDataLoder import pyMCDS_timeseries
-from pcDataLoder import read_MultiCellDS_xml
+from pcDataLoader import pyMCDS
+from pcDataLoader import pyMCDS_timeseries
+from pcDataLoader import read_MultiCellDS_xml
 ```
 
 **How to use the addition plotting scripts for plotting PhysiCell output?**\
@@ -100,7 +100,7 @@ References are maintained in each module`s [docstring](https://en.wikipedia.org/
 
 For each pcDataLoader module, get on the fly reference information with the help command.
 ```python
-from pcDataLoder import pyMCDS, pyMCDS_timeseries, read_MultiCellDS_xml
+from pcDataLoader import pyMCDS, pyMCDS_timeseries, read_MultiCellDS_xml
 
 help(pyMCDS)
 help(pyMCDS_timeseries)
