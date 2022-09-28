@@ -4,7 +4,7 @@
 
 pcDataLoader provides a pure, platform independent, python3 based, [pip](https://en.wikipedia.org/wiki/Pip_(package_manager)) installable, interface
 to load output generated with the [PhysiCell](https://github.com/MathCancer/PhysiCell) agent based modeling framework
-into [python3](https://en.wikipedia.org/wiki/Python_(programming_language).
+into [python3](https://en.wikipedia.org/wiki/Python_(programming_language)).
 
 pcDataLoader is a fork from the original [PhysiCell-Tools](https://github.com/PhysiCell-Tools) [python-loader](https://github.com/PhysiCell-Tools/python-loader) implementation.
 
