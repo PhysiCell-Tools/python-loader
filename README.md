@@ -1,6 +1,6 @@
 # pcDataLoader
 
-## Abstract
+## Abstract:
 
 pcDataLoader provides a platform independent, python3 based, [pip](https://en.wikipedia.org/wiki/Pip_(package_manager)) installable interface
 to load output, generated with the [PhysiCell](https://github.com/MathCancer/PhysiCell) agent based modeling framework,
@@ -17,7 +17,7 @@ The pcDataLoader python3 library will maintain two main branches:
 Note: there can only be one version of pcDataLoader installed in each python3 environment.
 
 
-## Header
+## Header:
 + Language: python >= 3.6
 + Library dependencies: matplotlib, numpy, pandas
 + Programmer: Patrick Wall, Elmar Bucher, Randy Heiland, Paul Macklin
@@ -28,7 +28,7 @@ Note: there can only be one version of pcDataLoader installed in each python3 en
 + Source code: [https://github.com/elmbeech/pcDataLoader](https://github.com/elmbeech/pcDataLoader)
 
 
-## HowTo Guide - branch v2 specific
+## HowTo Guide - branch v2 specific:
 
 **How to install the latest pcDataLoder from the v2 branch?**
 ```bash
@@ -42,7 +42,7 @@ pip3 install -U "pcDataLoder<3"
 ```
 
 
-## HowTo Guide - branch v3 specific
+## HowTo Guide - branch v3 specific:
 
 **How to install the latest pcDataLoder from the v3 branch?**
 ```bash
@@ -56,7 +56,7 @@ pip3 install -U pcDataLoder
 ```
 
 
-## HowTo Guide - branch generic
+## HowTo Guide - branch generic:
 
 **How to uninstall pcDataLoder from your python3 environment?**
 ```bash
@@ -93,7 +93,7 @@ python3 test_timeseries.py
 ```
 
 
-## Reference
+## Reference:
 
 This is the technical descriptions of the machinery and how to operate it.
 References are maintained in each module`s [docstring](https://en.wikipedia.org/wiki/Docstring).
@@ -108,20 +108,20 @@ help(read_MultiCellDS_xml)
 ```
 
 
-## Tutorial
+## Tutorial:
 + http://www.mathcancer.org/blog/python-loader/
 
 
-## Discussion
+## Discussion:
 To be developed.
 
 
-## About Documentation
+## About Documentation:
 + [what nobody tells you about documentation](https://www.youtube.com/watch?v=azf6yzuJt54)
 Within the pcDataLoader library, I try to stick to the policy lined out by Daniele Procida in his talk at the PyCon 2017 in Portland, Oregon.
 
 
-## Contributions
+## Contributions:
 + original PhysiCell-Tools python-loader implementation: Patrick Wall, Randy Heiland, Paul Macklin
 + fork pcDataLoader implementation: Elmar Bucher
 
