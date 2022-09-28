@@ -30,13 +30,13 @@ Note: there can only be one version of pcDataLoader installed in each python env
 
 ## HowTo Guide - branch v2 specific
 
-**How to install the latest pcDataLoder from the v2 branch?**
+### How to install the latest pcDataLoder from the v2 branch?
 ```bash
 pip3 install pcDataLoder<3
 ```
 
 
-**How to update to the latest pcDataLoder from the v2 branch?**
+### How to update to the latest pcDataLoder from the v2 branch?
 This works, even when you have a v3 branch installation.
 ```bash
 pip3 install -U pcDataLoder<3
@@ -50,7 +50,7 @@ pip3 install -U pcDataLoder<3
 pip3 install pcDataLoder
 ```
 
-**How to update to the latest pcDataLoder from the v3 branch?**
+**How to update to the latest pcDataLoder from the v3 branch?**\
 This works, even when you have a v2 branch installation.
 ```bash
 pip3 install -U pcDataLoder
@@ -77,13 +77,13 @@ from pcDataLoder import pyMCDS_timeseries
 from pcDataLoder import read_MultiCellDS_xml
 ```
 
-**How to use the addition plotting scripts for plotting PhysiCell output?**
+**How to use the addition plotting scripts for plotting PhysiCell output?**\
 This plotting scripts can be found in the [pcDataLoader/plotting](https://github.com/elmbeech/pcDataLoader/tree/master/pcDataLoader/plotting) directory.\
 You can copy these python scripts into your PhysiCell `output` directory and run them there.\
 `anim_svg_substrate.py` additionally requires the `scipy` library and `cells3D_fury.py` additionally requires the `fury` libraries to be installed.
 Both of them can be installed with pip.
 
-**Howto run the unit test code?**
+**Howto run the unit test code?**\
 You can always run the unit test suit, to check if you have an integer pcDataLoader installation.
 The test code can be found in the [test](https://github.com/elmbeech/pcDataLoader/tree/master/test) directory.
 ```bash
