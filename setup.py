@@ -149,9 +149,9 @@ setup(
     # maintainers, and where to support the project financially. The key is
     # what's used to render the link text on PyPI.
     project_urls={  # Optional
-        "Bug Reports": "https://github.com/PhysiCell-Tools/python-loader/issues",
+        "Bug Reports": "https://github.com/elmbeech/pcDataLoader/issues",
         "Funding": "http://www.mathcancer.org/",
         "Say Thanks!": "http://physicell.org/",
-        "Source": "https://github.com/PhysiCell-Tools/python-loader",
+        "Source": "https://github.com/elmbeech/pcDataLoader",
     },
 )
