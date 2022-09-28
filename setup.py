@@ -5,9 +5,9 @@ https://packaging.python.org/guides/distributing-packages-using-setuptools/
 https://github.com/pypa/sampleproject
 
 pip releasing a next version:
-1. vim pcDataLoder/VERSION.py  # increase version number in file
-2. git add pcDataLoder/VERSION.py
-3. git commit -m'@ pcDataLoder : next release.'
+1. vim pcDataLoader/VERSION.py  # increase version number in file
+2. git add pcDataLoader/VERSION.py
+3. git commit -m'@ pcDataLoader : next release.'
 4. git tag -a v0.0.0 -m'version 0.0.0'
 5. python3 -m build --sdist  # make source distribution
 6. python3 -m build --wheel  # make binary distribution python wheel
@@ -26,24 +26,24 @@ here = pathlib.Path(__file__).parent.resolve()
 long_description = (here / "README.md").read_text(encoding="utf-8")
 
 # Get the version number from the VERSION.py file
-exec(open('./pcDataLoder/VERSION.py').read())
+exec(open('./pcDataLoader/VERSION.py').read())
 
 # Arguments marked as "Required" below must be included for upload to PyPI.
 # Fields marked as "Optional" may be commented out.
 
 setup(
     # the basics
-    name="pcDataLoder",  # Required
+    name="pcDataLoader",  # Required
     version=__version__,  # Required
 
     # description
-    description="Python data loader for PhysiCell digital snapshots.",  # Optional
+    description="pcDataLoader provides a platform independent, python3 based, pip installable interface to load output, generated with the PhysiCell agent based modeling framework, into python3.",  # Optional
     long_description=long_description,  # Optional
     long_description_content_type="text/markdown",  # Optional (see note above)
 
     # the project's main homepage.
-    url="https://github.com/PhysiCell-Tools/python-loader",  # Optional
-    author="Randy Heiland",  # Optional
+    url="https://github.com/elmbeech/pcDataLoader",  # Optional
+    author="Elmar Bucher",  # Optional
     author_email="epbucher@iu.edu",  # Optional
     #author_email="heiland@iu.edu",  # Optional
 
@@ -115,8 +115,8 @@ setup(
     # If there are data files included in your packages that need to be
     # installed, specify them here.
     package_data={  # Optional
-        "pcDataLoder.data_snapshot": ["*.mat", "*.xml", "*.svg", "citation and license.txt"],
-        "pcDataLoder.data_timeseries": ["*.mat", "*.xml"],
+        "pcDataLoader.data_snapshot": ["*.mat", "*.xml", "*.svg", "citation_and_license.txt"],
+        "pcDataLoader.data_timeseries": ["*.mat", "*.xml"],
     },
 
     # Although 'package_data' is the preferred approach, in some case you may

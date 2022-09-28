@@ -2,19 +2,19 @@
 
 ## Abstract
 
-pcDataLoader provides a pure, platform independent, python3 based, [pip](https://en.wikipedia.org/wiki/Pip_(package_manager)) installable, interface
-to load output generated with the [PhysiCell](https://github.com/MathCancer/PhysiCell) agent based modeling framework
+pcDataLoader provides a platform independent, python3 based, [pip](https://en.wikipedia.org/wiki/Pip_(package_manager)) installable interface
+to load output, generated with the [PhysiCell](https://github.com/MathCancer/PhysiCell) agent based modeling framework,
 into [python3](https://en.wikipedia.org/wiki/Python_(programming_language)).
 
-pcDataLoader is a fork from the original [PhysiCell-Tools](https://github.com/PhysiCell-Tools) [python-loader](https://github.com/PhysiCell-Tools/python-loader) implementation.
+pcDataLoader is forked from the original [PhysiCell-Tools](https://github.com/PhysiCell-Tools) [python-loader](https://github.com/PhysiCell-Tools/python-loader) implementation.
 
-The pcDataLoader python library will maintain two main branches:
+The pcDataLoader python3 library will maintain two main branches:
 
-+ The **version 2 branch** will strictly be compatible with the original PhysiCell-Tools/python-loader code, although pip installable.
-+ The **version 3 branch** might break with old habits, although tries to be as downwards compatible as possible.
-  The aim of the v3 branch is to get a very lean and agile physicell output interface, for the ones coming from the python world to physicell.
++ ** Branch version 2** will be strictly compatible with the original PhysiCell-Tools/python-loader code, although pip installable.
++ **Branch version 3** might break with old habits, although tries to be as downwards compatible as possible.
+  The aim of the v3 branch is to get a very lean and agile physicell output interface for the ones coming from the python3 world to physicell.
 
-Note: there can only be one version of pcDataLoader installed in each python environment.
+Note: there can only be one version of pcDataLoader installed in each python3 environment.
 
 
 ## Header
@@ -58,19 +58,19 @@ pip3 install -U pcDataLoder
 
 ## HowTo Guide - branch generic
 
-**How to uninstall pcDataLoder from your python environment?**
+**How to uninstall pcDataLoder from your python3 environment?**
 ```bash
 pip3 uninstall pcDataLoder
 ```
 
 **How to check for the current installed pcDataLoder version?**
-```python
+```python3
 import pcDataLoder
 pcDataLoder.__version__
 ```
 
 **How to load the pcDataLoder library?**
-```python
+```python3
 from pcDataLoder import pyMCDS
 from pcDataLoder import pyMCDS_timeseries
 from pcDataLoder import read_MultiCellDS_xml
@@ -78,7 +78,7 @@ from pcDataLoder import read_MultiCellDS_xml
 
 **How to use the addition plotting scripts for plotting PhysiCell output?**\
 This plotting scripts can be found in the [pcDataLoader/plotting](https://github.com/elmbeech/pcDataLoader/tree/master/pcDataLoader/plotting) directory.\
-You can copy these python scripts into your PhysiCell `output` directory and run them there.\
+You can copy these python3 scripts into your PhysiCell `output` directory and run them there.\
 `anim_svg_substrate.py` additionally requires the `scipy` library and `cells3D_fury.py` additionally requires the `fury` libraries to be installed.
 Both of them can be installed with pip.
 
