@@ -11,7 +11,7 @@ pcDataLoader is a fork from the original [PhysiCell-Tools](https://github.com/Ph
 The pcDataLoader python library will maintain two main branches:
 + The **version 2 branch** will strictly be compatible with the original PhysiCell-Tools/python-loader code, although pip installable.
 + The **version 3 branch** might break with old habits, although tries to be as downwards compatible as possible.
-  The aim of the v3 branch is to get a very lean and agile physicell output interface, for the ones coming from the python world to physicell.
+  The aim of the v3 branch is to get a very lean and agile physicell output interface, for the ones coming from the python world to physicell.\
 Note: there can only be one version of pcDataLoader installed in each python environment.
 
 
