@@ -30,13 +30,12 @@ Note: there can only be one version of pcDataLoader installed in each python env
 
 ## HowTo Guide - branch v2 specific
 
-### How to install the latest pcDataLoder from the v2 branch?
+**How to install the latest pcDataLoder from the v2 branch?**
 ```bash
 pip3 install pcDataLoder<3
 ```
 
-
-### How to update to the latest pcDataLoder from the v2 branch?
+**How to update to the latest pcDataLoder from the v2 branch?**\
 This works, even when you have a v3 branch installation.
 ```bash
 pip3 install -U pcDataLoder<3
