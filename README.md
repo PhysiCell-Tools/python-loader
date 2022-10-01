@@ -19,7 +19,7 @@ Note: there can only be one version of pcDataLoader installed in each python3 en
 
 ## Header:
 + Language: python >= 3.6
-+ Library dependencies: matplotlib, numpy, pandas
++ Library dependencies: anndata, matplotlib, numpy, pandas
 + Programmer: Patrick Wall, Elmar Bucher, Randy Heiland, Paul Macklin
 + Date of origin original PhysiCell-Tools python-loader: 2019-09-02
 + Date of origin pcDataLoader fork: 2022-08-30
@@ -71,9 +71,7 @@ pcDataLoader.__version__
 
 **How to load the pcDataLoader library?**
 ```python3
-from pcDataLoader import pyMCDS
-from pcDataLoader import pyMCDS_timeseries
-from pcDataLoader import read_MultiCellDS_xml
+import pcDataLoader as pc
 ```
 
 **How to use the addition plotting scripts for plotting PhysiCell output?**\
@@ -99,18 +97,62 @@ This is the technical descriptions of the machinery and how to operate it.
 References are maintained in each module`s [docstring](https://en.wikipedia.org/wiki/Docstring).
 
 For each pcDataLoader module, get on the fly reference information with the help command.
-```python
-from pcDataLoader import pyMCDS, pyMCDS_timeseries, read_MultiCellDS_xml
+```python3
+import pcDataLoader as pc
 
-help(pyMCDS)
-help(pyMCDS_timeseries)
-help(read_MultiCellDS_xml)
+help(pc.pyMCDS)
+help(pc.pyMCDS_timeseries)
+help(pc.AnnData)
+help(pc.AnnData_timeseries)
 ```
 
 
 ## Tutorial:
 + http://www.mathcancer.org/blog/python-loader/
 
+```python3
+import pcDataLoader as pc
+
+mcds = pc.pyMCDS('data_snapshot/output00003696.xml', microenv=False)
+mcds = pc.pyMCDS('data_snapshot/output00003696.xml')
+```
+```python3
+import pcDataLoader as pc
+
+l_mcds = pc.pyMCDS_timeseries('data_snapshot/output00003696.xml', microenv=False)
+l_mcds = pc.pyMCDS_timeseries('data_snapshot/output00003696.xml')
+```
+
+```python3
+import pcDataLoader as pc
+
+mcds.get_substrate_names()
+mcds.get_concentrations_df()
+mcds.get_concentrations(mcds.get_substrate_names()[0])
+mcds.get_concentrations_at(x=0, y=0, z=0)
+```
+
+```python3
+import pcDataLoader as pc
+
+mcds.get_cell_variables()
+mcds.get_cell_df()
+mcds.get_cell_df_at(x=0,y=0,z=0)
+```
+
+```python3
+import pcDataLoader as pc
+
+adata = pc.AnnData('data_snapshot/output00003696.xml', microenv=False)
+adata = pc.AnnData('data_snapshot/output00003696.xml')
+```
+
+```python3
+import pcDataLoader as pc
+
+l_adata = pc.AnnData_timeseries('data_snapshot/output00003696.xml', microenv=False)
+l_adata = pc.AnnData_timeseries('data_snapshot/output00003696.xml')
+```
 
 ## Discussion:
 To be developed.
@@ -126,6 +168,15 @@ Within the pcDataLoader library, I try to stick to the documentation policy line
 
 
 ## Release Notes:
++ version 3.0.0 (2022-++-++): elmbeech/pcDataLoader
+    + **pyMCDS** takes new additionally a boolean parameter termed **microenv**, to specify if the microenvironment (substrates) should be read out (for completeness) or not (for speed increase).
+    + **pyMCDS** parameter **xml_file** can now handle path/file.xml (unix) or path\file.xml (dos) input, aslong output_path is the default.
+    + **mcds.get_cell_df** returns now a pandas dataframe with the cell IDs the index and not as a column. additionaly this dataframe has now voxel and voxel_position collumns.
+    + **mcds.get_2D_mesh** was renamed to **mcds.get_mesh_2D** for consistency.
+    + **mcds.get_cell_variables** and **mcds.get_substrate_names** return now a strictly alphabetically ordered list.
+    + new **mcds.get_concentration_df** function.
+    + new **AnnData** and **AnnData_timeseries** functions to load PhysiCell output straight into [AnnData](https://anndata.readthedocs.io/en/latest/) objects.
+
 + version 2.0.0 (2022-08-30): elmbeech/pcDataLoader pip installable release, derived from and compatible with PhysiCell-Tools/python-loader release 1.1.0 (2022-07-20).
 + version 1.1.0 (2022-05-09): Physicell-Tools/python-loader release compatible with pre-v1.10.x of PhysiCell
 + version 1.0.1 (2020-01-25): Physicell-Tools/python-loader time-series related bug fix
