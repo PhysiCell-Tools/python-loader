@@ -24,8 +24,11 @@ class pyMCDS:
         where PhysiCell output files are stored (default= ".")
 
     microenv: boole, optional
-        should the microenvironment be extracted too?
-        if False, function will be same as pyMCDS_cells.py script.
+        Should the microenvironment be extracted too?
+        Set microenv to False will speed up processing.
+        Set microenv to False will behave similar to the original pyMCDS_cells.py script.
+        Default setting is True.
+
 
     Attributes
     ----------
@@ -51,8 +54,9 @@ class pyMCDS:
         Parameters
         ----------
         flat : bool
-            If flat is set to true, we return only the x and y meshgrid.
-            Otherwise we return x, y, and z
+            If flat is set to True, only the x and y meshgrid will be returned.
+            Otherwise the x, y, and z meshgrid will be returned.
+            Default setting is False.
 
         Returns
         -------
@@ -91,6 +95,10 @@ class pyMCDS:
         """
         Helper function to quickly grab voxel centers array stored linearly as
         opposed to meshgrid-style.
+
+        Returns
+        -------
+
         """
         return self.data['mesh']['voxels']['centers']
 
@@ -197,8 +205,10 @@ class pyMCDS:
             Name of the chemical species for which to get concentrations
 
         z_slice : float
-            z-axis position to use as plane for 2D output. This value must match
-            a plane of voxel centers in the z-axis.
+            z-axis position to use as plane for 2D output.
+            This value must match a plane of voxel centers in the z-axis.
+            BUE: what about the None case.
+
         Returns
         -------
         conc_arr : array (np.float) shape=[nx_voxels, ny_voxels, nz_voxels]
@@ -221,6 +231,17 @@ class pyMCDS:
 
     def get_concentrations_df(self, z_slice=None):
         """
+        BUE
+
+        Parameters
+        ----------
+        z_slice : float
+            BUE check out get_concentrations
+
+        Returns
+        -------
+        conc_df : DataFrame shape=[]
+            BUE
         """
         xx, yy, zz = self.get_mesh()
         xx_min = xx.min()
@@ -269,9 +290,9 @@ class pyMCDS:
             ls_column.append(substrat_name)
 
         # get data frame
-        d_dtype = {'voxel_i': int, 'voxel_j': int, 'voxel_k': float}
+        d_dtype = {'voxel_i': int, 'voxel_j': int, 'voxel_k': float}  # bue: voxel_positions are all real.
         if len(conc_arr.shape) > 2:
-            d_dtype = {'voxel_i': int, 'voxel_j': int, 'voxel_k': int}
+            d_dtype = {'voxel_i': int, 'voxel_j': int, 'voxel_k': int}  # bue: voxel_positions are all real.
         data_a  = np.array(ll_data)
         conc_df = pd.DataFrame(data_a.T, columns=ls_column)
         conc_df = conc_df.astype(d_dtype)
@@ -327,10 +348,11 @@ class pyMCDS:
 
         Returns
         -------
-        cells_df : pd.Dataframe, shape=[n_cells, n_variables]
+        cells_df : DataFrame, shape=[n_cells, n_variables]
             Dataframe containing the cell data for all cells at this time step
         """
         cells_df = pd.DataFrame(self.data['discrete_cells'])
+
         # get voxel position
         xx, yy, zz = self.get_mesh()
         xx_min = xx.min()
@@ -352,10 +374,18 @@ class pyMCDS:
         df_voxel.loc[(df_voxel.voxel_j < yy_min), 'voxel_j'] =  yy_min
         df_voxel.loc[(df_voxel.voxel_k > zz_max), 'voxel_k'] =  zz_max
         df_voxel.loc[(df_voxel.voxel_k < zz_min), 'voxel_k'] =  zz_min
+        df_voxel['voxel_position_m'] = df_voxel.loc[:,'voxel_i'] * ds
+        df_voxel['voxel_position_n'] = df_voxel.loc[:,'voxel_j'] * ds
+        df_voxel['voxel_position_o'] = df_voxel.loc[:,'voxel_k'] * ds
+
+        # output
         cells_df = pd.merge(cells_df, df_voxel, left_index=True, right_index=True)
         cells_df = cells_df.loc[:, sorted(cells_df.columns)]
-        cells_df = cells_df.astype({'ID': int, 'voxel_i': int, 'voxel_j': int, 'voxel_k': int})
-        # output
+        cells_df = cells_df.astype({
+            'ID': int,
+            'voxel_i': int, 'voxel_j': int, 'voxel_k': int
+            #'voxel_positions are all real.
+        })
         cells_df.set_index('ID', inplace=True)
         return cells_df
 
@@ -375,7 +405,7 @@ class pyMCDS:
 
         Returns
         -------
-        vox_df : pd.DataFrame, shape=[n_cell_in_voxel, n_variables]
+        vox_df : DataFrame, shape=[n_cell_in_voxel, n_variables]
             cell dataframe containing only cells in the same voxel as the point
             specified by x, y, and z.
         """
@@ -400,32 +430,41 @@ class pyMCDS:
 
     def _read_xml(self, xml_file, output_path='.', microenv=True):
         """
-        Does the actual work of initializing MultiCellDS by parsing the xml
+        Internal function. Does the actual work of initializing MultiCellDS by parsing the xml
+
+        Parameters
+        ----------
+            BUE
+
+        Returns
+        -------
+        MCDS: obj
+            BUE
         """
         # file and path manipulation
         xml_file = xml_file.replace('\\','/')
-        if (xml_file.find('/') > 0) and (output_path == '.'):
+        if (xml_file.find('/') > -1) and (output_path == '.'):
             ls_xml_file = xml_file.split('/')
             xml_file = ls_xml_file.pop(-1)
             output_path = '/'.join(ls_xml_file)
         output_path = Path(output_path)
-        xml_file = output_path / xml_file
+        xml_pathfile = output_path / xml_file
 
-        # read xml file
-        tree = ET.parse(xml_file)
-        print('Reading {}'.format(xml_file))
+        # read xml path/file
+        tree = ET.parse(xml_pathfile)
+        print('Reading {}'.format(xml_pathfile))
 
         root = tree.getroot()
         MCDS = {}
 
-        # Get current simulated time
+        # get current simulated time
         metadata_node = root.find('metadata')
         time_node = metadata_node.find('current_time')
         MCDS['metadata'] = {}
         MCDS['metadata']['current_time'] = float(time_node.text)
         MCDS['metadata']['time_units'] = time_node.get('units')
 
-        # Get current runtime
+        # get current runtime
         time_node = metadata_node.find('current_runtime')
         MCDS['metadata']['current_runtime'] = float(time_node.text)
         MCDS['metadata']['runtime_units'] = time_node.get('units')
@@ -434,45 +473,45 @@ class pyMCDS:
         me_node = root.find('microenvironment')
         me_node = me_node.find('domain')
 
-        # no only cells
+        # find the mesh node
+        mesh_node = me_node.find('mesh')
+        MCDS['metadata']['spatial_units'] = mesh_node.get('units')
+        MCDS['mesh'] = {}
+
+        # while we're at it, find the mesh
+        coord_str = mesh_node.find('x_coordinates').text
+        delimiter = mesh_node.find('x_coordinates').get('delimiter')
+        x_coords = np.array(coord_str.split(delimiter), dtype=np.float64)
+
+        coord_str = mesh_node.find('y_coordinates').text
+        delimiter = mesh_node.find('y_coordinates').get('delimiter')
+        y_coords = np.array(coord_str.split(delimiter), dtype=np.float64)
+
+        coord_str = mesh_node.find('z_coordinates').text
+        delimiter = mesh_node.find('z_coordinates').get('delimiter')
+        z_coords = np.array(coord_str.split(delimiter), dtype=np.float64)
+
+        # reshape into a mesh grid
+        xx, yy, zz = np.meshgrid(x_coords, y_coords, z_coords)
+
+        MCDS['mesh']['x_coordinates'] = xx
+        MCDS['mesh']['y_coordinates'] = yy
+        MCDS['mesh']['z_coordinates'] = zz
+
+        # get microenvironment data
         if microenv:
-
-            # find the mesh node
-            mesh_node = me_node.find('mesh')
-            MCDS['metadata']['spatial_units'] = mesh_node.get('units')
-            MCDS['mesh'] = {}
-
-            # while we're at it, find the mesh
-            coord_str = mesh_node.find('x_coordinates').text
-            delimiter = mesh_node.find('x_coordinates').get('delimiter')
-            x_coords = np.array(coord_str.split(delimiter), dtype=np.float)
-
-            coord_str = mesh_node.find('y_coordinates').text
-            delimiter = mesh_node.find('y_coordinates').get('delimiter')
-            y_coords = np.array(coord_str.split(delimiter), dtype=np.float)
-
-            coord_str = mesh_node.find('z_coordinates').text
-            delimiter = mesh_node.find('z_coordinates').get('delimiter')
-            z_coords = np.array(coord_str.split(delimiter), dtype=np.float)
-
-            # reshape into a mesh grid
-            xx, yy, zz = np.meshgrid(x_coords, y_coords, z_coords)
-
-            MCDS['mesh']['x_coordinates'] = xx
-            MCDS['mesh']['y_coordinates'] = yy
-            MCDS['mesh']['z_coordinates'] = zz
 
             # Voxel data must be loaded from .mat file
             voxel_file = mesh_node.find('voxels').find('filename').text
-            voxel_path = output_path / voxel_file
+            voxel_pathfile = output_path / voxel_file
             try:
-                initial_mesh = io.loadmat(voxel_path)['mesh']
+                initial_mesh = io.loadmat(voxel_pathfile)['mesh']
             except:
                 raise FileNotFoundError(
-                    "No such file or directory:\n'{}' referenced in '{}'".format(voxel_path, xml_file))
+                    "No such file or directory:\n'{}' referenced in '{}'".format(voxel_pathfile, xml_pathfile))
                 sys.exit(1)
 
-            print('Reading {}'.format(voxel_path))
+            print('Reading {}'.format(voxel_pathfile))
 
             # center of voxel specified by first three rows [ x, y, z ]
             # volume specified by fourth row
@@ -493,16 +532,16 @@ class pyMCDS:
             # centers. The fourth row contains the voxel volume. The 5th row and up will
             # contain values for that species in that voxel.
             me_file = file_node.text
-            me_path = output_path / me_file
+            me_pathfile = output_path / me_file
             # Changes here
             try:
-                me_data = io.loadmat(me_path)['multiscale_microenvironment']
+                me_data = io.loadmat(me_pathfile)['multiscale_microenvironment']
             except:
                 raise FileNotFoundError(
-                    "No such file or directory:\n'{}' referenced in '{}'".format(me_path, xml_file))
+                    "No such file or directory:\n'{}' referenced in '{}'".format(me_pathfile, xml_pathfile))
                 sys.exit(1)
 
-            print('Reading {}'.format(me_path))
+            print('Reading {}'.format(me_pathfile))
 
             var_children = variables_node.findall('variable')
 
@@ -550,6 +589,7 @@ class pyMCDS:
                     MCDS['continuum_variables'][species_name]['data'][j, i, k] \
                         = me_data[4+si, vox_idx]
 
+        # get cell data
         # in order to get to the good stuff we have to pass through a few different
         # hierarchal levels
         cell_node = root.find('cellular_information')
@@ -604,15 +644,15 @@ class pyMCDS:
             n += 1
         # load the file
         cell_file = cell_node.find('filename').text
-        cell_path = output_path / cell_file
+        cell_pathfile = output_path / cell_file
         try:
-            cell_data = io.loadmat(cell_path)['cells']
+            cell_data = io.loadmat(cell_pathfile)['cells']
         except:
             raise FileNotFoundError(
-                "No such file or directory:\n'{}' referenced in '{}'".format(cell_path, xml_file))
+                "No such file or directory:\n'{}' referenced in '{}'".format(cell_pathfile, xml_pathfile))
             sys.exit(1)
 
-        print('Reading {}'.format(cell_path))
+        print('Reading {}'.format(cell_pathfile))
 
         for col in range(len(data_labels)):
             MCDS['discrete_cells'][data_labels[col]] = cell_data[col, :]

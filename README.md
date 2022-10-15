@@ -102,8 +102,8 @@ import pcDataLoader as pc
 
 help(pc.pyMCDS)
 help(pc.pyMCDS_timeseries)
-help(pc.AnnData)
-help(pc.AnnData_timeseries)
+help(pc.annD)
+help(pc.annD_timeseries)
 ```
 
 
@@ -143,15 +143,15 @@ mcds.get_cell_df_at(x=0,y=0,z=0)
 ```python3
 import pcDataLoader as pc
 
-adata = pc.AnnData('data_snapshot/output00003696.xml', microenv=False)
-adata = pc.AnnData('data_snapshot/output00003696.xml')
+adata = pc.annD('data_snapshot/output00003696.xml', microenv=False)
+adata = pc.annD('data_snapshot/output00003696.xml')
 ```
 
 ```python3
 import pcDataLoader as pc
 
-l_adata = pc.AnnData_timeseries('data_snapshot/output00003696.xml', microenv=False)
-l_adata = pc.AnnData_timeseries('data_snapshot/output00003696.xml')
+l_adata = pc.annD_timeseries('data_snapshot/output00003696.xml', microenv=False)
+l_adata = pc.annD_timeseries('data_snapshot/output00003696.xml')
 ```
 
 ## Discussion:
@@ -175,7 +175,7 @@ Within the pcDataLoader library, I try to stick to the documentation policy line
     + **mcds.get_2D_mesh** was renamed to **mcds.get_mesh_2D** for consistency.
     + **mcds.get_cell_variables** and **mcds.get_substrate_names** return now a strictly alphabetically ordered list.
     + new **mcds.get_concentration_df** function.
-    + new **AnnData** and **AnnData_timeseries** functions to load PhysiCell output straight into [AnnData](https://anndata.readthedocs.io/en/latest/) objects.
+    + new **annD** and **annD_timeseries** functions to load PhysiCell output straight into [AnnData](https://anndata.readthedocs.io/en/latest/) objects.
 
 + version 2.0.0 (2022-08-30): elmbeech/pcDataLoader pip installable release, derived from and compatible with PhysiCell-Tools/python-loader release 1.1.0 (2022-07-20).
 + version 1.1.0 (2022-05-09): Physicell-Tools/python-loader release compatible with pre-v1.10.x of PhysiCell
