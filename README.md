@@ -65,8 +65,8 @@ pip3 uninstall pcDataLoader
 
 **How to check for the current installed pcDataLoader version?**
 ```python3
-import pcDataLoader
-pcDataLoader.__version__
+import pcDataLoader as pc
+pc.__version__
 ```
 
 **How to load the pcDataLoader library?**
