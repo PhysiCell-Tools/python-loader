@@ -1,7 +1,6 @@
 # pcDataLoader
 
 ## Abstract:
-
 pcDataLoader provides a platform independent, python3 based, [pip](https://en.wikipedia.org/wiki/Pip_(package_manager)) installable interface
 to load output, generated with the [PhysiCell](https://github.com/MathCancer/PhysiCell) agent based modeling framework,
 into [python3](https://en.wikipedia.org/wiki/Python_(programming_language)).
@@ -29,18 +28,15 @@ Note: there can only be one version of pcDataLoader installed in each python3 en
 
 
 ## HowTo Guide:
-
-+ Check out: [man/HOWTO.md](https://github.com/elmbeech/pcDataLoader/man/HOWTO.md)!
++ Check out: [man/HOWTO.md](https://github.com/elmbeech/pcDataLoader/tree/master/man/HOWTO.md)!
 
 
 ## Tutorial:
-
 + http://www.mathcancer.org/blog/python-loader/
-+ Check out: [man/TUTORIAL.md](https://github.com/elmbeech/pcDataLoader/man/TUTORIAL.md)!
++ Check out: [man/TUTORIAL.md](https://github.com/elmbeech/pcDataLoader/tree/master/man/TUTORIAL.md)!
 
 
 ## Reference:
-
 This is the technical descriptions of the machinery and how to operate it.
 References are maintained in each module`s [docstring](https://en.wikipedia.org/wiki/Docstring).
 
