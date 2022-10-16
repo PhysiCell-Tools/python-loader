@@ -28,67 +28,15 @@ Note: there can only be one version of pcDataLoader installed in each python3 en
 + Source code: [https://github.com/elmbeech/pcDataLoader](https://github.com/elmbeech/pcDataLoader)
 
 
-## HowTo Guide - branch v2 specific:
+## HowTo Guide:
 
-**How to install the latest pcDataLoader from the v2 branch?**
-```bash
-pip3 install "pcDataLoader<3"
-```
-
-**How to update to the latest pcDataLoader from the v2 branch?**\
-This works, even when you have a v3 branch installation.
-```bash
-pip3 install -U "pcDataLoader<3"
-```
++ Check out: man/HOWTO.md(https://github.com/elmbeech/pcDataLoader/man/HOWTO.md)!
 
 
-## HowTo Guide - branch v3 specific:
+## Tutorial:
 
-**How to install the latest pcDataLoader from the v3 branch?**
-```bash
-pip3 install pcDataLoader
-```
-
-**How to update to the latest pcDataLoader from the v3 branch?**\
-This works, even when you have a v2 branch installation.
-```bash
-pip3 install -U pcDataLoader
-```
-
-
-## HowTo Guide - branch generic:
-
-**How to uninstall pcDataLoader from your python3 environment?**
-```bash
-pip3 uninstall pcDataLoader
-```
-
-**How to check for the current installed pcDataLoader version?**
-```python3
-import pcDataLoader as pc
-pc.__version__
-```
-
-**How to load the pcDataLoader library?**
-```python3
-import pcDataLoader as pc
-```
-
-**How to use the addition plotting scripts for plotting PhysiCell output?**\
-This plotting scripts can be found in the [pcDataLoader/plotting](https://github.com/elmbeech/pcDataLoader/tree/master/pcDataLoader/plotting) directory.\
-You can copy these python3 scripts into your PhysiCell `output` directory and run them there.\
-`anim_svg_substrate.py` additionally requires the `scipy` library and `cells3D_fury.py` additionally requires the `fury` libraries to be installed.
-Both of them can be installed with pip.
-
-**Howto run the unit test code?**\
-You can always run the unit test suit, to check if you have an integer pcDataLoader installation.
-The test code can be found in the [test](https://github.com/elmbeech/pcDataLoader/tree/master/test) directory.
-```bash
-python3 test_snapshot.py
-```
-```bash
-python3 test_timeseries.py
-```
++ http://www.mathcancer.org/blog/python-loader/
++ Check out: man/TUTORIAL.md(https://github.com/elmbeech/pcDataLoader/man/TUTORIAL.md)!
 
 
 ## Reference:
@@ -102,57 +50,8 @@ import pcDataLoader as pc
 
 help(pc.pyMCDS)
 help(pc.pyMCDS_timeseries)
-help(pc.annD)
-help(pc.annD_timeseries)
 ```
 
-
-## Tutorial:
-+ http://www.mathcancer.org/blog/python-loader/
-
-```python3
-import pcDataLoader as pc
-
-mcds = pc.pyMCDS('data_snapshot/output00003696.xml', microenv=False)
-mcds = pc.pyMCDS('data_snapshot/output00003696.xml')
-```
-```python3
-import pcDataLoader as pc
-
-l_mcds = pc.pyMCDS_timeseries('data_snapshot/output00003696.xml', microenv=False)
-l_mcds = pc.pyMCDS_timeseries('data_snapshot/output00003696.xml')
-```
-
-```python3
-import pcDataLoader as pc
-
-mcds.get_substrate_names()
-mcds.get_concentrations_df()
-mcds.get_concentrations(mcds.get_substrate_names()[0])
-mcds.get_concentrations_at(x=0, y=0, z=0)
-```
-
-```python3
-import pcDataLoader as pc
-
-mcds.get_cell_variables()
-mcds.get_cell_df()
-mcds.get_cell_df_at(x=0,y=0,z=0)
-```
-
-```python3
-import pcDataLoader as pc
-
-adata = pc.annD('data_snapshot/output00003696.xml', microenv=False)
-adata = pc.annD('data_snapshot/output00003696.xml')
-```
-
-```python3
-import pcDataLoader as pc
-
-l_adata = pc.annD_timeseries('data_snapshot/output00003696.xml', microenv=False)
-l_adata = pc.annD_timeseries('data_snapshot/output00003696.xml')
-```
 
 ## Discussion:
 To be developed.
@@ -175,7 +74,6 @@ Within the pcDataLoader library, I try to stick to the documentation policy line
     + **mcds.get_2D_mesh** was renamed to **mcds.get_mesh_2D** for consistency.
     + **mcds.get_cell_variables** and **mcds.get_substrate_names** return now a strictly alphabetically ordered list.
     + new **mcds.get_concentration_df** function.
-    + new **annD** and **annD_timeseries** functions to load PhysiCell output straight into [AnnData](https://anndata.readthedocs.io/en/latest/) objects.
 
 + version 2.0.0 (2022-08-30): elmbeech/pcDataLoader pip installable release, derived from and compatible with PhysiCell-Tools/python-loader release 1.1.0 (2022-07-20).
 + version 1.1.0 (2022-05-09): Physicell-Tools/python-loader release compatible with pre-v1.10.x of PhysiCell
