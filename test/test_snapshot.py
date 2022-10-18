@@ -22,8 +22,8 @@ import pathlib
 import pcDataLoader as pc
 
 # const
-s_path_3d = str(pathlib.Path(pc.__file__).parent.resolve()/'data_snapshot')
-s_file_3d = 'output00003696.xml'
+s_path_3d = str(pathlib.Path(pc.__file__).parent.resolve()/'data_timeseries_3d')
+s_file_3d = 'output00000024.xml'
 s_pathfile_3d = f'{s_path_3d}/{s_file_3d}'
 
 # load physicell data shortcut
@@ -50,45 +50,55 @@ class TestPyMcdsMicroenvTrue(object):
     def test_mcds_get_time(self, mcds=mcds):
         print(f'process: mcds.get_time() ...')
         r_time = mcds.get_time()
-        assert r_time == 30239.999998
+        assert r_time == 1440.0
 
         # mesh related functions
     def test_mcds_get_mesh_flat_false(self, mcds=mcds):
         print(f'process: mcds.get_mesh(flat=False) ...')
-        o_mesh = mcds.get_mesh(flat=False)
-        assert (str(type(o_mesh)) == "<class 'list'>") and \
-               (len(o_mesh) == 3) and \
-               (str(type(o_mesh[0])) == "<class 'numpy.ndarray'>") and \
-               (o_mesh[0].shape == (75, 75, 75)) and \
-               (str(type(o_mesh[1])) == "<class 'numpy.ndarray'>") and \
-               (o_mesh[1].shape == (75, 75, 75)) and \
-               (str(type(o_mesh[2])) == "<class 'numpy.ndarray'>") and \
-               (o_mesh[2].shape == (75, 75, 75))
+        lar_mesh = mcds.get_mesh(flat=False)
+        assert (str(type(lar_mesh)) == "<class 'list'>") and \
+               (len(lar_mesh) == 3) and \
+               # x
+               (str(type(lar_mesh[0])) == "<class 'numpy.ndarray'>") and \
+               (str(lar_mesh[0].dtype) == "float64" and \
+               (lar_mesh[0].shape == (75, 75, 75)) and \
+               # y
+               (str(type(lar_mesh[1])) == "<class 'numpy.ndarray'>") and \
+               (str(lar_mesh[1].dtype) == "float64" and \
+               (lar_mesh[1].shape == (75, 75, 75)) and \
+               # z
+               (str(type(lar_mesh[2])) == "<class 'numpy.ndarray'>") and \
+               (str(lar_mesh[2].dtype) == "float64" and \
+               (lar_mesh[2].shape == (75, 75, 75))
 
     def test_mcds_get_mesh_flat_true(self, mcds=mcds):
         print(f'process: mcds.get_mesh(flat=True) ...')
-        o_mesh = mcds.get_mesh(flat=True)
-        assert (str(type(o_mesh)) == "<class 'list'>") and \
-               (len(o_mesh) == 2) and \
-               (str(type(o_mesh[0])) == "<class 'numpy.ndarray'>") and \
-               (o_mesh[0].shape == (75, 75)) and \
-               (str(type(o_mesh[1])) == "<class 'numpy.ndarray'>") and \
-               (o_mesh[1].shape == (75, 75))
+        lar_mesh = mcds.get_mesh(flat=True)
+        assert (str(type(lar_mesh)) == "<class 'list'>") and \
+               (len(lar_mesh) == 2) and \
+               # x
+               (str(type(lar_mesh[0])) == "<class 'numpy.ndarray'>") and \
+               (str(lar_mesh[0].dtype) == "float64" and \
+               (lar_mesh[0].shape == (75, 75)) and \
+               # y
+               (str(type(lar_mesh[1])) == "<class 'numpy.ndarray'>") and \
+               (str(lar_mesh[1].dtype) == "float64" and \
+               (lar_mesh[1].shape == (75, 75))
 
     def test_mcds_get_mesh_2d(self, mcds=mcds):
         print(f'process: mcds.get_mesh_2d() ...')
-        o_mesh = mcds.get_mesh_2D()
-        assert (str(type(o_mesh)) == "<class 'list'>") and \
-               (len(o_mesh) == 2) and \
-               (str(type(o_mesh[0])) == "<class 'numpy.ndarray'>") and \
-               (o_mesh[0].shape == (75, 75)) and \
-               (str(type(o_mesh[1])) == "<class 'numpy.ndarray'>") and \
-               (o_mesh[1].shape == (75, 75))
+        lar_mesh_falt = mcds.get_mesh(flat=True)
+        lar_mesh_2d = mcds.get_mesh_2D()
+        assert (str(type(lar_mesh_2d)) == "<class 'list'>") and \
+               (len(lar_mesh_2d) == 2) and \
+               (lar_mesh_2d[0] == lar_mesh_flat[0]).all() and \
+               (lar_mesh_2d[1] == lar_mesh_flat[1]).all()
 
     def test_mcds_get_linear_voxels(self, mcds=mcds):
         print(f'process: mcds.get_linear_voxels() ...')
         a_voxel = mcds.get_linear_voxels()
         assert (str(type(a_voxel)) == "<class 'numpy.ndarray'>") and \
+               (str(a_voxel.dtype) == "float64" and \
                (a_voxel.shape == (3, 421875))
 
     def test_mcds_get_mesh_spacing(self, mcds=mcds):

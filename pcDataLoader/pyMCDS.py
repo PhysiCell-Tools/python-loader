@@ -42,6 +42,13 @@ class pyMCDS:
     ## METADATA RELATED FUNCTIONS
 
     def get_time(self):
+        """
+        Return BUE simulated time in secounds or minutes or hour?
+
+        Returns
+        -------
+        BUE
+        """
         return self.data['metadata']['current_time']
 
     ## MESH RELATED FUNCTIONS
@@ -64,19 +71,19 @@ class pyMCDS:
             Contains arrays of voxel center coordinates as meshgrid with shape
             [nx_voxel, ny_voxel, nz_voxel] or [nx_voxel, ny_voxel] if flat=True.
         """
-        if flat == True:
-            xx = self.data['mesh']['x_coordinates'][:, :, 0]
-            yy = self.data['mesh']['y_coordinates'][:, :, 0]
+        if flat:
+            ar_m = self.data['mesh']['x_coordinates'][:, :, 0]
+            ar_n = self.data['mesh']['y_coordinates'][:, :, 0]
 
-            return [xx, yy]
+            return [ar_m, ar_n]
 
         # if we dont want a plane just return appropriate values
         else:
-            xx = self.data['mesh']['x_coordinates']
-            yy = self.data['mesh']['y_coordinates']
-            zz = self.data['mesh']['z_coordinates']
+            ar_m = self.data['mesh']['x_coordinates']
+            ar_n = self.data['mesh']['y_coordinates']
+            ar_p = self.data['mesh']['z_coordinates']
 
-            return [xx, yy, zz]
+            return [ar_m, ar_n, ar_p]
 
     def get_mesh_2D(self):
         """
@@ -96,11 +103,17 @@ class pyMCDS:
         Helper function to quickly grab voxel centers array stored linearly as
         opposed to meshgrid-style.
 
+        Note: 
+        Ther oder of the flattened coordinates is neither C (row major) nor Fortran (column major) style.
+        However, the coordinate set is complete.
+
         Returns
         -------
-
+        flattend array of voxel position
         """
-        return self.data['mesh']['voxels']['centers']
+        # nmp
+        ar_n, ar_p, ar_m, = self.data['mesh']['voxels']['centers'] 
+        return [ar_m, ar_n, ar_p]
 
     def get_mesh_spacing(self):
         """
@@ -109,23 +122,20 @@ class pyMCDS:
 
         Returns
         -------
-        dx : float
+        dm : float
             Distance between voxel centers in the same units as the other
             spatial measurements
         """
-        centers = self.get_linear_voxels()
-        X = np.unique(centers[0, :])
-        Y = np.unique(centers[1, :])
-        Z = np.unique(centers[2, :])
+        ar_m, ar_n, ar_p = self.get_linear_voxels()
 
-        dx = (X.max() - X.min()) / X.shape[0]
-        dy = (Y.max() - Y.min()) / Y.shape[0]
-        dz = (Z.max() - Z.min()) / Z.shape[0]
+        dm = np.round((ar_m.max() - ar_m.min()) / ar_m.shape[0])
+        dn = np.round((ar_n.max() - ar_n.min()) / ar_n.shape[0])
+        dp = np.round((ar_p.max() - ar_p.min()) / ar_p.shape[0])
 
-        if np.abs(dx - dy) > 1e-10 or np.abs(dy - dz) > 1e-10 or np.abs(dx - dz) > 1e-10:
-            print('Warning: grid spacing may be axis dependent.')
+        #if np.abs(dm - dn) > 1e-10 or np.abs(dn - dp) > 1e-10 or np.abs(dm - dp) > 1e-10:
+        #    print('Warning: grid spacing may be axis dependent.')
 
-        return round(dx)
+        return [dm, dn, dp]
 
     def get_containing_voxel_ijk(self, x, y, z):
         """
@@ -150,31 +160,31 @@ class pyMCDS:
         ijk : list length=3
             contains the i, j, and k indices for the containing voxel's center
         """
-        xx, yy, zz = self.get_mesh()
-        ds = self.get_mesh_spacing()
+        ar_m, ar_n, ar_p = self.get_mesh()
+        dm, dn, dp = self.get_mesh_spacing()
 
-        if x > xx.max():
+        if x > ar_m.max():
             warnings.warn(f'Position out of bounds: x out of bounds in pyMCDS._get_voxel_idx({x}, {y}, {z}). Setting x = x_max!')
-            x = xx.max()
-        elif x < xx.min():
+            x = ar_m.max()
+        elif x < ar_m.min():
             warnings.warn(f'Position out of bounds: x out of bounds in pyMCDS._get_voxel_idx({x}, {y}, {z}). Setting x = x_min!')
-            x = xx.min()
-        elif y > yy.max():
+            x = ar_m.min()
+        elif y > ar_n.max():
             warnings.warn(f'Position out of bounds: y out of bounds in pyMCDS._get_voxel_idx({x}, {y}, {z}). Setting y = y_max!')
-            y = yy.max()
-        elif y < yy.min():
+            y = ar_n.max()
+        elif y < ar_n.min():
             warnings.warn(f'Position out of bounds: y out of bounds in pyMCDS._get_voxel_idx({x}, {y}, {z}). Setting y = y_min!')
-            y = yy.min()
-        elif z > zz.max():
+            y = ar_n.min()
+        elif z > ar_p.max():
             warnings.warn(f'Position out of bounds: z out of bounds in pyMCDS._get_voxel_idx({x}, {y}, {z}). Setting z = z_max!')
-            z = zz.max()
-        elif z < zz.min():
+            z = ar_p.max()
+        elif z < ar_p.min():
             warnings.warn(f'Position out of bounds: z out of bounds in pyMCDS._get_voxel_idx({x}, {y}, {z}). Setting z = z_min!')
-            z = zz.min()
+            z = ar_p.min()
 
-        i = int(np.round((x - xx.min()) / ds))
-        j = int(np.round((y - yy.min()) / ds))
-        k = int(np.round((z - zz.min()) / ds))
+        i = int(np.round((x - ar_m.min()) / dm))
+        j = int(np.round((y - ar_n.min()) / dn))
+        k = int(np.round((z - ar_p.min()) / dp))
 
         return [i, j, k]
 
@@ -187,11 +197,11 @@ class pyMCDS:
 
         Returns
         -------
-        species_list : array (str), shape=[n_species,]
+        ls_species : list (str)
             Contains names of chemical species in microenvironment
         """
-        species_list = sorted(self.data['continuum_variables'].keys())
-        return species_list
+        ls_species = sorted(self.data['continuum_variables'].keys())
+        return ls_species
 
     def get_concentrations(self, species_name, z_slice=None):
         """
@@ -211,92 +221,22 @@ class pyMCDS:
 
         Returns
         -------
-        conc_arr : array (np.float) shape=[nx_voxels, ny_voxels, nz_voxels]
+        ar_conc : array (np.float) shape=[nx_voxels, ny_voxels, nz_voxels]
             Contains the concentration of the specified chemical in each voxel.
             The array spatially maps to a meshgrid of the voxel centers.
         """
-        if z_slice is not None:
+        ar_conc = self.data['continuum_variables'][species_name]['data']
+
+        if not (z_slice is None):
             # check to see that z_slice is a valid plane
-            zz = self.data['mesh']['z_coordinates']
-            assert z_slice in zz, 'Specified z_slice {} not in z_coordinates'.format(z_slice)
+            ar_p = self.data['mesh']['z_coordinates']
+            assert z_slice in ar_p, 'Specified z_slice {} not in z_coordinates'.format(z_slice)
 
             # do the processing if its ok
-            mask = zz == z_slice
-            full_conc = self.data['continuum_variables'][species_name]['data']
-            conc_arr = full_conc[mask].reshape((zz.shape[0], zz.shape[1]))
-        else:
-            conc_arr = self.data['continuum_variables'][species_name]['data']
+            mask = ar_p == z_slice
+            ar_conc = ar_conc[mask].reshape((ar_p.shape[0], ar_p.shape[1]))
 
-        return conc_arr
-
-    def get_concentrations_df(self, z_slice=None):
-        """
-        BUE
-
-        Parameters
-        ----------
-        z_slice : float
-            BUE check out get_concentrations
-
-        Returns
-        -------
-        conc_df : DataFrame shape=[]
-            BUE
-        """
-        xx, yy, zz = self.get_mesh()
-        xx_min = xx.min()
-        yy_min = yy.min()
-        zz_min = zz.min()
-        ds = self.get_mesh_spacing()
-
-        b_coor = True
-        for substrat_name in self.get_substrate_names():
-            # get data
-            conc_arr = self.get_concentrations(species_name=substrat_name, z_slice=z_slice)
-
-            # get coordinates
-            if b_coor:
-                if len(conc_arr.shape) < 3:
-                    i_k = self.get_containing_voxel_ijk(0, 0, z_slice)[-1]
-                lr_x = []; lr_y = []; lr_z = []
-                li_i = []; li_j = []; li_k = []
-                for i in range(conc_arr.shape[0]):
-                    for j in range(conc_arr.shape[1]):
-                        if len(conc_arr.shape) < 3:
-                            lr_x.append(i*ds + xx_min)
-                            lr_y.append(j*ds + yy_min)
-                            lr_z.append(z_slice)
-                            li_i.append(i)
-                            li_j.append(j)
-                            li_k.append(i_k)
-                        else:
-                            for k in range(conc_arr.shape[2]):
-                                lr_x.append(i*ds + xx_min)
-                                lr_y.append(j*ds + yy_min)
-                                lr_z.append(k*ds + zz_min)
-                                li_i.append(i)
-                                li_j.append(j)
-                                li_k.append(k)
-
-                ll_data = [li_i, li_j, li_k, lr_x, lr_y, lr_z]
-                ls_column = [
-                    'voxel_i','voxel_j','voxel_k',
-                    'voxel_position_m','voxel_position_n','voxel_position_o'
-                ]
-                b_coor = False
-
-            # append data
-            ll_data.append(list(conc_arr.flatten(order='C')))
-            ls_column.append(substrat_name)
-
-        # get data frame
-        d_dtype = {'voxel_i': int, 'voxel_j': int, 'voxel_k': float}  # bue: voxel_positions are all real.
-        if len(conc_arr.shape) > 2:
-            d_dtype = {'voxel_i': int, 'voxel_j': int, 'voxel_k': int}  # bue: voxel_positions are all real.
-        data_a  = np.array(ll_data)
-        conc_df = pd.DataFrame(data_a.T, columns=ls_column)
-        conc_df = conc_df.astype(d_dtype)
-        return conc_df
+        return ar_conc
 
     def get_concentrations_at(self, x, y, z=0):
         """
@@ -314,17 +254,73 @@ class pyMCDS:
 
         Returns
         -------
-        concs : array, shape=[n_substrates,]
+        ar_concs : array, shape=[n_substrates,]
             array of concentrations in the order given by get_substrate_names()
         """
         i, j, k = self.get_containing_voxel_ijk(x, y, z)
         sub_name_list = self.get_substrate_names()
-        concs = np.zeros(len(sub_name_list))
+        ar_concs = np.zeros(len(sub_name_list))
 
         for ix, sub_name in enumerate(sub_name_list):
-            concs[ix] = self.get_concentrations(sub_name)[j, i, k]
+            ar_concs[ix] = self.get_concentrations(sub_name)[j, i, k]
 
-        return concs
+        return ar_concs
+
+    def get_concentrations_df(self, z_slice=None):
+        """
+        BUE
+
+        Parameters
+        ----------
+        z_slice : float
+            BUE check out get_concentrations
+
+        Returns
+        -------
+        df_conc : DataFrame shape=[]
+            BUE
+        """
+        # flatten mesh coordnates
+        ar_m, ar_n, ar_p = self.get_mesh()
+        ar_m = ar_m.flatten(order='C')
+        ar_n = ar_n.flatten(order='C')
+        ar_p = ar_p.flatten(order='C')
+        # get min
+        m_min = ar_m.min()
+        n_min = ar_n.min()
+        p_min = ar_p.min()
+        # get voxel spacing
+        dm, dn, dp = self.get_mesh_spacing()
+        # get voxel coordinates
+        ai_i = ((ar_m - m_min) / ds).astype(int)
+        ai_j = ((ar_n - n_min) / ds).astype(int)
+        ai_k = ((ar_p - p_min) / ds).astype(int)
+
+        # handle coordinates
+        ls_column = [
+            'voxel_i','voxel_j','voxel_k',
+            'voxel_position_m','voxel_position_n','voxel_position_p'
+        ]
+        la_data = [ai_i, ai_j, ai_k, ar_m, ar_n, ar_p]
+        # handle concentraions
+        for substrat_name in self.get_substrate_names():
+            ls_column.append(substrat_name)
+            la_data.append(ar_conc.flatten(order='C'))
+
+        # generate data frame 
+        aa_data  = np.array(la_data)
+        df_conc = pd.DataFrame(aa_data.T, columns=ls_column)
+        #d_dtype = {'voxel_i': int, 'voxel_j': int, 'voxel_k': float}  # bue: voxel_positions are all real.
+        #df_conc = conc_df.astype(d_dtype)
+
+        # filter
+        if not (z_slice is None):
+            assert z_slice in ar_p, 'Error: specifier z_slice {} not in z_coordinates'.format(z_slice)
+            df_conc = df_conc.loc[df_conc.voxel_position_p == z_slice, :]
+
+        # output
+        return df_conc
+
 
 
     ## CELL RELATED FUNCTIONS
@@ -336,11 +332,11 @@ class pyMCDS:
 
         Returns
         -------
-        var_list : list, shape=[n_variables]
+        ls_variables : list, shape=[n_variables]
             Contains the names of the cell variables
         """
-        var_list = sorted(self.data['discrete_cells'].keys())
-        return var_list
+        ls_variables = sorted(self.data['discrete_cells'].keys())
+        return ls_variables
 
     def get_cell_df(self):
         """
@@ -348,46 +344,54 @@ class pyMCDS:
 
         Returns
         -------
-        cells_df : DataFrame, shape=[n_cells, n_variables]
+        df_cell : DataFrame, shape=[n_cells, n_variables]
             Dataframe containing the cell data for all cells at this time step
         """
-        cells_df = pd.DataFrame(self.data['discrete_cells'])
+        # get cell position and more
+        df_cell = pd.DataFrame(self.data['discrete_cells'])
+        df_voxel = df_cell.loc[:,['position_x','position_y','position_z']].copy()
 
-        # get voxel position
-        xx, yy, zz = self.get_mesh()
-        xx_min = xx.min()
-        yy_min = yy.min()
-        zz_min = zz.min()
-        xx_max = xx.max()
-        yy_max = yy.max()
-        zz_max = zz.max()
-        ds = self.get_mesh_spacing()
-        df_voxel = cells_df.loc[:,['position_x','position_y','position_z']].copy()
-        df_voxel.loc[:,'position_x'] = df_voxel.loc[:,'position_x'] - xx_min
-        df_voxel.loc[:,'position_y'] = df_voxel.loc[:,'position_y'] - yy_min
-        df_voxel.loc[:,'position_z'] = df_voxel.loc[:,'position_z'] - zz_min
-        df_voxel = round(df_voxel / ds)
-        df_voxel.columns = ['voxel_i','voxel_j','voxel_k']
-        df_voxel.loc[(df_voxel.voxel_i > xx_max), 'voxel_i'] =  xx_max
-        df_voxel.loc[(df_voxel.voxel_i < xx_min), 'voxel_i'] =  xx_min
-        df_voxel.loc[(df_voxel.voxel_j > yy_max), 'voxel_j'] =  yy_max
-        df_voxel.loc[(df_voxel.voxel_j < yy_min), 'voxel_j'] =  yy_min
-        df_voxel.loc[(df_voxel.voxel_k > zz_max), 'voxel_k'] =  zz_max
-        df_voxel.loc[(df_voxel.voxel_k < zz_min), 'voxel_k'] =  zz_min
+        # get mesh spacing
+        dm, dn, dp = self.get_mesh_spacing()
+
+        # get mesh and voxel min max values
+        ar_m, ar_n, ar_p = self.get_mesh()
+        m_min = ar_m.min()
+        n_min = ar_n.min()
+        p_min = ar_p.min()
+        i_min = 0
+        j_min = 0
+        k_min = 0
+        i_max = ar_m.flatten().shape[0]
+        j_max = ar_n.flatten().shape[0]
+        k_max = ar_p.flatten().shape[0]
+
+        # get voxel for each cell
+        df_voxel.loc[:,'voxel_i'] = np.round((df_voxel.loc[:,'position_x'] - m_min) / dm)
+        df_voxel.loc[:,'voxel_j'] = np.round((df_voxel.loc[:,'position_y'] - n_min) / dn)
+        df_voxel.loc[:,'voxel_k'] = np.round((df_voxel.loc[:,'position_z'] - p_min) / dp)
+        df_voxel.loc[(df_voxel.voxel_i > i_max), 'voxel_i'] =  i_max
+        df_voxel.loc[(df_voxel.voxel_i < i_min), 'voxel_i'] =  i_min
+        df_voxel.loc[(df_voxel.voxel_j > j_max), 'voxel_j'] =  j_max
+        df_voxel.loc[(df_voxel.voxel_j < j_min), 'voxel_j'] =  j_min
+        df_voxel.loc[(df_voxel.voxel_k > k_max), 'voxel_k'] =  k_max
+        df_voxel.loc[(df_voxel.voxel_k < k_min), 'voxel_k'] =  k_min
+
+        # get voxel position for each cell
         df_voxel['voxel_position_m'] = df_voxel.loc[:,'voxel_i'] * ds
         df_voxel['voxel_position_n'] = df_voxel.loc[:,'voxel_j'] * ds
-        df_voxel['voxel_position_o'] = df_voxel.loc[:,'voxel_k'] * ds
+        df_voxel['voxel_position_p'] = df_voxel.loc[:,'voxel_k'] * ds
 
         # output
-        cells_df = pd.merge(cells_df, df_voxel, left_index=True, right_index=True)
-        cells_df = cells_df.loc[:, sorted(cells_df.columns)]
-        cells_df = cells_df.astype({
+        df_cell = pd.merge(cells_df, df_voxel, left_index=True, right_index=True)
+        df_cell = df_cell.loc[:, sorted(df_cell.columns)]
+        df_cell = df_cell.astype({
             'ID': int,
             'voxel_i': int, 'voxel_j': int, 'voxel_k': int
-            #'voxel_positions are all real.
+            # 'voxel_positions are all real.
         })
-        cells_df.set_index('ID', inplace=True)
-        return cells_df
+        df_cell.set_index('ID', inplace=True)
+        return df_cell
 
     def get_cell_df_at(self, x, y, z=0):
         """
@@ -409,24 +413,28 @@ class pyMCDS:
             cell dataframe containing only cells in the same voxel as the point
             specified by x, y, and z.
         """
-        ds = self.get_mesh_spacing()
-        xx, yy, zz = self.get_mesh()
-        i, j, k = self.get_containing_voxel_ijk(x, y, z)
-        x_vox = xx[j, i, k]
-        y_vox = yy[j, i, k]
-        z_vox = zz[j, i, k]
+        # get mesh and mesh spacing
+        dm, dn, dp = self.get_mesh_spacing()
+        ar_m, ar_n, ar_p = self.get_mesh()
 
-        cell_df = self.get_cell_df()
+        # get voxel coordinate
+        i, j, k = self.get_containing_voxel_ijk(x, y, z)
+        m = ar_m[j, i, k]
+        n = ar_n[j, i, k]
+        p = ar_p[j, i, k]
+
+        # get voxel
+        df_cell = self.get_cell_df()
         inside_voxel = (
-            (cell_df['position_x'] < x_vox + ds / 2) &
-            (cell_df['position_x'] > x_vox - ds / 2) &
-            (cell_df['position_y'] < y_vox + ds / 2) &
-            (cell_df['position_y'] > y_vox - ds / 2) &
-            (cell_df['position_z'] < z_vox + ds / 2) &
-            (cell_df['position_z'] > z_vox - ds / 2)
+            (df_cell['position_x'] < m + dm / 2) &
+            (df_cell['position_x'] > m - dm / 2) &
+            (df_cell['position_y'] < n + dn / 2) &
+            (df_cell['position_y'] > n - dn / 2) &
+            (df_cell['position_z'] < p + dp / 2) &
+            (df_cell['position_z'] > p - dp / 2)
         )
-        vox_df = cell_df[inside_voxel]
-        return vox_df
+        df_voxel = df_cell[inside_voxel]
+        return df_voxel
 
     def _read_xml(self, xml_file, output_path='.', microenv=True):
         """
