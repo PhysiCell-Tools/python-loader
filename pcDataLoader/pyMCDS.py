@@ -103,7 +103,7 @@ class pyMCDS:
         Helper function to quickly grab voxel centers array stored linearly as
         opposed to meshgrid-style.
 
-        Note: 
+        Note:
         Ther oder of the flattened coordinates is neither C (row major) nor Fortran (column major) style.
         However, the coordinate set is complete.
 
@@ -111,8 +111,30 @@ class pyMCDS:
         -------
         flattend array of voxel position
         """
-        # nmp
-        ar_n, ar_p, ar_m, = self.data['mesh']['voxels']['centers'] 
+        # nmp cube
+        ar_m_cube, ar_n_cube, ar_p_cube = self.get_mesh(flat=False)
+        er_m_cube = set(ar_m_cube.flatten())
+        er_n_cube = set(ar_n_cube.flatten())
+        er_p_cube = set(ar_p_cube.flatten())
+        # nmp linear retrieving and mapping
+        b_m = True
+        b_n = True
+        b_p = True
+        ar_0, ar_1, ar_2, = self.data['mesh']['voxels']['centers']
+        for ar_linear in [ar_0, ar_1, ar_2]:
+            er_linear = set(ar_linear)
+            if b_m and (er_linear == er_m_cube):
+                ar_m = ar_linear
+                b_m = False
+            elif b_n and (er_linear == er_n_cube):
+                ar_n = ar_linear
+                b_n = False
+            elif b_p and (er_linear == er_p_cube):
+                ar_p = ar_linear
+                b_p = False
+            else:
+                sys.exit(f'Error: linear coordinate set {sorted(er_linear)} not found in m, n, and p cube mesh axis.')
+        # output
         return [ar_m, ar_n, ar_p]
 
     def get_mesh_spacing(self):
@@ -128,12 +150,9 @@ class pyMCDS:
         """
         ar_m, ar_n, ar_p = self.get_linear_voxels()
 
-        dm = np.round((ar_m.max() - ar_m.min()) / ar_m.shape[0])
-        dn = np.round((ar_n.max() - ar_n.min()) / ar_n.shape[0])
-        dp = np.round((ar_p.max() - ar_p.min()) / ar_p.shape[0])
-
-        #if np.abs(dm - dn) > 1e-10 or np.abs(dn - dp) > 1e-10 or np.abs(dm - dp) > 1e-10:
-        #    print('Warning: grid spacing may be axis dependent.')
+        dm = np.round((ar_m.max() - ar_m.min()) / (len(set(ar_m)) - 1))
+        dn = np.round((ar_n.max() - ar_n.min()) / (len(set(ar_n)) - 1))
+        dp = np.round((ar_p.max() - ar_p.min()) / (len(set(ar_p)) - 1))
 
         return [dm, dn, dp]
 
@@ -292,9 +311,9 @@ class pyMCDS:
         # get voxel spacing
         dm, dn, dp = self.get_mesh_spacing()
         # get voxel coordinates
-        ai_i = ((ar_m - m_min) / ds).astype(int)
-        ai_j = ((ar_n - n_min) / ds).astype(int)
-        ai_k = ((ar_p - p_min) / ds).astype(int)
+        ai_i = ((ar_m - m_min) / dm).astype(int)
+        ai_j = ((ar_n - n_min) / dn).astype(int)
+        ai_k = ((ar_p - p_min) / dp).astype(int)
 
         # handle coordinates
         ls_column = [
@@ -305,13 +324,14 @@ class pyMCDS:
         # handle concentraions
         for substrat_name in self.get_substrate_names():
             ls_column.append(substrat_name)
+            ar_conc = self.get_concentrations(species_name=substrat_name, z_slice=None)
             la_data.append(ar_conc.flatten(order='C'))
 
-        # generate data frame 
+        # generate data frame
         aa_data  = np.array(la_data)
         df_conc = pd.DataFrame(aa_data.T, columns=ls_column)
-        #d_dtype = {'voxel_i': int, 'voxel_j': int, 'voxel_k': float}  # bue: voxel_positions are all real.
-        #df_conc = conc_df.astype(d_dtype)
+        d_dtype = {'voxel_i': int, 'voxel_j': int, 'voxel_k': int}  # bue: voxel_positions are all real.
+        df_conc = df_conc.astype(d_dtype)
 
         # filter
         if not (z_slice is None):
@@ -378,12 +398,12 @@ class pyMCDS:
         df_voxel.loc[(df_voxel.voxel_k < k_min), 'voxel_k'] =  k_min
 
         # get voxel position for each cell
-        df_voxel['voxel_position_m'] = df_voxel.loc[:,'voxel_i'] * ds
-        df_voxel['voxel_position_n'] = df_voxel.loc[:,'voxel_j'] * ds
-        df_voxel['voxel_position_p'] = df_voxel.loc[:,'voxel_k'] * ds
+        df_voxel['voxel_position_m'] = df_voxel.loc[:,'voxel_i'] * dm
+        df_voxel['voxel_position_n'] = df_voxel.loc[:,'voxel_j'] * dn
+        df_voxel['voxel_position_p'] = df_voxel.loc[:,'voxel_k'] * dp
 
         # output
-        df_cell = pd.merge(cells_df, df_voxel, left_index=True, right_index=True)
+        df_cell = pd.merge(df_cell, df_voxel, on=['position_x', 'position_y', 'position_z'])
         df_cell = df_cell.loc[:, sorted(df_cell.columns)]
         df_cell = df_cell.astype({
             'ID': int,
@@ -470,12 +490,12 @@ class pyMCDS:
         time_node = metadata_node.find('current_time')
         MCDS['metadata'] = {}
         MCDS['metadata']['current_time'] = float(time_node.text)
-        MCDS['metadata']['time_units'] = time_node.get('units')
+        MCDS['metadata']['time_units'] = time_node.get('units')  # bue 20221018: this is never used.
 
         # get current runtime
         time_node = metadata_node.find('current_runtime')
-        MCDS['metadata']['current_runtime'] = float(time_node.text)
-        MCDS['metadata']['runtime_units'] = time_node.get('units')
+        MCDS['metadata']['current_runtime'] = float(time_node.text)  # bue 20221018: this is never used.
+        MCDS['metadata']['runtime_units'] = time_node.get('units')  # bue 20221018: this is never used.
 
         # find the microenvironment node
         me_node = root.find('microenvironment')
@@ -483,7 +503,7 @@ class pyMCDS:
 
         # find the mesh node
         mesh_node = me_node.find('mesh')
-        MCDS['metadata']['spatial_units'] = mesh_node.get('units')
+        MCDS['metadata']['spatial_units'] = mesh_node.get('units')  # bue 20221018: this is never used.
         MCDS['mesh'] = {}
 
         # while we're at it, find the mesh
@@ -506,26 +526,26 @@ class pyMCDS:
         MCDS['mesh']['y_coordinates'] = yy
         MCDS['mesh']['z_coordinates'] = zz
 
+        # Voxel data must be loaded from .mat file
+        voxel_file = mesh_node.find('voxels').find('filename').text
+        voxel_pathfile = output_path / voxel_file
+        try:
+            initial_mesh = io.loadmat(voxel_pathfile)['mesh']
+        except:
+            raise FileNotFoundError(
+                "No such file or directory:\n'{}' referenced in '{}'".format(voxel_pathfile, xml_pathfile))
+            sys.exit(1)
+
+        print('Reading {}'.format(voxel_pathfile))
+
+        # center of voxel specified by first three rows [ x, y, z ]
+        # volume specified by fourth row
+        MCDS['mesh']['voxels'] = {}
+        MCDS['mesh']['voxels']['centers'] = initial_mesh[:3, :]
+        MCDS['mesh']['voxels']['volumes'] = initial_mesh[3, :]  # bue 20221018: this is never used.
+
         # get microenvironment data
         if microenv:
-
-            # Voxel data must be loaded from .mat file
-            voxel_file = mesh_node.find('voxels').find('filename').text
-            voxel_pathfile = output_path / voxel_file
-            try:
-                initial_mesh = io.loadmat(voxel_pathfile)['mesh']
-            except:
-                raise FileNotFoundError(
-                    "No such file or directory:\n'{}' referenced in '{}'".format(voxel_pathfile, xml_pathfile))
-                sys.exit(1)
-
-            print('Reading {}'.format(voxel_pathfile))
-
-            # center of voxel specified by first three rows [ x, y, z ]
-            # volume specified by fourth row
-            MCDS['mesh']['voxels'] = {}
-            MCDS['mesh']['voxels']['centers'] = initial_mesh[:3, :]
-            MCDS['mesh']['voxels']['volumes'] = initial_mesh[3, :]
 
             # Continuum_variables, unlike in the matlab version the individual chemical
             # species will be primarily accessed through their names e.g.
@@ -560,7 +580,7 @@ class pyMCDS:
             for si, species in enumerate(var_children):
                 species_name = species.get('name')
                 MCDS['continuum_variables'][species_name] = {}
-                MCDS['continuum_variables'][species_name]['units'] = species.get('units')
+                MCDS['continuum_variables'][species_name]['units'] = species.get('units')  # bue 20221018: this is never used.
 
                 print('Parsing {:s} data'.format(species_name))
 
@@ -570,14 +590,14 @@ class pyMCDS:
                 # travel down one level on tree
                 species = species.find('physical_parameter_set')
 
-                # diffusion data for each species
+                # diffusion data for each species  bue 20221018: this is never used.
                 MCDS['continuum_variables'][species_name]['diffusion_coefficient'] = {}
                 MCDS['continuum_variables'][species_name]['diffusion_coefficient']['value'] \
                     = float(species.find('diffusion_coefficient').text)
                 MCDS['continuum_variables'][species_name]['diffusion_coefficient']['units'] \
                     = species.find('diffusion_coefficient').get('units')
 
-                # decay data for each species
+                # decay data for each species  bue 20221018: this is never used.
                 MCDS['continuum_variables'][species_name]['decay_rate'] = {}
                 MCDS['continuum_variables'][species_name]['decay_rate']['value'] \
                     = float(species.find('decay_rate').text)
