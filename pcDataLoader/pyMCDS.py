@@ -129,8 +129,10 @@ class pyMCDS:
 
         dm = np.round((ar_m.max() - ar_m.min()) / (len(set(ar_m)) - 1))
         dn = np.round((ar_n.max() - ar_n.min()) / (len(set(ar_n)) - 1))
-        dp = np.round((ar_p.max() - ar_p.min()) / (len(set(ar_p)) - 1))
-
+        if (len(set(ar_p)) == 1):
+            dp = 1
+        else:
+            dp = np.round((ar_p.max() - ar_p.min()) / (len(set(ar_p)) - 1))
         return [dm, dn, dp]
 
     def get_containing_voxel_ijk(self, x, y, z):
@@ -288,9 +290,9 @@ class pyMCDS:
         # get voxel spacing
         dm, dn, dp = self.get_mesh_spacing()
         # get voxel coordinates
-        ai_i = ((ar_m - m_min) / dm).astype(int)
-        ai_j = ((ar_n - n_min) / dn).astype(int)
-        ai_k = ((ar_p - p_min) / dp).astype(int)
+        ai_i = ((ar_m - m_min) / dm)
+        ai_j = ((ar_n - n_min) / dn)
+        ai_k = ((ar_p - p_min) / dp)
 
         # handle coordinates
         ls_column = [

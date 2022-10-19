@@ -108,16 +108,16 @@ class TestPyMcdsMicroenvTrue2D(object):
     def test_mcds_get_mesh_spacing(self, mcds=mcds):
         print(f'process: mcds.get_mesh_spacing() ...')
         lr_spacing = mcds.get_mesh_spacing()
-        assert lr_spacing == [30.0, 20.0, np.nan]
+        assert lr_spacing == [30.0, 20.0, 1]
 
     def test_mcds_get_containing_voxel_ijk(self, mcds=mcds):
         print(f'process: mcds.get_containing_voxel_ijk(x=0, y=0, z=0) ...')
         li_voxel_0 = mcds.get_containing_voxel_ijk(x=0, y=0, z=0)
-        li_voxel_1 = mcds.get_containing_voxel_ijk(x=15, y=10, z=5)
-        li_voxel_2 = mcds.get_containing_voxel_ijk(x=30, y=20, z=10)
+        li_voxel_1 = mcds.get_containing_voxel_ijk(x=15, y=10, z=0)
+        li_voxel_2 = mcds.get_containing_voxel_ijk(x=30, y=20, z=0)
         assert (li_voxel_0 == [0, 0, 0]) and \
-               (li_voxel_1 == [1, 1, 1]) and \
-               (li_voxel_2 == [2, 2, 2])
+               (li_voxel_1 == [1, 1, 0]) and \
+               (li_voxel_2 == [2, 2, 0])
 
     # micro environment related functions
     def test_mcds_get_substrate_names(self, mcds=mcds):
@@ -129,7 +129,7 @@ class TestPyMcdsMicroenvTrue2D(object):
         print(f'process: mcds.get_concentrations(species_name="oxygen", z_slice=None) ...')
         ar_conc = mcds.get_concentrations(species_name='oxygen', z_slice=None)
         assert (str(type(ar_conc)) == "<class 'numpy.ndarray'>") and \
-               (ar_conc.shape == (11, 11, 11))
+               (ar_conc.shape == (11, 11, 1))
 
     def test_mcds_get_concentrations_zslice(self, mcds=mcds):
         print(f'process: mcds.get_concentrations(species_name="oxygen", z_slice=0) ...')
@@ -141,37 +141,37 @@ class TestPyMcdsMicroenvTrue2D(object):
         print(f'process: mcds.get_concentrations_df(z_slice=None) ...')
         df_conc = mcds.get_concentrations_df(z_slice=None)
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_conc.shape == (121, 8))
+               (df_conc.shape == (121, 7))
 
     def test_mcds_get_concentrations_df_zslice(self, mcds=mcds):
         print(f'process: mcds.get_concentrations_df(z_slice=0) ...')
         df_conc = mcds.get_concentrations_df(z_slice=0)
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_conc.shape == (121, 8))
+               (df_conc.shape == (121, 7))
 
     def test_mcds_get_concentrations_at(self, mcds=mcds):
         print(f'process: mcds.get_concentrations_at(x=0, y=0, z=0) ...')
         ar_conc = mcds.get_concentrations_at(x=0, y=0, z=0)
         assert (str(type(ar_conc)) == "<class 'numpy.ndarray'>") and \
-               (ar_conc.shape == (2,))
+               (ar_conc.shape == (1,))
 
     # cell realted functions
     def test_mcds_get_variables(self, mcds=mcds):
         print(f'process: mcds.get_cell_variables() ...')
         ls_variable = mcds.get_cell_variables()
         assert (str(type(ls_variable)) == "<class 'list'>") and \
-               (len(ls_variable) == 97) and \
+               (len(ls_variable) == 77) and \
                (ls_variable[0] == 'ID')
 
     def test_mcds_get_cell_df(self, mcds=mcds):
         print(f'process: mcds.get_cell_df() ...')
         df_cell = mcds.get_cell_df()
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (20460, 102))
+               (df_cell.shape == (1099, 82))
 
     def test_mcds_get_cell_df_at(self, mcds=mcds):
         print(f'process: mcds.get_cell_df_at(x=0, y=0, z=0) ...')
         df_cell = mcds.get_cell_df_at(x=0, y=0, z=0)
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (5, 102))
+               (df_cell.shape == (5, 82))
 
