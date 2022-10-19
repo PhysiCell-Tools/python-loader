@@ -27,7 +27,7 @@ s_file_3d = 'output00000024.xml'
 s_pathfile_3d = f'{s_path_3d}/{s_file_3d}'
 
 # load physicell data shortcut
-class TestPyMcdsShortcut(object):
+class TestPyMcdsShortcut3D(object):
     ''' test for pc.pyMCDS data loader shortcut '''
 
     def test_pyMCDS(self):
@@ -37,7 +37,7 @@ class TestPyMcdsShortcut(object):
         assert str(type(mcds)) == "<class 'pcDataLoader.pyMCDS.pyMCDS'>"
 
 # load physicell data with microenvironment
-class TestPyMcdsMicroenvTrue(object):
+class TestPyMcdsMicroenvTrue3D(object):
     ''' test for pc.pyMCDS data loader microenvironment True'''
     mcds = pc.pyMCDS(xml_file=s_file_3d, output_path=s_path_3d, microenv=True)
 
@@ -102,16 +102,16 @@ class TestPyMcdsMicroenvTrue(object):
                (len(lar_voxel) == 3) and \
                (str(type(lar_voxel[0])) == "<class 'numpy.ndarray'>") and \
                (str(lar_voxel[0].dtype) == "float64") and \
-               (lar_voxel[0].shape == (1331,)) and \
                (set(lar_voxel[0]) == er_m_cube) and \
+               (lar_voxel[0].shape == (1331,)) and \
                (str(type(lar_voxel[1])) == "<class 'numpy.ndarray'>") and \
                (str(lar_voxel[1].dtype) == "float64") and \
-               (lar_voxel[1].shape == (1331,)) and \
                (set(lar_voxel[1]) == er_n_cube) and \
+               (lar_voxel[1].shape == (1331,)) and \
                (str(type(lar_voxel[2])) == "<class 'numpy.ndarray'>") and \
                (str(lar_voxel[2].dtype) == "float64") and \
-               (lar_voxel[2].shape == (1331,)) and \
-               (set(lar_voxel[2]) == er_p_cube)
+               (set(lar_voxel[2]) == er_p_cube) and \
+               (lar_voxel[2].shape == (1331,))
 
     def test_mcds_get_mesh_spacing(self, mcds=mcds):
         print(f'process: mcds.get_mesh_spacing() ...')
@@ -184,7 +184,7 @@ class TestPyMcdsMicroenvTrue(object):
                (df_cell.shape == (5, 102))
 
 
-class TestPyMcdsMicroenvFalse(object):
+class TestPyMcdsMicroenvFalse3D(object):
     ''' test for pc.pyMCDS data loader microenvironment False '''
     mcds = pc.pyMCDS(xml_file=s_file_3d, output_path=s_path_3d, microenv=False)
 
@@ -299,4 +299,3 @@ class TestPyMcdsMicroenvFalse(object):
         df_cell = mcds.get_cell_df_at(x=0, y=0, z=0)
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_cell.shape == (5, 102))
-

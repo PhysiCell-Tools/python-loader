@@ -64,6 +64,7 @@ class pyMCDS:
             If flat is set to True, only the x and y meshgrid will be returned.
             Otherwise the x, y, and z meshgrid will be returned.
             Default setting is False.
+            # if we dont want a plane just return appropriate values
 
         Returns
         -------
@@ -77,7 +78,6 @@ class pyMCDS:
 
             return [ar_m, ar_n]
 
-        # if we dont want a plane just return appropriate values
         else:
             ar_m = self.data['mesh']['x_coordinates']
             ar_n = self.data['mesh']['y_coordinates']
@@ -111,30 +111,7 @@ class pyMCDS:
         -------
         flattend array of voxel position
         """
-        # nmp cube
-        ar_m_cube, ar_n_cube, ar_p_cube = self.get_mesh(flat=False)
-        er_m_cube = set(ar_m_cube.flatten())
-        er_n_cube = set(ar_n_cube.flatten())
-        er_p_cube = set(ar_p_cube.flatten())
-        # nmp linear retrieving and mapping
-        b_m = True
-        b_n = True
-        b_p = True
-        ar_0, ar_1, ar_2, = self.data['mesh']['voxels']['centers']
-        for ar_linear in [ar_0, ar_1, ar_2]:
-            er_linear = set(ar_linear)
-            if b_m and (er_linear == er_m_cube):
-                ar_m = ar_linear
-                b_m = False
-            elif b_n and (er_linear == er_n_cube):
-                ar_n = ar_linear
-                b_n = False
-            elif b_p and (er_linear == er_p_cube):
-                ar_p = ar_linear
-                b_p = False
-            else:
-                sys.exit(f'Error: linear coordinate set {sorted(er_linear)} not found in m, n, and p cube mesh axis.')
-        # output
+        ar_m, ar_n, ar_p, = self.data['mesh']['voxels']['centers']
         return [ar_m, ar_n, ar_p]
 
     def get_mesh_spacing(self):
@@ -520,13 +497,13 @@ class pyMCDS:
         z_coords = np.array(coord_str.split(delimiter), dtype=np.float64)
 
         # reshape into a mesh grid
-        xx, yy, zz = np.meshgrid(x_coords, y_coords, z_coords)
+        ar_mmm, ar_nnn, ar_ppp = np.meshgrid(x_coords, y_coords, z_coords)
 
-        MCDS['mesh']['x_coordinates'] = xx
-        MCDS['mesh']['y_coordinates'] = yy
-        MCDS['mesh']['z_coordinates'] = zz
+        MCDS['mesh']['x_coordinates'] = ar_mmm
+        MCDS['mesh']['y_coordinates'] = ar_nnn
+        MCDS['mesh']['z_coordinates'] = ar_ppp
 
-        # Voxel data must be loaded from .mat file
+        # voxel data must be loaded from .mat file
         voxel_file = mesh_node.find('voxels').find('filename').text
         voxel_pathfile = output_path / voxel_file
         try:
@@ -575,9 +552,11 @@ class pyMCDS:
 
             # we're going to need the linear x, y, and z coordinates later
             # but we dont need to get them in the loop
-            X, Y, Z = np.unique(xx), np.unique(yy), np.unique(zz)
+            ar_m = np.unique(ar_mmm)
+            ar_n = np.unique(ar_nnn)
+            ar_p = np.unique(ar_ppp)
 
-            for si, species in enumerate(var_children):
+            for i_s, species in enumerate(var_children):
                 species_name = species.get('name')
                 MCDS['continuum_variables'][species_name] = {}
                 MCDS['continuum_variables'][species_name]['units'] = species.get('units')  # bue 20221018: this is never used.
@@ -585,7 +564,7 @@ class pyMCDS:
                 print('Parsing {:s} data'.format(species_name))
 
                 # initialize array for concentration data
-                MCDS['continuum_variables'][species_name]['data'] = np.zeros(xx.shape)
+                MCDS['continuum_variables'][species_name]['data'] = np.zeros(ar_mmm.shape)
 
                 # travel down one level on tree
                 species = species.find('physical_parameter_set')
@@ -607,15 +586,15 @@ class pyMCDS:
                 # store data from microenvironment file as numpy array
                 # iterate over each voxel
                 for vox_idx in range(MCDS['mesh']['voxels']['centers'].shape[1]):
-                    # find the center
-                    center = MCDS['mesh']['voxels']['centers'][:, vox_idx]
 
-                    i = np.where(np.abs(center[0] - X) < 1e-10)[0][0]
-                    j = np.where(np.abs(center[1] - Y) < 1e-10)[0][0]
-                    k = np.where(np.abs(center[2] - Z) < 1e-10)[0][0]
+                    # find the voxel coordinate
+                    ar_center = MCDS['mesh']['voxels']['centers'][:, vox_idx]
+                    i = np.where(np.abs(ar_center[0] - ar_m) < 1e-10)[0][0]
+                    j = np.where(np.abs(ar_center[1] - ar_n) < 1e-10)[0][0]
+                    k = np.where(np.abs(ar_center[2] - ar_p) < 1e-10)[0][0]
 
-                    MCDS['continuum_variables'][species_name]['data'][j, i, k] \
-                        = me_data[4+si, vox_idx]
+                    # store value
+                    MCDS['continuum_variables'][species_name]['data'][j, i, k] = me_data[4+i_s, vox_idx]
 
         # get cell data
         # in order to get to the good stuff we have to pass through a few different
@@ -633,10 +612,10 @@ class pyMCDS:
         print( 'working on discrete cell data...\n')
 
         MCDS['discrete_cells'] = {}
-        data_labels = []
+        
         # iterate over 'label's which are children of 'labels' these will be used to
         # label data arrays
-        n = 0;
+        data_labels = []
         for label in cell_node.find('labels').findall('label'):
             # I don't like spaces in my dictionary keys
             fixed_label = label.text.replace(' ', '_')
@@ -669,7 +648,7 @@ class pyMCDS:
             else:
                 data_labels.append(fixed_label)
             # print(fixed_label)
-            n += 1
+
         # load the file
         cell_file = cell_node.find('filename').text
         cell_pathfile = output_path / cell_file
@@ -679,9 +658,10 @@ class pyMCDS:
             raise FileNotFoundError(
                 "No such file or directory:\n'{}' referenced in '{}'".format(cell_pathfile, xml_pathfile))
             sys.exit(1)
-
+        
         print('Reading {}'.format(cell_pathfile))
 
+        # store data
         for col in range(len(data_labels)):
             MCDS['discrete_cells'][data_labels[col]] = cell_data[col, :]
 
