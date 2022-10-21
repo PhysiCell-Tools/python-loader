@@ -64,13 +64,23 @@ Within the pcDataLoader library, I try to stick to the documentation policy line
 
 ## Release Notes:
 + version 3.0.0 (2022-++-++): elmbeech/pcDataLoader
-    + **pyMCDS** takes new additionally a boolean parameter termed **microenv**, to specify if the microenvironment (substrates) should be read out (for completeness) or not (for speed increase).
     + **pyMCDS** parameter **xml_file** can now handle path/file.xml (unix) or path\file.xml (dos) input, aslong output_path is the default.
+    + **pyMCDS** takes new additionally a boolean parameter termed **microenv**, to specify if the microenvironment (substrates) should be read out (for completeness) or not (for speed increase).
     + **mcds.get_2D_mesh** was renamed to **mcds.get_mesh_2D** for consistency.
-    + **mcds.get_mesh_spacing** returns now 3 specific values, one for x, y, and z, insted of 1 general value.
+    + **mcds.get_linear_voxels** was renamed to **mcds.get_mesh_linear** for consistency.
+    + **mcds.get_voxel_spacing** returns now 3 specific values, one for x, y, and z, insted of 1 general value.
     + **mcds.get_cell_variables** and **mcds.get_substrate_names** return now a strictly alphabetically ordered list.
-    + **mcds.get_cell_df** returns now a pandas dataframe with the cell IDs the index and not as a column. additionaly this dataframe has now voxel and voxel_position collumns.
+    + **mcds.get_cell_df** returns now a pandas dataframe with the cell IDs the index and not as a column.
+      additionaly, this dataframe has now voxel, voxel_position, substrate parameter, substrate concentration, and cell density columns.
     + new **mcds.get_concentration_df** function.
+    + new **mcds.get_substrate_df** function.
+    + new **mcds.get_unit_df** function.
+    + new **mcds.get_physicell_version** function.
+    + new **mcds.get_runtime** function.
+    + new **mcds.get_timestamp** function.
+    + new **mcds.get_voxel_volume** function.
+    + new **mcds.get_attached_graph_dict** function.
+    + new **mcds.get_neigbor_graph_dict** function.
     + cell positions are now constandly labeld as **x,y,z**, voxel positions as **m,n,p**, and voxels as **i,j,k**.
     + [pytest](https://en.wikipedia.org/wiki/Pytest) unit tests for all pyMCDS and pyMCDS_timeseries functions.
 

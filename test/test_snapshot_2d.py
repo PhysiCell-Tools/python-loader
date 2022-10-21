@@ -1,5 +1,5 @@
 #####
-# title: test_snapshot.py
+# title: test_snapshot_2d.py
 #
 # language: python3
 # author: bue
@@ -38,15 +38,38 @@ class TestPyMcdsMicroenvTrue2D(object):
         print(f'process: pc.pyMCDS(xml_file={s_file_2d}, output_path={s_path_2d}, microenv=True) ...')
         assert str(type(mcds)) == "<class 'pcDataLoader.pyMCDS.pyMCDS'>"
 
-    # metadata realted functions
+    ## metadata realted functions
+    def test_mcds_get_physicel_version(self, mcds=mcds):
+        s_pcversion = mcds.get_physicell_version()
+        assert s_pcversion == '1.10.4'
+
+    def test_mcds_get_timestamp(self, mcds=mcds):
+        s_timestamp = mcds.get_timestamp()
+        assert s_timestamp == '2022-10-19T01:12:20Z'
+
     def test_mcds_get_time(self, mcds=mcds):
-        print(f'process: mcds.get_time() ...')
         r_time = mcds.get_time()
         assert r_time == 1440.0
 
-    # mesh related functions
+    def test_mcds_get_runtime(self, mcds=mcds):
+        r_runtime = mcds.get_runtime()
+        assert r_runtime == 35.033598
+
+    ## graph related functions
+    def test_mcds_get_attached_graph_dict(self, mcds=mcds):
+        dei_graph = mcds.data['discrete_cells']['graph']['attached_cells']
+        assert (str(type(dei_graph)) == "<class 'dict'>") and \
+               (len(dei_graph) == 1099) and \
+               (len(dei_graph[1098]) == 0)
+
+    def test_mcds_get_neighbor_graph_dict(self, mcds=mcds):
+        dei_graph = mcds.data['discrete_cells']['graph']['neighbor_cells']
+        assert (str(type(dei_graph)) == "<class 'dict'>") and \
+               (len(dei_graph) == 1099) and \
+               (len(dei_graph[1098]) == 7)
+
+    ## mesh related functions
     def test_mcds_get_mesh_flat_false(self, mcds=mcds):
-        print(f'process: mcds.get_mesh(flat=False) ...')
         lar_mesh = mcds.get_mesh(flat=False)
         assert (str(type(lar_mesh)) == "<class 'list'>") and \
                (len(lar_mesh) == 3) and \
@@ -61,7 +84,6 @@ class TestPyMcdsMicroenvTrue2D(object):
                (lar_mesh[2].shape == (11, 11, 1))
 
     def test_mcds_get_mesh_flat_true(self, mcds=mcds):
-        print(f'process: mcds.get_mesh(flat=True) ...')
         lar_mesh = mcds.get_mesh(flat=True)
         assert (str(type(lar_mesh)) == "<class 'list'>") and \
                (len(lar_mesh) == 2) and \
@@ -73,7 +95,6 @@ class TestPyMcdsMicroenvTrue2D(object):
                (lar_mesh[1].shape == (11, 11))
 
     def test_mcds_get_mesh_2d(self, mcds=mcds):
-        print(f'process: mcds.get_mesh_2d() ...')
         lar_mesh_flat = mcds.get_mesh(flat=True)
         lar_mesh_2d = mcds.get_mesh_2D()
         assert (str(type(lar_mesh_2d)) == "<class 'list'>") and \
@@ -81,15 +102,14 @@ class TestPyMcdsMicroenvTrue2D(object):
                (lar_mesh_2d[0] == lar_mesh_flat[0]).all() and \
                (lar_mesh_2d[1] == lar_mesh_flat[1]).all()
 
-    def test_mcds_get_linear_voxels(self, mcds=mcds):
-        print(f'process: mcds.get_linear_voxels() ...')
+    def test_mcds_get_mesh_linear(self, mcds=mcds):
         # cube coordinates
         ar_m_cube, ar_n_cube, ar_p_cube = mcds.get_mesh(flat=False)
         er_m_cube = set(ar_m_cube.flatten())
         er_n_cube = set(ar_n_cube.flatten())
         er_p_cube = set(ar_p_cube.flatten())
         # linear coordiantes
-        lar_voxel = mcds.get_linear_voxels()
+        lar_voxel = mcds.get_mesh_linear()
         assert (str(type(lar_voxel)) == "<class 'list'>") and \
                (len(lar_voxel) == 3) and \
                (str(type(lar_voxel[0])) == "<class 'numpy.ndarray'>") and \
@@ -106,12 +126,14 @@ class TestPyMcdsMicroenvTrue2D(object):
                (lar_voxel[2].shape == (121,))
 
     def test_mcds_get_mesh_spacing(self, mcds=mcds):
-        print(f'process: mcds.get_mesh_spacing() ...')
         lr_spacing = mcds.get_mesh_spacing()
         assert lr_spacing == [30.0, 20.0, 1]
 
+    def test_mcds_get_voxel_volume(self, mcds=mcds):
+        r_volume = mcds.get_voxel_volume()
+        assert r_volume == 6000.0
+
     def test_mcds_get_containing_voxel_ijk(self, mcds=mcds):
-        print(f'process: mcds.get_containing_voxel_ijk(x=0, y=0, z=0) ...')
         li_voxel_0 = mcds.get_containing_voxel_ijk(x=0, y=0, z=0)
         li_voxel_1 = mcds.get_containing_voxel_ijk(x=15, y=10, z=0)
         li_voxel_2 = mcds.get_containing_voxel_ijk(x=30, y=20, z=0)
@@ -119,59 +141,61 @@ class TestPyMcdsMicroenvTrue2D(object):
                (li_voxel_1 == [1, 1, 0]) and \
                (li_voxel_2 == [2, 2, 0])
 
-    # micro environment related functions
+    ## micro environment related functions
     def test_mcds_get_substrate_names(self, mcds=mcds):
-        print(f'process: mcds.get_substrate_names() ...')
         ls_substrate = mcds.get_substrate_names()
         assert ls_substrate == ['oxygen']
 
+    def test_mcds_get_substrate_df(self, mcds=mcds):
+        df_substrate = mcds.get_substrate_df()
+        assert (str(type(df_substrate)) == "<class 'pandas.core.frame.DataFrame'>") and \
+               (df_substrate.shape == (2, 1))
+
     def test_mcds_get_concentrations(self, mcds=mcds):
-        print(f'process: mcds.get_concentrations(species_name="oxygen", z_slice=None) ...')
         ar_conc = mcds.get_concentrations(species_name='oxygen', z_slice=None)
         assert (str(type(ar_conc)) == "<class 'numpy.ndarray'>") and \
                (ar_conc.shape == (11, 11, 1))
 
     def test_mcds_get_concentrations_zslice(self, mcds=mcds):
-        print(f'process: mcds.get_concentrations(species_name="oxygen", z_slice=0) ...')
         ar_conc = mcds.get_concentrations(species_name='oxygen', z_slice=0)
         assert (str(type(ar_conc)) == "<class 'numpy.ndarray'>") and \
                (ar_conc.shape == (11, 11))
 
     def test_mcds_get_concentrations_df(self, mcds=mcds):
-        print(f'process: mcds.get_concentrations_df(z_slice=None) ...')
         df_conc = mcds.get_concentrations_df(z_slice=None)
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_conc.shape == (121, 7))
 
     def test_mcds_get_concentrations_df_zslice(self, mcds=mcds):
-        print(f'process: mcds.get_concentrations_df(z_slice=0) ...')
         df_conc = mcds.get_concentrations_df(z_slice=0)
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_conc.shape == (121, 7))
 
     def test_mcds_get_concentrations_at(self, mcds=mcds):
-        print(f'process: mcds.get_concentrations_at(x=0, y=0, z=0) ...')
         ar_conc = mcds.get_concentrations_at(x=0, y=0, z=0)
         assert (str(type(ar_conc)) == "<class 'numpy.ndarray'>") and \
                (ar_conc.shape == (1,))
 
-    # cell realted functions
+    ## cell realted functions
     def test_mcds_get_variables(self, mcds=mcds):
-        print(f'process: mcds.get_cell_variables() ...')
         ls_variable = mcds.get_cell_variables()
         assert (str(type(ls_variable)) == "<class 'list'>") and \
                (len(ls_variable) == 77) and \
                (ls_variable[0] == 'ID')
 
     def test_mcds_get_cell_df(self, mcds=mcds):
-        print(f'process: mcds.get_cell_df() ...')
         df_cell = mcds.get_cell_df()
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (1099, 82))
+               (df_cell.shape == (1099, 87))
 
     def test_mcds_get_cell_df_at(self, mcds=mcds):
-        print(f'process: mcds.get_cell_df_at(x=0, y=0, z=0) ...')
         df_cell = mcds.get_cell_df_at(x=0, y=0, z=0)
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (5, 82))
+               (df_cell.shape == (5, 87))
+
+    ## unit related functions
+    def test_mcds_get_unit_df(self, mcds=mcds):
+        df_unit = mcds.get_unit_df()
+        assert (str(type(df_unit)) == "<class 'pandas.core.frame.DataFrame'>") and \
+               (df_unit.shape == (82, 1))
 

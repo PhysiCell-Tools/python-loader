@@ -1,5 +1,5 @@
 #####
-# title: test_snapshot_3d.py
+# title: test_snapshot_3d_microenvfalse.py
 #
 # language: python3
 # author: bue
@@ -26,57 +26,18 @@ s_path_3d = str(pathlib.Path(pc.__file__).parent.resolve()/'data_timeseries_3d')
 s_file_3d = 'output00000024.xml'
 s_pathfile_3d = f'{s_path_3d}/{s_file_3d}'
 
-
-# load physicell data shortcut
-class TestPyMcdsShortcut3D(object):
-    ''' test for pc.pyMCDS data loader shortcut '''
-
-    def test_pyMCDS(self):
-        # load physicell data shortcut
-        print(f'process: pc.pyMCDS(xml_file={s_pathfile_3d}) ...')
-        mcds = pc.pyMCDS(xml_file=s_pathfile_3d)
-        assert str(type(mcds)) == "<class 'pcDataLoader.pyMCDS.pyMCDS'>"
-
-
-# load physicell data with microenvironment
-class TestPyMcdsMicroenvTrue3D(object):
-    ''' test for pc.pyMCDS data loader microenvironment True'''
-    mcds = pc.pyMCDS(xml_file=s_file_3d, output_path=s_path_3d, microenv=True)
+# test function
+class TestPyMcdsMicroenvFalse3D(object):
+    ''' test for pc.pyMCDS data loader microenvironment False '''
+    mcds = pc.pyMCDS(xml_file=s_file_3d, output_path=s_path_3d, microenv=False)
 
     def test_pyMCDS(self, mcds=mcds):
         # load physicell data
-        print(f'process: pc.pyMCDS(xml_file={s_file_3d}, output_path={s_path_3d}, microenv=True) ...')
+        print(f'process: pc.pyMCDS(xml_file={s_file_3d}, output_path={s_path_3d}, microenv=False) ...')
         assert str(type(mcds)) == "<class 'pcDataLoader.pyMCDS.pyMCDS'>"
 
     ## metadata realted functions
-    def test_mcds_get_physicel_version(self, mcds=mcds):
-        s_pcversion = mcds.get_physicell_version()
-        assert s_pcversion == '1.10.4'
-
-    def test_mcds_get_timestamp(self, mcds=mcds):
-        s_timestamp = mcds.get_timestamp()
-        assert s_timestamp == '2022-10-18T15:28:37Z'
-
-    def test_mcds_get_time(self, mcds=mcds):
-        r_time = mcds.get_time()
-        assert r_time == 1440.0
-
-    def test_mcds_get_runtime(self, mcds=mcds):
-        r_runtime = mcds.get_runtime()
-        assert r_runtime == 313.35264
-
-    ## graph related functions
-    def test_mcds_get_attached_graph_dict(self, mcds=mcds):
-        dei_graph = mcds.data['discrete_cells']['graph']['attached_cells']
-        assert (str(type(dei_graph)) == "<class 'dict'>") and \
-               (len(dei_graph) == 20460) and \
-               (len(dei_graph[20459]) == 0)
-
-    def test_mcds_get_neighbor_graph_dict(self, mcds=mcds):
-        dei_graph = mcds.data['discrete_cells']['graph']['neighbor_cells']
-        assert (str(type(dei_graph)) == "<class 'dict'>") and \
-               (len(dei_graph) == 20460) and \
-               (len(dei_graph[20459]) == 13)
+    # nop
 
     ## mesh related functions
     def test_mcds_get_mesh_flat_false(self, mcds=mcds):
@@ -152,40 +113,11 @@ class TestPyMcdsMicroenvTrue3D(object):
                (li_voxel_2 == [2, 2, 2])
 
     ## micro environment related functions
-    def test_mcds_get_substrate_names(self, mcds=mcds):
-        ls_substrate = mcds.get_substrate_names()
-        assert ls_substrate == ['immunostimulatory factor', 'oxygen']
-
-    def test_mcds_get_substrate_df(self, mcds=mcds):
-        df_substrate = mcds.get_substrate_df()
-        assert (str(type(df_substrate)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_substrate.shape == (4, 1))
-
-
-    def test_mcds_get_concentrations(self, mcds=mcds):
-        ar_conc = mcds.get_concentrations(species_name='oxygen', z_slice=None)
-        assert (str(type(ar_conc)) == "<class 'numpy.ndarray'>") and \
-               (ar_conc.shape == (11, 11, 11))
-
-    def test_mcds_get_concentrations_zslice(self, mcds=mcds):
-        ar_conc = mcds.get_concentrations(species_name='oxygen', z_slice=-5)
-        assert (str(type(ar_conc)) == "<class 'numpy.ndarray'>") and \
-               (ar_conc.shape == (11, 11))
-
-    def test_mcds_get_concentrations_df(self, mcds=mcds):
-        df_conc = mcds.get_concentrations_df(z_slice=None)
-        assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_conc.shape == (1331, 8))
-
-    def test_mcds_get_concentrations_df_zslice(self, mcds=mcds):
-        df_conc = mcds.get_concentrations_df(z_slice=-5)
-        assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_conc.shape == (121, 8))
-
-    def test_mcds_get_concentrations_at(self, mcds=mcds):
-        ar_conc = mcds.get_concentrations_at(x=0, y=0, z=0)
-        assert (str(type(ar_conc)) == "<class 'numpy.ndarray'>") and \
-               (ar_conc.shape == (2,))
+    # mcds.get_substrate_names # nop
+    # mcds.get_substrate_df # nop
+    # mcds.get_concentrations # nop
+    # mcds.get_concentrations_df # nop
+    # mcds.get_concentrations_at # nop
 
     ## cell realted functions
     def test_mcds_get_cell_variables(self, mcds=mcds):
@@ -197,15 +129,16 @@ class TestPyMcdsMicroenvTrue3D(object):
     def test_mcds_get_cell_df(self, mcds=mcds):
         df_cell = mcds.get_cell_df()
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (20460, 110))
+               (df_cell.shape == (20460, 101))
 
     def test_mcds_get_cell_df_at(self, mcds=mcds):
         df_cell = mcds.get_cell_df_at(x=0, y=0, z=0)
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (5, 110))
+               (df_cell.shape == (5, 101))
 
     ## unit related functions
     def test_mcds_get_unit_df(self, mcds=mcds):
         df_unit = mcds.get_unit_df()
         assert (str(type(df_unit)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_unit.shape == (105, 1))
+               (df_unit.shape == (99, 1))
+

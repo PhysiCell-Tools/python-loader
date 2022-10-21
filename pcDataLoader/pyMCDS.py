@@ -6,6 +6,34 @@ import sys
 import warnings
 from pathlib import Path
 
+def graph_file_parser(s_pathfile):
+    """
+    input:
+        s_pathfile
+
+    output:
+        dei_graph
+
+    descriptio:
+
+    """
+    # processing
+    dei_graph = {}
+    f = open(s_pathfile)
+    for i, s_line in enumerate(f):
+        #print('processing line:', s_line.strip())
+        s_key, s_value = s_line.strip().split(':')
+        ei_value = set()
+        if len(s_value.strip()) :
+            ei_value = set([int(s_id) for s_id in s_value.split(',')])
+        dei_graph.update({int(s_key): ei_value})
+    f.close()
+
+    # output
+    return(dei_graph)
+
+
+
 class pyMCDS:
     """
     This class contains a dictionary of dictionaries that contains all of the
@@ -38,8 +66,24 @@ class pyMCDS:
     """
     def __init__(self, xml_file, output_path='.', microenv=True):
         self.data = self._read_xml(xml_file, output_path, microenv)
+        self.microenv = microenv
 
     ## METADATA RELATED FUNCTIONS
+
+    def get_physicell_version(self):
+        """
+        """
+        return self.data['metadata']['physicell_version']
+
+    def get_timestamp(self):
+        """
+        Return BUE simulated time in secounds or minutes or hour?
+
+        Returns
+        -------
+        BUE
+        """
+        return self.data['metadata']['created']
 
     def get_time(self):
         """
@@ -50,6 +94,32 @@ class pyMCDS:
         BUE
         """
         return self.data['metadata']['current_time']
+
+
+    def get_runtime(self):
+        """
+        Return BUE simulated time in secounds or minutes or hour?
+
+        Returns
+        -------
+        BUE
+        """
+        return self.data['metadata']['current_runtime']
+
+
+    ## GRAPH RELATED FUNCTIONS
+    def get_attached_graph_dict(self):
+        """
+        BUE
+        """
+        return self.data['discrete_cells']['graph']['attached_cells']
+
+    def get_neighbor_graph_dict(self):
+        """
+        BUE
+        """
+        return self.data['discrete_cells']['graph']['neighbor_cells']
+
 
     ## MESH RELATED FUNCTIONS
 
@@ -98,7 +168,7 @@ class pyMCDS:
         """
         return self.get_mesh(flat=True)
 
-    def get_linear_voxels(self):
+    def get_mesh_linear(self):
         """
         Helper function to quickly grab voxel centers array stored linearly as
         opposed to meshgrid-style.
@@ -125,7 +195,7 @@ class pyMCDS:
             Distance between voxel centers in the same units as the other
             spatial measurements
         """
-        ar_m, ar_n, ar_p = self.get_linear_voxels()
+        ar_m, ar_n, ar_p = self.get_mesh_linear()
 
         dm = np.round((ar_m.max() - ar_m.min()) / (len(set(ar_m)) - 1))
         dn = np.round((ar_n.max() - ar_n.min()) / (len(set(ar_n)) - 1))
@@ -134,6 +204,15 @@ class pyMCDS:
         else:
             dp = np.round((ar_p.max() - ar_p.min()) / (len(set(ar_p)) - 1))
         return [dm, dn, dp]
+
+    def get_voxel_volume(self):
+        """
+        """
+        ar_volume = np.unique(self.data['mesh']['voxels']['volumes'])
+        if ar_volume.shape != (1,):
+            sys.exit(f'Error: mesh is not built out of a unique voxel volume. {ar_volume}')
+        r_volume = ar_volume[0]
+        return(r_volume)
 
     def get_containing_voxel_ijk(self, x, y, z):
         """
@@ -162,22 +241,22 @@ class pyMCDS:
         dm, dn, dp = self.get_mesh_spacing()
 
         if x > ar_m.max():
-            warnings.warn(f'Position out of bounds: x out of bounds in pyMCDS._get_voxel_idx({x}, {y}, {z}). Setting x = x_max!')
+            warnings.warn(f'Position out of bounds: x out of bounds in pyMCDS.get_containing_voxel_ijk({x}, {y}, {z}). Setting x = x_max!')
             x = ar_m.max()
         elif x < ar_m.min():
-            warnings.warn(f'Position out of bounds: x out of bounds in pyMCDS._get_voxel_idx({x}, {y}, {z}). Setting x = x_min!')
+            warnings.warn(f'Position out of bounds: x out of bounds in pyMCDS.get_containing_voxel_ijk({x}, {y}, {z}). Setting x = x_min!')
             x = ar_m.min()
         elif y > ar_n.max():
-            warnings.warn(f'Position out of bounds: y out of bounds in pyMCDS._get_voxel_idx({x}, {y}, {z}). Setting y = y_max!')
+            warnings.warn(f'Position out of bounds: y out of bounds in pyMCDS.get_containing_voxel_ijk({x}, {y}, {z}). Setting y = y_max!')
             y = ar_n.max()
         elif y < ar_n.min():
-            warnings.warn(f'Position out of bounds: y out of bounds in pyMCDS._get_voxel_idx({x}, {y}, {z}). Setting y = y_min!')
+            warnings.warn(f'Position out of bounds: y out of bounds in pyMCDS.get_containing_voxel_ijk({x}, {y}, {z}). Setting y = y_min!')
             y = ar_n.min()
         elif z > ar_p.max():
-            warnings.warn(f'Position out of bounds: z out of bounds in pyMCDS._get_voxel_idx({x}, {y}, {z}). Setting z = z_max!')
+            warnings.warn(f'Position out of bounds: z out of bounds in pyMCDS.get_containing_voxel_ijk({x}, {y}, {z}). Setting z = z_max!')
             z = ar_p.max()
         elif z < ar_p.min():
-            warnings.warn(f'Position out of bounds: z out of bounds in pyMCDS._get_voxel_idx({x}, {y}, {z}). Setting z = z_min!')
+            warnings.warn(f'Position out of bounds: z out of bounds in pyMCDS.get_containing_voxel_ijk({x}, {y}, {z}). Setting z = z_min!')
             z = ar_p.min()
 
         i = int(np.round((x - ar_m.min()) / dm))
@@ -200,6 +279,27 @@ class pyMCDS:
         """
         ls_species = sorted(self.data['continuum_variables'].keys())
         return ls_species
+
+    def get_substrate_df(self):
+        """
+        """
+        # extract data
+        dr_sub = {}
+        for s_substrate in self.get_substrate_names():
+
+            s_diffusion_key = f'{s_substrate}_diffusion_coefficient'
+            s_diffusion_value = self.data['continuum_variables'][s_substrate]['diffusion_coefficient']['value']
+            dr_sub.update({s_diffusion_key: [s_diffusion_value]})
+
+            s_decay_key = f'{s_substrate}_decay_rate'
+            s_decay_value = self.data['continuum_variables'][s_substrate]['decay_rate']['value']
+            dr_sub.update({s_decay_key: [s_decay_value]})
+
+        # output
+        df_substrate = pd.DataFrame(dr_sub, index=['value']).T
+        df_substrate.index.name = 'parameter'
+        return(df_substrate)
+
 
     def get_concentrations(self, species_name, z_slice=None):
         """
@@ -256,11 +356,11 @@ class pyMCDS:
             array of concentrations in the order given by get_substrate_names()
         """
         i, j, k = self.get_containing_voxel_ijk(x, y, z)
-        sub_name_list = self.get_substrate_names()
-        ar_concs = np.zeros(len(sub_name_list))
+        ls_substrate = self.get_substrate_names()
+        ar_concs = np.zeros(len(ls_substrate))
 
-        for ix, sub_name in enumerate(sub_name_list):
-            ar_concs[ix] = self.get_concentrations(sub_name)[j, i, k]
+        for ix, s_substrate in enumerate(ls_substrate):
+            ar_concs[ix] = self.get_concentrations(s_substrate)[j, i, k]
 
         return ar_concs
 
@@ -301,9 +401,9 @@ class pyMCDS:
         ]
         la_data = [ai_i, ai_j, ai_k, ar_m, ar_n, ar_p]
         # handle concentraions
-        for substrat_name in self.get_substrate_names():
-            ls_column.append(substrat_name)
-            ar_conc = self.get_concentrations(species_name=substrat_name, z_slice=None)
+        for s_substrate in self.get_substrate_names():
+            ls_column.append(s_substrate)
+            ar_conc = self.get_concentrations(species_name=s_substrate, z_slice=None)
             la_data.append(ar_conc.flatten(order='C'))
 
         # generate data frame
@@ -334,20 +434,21 @@ class pyMCDS:
         ls_variables : list, shape=[n_variables]
             Contains the names of the cell variables
         """
-        ls_variables = sorted(self.data['discrete_cells'].keys())
+        ls_variables = sorted(self.data['discrete_cells']['data'].keys())
         return ls_variables
 
     def get_cell_df(self):
         """
-        Builds DataFrame from data['discrete_cells']
+        Builds DataFrame from data['discrete_cells']['data']
 
         Returns
         -------
         df_cell : DataFrame, shape=[n_cells, n_variables]
             Dataframe containing the cell data for all cells at this time step
         """
+
         # get cell position and more
-        df_cell = pd.DataFrame(self.data['discrete_cells'])
+        df_cell = pd.DataFrame(self.data['discrete_cells']['data'])
         df_voxel = df_cell.loc[:,['position_x','position_y','position_z']].copy()
 
         # get mesh spacing
@@ -361,14 +462,14 @@ class pyMCDS:
         i_min = 0
         j_min = 0
         k_min = 0
-        i_max = ar_m.flatten().shape[0]
-        j_max = ar_n.flatten().shape[0]
-        k_max = ar_p.flatten().shape[0]
+        i_max = np.unique(ar_m).shape[0] - 1
+        j_max = np.unique(ar_n).shape[0] - 1
+        k_max = np.unique(ar_p).shape[0] - 1
 
         # get voxel for each cell
-        df_voxel.loc[:,'voxel_i'] = np.round((df_voxel.loc[:,'position_x'] - m_min) / dm)
-        df_voxel.loc[:,'voxel_j'] = np.round((df_voxel.loc[:,'position_y'] - n_min) / dn)
-        df_voxel.loc[:,'voxel_k'] = np.round((df_voxel.loc[:,'position_z'] - p_min) / dp)
+        df_voxel.loc[:,'voxel_i'] = np.round((df_voxel.loc[:,'position_x'] - m_min) / dm).astype(int)
+        df_voxel.loc[:,'voxel_j'] = np.round((df_voxel.loc[:,'position_y'] - n_min) / dn).astype(int)
+        df_voxel.loc[:,'voxel_k'] = np.round((df_voxel.loc[:,'position_z'] - p_min) / dp).astype(int)
         df_voxel.loc[(df_voxel.voxel_i > i_max), 'voxel_i'] =  i_max
         df_voxel.loc[(df_voxel.voxel_i < i_min), 'voxel_i'] =  i_min
         df_voxel.loc[(df_voxel.voxel_j > j_max), 'voxel_j'] =  j_max
@@ -376,21 +477,44 @@ class pyMCDS:
         df_voxel.loc[(df_voxel.voxel_k > k_max), 'voxel_k'] =  k_max
         df_voxel.loc[(df_voxel.voxel_k < k_min), 'voxel_k'] =  k_min
 
-        # get voxel position for each cell
-        df_voxel['voxel_position_m'] = df_voxel.loc[:,'voxel_i'] * dm
-        df_voxel['voxel_position_n'] = df_voxel.loc[:,'voxel_j'] * dn
-        df_voxel['voxel_position_p'] = df_voxel.loc[:,'voxel_k'] * dp
+        # merge voxel (inner join)
+        df_cell = pd.merge(df_cell, df_voxel, on=['position_x', 'position_y', 'position_z'])
+
+        # merge cell_density (left join)
+        df_cellcount = df_cell.loc[:,['voxel_i','voxel_j','voxel_k','ID']].groupby(['voxel_i','voxel_j','voxel_k']).count().reset_index()
+        ls_column = list(df_cellcount.columns)
+        ls_column[-1] = 'cell_count_voxel'
+        df_cellcount.columns = ls_column
+        s_density = f"cell_density_{self.data['metadata']['spatial_units']}3"
+        df_cellcount[s_density] = df_cellcount.loc[:,'cell_count_voxel'] / self.get_voxel_volume()
+        df_cell = pd.merge(
+            df_cell,
+            df_cellcount,
+            on = ['voxel_i', 'voxel_j', 'voxel_k'],
+            how = 'left',
+        )
+
+        # microenviroment
+        if self.microenv:
+            # merge substrate (left join)
+            df_sub = self.get_substrate_df()
+            for s_index in df_sub.index:
+                df_cell[s_index] = df_sub.loc[s_index,'value']
+
+            # merge concentration (left join)
+            df_conc = self.get_concentrations_df(z_slice=None)
+            df_cell = pd.merge(
+                df_cell,
+                df_conc,
+                on = ['voxel_i', 'voxel_j', 'voxel_k'],
+                how = 'left',
+            )
 
         # output
-        df_cell = pd.merge(df_cell, df_voxel, on=['position_x', 'position_y', 'position_z'])
         df_cell = df_cell.loc[:, sorted(df_cell.columns)]
-        df_cell = df_cell.astype({
-            'ID': int,
-            'voxel_i': int, 'voxel_j': int, 'voxel_k': int
-            # 'voxel_positions are all real.
-        })
         df_cell.set_index('ID', inplace=True)
         return df_cell
+
 
     def get_cell_df_at(self, x, y, z=0):
         """
@@ -435,6 +559,48 @@ class pyMCDS:
         df_voxel = df_cell[inside_voxel]
         return df_voxel
 
+
+    ## UNIT OVERVIEW RELATED FUNCTION
+
+    def get_unit_df(self):
+        """
+        """
+        # extract data
+        ds_unit = {}
+        # units for metadata parameters
+        ds_unit.update({'time': [self.data['metadata']['time_units']]})
+        ds_unit.update({'runtime': [self.data['metadata']['runtime_units']]})
+        ds_unit.update({'spatial_unit': [self.data['metadata']['spatial_units']]})
+
+        # microenvironment
+        if self.microenv:
+            for s_substrate in self.get_substrate_names():
+                # unit from substrate paramaters
+                s_unit = self.data['continuum_variables'][s_substrate]['units']
+                ds_unit.update({s_substrate: [s_unit]})
+
+                # units from microenvironment paramaters
+                s_diffusion_key = f'{s_substrate}_diffusion_coefficient'
+                s_diffusion_unit = self.data['continuum_variables'][s_substrate]['diffusion_coefficient']['units']
+                ds_unit.update({s_diffusion_key: [s_diffusion_unit]})
+
+                s_decay_key = f'{s_substrate}_decay_rate'
+                s_decay_unit = self.data['continuum_variables'][s_substrate]['decay_rate']['units']
+                ds_unit.update({s_decay_key: [s_decay_unit]})
+
+        # units from cell parameters
+        ds_unit.update(self.data['discrete_cells']['units'])
+
+        # output
+        del ds_unit['ID']
+        df_unit= pd.DataFrame(ds_unit, index=['unit']).T
+        df_unit.index.name = 'parameter'
+        df_unit.sort_index(inplace=True)
+        return(df_unit)
+
+
+    ## LOAD DATA
+
     def _read_xml(self, xml_file, output_path='.', microenv=True):
         """
         Internal function. Does the actual work of initializing MultiCellDS by parsing the xml
@@ -464,25 +630,46 @@ class pyMCDS:
         root = tree.getroot()
         MCDS = {}
 
-        # get current simulated time
+
+        ####################
+        # handle meta data #
+        ####################
+
+        ### find the metadata node ###
         metadata_node = root.find('metadata')
-        time_node = metadata_node.find('current_time')
         MCDS['metadata'] = {}
+
+        # get physicell software version
+        software_node = metadata_node.find('software')
+        physicellv_node = software_node.find('version')
+        MCDS['metadata']['physicell_version'] = physicellv_node.text
+
+        # get timestamp
+        time_node = metadata_node.find('created')
+        MCDS['metadata']['created'] = time_node.text
+
+        # get current simulated time
+        time_node = metadata_node.find('current_time')
         MCDS['metadata']['current_time'] = float(time_node.text)
-        MCDS['metadata']['time_units'] = time_node.get('units')  # bue 20221018: this is never used.
+        MCDS['metadata']['time_units'] = time_node.get('units')
 
         # get current runtime
         time_node = metadata_node.find('current_runtime')
-        MCDS['metadata']['current_runtime'] = float(time_node.text)  # bue 20221018: this is never used.
-        MCDS['metadata']['runtime_units'] = time_node.get('units')  # bue 20221018: this is never used.
+        MCDS['metadata']['current_runtime'] = float(time_node.text)
+        MCDS['metadata']['runtime_units'] = time_node.get('units')
 
         # find the microenvironment node
         me_node = root.find('microenvironment')
         me_node = me_node.find('domain')
 
-        # find the mesh node
+
+        ####################
+        # handle mesh data #
+        ####################
+
+        ### find the mesh node ###
         mesh_node = me_node.find('mesh')
-        MCDS['metadata']['spatial_units'] = mesh_node.get('units')  # bue 20221018: this is never used.
+        MCDS['metadata']['spatial_units'] = mesh_node.get('units')
         MCDS['mesh'] = {}
 
         # while we're at it, find the mesh
@@ -521,16 +708,20 @@ class pyMCDS:
         # volume specified by fourth row
         MCDS['mesh']['voxels'] = {}
         MCDS['mesh']['voxels']['centers'] = initial_mesh[:3, :]
-        MCDS['mesh']['voxels']['volumes'] = initial_mesh[3, :]  # bue 20221018: this is never used.
+        MCDS['mesh']['voxels']['volumes'] = initial_mesh[3, :]
 
-        # get microenvironment data
+
+        ################################
+        # handle microenvironment data #
+        ################################
+
         if microenv:
+            MCDS['continuum_variables'] = {}
 
             # Continuum_variables, unlike in the matlab version the individual chemical
             # species will be primarily accessed through their names e.g.
             # MCDS['continuum_variables']['oxygen']['units']
             # MCDS['continuum_variables']['glucose']['data']
-            MCDS['continuum_variables'] = {}
             variables_node = me_node.find('variables')
             file_node = me_node.find('data').find('filename')
 
@@ -561,9 +752,9 @@ class pyMCDS:
             for i_s, species in enumerate(var_children):
                 species_name = species.get('name')
                 MCDS['continuum_variables'][species_name] = {}
-                MCDS['continuum_variables'][species_name]['units'] = species.get('units')  # bue 20221018: this is never used.
+                MCDS['continuum_variables'][species_name]['units'] = species.get('units')
 
-                print('Parsing {:s} data'.format(species_name))
+                print('Parsing {} data'.format(species_name))
 
                 # initialize array for concentration data
                 MCDS['continuum_variables'][species_name]['data'] = np.zeros(ar_mmm.shape)
@@ -571,14 +762,14 @@ class pyMCDS:
                 # travel down one level on tree
                 species = species.find('physical_parameter_set')
 
-                # diffusion data for each species  bue 20221018: this is never used.
+                # diffusion data for each species
                 MCDS['continuum_variables'][species_name]['diffusion_coefficient'] = {}
                 MCDS['continuum_variables'][species_name]['diffusion_coefficient']['value'] \
                     = float(species.find('diffusion_coefficient').text)
                 MCDS['continuum_variables'][species_name]['diffusion_coefficient']['units'] \
                     = species.find('diffusion_coefficient').get('units')
 
-                # decay data for each species  bue 20221018: this is never used.
+                # decay data for each species
                 MCDS['continuum_variables'][species_name]['decay_rate'] = {}
                 MCDS['continuum_variables'][species_name]['decay_rate']['value'] \
                     = float(species.find('decay_rate').text)
@@ -598,7 +789,11 @@ class pyMCDS:
                     # store value
                     MCDS['continuum_variables'][species_name]['data'][j, i, k] = me_data[4+i_s, vox_idx]
 
-        # get cell data
+
+        ####################
+        # handel cell data #
+        ####################
+
         # in order to get to the good stuff we have to pass through a few different
         # hierarchal levels
         cell_node = root.find('cellular_information')
@@ -608,20 +803,22 @@ class pyMCDS:
         # we want the PhysiCell data, there is more of it
         for child in cell_node.findall('simplified_data'):
             if child.get('source') == 'PhysiCell':
-                cell_node = child
+                cellchild_node = child
                 break
 
         print( 'working on discrete cell data...\n')
 
         MCDS['discrete_cells'] = {}
-        
+
         # iterate over 'label's which are children of 'labels' these will be used to
         # label data arrays
         data_labels = []
-        for label in cell_node.find('labels').findall('label'):
+        ds_unit = {}
+        for label in cellchild_node.find('labels').findall('label'):
             # I don't like spaces in my dictionary keys
             fixed_label = label.text.replace(' ', '_')
             nlabels = int(label.get('size'))
+            s_unit = label.get('units')
             if nlabels > 1:
                 # tags to differentiate repeated labels (usually space related)
                 # print("n=",n)
@@ -645,14 +842,20 @@ class pyMCDS:
                         dir_label.append( '_%u' % nn )
                 # print( dir_label )
                 for i in range(int(label.get('size'))):
-                    # print( fixed_label + dir_label[i] )
-                    data_labels.append(fixed_label + dir_label[i])
+                    s_label = fixed_label + dir_label[i]
+                    # print(s_label)
+                    data_labels.append(s_label)
+                    ds_unit.update({s_label : s_unit})
             else:
+                # print(fixed_label)
                 data_labels.append(fixed_label)
-            # print(fixed_label)
+                ds_unit.update({fixed_label : s_unit})
+
+        # store unit
+        MCDS['discrete_cells']['units'] = ds_unit
 
         # load the file
-        cell_file = cell_node.find('filename').text
+        cell_file = cellchild_node.find('filename').text
         cell_pathfile = output_path / cell_file
         try:
             cell_data = io.loadmat(cell_pathfile)['cells']
@@ -660,11 +863,47 @@ class pyMCDS:
             raise FileNotFoundError(
                 "No such file or directory:\n'{}' referenced in '{}'".format(cell_pathfile, xml_pathfile))
             sys.exit(1)
-        
         print('Reading {}'.format(cell_pathfile))
 
         # store data
+        MCDS['discrete_cells']['data'] = {}
         for col in range(len(data_labels)):
-            MCDS['discrete_cells'][data_labels[col]] = cell_data[col, :]
+            MCDS['discrete_cells']['data'][data_labels[col]] = cell_data[col, :]
 
+
+        ##################
+        # get graph data #
+        ##################
+
+        MCDS['discrete_cells']['graph'] = {}
+
+        # neighborhod cell graph
+        cellgraph_node = cell_node.find('neighbor_graph')
+        cell_file = cellgraph_node.find('filename').text
+        cell_pathfile = output_path / cell_file
+        try:
+            dei_graph = graph_file_parser(s_pathfile=cell_pathfile)
+        except:
+            raise FileNotFoundError("No such file or directory:\n'{}' referenced in '{}'".format(cell_file, xml_pathfile))
+            sys.exit(1)
+        print('Reading {}'.format(cell_pathfile))
+
+        # store data
+        MCDS['discrete_cells']['graph'].update({'neighbor_cells': dei_graph})
+
+        # attached cell graph
+        cellgraph_node = cell_node.find('attached_cells_graph')
+        cell_file = cellgraph_node.find('filename').text
+        cell_pathfile = output_path / cell_file
+        try:
+            dei_graph = graph_file_parser(s_pathfile=cell_pathfile)
+        except:
+            raise FileNotFoundError("No such file or directory:\n'{}' referenced in '{}'".format(cell_file, xml_pathfile))
+            sys.exit(1)
+        print('Reading {}'.format(cell_pathfile))
+
+        # store data
+        MCDS['discrete_cells']['graph'].update({'attached_cells': dei_graph})
+
+        # output
         return MCDS
