@@ -68,10 +68,11 @@ Within the pcDataLoader library, I try to stick to the documentation policy line
     + **pyMCDS** takes new additionally a boolean parameter termed **microenv**, to specify if the microenvironment (substrates) should be read out (for completeness) or not (for speed increase).
     + **mcds.get_2D_mesh** was renamed to **mcds.get_mesh_2D** for consistency.
     + **mcds.get_linear_voxels** was renamed to **mcds.get_mesh_linear** for consistency.
+    + **mcds.get_containing_voxel_ijk** was renamed to **mcds.get_voxel_ijk** for biefness.
     + **mcds.get_voxel_spacing** returns now 3 specific values, one for x, y, and z, insted of 1 general value.
     + **mcds.get_cell_variables** and **mcds.get_substrate_names** return now a strictly alphabetically ordered list.
     + **mcds.get_cell_df** returns now a pandas dataframe with the cell IDs the index and not as a column.
-      additionaly, this dataframe has now voxel, voxel_position, substrate parameter, substrate concentration, and cell density columns.
+      additionaly, this dataframe has now voxel, mesh_center, substrate parameter, substrate concentration, and cell density columns.
     + new **mcds.get_concentration_df** function.
     + new **mcds.get_substrate_df** function.
     + new **mcds.get_unit_df** function.
@@ -79,9 +80,19 @@ Within the pcDataLoader library, I try to stick to the documentation policy line
     + new **mcds.get_runtime** function.
     + new **mcds.get_timestamp** function.
     + new **mcds.get_voxel_volume** function.
+    + new **mcds.get_x_range** function.
+    + new **mcds.get_y_range** function.
+    + new **mcds.get_z_range** function.
+    + new **mcds.get_mesh_m_range** function.
+    + new **mcds.get_mesh_n_range** function.
+    + new **mcds.get_mesh_p_range** function.
+    + new **mcds.get_voxel_i_range** function.
+    + new **mcds.get_voxel_j_range** function.
+    + new **mcds.get_voxel_k_range** function.
+    + new **mcds.is_in_mesh** function.
     + new **mcds.get_attached_graph_dict** function.
     + new **mcds.get_neigbor_graph_dict** function.
-    + cell positions are now constandly labeld as **x,y,z**, voxel positions as **m,n,p**, and voxels as **i,j,k**.
+    + cell positon coordinats are now constandly labeld as **x,y,z**, mesh center coordinates as **m,n,p**, and voxel coordinates as **i,j,k**.
     + [pytest](https://en.wikipedia.org/wiki/Pytest) unit tests for all pyMCDS and pyMCDS_timeseries functions.
 
 + version 2.0.0 (2022-08-30): elmbeech/pcDataLoader pip installable release, derived from and compatible with PhysiCell-Tools/python-loader release 1.1.0 (2022-07-20).

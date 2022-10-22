@@ -39,7 +39,7 @@ class TestPyMcdsShortcut3D(object):
 
 
 # load physicell data with microenvironment
-class TestPyMcdsMicroenvTrue3D(object):
+class TestPyMcds3D(object):
     ''' test for pc.pyMCDS data loader microenvironment True'''
     mcds = pc.pyMCDS(xml_file=s_file_3d, output_path=s_path_3d, microenv=True)
 
@@ -79,6 +79,42 @@ class TestPyMcdsMicroenvTrue3D(object):
                (len(dei_graph[20459]) == 13)
 
     ## mesh related functions
+    def test_mcds_get_x_range(self, mcds=mcds):
+        tr_range = mcds.get_x_range()
+        assert tr_range == (-30, 300)
+
+    def test_mcds_get_y_range(self, mcds=mcds):
+        tr_range = mcds.get_y_range()
+        assert tr_range == (-20, 200)
+
+    def test_mcds_get_z_range(self, mcds=mcds):
+        tr_range = mcds.get_z_range()
+        assert tr_range == (-10, 100)
+
+    def test_mcds_get_mesh_m_range(self, mcds=mcds):
+        tr_range = mcds.get_mesh_m_range()
+        assert tr_range == (-15, 285)
+
+    def test_mcds_get_mesh_n_range(self, mcds=mcds):
+        tr_range = mcds.get_mesh_n_range()
+        assert tr_range == (-10, 190)
+
+    def test_mcds_get_mesh_p_range(self, mcds=mcds):
+        tr_range = mcds.get_mesh_p_range()
+        assert tr_range == (-5, 95)
+
+    def test_mcds_get_voxel_i_range(self, mcds=mcds):
+        tr_range = mcds.get_voxel_i_range()
+        assert tr_range == (0, 11)
+
+    def test_mcds_get_voxel_j_range(self, mcds=mcds):
+        tr_range = mcds.get_voxel_j_range()
+        assert tr_range == (0, 11)
+
+    def test_mcds_get_voxel_k_range(self, mcds=mcds):
+        tr_range = mcds.get_voxel_k_range()
+        assert tr_range == (0, 11)
+
     def test_mcds_get_mesh_flat_false(self, mcds=mcds):
         lar_mesh = mcds.get_mesh(flat=False)
         assert (str(type(lar_mesh)) == "<class 'list'>") and \
@@ -143,24 +179,27 @@ class TestPyMcdsMicroenvTrue3D(object):
         r_volume = mcds.get_voxel_volume()
         assert r_volume == 6000.0
 
-    def test_mcds_get_containing_voxel_ijk(self, mcds=mcds):
-        li_voxel_0 = mcds.get_containing_voxel_ijk(x=0, y=0, z=0)
-        li_voxel_1 = mcds.get_containing_voxel_ijk(x=15, y=10, z=5)
-        li_voxel_2 = mcds.get_containing_voxel_ijk(x=30, y=20, z=10)
+    def test_mcds_get_voxel_ijk(self, mcds=mcds):
+        li_voxel_0 = mcds.get_voxel_ijk(x=0, y=0, z=0)
+        li_voxel_1 = mcds.get_voxel_ijk(x=15, y=10, z=5)
+        li_voxel_2 = mcds.get_voxel_ijk(x=30, y=20, z=10)
         assert (li_voxel_0 == [0, 0, 0]) and \
                (li_voxel_1 == [1, 1, 1]) and \
                (li_voxel_2 == [2, 2, 2])
 
+    def test_mcds_is_in_mesh(self, mcds=mcds):
+        assert mcds.is_in_mesh(x=42, y=42, z=42, b_break=False) and \
+               not mcds.is_in_mesh(x=-42, y=-42, z=-42, b_break=False)
+
     ## micro environment related functions
     def test_mcds_get_substrate_names(self, mcds=mcds):
         ls_substrate = mcds.get_substrate_names()
-        assert ls_substrate == ['immunostimulatory factor', 'oxygen']
+        assert ls_substrate == ['immunostimulatory_factor', 'oxygen']
 
     def test_mcds_get_substrate_df(self, mcds=mcds):
         df_substrate = mcds.get_substrate_df()
         assert (str(type(df_substrate)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_substrate.shape == (4, 1))
-
 
     def test_mcds_get_concentrations(self, mcds=mcds):
         ar_conc = mcds.get_concentrations(species_name='oxygen', z_slice=None)
@@ -172,6 +211,11 @@ class TestPyMcdsMicroenvTrue3D(object):
         assert (str(type(ar_conc)) == "<class 'numpy.ndarray'>") and \
                (ar_conc.shape == (11, 11))
 
+    def test_mcds_get_concentrations_at(self, mcds=mcds):
+        ar_conc = mcds.get_concentrations_at(x=0, y=0, z=0)
+        assert (str(type(ar_conc)) == "<class 'numpy.ndarray'>") and \
+               (ar_conc.shape == (2,))
+
     def test_mcds_get_concentrations_df(self, mcds=mcds):
         df_conc = mcds.get_concentrations_df(z_slice=None)
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
@@ -181,11 +225,6 @@ class TestPyMcdsMicroenvTrue3D(object):
         df_conc = mcds.get_concentrations_df(z_slice=-5)
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_conc.shape == (121, 8))
-
-    def test_mcds_get_concentrations_at(self, mcds=mcds):
-        ar_conc = mcds.get_concentrations_at(x=0, y=0, z=0)
-        assert (str(type(ar_conc)) == "<class 'numpy.ndarray'>") and \
-               (ar_conc.shape == (2,))
 
     ## cell realted functions
     def test_mcds_get_cell_variables(self, mcds=mcds):

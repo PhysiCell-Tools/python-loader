@@ -1,11 +1,20 @@
+###########
+#
+#
+#
+###########
+
+
+# load library
 import xml.etree.ElementTree as ET
 import numpy as np
 import pandas as pd
 from scipy import io
 import sys
-import warnings
 from pathlib import Path
 
+
+# functions
 def graph_file_parser(s_pathfile):
     """
     input:
@@ -33,7 +42,7 @@ def graph_file_parser(s_pathfile):
     return(dei_graph)
 
 
-
+# object classes
 class pyMCDS:
     """
     This class contains a dictionary of dictionaries that contains all of the
@@ -64,9 +73,11 @@ class pyMCDS:
         Hierarchical container for all of the data retrieved by parsing the xml
         file and the files referenced therein.
     """
-    def __init__(self, xml_file, output_path='.', microenv=True):
-        self.data = self._read_xml(xml_file, output_path, microenv)
+    def __init__(self, xml_file, output_path='.', microenv=True, verbose=True):
         self.microenv = microenv
+        self.verbose = verbose
+        self.data = self._read_xml(xml_file, output_path)
+
 
     ## METADATA RELATED FUNCTIONS
 
@@ -74,6 +85,7 @@ class pyMCDS:
         """
         """
         return self.data['metadata']['physicell_version']
+
 
     def get_timestamp(self):
         """
@@ -84,6 +96,7 @@ class pyMCDS:
         BUE
         """
         return self.data['metadata']['created']
+
 
     def get_time(self):
         """
@@ -108,11 +121,13 @@ class pyMCDS:
 
 
     ## GRAPH RELATED FUNCTIONS
+
     def get_attached_graph_dict(self):
         """
         BUE
         """
         return self.data['discrete_cells']['graph']['attached_cells']
+
 
     def get_neighbor_graph_dict(self):
         """
@@ -122,6 +137,60 @@ class pyMCDS:
 
 
     ## MESH RELATED FUNCTIONS
+
+    def get_x_range(self):
+        '''
+        '''
+        return self.data['mesh']['x_range']
+
+
+    def get_y_range(self):
+        '''
+        '''
+        return self.data['mesh']['y_range']
+
+
+    def get_z_range(self):
+        '''
+        '''
+        return self.data['mesh']['z_range']
+
+
+    def get_mesh_m_range(self):
+        '''
+        '''
+        return self.data['mesh']['m_range']
+
+
+    def get_mesh_n_range(self):
+        '''
+        '''
+        return self.data['mesh']['n_range']
+
+
+    def get_mesh_p_range(self):
+        '''
+        '''
+        return self.data['mesh']['p_range']
+
+
+    def get_voxel_i_range(self):
+        '''
+        '''
+        return self.data['mesh']['i_range']
+
+
+    def get_voxel_j_range(self):
+        '''
+        '''
+        return self.data['mesh']['j_range']
+
+
+    def get_voxel_k_range(self):
+        '''
+        '''
+        return self.data['mesh']['k_range']
+
 
     def get_mesh(self, flat=False):
         """
@@ -143,17 +212,18 @@ class pyMCDS:
             [nx_voxel, ny_voxel, nz_voxel] or [nx_voxel, ny_voxel] if flat=True.
         """
         if flat:
-            ar_m = self.data['mesh']['x_coordinates'][:, :, 0]
-            ar_n = self.data['mesh']['y_coordinates'][:, :, 0]
+            ar_m = self.data['mesh']['m_coordinates'][:, :, 0]
+            ar_n = self.data['mesh']['n_coordinates'][:, :, 0]
 
             return [ar_m, ar_n]
 
         else:
-            ar_m = self.data['mesh']['x_coordinates']
-            ar_n = self.data['mesh']['y_coordinates']
-            ar_p = self.data['mesh']['z_coordinates']
+            ar_m = self.data['mesh']['m_coordinates']
+            ar_n = self.data['mesh']['n_coordinates']
+            ar_p = self.data['mesh']['p_coordinates']
 
             return [ar_m, ar_n, ar_p]
+
 
     def get_mesh_2D(self):
         """
@@ -168,6 +238,7 @@ class pyMCDS:
         """
         return self.get_mesh(flat=True)
 
+
     def get_mesh_linear(self):
         """
         Helper function to quickly grab voxel centers array stored linearly as
@@ -181,8 +252,9 @@ class pyMCDS:
         -------
         flattend array of voxel position
         """
-        ar_m, ar_n, ar_p, = self.data['mesh']['voxels']['centers']
+        ar_m, ar_n, ar_p, = self.data['mesh']['mnp_coordinates']  # bue ['voxels']['centers']
         return [ar_m, ar_n, ar_p]
+
 
     def get_mesh_spacing(self):
         """
@@ -205,16 +277,19 @@ class pyMCDS:
             dp = np.round((ar_p.max() - ar_p.min()) / (len(set(ar_p)) - 1))
         return [dm, dn, dp]
 
+
     def get_voxel_volume(self):
         """
         """
-        ar_volume = np.unique(self.data['mesh']['voxels']['volumes'])
+        ar_volume = np.unique(self.data['mesh']['volumes'])  # bue ['voxels']['volumes']
         if ar_volume.shape != (1,):
-            sys.exit(f'Error: mesh is not built out of a unique voxel volume. {ar_volume}')
+            sys.exit(f'Error @ pyMCDS.get_voxel_volume : mesh is not built out of a unique voxel volume {ar_volume}.')
         r_volume = ar_volume[0]
         return(r_volume)
 
-    def get_containing_voxel_ijk(self, x, y, z):
+
+    # bue def get_containing_voxel_ijk(self, x, y, z):
+    def get_voxel_ijk(self, x, y, z):
         """
         Internal function to get the meshgrid indices for the center of a voxel
         that contains the given position.
@@ -237,33 +312,42 @@ class pyMCDS:
         ijk : list length=3
             contains the i, j, and k indices for the containing voxel's center
         """
-        ar_m, ar_n, ar_p = self.get_mesh()
+        tr_m = self.get_mesh_m_range()
+        tr_n = self.get_mesh_n_range()
+        tr_p = self.get_mesh_p_range()
         dm, dn, dp = self.get_mesh_spacing()
 
-        if x > ar_m.max():
-            warnings.warn(f'Position out of bounds: x out of bounds in pyMCDS.get_containing_voxel_ijk({x}, {y}, {z}). Setting x = x_max!')
-            x = ar_m.max()
-        elif x < ar_m.min():
-            warnings.warn(f'Position out of bounds: x out of bounds in pyMCDS.get_containing_voxel_ijk({x}, {y}, {z}). Setting x = x_min!')
-            x = ar_m.min()
-        elif y > ar_n.max():
-            warnings.warn(f'Position out of bounds: y out of bounds in pyMCDS.get_containing_voxel_ijk({x}, {y}, {z}). Setting y = y_max!')
-            y = ar_n.max()
-        elif y < ar_n.min():
-            warnings.warn(f'Position out of bounds: y out of bounds in pyMCDS.get_containing_voxel_ijk({x}, {y}, {z}). Setting y = y_min!')
-            y = ar_n.min()
-        elif z > ar_p.max():
-            warnings.warn(f'Position out of bounds: z out of bounds in pyMCDS.get_containing_voxel_ijk({x}, {y}, {z}). Setting z = z_max!')
-            z = ar_p.max()
-        elif z < ar_p.min():
-            warnings.warn(f'Position out of bounds: z out of bounds in pyMCDS.get_containing_voxel_ijk({x}, {y}, {z}). Setting z = z_min!')
-            z = ar_p.min()
-
-        i = int(np.round((x - ar_m.min()) / dm))
-        j = int(np.round((y - ar_n.min()) / dn))
-        k = int(np.round((z - ar_p.min()) / dp))
+        i = int(np.round((x - tr_m[0]) / dm))
+        j = int(np.round((y - tr_n[0]) / dn))
+        k = int(np.round((z - tr_p[0]) / dp))
 
         return [i, j, k]
+
+    def is_in_mesh(self, x, y, z, b_break=True):
+        '''
+        #print("_read_xml: bbox_coords= ",bbox_coords)  # rwh: [xmin ymin zmin xmax ymax zmax]
+        '''
+        b_isinmesh = True
+
+        # check againt boundary box
+        tr_xrange = self.get_x_range()
+        tr_yrange = self.get_y_range()
+        tr_zrange = self.get_z_range()
+
+        if (x < tr_xrange[0]) or (x > tr_xrange[1]):
+            print(f'Warning @ pyMCDS.is_in_mesh : x = {x} out of bounds: x-range is {tr_xrange}.')
+            b_isinmesh = False
+        elif (y < tr_yrange[0]) or (y > tr_yrange[1]):
+            print(f'Warning @ pyMCDS.is_in_mesh : y = {y} out of bounds: y-range is {tr_yrange}.')
+            b_isinmesh = False
+        elif (z < tr_zrange[0]) or (z > tr_zrange[1]):
+            print(f'Warning @ pyMCDS.is_in_mesh : z = {z} out of bounds: z-range is {tr_zrange}.')
+            b_isinmesh = False
+
+        # output
+        if b_break and not b_isinmesh:
+            sys.exit('Processing stopped!')
+        return(b_isinmesh)
 
 
     ## MICROENVIRONMENT RELATED FUNCTIONS
@@ -279,6 +363,7 @@ class pyMCDS:
         """
         ls_species = sorted(self.data['continuum_variables'].keys())
         return ls_species
+
 
     def get_substrate_df(self):
         """
@@ -324,17 +409,18 @@ class pyMCDS:
             The array spatially maps to a meshgrid of the voxel centers.
         """
         ar_conc = self.data['continuum_variables'][species_name]['data']
+        ar_p = self.data['mesh']['p_coordinates']
 
-        if not (z_slice is None):
-            # check to see that z_slice is a valid plane
-            ar_p = self.data['mesh']['z_coordinates']
-            assert z_slice in ar_p, 'Specified z_slice {} not in z_coordinates'.format(z_slice)
-
-            # do the processing if its ok
-            mask = ar_p == z_slice
-            ar_conc = ar_conc[mask].reshape((ar_p.shape[0], ar_p.shape[1]))
+        if not (z_slice is None): 
+            if (z_slice in ar_p):
+                # filter by z_slice
+                mask = ar_p == z_slice
+                ar_conc = ar_conc[mask].reshape((ar_p.shape[0], ar_p.shape[1]))
+            else:
+                sys.exit(f'Error @ pyMCDS.get_concentrations : specified z_slice {z_slice} not in z_coordinates {np.unique(ar_p)}.')
 
         return ar_conc
+
 
     def get_concentrations_at(self, x, y, z=0):
         """
@@ -355,14 +441,17 @@ class pyMCDS:
         ar_concs : array, shape=[n_substrates,]
             array of concentrations in the order given by get_substrate_names()
         """
-        i, j, k = self.get_containing_voxel_ijk(x, y, z)
+        i, j, k = self.get_voxel_ijk(x, y, z)
         ls_substrate = self.get_substrate_names()
         ar_concs = np.zeros(len(ls_substrate))
 
-        for ix, s_substrate in enumerate(ls_substrate):
-            ar_concs[ix] = self.get_concentrations(s_substrate)[j, i, k]
+        for n, s_substrate in enumerate(ls_substrate):
+            ar_concs[n] = self.get_concentrations(s_substrate)[j, i, k]
+            if self.verbose:
+                print(f'pyMCD.get_concentrations_at(x={x},y={y},z={z}) > jkl: [{i},{j},{k}] > substrate: {s_substrate} {ar_concs[n]}')
 
         return ar_concs
+
 
     def get_concentrations_df(self, z_slice=None):
         """
@@ -383,21 +472,23 @@ class pyMCDS:
         ar_m = ar_m.flatten(order='C')
         ar_n = ar_n.flatten(order='C')
         ar_p = ar_p.flatten(order='C')
-        # get min
-        m_min = ar_m.min()
-        n_min = ar_n.min()
-        p_min = ar_p.min()
+
+        # check to see that z_slice is a valid plane
+        if not (z_slice is None) and not (z_slice in ar_p):
+            sys.exit(f'Error @ pyMCDS.get_concentrations_df : specified z_slice {z_slice} not in z_coordinates {np.unique(ar_p)}.')
+
         # get voxel spacing
         dm, dn, dp = self.get_mesh_spacing()
+
         # get voxel coordinates
-        ai_i = ((ar_m - m_min) / dm)
-        ai_j = ((ar_n - n_min) / dn)
-        ai_k = ((ar_p - p_min) / dp)
+        ai_i = ((ar_m - ar_m.min()) / dm)
+        ai_j = ((ar_n - ar_n.min()) / dn)
+        ai_k = ((ar_p - ar_p.min()) / dp)
 
         # handle coordinates
         ls_column = [
             'voxel_i','voxel_j','voxel_k',
-            'voxel_position_m','voxel_position_n','voxel_position_p'
+            'mesh_center_m','mesh_center_n','mesh_center_p'
         ]
         la_data = [ai_i, ai_j, ai_k, ar_m, ar_n, ar_p]
         # handle concentraions
@@ -409,17 +500,15 @@ class pyMCDS:
         # generate data frame
         aa_data  = np.array(la_data)
         df_conc = pd.DataFrame(aa_data.T, columns=ls_column)
-        d_dtype = {'voxel_i': int, 'voxel_j': int, 'voxel_k': int}  # bue: voxel_positions are all real.
+        d_dtype = {'voxel_i': int, 'voxel_j': int, 'voxel_k': int}  # bue: mesh_center are all real.
         df_conc = df_conc.astype(d_dtype)
 
         # filter
         if not (z_slice is None):
-            assert z_slice in ar_p, 'Error: specifier z_slice {} not in z_coordinates'.format(z_slice)
-            df_conc = df_conc.loc[df_conc.voxel_position_p == z_slice, :]
+           df_conc = df_conc.loc[df_conc.mesh_center_p == z_slice, :]
 
         # output
         return df_conc
-
 
 
     ## CELL RELATED FUNCTIONS
@@ -436,6 +525,7 @@ class pyMCDS:
         """
         ls_variables = sorted(self.data['discrete_cells']['data'].keys())
         return ls_variables
+
 
     def get_cell_df(self):
         """
@@ -541,7 +631,7 @@ class pyMCDS:
         ar_m, ar_n, ar_p = self.get_mesh()
 
         # get voxel coordinate
-        i, j, k = self.get_containing_voxel_ijk(x, y, z)
+        i, j, k = self.get_voxel_ijk(x, y, z)
         m = ar_m[j, i, k]
         n = ar_n[j, i, k]
         p = ar_p[j, i, k]
@@ -549,12 +639,12 @@ class pyMCDS:
         # get voxel
         df_cell = self.get_cell_df()
         inside_voxel = (
-            (df_cell['position_x'] < m + dm / 2) &
-            (df_cell['position_x'] > m - dm / 2) &
-            (df_cell['position_y'] < n + dn / 2) &
-            (df_cell['position_y'] > n - dn / 2) &
-            (df_cell['position_z'] < p + dp / 2) &
-            (df_cell['position_z'] > p - dp / 2)
+            (df_cell['position_x'] <= m + dm / 2) &
+            (df_cell['position_x'] >= m - dm / 2) &
+            (df_cell['position_y'] <= n + dn / 2) &
+            (df_cell['position_y'] >= n - dn / 2) &
+            (df_cell['position_z'] <= p + dp / 2) &
+            (df_cell['position_z'] >= p - dp / 2)
         )
         df_voxel = df_cell[inside_voxel]
         return df_voxel
@@ -601,7 +691,7 @@ class pyMCDS:
 
     ## LOAD DATA
 
-    def _read_xml(self, xml_file, output_path='.', microenv=True):
+    def _read_xml(self, xml_file, output_path='.'):
         """
         Internal function. Does the actual work of initializing MultiCellDS by parsing the xml
 
@@ -625,7 +715,8 @@ class pyMCDS:
 
         # read xml path/file
         tree = ET.parse(xml_pathfile)
-        print('Reading {}'.format(xml_pathfile))
+        if self.verbose:
+            print(f'Reading: {xml_pathfile}')
 
         root = tree.getroot()
         MCDS = {}
@@ -634,6 +725,9 @@ class pyMCDS:
         ####################
         # handle meta data #
         ####################
+
+        if self.verbose:
+            print('working on meta data ...')
 
         ### find the metadata node ###
         metadata_node = root.find('metadata')
@@ -667,6 +761,9 @@ class pyMCDS:
         # handle mesh data #
         ####################
 
+        if self.verbose:
+            print('working on mesh data ...')
+
         ### find the mesh node ###
         mesh_node = me_node.find('mesh')
         MCDS['metadata']['spatial_units'] = mesh_node.get('units')
@@ -687,35 +784,57 @@ class pyMCDS:
 
         # reshape into a mesh grid
         ar_mmm, ar_nnn, ar_ppp = np.meshgrid(x_coords, y_coords, z_coords)
+        
+        MCDS['mesh']['m_coordinates'] = ar_mmm
+        MCDS['mesh']['n_coordinates'] = ar_nnn
+        MCDS['mesh']['p_coordinates'] = ar_ppp
+        
+        # get voxel range
+        MCDS['mesh']['i_range'] = (0, len(set(ar_mmm.flatten())))
+        MCDS['mesh']['j_range'] = (0, len(set(ar_nnn.flatten())))
+        MCDS['mesh']['k_range'] = (0, len(set(ar_ppp.flatten())))
 
-        MCDS['mesh']['x_coordinates'] = ar_mmm
-        MCDS['mesh']['y_coordinates'] = ar_nnn
-        MCDS['mesh']['z_coordinates'] = ar_ppp
+        # get mesh center range
+        MCDS['mesh']['m_range'] = (ar_mmm.min(), ar_mmm.max())
+        MCDS['mesh']['n_range'] = (ar_nnn.min(), ar_nnn.max())
+        MCDS['mesh']['p_range'] = (ar_ppp.min(), ar_ppp.max())
+
+        # get mesh bounding box range [xmin ymin zmin xmax ymax zmax]
+        bboxcoor_str = mesh_node.find('bounding_box').text
+        delimiter = mesh_node.find('bounding_box').get('delimiter')
+        ar_bboxcoor = np.array(bboxcoor_str.split(delimiter), dtype=np.float64) 
+        
+        MCDS['mesh']['x_range'] = (ar_bboxcoor[0], ar_bboxcoor[3])
+        MCDS['mesh']['y_range'] = (ar_bboxcoor[1], ar_bboxcoor[4])
+        MCDS['mesh']['z_range'] = (ar_bboxcoor[2], ar_bboxcoor[5])
 
         # voxel data must be loaded from .mat file
         voxel_file = mesh_node.find('voxels').find('filename').text
         voxel_pathfile = output_path / voxel_file
         try:
             initial_mesh = io.loadmat(voxel_pathfile)['mesh']
+            if self.verbose:
+                print(f'Reading: {voxel_pathfile}')
         except:
-            raise FileNotFoundError(
-                "No such file or directory:\n'{}' referenced in '{}'".format(voxel_pathfile, xml_pathfile))
+            raise FileNotFoundError(f'Error @ pyMCDS._read_xml : no such file or directory: {voxel_pathfile}\nreferenced in: {xml_pathfile}.')
             sys.exit(1)
 
-        print('Reading {}'.format(voxel_pathfile))
 
         # center of voxel specified by first three rows [ x, y, z ]
         # volume specified by fourth row
-        MCDS['mesh']['voxels'] = {}
-        MCDS['mesh']['voxels']['centers'] = initial_mesh[:3, :]
-        MCDS['mesh']['voxels']['volumes'] = initial_mesh[3, :]
+        #MCDS['mesh']['voxels'] = {}
+        MCDS['mesh']['mnp_coordinates'] = initial_mesh[:3, :]   # bue ['voxels']['centers']
+        MCDS['mesh']['volumes'] = initial_mesh[3, :]  # bue ['voxels']['volumes']
 
 
         ################################
         # handle microenvironment data #
         ################################
 
-        if microenv:
+        if self.microenv:
+            if self.verbose:
+                print('working on microenvironment data ...')
+
             MCDS['continuum_variables'] = {}
 
             # Continuum_variables, unlike in the matlab version the individual chemical
@@ -734,12 +853,12 @@ class pyMCDS:
             # Changes here
             try:
                 me_data = io.loadmat(me_pathfile)['multiscale_microenvironment']
+                if self.verbose:
+                    print(f'Reading: {me_pathfile}')
             except:
-                raise FileNotFoundError(
-                    "No such file or directory:\n'{}' referenced in '{}'".format(me_pathfile, xml_pathfile))
+                raise FileNotFoundError(f'Error @ pyMCDS._read_xml : no such file or directory: {me_pathfile,}\nreferenced in: {xml_pathfile}.')
                 sys.exit(1)
 
-            print('Reading {}'.format(me_pathfile))
 
             var_children = variables_node.findall('variable')
 
@@ -750,11 +869,14 @@ class pyMCDS:
             ar_p = np.unique(ar_ppp)
 
             for i_s, species in enumerate(var_children):
-                species_name = species.get('name')
+                # i don't like spaces in species names!
+                species_name = species.get('name').replace(' ', '_')
+
                 MCDS['continuum_variables'][species_name] = {}
                 MCDS['continuum_variables'][species_name]['units'] = species.get('units')
 
-                print('Parsing {} data'.format(species_name))
+                if self.verbose:
+                    print(f'Parsing: {species_name} data')
 
                 # initialize array for concentration data
                 MCDS['continuum_variables'][species_name]['data'] = np.zeros(ar_mmm.shape)
@@ -778,10 +900,10 @@ class pyMCDS:
 
                 # store data from microenvironment file as numpy array
                 # iterate over each voxel
-                for vox_idx in range(MCDS['mesh']['voxels']['centers'].shape[1]):
+                for vox_idx in range(MCDS['mesh']['mnp_coordinates'].shape[1]):
 
                     # find the voxel coordinate
-                    ar_center = MCDS['mesh']['voxels']['centers'][:, vox_idx]
+                    ar_center = MCDS['mesh']['mnp_coordinates'][:, vox_idx]
                     i = np.where(np.abs(ar_center[0] - ar_m) < 1e-10)[0][0]
                     j = np.where(np.abs(ar_center[1] - ar_n) < 1e-10)[0][0]
                     k = np.where(np.abs(ar_center[2] - ar_p) < 1e-10)[0][0]
@@ -794,8 +916,10 @@ class pyMCDS:
         # handel cell data #
         ####################
 
-        # in order to get to the good stuff we have to pass through a few different
-        # hierarchal levels
+        if self.verbose:
+            print('working on discrete cell data ...')
+
+        # in order to get to the good stuff we have to pass through a few different hierarchal levels
         cell_node = root.find('cellular_information')
         cell_node = cell_node.find('cell_populations')
         cell_node = cell_node.find('cell_population')
@@ -806,8 +930,6 @@ class pyMCDS:
                 cellchild_node = child
                 break
 
-        print( 'working on discrete cell data...\n')
-
         MCDS['discrete_cells'] = {}
 
         # iterate over 'label's which are children of 'labels' these will be used to
@@ -815,7 +937,7 @@ class pyMCDS:
         data_labels = []
         ds_unit = {}
         for label in cellchild_node.find('labels').findall('label'):
-            # I don't like spaces in my dictionary keys
+            # I don't like spaces in my dictionary keys!
             fixed_label = label.text.replace(' ', '_')
             nlabels = int(label.get('size'))
             s_unit = label.get('units')
@@ -859,11 +981,11 @@ class pyMCDS:
         cell_pathfile = output_path / cell_file
         try:
             cell_data = io.loadmat(cell_pathfile)['cells']
+            if self.verbose:
+                print(f'Reading: {cell_pathfile}')
         except:
-            raise FileNotFoundError(
-                "No such file or directory:\n'{}' referenced in '{}'".format(cell_pathfile, xml_pathfile))
+            raise FileNotFoundError(f'Error @ pyMCDS._read_xml : no such file or directory: {cell_pathfile}\nreferenced in: {xml_pathfile}.')
             sys.exit(1)
-        print('Reading {}'.format(cell_pathfile))
 
         # store data
         MCDS['discrete_cells']['data'] = {}
@@ -875,6 +997,9 @@ class pyMCDS:
         # get graph data #
         ##################
 
+        if self.verbose:
+            print('working on graph data ...')
+
         MCDS['discrete_cells']['graph'] = {}
 
         # neighborhod cell graph
@@ -883,10 +1008,11 @@ class pyMCDS:
         cell_pathfile = output_path / cell_file
         try:
             dei_graph = graph_file_parser(s_pathfile=cell_pathfile)
+            if self.verbose:
+                print(f'Reading: {cell_pathfile}')
         except:
-            raise FileNotFoundError("No such file or directory:\n'{}' referenced in '{}'".format(cell_file, xml_pathfile))
+            raise FileNotFoundError(f'Error @ pyMCDS._read_xml : no such file or directory: {cell_pathfile}\nreferenced in: {xml_pathfile}.')
             sys.exit(1)
-        print('Reading {}'.format(cell_pathfile))
 
         # store data
         MCDS['discrete_cells']['graph'].update({'neighbor_cells': dei_graph})
@@ -897,13 +1023,16 @@ class pyMCDS:
         cell_pathfile = output_path / cell_file
         try:
             dei_graph = graph_file_parser(s_pathfile=cell_pathfile)
+            if self.verbose:
+                print(f'Reading: {cell_pathfile}')
         except:
-            raise FileNotFoundError("No such file or directory:\n'{}' referenced in '{}'".format(cell_file, xml_pathfile))
+            raise FileNotFoundError(f'Error @ pyMCDS._read_xml : no such file or directory: {cell_pathfile}\nreferenced in: {xml_pathfile}.')
             sys.exit(1)
-        print('Reading {}'.format(cell_pathfile))
 
         # store data
         MCDS['discrete_cells']['graph'].update({'attached_cells': dei_graph})
 
         # output
+        if self.verbose:
+            print('done!')
         return MCDS
