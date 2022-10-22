@@ -65,7 +65,8 @@ Within the pcDataLoader library, I try to stick to the documentation policy line
 ## Release Notes:
 + version 3.0.0 (2022-++-++): elmbeech/pcDataLoader
     + **pyMCDS** parameter **xml_file** can now handle path/file.xml (unix) or path\file.xml (dos) input, aslong output_path is the default.
-    + **pyMCDS** takes new additionally a boolean parameter termed **microenv**, to specify if the microenvironment (substrates) should be read out (for completeness) or not (for speed increase).
+    + **pyMCDS** has a new additionally a boolean parameter termed **microenv**, to specify if the microenvironment (substrates) should be read out (for completeness) or not (for speed increase).
+    + **pyMCDS** has a new additionally a boolean parameter termed **verbose**, to specify if there should be text output while processing.
     + **mcds.get_2D_mesh** was renamed to **mcds.get_mesh_2D** for consistency.
     + **mcds.get_linear_voxels** was renamed to **mcds.get_mesh_linear** for consistency.
     + **mcds.get_containing_voxel_ijk** was renamed to **mcds.get_voxel_ijk** for biefness.
@@ -92,6 +93,9 @@ Within the pcDataLoader library, I try to stick to the documentation policy line
     + new **mcds.is_in_mesh** function.
     + new **mcds.get_attached_graph_dict** function.
     + new **mcds.get_neigbor_graph_dict** function.
+    + new class **pyMCDS_movie** to generates a move form the svd files.
+    + class **pyMCDS_timeseries** retuns now only and simply an ordered list of mcds objects.
+    + all **plotting** functions were removed, because pcDataLoader only focus on making the raw data in python easy accessible for in-depth analysis.
     + cell positon coordinats are now constandly labeld as **x,y,z**, mesh center coordinates as **m,n,p**, and voxel coordinates as **i,j,k**.
     + [pytest](https://en.wikipedia.org/wiki/Pytest) unit tests for all pyMCDS and pyMCDS_timeseries functions.
 

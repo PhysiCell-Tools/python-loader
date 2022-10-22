@@ -323,7 +323,7 @@ class pyMCDS:
 
         return [i, j, k]
 
-    def is_in_mesh(self, x, y, z, b_break=True):
+    def is_in_mesh(self, x, y, z, halt=True):
         '''
         #print("_read_xml: bbox_coords= ",bbox_coords)  # rwh: [xmin ymin zmin xmax ymax zmax]
         '''
@@ -345,7 +345,7 @@ class pyMCDS:
             b_isinmesh = False
 
         # output
-        if b_break and not b_isinmesh:
+        if halt and not b_isinmesh:
             sys.exit('Processing stopped!')
         return(b_isinmesh)
 
