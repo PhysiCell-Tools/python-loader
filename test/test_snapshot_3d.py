@@ -41,7 +41,7 @@ class TestPyMcdsShortcut3D(object):
 # load physicell data with microenvironment
 class TestPyMcds3D(object):
     ''' test for pc.pyMCDS data loader microenvironment True'''
-    mcds = pc.pyMCDS(xml_file=s_file_3d, output_path=s_path_3d, microenv=True)
+    mcds = pc.pyMCDS(xml_file=s_file_3d, output_path=s_path_3d)  # graph=True, microenv=True
 
     def test_pyMCDS(self, mcds=mcds):
         # load physicell data
@@ -188,8 +188,8 @@ class TestPyMcds3D(object):
                (li_voxel_2 == [2, 2, 2])
 
     def test_mcds_is_in_mesh(self, mcds=mcds):
-        assert mcds.is_in_mesh(x=42, y=42, z=42, b_break=False) and \
-               not mcds.is_in_mesh(x=-42, y=-42, z=-42, b_break=False)
+        assert mcds.is_in_mesh(x=42, y=42, z=42, halt=False) and \
+               not mcds.is_in_mesh(x=-42, y=-42, z=-42, halt=False)
 
     ## micro environment related functions
     def test_mcds_get_substrate_names(self, mcds=mcds):

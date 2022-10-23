@@ -73,8 +73,9 @@ class pyMCDS:
         Hierarchical container for all of the data retrieved by parsing the xml
         file and the files referenced therein.
     """
-    def __init__(self, xml_file, output_path='.', microenv=True, verbose=True):
+    def __init__(self, xml_file, output_path='.', graph=True, microenv=True, verbose=True):
         self.microenv = microenv
+        self.graph = graph
         self.verbose = verbose
         self.data = self._read_xml(xml_file, output_path)
 
@@ -997,40 +998,42 @@ class pyMCDS:
         # get graph data #
         ##################
 
-        if self.verbose:
-            print('working on graph data ...')
+        if self.graph:
 
-        MCDS['discrete_cells']['graph'] = {}
-
-        # neighborhod cell graph
-        cellgraph_node = cell_node.find('neighbor_graph')
-        cell_file = cellgraph_node.find('filename').text
-        cell_pathfile = output_path / cell_file
-        try:
-            dei_graph = graph_file_parser(s_pathfile=cell_pathfile)
             if self.verbose:
-                print(f'Reading: {cell_pathfile}')
-        except:
-            raise FileNotFoundError(f'Error @ pyMCDS._read_xml : no such file or directory: {cell_pathfile}\nreferenced in: {xml_pathfile}.')
-            sys.exit(1)
+                print('working on graph data ...')
 
-        # store data
-        MCDS['discrete_cells']['graph'].update({'neighbor_cells': dei_graph})
+            MCDS['discrete_cells']['graph'] = {}
 
-        # attached cell graph
-        cellgraph_node = cell_node.find('attached_cells_graph')
-        cell_file = cellgraph_node.find('filename').text
-        cell_pathfile = output_path / cell_file
-        try:
-            dei_graph = graph_file_parser(s_pathfile=cell_pathfile)
-            if self.verbose:
-                print(f'Reading: {cell_pathfile}')
-        except:
-            raise FileNotFoundError(f'Error @ pyMCDS._read_xml : no such file or directory: {cell_pathfile}\nreferenced in: {xml_pathfile}.')
-            sys.exit(1)
+            # neighborhod cell graph
+            cellgraph_node = cell_node.find('neighbor_graph')
+            cell_file = cellgraph_node.find('filename').text
+            cell_pathfile = output_path / cell_file
+            try:
+                dei_graph = graph_file_parser(s_pathfile=cell_pathfile)
+                if self.verbose:
+                    print(f'Reading: {cell_pathfile}')
+            except:
+                raise FileNotFoundError(f'Error @ pyMCDS._read_xml : no such file or directory: {cell_pathfile}\nreferenced in: {xml_pathfile}.')
+                sys.exit(1)
 
-        # store data
-        MCDS['discrete_cells']['graph'].update({'attached_cells': dei_graph})
+            # store data
+            MCDS['discrete_cells']['graph'].update({'neighbor_cells': dei_graph})
+
+            # attached cell graph
+            cellgraph_node = cell_node.find('attached_cells_graph')
+            cell_file = cellgraph_node.find('filename').text
+            cell_pathfile = output_path / cell_file
+            try:
+                dei_graph = graph_file_parser(s_pathfile=cell_pathfile)
+                if self.verbose:
+                    print(f'Reading: {cell_pathfile}')
+            except:
+                raise FileNotFoundError(f'Error @ pyMCDS._read_xml : no such file or directory: {cell_pathfile}\nreferenced in: {xml_pathfile}.')
+                sys.exit(1)
+
+            # store data
+            MCDS['discrete_cells']['graph'].update({'attached_cells': dei_graph})
 
         # output
         if self.verbose:

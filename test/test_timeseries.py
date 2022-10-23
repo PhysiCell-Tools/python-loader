@@ -1,21 +1,55 @@
+####
+# title: test_timeseries.py
+#
+# language: python3
+# author: bue
+# date: 2022-10-15
+# license: BSD 3-Clause
+#
+# description:
+#   pytest unit test library for heat.py
+#   + https://docs.pytest.org/
+#
+#   note:
+#   assert actual == expected, message
+#   == value equality
+#   is reference equality
+#   pytest.approx for real values
+#####
+
 # load library
+import os
 import pathlib
-import pcDataLoader
-from pcDataLoader import pyMCDS_timeseries
+import pcDataLoader as pc
 
-# load physicell timeseries data
-mcds = pyMCDS_timeseries(str(pathlib.Path(pcDataLoader.__file__).parent.resolve() / 'data_timeseries'))
+# const
+s_path_2d = str(pathlib.Path(pc.__file__).parent.resolve()/'data_timeseries_2d')
 
-# command to extract basic timeseries information
-mcds.get_times()
+# load physicell data timeseries
+class TestPyMcdsTimeseries(object):
+    ''' test for pc.pyMCDS_timeseries data loader. '''
+    mcds = pc.pyMCDS_ts(s_path_2d, verbose=False)
 
-# howto extract data form a single timepoint
-# check out test_single.py for more details
-mcd1 = mcds.timeseries[0]
-print(mcd1.get_time())
-print(mcds.timeseries[0].get_time())
+    def test_mcds_get_xmlfile_list(self, mcds=mcds):
+        ls_xmlfile = mcds.get_xmlfile_list()
+        assert len(ls_xmlfile) == 25
 
-# plotting commands
-chem_list = mcds.timeseries[0].get_substrate_names()
-mcds.plot_menv_total(chem_list)
-mcds.plot_cell_type_counts()
+    def test_mcds_get_xmlfile_list_read_mcds(self, mcds=mcds):
+        ls_xmlfile = mcds.get_xmlfile_list()
+        ls_xmlfile = ls_xmlfile[-3:]
+        ls_mcds = mcds.read_mcds(ls_xmlfile)
+        assert len(ls_xmlfile) == 3 and \
+               len(ls_mcds) == 3 and \
+               ls_mcds[2].get_time() == 1440
+
+    def test_mcds_read_mcds(self, mcds=mcds):
+        ls_mcds = mcds.read_mcds()
+        assert len(ls_mcds) == 25 and \
+               ls_mcds[-1].get_time() == 1440
+
+    #def test_mcds_make_movie(self, mcds=mcds):
+    #    s_pathfile = mcds.make_movie()
+    #    if os.path.isfile(s_pathfile):
+    #        os.remove(s_pathfile)
+    #    assert os.path.isfile(s_pathfile)
+
