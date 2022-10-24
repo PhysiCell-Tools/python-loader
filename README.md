@@ -65,39 +65,47 @@ Within the pcDataLoader library, I try to stick to the documentation policy line
 ## Release Notes:
 + version 3.0.0 (2022-++-++): elmbeech/pcDataLoader
     + **pyMCDS** parameter **xml_file** can now handle path/file.xml (unix) or path\file.xml (dos) input, aslong output_path is the default.
-    + **pyMCDS** has a new additionally a boolean parameter termed **microenv**, to specify if the microenvironment (substrates) should be read out (for completeness) or not (for speed increase).
-    + **pyMCDS** has a new additionally a boolean parameter termed **verbose**, to specify if there should be text output while processing.
-    + **mcds.get_2D_mesh** was renamed to **mcds.get_mesh_2D** for consistency.
-    + **mcds.get_linear_voxels** was renamed to **mcds.get_mesh_linear** for consistency.
-    + **mcds.get_containing_voxel_ijk** was renamed to **mcds.get_voxel_ijk** for biefness.
-    + **mcds.get_voxel_spacing** returns now 3 specific values, one for x, y, and z, insted of 1 general value.
-    + **mcds.get_cell_variables** and **mcds.get_substrate_names** return now a strictly alphabetically ordered list.
-    + **mcds.get_cell_df** returns now a pandas dataframe with the cell IDs the index and not as a column.
+    + **pyMCDS** has a new additionally a boolean **microenv** parameter, to specify if the microenvironment (substrates) should be read (for completeness) or not (for speed increase and less memory usage).
+    + **pyMCDS** has a new additionally a boolean **graph** parameter, to specify if the attached and neighbor graph should be read.
+    + **pyMCDS** has a new additionally a boolean **verbose** parameter, to specify if there should be text output while processing.
+    + pyMCDS **mcds.get_2D_mesh** was renamed to **mcds.get_mesh_2D** for consistency.
+    + pyMCDS **mcds.get_linear_voxels** was renamed to **mcds.get_mesh_linear** for consistency.
+    + pyMCDS **mcds.get_containing_voxel_ijk** was renamed to **mcds.get_voxel_ijk** for biefness.
+    + pyMCDS **mcds.get_voxel_spacing** returns now 3 specific values, one for x, y, and z, insted of 1 general value.
+    + pyMCDS **mcds.get_cell_variables** and **mcds.get_substrate_names** return now a strictly alphabetically ordered list.
+    + pyMCDS **mcds.get_cell_df** returns now a pandas dataframe with the cell IDs the index and not as a column.
       additionaly, this dataframe has now voxel, mesh_center, substrate parameter, substrate concentration, and cell density columns.
-    + new **mcds.get_concentration_df** function.
-    + new **mcds.get_substrate_df** function.
-    + new **mcds.get_unit_df** function.
-    + new **mcds.get_physicell_version** function.
-    + new **mcds.get_runtime** function.
-    + new **mcds.get_timestamp** function.
-    + new **mcds.get_voxel_volume** function.
-    + new **mcds.get_x_range** function.
-    + new **mcds.get_y_range** function.
-    + new **mcds.get_z_range** function.
-    + new **mcds.get_mesh_m_range** function.
-    + new **mcds.get_mesh_n_range** function.
-    + new **mcds.get_mesh_p_range** function.
-    + new **mcds.get_voxel_i_range** function.
-    + new **mcds.get_voxel_j_range** function.
-    + new **mcds.get_voxel_k_range** function.
-    + new **mcds.is_in_mesh** function.
-    + new **mcds.get_attached_graph_dict** function.
-    + new **mcds.get_neigbor_graph_dict** function.
-    + new class **pyMCDS_movie** to generates a move form the svd files.
-    + class **pyMCDS_timeseries** retuns now only and simply an ordered list of mcds objects.
+    + new pyMCDS **mcds.get_concentration_df** function.
+    + new pyMCDS **mcds.get_substrate_df** function.
+    + new pyMCDS **mcds.get_unit_df** function.
+    + new pyMCDS **mcds.get_physicell_version** function.
+    + new pyMCDS **mcds.get_runtime** function.
+    + new pyMCDS **mcds.get_timestamp** function.
+    + new pyMCDS **mcds.get_voxel_volume** function.
+    + new pyMCDS **mcds.get_x_range** function.
+    + new pyMCDS **mcds.get_y_range** function.
+    + new pyMCDS **mcds.get_z_range** function.
+    + new pyMCDS **mcds.get_mesh_m_range** function.
+    + new pyMCDS **mcds.get_mesh_n_range** function.
+    + new pyMCDS **mcds.get_mesh_p_range** function.
+    + new pyMCDS **mcds.get_voxel_i_range** function.
+    + new pyMCDS **mcds.get_voxel_j_range** function.
+    + new pyMCDS **mcds.get_voxel_k_range** function.
+    + new pyMCDS **mcds.is_in_mesh** function.
+    + new pyMCDS **mcds.get_attached_graph_dict** function.
+    + new pyMCDS **mcds.get_neigbor_graph_dict** function.
+    + class **pyMCDS_timeseries** was renamed to **pyMCDSts** and completly rewritten.
+    + new pyMCDSts **get_xmlfile_list** function.
+    + new pyMCDSts **read_mcds** function.
+    + new pyMCDSts **make_gif** function.
+    + new pyMCDSts **make_jpeg** function.
+    + new pyMCDSts **make_png** function.
+    + new pyMCDSts **make_tiff** function.
+    + new pyMCDSts **make_movie** function.
     + all **plotting** functions were removed, because pcDataLoader only focus on making the raw data in python easy accessible for in-depth analysis.
     + cell positon coordinats are now constandly labeld as **x,y,z**, mesh center coordinates as **m,n,p**, and voxel coordinates as **i,j,k**.
-    + [pytest](https://en.wikipedia.org/wiki/Pytest) unit tests for all pyMCDS and pyMCDS_timeseries functions.
+    + the underling mcds object dictionary structure has changed.
+    + [pytest](https://en.wikipedia.org/wiki/Pytest) unit tests exist now for all pyMCDS and pyMCDSts functions.
 
 + version 2.0.0 (2022-08-30): elmbeech/pcDataLoader pip installable release, derived from and compatible with PhysiCell-Tools/python-loader release 1.1.0 (2022-07-20).
 + version 1.1.0 (2022-05-09): Physicell-Tools/python-loader release compatible with pre-v1.10.x of PhysiCell
