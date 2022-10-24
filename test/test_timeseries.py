@@ -26,9 +26,9 @@ import pcDataLoader as pc
 s_path_2d = str(pathlib.Path(pc.__file__).parent.resolve()/'data_timeseries_2d')
 
 # load physicell data timeseries
-class TestPyMcdsTimeseries(object):
-    ''' test for pc.pyMCDS_timeseries data loader. '''
-    mcds = pc.pyMCDS_ts(s_path_2d, verbose=False)
+class TestPyMcdsTs(object):
+    ''' test for pc.pyMCDStimeseries data loader. '''
+    mcds = pc.pyMCDSts(s_path_2d, verbose=False)
 
     def test_mcds_get_xmlfile_list(self, mcds=mcds):
         ls_xmlfile = mcds.get_xmlfile_list()
@@ -47,9 +47,19 @@ class TestPyMcdsTimeseries(object):
         assert len(ls_mcds) == 25 and \
                ls_mcds[-1].get_time() == 1440
 
-    #def test_mcds_make_movie(self, mcds=mcds):
-    #    s_pathfile = mcds.make_movie()
-    #    if os.path.isfile(s_pathfile):
-    #        os.remove(s_pathfile)
-    #    assert os.path.isfile(s_pathfile)
+    ## resize ##
+    def test_mcds_handle_resize(self, mcds=mcds):
+        s_resize = mcds._handle_resize()
+        assert s_resize == ''
 
+    def test_mcds_handle_resize_1(self, mcds=mcds):
+        s_resize = mcds._handle_resize(resize_factor=1)
+        assert s_resize == ''
+
+    def test_mcds_handle_resize_2(self, mcds=mcds):
+        s_resize = mcds._handle_resize(resize_factor=2)
+        assert s_resize == "-resize '660.0!x470.8!'"
+
+    def test_mcds_handle_resize_movie(self, mcds=mcds):
+        s_resize = mcds._handle_resize(movie=True)
+        assert s_resize == "-resize '330!x234!'"

@@ -30,11 +30,11 @@ s_pathfile_2d = f'{s_path_2d}/{s_file_2d}'
 # load physicell data with microenvironment
 class TestPyMcdsMicroenvTrue2D(object):
     ''' test for pc.pyMCDS data loader, the complete data set. '''
-    mcds = pc.pyMCDS(xml_file=s_file_2d, output_path=s_path_2d, microenv=True)
+    mcds = pc.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, microenv=True)
 
     def test_pyMCDS(self, mcds=mcds):
         # load physicell data
-        print(f'process: pc.pyMCDS(xml_file={s_file_2d}, output_path={s_path_2d}, microenv=True) ...')
+        print(f'process: pc.pyMCDS(xmlfile={s_file_2d}, output_path={s_path_2d}, microenv=True) ...')
         assert str(type(mcds)) == "<class 'pcDataLoader.pyMCDS.pyMCDS'>"
 
     ## metadata realted functions

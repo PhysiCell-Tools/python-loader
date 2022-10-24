@@ -6,16 +6,15 @@
 
 
 # load library
-import xml.etree.ElementTree as ET
 import numpy as np
 import pandas as pd
+import pathlib
 from scipy import io
 import sys
-from pathlib import Path
-
+import xml.etree.ElementTree as ET
 
 # functions
-def graph_file_parser(s_pathfile):
+def graphfile_parser(s_pathfile):
     """
     input:
         s_pathfile
@@ -73,11 +72,11 @@ class pyMCDS:
         Hierarchical container for all of the data retrieved by parsing the xml
         file and the files referenced therein.
     """
-    def __init__(self, xml_file, output_path='.', graph=True, microenv=True, verbose=True):
+    def __init__(self, xmlfile, output_path='.', graph=True, microenv=True, verbose=True):
         self.microenv = microenv
         self.graph = graph
         self.verbose = verbose
-        self.data = self._read_xml(xml_file, output_path)
+        self.data = self._read_xml(xmlfile, output_path)
 
 
     ## METADATA RELATED FUNCTIONS
@@ -692,7 +691,7 @@ class pyMCDS:
 
     ## LOAD DATA
 
-    def _read_xml(self, xml_file, output_path='.'):
+    def _read_xml(self, xmlfile, output_path='.'):
         """
         Internal function. Does the actual work of initializing MultiCellDS by parsing the xml
 
@@ -706,18 +705,18 @@ class pyMCDS:
             BUE
         """
         # file and path manipulation
-        xml_file = xml_file.replace('\\','/')
-        if (xml_file.find('/') > -1) and (output_path == '.'):
-            ls_xml_file = xml_file.split('/')
-            xml_file = ls_xml_file.pop(-1)
-            output_path = '/'.join(ls_xml_file)
-        output_path = Path(output_path)
-        xml_pathfile = output_path / xml_file
+        xmlfile = xmlfile.replace('\\','/')
+        if (xmlfile.find('/') > -1) and (output_path == '.'):
+            ls_xmlfile = xmlfile.split('/')
+            xmlfile = ls_xmlfile.pop(-1)
+            output_path = '/'.join(ls_xmlfile)
+        output_path = pathlib.Path(output_path)
+        xmlpathfile = output_path / xmlfile
 
         # read xml path/file
-        tree = ET.parse(xml_pathfile)
+        tree = ET.parse(xmlpathfile)
         if self.verbose:
-            print(f'Reading: {xml_pathfile}')
+            print(f'Reading: {xmlpathfile}')
 
         root = tree.getroot()
         MCDS = {}
@@ -810,14 +809,14 @@ class pyMCDS:
         MCDS['mesh']['z_range'] = (ar_bboxcoor[2], ar_bboxcoor[5])
 
         # voxel data must be loaded from .mat file
-        voxel_file = mesh_node.find('voxels').find('filename').text
-        voxel_pathfile = output_path / voxel_file
+        voxelfile = mesh_node.find('voxels').find('filename').text
+        voxelpathfile = output_path / voxelfile
         try:
-            initial_mesh = io.loadmat(voxel_pathfile)['mesh']
+            initial_mesh = io.loadmat(voxelpathfile)['mesh']
             if self.verbose:
-                print(f'Reading: {voxel_pathfile}')
+                print(f'Reading: {voxelpathfile}')
         except:
-            raise FileNotFoundError(f'Error @ pyMCDS._read_xml : no such file or directory: {voxel_pathfile}\nreferenced in: {xml_pathfile}.')
+            raise FileNotFoundError(f'Error @ pyMCDS._read_xml : no such file or directory: {voxelpathfile}\nreferenced in: {xmlpathfile}.')
             sys.exit(1)
 
 
@@ -849,15 +848,15 @@ class pyMCDS:
             # of species being tracked. the first 3 rows represent (x, y, z) of voxel
             # centers. The fourth row contains the voxel volume. The 5th row and up will
             # contain values for that species in that voxel.
-            me_file = file_node.text
-            me_pathfile = output_path / me_file
+            mefile = file_node.text
+            mepathfile = output_path / mefile
             # Changes here
             try:
-                me_data = io.loadmat(me_pathfile)['multiscale_microenvironment']
+                me_data = io.loadmat(mepathfile)['multiscale_microenvironment']
                 if self.verbose:
-                    print(f'Reading: {me_pathfile}')
+                    print(f'Reading: {mepathfile}')
             except:
-                raise FileNotFoundError(f'Error @ pyMCDS._read_xml : no such file or directory: {me_pathfile,}\nreferenced in: {xml_pathfile}.')
+                raise FileNotFoundError(f'Error @ pyMCDS._read_xml : no such file or directory: {mepathfile,}\nreferenced in: {xmlpathfile}.')
                 sys.exit(1)
 
 
@@ -978,14 +977,14 @@ class pyMCDS:
         MCDS['discrete_cells']['units'] = ds_unit
 
         # load the file
-        cell_file = cellchild_node.find('filename').text
-        cell_pathfile = output_path / cell_file
+        cellfile = cellchild_node.find('filename').text
+        cellpathfile = output_path / cellfile
         try:
-            cell_data = io.loadmat(cell_pathfile)['cells']
+            cell_data = io.loadmat(cellpathfile)['cells']
             if self.verbose:
-                print(f'Reading: {cell_pathfile}')
+                print(f'Reading: {cellpathfile}')
         except:
-            raise FileNotFoundError(f'Error @ pyMCDS._read_xml : no such file or directory: {cell_pathfile}\nreferenced in: {xml_pathfile}.')
+            raise FileNotFoundError(f'Error @ pyMCDS._read_xml : no such file or directory: {cellpathfile}\nreferenced in: {xmlpathfile}.')
             sys.exit(1)
 
         # store data
@@ -1007,14 +1006,14 @@ class pyMCDS:
 
             # neighborhod cell graph
             cellgraph_node = cell_node.find('neighbor_graph')
-            cell_file = cellgraph_node.find('filename').text
-            cell_pathfile = output_path / cell_file
+            cellfile = cellgraph_node.find('filename').text
+            cellpathfile = output_path / cellfile
             try:
-                dei_graph = graph_file_parser(s_pathfile=cell_pathfile)
+                dei_graph = graphfile_parser(s_pathfile=cellpathfile)
                 if self.verbose:
-                    print(f'Reading: {cell_pathfile}')
+                    print(f'Reading: {cellpathfile}')
             except:
-                raise FileNotFoundError(f'Error @ pyMCDS._read_xml : no such file or directory: {cell_pathfile}\nreferenced in: {xml_pathfile}.')
+                raise FileNotFoundError(f'Error @ pyMCDS._read_xml : no such file or directory: {cellpathfile}\nreferenced in: {xmlpathfile}.')
                 sys.exit(1)
 
             # store data
@@ -1022,14 +1021,14 @@ class pyMCDS:
 
             # attached cell graph
             cellgraph_node = cell_node.find('attached_cells_graph')
-            cell_file = cellgraph_node.find('filename').text
-            cell_pathfile = output_path / cell_file
+            cellfile = cellgraph_node.find('filename').text
+            cellpathfile = output_path / cellfile
             try:
-                dei_graph = graph_file_parser(s_pathfile=cell_pathfile)
+                dei_graph = graphfile_parser(s_pathfile=cellpathfile)
                 if self.verbose:
-                    print(f'Reading: {cell_pathfile}')
+                    print(f'Reading: {cellpathfile}')
             except:
-                raise FileNotFoundError(f'Error @ pyMCDS._read_xml : no such file or directory: {cell_pathfile}\nreferenced in: {xml_pathfile}.')
+                raise FileNotFoundError(f'Error @ pyMCDS._read_xml : no such file or directory: {cellpathfile}\nreferenced in: {xmlpathfile}.')
                 sys.exit(1)
 
             # store data

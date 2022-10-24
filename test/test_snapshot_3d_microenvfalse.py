@@ -29,11 +29,11 @@ s_pathfile_3d = f'{s_path_3d}/{s_file_3d}'
 # test function
 class TestPyMcdsMicroenvFalse3D(object):
     ''' test for pc.pyMCDS data loader microenvironment False '''
-    mcds = pc.pyMCDS(xml_file=s_file_3d, output_path=s_path_3d, microenv=False)
+    mcds = pc.pyMCDS(xmlfile=s_file_3d, output_path=s_path_3d, microenv=False)
 
     def test_pyMCDS(self, mcds=mcds):
         # load physicell data
-        print(f'process: pc.pyMCDS(xml_file={s_file_3d}, output_path={s_path_3d}, microenv=False) ...')
+        print(f'process: pc.pyMCDS(xmlfile={s_file_3d}, output_path={s_path_3d}, microenv=False) ...')
         assert str(type(mcds)) == "<class 'pcDataLoader.pyMCDS.pyMCDS'>"
 
     ## metadata realted functions
