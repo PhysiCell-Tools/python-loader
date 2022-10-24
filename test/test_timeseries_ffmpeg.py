@@ -30,7 +30,14 @@ class TestPyMcdsTs(object):
     ''' test for pc.pyMCDStimeseries data loader. '''
     mcds = pc.pyMCDSts(s_path_2d, verbose=False)
 
-    ## movie ##
+    ### ffmpeg command ###
+    def test_ffmpeg(self):
+        b_ok = (os.system('ffmpeg -version') == 0)
+        if not b_ok:
+            print('Warning @ pcDataLoader : ffmpeg is not installed!')
+        assert b_ok
+
+    ## making movies ##
     def test_mcds_make_movie_jpeg(self, mcds=mcds):
         s_pathfile = f'{s_path_2d}/movie_jpeg.mp4'
         if os.path.exists(s_pathfile):

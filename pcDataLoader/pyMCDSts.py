@@ -75,7 +75,7 @@ class pyMCDSts:
         '''
         '''
         s_magick = 'magick '
-        if (platform.system() == 'Linux') and (os.system('magick --version') != 0):
+        if (platform.system() == 'Linux') and (os.system('magick --version') != 0) and (os.system('convert --version') == 0):
             s_magick = ''
         return(s_magick)
 
