@@ -71,7 +71,7 @@ class pyMCDSts:
 
 
     ## TRANSFORM SVG
-    def _handle_os(self):
+    def _handle_magick(self):
         '''
         '''
         s_magick = 'magick '
@@ -99,7 +99,7 @@ class pyMCDSts:
         '''
         gif
         '''
-        s_magick = self._handle_os()
+        s_magick = self._handle_magick()
         s_resize = self._handle_resize(resize_factor=resize_factor, movie=False)
 
         # generate gif
@@ -113,7 +113,7 @@ class pyMCDSts:
         '''
         jpeg
         '''
-        s_magick = self._handle_os()
+        s_magick = self._handle_magick()
         s_resize = self._handle_resize(resize_factor=resize_factor, movie=movie)
         os.system(f'{s_magick}mogrify {s_resize} -format jpeg {self.output_path}/*.svg')
 
@@ -121,7 +121,7 @@ class pyMCDSts:
         '''
         png
         '''
-        s_magick = self._handle_os()
+        s_magick = self._handle_magick()
         s_resize = self._handle_resize(resize_factor=resize_factor, movie=movie)
         os.system(f'{s_magick}mogrify {s_resize} {addargs} -format png {self.output_path}/*.svg')
 
@@ -129,7 +129,7 @@ class pyMCDSts:
         '''
         tiff
         '''
-        s_magick = self._handle_os()
+        s_magick = self._handle_magick()
         s_resize = self._handle_resize(resize_factor=resize_factor, movie=movie)
         os.system(f'{s_magick}mogrify {s_resize} -format tiff {self.output_path}/*.svg')
 

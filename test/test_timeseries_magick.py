@@ -30,13 +30,13 @@ class TestPyMcdsTs(object):
     ''' test for pc.pyMCDStimeseries data loader. '''
     mcds = pc.pyMCDSts(s_path_2d, verbose=False)
 
-    ## os ##
-    def test_mcds_handle_os(self, mcds=mcds):
-        s_magick = mcds._handle_os()
+    ## magick command ##
+    def test_mcds_handle_magick(self, mcds=mcds):
+        s_magick = mcds._handle_magick()
         assert s_magick in {'', 'magick '}
 
     ## gif ##
-    def test_make_gif(self, mcds=mcds):
+    def test_mcds_make_gif(self, mcds=mcds):
         s_pathfile = f'{s_path_2d}/timeseries.gif'
         if os.path.exists(s_pathfile):
             os.remove(s_pathfile)
@@ -44,7 +44,7 @@ class TestPyMcdsTs(object):
         assert os.path.exists(s_pathfile)
         os.remove(s_pathfile)
 
-    def test_make_gif_03(self, mcds=mcds):
+    def test_mcds_make_gif_03(self, mcds=mcds):
         s_pathfile = f'{s_path_2d}/timeseries.gif'
         if os.path.exists(s_pathfile):
             os.remove(s_pathfile)
@@ -53,7 +53,7 @@ class TestPyMcdsTs(object):
         os.remove(s_pathfile)
 
     ## jpeg ##
-    def test_make_jpeg(self, mcds=mcds):
+    def test_mcds_make_jpeg(self, mcds=mcds):
         s_pathfile = f'{s_path_2d}/initial.jpeg'
         if os.path.exists(s_pathfile):
             os.remove(s_pathfile)
@@ -63,7 +63,7 @@ class TestPyMcdsTs(object):
             if s_file.endswith('.jpeg'):
                 os.remove(f'{s_path_2d}/{s_file}')
 
-    def test_make_jpeg_03(self, mcds=mcds):
+    def test_mcds_make_jpeg_03(self, mcds=mcds):
         s_pathfile = f'{s_path_2d}/initial.jpeg'
         if os.path.exists(s_pathfile):
             os.remove(s_pathfile)
@@ -74,7 +74,7 @@ class TestPyMcdsTs(object):
                 os.remove(f'{s_path_2d}/{s_file}')
 
     ## png ##
-    def test_make_png(self, mcds=mcds):
+    def test_mcds_make_png(self, mcds=mcds):
         s_pathfile = f'{s_path_2d}/initial.png'
         if os.path.exists(s_pathfile):
             os.remove(s_pathfile)
@@ -84,7 +84,7 @@ class TestPyMcdsTs(object):
             if s_file.endswith('.png'):
                 os.remove(f'{s_path_2d}/{s_file}')
 
-    def test_make_png_03(self, mcds=mcds):
+    def test_mcds_make_png_03(self, mcds=mcds):
         s_pathfile = f'{s_path_2d}/initial.png'
         if os.path.exists(s_pathfile):
             os.remove(s_pathfile)
@@ -95,7 +95,7 @@ class TestPyMcdsTs(object):
                 os.remove(f'{s_path_2d}/{s_file}')
 
     ## tiff ##
-    def test_make_tiff(self, mcds=mcds):
+    def test_mcds_make_tiff(self, mcds=mcds):
         s_pathfile = f'{s_path_2d}/initial.tiff'
         if os.path.exists(s_pathfile):
             os.remove(s_pathfile)
@@ -105,7 +105,7 @@ class TestPyMcdsTs(object):
             if s_file.endswith('.tiff'):
                 os.remove(f'{s_path_2d}/{s_file}')
 
-    def test_make_tiff_03(self, mcds=mcds):
+    def test_mcds_make_tiff_03(self, mcds=mcds):
         s_pathfile = f'{s_path_2d}/initial.tiff'
         if os.path.exists(s_pathfile):
             os.remove(s_pathfile)
