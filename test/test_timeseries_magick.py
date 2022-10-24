@@ -34,15 +34,9 @@ class TestPyMcdsTs(object):
     ## magick command ##
     def test_mcds_handle_magick(self, mcds=mcds):
         s_magick = mcds._handle_magick()
-        if (platform.system() == 'Linux') and (os.system('magick --version') != 0) and (os.system('convert --version') == 0):
-            print('Okay @ pyMCDSts._handle_magick : image magick installation version < 7.0 found.')
-        elif (platform.system() in {'Windows', 'Darwin', 'Linux'} and (os.system('magick --version') != 0)):
-            print('Warning @ pyMCDSts._handle_magick : image magick installation version >= 7.0 missing!')
+        if not((os.system('magick --version') == 0) or ((platform.system() in {'Linux'}) and (os.system('convert --version') == 0))):
             s_magick = None
-        elif not (platform.system() in {'Windows', 'Darwin', 'Linux'}):
-            print('Okay @ pyMCDSts._handle_magick : you are running an other operating system then Windows, MacOS, or Linux.\nPlease check manullay if you have image magick version >= 7.0 installed!')
-        else:
-            pass
+            print('Error @ pyMCDSts._handle_magick : image magick installation version >= 7.0 missing!')
         assert s_magick in {'', 'magick '}
 
     ## gif ##
