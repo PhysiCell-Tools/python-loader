@@ -714,6 +714,7 @@ class pyMCDS:
         xmlpathfile = output_path / xmlfile
 
         # read xml path/file
+        # 20221027 juliano: d = xmltodict.parse(open('PhysiCell_settings.xml').read(), process_namespaces=True)
         tree = ET.parse(xmlpathfile)
         if self.verbose:
             print(f'Reading: {xmlpathfile}')
