@@ -72,6 +72,7 @@ Within the pcDataLoader library, I try to stick to the documentation policy line
     + pyMCDS **mcds.get_linear_voxels** was renamed to **mcds.get_mesh_axis** for consistency.
     + pyMCDS **mcds.get_containing_voxel_ijk** was renamed to **mcds.get_voxel_ijk** for biefness.
     + pyMCDS **mcds.get_voxel_spacing** returns now 3 specific values, one for x, y, and z, insted of 1 general value.
+    + pyMCDS **mcds.get_concentrations** if z_slice is not a mesh center value, the function will by default adjust to nearest and no longer break.
     + pyMCDS **mcds.get_cell_variables** and **mcds.get_substrate_names** return now a strictly alphabetically ordered list.
     + pyMCDS **mcds.get_cell_df** returns now a pandas dataframe with the cell IDs the index and not as a column.
       additionaly, this dataframe has now voxel, mesh_center, substrate parameter, substrate concentration, and cell density columns.

@@ -348,19 +348,19 @@ class pyMCDS:
             self: pyMCDS class instance.
 
             flat : bool; default False
-                if flat is True, only the m-axis mesh center 
+                if flat is True, only the m-axis mesh center
                 and n-axis mesh center meshgrids will be returned.
                 else the m, n, and p mesh center meshgrids will be returned.
 
         output:
             la_meshgrid : list of numpy arrays.
-                meshgrid shaped objects, each  with the mesh center 
+                meshgrid shaped objects, each  with the mesh center
                 coordinate values from one particular axis.
 
         description:
-            function returns a list of meshgrids each stores the 
-            mesh center coordinate values from one particular axis. 
-            the function can either return meshgrids for the full 
+            function returns a list of meshgrids each stores the
+            mesh center coordinate values from one particular axis.
+            the function can either return meshgrids for the full
             m, n, p 3D cube, or only the 2D planes along the p axis.
         """
         if flat:
@@ -382,11 +382,11 @@ class pyMCDS:
 
         output:
             la_meshgrid : list of 2 numpy arrays.
-                meshgrid shaped objects, with the mesh center 
+                meshgrid shaped objects, with the mesh center
                 coordinate values from the m and n-axis, respective.
 
         description:
-            function is identical to the self.get_mesh(self, flat=True) 
+            function is identical to the self.get_mesh(self, flat=True)
             function call.
         """
         return self.get_mesh(flat=True)
@@ -397,12 +397,12 @@ class pyMCDS:
         input:
             self: pyMCDS class instance.
 
-        output: 
+        output:
             la_meshaxis : list of 3 one dimensonal numpy arrays.
-                n, m, and p-axis mesh center coorinate vectors. 
+                n, m, and p-axis mesh center coorinate vectors.
 
         desription:
-            function returns three vectors with mesh center coordinate values, 
+            function returns three vectors with mesh center coordinate values,
             one for each axis.
         """
         ar_m, ar_n, ar_p, = self.data['mesh']['mnp_coordinates']
@@ -417,12 +417,12 @@ class pyMCDS:
         output:
             lr_nmpspacing: list of 3 floating point numbers.
                 mesh spacing in m, n, and p direction.
-        
+
         description:
-            function returns the distance in between voxel centers 
-            in the spacial unit defined in the PhysiCell_settings.xml file. 
+            function returns the distance in between voxel centers
+            in the spacial unit defined in the PhysiCell_settings.xml file.
         """
-        ar_m, ar_n, ar_p = self.get_mesh_linear()
+        ar_m, ar_n, ar_p = self.get_mesh_axis()
 
         # bue: dm = np.round((ar_m.max() - ar_m.min()) / (len(set(ar_m)) - 1))
         # bue:dn = np.round((ar_n.max() - ar_n.min()) / (len(set(ar_n)) - 1))
@@ -448,7 +448,7 @@ class pyMCDS:
 
         description:
             function returns the volume value for a single voxel, related
-            to the spacial unit defined in the PhysiCell_settings.xml file. 
+            to the spacial unit defined in the PhysiCell_settings.xml file.
         """
         ar_volume = np.unique(self.data['mesh']['volumes'])
         if ar_volume.shape != (1,):
@@ -474,11 +474,11 @@ class pyMCDS:
 
         output:
             li_ijk : list of 3 integers
-                i, j, k indices for the voxel 
+                i, j, k indices for the voxel
                 containing the x, y, z position.
-        
+
         description:
-            function returns the meshgrid indices i, j, k 
+            function returns the meshgrid indices i, j, k
             for the given cell position x, y, z.
         """
         tr_m = self.get_mesh_m_range()
@@ -493,7 +493,7 @@ class pyMCDS:
         return [i, j, k]
 
 
-    def is_in_mesh(self, x, y, z, halt=True):
+    def is_in_mesh(self, x, y, z, halt=False):
         """
         input:
             self: pyMCDS class instance.
@@ -507,18 +507,19 @@ class pyMCDS:
             z : floating point number
                 cell position z-coordinate
 
-            halt: boolean, default is True
+            halt: boolean; default is False
                 should program execution break or just spit out a waring,
                 if cell position is not in mesh?
 
         output:
             b_isinmesh: boolean
-            states, if the given coordinat is inside the mesh.
+            states if the given coordinat is inside the mesh.
 
         description:
             function evaluates, if the given cell position coordinat
-            is inside the bounderies and breaks programm execution, 
-            if so specified.
+            is inside the bounderies. if the coordinate is outside the
+            mesh, a waring will be printed. if additionally halt is True,
+            programm execution will break.
         """
         b_isinmesh = True
 
@@ -550,76 +551,97 @@ class pyMCDS:
         input:
             self: pyMCDS class instance.
 
-        Returns list of chemical species in microenvironment
+        output:
+            ls_substrat: list of stings
+            list of all substrates  tracked in the microenviroment.
 
-        Returns
-        -------
-        ls_species : list (str)
-            Contains names of chemical species in microenvironment
+        description:
+            function returns all chemical species names,
+            modeled in the microenvironment.
         """
-        ls_species = sorted(self.data['continuum_variables'].keys())
-        return ls_species
+        ls_substrat = sorted(self.data['continuum_variables'].keys())
+        return ls_substrat
 
 
     def get_substrate_df(self):
         """
         input:
             self: pyMCDS class instance.
+
+        output:
+            df_substare: pandas dataframe
+            one substrate per row and decay_rate and difusion_coefficient
+            factors as columns.
+
+        description:
+            function retuns a dataframe with each substrate's
+            decay_rate and difusion_coefficient.
         """
         # extract data
-        dr_sub = {}
+        ls_column = ['substrate','decay_rate','diffusion_coefficient']
+        ll_sub = []
         for s_substrate in self.get_substrate_names():
-
-            s_diffusion_key = f'{s_substrate}_diffusion_coefficient'
-            s_diffusion_value = self.data['continuum_variables'][s_substrate]['diffusion_coefficient']['value']
-            dr_sub.update({s_diffusion_key: [s_diffusion_value]})
-
-            s_decay_key = f'{s_substrate}_decay_rate'
             s_decay_value = self.data['continuum_variables'][s_substrate]['decay_rate']['value']
-            dr_sub.update({s_decay_key: [s_decay_value]})
+            s_diffusion_value = self.data['continuum_variables'][s_substrate]['diffusion_coefficient']['value']
+            ll_sub.append([s_substrate, s_decay_value, s_diffusion_value])
+
+        # generate dataframe
+        df_substrate = pd.DataFrame(ll_sub, columns=ls_column)
+        df_substrate.set_index('substrate', inplace=True)
+        df_substrate.columns.name = 'parameter'
 
         # output
-        df_substrate = pd.DataFrame(dr_sub, index=['value']).T
-        df_substrate.index.name = 'parameter'
         return(df_substrate)
 
 
-    def get_concentrations(self, species_name, z_slice=None):
+    def get_concentrations(self, substrate, z_slice=None, halt=False):
         """
         input:
             self: pyMCDS class instance.
 
-        Returns the concentration array for the specified chemical species
-        in the microenvironment. Can return either the whole 3D picture, or
-        a 2D plane of concentrations.
+            substrate: string
+                substrate name.
 
-        Parameters
-        ----------
-        species_name : str
-            Name of the chemical species for which to get concentrations
+            z_slice: floating point number; default is None
+                z-axis position to slice a 2D xy-plain out of the
+                3D substrate concentraion mesh. if None the
+                whole 3D mesh will be returned.
 
-        z_slice : float
-            z-axis position to use as plane for 2D output.
-            This value must match a plane of voxel centers in the z-axis.
-            BUE: what about the None case.
+            halt: boolean; default is False
+                should program execution break or just spit out a waring,
+                if z_slize position is not an exact mesh center coordinate?
+                if False, z_slice will be adjusted to the nearest
+                mesh center value, the small one, if there are
+                multiple occurrences.
 
-        Returns
-        -------
-        ar_conc : array (np.float) shape=[nx_voxels, ny_voxels, nz_voxels]
-            Contains the concentration of the specified chemical in each voxel.
-            The array spatially maps to a meshgrid of the voxel centers.
+        output:
+            ar_conc: numpy array of floating point numbers
+                substrate concentration meshgrid or xy-plain slice
+                through the meshgrid.
+
+        description:
+            function retuns the concentraion meshgrid, or a xy-plain slice
+            out of the whole meshgrid, for the specified chemical species.
         """
-        ar_conc = self.data['continuum_variables'][species_name]['data']
+        ar_conc = self.data['continuum_variables'][substrate]['data']
         ar_p = self.data['mesh']['p_coordinates']
 
         if not (z_slice is None):
-            if (z_slice in ar_p):
-                # filter by z_slice
-                mask = ar_p == z_slice
-                ar_conc = ar_conc[mask].reshape((ar_p.shape[0], ar_p.shape[1]))
-            else:
-                sys.exit(f'Error @ pyMCDS.get_concentrations : specified z_slice {z_slice} not in z_coordinates {np.unique(ar_p)}.')
+            # check if z_slice is a mesh center
+            if not (z_slice in ar_p):
+                ar_punique = np.unique(ar_p)
+                print(f'Warning @ pyMCDS.get_concentrations : specified z_slice {z_slice} is not an element of the z-axis mesh centers set {ar_punique}.')
+                if halt:
+                    sys.exit('Processing stopped!')
+                else:
+                    z_slice = ar_punique[np.abs(ar_puniqu - z_slice).argmin()]
+                    print(f'z_slice set to {z_slice}.')
 
+            # filter by z_slice
+            mask = ar_p == z_slice
+            ar_conc = ar_conc[mask].reshape((ar_p.shape[0], ar_p.shape[1]))
+
+        # output
         return ar_conc
 
 
@@ -628,23 +650,24 @@ class pyMCDS:
         input:
             self: pyMCDS class instance.
 
+            x : floating point number
+                cell position x-coordinate
 
-        Return concentrations of each chemical species inside a particular voxel
-        that contains the point described in the arguments.
+            y : floating point number
+                cell position y-coordinate
 
-        Parameters
-        ----------
-        x : float
-            x-position for the point of interest
-        y : float
-            y_position for the point of interest
-        z : float
-            z_position for the point of interest
+            z : floating point number, default is 0
+                cell position z-coordinate
 
-        Returns
-        -------
-        ar_concs : array, shape=[n_substrates,]
-            array of concentrations in the order given by get_substrate_names()
+        output:
+            ar_concs: numpy array of floating point numbers.
+            array of substrate concentrations in the order
+            given by get_substrate_names().
+
+        description:
+            function return concentrations of each chemical species
+            inside a particular voxel that contains the point specified
+            in the arguments.
         """
         i, j, k = self.get_voxel_ijk(x, y, z)
         ls_substrate = self.get_substrate_names()
@@ -663,17 +686,19 @@ class pyMCDS:
         input:
             self: pyMCDS class instance.
 
-        BUE
+            z_slice: floating point number; default is None
+                z-axis position to slice a 2D xy-plain out of the
+                3D substrate concentraion mesh. if None the
+                whole 3D mesh will be returned.
 
-        Parameters
-        ----------
-        z_slice : float
-            BUE check out get_concentrations
+        output:
+            df_conc : pandas dataframe
+                dataframe with all substrate concentraions in each voxel.
 
-        Returns
-        -------
-        df_conc : DataFrame shape=[]
-            BUE
+        description:
+            function returns a dataframe with concentration values
+            for all chemical species in all voxels. additionall this
+            dataframe lists voxel and mesh center coordinates.
         """
         # flatten mesh coordnates
         ar_m, ar_n, ar_p = self.get_mesh()
@@ -702,10 +727,10 @@ class pyMCDS:
         # handle concentraions
         for s_substrate in self.get_substrate_names():
             ls_column.append(s_substrate)
-            ar_conc = self.get_concentrations(species_name=s_substrate, z_slice=None)
+            ar_conc = self.get_concentrations(substrate=s_substrate, z_slice=None)
             la_data.append(ar_conc.flatten(order='C'))
 
-        # generate data frame
+        # generate dataframe
         aa_data  = np.array(la_data)
         df_conc = pd.DataFrame(aa_data.T, columns=ls_column)
         d_dtype = {'voxel_i': int, 'voxel_j': int, 'voxel_k': int}  # bue: mesh_center are all real.
@@ -750,7 +775,7 @@ class pyMCDS:
         Returns
         -------
         df_cell : DataFrame, shape=[n_cells, n_variables]
-            Dataframe containing the cell data for all cells at this time step
+            dataframe containing the cell data for all cells at this time step
         """
 
         # get cell position and more
@@ -826,6 +851,15 @@ class pyMCDS:
         """
         input:
             self: pyMCDS class instance.
+
+            x : floating point number
+                cell position x-coordinate
+
+            y : floating point number
+                cell position y-coordinate
+
+            z : floating point number; default is 0
+                cell position z-coordinate
 
 
         Returns a dataframe for cells in the same voxel as the position given by
@@ -1095,35 +1129,35 @@ class pyMCDS:
             ar_n = np.unique(ar_nnn)
             ar_p = np.unique(ar_ppp)
 
-            for i_s, species in enumerate(var_children):
+            for i_s, chemspecies in enumerate(var_children):
                 # i don't like spaces in species names!
-                species_name = species.get('name').replace(' ', '_')
+                s_substrate =chemspecies.get('name').replace(' ', '_')
 
-                MCDS['continuum_variables'][species_name] = {}
-                MCDS['continuum_variables'][species_name]['units'] = species.get('units')
+                MCDS['continuum_variables'][s_substrate] = {}
+                MCDS['continuum_variables'][s_substrate]['units'] = chemspecies.get('units')
 
                 if self.verbose:
-                    print(f'Parsing: {species_name} data')
+                    print(f'Parsing: {s_substrate} data')
 
                 # initialize array for concentration data
-                MCDS['continuum_variables'][species_name]['data'] = np.zeros(ar_mmm.shape)
+                MCDS['continuum_variables'][s_substrate]['data'] = np.zeros(ar_mmm.shape)
 
                 # travel down one level on tree
-                species = species.find('physical_parameter_set')
+                chemspecies = chemspecies.find('physical_parameter_set')
 
                 # diffusion data for each species
-                MCDS['continuum_variables'][species_name]['diffusion_coefficient'] = {}
-                MCDS['continuum_variables'][species_name]['diffusion_coefficient']['value'] \
-                    = float(species.find('diffusion_coefficient').text)
-                MCDS['continuum_variables'][species_name]['diffusion_coefficient']['units'] \
-                    = species.find('diffusion_coefficient').get('units')
+                MCDS['continuum_variables'][s_substrate]['diffusion_coefficient'] = {}
+                MCDS['continuum_variables'][s_substrate]['diffusion_coefficient']['value'] \
+                    = float(chemspecies.find('diffusion_coefficient').text)
+                MCDS['continuum_variables'][s_substrate]['diffusion_coefficient']['units'] \
+                    = chemspecies.find('diffusion_coefficient').get('units')
 
                 # decay data for each species
-                MCDS['continuum_variables'][species_name]['decay_rate'] = {}
-                MCDS['continuum_variables'][species_name]['decay_rate']['value'] \
-                    = float(species.find('decay_rate').text)
-                MCDS['continuum_variables'][species_name]['decay_rate']['units'] \
-                    = species.find('decay_rate').get('units')
+                MCDS['continuum_variables'][s_substrate]['decay_rate'] = {}
+                MCDS['continuum_variables'][s_substrate]['decay_rate']['value'] \
+                    = float(chemspecies.find('decay_rate').text)
+                MCDS['continuum_variables'][s_substrate]['decay_rate']['units'] \
+                    = chemspecies.find('decay_rate').get('units')
 
                 # store data from microenvironment file as numpy array
                 # iterate over each voxel
@@ -1136,7 +1170,7 @@ class pyMCDS:
                     k = np.where(np.abs(ar_center[2] - ar_p) < 1e-10)[0][0]
 
                     # store value
-                    MCDS['continuum_variables'][species_name]['data'][j, i, k] = me_data[4+i_s, vox_idx]
+                    MCDS['continuum_variables'][s_substrate]['data'][j, i, k] = me_data[4+i_s, vox_idx]
 
 
         ####################
