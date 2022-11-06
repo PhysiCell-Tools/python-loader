@@ -1,8 +1,17 @@
-###########
+#########
+# title: pyMCDS.py
 #
+# language: python3
+# date: 2022-08-22
+# license: BSD-3-Clause
+# authors: Patrick Wall, Randy Heiland, Paul Macklin, Elmar Bucher
 #
-#
-###########
+# description:
+#     pyMCDS.py defineds an object class, able to load and access
+#     within python a single time step form the PhysiCell model output folder.
+#     pyMCDS.py was forked from the original PhysiCell-Tools python-loader
+#     implementation and further developed.
+#########
 
 
 # load library
@@ -17,13 +26,16 @@ import xml.etree.ElementTree as ET
 def graphfile_parser(s_pathfile):
     """
     input:
-        s_pathfile
+        s_pathfile: string
+            path to and file name from graph.txt file.
 
     output:
-        dei_graph
+        dei_graph: dictionary of sets of integers.
+            object mapps each cellid to connected cellids.
 
-    descriptio:
-
+    description:
+        code parses the physicell own graphs format and stores and
+        returns the content in a dictionary object.
     """
     # processing
     dei_graph = {}
@@ -44,33 +56,40 @@ def graphfile_parser(s_pathfile):
 # object classes
 class pyMCDS:
     """
-    This class contains a dictionary of dictionaries that contains all of the
-    output from a single time step of a PhysiCell Model. This class assumes that
-    all output files are stored in the same directory. Data is loaded by reading
-    the .xml file for a particular timestep.
+    input:
+        xml_name: string
+            name of the xml file with or without path.
+            in the with path case output_path has to be set to the default!
 
-    Parameters
-    ----------
-    xml_name: str
-        String containing the name of the xml file without the path
-        or whith path (in this case output_path has to be the default).
+        output_path: string, default '.'
+            relative or absolute path to the directory where
+            the PhysiCell output files are stored.
 
-    output_path: str, optional
-        String containing the path (relative or absolute) to the directory
-        where PhysiCell output files are stored (default= ".")
+        microenv: booler; default True
+            should the microenvironment be extracted?
+            setting microenv to False will use less memory and speed up
+            processing, similar to the original pyMCDS_cells.py script.
 
-    microenv: boole, optional
-        Should the microenvironment be extracted too?
-        Set microenv to False will speed up processing.
-        Set microenv to False will behave similar to the original pyMCDS_cells.py script.
-        Default setting is True.
+        graph: boole; default True
+            should the graphs be extracted?
+            setting grap to False will use less memory and speed up processing.
 
+        verbose: boole; default True
+            setting verbose to False for less text output, while processing.
 
-    Attributes
-    ----------
-    data : dict
-        Hierarchical container for all of the data retrieved by parsing the xml
-        file and the files referenced therein.
+    output:
+        mcds: pyMCDS class instance
+            all fetched content is stored at mcds.data.
+
+    description:
+        pyMCDS.__init__ will generate a class instance with a
+        dictionary of dictionaries data structure that contains all
+        output from a single PhysiCell model time step. furthmore,
+        this class, and as such it's instances, offers functions
+        to access the stored data.
+        the code assumes that all related output files are stored in
+        the same directory. data is loaded by reading the xml file
+        for a particular timestep and the therein referenced files.
     """
     def __init__(self, xmlfile, output_path='.', graph=True, microenv=True, verbose=True):
         self.microenv = microenv
@@ -79,238 +98,388 @@ class pyMCDS:
         self.data = self._read_xml(xmlfile, output_path)
 
 
-    ## METADATA RELATED FUNCTIONS
+    ## METADATA RELATED FUNCTIONS ##
 
     def get_physicell_version(self):
         """
+        input:
+            self: pyMCDS class instance.
+
+        output:
+            s_version : sting
+            PhysiCell version which generated the data.
+
+        description:
+            function returns as a string the PhysiCell version
+            that was used to generated this data.
         """
         return self.data['metadata']['physicell_version']
 
 
     def get_timestamp(self):
         """
-        Return BUE simulated time in secounds or minutes or hour?
+        input:
+            self: pyMCDS class instance.
 
-        Returns
-        -------
-        BUE
+        output:
+            s_timestap : sting
+            timestamp from when this data was generated.
+
+        description:
+            function returns as a string the timestamp from when
+            this data was generated.
         """
         return self.data['metadata']['created']
 
 
     def get_time(self):
         """
-        Return BUE simulated time in secounds or minutes or hour?
+        input:
+            self: pyMCDS class instance.
 
-        Returns
-        -------
-        BUE
+        output:
+            r_time : floating point number
+            simulation time in [min].
+
+        description:
+            function returns as a real number
+            the simmulation time in minutes.
         """
         return self.data['metadata']['current_time']
 
 
     def get_runtime(self):
         """
-        Return BUE simulated time in secounds or minutes or hour?
+        input:
+            self: pyMCDS class instance.
 
-        Returns
-        -------
-        BUE
+        output:
+            r_time : floating point number
+            wall time in [sec].
+
+        description:
+            function returns as a real number the wall time in secounds
+            the simmulation took to run up to this timestep.
         """
         return self.data['metadata']['current_runtime']
 
 
-    ## GRAPH RELATED FUNCTIONS
+    ## GRAPH RELATED FUNCTIONS ##
 
     def get_attached_graph_dict(self):
         """
-        BUE
+        input:
+            self: pyMCDS class instance.
+
+        output:
+            dei_graph: dictionary of sets of integers
+            mapps each cellid to the attached connected cellids.
+
+        description:
+            function returns the attached cell graph as dictionary object.
         """
         return self.data['discrete_cells']['graph']['attached_cells']
 
 
     def get_neighbor_graph_dict(self):
         """
-        BUE
+        input:
+            self: pyMCDS class instance.
+
+        output:
+            dei_graph: dictionary of sets of integers
+            mapps each cellid to the connected neighbour cellids.
+
+        description:
+            function returns the cell neighbor graph as dictionary object.
         """
         return self.data['discrete_cells']['graph']['neighbor_cells']
 
 
-    ## MESH RELATED FUNCTIONS
+    ## MESH RELATED FUNCTIONS  ##
 
     def get_x_range(self):
-        '''
-        '''
+        """
+        input:
+            self: pyMCDS class instance.
+
+        output:
+            tr_x : tuple of 2 floating point numbers
+            x-axis cell position range.
+
+        decritpion:
+            function returns in a tuple the lowest and highest
+            x-axis cell position value.
+        """
         return self.data['mesh']['x_range']
 
 
     def get_y_range(self):
-        '''
-        '''
+        """
+        input:
+            self: pyMCDS class instance.
+
+        output:
+            tr_y : tuple of 2 floating point numbers
+            y-axis cell position range.
+
+        decritpion:
+            function returns in a tuple the lowest and highest
+            y-axis cell position value.
+        """
         return self.data['mesh']['y_range']
 
 
     def get_z_range(self):
-        '''
-        '''
+        """
+        input:
+            self: pyMCDS class instance.
+
+        output:
+            tr_z : tuple of 2 floating point numbers
+            z-axis cell position range.
+
+        decritpion:
+            function returns in a tuple the lowest and highest
+            z-axis cell position value.
+        """
         return self.data['mesh']['z_range']
 
 
     def get_mesh_m_range(self):
-        '''
-        '''
+        """
+        input:
+            self: pyMCDS class instance.
+
+        output:
+            tr_m : tuple of 2 floating point numbers
+            m-axis mesh center range.
+
+        decritpion:
+            function returns in a tuple the lowest and highest
+            m-axis mesh center value.
+        """
         return self.data['mesh']['m_range']
 
 
     def get_mesh_n_range(self):
-        '''
-        '''
+        """
+        input:
+            self: pyMCDS class instance.
+
+        output:
+            tr_n : tuple of 2 floating point numbers
+            n-axis mesh center range.
+
+        decritpion:
+            function returns in a tuple the lowest and highest
+            n-axis mesh center value.
+        """
         return self.data['mesh']['n_range']
 
 
     def get_mesh_p_range(self):
-        '''
-        '''
+        """
+        input:
+            self: pyMCDS class instance.
+
+        output:
+            tr_p : tuple of 2 floating point numbers
+            p-axis mesh center range.
+
+        decritpion:
+            function returns in a tuple the lowest and highest
+            p-axis mesh center value.
+        """
         return self.data['mesh']['p_range']
 
 
     def get_voxel_i_range(self):
-        '''
-        '''
+        """
+        input:
+            self: pyMCDS class instance.
+
+        output:
+            ti_i : tuple of 2 integer numbers
+            i-axis voxel range.
+
+        decritpion:
+            function returns in a tuple the lowest and highest
+            i-axis voxel value.
+        """
         return self.data['mesh']['i_range']
 
 
     def get_voxel_j_range(self):
-        '''
-        '''
+        """
+        input:
+            self: pyMCDS class instance.
+
+        output:
+            ti_j : tuple of 2 integer numbers
+            j-axis voxel range.
+
+        decritpion:
+            function returns in a tuple the lowest and highest
+            j-axis voxel value.
+        """
         return self.data['mesh']['j_range']
 
 
     def get_voxel_k_range(self):
-        '''
-        '''
+        """
+        input:
+            self: pyMCDS class instance.
+
+        output:
+            ti_k : tuple of 2 integer numbers
+            k-axis voxel range.
+
+        decritpion:
+            function returns in a tuple the lowest and highest
+            k-axis voxel value.
+        """
         return self.data['mesh']['k_range']
 
 
     def get_mesh(self, flat=False):
         """
-        Return a meshgrid of the computational domain. Can return either full
-        3D or a 2D plane for contour plots.
+        input:
+            self: pyMCDS class instance.
 
-        Parameters
-        ----------
-        flat : bool
-            If flat is set to True, only the x and y meshgrid will be returned.
-            Otherwise the x, y, and z meshgrid will be returned.
-            Default setting is False.
-            # if we dont want a plane just return appropriate values
+            flat : bool; default False
+                if flat is True, only the m-axis mesh center 
+                and n-axis mesh center meshgrids will be returned.
+                else the m, n, and p mesh center meshgrids will be returned.
 
-        Returns
-        -------
-        splitting : list length=2 if flat=True, else length=3
-            Contains arrays of voxel center coordinates as meshgrid with shape
-            [nx_voxel, ny_voxel, nz_voxel] or [nx_voxel, ny_voxel] if flat=True.
+        output:
+            la_meshgrid : list of numpy arrays.
+                meshgrid shaped objects, each  with the mesh center 
+                coordinate values from one particular axis.
+
+        description:
+            function returns a list of meshgrids each stores the 
+            mesh center coordinate values from one particular axis. 
+            the function can either return meshgrids for the full 
+            m, n, p 3D cube, or only the 2D planes along the p axis.
         """
         if flat:
             ar_m = self.data['mesh']['m_coordinates'][:, :, 0]
             ar_n = self.data['mesh']['n_coordinates'][:, :, 0]
-
             return [ar_m, ar_n]
 
         else:
             ar_m = self.data['mesh']['m_coordinates']
             ar_n = self.data['mesh']['n_coordinates']
             ar_p = self.data['mesh']['p_coordinates']
-
             return [ar_m, ar_n, ar_p]
 
 
     def get_mesh_2D(self):
         """
-        This function returns the x, y meshgrid as two numpy arrays. It is
-        identical to get_mesh with the option flat=True
+        input:
+            self: pyMCDS class instance.
 
-        Returns
-        -------
-        splitting : list length=2
-            Contains arrays of voxel center coordinates in x and y dimensions
-            as meshgrid with shape [nx_voxel, ny_voxel]
+        output:
+            la_meshgrid : list of 2 numpy arrays.
+                meshgrid shaped objects, with the mesh center 
+                coordinate values from the m and n-axis, respective.
+
+        description:
+            function is identical to the self.get_mesh(self, flat=True) 
+            function call.
         """
         return self.get_mesh(flat=True)
 
 
-    def get_mesh_linear(self):
+    def get_mesh_axis(self):
         """
-        Helper function to quickly grab voxel centers array stored linearly as
-        opposed to meshgrid-style.
+        input:
+            self: pyMCDS class instance.
 
-        Note:
-        Ther oder of the flattened coordinates is neither C (row major) nor Fortran (column major) style.
-        However, the coordinate set is complete.
+        output: 
+            la_meshaxis : list of 3 one dimensonal numpy arrays.
+                n, m, and p-axis mesh center coorinate vectors. 
 
-        Returns
-        -------
-        flattend array of voxel position
+        desription:
+            function returns three vectors with mesh center coordinate values, 
+            one for each axis.
         """
-        ar_m, ar_n, ar_p, = self.data['mesh']['mnp_coordinates']  # bue ['voxels']['centers']
+        ar_m, ar_n, ar_p, = self.data['mesh']['mnp_coordinates']
         return [ar_m, ar_n, ar_p]
 
 
     def get_mesh_spacing(self):
         """
-        Returns the space in between voxel centers for the mesh in terms of the
-        mesh's spatial units. Assumes that voxel centers fall on integer values.
+        input:
+            self: pyMCDS class instance.
 
-        Returns
-        -------
-        dm : float
-            Distance between voxel centers in the same units as the other
-            spatial measurements
+        output:
+            lr_nmpspacing: list of 3 floating point numbers.
+                mesh spacing in m, n, and p direction.
+        
+        description:
+            function returns the distance in between voxel centers 
+            in the spacial unit defined in the PhysiCell_settings.xml file. 
         """
         ar_m, ar_n, ar_p = self.get_mesh_linear()
 
-        dm = np.round((ar_m.max() - ar_m.min()) / (len(set(ar_m)) - 1))
-        dn = np.round((ar_n.max() - ar_n.min()) / (len(set(ar_n)) - 1))
+        # bue: dm = np.round((ar_m.max() - ar_m.min()) / (len(set(ar_m)) - 1))
+        # bue:dn = np.round((ar_n.max() - ar_n.min()) / (len(set(ar_n)) - 1))
+        dm = (ar_m.max() - ar_m.min()) / (len(set(ar_m)) - 1)
+        dn = (ar_n.max() - ar_n.min()) / (len(set(ar_n)) - 1)
         if (len(set(ar_p)) == 1):
             dp = 1
         else:
-            dp = np.round((ar_p.max() - ar_p.min()) / (len(set(ar_p)) - 1))
+            # bue: dp = np.round((ar_p.max() - ar_p.min()) / (len(set(ar_p)) - 1))
+            dp = (ar_p.max() - ar_p.min()) / (len(set(ar_p)) - 1)
         return [dm, dn, dp]
 
 
     def get_voxel_volume(self):
         """
+        input:
+            self: pyMCDS class instance.
+
+        output:
+            r_volume: floating point number
+            voxel volume value related to the spacial unit
+            defined in the PhysiCell_settings.xml file.
+
+        description:
+            function returns the volume value for a single voxel, related
+            to the spacial unit defined in the PhysiCell_settings.xml file. 
         """
-        ar_volume = np.unique(self.data['mesh']['volumes'])  # bue ['voxels']['volumes']
+        ar_volume = np.unique(self.data['mesh']['volumes'])
         if ar_volume.shape != (1,):
             sys.exit(f'Error @ pyMCDS.get_voxel_volume : mesh is not built out of a unique voxel volume {ar_volume}.')
         r_volume = ar_volume[0]
         return(r_volume)
 
 
-    # bue def get_containing_voxel_ijk(self, x, y, z):
+    # bue: def get_containing_voxel_ijk(self, x, y, z):
     def get_voxel_ijk(self, x, y, z):
         """
-        Internal function to get the meshgrid indices for the center of a voxel
-        that contains the given position.
+        input:
+            self: pyMCDS class instance.
 
-        Note that pyMCDS stores meshgrids as 'cartesian'
-        (indexing='xy' in np.meshgrid) which means that we will have
-        to use these indices as [j, i, k] on the actual meshgrid objects
+            x : floating point number
+                cell position x-coordinate
 
-        Parameters
-        ----------
-        x : float
-            x-coordinate for the position
-        y : float
-            y-coordinate for the position
-        z : float
-            z-coordinate for the position
+            y : floating point number
+                cell position y-coordinate
 
-        Returns
-        -------
-        ijk : list length=3
-            contains the i, j, and k indices for the containing voxel's center
+            z : floating point number
+                cell position z-coordinate
+
+        output:
+            li_ijk : list of 3 integers
+                i, j, k indices for the voxel 
+                containing the x, y, z position.
+        
+        description:
+            function returns the meshgrid indices i, j, k 
+            for the given cell position x, y, z.
         """
         tr_m = self.get_mesh_m_range()
         tr_n = self.get_mesh_n_range()
@@ -323,10 +492,34 @@ class pyMCDS:
 
         return [i, j, k]
 
+
     def is_in_mesh(self, x, y, z, halt=True):
-        '''
-        #print("_read_xml: bbox_coords= ",bbox_coords)  # rwh: [xmin ymin zmin xmax ymax zmax]
-        '''
+        """
+        input:
+            self: pyMCDS class instance.
+
+            x : floating point number
+                cell position x-coordinate
+
+            y : floating point number
+                cell position y-coordinate
+
+            z : floating point number
+                cell position z-coordinate
+
+            halt: boolean, default is True
+                should program execution break or just spit out a waring,
+                if cell position is not in mesh?
+
+        output:
+            b_isinmesh: boolean
+            states, if the given coordinat is inside the mesh.
+
+        description:
+            function evaluates, if the given cell position coordinat
+            is inside the bounderies and breaks programm execution, 
+            if so specified.
+        """
         b_isinmesh = True
 
         # check againt boundary box
@@ -350,10 +543,13 @@ class pyMCDS:
         return(b_isinmesh)
 
 
-    ## MICROENVIRONMENT RELATED FUNCTIONS
+    ## MICROENVIRONMENT RELATED FUNCTIONS ##
 
     def get_substrate_names(self):
         """
+        input:
+            self: pyMCDS class instance.
+
         Returns list of chemical species in microenvironment
 
         Returns
@@ -367,6 +563,8 @@ class pyMCDS:
 
     def get_substrate_df(self):
         """
+        input:
+            self: pyMCDS class instance.
         """
         # extract data
         dr_sub = {}
@@ -388,6 +586,9 @@ class pyMCDS:
 
     def get_concentrations(self, species_name, z_slice=None):
         """
+        input:
+            self: pyMCDS class instance.
+
         Returns the concentration array for the specified chemical species
         in the microenvironment. Can return either the whole 3D picture, or
         a 2D plane of concentrations.
@@ -411,7 +612,7 @@ class pyMCDS:
         ar_conc = self.data['continuum_variables'][species_name]['data']
         ar_p = self.data['mesh']['p_coordinates']
 
-        if not (z_slice is None): 
+        if not (z_slice is None):
             if (z_slice in ar_p):
                 # filter by z_slice
                 mask = ar_p == z_slice
@@ -424,6 +625,10 @@ class pyMCDS:
 
     def get_concentrations_at(self, x, y, z=0):
         """
+        input:
+            self: pyMCDS class instance.
+
+
         Return concentrations of each chemical species inside a particular voxel
         that contains the point described in the arguments.
 
@@ -455,6 +660,9 @@ class pyMCDS:
 
     def get_concentrations_df(self, z_slice=None):
         """
+        input:
+            self: pyMCDS class instance.
+
         BUE
 
         Parameters
@@ -511,10 +719,14 @@ class pyMCDS:
         return df_conc
 
 
-    ## CELL RELATED FUNCTIONS
+    ## CELL RELATED FUNCTIONS ##
 
     def get_cell_variables(self):
         """
+        input:
+            self: pyMCDS class instance.
+
+
         Returns the names of all of the cell variables tracked in ['discrete cells']
         dictionary
 
@@ -529,6 +741,10 @@ class pyMCDS:
 
     def get_cell_df(self):
         """
+        input:
+            self: pyMCDS class instance.
+
+
         Builds DataFrame from data['discrete_cells']['data']
 
         Returns
@@ -608,6 +824,10 @@ class pyMCDS:
 
     def get_cell_df_at(self, x, y, z=0):
         """
+        input:
+            self: pyMCDS class instance.
+
+
         Returns a dataframe for cells in the same voxel as the position given by
         x, y, and z.
 
@@ -650,10 +870,12 @@ class pyMCDS:
         return df_voxel
 
 
-    ## UNIT OVERVIEW RELATED FUNCTION
+    ## UNIT OVERVIEW RELATED FUNCTION ##
 
     def get_unit_df(self):
         """
+        input:
+            self: pyMCDS class instance.
         """
         # extract data
         ds_unit = {}
@@ -689,10 +911,14 @@ class pyMCDS:
         return(df_unit)
 
 
-    ## LOAD DATA
+    ## LOAD DATA  ##
 
     def _read_xml(self, xmlfile, output_path='.'):
         """
+        input:
+            self: pyMCDS class instance.
+
+
         Internal function. Does the actual work of initializing MultiCellDS by parsing the xml
 
         Parameters
@@ -784,12 +1010,12 @@ class pyMCDS:
         z_coords = np.array(coord_str.split(delimiter), dtype=np.float64)
 
         # reshape into a mesh grid
-        ar_mmm, ar_nnn, ar_ppp = np.meshgrid(x_coords, y_coords, z_coords)
-        
+        ar_mmm, ar_nnn, ar_ppp = np.meshgrid(x_coords, y_coords, z_coords, indexing='xy')
+
         MCDS['mesh']['m_coordinates'] = ar_mmm
         MCDS['mesh']['n_coordinates'] = ar_nnn
         MCDS['mesh']['p_coordinates'] = ar_ppp
-        
+
         # get voxel range
         MCDS['mesh']['i_range'] = (0, len(set(ar_mmm.flatten())))
         MCDS['mesh']['j_range'] = (0, len(set(ar_nnn.flatten())))
@@ -803,8 +1029,8 @@ class pyMCDS:
         # get mesh bounding box range [xmin ymin zmin xmax ymax zmax]
         bboxcoor_str = mesh_node.find('bounding_box').text
         delimiter = mesh_node.find('bounding_box').get('delimiter')
-        ar_bboxcoor = np.array(bboxcoor_str.split(delimiter), dtype=np.float64) 
-        
+        ar_bboxcoor = np.array(bboxcoor_str.split(delimiter), dtype=np.float64)
+
         MCDS['mesh']['x_range'] = (ar_bboxcoor[0], ar_bboxcoor[3])
         MCDS['mesh']['y_range'] = (ar_bboxcoor[1], ar_bboxcoor[4])
         MCDS['mesh']['z_range'] = (ar_bboxcoor[2], ar_bboxcoor[5])

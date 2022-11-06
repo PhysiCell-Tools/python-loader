@@ -1,8 +1,19 @@
-########
+#########
+# title: pyMCDSts.py
 #
+# language: python3
+# date: 2022-08-22
+# license: BSD-3-Clause
+# authors: Patrick Wall, Randy Heiland, Paul Macklin, Elmar Bucher
 #
-#
-########
+# description:
+#     pyMCDSts.py defineds an object class, able to load and access
+#     within python a time series of mcds objects loaded form a single
+#     PhysiCell model output folder. pyMCDSts.py was a froked from
+#     PhysiCell-Tools python-loader as pyMCDS_timeseries.py, then
+#     totally rewritten and further developed. the make_image and
+#     make_movie functions are cloned from PhysiCell Makefile.
+#########
 
 # load libraries
 import os
@@ -14,19 +25,18 @@ import xml.etree.ElementTree as ET
 # classes
 class pyMCDSts:
     '''
-    This class contains a np.array of pyMCDS objects as well as functions for
-    extracting information from that list.
-
-    Parameters
-    ----------
+    input:
     output_path : string
         String containing the path (relative or absolute) to the directory
         containing the PhysiCell output files
 
-    Attributes
-    ----------
+    output:
     timeseries : array-like (pyMCDS) [n_timesteps,]
         Numpy array of pyMCDS objects sorted by time.
+
+    description:
+        This class contains a np.array of pyMCDS objects as well as functions for
+        extracting information from that list.
     '''
     def __init__(self, output_path='.', microenv=True, graph=True, verbose=True):
         self.output_path = output_path
@@ -38,6 +48,9 @@ class pyMCDSts:
     ## LOAD DATA
     def get_xmlfile_list(self):
         '''
+        input:
+            self: pyMCDSts class instance.
+
         '''
         # get a generator of output xml files sorted alphanumerically
         # bue 2022-10-22: is the output*.xml always the correct pattern?
@@ -47,6 +60,9 @@ class pyMCDSts:
 
     def read_mcds(self, xmlfile_list=None):
         """
+        input:
+            self: pyMCDSts class instance.
+
         Internal function. Does the actual work of initializing MultiCellDS by parsing the xml
         """
         # handle input
@@ -73,6 +89,9 @@ class pyMCDSts:
     ## TRANSFORM SVG
     def _handle_magick(self):
         '''
+        input:
+            self: pyMCDSts class instance.
+
         '''
         s_magick = 'magick '
         if (platform.system() in {'Linux'}) and (os.system('magick --version') != 0) and (os.system('convert --version') == 0):
@@ -81,6 +100,8 @@ class pyMCDSts:
 
     def _handle_resize(self, resize_factor=1, movie=False):
         '''
+        input:
+            self: pyMCDSts class instance.
         '''
         s_resize = ''
         if movie or (resize_factor != 1):
@@ -97,6 +118,9 @@ class pyMCDSts:
 
     def make_gif(self, giffile='timeseries.gif', resize_factor=1):
         '''
+        input:
+            self: pyMCDSts class instance.
+
         gif
         '''
         s_magick = self._handle_magick()
@@ -111,6 +135,9 @@ class pyMCDSts:
 
     def make_jpeg(self, resize_factor=1, movie=False):
         '''
+        input:
+            self: pyMCDSts class instance.
+
         jpeg
         '''
         s_magick = self._handle_magick()
@@ -119,6 +146,9 @@ class pyMCDSts:
 
     def make_png(self, resize_factor=1, addargs='-transparent white', movie=False):
         '''
+        input:
+            self: pyMCDSts class instance.
+
         png
         '''
         s_magick = self._handle_magick()
@@ -127,6 +157,9 @@ class pyMCDSts:
 
     def make_tiff(self, resize_factor=1, movie=False):
         '''
+        input:
+            self: pyMCDSts class instance.
+
         tiff
         '''
         s_magick = self._handle_magick()
@@ -135,6 +168,10 @@ class pyMCDSts:
 
     def make_movie(self, moviefile='movie.mp4', frame_rate=24, resize_factor=1, interface='jpeg'):
         """
+        input:
+            self: pyMCDSts class instance.
+
+
         generates a movie from all svg files found in the PhysiCell output directory.
 
         Parameters

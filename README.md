@@ -69,7 +69,7 @@ Within the pcDataLoader library, I try to stick to the documentation policy line
     + **pyMCDS** has a new additionally a boolean **graph** parameter, to specify if the attached and neighbor graph should be read.
     + **pyMCDS** has a new additionally a boolean **verbose** parameter, to specify if there should be text output while processing.
     + pyMCDS **mcds.get_2D_mesh** was renamed to **mcds.get_mesh_2D** for consistency.
-    + pyMCDS **mcds.get_linear_voxels** was renamed to **mcds.get_mesh_linear** for consistency.
+    + pyMCDS **mcds.get_linear_voxels** was renamed to **mcds.get_mesh_axis** for consistency.
     + pyMCDS **mcds.get_containing_voxel_ijk** was renamed to **mcds.get_voxel_ijk** for biefness.
     + pyMCDS **mcds.get_voxel_spacing** returns now 3 specific values, one for x, y, and z, insted of 1 general value.
     + pyMCDS **mcds.get_cell_variables** and **mcds.get_substrate_names** return now a strictly alphabetically ordered list.
