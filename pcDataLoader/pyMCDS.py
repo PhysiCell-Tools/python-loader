@@ -57,7 +57,7 @@ def graphfile_parser(s_pathfile):
 class pyMCDS:
     """
     input:
-        xml_name: string
+        xmlfile: string
             name of the xml file with or without path.
             in the with path case output_path has to be set to the default!
 
@@ -553,7 +553,7 @@ class pyMCDS:
 
         output:
             ls_substrat: list of stings
-            list of all substrates  tracked in the microenviroment.
+            alphabetically ordered list of all tracked substrates.
 
         description:
             function returns all chemical species names,
@@ -751,14 +751,13 @@ class pyMCDS:
         input:
             self: pyMCDS class instance.
 
+        output:
+            ls_variables: list of strings.
+            alphabetically ordered list of all tracked cell variable names.
 
-        Returns the names of all of the cell variables tracked in ['discrete cells']
-        dictionary
 
-        Returns
-        -------
-        ls_variables : list, shape=[n_variables]
-            Contains the names of the cell variables
+        description:
+            function returns all modeled cell variable names.
         """
         ls_variables = sorted(self.data['discrete_cells']['data'].keys())
         return ls_variables
@@ -769,13 +768,17 @@ class pyMCDS:
         input:
             self: pyMCDS class instance.
 
+        output:
+            df_cell: pandas dataframe
+            dataframe lists, one cell per row, all tracked variables
+            values related to this cell. the variables are cell_position,
+            mesh_center, and voxel coordinates, all cell_variables,
+            all substrate rates and concentrations, and additional
+            the surrounding cell density.
 
-        Builds DataFrame from data['discrete_cells']['data']
-
-        Returns
-        -------
-        df_cell : DataFrame, shape=[n_cells, n_variables]
-            dataframe containing the cell data for all cells at this time step
+        description:
+            function returnd a dataframe with a cell centric view
+            of the simulation.
         """
 
         # get cell position and more
@@ -829,8 +832,10 @@ class pyMCDS:
         if self.microenv:
             # merge substrate (left join)
             df_sub = self.get_substrate_df()
-            for s_index in df_sub.index:
-                df_cell[s_index] = df_sub.loc[s_index,'value']
+            for s_sub in df_sub.index:
+                 for s_rate in df_sub.columns:
+                     s_var = f'{s_sub}_{s_rate}'
+                     df_cell[s_var] = df_sub.loc[s_sub,s_rate]
 
             # merge concentration (left join)
             df_conc = self.get_concentrations_df(z_slice=None)
@@ -861,24 +866,13 @@ class pyMCDS:
             z : floating point number; default is 0
                 cell position z-coordinate
 
+        output:
+            df_voxel: pandas dataframe
+            x, y, z voxel filtered cell dataframe.
 
-        Returns a dataframe for cells in the same voxel as the position given by
-        x, y, and z.
-
-        Parameters
-        ----------
-        x : float
-            x-position for the point of interest
-        y : float
-            y_position for the point of interest
-        z : float
-            z_position for the point of interest
-
-        Returns
-        -------
-        vox_df : DataFrame, shape=[n_cell_in_voxel, n_variables]
-            cell dataframe containing only cells in the same voxel as the point
-            specified by x, y, and z.
+        description:
+            function returns the cell dataframe for the voxel
+            specified with the x, y, z position coordinate.
         """
         # get mesh and mesh spacing
         dm, dn, dp = self.get_mesh_spacing()
@@ -910,6 +904,15 @@ class pyMCDS:
         """
         input:
             self: pyMCDS class instance.
+
+        output:
+            df_unit: pandas dataframe
+            dataframe lists all tracked variables from metadata,
+            cell, and microenvironment and maps them to their unit.
+
+        description:
+            function retuns a dataframe that lists all tracked variables
+            and their units.
         """
         # extract data
         ds_unit = {}
@@ -952,17 +955,20 @@ class pyMCDS:
         input:
             self: pyMCDS class instance.
 
+            xmlfile: string
+                name of the xml file with or without path.
+                in the with path case output_path has to be set to the default!
 
-        Internal function. Does the actual work of initializing MultiCellDS by parsing the xml
+            output_path: string, default '.'
+                relative or absolute path to the directory where
+                the PhysiCell output files are stored.
 
-        Parameters
-        ----------
-            BUE
+        output:
+            self: pyMCDS class instance with loaded data.
 
-        Returns
-        -------
-        MCDS: obj
-            BUE
+        description:
+            intenal function to load the data from the PhysiCell output files
+            into the pyMCDS instance.
         """
         # file and path manipulation
         xmlfile = xmlfile.replace('\\','/')
@@ -1254,9 +1260,9 @@ class pyMCDS:
             MCDS['discrete_cells']['data'][data_labels[col]] = cell_data[col, :]
 
 
-        ##################
-        # get graph data #
-        ##################
+        #####################
+        # handle graph data #
+        #####################
 
         if self.graph:
 
