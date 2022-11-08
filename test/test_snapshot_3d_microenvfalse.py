@@ -40,97 +40,85 @@ class TestPyMcdsMicroenvFalse3D(object):
     # nop
 
     ## mesh related functions
-    def test_mcds_get_x_range(self, mcds=mcds):
-        tr_range = mcds.get_x_range()
-        assert tr_range == (-30, 300)
+    def test_mcds_get_xyz_range(self, mcds=mcds):
+        ltr_range = mcds.get_xyz_range()
+        assert ltr_range == [(-30, 300), (-20, 200), (-10, 100)]
 
-    def test_mcds_get_y_range(self, mcds=mcds):
-        tr_range = mcds.get_y_range()
-        assert tr_range == (-20, 200)
+    def test_mcds_get_mesh_mnp_range(self, mcds=mcds):
+        ltr_range = mcds.get_mesh_mnp_range()
+        assert ltr_range == [(-15, 285), (-10, 190), (-5, 95)]
 
-    def test_mcds_get_z_range(self, mcds=mcds):
-        tr_range = mcds.get_z_range()
-        assert tr_range == (-10, 100)
+    def test_mcds_get_voxel_ijk_range(self, mcds=mcds):
+        ltr_range = mcds.get_voxel_ijk_range()
+        assert ltr_range == [(0, 11), (0, 11), (0, 11)]
 
-    def test_mcds_get_mesh_m_range(self, mcds=mcds):
-        tr_range = mcds.get_mesh_m_range()
-        assert tr_range == (-15, 285)
+    def test_mcds_get_mesh_mnp_axis(self, mcds=mcds):
+        lar_axis = mcds.get_mesh_mnp_axis()
+        assert all(lar_axis[0] == [-15., 15., 45., 75., 105., 135., 165., 195., 225., 255., 285.]) and \
+               all(lar_axis[1] == [-10., 10., 30., 50., 70., 90., 110., 130., 150., 170., 190.]) and \
+               all(lar_axis[2] == [-5., 5., 15., 25., 35., 45., 55., 65., 75., 85., 95.])
 
-    def test_mcds_get_mesh_n_range(self, mcds=mcds):
-        tr_range = mcds.get_mesh_n_range()
-        assert tr_range == (-10, 190)
-
-    def test_mcds_get_mesh_p_range(self, mcds=mcds):
-        tr_range = mcds.get_mesh_p_range()
-        assert tr_range == (-5, 95)
-
-    def test_mcds_get_voxel_i_range(self, mcds=mcds):
-        tr_range = mcds.get_voxel_i_range()
-        assert tr_range == (0, 11)
-
-    def test_mcds_get_voxel_j_range(self, mcds=mcds):
-        tr_range = mcds.get_voxel_j_range()
-        assert tr_range == (0, 11)
-
-    def test_mcds_get_voxel_k_range(self, mcds=mcds):
-        tr_range = mcds.get_voxel_k_range()
-        assert tr_range == (0, 11)
+    def test_mcds_get_voxel_ijk_axis(self, mcds=mcds):
+        lar_axis = mcds.get_voxel_ijk_axis()
+        assert all(lar_axis[0] == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) and \
+               all(lar_axis[1] == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) and \
+               all(lar_axis[2] == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 
     def test_mcds_get_mesh_flat_false(self, mcds=mcds):
-        lar_mesh = mcds.get_mesh(flat=False)
-        assert (str(type(lar_mesh)) == "<class 'list'>") and \
-               (len(lar_mesh) == 3) and \
-               (str(type(lar_mesh[0])) == "<class 'numpy.ndarray'>") and \
-               (str(lar_mesh[0].dtype) == "float64") and \
-               (lar_mesh[0].shape == (11, 11, 11)) and \
-               (str(type(lar_mesh[1])) == "<class 'numpy.ndarray'>") and \
-               (str(lar_mesh[1].dtype) == "float64") and \
-               (lar_mesh[1].shape == (11, 11, 11)) and \
-               (str(type(lar_mesh[2])) == "<class 'numpy.ndarray'>") and \
-               (str(lar_mesh[2].dtype) == "float64") and \
-               (lar_mesh[2].shape == (11, 11, 11))
+        aar_mesh = mcds.get_mesh(flat=False)
+        assert (str(type(aar_mesh)) == "<class 'numpy.ndarray'>") and \
+               (len(aar_mesh) == 3) and \
+               (str(type(aar_mesh[0])) == "<class 'numpy.ndarray'>") and \
+               (str(aar_mesh[0].dtype) == "float64") and \
+               (aar_mesh[0].shape == (11, 11, 11)) and \
+               (str(type(aar_mesh[1])) == "<class 'numpy.ndarray'>") and \
+               (str(aar_mesh[1].dtype) == "float64") and \
+               (aar_mesh[1].shape == (11, 11, 11)) and \
+               (str(type(aar_mesh[2])) == "<class 'numpy.ndarray'>") and \
+               (str(aar_mesh[2].dtype) == "float64") and \
+               (aar_mesh[2].shape == (11, 11, 11))
 
     def test_mcds_get_mesh_flat_true(self, mcds=mcds):
-        lar_mesh = mcds.get_mesh(flat=True)
-        assert (str(type(lar_mesh)) == "<class 'list'>") and \
-               (len(lar_mesh) == 2) and \
-               (str(type(lar_mesh[0])) == "<class 'numpy.ndarray'>") and \
-               (str(lar_mesh[0].dtype) == "float64") and \
-               (lar_mesh[0].shape == (11, 11)) and \
-               (str(type(lar_mesh[1])) == "<class 'numpy.ndarray'>") and \
-               (str(lar_mesh[1].dtype) == "float64") and \
-               (lar_mesh[1].shape == (11, 11))
+        aar_mesh = mcds.get_mesh(flat=True)
+        assert (str(type(aar_mesh)) == "<class 'numpy.ndarray'>") and \
+               (len(aar_mesh) == 2) and \
+               (str(type(aar_mesh[0])) == "<class 'numpy.ndarray'>") and \
+               (str(aar_mesh[0].dtype) == "float64") and \
+               (aar_mesh[0].shape == (11, 11)) and \
+               (str(type(aar_mesh[1])) == "<class 'numpy.ndarray'>") and \
+               (str(aar_mesh[1].dtype) == "float64") and \
+               (aar_mesh[1].shape == (11, 11))
 
     def test_mcds_get_mesh_2d(self, mcds=mcds):
-        lar_mesh_flat = mcds.get_mesh(flat=True)
-        lar_mesh_2d = mcds.get_mesh_2D()
-        assert (str(type(lar_mesh_2d)) == "<class 'list'>") and \
-               (len(lar_mesh_2d) == 2) and \
-               (lar_mesh_2d[0] == lar_mesh_flat[0]).all() and \
-               (lar_mesh_2d[1] == lar_mesh_flat[1]).all()
+        aar_mesh_flat = mcds.get_mesh(flat=True)
+        aar_mesh_2d = mcds.get_mesh_2D()
+        assert (str(type(aar_mesh_2d)) == "<class 'numpy.ndarray'>") and \
+               (len(aar_mesh_2d) == 2) and \
+               (aar_mesh_2d[0] == aar_mesh_flat[0]).all() and \
+               (aar_mesh_2d[1] == aar_mesh_flat[1]).all()
 
-    def test_mcds_get_mesh_linear(self, mcds=mcds):
+    def test_mcds_get_mesh_coordinate(self, mcds=mcds):
         # cube coordinates
         ar_m_cube, ar_n_cube, ar_p_cube = mcds.get_mesh(flat=False)
         er_m_cube = set(ar_m_cube.flatten())
         er_n_cube = set(ar_n_cube.flatten())
         er_p_cube = set(ar_p_cube.flatten())
         # linear coordiantes
-        lar_voxel = mcds.get_mesh_linear()
-        assert (str(type(lar_voxel)) == "<class 'list'>") and \
-               (len(lar_voxel) == 3) and \
-               (str(type(lar_voxel[0])) == "<class 'numpy.ndarray'>") and \
-               (str(lar_voxel[0].dtype) == "float64") and \
-               (set(lar_voxel[0]) == er_m_cube) and \
-               (lar_voxel[0].shape == (1331,)) and \
-               (str(type(lar_voxel[1])) == "<class 'numpy.ndarray'>") and \
-               (str(lar_voxel[1].dtype) == "float64") and \
-               (set(lar_voxel[1]) == er_n_cube) and \
-               (lar_voxel[1].shape == (1331,)) and \
-               (str(type(lar_voxel[2])) == "<class 'numpy.ndarray'>") and \
-               (str(lar_voxel[2].dtype) == "float64") and \
-               (set(lar_voxel[2]) == er_p_cube) and \
-               (lar_voxel[2].shape == (1331,))
+        aar_voxel = mcds.get_mesh_coordinate()
+        assert (str(type(aar_voxel)) == "<class 'numpy.ndarray'>") and \
+               (len(aar_voxel) == 3) and \
+               (str(type(aar_voxel[0])) == "<class 'numpy.ndarray'>") and \
+               (str(aar_voxel[0].dtype) == "float64") and \
+               (set(aar_voxel[0]) == er_m_cube) and \
+               (aar_voxel[0].shape == (1331,)) and \
+               (str(type(aar_voxel[1])) == "<class 'numpy.ndarray'>") and \
+               (str(aar_voxel[1].dtype) == "float64") and \
+               (set(aar_voxel[1]) == er_n_cube) and \
+               (aar_voxel[1].shape == (1331,)) and \
+               (str(type(aar_voxel[2])) == "<class 'numpy.ndarray'>") and \
+               (str(aar_voxel[2].dtype) == "float64") and \
+               (set(aar_voxel[2]) == er_p_cube) and \
+               (aar_voxel[2].shape == (1331,))
 
     def test_mcds_get_mesh_spacing(self, mcds=mcds):
         lr_spacing = mcds.get_mesh_spacing()

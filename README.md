@@ -69,10 +69,12 @@ Within the pcDataLoader library, I try to stick to the documentation policy line
     + **pyMCDS** has a new additionally a boolean **graph** parameter, to specify if the attached and neighbor graph should be read.
     + **pyMCDS** has a new additionally a boolean **verbose** parameter, to specify if there should be text output while processing.
     + pyMCDS **mcds.get_2D_mesh** was renamed to **mcds.get_mesh_2D** for consistency.
-    + pyMCDS **mcds.get_linear_voxels** was renamed to **mcds.get_mesh_axis** for consistency.
+    + pyMCDS **mcds.get_linear_voxels** was renamed to **mcds.get_mesh_coordinate** for consistency.
     + pyMCDS **mcds.get_containing_voxel_ijk** was renamed to **mcds.get_voxel_ijk** for biefness.
     + pyMCDS **mcds.get_voxel_spacing** returns now 3 specific values, one for x, y, and z, insted of 1 general value.
-    + pyMCDS **mcds.get_concentrations** if z_slice is not a mesh center value, the function will by default adjust to nearest and no longer break.
+    + pyMCDS **mcds.get_concentrations** was renamed to **mcds.get_concentration** for consistency
+    + pyMCDS **mcds.get_concentrations_at** was renamed to **mcds.get_concentration_at** for consistency
+    + pyMCDS **mcds.get_concentration_at** if z_slice is not a mesh center value, the function will by default adjust to nearest and no longer break.
     + pyMCDS **mcds.get_cell_variables** and **mcds.get_substrate_names** return now a strictly alphabetically ordered list.
     + pyMCDS **mcds.get_cell_df** returns now a pandas dataframe with the cell IDs the index and not as a column.
       additionaly, this dataframe has now voxel, mesh_center, substrate parameter, substrate concentration, and cell density columns.
@@ -82,16 +84,12 @@ Within the pcDataLoader library, I try to stick to the documentation policy line
     + new pyMCDS **mcds.get_physicell_version** function.
     + new pyMCDS **mcds.get_runtime** function.
     + new pyMCDS **mcds.get_timestamp** function.
+    + new pyMCDS **mcds.get_voxel_ijk_range** function.
+    + new pyMCDS **mcds.get_voxel_ijk_axis** function.
     + new pyMCDS **mcds.get_voxel_volume** function.
-    + new pyMCDS **mcds.get_x_range** function.
-    + new pyMCDS **mcds.get_y_range** function.
-    + new pyMCDS **mcds.get_z_range** function.
-    + new pyMCDS **mcds.get_mesh_m_range** function.
-    + new pyMCDS **mcds.get_mesh_n_range** function.
-    + new pyMCDS **mcds.get_mesh_p_range** function.
-    + new pyMCDS **mcds.get_voxel_i_range** function.
-    + new pyMCDS **mcds.get_voxel_j_range** function.
-    + new pyMCDS **mcds.get_voxel_k_range** function.
+    + new pyMCDS **mcds.get_mesh_mnp_range** function.
+    + new pyMCDS **mcds.get_mesh_mnp_axis** function.
+    + new pyMCDS **mcds.get_xyz_range** function.
     + new pyMCDS **mcds.is_in_mesh** function.
     + new pyMCDS **mcds.get_attached_graph_dict** function.
     + new pyMCDS **mcds.get_neigbor_graph_dict** function.

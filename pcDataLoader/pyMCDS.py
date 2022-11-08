@@ -198,148 +198,84 @@ class pyMCDS:
 
     ## MESH RELATED FUNCTIONS  ##
 
-    def get_x_range(self):
+    def get_voxel_ijk_range(self):
         """
         input:
             self: pyMCDS class instance.
 
         output:
-            tr_x : tuple of 2 floating point numbers
-            x-axis cell position range.
+            lti_i : list of tuple of 2 integer numbers
+            i-axis, j-aixs, and k-axis voxel range.
 
         decritpion:
-            function returns in a tuple the lowest and highest
-            x-axis cell position value.
+            function returns in a list of tuples the lowest and highest
+            i-axis, j-axis, and k-axis voxel value.
         """
-        return self.data['mesh']['x_range']
+        return self.data['mesh']['ijk_range']
 
 
-    def get_y_range(self):
+    def get_mesh_mnp_range(self):
         """
         input:
             self: pyMCDS class instance.
 
         output:
-            tr_y : tuple of 2 floating point numbers
-            y-axis cell position range.
+            ltr_mnp : list of tuple of 2 floating point numbers
+            m-axis, n-axis, and p-axis  mesh center range.
 
         decritpion:
-            function returns in a tuple the lowest and highest
-            y-axis cell position value.
+            function returns in a list of tuples the lowest and highest
+            m-axis, n-axis, and p-axis mesh center value.
         """
-        return self.data['mesh']['y_range']
+        return self.data['mesh']['mnp_range']
 
 
-    def get_z_range(self):
+    def get_xyz_range(self):
         """
         input:
             self: pyMCDS class instance.
 
         output:
-            tr_z : tuple of 2 floating point numbers
-            z-axis cell position range.
+            ltr_xyz : list of tuple of 2 floating point numbers
+            x-axis, y-axis, and z-axis position range.
 
         decritpion:
-            function returns in a tuple the lowest and highest
-            z-axis cell position value.
+            function returns in a list of tuples the lowest and highest
+            x-axis, y-axis, and z-axis position value.
         """
-        return self.data['mesh']['z_range']
+        return self.data['mesh']['xyz_range']
 
 
-    def get_mesh_m_range(self):
+    def get_voxel_ijk_axis(self):
         """
         input:
             self: pyMCDS class instance.
 
         output:
-            tr_m : tuple of 2 floating point numbers
-            m-axis mesh center range.
+            lai_ijk : list of 3 numpy arrays of integre numbers
+            i-axis, j-axis, and k-axis voxel coordinates axis.
 
-        decritpion:
-            function returns in a tuple the lowest and highest
-            m-axis mesh center value.
+        description:
+            function returns a list of voxel coordinate vectors,
+            one for the i-axis, j-axis, and k-axis.
         """
-        return self.data['mesh']['m_range']
+        return self.data['mesh']['ijk_axis']
 
 
-    def get_mesh_n_range(self):
-        """
-        input:
-            self: pyMCDS class instance.
-
-        output:
-            tr_n : tuple of 2 floating point numbers
-            n-axis mesh center range.
-
-        decritpion:
-            function returns in a tuple the lowest and highest
-            n-axis mesh center value.
-        """
-        return self.data['mesh']['n_range']
-
-
-    def get_mesh_p_range(self):
+    def get_mesh_mnp_axis(self):
         """
         input:
             self: pyMCDS class instance.
 
         output:
-            tr_p : tuple of 2 floating point numbers
-            p-axis mesh center range.
+            lar_mnp : list of 3 numpy arrays of floating point numbers
+            m-axis, n-axis, and p-axis mesh center axis coordinates.
 
-        decritpion:
-            function returns in a tuple the lowest and highest
-            p-axis mesh center value.
+        description:
+            function returns a list of mesh center vectors,
+            one for the m-axis, n-axis, and p-axis.
         """
-        return self.data['mesh']['p_range']
-
-
-    def get_voxel_i_range(self):
-        """
-        input:
-            self: pyMCDS class instance.
-
-        output:
-            ti_i : tuple of 2 integer numbers
-            i-axis voxel range.
-
-        decritpion:
-            function returns in a tuple the lowest and highest
-            i-axis voxel value.
-        """
-        return self.data['mesh']['i_range']
-
-
-    def get_voxel_j_range(self):
-        """
-        input:
-            self: pyMCDS class instance.
-
-        output:
-            ti_j : tuple of 2 integer numbers
-            j-axis voxel range.
-
-        decritpion:
-            function returns in a tuple the lowest and highest
-            j-axis voxel value.
-        """
-        return self.data['mesh']['j_range']
-
-
-    def get_voxel_k_range(self):
-        """
-        input:
-            self: pyMCDS class instance.
-
-        output:
-            ti_k : tuple of 2 integer numbers
-            k-axis voxel range.
-
-        decritpion:
-            function returns in a tuple the lowest and highest
-            k-axis voxel value.
-        """
-        return self.data['mesh']['k_range']
+        return self.data['mesh']['mnp_axis']
 
 
     def get_mesh(self, flat=False):
@@ -353,26 +289,23 @@ class pyMCDS:
                 else the m, n, and p mesh center meshgrids will be returned.
 
         output:
-            la_meshgrid : list of numpy arrays.
+            aa_meshgrid : numpy array of numpy arrays.
                 meshgrid shaped objects, each  with the mesh center
                 coordinate values from one particular axis.
 
         description:
-            function returns a list of meshgrids each stores the
+            function returns an array of meshgrids each stores the
             mesh center coordinate values from one particular axis.
             the function can either return meshgrids for the full
             m, n, p 3D cube, or only the 2D planes along the p axis.
         """
         if flat:
-            ar_m = self.data['mesh']['m_coordinates'][:, :, 0]
-            ar_n = self.data['mesh']['n_coordinates'][:, :, 0]
-            return [ar_m, ar_n]
+            ar_m = self.data['mesh']['mnp_grid'][0][:, :, 0]
+            ar_n = self.data['mesh']['mnp_grid'][1][:, :, 0]
+            return np.array([ar_m, ar_n])
 
         else:
-            ar_m = self.data['mesh']['m_coordinates']
-            ar_n = self.data['mesh']['n_coordinates']
-            ar_p = self.data['mesh']['p_coordinates']
-            return [ar_m, ar_n, ar_p]
+            return self.data['mesh']['mnp_grid']
 
 
     def get_mesh_2D(self):
@@ -381,7 +314,7 @@ class pyMCDS:
             self: pyMCDS class instance.
 
         output:
-            la_meshgrid : list of 2 numpy arrays.
+            aa_meshgrid : numpy array of 2 numpy arrays.
                 meshgrid shaped objects, with the mesh center
                 coordinate values from the m and n-axis, respective.
 
@@ -392,21 +325,20 @@ class pyMCDS:
         return self.get_mesh(flat=True)
 
 
-    def get_mesh_axis(self):
+    def get_mesh_coordinate(self):
         """
         input:
             self: pyMCDS class instance.
 
         output:
-            la_meshaxis : list of 3 one dimensonal numpy arrays.
+            aar_meshaxis : numpy array of 3 one dimensonal numpy floating point number arrays.
                 n, m, and p-axis mesh center coorinate vectors.
 
         desription:
             function returns three vectors with mesh center coordinate values,
             one for each axis.
         """
-        ar_m, ar_n, ar_p, = self.data['mesh']['mnp_coordinates']
-        return [ar_m, ar_n, ar_p]
+        return self.data['mesh']['mnp_coordinate']
 
 
     def get_mesh_spacing(self):
@@ -415,24 +347,22 @@ class pyMCDS:
             self: pyMCDS class instance.
 
         output:
-            lr_nmpspacing: list of 3 floating point numbers.
+            lr_mnp_spacing: list of 3 floating point numbers.
                 mesh spacing in m, n, and p direction.
 
         description:
             function returns the distance in between voxel centers
             in the spacial unit defined in the PhysiCell_settings.xml file.
         """
-        ar_m, ar_n, ar_p = self.get_mesh_axis()
+        tr_m_range, tr_n_range, tr_p_range = self.get_mesh_mnp_range()
+        ar_m_axis, ar_n_axis, ar_p_axis = self.get_mesh_mnp_axis()
 
-        # bue: dm = np.round((ar_m.max() - ar_m.min()) / (len(set(ar_m)) - 1))
-        # bue:dn = np.round((ar_n.max() - ar_n.min()) / (len(set(ar_n)) - 1))
-        dm = (ar_m.max() - ar_m.min()) / (len(set(ar_m)) - 1)
-        dn = (ar_n.max() - ar_n.min()) / (len(set(ar_n)) - 1)
-        if (len(set(ar_p)) == 1):
+        dm = (tr_m_range[1] - tr_m_range[0]) / (len(ar_m_axis) - 1)
+        dn = (tr_n_range[1] - tr_n_range[0]) / (len(ar_n_axis) - 1)
+        if (len(set(tr_p_range)) == 1):
             dp = 1
         else:
-            # bue: dp = np.round((ar_p.max() - ar_p.min()) / (len(set(ar_p)) - 1))
-            dp = (ar_p.max() - ar_p.min()) / (len(set(ar_p)) - 1)
+            dp = (tr_p_range[1] - tr_p_range[0]) / (len(ar_p_axis) - 1)
         return [dm, dn, dp]
 
 
@@ -457,20 +387,19 @@ class pyMCDS:
         return(r_volume)
 
 
-    # bue: def get_containing_voxel_ijk(self, x, y, z):
     def get_voxel_ijk(self, x, y, z):
         """
         input:
             self: pyMCDS class instance.
 
             x : floating point number
-                cell position x-coordinate
+                position x-coordinate
 
             y : floating point number
-                cell position y-coordinate
+                position y-coordinate
 
             z : floating point number
-                cell position z-coordinate
+                position z-coordinate
 
         output:
             li_ijk : list of 3 integers
@@ -479,11 +408,9 @@ class pyMCDS:
 
         description:
             function returns the meshgrid indices i, j, k
-            for the given cell position x, y, z.
+            for the given position x, y, z.
         """
-        tr_m = self.get_mesh_m_range()
-        tr_n = self.get_mesh_n_range()
-        tr_p = self.get_mesh_p_range()
+        tr_m, tr_n, tr_p = self.get_mesh_mnp_range()
         dm, dn, dp = self.get_mesh_spacing()
 
         i = int(np.round((x - tr_m[0]) / dm))
@@ -499,24 +426,24 @@ class pyMCDS:
             self: pyMCDS class instance.
 
             x : floating point number
-                cell position x-coordinate
+                position x-coordinate
 
             y : floating point number
-                cell position y-coordinate
+                position y-coordinate
 
             z : floating point number
-                cell position z-coordinate
+                position z-coordinate
 
             halt: boolean; default is False
                 should program execution break or just spit out a waring,
-                if cell position is not in mesh?
+                if position is not in mesh?
 
         output:
             b_isinmesh: boolean
-            states if the given coordinat is inside the mesh.
+            states if the given coordinate is inside the mesh.
 
         description:
-            function evaluates, if the given cell position coordinat
+            function evaluates, if the given position coordinate
             is inside the bounderies. if the coordinate is outside the
             mesh, a waring will be printed. if additionally halt is True,
             programm execution will break.
@@ -524,18 +451,16 @@ class pyMCDS:
         b_isinmesh = True
 
         # check againt boundary box
-        tr_xrange = self.get_x_range()
-        tr_yrange = self.get_y_range()
-        tr_zrange = self.get_z_range()
+        tr_x, tr_y, tr_z = self.get_xyz_range()
 
-        if (x < tr_xrange[0]) or (x > tr_xrange[1]):
-            print(f'Warning @ pyMCDS.is_in_mesh : x = {x} out of bounds: x-range is {tr_xrange}.')
+        if (x < tr_x[0]) or (x > tr_x[1]):
+            print(f'Warning @ pyMCDS.is_in_mesh : x = {x} out of bounds: x-range is {tr_x}.')
             b_isinmesh = False
-        elif (y < tr_yrange[0]) or (y > tr_yrange[1]):
-            print(f'Warning @ pyMCDS.is_in_mesh : y = {y} out of bounds: y-range is {tr_yrange}.')
+        elif (y < tr_y[0]) or (y > tr_y[1]):
+            print(f'Warning @ pyMCDS.is_in_mesh : y = {y} out of bounds: y-range is {tr_y}.')
             b_isinmesh = False
-        elif (z < tr_zrange[0]) or (z > tr_zrange[1]):
-            print(f'Warning @ pyMCDS.is_in_mesh : z = {z} out of bounds: z-range is {tr_zrange}.')
+        elif (z < tr_z[0]) or (z > tr_z[1]):
+            print(f'Warning @ pyMCDS.is_in_mesh : z = {z} out of bounds: z-range is {tr_z}.')
             b_isinmesh = False
 
         # output
@@ -594,7 +519,7 @@ class pyMCDS:
         return(df_substrate)
 
 
-    def get_concentrations(self, substrate, z_slice=None, halt=False):
+    def get_concentration(self, substrate, z_slice=None, halt=False):
         """
         input:
             self: pyMCDS class instance.
@@ -624,40 +549,40 @@ class pyMCDS:
             out of the whole meshgrid, for the specified chemical species.
         """
         ar_conc = self.data['continuum_variables'][substrate]['data']
-        ar_p = self.data['mesh']['p_coordinates']
 
+        # check if z_slice is a mesh center or None
         if not (z_slice is None):
-            # check if z_slice is a mesh center
-            if not (z_slice in ar_p):
-                ar_punique = np.unique(ar_p)
-                print(f'Warning @ pyMCDS.get_concentrations : specified z_slice {z_slice} is not an element of the z-axis mesh centers set {ar_punique}.')
+            _, _, ar_p_axis = self.get_mesh_mnp_axis()
+            if not (z_slice in ar_p_axis):
+                print(f'Warning @ pyMCDS.get_concentration : specified z_slice {z_slice} is not an element of the z-axis mesh centers set {ar_p_axis}.')
                 if halt:
                     sys.exit('Processing stopped!')
                 else:
-                    z_slice = ar_punique[np.abs(ar_puniqu - z_slice).argmin()]
+                    z_slice = ar_p_axis[(ar_p_axis - z_slice).argmin()]
                     print(f'z_slice set to {z_slice}.')
 
             # filter by z_slice
-            mask = ar_p == z_slice
-            ar_conc = ar_conc[mask].reshape((ar_p.shape[0], ar_p.shape[1]))
+            _, _, ar_p_grid = self.get_mesh()
+            mask = ar_p_grid == z_slice
+            ar_conc = ar_conc[mask].reshape((ar_p_grid.shape[0], ar_p_grid.shape[1]))
 
         # output
         return ar_conc
 
 
-    def get_concentrations_at(self, x, y, z=0):
+    def get_concentration_at(self, x, y, z=0):
         """
         input:
             self: pyMCDS class instance.
 
             x : floating point number
-                cell position x-coordinate
+                position x-coordinate
 
             y : floating point number
-                cell position y-coordinate
+                position y-coordinate
 
             z : floating point number, default is 0
-                cell position z-coordinate
+                position z-coordinate
 
         output:
             ar_concs: numpy array of floating point numbers.
@@ -674,14 +599,14 @@ class pyMCDS:
         ar_concs = np.zeros(len(ls_substrate))
 
         for n, s_substrate in enumerate(ls_substrate):
-            ar_concs[n] = self.get_concentrations(s_substrate)[j, i, k]
+            ar_concs[n] = self.get_concentration(s_substrate)[j, i, k]
             if self.verbose:
-                print(f'pyMCD.get_concentrations_at(x={x},y={y},z={z}) > jkl: [{i},{j},{k}] > substrate: {s_substrate} {ar_concs[n]}')
+                print(f'pyMCD.get_concentration_at(x={x},y={y},z={z}) > jkl: [{i},{j},{k}] > substrate: {s_substrate} {ar_concs[n]}')
 
         return ar_concs
 
 
-    def get_concentrations_df(self, z_slice=None):
+    def get_concentration_df(self, z_slice=None, halt=False):
         """
         input:
             self: pyMCDS class instance.
@@ -690,6 +615,13 @@ class pyMCDS:
                 z-axis position to slice a 2D xy-plain out of the
                 3D substrate concentraion mesh. if None the
                 whole 3D mesh will be returned.
+
+            halt: boolean; default is False
+                should program execution break or just spit out a waring,
+                if z_slize position is not an exact mesh center coordinate?
+                if False, z_slice will be adjusted to the nearest
+                mesh center value, the small one, if there are
+                multiple occurrences.
 
         output:
             df_conc : pandas dataframe
@@ -700,15 +632,22 @@ class pyMCDS:
             for all chemical species in all voxels. additionall this
             dataframe lists voxel and mesh center coordinates.
         """
+        # check if z_slice is a mesh center or None
+        if not (z_slice is None):
+            _, _, ar_p_axis = self.get_mesh_mnp_axis()
+            if not (z_slice in ar_p_axis):
+                print(f'Warning @ pyMCDS.get_concentration_df : specified z_slice {z_slice} is not an element of the z-axis mesh centers set {ar_p_axis}.')
+                if halt:
+                    sys.exit('Processing stopped!')
+                else:
+                    z_slice = ar_p_axis[(ar_p_axis - z_slice).argmin()]
+                    print(f'z_slice set to {z_slice}.')
+
         # flatten mesh coordnates
         ar_m, ar_n, ar_p = self.get_mesh()
         ar_m = ar_m.flatten(order='C')
         ar_n = ar_n.flatten(order='C')
         ar_p = ar_p.flatten(order='C')
-
-        # check to see that z_slice is a valid plane
-        if not (z_slice is None) and not (z_slice in ar_p):
-            sys.exit(f'Error @ pyMCDS.get_concentrations_df : specified z_slice {z_slice} not in z_coordinates {np.unique(ar_p)}.')
 
         # get voxel spacing
         dm, dn, dp = self.get_mesh_spacing()
@@ -724,16 +663,17 @@ class pyMCDS:
             'mesh_center_m','mesh_center_n','mesh_center_p'
         ]
         la_data = [ai_i, ai_j, ai_k, ar_m, ar_n, ar_p]
+
         # handle concentraions
         for s_substrate in self.get_substrate_names():
             ls_column.append(s_substrate)
-            ar_conc = self.get_concentrations(substrate=s_substrate, z_slice=None)
+            ar_conc = self.get_concentration(substrate=s_substrate, z_slice=None)
             la_data.append(ar_conc.flatten(order='C'))
 
         # generate dataframe
         aa_data  = np.array(la_data)
         df_conc = pd.DataFrame(aa_data.T, columns=ls_column)
-        d_dtype = {'voxel_i': int, 'voxel_j': int, 'voxel_k': int}  # bue: mesh_center are all real.
+        d_dtype = {'voxel_i': int, 'voxel_j': int, 'voxel_k': int}
         df_conc = df_conc.astype(d_dtype)
 
         # filter
@@ -838,7 +778,7 @@ class pyMCDS:
                      df_cell[s_var] = df_sub.loc[s_sub,s_rate]
 
             # merge concentration (left join)
-            df_conc = self.get_concentrations_df(z_slice=None)
+            df_conc = self.get_concentration_df(z_slice=None)
             df_cell = pd.merge(
                 df_cell,
                 df_conc,
@@ -858,13 +798,13 @@ class pyMCDS:
             self: pyMCDS class instance.
 
             x : floating point number
-                cell position x-coordinate
+                position x-coordinate
 
             y : floating point number
-                cell position y-coordinate
+                position y-coordinate
 
             z : floating point number; default is 0
-                cell position z-coordinate
+                position z-coordinate
 
         output:
             df_voxel: pandas dataframe
@@ -983,7 +923,7 @@ class pyMCDS:
         # 20221027 juliano: d = xmltodict.parse(open('PhysiCell_settings.xml').read(), process_namespaces=True)
         tree = ET.parse(xmlpathfile)
         if self.verbose:
-            print(f'Reading: {xmlpathfile}')
+            print(f'reading: {xmlpathfile}')
 
         root = tree.getroot()
         MCDS = {}
@@ -1037,43 +977,59 @@ class pyMCDS:
         MCDS['mesh'] = {}
 
         # while we're at it, find the mesh
-        coord_str = mesh_node.find('x_coordinates').text
-        delimiter = mesh_node.find('x_coordinates').get('delimiter')
-        x_coords = np.array(coord_str.split(delimiter), dtype=np.float64)
+        s_x_coor = mesh_node.find('x_coordinates').text
+        s_delim = mesh_node.find('x_coordinates').get('delimiter')
+        ar_x_coor = np.array(s_x_coor.split(s_delim), dtype=np.float64)
 
-        coord_str = mesh_node.find('y_coordinates').text
-        delimiter = mesh_node.find('y_coordinates').get('delimiter')
-        y_coords = np.array(coord_str.split(delimiter), dtype=np.float64)
+        s_y_coor = mesh_node.find('y_coordinates').text
+        s_delim = mesh_node.find('y_coordinates').get('delimiter')
+        ar_y_coor = np.array(s_y_coor.split(s_delim), dtype=np.float64)
 
-        coord_str = mesh_node.find('z_coordinates').text
-        delimiter = mesh_node.find('z_coordinates').get('delimiter')
-        z_coords = np.array(coord_str.split(delimiter), dtype=np.float64)
+        s_z_coor = mesh_node.find('z_coordinates').text
+        s_delim = mesh_node.find('z_coordinates').get('delimiter')
+        ar_z_coor = np.array(s_z_coor.split(s_delim), dtype=np.float64)
 
-        # reshape into a mesh grid
-        ar_mmm, ar_nnn, ar_ppp = np.meshgrid(x_coords, y_coords, z_coords, indexing='xy')
+        # reshape into a meshgrid
+        MCDS['mesh']['mnp_grid'] = np.array(np.meshgrid(ar_x_coor, ar_y_coor, ar_z_coor, indexing='xy'))
 
-        MCDS['mesh']['m_coordinates'] = ar_mmm
-        MCDS['mesh']['n_coordinates'] = ar_nnn
-        MCDS['mesh']['p_coordinates'] = ar_ppp
-
-        # get voxel range
-        MCDS['mesh']['i_range'] = (0, len(set(ar_mmm.flatten())))
-        MCDS['mesh']['j_range'] = (0, len(set(ar_nnn.flatten())))
-        MCDS['mesh']['k_range'] = (0, len(set(ar_ppp.flatten())))
+        # get mesh center axis
+        MCDS['mesh']['mnp_axis'] = [
+            np.unique(ar_x_coor),
+            np.unique(ar_y_coor),
+            np.unique(ar_z_coor),
+        ]
 
         # get mesh center range
-        MCDS['mesh']['m_range'] = (ar_mmm.min(), ar_mmm.max())
-        MCDS['mesh']['n_range'] = (ar_nnn.min(), ar_nnn.max())
-        MCDS['mesh']['p_range'] = (ar_ppp.min(), ar_ppp.max())
+        MCDS['mesh']['mnp_range'] = [
+           (MCDS['mesh']['mnp_axis'][0].min(), MCDS['mesh']['mnp_axis'][0].max()),
+           (MCDS['mesh']['mnp_axis'][1].min(), MCDS['mesh']['mnp_axis'][1].max()),
+           (MCDS['mesh']['mnp_axis'][2].min(), MCDS['mesh']['mnp_axis'][2].max()),
+        ]
+
+        # get voxel range
+        MCDS['mesh']['ijk_range'] = [
+            (0, len(MCDS['mesh']['mnp_axis'][0])),
+            (0, len(MCDS['mesh']['mnp_axis'][1])),
+            (0, len(MCDS['mesh']['mnp_axis'][2])),
+        ]
+
+        # get voxel axis
+        MCDS['mesh']['ijk_axis'] = [
+            np.array(range(MCDS['mesh']['ijk_range'][0][1])),
+            np.array(range(MCDS['mesh']['ijk_range'][1][1])),
+            np.array(range(MCDS['mesh']['ijk_range'][2][1])),
+        ]
 
         # get mesh bounding box range [xmin ymin zmin xmax ymax zmax]
         bboxcoor_str = mesh_node.find('bounding_box').text
         delimiter = mesh_node.find('bounding_box').get('delimiter')
         ar_bboxcoor = np.array(bboxcoor_str.split(delimiter), dtype=np.float64)
 
-        MCDS['mesh']['x_range'] = (ar_bboxcoor[0], ar_bboxcoor[3])
-        MCDS['mesh']['y_range'] = (ar_bboxcoor[1], ar_bboxcoor[4])
-        MCDS['mesh']['z_range'] = (ar_bboxcoor[2], ar_bboxcoor[5])
+        MCDS['mesh']['xyz_range'] = [
+            (ar_bboxcoor[0], ar_bboxcoor[3]),
+            (ar_bboxcoor[1], ar_bboxcoor[4]),
+            (ar_bboxcoor[2], ar_bboxcoor[5]),
+        ]
 
         # voxel data must be loaded from .mat file
         voxelfile = mesh_node.find('voxels').find('filename').text
@@ -1081,7 +1037,7 @@ class pyMCDS:
         try:
             initial_mesh = io.loadmat(voxelpathfile)['mesh']
             if self.verbose:
-                print(f'Reading: {voxelpathfile}')
+                print(f'reading: {voxelpathfile}')
         except:
             raise FileNotFoundError(f'Error @ pyMCDS._read_xml : no such file or directory: {voxelpathfile}\nreferenced in: {xmlpathfile}.')
             sys.exit(1)
@@ -1089,9 +1045,8 @@ class pyMCDS:
 
         # center of voxel specified by first three rows [ x, y, z ]
         # volume specified by fourth row
-        #MCDS['mesh']['voxels'] = {}
-        MCDS['mesh']['mnp_coordinates'] = initial_mesh[:3, :]   # bue ['voxels']['centers']
-        MCDS['mesh']['volumes'] = initial_mesh[3, :]  # bue ['voxels']['volumes']
+        MCDS['mesh']['mnp_coordinate'] = initial_mesh[:3, :]
+        MCDS['mesh']['volumes'] = initial_mesh[3, :]
 
 
         ################################
@@ -1102,39 +1057,31 @@ class pyMCDS:
             if self.verbose:
                 print('working on microenvironment data ...')
 
-            MCDS['continuum_variables'] = {}
-
-            # Continuum_variables, unlike in the matlab version the individual chemical
-            # species will be primarily accessed through their names e.g.
-            # MCDS['continuum_variables']['oxygen']['units']
-            # MCDS['continuum_variables']['glucose']['data']
-            variables_node = me_node.find('variables')
-            file_node = me_node.find('data').find('filename')
-
             # micro environment data is shape [4+n, len(voxels)] where n is the number
             # of species being tracked. the first 3 rows represent (x, y, z) of voxel
             # centers. The fourth row contains the voxel volume. The 5th row and up will
             # contain values for that species in that voxel.
+            file_node = me_node.find('data').find('filename')
             mefile = file_node.text
             mepathfile = output_path / mefile
             # Changes here
             try:
                 me_data = io.loadmat(mepathfile)['multiscale_microenvironment']
                 if self.verbose:
-                    print(f'Reading: {mepathfile}')
+                    print(f'reading: {mepathfile}')
             except:
                 raise FileNotFoundError(f'Error @ pyMCDS._read_xml : no such file or directory: {mepathfile,}\nreferenced in: {xmlpathfile}.')
                 sys.exit(1)
 
-
+            # continuum_variables, unlike in the matlab version the individual chemical
+            # species will be primarily accessed through their names e.g.
+            # MCDS['continuum_variables']['oxygen']['units']
+            # MCDS['continuum_variables']['glucose']['data']
+            variables_node = me_node.find('variables')
             var_children = variables_node.findall('variable')
+            MCDS['continuum_variables'] = {}
 
-            # we're going to need the linear x, y, and z coordinates later
-            # but we dont need to get them in the loop
-            ar_m = np.unique(ar_mmm)
-            ar_n = np.unique(ar_nnn)
-            ar_p = np.unique(ar_ppp)
-
+            # substrate loop
             for i_s, chemspecies in enumerate(var_children):
                 # i don't like spaces in species names!
                 s_substrate =chemspecies.get('name').replace(' ', '_')
@@ -1143,37 +1090,34 @@ class pyMCDS:
                 MCDS['continuum_variables'][s_substrate]['units'] = chemspecies.get('units')
 
                 if self.verbose:
-                    print(f'Parsing: {s_substrate} data')
+                    print(f'parsing: {s_substrate} data')
 
-                # initialize array for concentration data
-                MCDS['continuum_variables'][s_substrate]['data'] = np.zeros(ar_mmm.shape)
+                # initialize meshgrid shaped array for concentration data
+                MCDS['continuum_variables'][s_substrate]['data'] = np.zeros(MCDS['mesh']['mnp_grid'][0].shape)
 
                 # travel down one level on tree
                 chemspecies = chemspecies.find('physical_parameter_set')
 
                 # diffusion data for each species
                 MCDS['continuum_variables'][s_substrate]['diffusion_coefficient'] = {}
-                MCDS['continuum_variables'][s_substrate]['diffusion_coefficient']['value'] \
-                    = float(chemspecies.find('diffusion_coefficient').text)
-                MCDS['continuum_variables'][s_substrate]['diffusion_coefficient']['units'] \
-                    = chemspecies.find('diffusion_coefficient').get('units')
+                MCDS['continuum_variables'][s_substrate]['diffusion_coefficient']['value'] = float(chemspecies.find('diffusion_coefficient').text)
+                MCDS['continuum_variables'][s_substrate]['diffusion_coefficient']['units'] = chemspecies.find('diffusion_coefficient').get('units')
 
                 # decay data for each species
                 MCDS['continuum_variables'][s_substrate]['decay_rate'] = {}
-                MCDS['continuum_variables'][s_substrate]['decay_rate']['value'] \
-                    = float(chemspecies.find('decay_rate').text)
-                MCDS['continuum_variables'][s_substrate]['decay_rate']['units'] \
-                    = chemspecies.find('decay_rate').get('units')
+                MCDS['continuum_variables'][s_substrate]['decay_rate']['value']  = float(chemspecies.find('decay_rate').text)
+                MCDS['continuum_variables'][s_substrate]['decay_rate']['units']  = chemspecies.find('decay_rate').get('units')
 
                 # store data from microenvironment file as numpy array
                 # iterate over each voxel
-                for vox_idx in range(MCDS['mesh']['mnp_coordinates'].shape[1]):
+                # bue: i have a hunch this could be faster reimplemented.
+                for vox_idx in range(MCDS['mesh']['mnp_coordinate'].shape[1]):
 
                     # find the voxel coordinate
-                    ar_center = MCDS['mesh']['mnp_coordinates'][:, vox_idx]
-                    i = np.where(np.abs(ar_center[0] - ar_m) < 1e-10)[0][0]
-                    j = np.where(np.abs(ar_center[1] - ar_n) < 1e-10)[0][0]
-                    k = np.where(np.abs(ar_center[2] - ar_p) < 1e-10)[0][0]
+                    ar_center = MCDS['mesh']['mnp_coordinate'][:, vox_idx]
+                    i = np.where(np.abs(ar_center[0] - MCDS['mesh']['mnp_axis'][0]) < 1e-10)[0][0]
+                    j = np.where(np.abs(ar_center[1] - MCDS['mesh']['mnp_axis'][1]) < 1e-10)[0][0]
+                    k = np.where(np.abs(ar_center[2] - MCDS['mesh']['mnp_axis'][2]) < 1e-10)[0][0]
 
                     # store value
                     MCDS['continuum_variables'][s_substrate]['data'][j, i, k] = me_data[4+i_s, vox_idx]
@@ -1249,7 +1193,7 @@ class pyMCDS:
         try:
             cell_data = io.loadmat(cellpathfile)['cells']
             if self.verbose:
-                print(f'Reading: {cellpathfile}')
+                print(f'reading: {cellpathfile}')
         except:
             raise FileNotFoundError(f'Error @ pyMCDS._read_xml : no such file or directory: {cellpathfile}\nreferenced in: {xmlpathfile}.')
             sys.exit(1)
@@ -1278,7 +1222,7 @@ class pyMCDS:
             try:
                 dei_graph = graphfile_parser(s_pathfile=cellpathfile)
                 if self.verbose:
-                    print(f'Reading: {cellpathfile}')
+                    print(f'reading: {cellpathfile}')
             except:
                 raise FileNotFoundError(f'Error @ pyMCDS._read_xml : no such file or directory: {cellpathfile}\nreferenced in: {xmlpathfile}.')
                 sys.exit(1)
@@ -1293,7 +1237,7 @@ class pyMCDS:
             try:
                 dei_graph = graphfile_parser(s_pathfile=cellpathfile)
                 if self.verbose:
-                    print(f'Reading: {cellpathfile}')
+                    print(f'reading: {cellpathfile}')
             except:
                 raise FileNotFoundError(f'Error @ pyMCDS._read_xml : no such file or directory: {cellpathfile}\nreferenced in: {xmlpathfile}.')
                 sys.exit(1)
