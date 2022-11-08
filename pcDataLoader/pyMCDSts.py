@@ -9,12 +9,13 @@
 # description:
 #     pyMCDSts.py defineds an object class, able to load and access
 #     within python a time series of mcds objects loaded form a single
-#     PhysiCell model output folder. pyMCDSts.py was first froked from
+#     PhysiCell model output directory. pyMCDSts.py was first froked from
 #     PhysiCell-Tools python-loader, where it was implemented as 
 #     pyMCDS_timeseries.py, then totally rewritten and further developed. 
 #     the make_image and  make_movie functions are cloned from the PhysiCell 
 #     Makefile.
 #########
+
 
 # load libraries
 import os
@@ -22,6 +23,7 @@ import pathlib
 import platform
 from .pyMCDS import pyMCDS
 import xml.etree.ElementTree as ET
+
 
 # classes
 class pyMCDSts:
@@ -81,6 +83,7 @@ class pyMCDSts:
         ls_pathfile = [o_pathfile.as_posix() for o_pathfile in sorted(pathlib.Path(self.output_path).glob('output*.xml'))]
         return(ls_pathfile)
 
+
     def read_mcds(self, xmlfile_list=None):
         """
         input:
@@ -137,6 +140,7 @@ class pyMCDSts:
             s_magick = ''
         return(s_magick)
 
+
     def _handle_resize(self, resize_factor=1, movie=False):
         """
         input:
@@ -172,25 +176,25 @@ class pyMCDSts:
             s_resize = f"-resize '{r_width * resize_factor}!x{r_hight * resize_factor}!'"
         return(s_resize)
 
-    # BUE HERE I AM
+
     def make_gif(self, giffile='timeseries.gif', resize_factor=1):
         """
         input:
             self: pyMCDSts class instance.
 
             giffile: string; default 'timeseries.gif'
-
+                gif image filename.
 
             resize_factor: floating point number; defaulat 1
             to specify image maginfied or scale down. 
 
         output:
-            gif file in output_path folder.
-            s_opathfile
+            gif file in output_path directory.
+`            additionally, function will retun the path and filename.
 
         description:
-
-        gif
+            function generate a gif image from all snapshot svg files
+            found in the output_path directory.
         """
         s_magick = self._handle_magick()
         s_resize = self._handle_resize(resize_factor=resize_factor, movie=False)
@@ -201,6 +205,7 @@ class pyMCDSts:
 
         # output
         return(s_opathfile)
+
 
     def make_jpeg(self, resize_factor=1, movie=False):
         """
@@ -217,15 +222,18 @@ class pyMCDSts:
             generating a movie out of images.
 
         output:
-            jpeg files in output_path folder.
+            jpeg files in output_path directory.
 
         description:
-
-        jpeg
+            function generate jpeg image equivalents from all svg files
+            found in the output_path directory.
+            jpeg is by definition a lossy compressed image format.
+            https://en.wikipedia.org/wiki/JPEG
         """
         s_magick = self._handle_magick()
         s_resize = self._handle_resize(resize_factor=resize_factor, movie=movie)
         os.system(f'{s_magick}mogrify {s_resize} -format jpeg {self.output_path}/*.svg')
+
 
     def make_png(self, resize_factor=1, addargs='-transparent white', movie=False):
         """
@@ -236,8 +244,9 @@ class pyMCDSts:
             to specify image maginfied or scale down. 
 
             addargs: string; default '-transparent white'
+            sting to additional image mackig parameters.
+            by default alpha channel transparence is set to white.
             
-
             movie: boolean; default False
             if set to True, the resize parameter will be adjusted,
             so that the resulting image's hight and width are 
@@ -245,15 +254,18 @@ class pyMCDSts:
             generating a movie out of images.
 
         output:
-            png files in output_path folder.
+            png files in output_path directory.
 
         description:
-
-        png
+            function generate png image equivalents from all svg files
+            found in the output_path directory.
+            png is by definition a lossless compressed image format.
+            https://en.wikipedia.org/wiki/Portable_Network_Graphics
         """
         s_magick = self._handle_magick()
         s_resize = self._handle_resize(resize_factor=resize_factor, movie=movie)
         os.system(f'{s_magick}mogrify {s_resize} {addargs} -format png {self.output_path}/*.svg')
+
 
     def make_tiff(self, resize_factor=1, movie=False):
         """
@@ -270,15 +282,17 @@ class pyMCDSts:
             generating a movie out of images.
 
         output:
-            tiff files in output_path folder.
+            tiff files in output_path directory.
 
         decription:
-
-        tiff
+            function generate tiff image equivalents from all svg files
+            found in the output_path directory.
+            https://en.wikipedia.org/wiki/TIFF
         """
         s_magick = self._handle_magick()
         s_resize = self._handle_resize(resize_factor=resize_factor, movie=movie)
         os.system(f'{s_magick}mogrify {s_resize} -format tiff {self.output_path}/*.svg')
+
 
     def make_movie(self, moviefile='movie.mp4', frame_rate=24, resize_factor=1, interface='jpeg'):
         """
@@ -286,23 +300,26 @@ class pyMCDSts:
             self: pyMCDSts class instance.
 
             moviefile: sting; default 'movie.mp4'
+            mp4 movie file name.
 
             frame_rate: integer; default 24
+            specifies how many images per secound will be use.
 
             resize_factor: floating point number; defaulat 1
             to specify image maginfied or scale down. 
 
             interface: string; default 'jpeg'
+                ffmpeg can not directely translate svg image into a move.
+                the interface image format will be used to bridge the gap.
 
         output:
-            mp4 move file in output_path.
-            s_opathfile
+            mp4 move file in output_path directory.
+            interface image files in output_path directory.
+`           additionally, function will retun the movie path and filename.
 
         description:
-
-
-        generates a movie from all svg files found in the PhysiCell output directory.
-        mp4 moviefile move, made from the svg images.
+            function generates a movie from all svg files found in the 
+            output_path directory.
         """
         # gererate interface images
         if interface in {'JPEG', 'jpeg', 'jpg', 'jpe'}:
