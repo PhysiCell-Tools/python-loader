@@ -81,6 +81,7 @@ Within the pcDataLoader library, I try to stick to the documentation policy line
     + new pyMCDS **mcds.get_concentration_df** function.
     + new pyMCDS **mcds.get_substrate_df** function.
     + new pyMCDS **mcds.get_unit_df** function.
+    + new pyMCDS **mcds.get_multicellds_version** function.
     + new pyMCDS **mcds.get_physicell_version** function.
     + new pyMCDS **mcds.get_runtime** function.
     + new pyMCDS **mcds.get_timestamp** function.
