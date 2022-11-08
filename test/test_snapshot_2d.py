@@ -38,7 +38,11 @@ class TestPyMcdsMicroenvTrue2D(object):
         assert str(type(mcds)) == "<class 'pcDataLoader.pyMCDS.pyMCDS'>"
 
     ## metadata realted functions
-    def test_mcds_get_physicel_version(self, mcds=mcds):
+    def test_mcds_get_multicellds_version(self, mcds=mcds):
+        s_mcdsversion = mcds.get_multicellds_version()
+        assert s_mcdsversion == '2.snapshot/simulation'
+
+    def test_mcds_get_physicell_version(self, mcds=mcds):
         s_pcversion = mcds.get_physicell_version()
         assert s_pcversion == '1.10.4'
 
@@ -82,15 +86,31 @@ class TestPyMcdsMicroenvTrue2D(object):
 
     def test_mcds_get_mesh_mnp_axis(self, mcds=mcds):
         lar_axis = mcds.get_mesh_mnp_axis()
-        assert all(lar_axis[0] == [-15., 15., 45., 75., 105., 135., 165., 195., 225., 255., 285.]) and \
-               all(lar_axis[1] == [-10., 10., 30., 50., 70., 90., 110., 130., 150., 170., 190.]) and \
-               all(lar_axis[2] == [0.])
+        assert (str(type(lar_axis)) == "<class 'list'>") and \
+               (len(lar_axis) == 3) and \
+               (str(type(lar_axis[0])) == "<class 'numpy.ndarray'>") and \
+               (str(lar_axis[0].dtype) == "float64") and \
+               (lar_axis[0].shape == (11,)) and \
+               (str(type(lar_axis[1])) == "<class 'numpy.ndarray'>") and \
+               (str(lar_axis[1].dtype) == "float64") and \
+               (lar_axis[1].shape == (11,)) and \
+               (str(type(lar_axis[2])) == "<class 'numpy.ndarray'>") and \
+               (str(lar_axis[2].dtype) == "float64") and \
+               (lar_axis[2].shape == (1,))
 
     def test_mcds_get_voxel_ijk_axis(self, mcds=mcds):
         lar_axis = mcds.get_voxel_ijk_axis()
-        assert all(lar_axis[0] == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) and \
-               all(lar_axis[1] == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) and \
-               all(lar_axis[2] == [0])
+        assert (str(type(lar_axis)) == "<class 'list'>") and \
+               (len(lar_axis) == 3) and \
+               (str(type(lar_axis[0])) == "<class 'numpy.ndarray'>") and \
+               (str(lar_axis[0].dtype) == "int64") and \
+               (lar_axis[0].shape == (11,)) and \
+               (str(type(lar_axis[1])) == "<class 'numpy.ndarray'>") and \
+               (str(lar_axis[1].dtype) == "int64") and \
+               (lar_axis[1].shape == (11,)) and \
+               (str(type(lar_axis[2])) == "<class 'numpy.ndarray'>") and \
+               (str(lar_axis[2].dtype) == "int64") and \
+               (lar_axis[2].shape == (1,))
 
     def test_mcds_get_mesh_flat_false(self, mcds=mcds):
         aar_mesh = mcds.get_mesh(flat=False)

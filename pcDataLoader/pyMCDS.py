@@ -100,6 +100,21 @@ class pyMCDS:
 
     ## METADATA RELATED FUNCTIONS ##
 
+    def get_multicellds_version(self):
+        """
+        input:
+            self: pyMCDS class instance.
+
+        output:
+            s_version : sting
+            MultiCellDS xml version which stors the data.
+
+        description:
+            function returns as a string the MultiCellDS version
+            that is used to store this data.
+        """
+        return self.data['metadata']['multicellds_version']
+
     def get_physicell_version(self):
         """
         input:
@@ -289,7 +304,7 @@ class pyMCDS:
                 else the m, n, and p mesh center meshgrids will be returned.
 
         output:
-            aa_meshgrid : numpy array of numpy arrays.
+            aar_meshgrid : numpy array of numpy arrays of floating point numbers.
                 meshgrid shaped objects, each  with the mesh center
                 coordinate values from one particular axis.
 
@@ -314,7 +329,7 @@ class pyMCDS:
             self: pyMCDS class instance.
 
         output:
-            aa_meshgrid : numpy array of 2 numpy arrays.
+            aar_meshgrid : numpy array of 2 numpy arrays of floating point numbers.
                 meshgrid shaped objects, with the mesh center
                 coordinate values from the m and n-axis, respective.
 
@@ -940,6 +955,9 @@ class pyMCDS:
         metadata_node = root.find('metadata')
         MCDS['metadata'] = {}
 
+        # get multicellds xml version
+        MCDS['metadata']['multicellds_version'] = f'{root.get("version")}.{root.get("type")}'
+
         # get physicell software version
         software_node = metadata_node.find('software')
         physicellv_node = software_node.find('version')
@@ -1084,7 +1102,7 @@ class pyMCDS:
             # substrate loop
             for i_s, chemspecies in enumerate(var_children):
                 # i don't like spaces in species names!
-                s_substrate =chemspecies.get('name').replace(' ', '_')
+                s_substrate = chemspecies.get('name').replace(' ', '_')
 
                 MCDS['continuum_variables'][s_substrate] = {}
                 MCDS['continuum_variables'][s_substrate]['units'] = chemspecies.get('units')
