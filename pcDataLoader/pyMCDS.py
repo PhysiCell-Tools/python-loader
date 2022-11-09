@@ -107,9 +107,9 @@ class pyMCDS:
         Y = np.unique(centers[1, :])
         Z = np.unique(centers[2, :])
 
-        dx = (X.max() - X.min()) / X.shape[0]
-        dy = (Y.max() - Y.min()) / Y.shape[0]
-        dz = (Z.max() - Z.min()) / Z.shape[0]
+        dx = (X.max() - X.min()) / (X.shape[0] - 1)
+        dy = (Y.max() - Y.min()) / (Y.shape[0] - 1)
+        dz = (Z.max() - Z.min()) / (Z.shape[0] - 1)
 
         if np.abs(dx - dy) > 1e-10 or np.abs(dy - dz) > 1e-10 \
             or np.abs(dx - dz) > 1e-10:
@@ -320,14 +320,19 @@ class pyMCDS:
         """
         Does the actual work of initializing MultiCellDS by parsing the xml
         """
-
+        # file and path manipulation
+        xml_file = xml_file.replace('\\','/')
+        if (xml_file.find('/') > -1) and (output_path == '.'):
+            ls_xml_file = xml_file.split('/')
+            xml_file = ls_xml_file.pop(-1)
+            output_path = '/'.join(ls_xml_file)
         output_path = Path(output_path)
         xml_file = output_path / xml_file
-        tree = ET.parse(xml_file)
 
         print('Reading {}'.format(xml_file))
-
+        tree = ET.parse(xml_file)
         root = tree.getroot()
+
         MCDS = {}
 
         # Get current simulated time
