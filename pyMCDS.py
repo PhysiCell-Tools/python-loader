@@ -107,9 +107,9 @@ class pyMCDS:
         Y = np.unique(centers[1, :])
         Z = np.unique(centers[2, :])
 
-        dx = (X.max() - X.min()) / X.shape[0]
-        dy = (Y.max() - Y.min()) / Y.shape[0]
-        dz = (Z.max() - Z.min()) / Z.shape[0]
+        dx = (X.max() - X.min()) / (X.shape[0] - 1)
+        dy = (Y.max() - Y.min()) / (Y.shape[0] - 1)
+        dz = (Z.max() - Z.min()) / (Z.shape[0] - 1)
         
         if np.abs(dx - dy) > 1e-10 or np.abs(dy - dz) > 1e-10 \
             or np.abs(dx - dz) > 1e-10:
