@@ -126,6 +126,7 @@ Within the pcDataLoader library, I try to stick to the documentation policy line
 
 
 ## Release Notes:
++ version 2.0.1 (2022-11-08): elmbeech/pcDataLoader beta release patch voxel spacing bugfix.
 + version 2.0.0 (2022-08-30): elmbeech/pcDataLoader pip installable release, derived from and compatible with PhysiCell-Tools/python-loader release 1.1.0 (2022-07-20).
 + version 1.1.0 (2022-05-09): Physicell-Tools/python-loader release compatible with pre-v1.10.x of PhysiCell
 + version 1.0.1 (2020-01-25): Physicell-Tools/python-loader time-series related bug fix
