@@ -50,16 +50,12 @@ class TestPyMcdsTs(object):
     ## resize ##
     def test_mcds_handle_resize(self, mcds=mcds):
         s_resize = mcds._handle_resize()
-        assert s_resize == ''
+        assert s_resize == "-resize '330!x236!'"
 
     def test_mcds_handle_resize_1(self, mcds=mcds):
         s_resize = mcds._handle_resize(resize_factor=1)
-        assert s_resize == ''
+        assert s_resize == "-resize '330!x236!'"
 
     def test_mcds_handle_resize_2(self, mcds=mcds):
         s_resize = mcds._handle_resize(resize_factor=2)
-        assert s_resize == "-resize '660.0!x470.8!'"
-
-    def test_mcds_handle_resize_movie(self, mcds=mcds):
-        s_resize = mcds._handle_resize(movie=True)
-        assert s_resize == "-resize '330!x234!'"
+        assert s_resize == "-resize '660!x470!'"

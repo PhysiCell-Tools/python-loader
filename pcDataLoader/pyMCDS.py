@@ -372,12 +372,12 @@ class pyMCDS:
         tr_m_range, tr_n_range, tr_p_range = self.get_mesh_mnp_range()
         ar_m_axis, ar_n_axis, ar_p_axis = self.get_mesh_mnp_axis()
 
-        dm = (tr_m_range[1] - tr_m_range[0]) / (len(ar_m_axis) - 1)
-        dn = (tr_n_range[1] - tr_n_range[0]) / (len(ar_n_axis) - 1)
+        dm = (tr_m_range[1] - tr_m_range[0]) / (ar_m_axis.shape[0] - 1)
+        dn = (tr_n_range[1] - tr_n_range[0]) / (ar_n_axis.shape[0] - 1)
         if (len(set(tr_p_range)) == 1):
             dp = 1
         else:
-            dp = (tr_p_range[1] - tr_p_range[0]) / (len(ar_p_axis) - 1)
+            dp = (tr_p_range[1] - tr_p_range[0]) / (ar_p_axis.shape[0] - 1)
         return [dm, dn, dp]
 
 
@@ -744,27 +744,19 @@ class pyMCDS:
         dm, dn, dp = self.get_mesh_spacing()
 
         # get mesh and voxel min max values
-        ar_m, ar_n, ar_p = self.get_mesh()
-        m_min = ar_m.min()
-        n_min = ar_n.min()
-        p_min = ar_p.min()
-        i_min = 0
-        j_min = 0
-        k_min = 0
-        i_max = np.unique(ar_m).shape[0] - 1
-        j_max = np.unique(ar_n).shape[0] - 1
-        k_max = np.unique(ar_p).shape[0] - 1
+        tr_m_range, tr_n_range, tr_p_range = self.get_mesh_mnp_range()
+        tr_i_range, tr_j_range, tr_k_range = self.get_voxel_ijk_range()
 
         # get voxel for each cell
-        df_voxel.loc[:,'voxel_i'] = np.round((df_voxel.loc[:,'position_x'] - m_min) / dm).astype(int)
-        df_voxel.loc[:,'voxel_j'] = np.round((df_voxel.loc[:,'position_y'] - n_min) / dn).astype(int)
-        df_voxel.loc[:,'voxel_k'] = np.round((df_voxel.loc[:,'position_z'] - p_min) / dp).astype(int)
-        df_voxel.loc[(df_voxel.voxel_i > i_max), 'voxel_i'] =  i_max
-        df_voxel.loc[(df_voxel.voxel_i < i_min), 'voxel_i'] =  i_min
-        df_voxel.loc[(df_voxel.voxel_j > j_max), 'voxel_j'] =  j_max
-        df_voxel.loc[(df_voxel.voxel_j < j_min), 'voxel_j'] =  j_min
-        df_voxel.loc[(df_voxel.voxel_k > k_max), 'voxel_k'] =  k_max
-        df_voxel.loc[(df_voxel.voxel_k < k_min), 'voxel_k'] =  k_min
+        df_voxel.loc[:,'voxel_i'] = np.round((df_voxel.loc[:,'position_x'] - tr_m_range[0]) / dm).astype(int)
+        df_voxel.loc[:,'voxel_j'] = np.round((df_voxel.loc[:,'position_y'] - tr_n_range[0]) / dn).astype(int)
+        df_voxel.loc[:,'voxel_k'] = np.round((df_voxel.loc[:,'position_z'] - tr_p_range[0]) / dp).astype(int)
+        df_voxel.loc[(df_voxel.voxel_i > tr_i_range[1]), 'voxel_i'] = tr_i_range[1]  # i_max
+        df_voxel.loc[(df_voxel.voxel_i < tr_i_range[0]), 'voxel_i'] = tr_i_range[0]  # i_min
+        df_voxel.loc[(df_voxel.voxel_j > tr_j_range[1]), 'voxel_j'] = tr_j_range[1]  # j_max
+        df_voxel.loc[(df_voxel.voxel_j < tr_j_range[0]), 'voxel_j'] = tr_j_range[0]  # j_min
+        df_voxel.loc[(df_voxel.voxel_k > tr_k_range[1]), 'voxel_k'] = tr_k_range[1]  # k_max
+        df_voxel.loc[(df_voxel.voxel_k < tr_k_range[0]), 'voxel_k'] = tr_k_range[0]  # k_min
 
         # merge voxel (inner join)
         df_cell = pd.merge(df_cell, df_voxel, on=['position_x', 'position_y', 'position_z'])

@@ -21,8 +21,10 @@
 import os
 import pathlib
 import pcDataLoader as pc
+import time
 
 # const
+i_sleep = 7
 s_path_2d = str(pathlib.Path(pc.__file__).parent.resolve()/'data_timeseries_2d')
 
 # load physicell data timeseries
@@ -37,37 +39,20 @@ class TestPyMcdsTs(object):
             print('Warning @ pcDataLoader : ffmpeg is not installed!')
         assert b_ok
 
-    ## making movies ##
-    def test_mcds_make_movie_jpeg(self, mcds=mcds):
+    ## making movies with jpeg as interface ##
+    def test_mcds_make_movie(self, mcds=mcds):
+        # initialize
         s_pathfile = f'{s_path_2d}/movie_jpeg.mp4'
         if os.path.exists(s_pathfile):
             os.remove(s_pathfile)
-        mcds.make_movie(moviefile='movie_jpeg.mp4')
+        # generate jpeg interface images
+        mcds.make_jpeg()
+        time.sleep(i_sleep)
+        # generate movie
+        mcds.make_movie(moviefile='movie_jpeg.mp4', )
         assert os.path.getsize(s_pathfile) > 0
+        # clean up
         os.remove(s_pathfile)
         for s_file in os.listdir(s_path_2d):
             if s_file.endswith('.jpeg'):
                 os.remove(f'{s_path_2d}/{s_file}')
-
-    def test_mcds_make_movie_png(self, mcds=mcds):
-        s_pathfile = f'{s_path_2d}/movie_png.mp4'
-        if os.path.exists(s_pathfile):
-            os.remove(s_pathfile)
-        mcds.make_movie(moviefile='movie_png.mp4', interface='png')
-        assert os.path.getsize(s_pathfile) > 0
-        os.remove(s_pathfile)
-        for s_file in os.listdir(s_path_2d):
-            if s_file.endswith('.png'):
-                os.remove(f'{s_path_2d}/{s_file}')
-
-    def test_mcds_make_movie_tiff(self, mcds=mcds):
-        s_pathfile = f'{s_path_2d}/movie_tiff.mp4'
-        if os.path.exists(s_pathfile):
-            os.remove(s_pathfile)
-        mcds.make_movie(moviefile='movie_tiff.mp4', interface='tiff')
-        assert os.path.getsize(s_pathfile) > 0
-        os.remove(s_pathfile)
-        for s_file in os.listdir(s_path_2d):
-            if s_file.endswith('.tiff'):
-                os.remove(f'{s_path_2d}/{s_file}')
-

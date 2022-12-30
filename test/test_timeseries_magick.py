@@ -21,9 +21,11 @@
 import os
 import pathlib
 import pcDataLoader as pc
-import platform 
+import platform
+import time
 
 # const
+i_sleep = 6
 s_path_2d = str(pathlib.Path(pc.__file__).parent.resolve()/'data_timeseries_2d')
 
 # load physicell data timeseries
@@ -45,6 +47,7 @@ class TestPyMcdsTs(object):
         if os.path.exists(s_pathfile):
             os.remove(s_pathfile)
         mcds.make_gif()
+        time.sleep(i_sleep)
         assert os.path.exists(s_pathfile)
         os.remove(s_pathfile)
 
@@ -53,6 +56,7 @@ class TestPyMcdsTs(object):
         if os.path.exists(s_pathfile):
             os.remove(s_pathfile)
         mcds.make_gif(resize_factor=1/3)
+        time.sleep(i_sleep)
         assert os.path.exists(s_pathfile)
         os.remove(s_pathfile)
 
@@ -62,7 +66,8 @@ class TestPyMcdsTs(object):
         if os.path.exists(s_pathfile):
             os.remove(s_pathfile)
         mcds.make_jpeg()
-        assert os.path.exists(s_pathfile)
+        time.sleep(i_sleep)
+        assert os.path.isfile(s_pathfile)
         for s_file in os.listdir(s_path_2d):
             if s_file.endswith('.jpeg'):
                 os.remove(f'{s_path_2d}/{s_file}')
@@ -72,6 +77,7 @@ class TestPyMcdsTs(object):
         if os.path.exists(s_pathfile):
             os.remove(s_pathfile)
         mcds.make_jpeg(resize_factor=1/3)
+        time.sleep(i_sleep)
         assert os.path.exists(s_pathfile)
         for s_file in os.listdir(s_path_2d):
             if s_file.endswith('.jpeg'):
@@ -83,6 +89,7 @@ class TestPyMcdsTs(object):
         if os.path.exists(s_pathfile):
             os.remove(s_pathfile)
         mcds.make_png()
+        time.sleep(i_sleep)
         assert os.path.exists(s_pathfile)
         for s_file in os.listdir(s_path_2d):
             if s_file.endswith('.png'):
@@ -93,6 +100,7 @@ class TestPyMcdsTs(object):
         if os.path.exists(s_pathfile):
             os.remove(s_pathfile)
         mcds.make_png(resize_factor=1/3)
+        time.sleep(i_sleep)
         assert os.path.exists(s_pathfile)
         for s_file in os.listdir(s_path_2d):
             if s_file.endswith('.png'):
@@ -104,6 +112,7 @@ class TestPyMcdsTs(object):
         if os.path.exists(s_pathfile):
             os.remove(s_pathfile)
         mcds.make_tiff()
+        time.sleep(i_sleep)
         assert os.path.exists(s_pathfile)
         for s_file in os.listdir(s_path_2d):
             if s_file.endswith('.tiff'):
@@ -114,8 +123,8 @@ class TestPyMcdsTs(object):
         if os.path.exists(s_pathfile):
             os.remove(s_pathfile)
         mcds.make_tiff(resize_factor=1/3)
+        time.sleep(i_sleep)
         assert os.path.exists(s_pathfile)
         for s_file in os.listdir(s_path_2d):
             if s_file.endswith('.tiff'):
                 os.remove(f'{s_path_2d}/{s_file}')
-
