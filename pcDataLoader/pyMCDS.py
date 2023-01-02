@@ -952,8 +952,9 @@ class pyMCDS:
 
         # get physicell software version
         software_node = metadata_node.find('software')
+        physicelln_node = software_node.find('name')
         physicellv_node = software_node.find('version')
-        MCDS['metadata']['physicell_version'] = physicellv_node.text
+        MCDS['metadata']['physicell_version'] = f'{physicelln_node.text}_{physicellv_node.text}'
 
         # get timestamp
         time_node = metadata_node.find('created')

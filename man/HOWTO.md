@@ -28,6 +28,19 @@ This works, even when you have a v2 branch installation.
 pip3 install -U pcDataLoader
 ```
 
+**Howto run the unit test code?**\
+The pcDataLoader version3 sorce code has full unit test coverage.
+Unitest were written with in [pytest](https://docs.pytest.org/).
+All unit test code is in the [test](https://github.com/elmbeech/pcDataLoader/tree/master/test) directory.
+
+```python3
+import os
+import pathlib
+import pcDataLoader as pc
+s_path = str(pathlib.Path(pc.__file__).parent.parent.resolve())
+os.system(f'pytest {s_path}')
+```
+
 
 ## HowTo - branch generic:
 
@@ -36,29 +49,14 @@ pip3 install -U pcDataLoader
 pip3 uninstall pcDataLoader
 ```
 
+**How to load the pcDataLoader library?**
+```python3
+import pcDataLoader as pc
+```
+
 **How to check for the current installed pcDataLoader version?**
 ```python3
 import pcDataLoader as pc
 pc.__version__
 ```
 
-**How to load the pcDataLoader library?**
-```python3
-import pcDataLoader as pc
-```
-
-**How to use the addition plotting scripts for plotting PhysiCell output?**\
-This plotting scripts can be found in the [pcDataLoader/plotting](https://github.com/elmbeech/pcDataLoader/tree/master/pcDataLoader/plotting) directory.\
-You can copy these python3 scripts into your PhysiCell `output` directory and run them there.\
-`anim_svg_substrate.py` additionally requires the `scipy` library and `cells3D_fury.py` additionally requires the `fury` libraries to be installed.
-Both of them can be installed with pip.
-
-**Howto run the unit test code?**\
-You can always run the unit test suit, to check if you have an integer pcDataLoader installation.
-The test code can be found in the [test](https://github.com/elmbeech/pcDataLoader/tree/master/test) directory.
-```bash
-python3 test_snapshot.py
-```
-```bash
-python3 test_timeseries.py
-```
