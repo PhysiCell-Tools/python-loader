@@ -75,6 +75,8 @@ Regarding **version 1**, the structure has slightly change.\
 However, in **version 3**, all data is accessible by functions, thus there should be no need to fetch data directely form the `mcds.data` dictionary!\
 Anyhow, let’s take a look at what we actually have in here.
 
+![heat.clusterbar and heat.clustermap images](img/pcdataloader_data_dictionary_v3.0.0.jpg)
+
 ```python
 # main data branches
 sorted(mcds.data.keys())  # metadata, mesh, continuum_variables, and discrete_cells.
@@ -95,7 +97,6 @@ sorted(mcds.data['discrete_cells']['data'].keys()  # all cell realted, tracked d
 sorted(mcds.data['discrete_cells']['graph'].keys())  # neighbor_cells and attached_cells graph dictionaries.
 ```
 
-![heat.clusterbar and heat.clustermap images](img/pcdataloader_data_dictionary_v3.0.0.png)
 
 
 
