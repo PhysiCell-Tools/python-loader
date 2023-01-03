@@ -75,29 +75,21 @@ Regarding **version 1**, the structure has slightly change.\
 However, in **version 3**, all data is accessible by functions, thus there should be no need to fetch data directely form the `mcds.data` dictionary!\
 Anyhow, let’s take a look at what we actually have in here.
 
-**main data branches**
 ```python
+# main data branches
 sorted(mcds.data.keys())  # metadata, mesh, continuum_variables, and discrete_cells.
-```
 
-**metadata**
-```python
+# metadata
 sorted(mcds.data['metadata'].keys())  # multicellds version, physicell version, simulaton time, runtime, time stamp, spatial unit, time unit.
-```
 
-**mesh**
-```python
+# mesh
 sorted(mcds.data['mesh'].keys())  # voxel (ijk), mesh (nmp), and position (xyz) range, axis, coordinate, grid objects, and voxel volume.
-```
 
-**microenvironment**
-```python
+# microenvironment
 sorted(mcds.data['continuum_variables'].keys())  # list of all processed substrat, e.g. oxygen.
 sorted(mcds.data['continuum_variables']['oxygen'].keys())  # substrat related data values, unit, decay rate, and diffusion coefficient.
-```
 
-**cell**
-```python
+# cell
 sorted(mcds.data['discrete_cells'].keys())  # data, units, and graph dictionaries.
 sorted(mcds.data['discrete_cells']['data'].keys()  # all cell realted, tracked data.
 sorted(mcds.data['discrete_cells']['graph'].keys())  # neighbor_cells and attached_cells graph dictionaries.
