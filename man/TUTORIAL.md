@@ -1,13 +1,12 @@
 # pcDataLoader Tutorial Man Page
 
-Please install the latest version of pcDataLoader, as descripend in the [HowTo](https://github.com/elmbeech/pcDataLoader/blob/v3/man/HOWTO.md) section.
-If you are new to pcDataLoader, install from branch v3.
+Please install the latest version of pcDataLoader, as descripend in the [HowTo](https://github.com/elmbeech/pcDataLoader/blob/v3/man/HOWTO.md) section.\
+If you are new to pcDataLoader, install from branch v3.\
 Branch v2 exist mainly for backwards compatibility.
 
 
 ## Tutorial - branch v2
 The original python-loader tutorial can be found here.
-
 + http://www.mathcancer.org/blog/python-loader/
 
 
@@ -15,20 +14,20 @@ The original python-loader tutorial can be found here.
 
 ### Introduction: Anatomy of a PhysiCell MultiCellDigital Snapshot
 
-Each time PhysiCell’s internal time tracker passes a time step where data is to be saved, it generates a number of files of various types.
-Each of these files will have a number at the end that indicates where it belongs in the sequence of outputs.
-All of the files from the first round of output will end in 00000000.* and the second round will be 00000001.* and so on.
+Each time PhysiCell’s internal time tracker passes a time step where data is to be saved, it generates a number of files of various types.\
+Each of these files will have a number at the end that indicates where it belongs in the sequence of outputs.\
+All of the files from the first round of output will end in 00000000.* and the second round will be 00000001.* and so on.\
 Have a look at this [PhysiCell data time series](https://github.com/elmbeech/pcDataLoader/tree/v3/pcDataLoader/data_timeseries_2d).
 
-Let’s say we captured data every simmulation time hour, and we’re interested in the set of output, half a day through the run, the 13th set of output files.
+Let’s say we captured data every simmulation time hour, and we’re interested in the set of output, half a day through the run, the 13th set of output files.\
 The files we care about most from this set consists of:
 
 + **output00000012.xml**: This file is the main organizer of the data.
-    It contains an overview of the data stored in the MultiCellDS as well as some actual data including:
-    metadata (MultiCellDS version, PhysiCell or BioFVM version, simulation time, runtime, and processing time stamp),
-    coordinates for the computational domain (mesh),
-    parameters for diffusing substrates in the microenvironment (variables),
-    column labels and units for the cell data (cell_population),
+    It contains an overview of the data stored in the MultiCellDS as well as some actual data including:\
+    metadata (MultiCellDS version, PhysiCell or BioFVM version, simulation time, runtime, and processing time stamp),\
+    coordinates for the computational domain (mesh),\
+    parameters for diffusing substrates in the microenvironment (variables),\
+    column labels and units for the cell data (cell_population),\
     file names for the files that contain microenvironment and cell data at this time step (mat and possibly graph.txt files),
 + **output00000012_cells.mat**: This is a MATLAB matrix file that contains all of the tracked information about the individual cells in the model.
     It tells us things like the cells’ position, volume, secretion, cell cycle status, and user-defined cell parameters.
