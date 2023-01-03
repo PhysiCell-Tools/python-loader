@@ -32,7 +32,6 @@ Note: there can only be one version of pcDataLoader installed in each python3 en
 
 
 ## Tutorial:
-+ http://www.mathcancer.org/blog/python-loader/
 + Check out: [man/TUTORIAL.md](https://github.com/elmbeech/pcDataLoader/tree/master/man/TUTORIAL.md)!
 
 
