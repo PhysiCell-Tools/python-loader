@@ -56,13 +56,14 @@ mcds = pc.pyMCDS(s_pathfile)  # loads whole snapshot: the xml and all realated m
 Side notes: in general, unix and windows path notation will work.\
 Additionaly, legacy way of data loaing works too.
 ```python
+# legacy way of loading an mcds object
 mcds = pc.pyMCDS('output00000012.xml', s_path)
 ```
 
 By default all data realted to the snapshot is loaded.\
 For speed and less memory usage, it is however possible to only load the essential (xml and cell mat data), and exclude microenviroment and graph data loading.
 ```python
-# fine tuned load mcds object
+# fine tuned way of loading an mcds object
 mcds = pc.pyMCDS(s_pathfile, graph=False, microenv=False)
 ```
 
