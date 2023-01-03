@@ -75,23 +75,32 @@ Regarding **version 1**, the structure has slightly change.\
 However, in **version 3**, all data is accessible by functions, thus there should be no need to fetch data directely form the `mcds.data` dictionary!\
 Anyhow, let’s take a look at what we actually have in here.
 
+**main data branches**
 ```python
-sorted(mcds.data.keys())  # list the main data branches: metadata, mesh, continuum_variables,  and discrete_cells.
+sorted(mcds.data.keys())  # metadata, mesh, continuum_variables, and discrete_cells.
+```
 
-# metadata
+**metadata**
+```python
 sorted(mcds.data['metadata'].keys())  # multicellds version, physicell version, simulaton time, runtime, time stamp, spatial unit, time unit.
+```
 
-# mesh
+**mesh**
+```python
 sorted(mcds.data['mesh'].keys())  # voxel (ijk), mesh (nmp), and position (xyz) range, axis, coordinate, grid objects, and voxel volume.
+```
 
-# microenvironment
-sorted(mcds.data['continuum_variables'].keys())  # list of all processed substrat, e.g. oxygen
-sorted(mcds.data['continuum_variables']['oxygen'].keys())  # substrat related: data values, unit, decay rate and diffusion coefficient.
+**microenvironment**
+```python
+sorted(mcds.data['continuum_variables'].keys())  # list of all processed substrat, e.g. oxygen.
+sorted(mcds.data['continuum_variables']['oxygen'].keys())  # substrat related data values, unit, decay rate, and diffusion coefficient.
+```
 
-# cell
-sorted(mcds.data['discrete_cells'].keys())  # data dictionary, units dictionary, and graph dictionarys.
-sorted(mcds.data['discrete_cells']['data'].keys()  # all cell realted tracked data.
-sorted(mcds.data['discrete_cells']['graph'].keys())  # neighbor_cells and attached_cells graph dictionary.
+**cell**
+```python
+sorted(mcds.data['discrete_cells'].keys())  # data, units, and graph dictionaries.
+sorted(mcds.data['discrete_cells']['data'].keys()  # all cell realted, tracked data.
+sorted(mcds.data['discrete_cells']['graph'].keys())  # neighbor_cells and attached_cells graph dictionaries.
 ```
 
 Now, less access this data by the objects function.
