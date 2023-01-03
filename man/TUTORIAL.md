@@ -87,13 +87,17 @@ sorted(mcds.data['mesh'].keys())  # voxel (ijk), mesh (nmp), and position (xyz) 
 
 # microenvironment
 sorted(mcds.data['continuum_variables'].keys())  # list of all processed substrat, e.g. oxygen.
-sorted(mcds.data['continuum_variables']['oxygen'].keys())  # substrat related data values, unit, decay rate, and diffusion coefficient.
+sorted(mcds.data['continuum_variables']['oxygen'].keys())  # substrat related data values, unit, diffusion coefficient, and decay rate.
 
 # cell
 sorted(mcds.data['discrete_cells'].keys())  # data, units, and graph dictionaries.
 sorted(mcds.data['discrete_cells']['data'].keys()  # all cell realted, tracked data.
 sorted(mcds.data['discrete_cells']['graph'].keys())  # neighbor_cells and attached_cells graph dictionaries.
 ```
+
+![heat.clusterbar and heat.clustermap images](img/pcdataloader_data_dictionary_v3.0.0.png)
+
+
 
 Now, less access this data by the objects function.
 #### Metadata
