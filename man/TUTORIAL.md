@@ -75,14 +75,14 @@ Regarding **version 1**, the structure has slightly change.\
 However, in **version 3**, all data is accessible by functions, thus there should be no need to fetch data directely form the `mcds.data` dictionary!\
 Anyhow, let’s take a look at what we actually have in here.
 
-![heat.clusterbar and heat.clustermap images](img/pcdataloader_data_dictionary_v3.0.0.jpg)
+![mcds.data dictionary blue print](img/pcdataloader_data_dictionary_v3.0.0.png)
 
 ```python
 # main data branches
-sorted(mcds.data.keys())  # metadata, mesh, continuum_variables, and discrete_cells.
+sorted(mcds.data.keys())  # metadata, mesh, substrate (continuum_variables), and agent (discrete_cells).
 
 # metadata
-sorted(mcds.data['metadata'].keys())  # multicellds version, physicell version, simulaton time, runtime, time stamp, spatial unit, time unit.
+sorted(mcds.data['metadata'].keys())  # multicellds version, physicell version, simulation time, runtime, time stamp, time unit, and spatial unit.
 
 # mesh
 sorted(mcds.data['mesh'].keys())  # voxel (ijk), mesh (nmp), and position (xyz) range, axis, coordinate, grid objects, and voxel volume.
@@ -94,10 +94,9 @@ sorted(mcds.data['continuum_variables']['oxygen'].keys())  # substrat related da
 # cell
 sorted(mcds.data['discrete_cells'].keys())  # data, units, and graph dictionaries.
 sorted(mcds.data['discrete_cells']['data'].keys()  # all cell realted, tracked data.
+sorted(mcds.data['discrete_cells']['unit'].keys()  # all units from the cell realted, tracked data.
 sorted(mcds.data['discrete_cells']['graph'].keys())  # neighbor_cells and attached_cells graph dictionaries.
 ```
-
-
 
 
 Now, less access this data by the objects function.
