@@ -3,12 +3,12 @@
 
 ## HowTo - branch v2 specific:
 
-**How to install the latest pcDataLoader from the v2 branch?**
+### How to install the latest pcDataLoader from the v2 branch?
 ```bash
 pip3 install "pcDataLoader<3"
 ```
 
-**How to update to the latest pcDataLoader from the v2 branch?**\
+### How to update to the latest pcDataLoader from the v2 branch?
 This works, even when you have a v3 branch installation.
 ```bash
 pip3 install -U "pcDataLoader<3"
@@ -17,18 +17,18 @@ pip3 install -U "pcDataLoader<3"
 
 ## HowTo - branch v3 specific:
 
-**How to install the latest pcDataLoader from the v3 branch?**
+### How to install the latest pcDataLoader from the v3 branch?
 ```bash
 pip3 install pcDataLoader
 ```
 
-**How to update to the latest pcDataLoader from the v3 branch?**\
+### How to update to the latest pcDataLoader from the v3 branch?
 This works, even when you have a v2 branch installation.
 ```bash
 pip3 install -U pcDataLoader
 ```
 
-**Howto run the unit test code?**\
+### Howto run the unit test code?
 The pcDataLoader version3 sorce code has full unit test coverage.
 Unitest were written with in [pytest](https://docs.pytest.org/).
 All unit test code is in the [test](https://github.com/elmbeech/pcDataLoader/tree/master/test) directory.
