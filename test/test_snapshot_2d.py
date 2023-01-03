@@ -40,11 +40,11 @@ class TestPyMcdsMicroenvTrue2D(object):
     ## metadata realted functions
     def test_mcds_get_multicellds_version(self, mcds=mcds):
         s_mcdsversion = mcds.get_multicellds_version()
-        assert s_mcdsversion == '2.snapshot/simulation'
+        assert s_mcdsversion == 'MultiCellDS_2'
 
     def test_mcds_get_physicell_version(self, mcds=mcds):
         s_pcversion = mcds.get_physicell_version()
-        assert s_pcversion == '1.10.4'
+        assert s_pcversion == 'PhysiCell_1.10.4'
 
     def test_mcds_get_timestamp(self, mcds=mcds):
         s_timestamp = mcds.get_timestamp()

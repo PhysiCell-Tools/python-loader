@@ -40,15 +40,15 @@ Note: there can only be one version of pcDataLoader installed in each python3 en
 This is the technical descriptions of the machinery and how to operate it.
 References are maintained in each module`s [docstring](https://en.wikipedia.org/wiki/Docstring).
 
-For each pcDataLoader module, get on the fly reference information with the help command.
+First load PhysiCell Data Loader
 ```python3
 import pcDataLoader as pc
+```
 
+Then, for each pcDataLoader module, get on the fly reference information with the [help](https://en.wikipedia.org/wiki/Help!) command.
 
-##########
-# pyMCDS #
-##########
-
+### pyMCDS
+```
 help(pc.pyMCDS)
 help(pc.pyMCDS.__init__)
 
@@ -95,12 +95,10 @@ help(pc.pyMCDS.get_unit_df)
 # pyMCDS internal functions
 help(pc.pyMCDS._read_xml)
 help(pc.graphfile_parser)
+```
 
-
-######################
-# pyMCDS time series #
-######################
-
+### pyMCDS time series
+```
 help(pc.pyMCDSts)
 help(pc.pyMCDSts.__init__)
 

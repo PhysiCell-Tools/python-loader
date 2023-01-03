@@ -948,7 +948,7 @@ class pyMCDS:
         MCDS['metadata'] = {}
 
         # get multicellds xml version
-        MCDS['metadata']['multicellds_version'] = f'{root.get("version")}.{root.get("type")}'
+        MCDS['metadata']['multicellds_version'] = f"MultiCellDS_{root.get('version')}"
 
         # get physicell software version
         software_node = metadata_node.find('software')
