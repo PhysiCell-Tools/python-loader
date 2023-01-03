@@ -29,9 +29,9 @@ pip3 install -U pcDataLoader
 ```
 
 ### Howto run the unit test code?
-The pcDataLoader version3 sorce code has full unit test coverage.
-Unitest were written with in [pytest](https://docs.pytest.org/).
-All unit test code is in the [test](https://github.com/elmbeech/pcDataLoader/tree/master/test) directory.
+The pcDataLoader version3 sorce code has full unit test coverage.\
+Unitest were written with in [pytest](https://docs.pytest.org/).\
+All unit test code is in the [test](https://github.com/elmbeech/pcDataLoader/tree/master/test) directory.\
 
 ```python3
 import os
