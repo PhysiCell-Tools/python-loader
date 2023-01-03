@@ -38,13 +38,13 @@ The files we care about most from this set consists of:
 In this paragraph we will load the pcDataLoder library and data snapshot 00000012, described above, from [data_timeseries_2d](https://github.com/elmbeech/pcDataLoader/tree/v3/pcDataLoader/data_timeseries_2d) from the test dataset.
 (There is no need to extra install the test data set.
 In fact, both test datasets are already installed.
-They shipps with the pip3 pcDataLoader installation.)
+They ship with the pip3 pcDataLoader installation.)
 
 ```python
 import pathlib  # library to locate the test data
 import pcDataLoader as pc  # the PhysiCell data loader library
 
-s_path = str(pathlib.Path(pc.__file__).parent.joinpath('data_timeseries_2d'))  # path to the test data set
+s_path = str(pathlib.Path(pc.__file__).parent.joinpath('data_timeseries_2d'))  # local path to the installed test data set
 s_file = 'output00000012.xml'  # the snapshot we want to analyse
 s_pathfile = f'{s_path}/{s_file}'
 print('mcds snapshot xml:', s_pathfile)
@@ -53,13 +53,13 @@ print('mcds snapshot xml:', s_pathfile)
 mcds = pc.pyMCDS(s_pathfile)  # loads whole snapshot: the xml and all realated mat and graph files.
 ```
 
-Side notes: in general, unix and windows path notation will work.
+Side notes: in general, unix and windows path notation will work.\
 Additionaly, legacy way of data loaing works too.
 ```python
 mcds = pc.pyMCDS('output00000012.xml', s_path)
 ```
 
-By default all data realted to the snapshot is loaded.
+By default all data realted to the snapshot is loaded.\
 For speed and less memory usage, it is however possible to only load the essential (xml and cell mat data), and exclude microenviroment and graph data loading.
 ```python
 # fine tuned load mcds object
@@ -68,10 +68,10 @@ mcds = pc.pyMCDS(s_pathfile, graph=False, microenv=False)
 
 ### Accessing the Loaded Data
 
-All loaded  data lievs in `mcds.data` dictionary.
-As in **version 1**, we’ve tried to keep everything organized inside of this dictionary.
-Regarding **version 1**, the structure has slightly change.
-However, in **version 3**, all data is accessible by functions, thus there should be no need to fetch data directely form the `mcds.data` dictionary!
+All loaded  data lievs in `mcds.data` dictionary.\
+As in **version 1**, we’ve tried to keep everything organized inside of this dictionary.\
+Regarding **version 1**, the structure has slightly change.\
+However, in **version 3**, all data is accessible by functions, thus there should be no need to fetch data directely form the `mcds.data` dictionary!\
 Anyhow, let’s take a look at what we actually have in here.
 
 ```python
