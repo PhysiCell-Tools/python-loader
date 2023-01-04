@@ -1,8 +1,8 @@
 # pcDataLoader Refrence Man Page                                                
                                                                                 
 This is the technical descriptions of the machinery and how to operate it.\
-References are maintained in each module`s [docstring](https://en.wikipedia.org/wiki/Docstring).\
-You can access the by source code, or by first load PhysiCell Data Loader.
+References are maintained in each module's [docstring](https://en.wikipedia.org/wiki/Docstring).\
+You can access the by [source code](https://github.com/elmbeech/pcDataLoader/tree/master/pcDataLoader), or by first load PhysiCell Data Loader.
 
 ```python3
 import pcDataLoader as pc
@@ -81,3 +81,4 @@ help(pc.pyMCDSts.make_movie)
 help(pc.pyMCDSts._handle_magick)
 help(pc.pyMCDSts._handle_resize)
 ```
+
