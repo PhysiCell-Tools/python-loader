@@ -156,6 +156,7 @@ Within the pcDataLoader library, I try to stick to the documentation policy line
     + new pyMCDS **mcds.get_timestamp** function.
     + new pyMCDS **mcds.get_voxel_ijk_range** function.
     + new pyMCDS **mcds.get_voxel_ijk_axis** function.
+    + new pyMCDS **mcds.get_voxel_spacing** function.
     + new pyMCDS **mcds.get_voxel_volume** function.
     + new pyMCDS **mcds.get_mesh_mnp_range** function.
     + new pyMCDS **mcds.get_mesh_mnp_axis** function.

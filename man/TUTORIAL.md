@@ -67,7 +67,7 @@ For speed and less memory usage, it is however possible to only load the essenti
 mcds = pc.pyMCDS(s_pathfile, graph=False, microenv=False)
 ```
 
-### Accessing the Loaded Data
+### Loaded Data Structure
 
 All loaded  data lievs in `mcds.data` dictionary.\
 As in **version 1**, we’ve tried to keep everything organized inside of this dictionary.\
@@ -98,58 +98,135 @@ sorted(mcds.data['discrete_cells']['unit'].keys()  # all units from the cell rea
 sorted(mcds.data['discrete_cells']['graph'].keys())  # neighbor_cells and attached_cells graph dictionaries.
 ```
 
+### Accessing the Loaded Data by the pyMCDS Class Functions
+Once agin, for the ones in the backrow, in version 3, all data is accessible by functions.\
+There should be no need to fetch data directely form the `mcds.data` dictionary of dictionaries.\
+We will explor this functions in this paragaraph. 
 
-Now, less access this data by the objects function.
 #### Metadata
-Let's start with **Metadata**
-```python
 
+Fetch the data's MultiCellDS version, and the PhysiCell version the data was generated.
+```python
+mcds.get_multicellds_version()  # will retuns a string like MultiCellDS_2 or MultiCellDS_0.5
+mcds.get_physicell_version()  # will returns a string like PhysiCell_1.10.4 or BioFVM_1.1.7
+```
+
+Fetch simulation time, runtime, and time stamp when the data was processed.
+```python
+mcds.pyMCDS.get_time()   # will retun a float value like 720.0
+mcds.pyMCDS.get_runtime()  # will retun a float value like 15.596373
+mcds.get_timestamp()  # will retun a sting like 2022-10-19T01:12:01Z
 ```
 
 #### Mesh data
-Let's have a look at **Meshdata**
 
-#### Microenvironment data
+Let's start by the voxel.\
+It is common, but not necessary, that the voxels width, heigth, and depth is the same.\
+However, you will find that in this test dataset this is not the case. \
+In the related `PhysiCell_settings.xml` file the voxel was defined by 30[nm] high, 20[nm] wide, and 10[nm] deep.\
+We can retrive the voxel spacing value and voxel volume. \
+Additionaly, we can retrive the mesh spacing.\
+You will notice that voxel and mesh spacing values differ.
+This is because this data set is from a 2D simulation. Because of that, the mesh depth is set to 1.
+In 3D simulation data voxel and mesh spacing will be the same.
+```python
+mcds.get_mesh_spacing()  # [30.0, 20.0, 1]
+mcds.get_voxel_spacing() # [30.0, 20.0, 10.0]
+mcds.get_voxel_volume()  # 30[nm] * 20[nm] * 10[nm] = 6000[nm\*\*3]
+```
+
+Since version 3, coordinate labels are distinct:
++ **x,y,z:** cell position coordinates are real values.
++ **m,n,p:** mesh center coordinates are real values.
++ **i,j,k:** voxel index coordinates are unsigned interger values.
+
+For a better understanding, let's fetch the start and stop range values for each coordinate type.
+Unlike in the python range function, the start and stop value is inclusive.
+```python
+mcds.get_voxel_ijk_range()  # [(0, 10), (0, 10), (0, 0)]
+mcds.get_mesh_mnp_range()  # [(-15.0, 285.0), (-10.0, 190.0), (0.0, 0.0)]
+mcds.get_xyz_range()  # [(-30.0, 300.0), (-20.0, 200.0), (-5.0, 5.0)]
+```
+The domain benchmarks are:
++ voxel index values stretch from 0 to 10 longitude (i), 0 to 10 latitude (j), the 2D domain is only 1 voxel deep (k).
++ mesh center values strech from -15[nm] to 285[nm] longitude (m), -10[nm] to 190[nm] latitude (n), and the depth mesh center (p) is at zero.
++ cell can hold a positioned between -30[nm] and 300[nm] longitude (x), -20[nm] and 200[nm] latitude (y), and -5[nm] and 5[nm] depth (z).
+
+For voxel and  mesh centers we can fetch the axis tick lists.
+Each of this function will return a list of 3 numpy arrays, orderd ijk or mnp, respective.
+```python
+mcds.get_voxel_ijk_axis() 
+mcds.get_mesh_mnp_axis()
+```
+
+#### BUE 20220103: ARE HERE ERRORS? ####
+
+We can even retive the mesh it self,
+and all mnp mesh center coordinate triplets. 
+```python
+mcds.get_mesh_2D()  # numpy array with shape (2, 11, 11)
+mcds.get_mesh()  # numpy array with shape (3, 11, 11, 1)
+mcds.get_mesh_coordinate()  # numpy array with shape (3, 121)
+```
+
+Furthmore, there are two helper function.
+One to figure out of a particular x,y,z coordinat is still in side the mesh, 
+and other one to translate an x,y,z coordnate into i,j,k voxel indices.
+```python
+mesh.get_voxel_ijk(x=, y=, z=)
+mesh.pyMCDS.is_in_mesh(x=, y=, z=)
+```
+
+#### Microenvironment (Continuum Variables) Data
 Let's have a look at the substrate.
 
-#### Cell data
+```python
+help(pc.pyMCDS.get_substrate_names)
+help(pc.pyMCDS.get_substrate_df)
+help(pc.pyMCDS.get_concentration)
+help(pc.pyMCDS.get_concentration_df)
+help(pc.pyMCDS.get_concentration_at)
+```
+
+#### Cell (Discrete Cells) Data 
+
+```python
+help(pc.pyMCDS.get_cell_variables)
+help(pc.pyMCDS.get_cell_df)
+help(pc.pyMCDS.get_cell_df_at)
+
+help(pc.pyMCDS.get_attached_graph_dict)
+help(pc.pyMCDS.get_neighbor_graph_dict)
+```
 
 
+### Units
+```python
+help(pc.pyMCDS.get_unit_df)
+```
+
+>>> mcds.data['metadata']['time_units']
+'min'
 
 
 ################
 ## HERE I AM ##
 ###############
 
-
-The data member dictionary is a dictionary of dictionaries whose child dictionaries can be accessed through normal python dictionary syntax.
-?
-
-mcds.data['metadata']
-mcds.data['continuum_variables']['my_chemical']
-
-Each of these subdictionaries contains data, we will take a look at exactly what that data is and how it can be accessed in the following sections.
-Metadata
-
-
-
-Expanded metadata subdictionary
-
-The metadata dictionary contains information about the time of the simulation as well as units for both times and space. Here and in later sections blue boxes indicate scalars and green boxes indicate strings. We can access each of these things using normal dictionary syntax. We’ve also got access to a helper function get_time() for the common operation of retrieving the simulation time.
-?
-
->>> mcds.data['metadata']['time_units']
-'min'
->>> mcds.get_time()
-5220.0
-Mesh
-
+#Mesh
 Expanded mesh dictionary
 
-The mesh dictionary has a lot more going on than the metadata dictionary. It contains three numpy arrays, indicated by orange boxes, as well as another dictionary. The three arrays contain x, y and z coordinates for the centers of the voxels that constiture the computational domain in a meshgrid format. This means that each of those arrays is tensors of rank three. Together they identify the coordinates of each possible point in the space.
+The mesh dictionary has a lot more going on than the metadata dictionary. 
 
-In contrast, the arrays in the voxel dictionary are stored linearly. If we know that we care about voxel number 42, we want to use the stuff in the voxels dictionary. If we want to make a contour plot, we want to use the x_coordinates, y_coordinates, and z_coordinates arrays.
-?
+It contains three numpy arrays, indicated by orange boxes, as well as another dictionary. 
+The three arrays contain x, y and z coordinates for the centers of the voxels that constiture the computational domain in a meshgrid format. 
+This means that each of those arrays is tensors of rank three. 
+Together they identify the coordinates of each possible point in the space.
+
+In contrast, the arrays in the voxel dictionary are stored linearly. 
+If we know that we care about voxel number 42, we want to use the stuff in the voxels dictionary. 
+If we want to make a contour plot, we want to use the x_coordinates, y_coordinates, and z_coordinates arrays.
+
 
 # We can extract one of the meshgrid arrays as a numpy array
 >>> y_coords = mcds.data['mesh']['y_coordinates']
@@ -180,13 +257,20 @@ array([-740., -740., -740., -740.])
 (75, 75)
 
 
+
 Continuum variables
+mcds.data['continuum_variables']['my_chemical']
 
 Expanded microenvironment dictionaries
 
-The continuum_variables dictionary is the most complicated of the four. It contains subdictionaries that we access using the names of each of the chemicals in the microenvironment. In our toy example above, these are oxygen and my_chemical. If our model tracked diffusing oxygen, VEGF, and glucose, then the continuum_variables dictionary would contain a subdirectory for each of them.
+The continuum_variables dictionary is the most complicated of the four. 
+It contains subdictionaries that we access using the names of each of the chemicals in the microenvironment. 
+In our toy example above, these are oxygen and my_chemical. 
+If our model tracked diffusing oxygen, VEGF, and glucose, then the continuum_variables dictionary would contain a subdirectory for each of them.
 
-For a particular chemical species in the microenvironment we have two more dictionaries called decay_rate and diffusion_coefficient, and a numpy array called data. The diffusion and decay dictionaries each complete the value stored as a scalar and the unit stored as a string. The numpy array contains the concentrations of the chemical in each voxel at this time and is the same shape as the meshgrids of the computational domain stored in the .data[‘mesh’] arrays.
+For a particular chemical species in the microenvironment we have two more dictionaries called decay_rate and diffusion_coefficient, and a numpy array called data. 
+The diffusion and decay dictionaries each complete the value stored as a scalar and the unit stored as a string. 
+The numpy array contains the concentrations of the chemical in each voxel at this time and is the same shape as the meshgrids of the computational domain stored in the .data[‘mesh’] arrays.
 ?
 
 # we need to know the names of the substrates to work with
@@ -232,7 +316,10 @@ Discrete Cells
 
 expanded cells dictionary
 
-The discrete cells dictionary is relatively straightforward. It contains a number of numpy arrays that contain information regarding individual cells.  These are all 1-dimensional arrays and each corresponds to one of the variables specified in the output*.xml file. With the default settings, these are:
+The discrete cells dictionary is relatively straightforward. 
+It contains a number of numpy arrays that contain information regarding individual cells.  
+These are all 1-dimensional arrays and each corresponds to one of the variables specified in the output*.xml file. 
+With the default settings, these are:
 
     ID: unique integer that will identify the cell throughout its lifetime in the simulation
     position(_x, _y, _z): floating point positions for the cell in x, y, and z directions
@@ -470,30 +557,4 @@ The first extension of this project will be timeseries functionality. This will 
 
 In this tutorial we will load the 24[h] time step data snapshot from the 3D cancer-immune-sample project, provided as test data with this libarary.
 Feel free to run the tutorila with your own PhysiCell data output.
-
-
-```python3
-import pcDataLoader as pc
-
-l_mcds = pc.pyMCDS_timeseries('data_snapshot/output00003696.xml', microenv=False)
-l_mcds = pc.pyMCDS_timeseries('data_snapshot/output00003696.xml')
-```
-
-```python3
-import pcDataLoader as pc
-
-mcds.get_substrate_names()
-mcds.get_concentrations_df()
-mcds.get_concentrations(mcds.get_substrate_names()[0])
-mcds.get_concentrations_at(x=0, y=0, z=0)
-```
-
-```python3
-import pcDataLoader as pc
-
-mcds.get_cell_variables()
-mcds.get_cell_df()
-mcds.get_cell_df_at(x=0,y=0,z=0)
-```
-
 

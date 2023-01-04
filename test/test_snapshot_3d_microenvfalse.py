@@ -50,7 +50,7 @@ class TestPyMcdsMicroenvFalse3D(object):
 
     def test_mcds_get_voxel_ijk_range(self, mcds=mcds):
         ltr_range = mcds.get_voxel_ijk_range()
-        assert ltr_range == [(0, 11), (0, 11), (0, 11)]
+        assert ltr_range == [(0, 10), (0, 10), (0, 10)]
 
     def test_mcds_get_mesh_mnp_axis(self, mcds=mcds):
         lar_axis = mcds.get_mesh_mnp_axis()
@@ -138,6 +138,10 @@ class TestPyMcdsMicroenvFalse3D(object):
 
     def test_mcds_get_mesh_spacing(self, mcds=mcds):
         lr_spacing = mcds.get_mesh_spacing()
+        assert lr_spacing == [30.0, 20.0, 10.0]
+
+    def test_mcds_get_voxel_spacing(self, mcds=mcds):
+        lr_spacing = mcds.get_voxel_spacing()
         assert lr_spacing == [30.0, 20.0, 10.0]
 
     def test_mcds_get_voxel_volume(self, mcds=mcds):

@@ -366,7 +366,7 @@ class pyMCDS:
                 mesh spacing in m, n, and p direction.
 
         description:
-            function returns the distance in between voxel centers
+            function returns the distance in between mesh centers,
             in the spacial unit defined in the PhysiCell_settings.xml file.
         """
         tr_m_range, tr_n_range, tr_p_range = self.get_mesh_mnp_range()
@@ -378,6 +378,25 @@ class pyMCDS:
             dp = 1
         else:
             dp = (tr_p_range[1] - tr_p_range[0]) / (ar_p_axis.shape[0] - 1)
+        return [dm, dn, dp]
+
+
+    def get_voxel_spacing(self):
+        """
+        input:
+            self: pyMCDS class instance.
+
+        output:
+            lr_ijk_spacing: list of 3 floating point numbers.
+                voxel spacing in i, j, and k direction.
+
+        description:
+            function returns the voxel width, heigth, depth measurement,
+            in the spacial unit defined in the PhysiCell_settings.xml file.
+        """
+        r_volume = self.get_voxel_volume()
+        dm, dn, _ = self.get_mesh_spacing()
+        dp  = r_volume / (dm * dn)
         return [dm, dn, dp]
 
 
@@ -664,7 +683,7 @@ class pyMCDS:
         ar_n = ar_n.flatten(order='C')
         ar_p = ar_p.flatten(order='C')
 
-        # get voxel spacing
+        # get mesh spacing
         dm, dn, dp = self.get_mesh_spacing()
 
         # get voxel coordinates
@@ -1019,16 +1038,16 @@ class pyMCDS:
 
         # get voxel range
         MCDS['mesh']['ijk_range'] = [
-            (0, len(MCDS['mesh']['mnp_axis'][0])),
-            (0, len(MCDS['mesh']['mnp_axis'][1])),
-            (0, len(MCDS['mesh']['mnp_axis'][2])),
+            (0, len(MCDS['mesh']['mnp_axis'][0]) - 1),
+            (0, len(MCDS['mesh']['mnp_axis'][1]) - 1),
+            (0, len(MCDS['mesh']['mnp_axis'][2]) - 1),
         ]
 
         # get voxel axis
         MCDS['mesh']['ijk_axis'] = [
-            np.array(range(MCDS['mesh']['ijk_range'][0][1])),
-            np.array(range(MCDS['mesh']['ijk_range'][1][1])),
-            np.array(range(MCDS['mesh']['ijk_range'][2][1])),
+            np.array(range(MCDS['mesh']['ijk_range'][0][1] + 1)),
+            np.array(range(MCDS['mesh']['ijk_range'][1][1] + 1)),
+            np.array(range(MCDS['mesh']['ijk_range'][2][1] + 1)),
         ]
 
         # get mesh bounding box range [xmin ymin zmin xmax ymax zmax]
