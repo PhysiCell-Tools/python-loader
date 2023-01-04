@@ -61,7 +61,7 @@ class pyMCDS:
             name of the xml file with or without path.
             in the with path case output_path has to be set to the default!
 
-        output_path: string, default '.'
+        output_path: string; default '.'
             relative or absolute path to the directory where
             the PhysiCell output files are stored.
 
@@ -272,12 +272,12 @@ class pyMCDS:
                 else the m, n, and p mesh center meshgrids will be returned.
 
         output:
-            aar_meshgrid : numpy array of numpy arrays of floating point numbers.
-                meshgrid shaped objects, each  with the mesh center
-                coordinate values from one particular axis.
+            aar_meshgrid : 4-way or 3-way numpy arrays tensor of floating point numbers.
+                meshgrid shaped object,  with the mesh center
+                coordinate values from the m, n, p-axis or m, n-axis.
 
         description:
-            function returns an array of meshgrids each stores the
+            function returns an numpy array of meshgrids each stores the
             mesh center coordinate values from one particular axis.
             the function can either return meshgrids for the full
             m, n, p 3D cube, or only the 2D planes along the p axis.
@@ -297,9 +297,9 @@ class pyMCDS:
             self: pyMCDS class instance.
 
         output:
-            aar_meshgrid : numpy array of 2 numpy arrays of floating point numbers.
+            aar_meshgrid : 3-way numpy arrays tensor of floating point numbers.
                 meshgrid shaped objects, with the mesh center
-                coordinate values from the m and n-axis, respective.
+                coordinate values from the m and n-axis.
 
         description:
             function is identical to the self.get_mesh(self, flat=True)
@@ -389,52 +389,19 @@ class pyMCDS:
         return [dm, dn, dp]
 
 
-    def get_voxel_ijk(self, x, y, z):
-        """
-        input:
-            self: pyMCDS class instance.
-
-            x : floating point number
-                position x-coordinate
-
-            y : floating point number
-                position y-coordinate
-
-            z : floating point number
-                position z-coordinate
-
-        output:
-            li_ijk : list of 3 integers
-                i, j, k indices for the voxel
-                containing the x, y, z position.
-
-        description:
-            function returns the meshgrid indices i, j, k
-            for the given position x, y, z.
-        """
-        tr_m, tr_n, tr_p = self.get_mesh_mnp_range()
-        dm, dn, dp = self.get_voxel_spacing()
-
-        i = int(np.round((x - tr_m[0]) / dm))
-        j = int(np.round((y - tr_n[0]) / dn))
-        k = int(np.round((z - tr_p[0]) / dp))
-
-        return [i, j, k]
-
-
     def is_in_mesh(self, x, y, z, halt=False):
         """
         input:
             self: pyMCDS class instance.
 
-            x : floating point number
-                position x-coordinate
+            x: floating point number.
+                position x-coordinate.
 
-            y : floating point number
-                position y-coordinate
+            y: floating point number.
+                position y-coordinate.
 
-            z : floating point number
-                position z-coordinate
+            z: floating point number.
+                position z-coordinate.
 
             halt: boolean; default is False
                 should program execution break or just spit out a waring,
@@ -469,6 +436,52 @@ class pyMCDS:
         if halt and not b_isinmesh:
             sys.exit('Processing stopped!')
         return(b_isinmesh)
+
+
+    def get_voxel_ijk(self, x, y, z, is_in_mesh=True):
+        """
+        input:
+            self: pyMCDS class instance.
+
+            x: floating point number.
+                position x-coordinate.
+
+            y: floating point number.
+                position y-coordinate.
+
+            z: floating point number.
+                position z-coordinate.
+
+            is_in_mesh: boolean; default is True.
+                should function check, if the given coordinate is in the mesh,
+                and only calculate ijk values if is so?
+
+        output:
+            li_ijk : list of 3 integers
+                i, j, k indices for the voxel
+                containing the x, y, z position.
+
+        description:
+            function returns the meshgrid indices i, j, k
+            for the given position x, y, z.
+        """
+        lr_ijk = None
+        b_calc = True
+
+        if is_in_mesh:
+            b_calc = self.is_in_mesh(x=x, y=y, z=z, halt=False)
+
+        if b_calc:
+            tr_m, tr_n, tr_p = self.get_mesh_mnp_range()
+            dm, dn, dp = self.get_voxel_spacing()
+
+            i = int(np.round((x - tr_m[0]) / dm))
+            j = int(np.round((y - tr_n[0]) / dn))
+            k = int(np.round((z - tr_p[0]) / dp))
+
+            lr_ijk = [i, j, k]
+
+        return lr_ijk
 
 
     ## MICROENVIRONMENT RELATED FUNCTIONS ##
@@ -577,14 +590,14 @@ class pyMCDS:
         input:
             self: pyMCDS class instance.
 
-            x : floating point number
-                position x-coordinate
+            x: floating point number.
+                position x-coordinate.
 
-            y : floating point number
-                position y-coordinate
+            y: floating point number.
+                position y-coordinate.
 
-            z : floating point number, default is 0
-                position z-coordinate
+            z: floating point number; default is 0.
+                position z-coordinate.
 
         output:
             ar_concs: numpy array of floating point numbers.
@@ -791,17 +804,17 @@ class pyMCDS:
         input:
             self: pyMCDS class instance.
 
-            x : floating point number
-                position x-coordinate
+            x: floating point number.
+                position x-coordinate.
 
-            y : floating point number
-                position y-coordinate
+            y: floating point number.
+                position y-coordinate.
 
-            z : floating point number; default is 0
-                position z-coordinate
+            z: floating point number; default is 0.
+                position z-coordinate.
 
         output:
-            df_voxel: pandas dataframe
+            df_voxel: pandas dataframe.
             x, y, z voxel filtered cell dataframe.
 
         description:
@@ -925,7 +938,7 @@ class pyMCDS:
                 name of the xml file with or without path.
                 in the with path case output_path has to be set to the default!
 
-            output_path: string, default '.'
+            output_path: string; default '.'
                 relative or absolute path to the directory where
                 the PhysiCell output files are stored.
 

@@ -101,7 +101,7 @@ sorted(mcds.data['discrete_cells']['graph'].keys())  # neighbor_cells and attach
 ### Accessing the Loaded Data by the pyMCDS Class Functions
 Once agin, for the ones in the backrow, in version 3, all data is accessible by functions.\
 There should be no need to fetch data directely form the `mcds.data` dictionary of dictionaries.\
-We will explor this functions in this paragaraph. 
+We will explor this functions in this paragaraph.
 
 #### Metadata
 
@@ -155,35 +155,50 @@ The domain benchmarks are:
 For voxel and  mesh centers we can fetch the axis tick lists.
 Each of this function will return a list of 3 numpy arrays, orderd ijk or mnp, respective.
 ```python
-mcds.get_voxel_ijk_axis() 
+mcds.get_voxel_ijk_axis()
 mcds.get_mesh_mnp_axis()
 ```
 
-#### BUE 20220103: ARE HERE ERRORS? ####
-11 voxel whide axis -> 0 .. 10!
-This is all correct! 
-mybe adjust docstring!
-
-We can even retive the mesh it self,
-and all mnp mesh center coordinate triplets. 
+We can even retive all mnp mesh center coordinate triplets, and the meshgrids in 2D or 3D form it self.
+The coordinate triplets are returned as numpy array
+The mesh grids are retunred as 3 and 4 way tensors numpy array, but showen below, it is easy to subseted these tensors.
 ```python
-mcds.get_mesh_2D()  # numpy array with shape (2, 11, 11)   # 3D: (2, 11, 11)
-mcds.get_mesh()  # numpy array with shape (3, 11, 11, 1)   # 3D: (3, 11, 11, 11)
-mcds.get_mesh_coordinate()  # numpy array with shape (3, 121)  # 3D:  (3, 1331) 
+# all mnp coordinates
+mnp_coordinats = mcds.get_mesh_coordinate()  # numpy array with shape (3, 121)
+mnp_coordinats.shape  # (3, 121)
+
+# 2D mesh grid
+mn_meshgrid = mcds.get_mesh_2D()  # numpy array with shape (2, 11, 11)
+mn_meshgrid.shape # (2, 11, 11)
+m_meshgrid = mn_meshgrid[0]  # or explicite mn_meshgrid[0,:,:]
+n_meshgrid = mn_meshgrid[1]  # or explicite mn_meshgrid[1,:,:]
+m_meshgrid.shape  # (11, 11)
+n_meshgrid.shape  # (11, 11)
+
+# 3D mesh grid
+mnp_meshgrid = mcds.get_mesh()  # numpy array with shape (3, 11, 11, 1)
+mnp_meshgrid.shape # (3, 11, 11, 1)
+m_meshgrid = mnp_meshgrid[0]  # or explicite mnp_meshgrid[0,:,:,:]
+n_meshgrid = mnp_meshgrid[1]  # or explicite mnp_meshgrid[1,:,:,:]
+p_meshgrid = mnp_meshgrid[2]  # or explicite mnp_meshgrid[2,:,:,:]
+m_meshgrid.shape  # (11, 11, 1)
+n_meshgrid.shape  # (11, 11, 1)
+p_meshgrid.shape  # (11, 11, 1)
 ```
 
 Furthmore, there are two helper function.
-One to figure out of a particular x,y,z coordinat is still in side the mesh, 
-and other one to translate an x,y,z coordnate into i,j,k voxel indices.
+One to figure out of a particular x,y,z coordinat is still in side the mesh,
+and other one to translate an x,y,z coordnate into i,j,k voxel indices, that by default as well checks, if the given coordinat is in the mesh.
 ```python
-#!get voxel does not care about if in mesh!
-mcds.get_voxel_ijk(x=0, y=0, z=0)  # [0,0,0]
-mcds.get_voxel_ijk(x=111, y=22, z=3)  # [4, 2, 3]  # this is 2D MESH p=1
-mcds.get_voxel_ijk(x=111, y=222, z=333)  # [4, 12, 333]  # this is 2D MESH p=1
-
+# is given x,y,z is in the mesh?
 mcds.is_in_mesh(x=0, y=0, z=0)  # True
 mcds.is_in_mesh(x=111, y=22, z=-5)  # True
-mcds.is_in_mesh(x=111, y=22, z=-5.1)  # False
+mcds.is_in_mesh(x=111, y=22, z=-5.1)  # False and Warning @ pyMCDS.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0).
+
+# translate x,y,z into i,j,k!
+mcds.get_voxel_ijk(x=0, y=0, z=0)  # [0,0,0]
+mcds.get_voxel_ijk(x=111, y=22, z=-5)  # [4, 2, 0]
+mcds.get_voxel_ijk(x=111, y=22, z=-5.1)  # None and Warning @ pyMCDS.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0).
 ```
 
 #### Microenvironment (Continuum Variables) Data
@@ -197,7 +212,7 @@ help(pc.pyMCDS.get_concentration_df)
 help(pc.pyMCDS.get_concentration_at)
 ```
 
-#### Cell (Discrete Cells) Data 
+#### Cell (Discrete Cells) Data
 
 ```python
 help(pc.pyMCDS.get_cell_variables)
@@ -225,15 +240,15 @@ help(pc.pyMCDS.get_unit_df)
 #Mesh
 Expanded mesh dictionary
 
-The mesh dictionary has a lot more going on than the metadata dictionary. 
+The mesh dictionary has a lot more going on than the metadata dictionary.
 
-It contains three numpy arrays, indicated by orange boxes, as well as another dictionary. 
-The three arrays contain x, y and z coordinates for the centers of the voxels that constiture the computational domain in a meshgrid format. 
-This means that each of those arrays is tensors of rank three. 
+It contains three numpy arrays, indicated by orange boxes, as well as another dictionary.
+The three arrays contain x, y and z coordinates for the centers of the voxels that constiture the computational domain in a meshgrid format.
+This means that each of those arrays is tensors of rank three.
 Together they identify the coordinates of each possible point in the space.
 
-In contrast, the arrays in the voxel dictionary are stored linearly. 
-If we know that we care about voxel number 42, we want to use the stuff in the voxels dictionary. 
+In contrast, the arrays in the voxel dictionary are stored linearly.
+If we know that we care about voxel number 42, we want to use the stuff in the voxels dictionary.
 If we want to make a contour plot, we want to use the x_coordinates, y_coordinates, and z_coordinates arrays.
 
 
@@ -272,13 +287,13 @@ mcds.data['continuum_variables']['my_chemical']
 
 Expanded microenvironment dictionaries
 
-The continuum_variables dictionary is the most complicated of the four. 
-It contains subdictionaries that we access using the names of each of the chemicals in the microenvironment. 
-In our toy example above, these are oxygen and my_chemical. 
+The continuum_variables dictionary is the most complicated of the four.
+It contains subdictionaries that we access using the names of each of the chemicals in the microenvironment.
+In our toy example above, these are oxygen and my_chemical.
 If our model tracked diffusing oxygen, VEGF, and glucose, then the continuum_variables dictionary would contain a subdirectory for each of them.
 
-For a particular chemical species in the microenvironment we have two more dictionaries called decay_rate and diffusion_coefficient, and a numpy array called data. 
-The diffusion and decay dictionaries each complete the value stored as a scalar and the unit stored as a string. 
+For a particular chemical species in the microenvironment we have two more dictionaries called decay_rate and diffusion_coefficient, and a numpy array called data.
+The diffusion and decay dictionaries each complete the value stored as a scalar and the unit stored as a string.
 The numpy array contains the concentrations of the chemical in each voxel at this time and is the same shape as the meshgrids of the computational domain stored in the .data[‘mesh’] arrays.
 ?
 
@@ -325,9 +340,9 @@ Discrete Cells
 
 expanded cells dictionary
 
-The discrete cells dictionary is relatively straightforward. 
-It contains a number of numpy arrays that contain information regarding individual cells.  
-These are all 1-dimensional arrays and each corresponds to one of the variables specified in the output*.xml file. 
+The discrete cells dictionary is relatively straightforward.
+It contains a number of numpy arrays that contain information regarding individual cells.
+These are all 1-dimensional arrays and each corresponds to one of the variables specified in the output*.xml file.
 With the default settings, these are:
 
     ID: unique integer that will identify the cell throughout its lifetime in the simulation
