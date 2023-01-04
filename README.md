@@ -1,4 +1,8 @@
-# pcDataLoader
+![pcDataLoader  logo & title](man/img/pcdataloader_title_v3.0.0.png) 
+
+## +
+
+pcdataloader_title_v3.0.0.png
 
 ## Abstract:
 pcDataLoader provides a platform independent, python3 based, [pip](https://en.wikipedia.org/wiki/Pip_(package_manager)) installable interface
