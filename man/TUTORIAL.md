@@ -35,7 +35,7 @@ The files we care about most from this set consists of:
 
 
 ### Load the Data form a PhysiCell MultiCellDigital Snapshot into Python3
-In this paragraph we will load the pcDataLoder library and data snapshot 00000012, described above, from [data_timeseries_2d](https://github.com/elmbeech/pcDataLoader/tree/v3/pcDataLoader/data_timeseries_2d) from the test dataset.
+In this paragraph we will load the pcDataLoder library and data snapshot 00000012, described above, from [data timeseries 2d](https://github.com/elmbeech/pcDataLoader/tree/v3/pcDataLoader/data_timeseries_2d) from the test dataset.
 (There is no need to extra install the test data set.
 In fact, both test datasets are already installed.
 They ship with the pip3 pcDataLoader installation.)
@@ -203,14 +203,40 @@ mcds.get_voxel_ijk(x=111, y=22, z=-5.1)  # None and Warning @ pyMCDS.is_in_mesh 
 
 #### Microenvironment (Continuum Variables) Data
 Let's have a look at the substrate.
-
+We can retrive an alphabetically ordered list of all the substrates processes in the simulation.
+In the loaded data set only one substarte, oxygen, was part of the simulation.
 ```python
-help(pc.pyMCDS.get_substrate_names)
-help(pc.pyMCDS.get_substrate_df)
-help(pc.pyMCDS.get_concentration)
-help(pc.pyMCDS.get_concentration_df)
-help(pc.pyMCDS.get_concentration_at)
+mcds.get_substrate_names()  # ['oxygen']
 ```
+
+We can retrieve a pandas dataframe withe the parameters (decay\_rate, diffusion\_coefficient) that ware set for in each substrate.
+```python
+df = mcds.get_substrate_df()
+df.head()
+```
+
+Regaridng the concentration, we can retieve:
++ a **numpy array** of all substratd concentrations at a particular xyz coordinate, ordered alphabetically by substrate name, like the list retieved by the get\_substrate\_names function.
++ substrate specific 3D or 2D **meshgrid numpy arrays**.
+  To get a 2D meshgrids you can slice though any z stack value, the fuction will always pick the closest mesh coordinate, the smaller coordinate, if you hit the saddlepont between two voxels.
++ a **pandas dataframe** with voxel ijk coordinate values, mesh center mnp coordinate values, and concentrations values for all substrates.
+```python
+# all contration values at particular coordinate
+mcds.get_concentration_at(x=0, y=0, z=0)  # array([34.4166271])
+mcds.get_concentration_at(x=111, y=22, z=-5)
+mcds.get_concentration_at(x=111, y=22, z=-5.1)
+
+# concentration meshgrid for a particular substrate
+oxygen_3d = mcds.get_concentration('oxygen')
+oxygen_2d = mcds.get_concentration('oxygen', z_slice=0)
+oxygen_3d .shape  # (11, 11, 1)
+oxygen_2d.shape  # (11, 11)
+
+# dataframe with complete voxel cordinate (ijk), mesh coordiante (mnp), and substarte concentration mapping.
+df = mcds.get_concentration_df()
+df.head()
+```
+
 
 #### Cell (Discrete Cells) Data
 
@@ -236,105 +262,6 @@ help(pc.pyMCDS.get_unit_df)
 ################
 ## HERE I AM ##
 ###############
-
-#Mesh
-Expanded mesh dictionary
-
-The mesh dictionary has a lot more going on than the metadata dictionary.
-
-It contains three numpy arrays, indicated by orange boxes, as well as another dictionary.
-The three arrays contain x, y and z coordinates for the centers of the voxels that constiture the computational domain in a meshgrid format.
-This means that each of those arrays is tensors of rank three.
-Together they identify the coordinates of each possible point in the space.
-
-In contrast, the arrays in the voxel dictionary are stored linearly.
-If we know that we care about voxel number 42, we want to use the stuff in the voxels dictionary.
-If we want to make a contour plot, we want to use the x_coordinates, y_coordinates, and z_coordinates arrays.
-
-
-# We can extract one of the meshgrid arrays as a numpy array
->>> y_coords = mcds.data['mesh']['y_coordinates']
->>> y_coords.shape
-(75, 75, 75)
->>> y_coords[0, 0, :4]
-array([-740., -740., -740., -740.])
-
-# We can also extract the array of voxel centers
->>> centers = mcds.data['mesh']['voxels']['centers']
->>> centers.shape
-(3, 421875)
->>> centers[:, :4]
-array([[-740., -720., -700., -680.],
-       [-740., -740., -740., -740.],
-       [-740., -740., -740., -740.]])
-
-# We have a handy function to quickly extract the components of the full meshgrid
->>> xx, yy, zz = mcds.get_mesh()
->>> yy.shape
-(75, 75, 75)
->>> yy[0, 0, :4]
-array([-740., -740., -740., -740.])
-
-# We can also use this to return the meshgrid describing an x, y plane
->>> xx, yy = mcds.get_2D_mesh()
->>> yy.shape
-(75, 75)
-
-
-
-Continuum variables
-mcds.data['continuum_variables']['my_chemical']
-
-Expanded microenvironment dictionaries
-
-The continuum_variables dictionary is the most complicated of the four.
-It contains subdictionaries that we access using the names of each of the chemicals in the microenvironment.
-In our toy example above, these are oxygen and my_chemical.
-If our model tracked diffusing oxygen, VEGF, and glucose, then the continuum_variables dictionary would contain a subdirectory for each of them.
-
-For a particular chemical species in the microenvironment we have two more dictionaries called decay_rate and diffusion_coefficient, and a numpy array called data.
-The diffusion and decay dictionaries each complete the value stored as a scalar and the unit stored as a string.
-The numpy array contains the concentrations of the chemical in each voxel at this time and is the same shape as the meshgrids of the computational domain stored in the .data[‘mesh’] arrays.
-?
-
-# we need to know the names of the substrates to work with
-# this data. We have a function to help us find them.
->>> mcds.get_substrate_names()
-['oxygen', 'my_chemical']
-
-# The diffusable chemical dictionaries are messy
-# if we need to do a lot with them it might be easier
-# to put them into their own instance
->>> oxy_dict = mcds.data['continuum_variables']['oxygen']
->>> oxy_dict['decay_rate']
-{'value': 0.1, 'units': '1/min'}
-
-# What we care about most is probably the numpy
-# array of concentrations
->>> oxy_conc = oxy_dict['data']
->>> oxy_conc.shape
-(75, 75, 75)
-
-# Alternatively, we can get the same array with a function
->>> oxy_conc2 = mcds.get_concentrations('oxygen')
->>> oxy_conc2.shape
-(75, 75, 75)
-
-# We can also get the concentrations on a plane using the
-# same function and supplying a z value to "slice through"
-# note that right now the z_value must be an exact match
-# for a plane of voxel centers, in the future we may add
-# interpolation.
->>> oxy_plane = mcds.get_concentrations('oxygen', z_value=100.0)
->>> oxy_plane.shape
-(75, 75)
-
-# we can also find the concentration in a single voxel using the
-# position of a point within that voxel. This will give us an
-# array of all concentrations at that point.
->>> mcds.get_concentrations_at(x=0., y=550., z=0.)
-array([17.94514446,  0.99113448])
-
 
 Discrete Cells
 

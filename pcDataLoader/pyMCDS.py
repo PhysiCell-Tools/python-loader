@@ -551,8 +551,8 @@ class pyMCDS:
                 should program execution break or just spit out a waring,
                 if z_slize position is not an exact mesh center coordinate?
                 if False, z_slice will be adjusted to the nearest
-                mesh center value, the small one, if there are
-                multiple occurrences.
+                mesh center value, the smaller one, if the coordinate
+                lies on a saddlepoint.
 
         output:
             ar_conc: numpy array of floating point numbers
@@ -635,8 +635,8 @@ class pyMCDS:
                 should program execution break or just spit out a waring,
                 if z_slize position is not an exact mesh center coordinate?
                 if False, z_slice will be adjusted to the nearest
-                mesh center value, the small one, if there are
-                multiple occurrences.
+                mesh center value, the smaller one, if the coordinate
+                lies on a saddlepoint.
 
         output:
             df_conc : pandas dataframe
