@@ -160,21 +160,30 @@ mcds.get_mesh_mnp_axis()
 ```
 
 #### BUE 20220103: ARE HERE ERRORS? ####
+11 voxel whide axis -> 0 .. 10!
+This is all correct! 
+mybe adjust docstring!
 
 We can even retive the mesh it self,
 and all mnp mesh center coordinate triplets. 
 ```python
-mcds.get_mesh_2D()  # numpy array with shape (2, 11, 11)
-mcds.get_mesh()  # numpy array with shape (3, 11, 11, 1)
-mcds.get_mesh_coordinate()  # numpy array with shape (3, 121)
+mcds.get_mesh_2D()  # numpy array with shape (2, 11, 11)   # 3D: (2, 11, 11)
+mcds.get_mesh()  # numpy array with shape (3, 11, 11, 1)   # 3D: (3, 11, 11, 11)
+mcds.get_mesh_coordinate()  # numpy array with shape (3, 121)  # 3D:  (3, 1331) 
 ```
 
 Furthmore, there are two helper function.
 One to figure out of a particular x,y,z coordinat is still in side the mesh, 
 and other one to translate an x,y,z coordnate into i,j,k voxel indices.
 ```python
-mesh.get_voxel_ijk(x=, y=, z=)
-mesh.pyMCDS.is_in_mesh(x=, y=, z=)
+#!get voxel does not care about if in mesh!
+mcds.get_voxel_ijk(x=0, y=0, z=0)  # [0,0,0]
+mcds.get_voxel_ijk(x=111, y=22, z=3)  # [4, 2, 3]  # this is 2D MESH p=1
+mcds.get_voxel_ijk(x=111, y=222, z=333)  # [4, 12, 333]  # this is 2D MESH p=1
+
+mcds.is_in_mesh(x=0, y=0, z=0)  # True
+mcds.is_in_mesh(x=111, y=22, z=-5)  # True
+mcds.is_in_mesh(x=111, y=22, z=-5.1)  # False
 ```
 
 #### Microenvironment (Continuum Variables) Data

@@ -58,10 +58,6 @@ help(pc.pyMCDS.get_timestamp)
 help(pc.pyMCDS.get_time)
 help(pc.pyMCDS.get_runtime)
 
-# pyMCDS graph
-help(pc.pyMCDS.get_attached_graph_dict)
-help(pc.pyMCDS.get_neighbor_graph_dict)
-
 # pyMCDS mesh
 help(pc.pyMCDS.get_voxel_ijk_range)
 help(pc.pyMCDS.get_mesh_mnp_range)
@@ -72,6 +68,7 @@ help(pc.pyMCDS.get_mesh)
 help(pc.pyMCDS.get_mesh_2D)
 help(pc.pyMCDS.get_mesh_coordinate)
 help(pc.pyMCDS.get_mesh_spacing)
+help(pc.pyMCDS.get_voxel_spacing)
 help(pc.pyMCDS.get_voxel_volume)
 help(pc.pyMCDS.get_voxel_ijk)
 help(pc.pyMCDS.is_in_mesh)
@@ -87,6 +84,10 @@ help(pc.pyMCDS.get_concentration_at)
 help(pc.pyMCDS.get_cell_variables)
 help(pc.pyMCDS.get_cell_df)
 help(pc.pyMCDS.get_cell_df_at)
+
+# pyMCDS graph
+help(pc.pyMCDS.get_attached_graph_dict)
+help(pc.pyMCDS.get_neighbor_graph_dict)
 
 # pyMCDS unit
 help(pc.pyMCDS.get_unit_df)

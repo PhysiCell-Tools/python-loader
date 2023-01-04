@@ -179,38 +179,6 @@ class pyMCDS:
         return self.data['metadata']['current_runtime']
 
 
-    ## GRAPH RELATED FUNCTIONS ##
-
-    def get_attached_graph_dict(self):
-        """
-        input:
-            self: pyMCDS class instance.
-
-        output:
-            dei_graph: dictionary of sets of integers
-            mapps each cellid to the attached connected cellids.
-
-        description:
-            function returns the attached cell graph as dictionary object.
-        """
-        return self.data['discrete_cells']['graph']['attached_cells']
-
-
-    def get_neighbor_graph_dict(self):
-        """
-        input:
-            self: pyMCDS class instance.
-
-        output:
-            dei_graph: dictionary of sets of integers
-            mapps each cellid to the connected neighbour cellids.
-
-        description:
-            function returns the cell neighbor graph as dictionary object.
-        """
-        return self.data['discrete_cells']['graph']['neighbor_cells']
-
-
     ## MESH RELATED FUNCTIONS  ##
 
     def get_voxel_ijk_range(self):
@@ -356,6 +324,27 @@ class pyMCDS:
         return self.data['mesh']['mnp_coordinate']
 
 
+    def get_voxel_volume(self):
+        """
+        input:
+            self: pyMCDS class instance.
+
+        output:
+            r_volume: floating point number
+            voxel volume value related to the spacial unit
+            defined in the PhysiCell_settings.xml file.
+
+        description:
+            function returns the volume value for a single voxel, related
+            to the spacial unit defined in the PhysiCell_settings.xml file.
+        """
+        ar_volume = np.unique(self.data['mesh']['volumes'])
+        if ar_volume.shape != (1,):
+            sys.exit(f'Error @ pyMCDS.get_voxel_volume : mesh is not built out of a unique voxel volume {ar_volume}.')
+        r_volume = ar_volume[0]
+        return(r_volume)
+
+
     def get_mesh_spacing(self):
         """
         input:
@@ -400,27 +389,6 @@ class pyMCDS:
         return [dm, dn, dp]
 
 
-    def get_voxel_volume(self):
-        """
-        input:
-            self: pyMCDS class instance.
-
-        output:
-            r_volume: floating point number
-            voxel volume value related to the spacial unit
-            defined in the PhysiCell_settings.xml file.
-
-        description:
-            function returns the volume value for a single voxel, related
-            to the spacial unit defined in the PhysiCell_settings.xml file.
-        """
-        ar_volume = np.unique(self.data['mesh']['volumes'])
-        if ar_volume.shape != (1,):
-            sys.exit(f'Error @ pyMCDS.get_voxel_volume : mesh is not built out of a unique voxel volume {ar_volume}.')
-        r_volume = ar_volume[0]
-        return(r_volume)
-
-
     def get_voxel_ijk(self, x, y, z):
         """
         input:
@@ -445,7 +413,7 @@ class pyMCDS:
             for the given position x, y, z.
         """
         tr_m, tr_n, tr_p = self.get_mesh_mnp_range()
-        dm, dn, dp = self.get_mesh_spacing()
+        dm, dn, dp = self.get_voxel_spacing()
 
         i = int(np.round((x - tr_m[0]) / dm))
         j = int(np.round((y - tr_n[0]) / dn))
@@ -684,7 +652,7 @@ class pyMCDS:
         ar_p = ar_p.flatten(order='C')
 
         # get mesh spacing
-        dm, dn, dp = self.get_mesh_spacing()
+        dm, dn, dp = self.get_voxel_spacing()
 
         # get voxel coordinates
         ai_i = ((ar_m - ar_m.min()) / dm)
@@ -760,7 +728,7 @@ class pyMCDS:
         df_voxel = df_cell.loc[:,['position_x','position_y','position_z']].copy()
 
         # get mesh spacing
-        dm, dn, dp = self.get_mesh_spacing()
+        dm, dn, dp = self.get_voxel_spacing()
 
         # get mesh and voxel min max values
         tr_m_range, tr_n_range, tr_p_range = self.get_mesh_mnp_range()
@@ -841,7 +809,7 @@ class pyMCDS:
             specified with the x, y, z position coordinate.
         """
         # get mesh and mesh spacing
-        dm, dn, dp = self.get_mesh_spacing()
+        dm, dn, dp = self.get_voxel_spacing()
         ar_m, ar_n, ar_p = self.get_mesh()
 
         # get voxel coordinate
@@ -862,6 +830,38 @@ class pyMCDS:
         )
         df_voxel = df_cell[inside_voxel]
         return df_voxel
+
+
+    ## GRAPH RELATED FUNCTIONS ##
+
+    def get_attached_graph_dict(self):
+        """
+        input:
+            self: pyMCDS class instance.
+
+        output:
+            dei_graph: dictionary of sets of integers
+            mapps each cellid to the attached connected cellids.
+
+        description:
+            function returns the attached cell graph as dictionary object.
+        """
+        return self.data['discrete_cells']['graph']['attached_cells']
+
+
+    def get_neighbor_graph_dict(self):
+        """
+        input:
+            self: pyMCDS class instance.
+
+        output:
+            dei_graph: dictionary of sets of integers
+            mapps each cellid to the connected neighbour cellids.
+
+        description:
+            function returns the cell neighbor graph as dictionary object.
+        """
+        return self.data['discrete_cells']['graph']['neighbor_cells']
 
 
     ## UNIT OVERVIEW RELATED FUNCTION ##
