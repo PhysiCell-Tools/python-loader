@@ -1,9 +1,9 @@
 # pcDataLoader Refrence Man Page                                                
                                                                                 
-This is the technical descriptions of the machinery and how to operate it.
-References are maintained in each module`s [docstring](https://en.wikipedia.org/wiki/Docstring).
-
+This is the technical descriptions of the machinery and how to operate it.\
+References are maintained in each module`s [docstring](https://en.wikipedia.org/wiki/Docstring).\
 You can access the by source code, or by first load PhysiCell Data Loader.
+
 ```python3
 import pcDataLoader as pc
 ```
