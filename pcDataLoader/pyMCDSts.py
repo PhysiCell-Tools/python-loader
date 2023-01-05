@@ -181,7 +181,7 @@ class pyMCDSts:
         return(s_resize)
 
 
-    def make_gif(self, giffile='timeseries.gif', resize_factor=1):
+    def make_gif(self, resize_factor=1, giffile='timeseries.gif'):
         """
         input:
             self: pyMCDSts class instance.
@@ -278,7 +278,7 @@ class pyMCDSts:
         for s_glob in ls_glob:
             if (len(set(pathlib.Path(self.output_path).glob(s_glob))) > 0):
                 if (s_glob in es_resize):
-                    os.system(f'{s_magick}mogrigy {s_resize} {addargs} -format png {self.output_path}/{s_glob} &')
+                    os.system(f'{s_magick}mogrify {s_resize} {addargs} -format png {self.output_path}/{s_glob} &')
                 else:
                     os.system(f'{s_magick}mogrify {addargs} -format png {self.output_path}/{s_glob} &')
 
@@ -314,16 +314,10 @@ class pyMCDSts:
                     os.system(f'{s_magick}mogrify -format tiff {self.output_path}/{s_glob} & ')
 
 
-    def make_movie(self, moviefile='movie.mp4', frame_rate=24, interface='jpeg'):
+    def make_movie(self, interface='jpeg', moviefile='movie.mp4', frame_rate=24):
         """
         input:
             self: pyMCDSts class instance.
-
-            moviefile: sting; default 'movie.mp4'
-            mp4 movie file name.
-
-            frame_rate: integer; default 24
-            specifies how many images per secound will be use.
 
             interface: string; default jpeg
             ffmpeg can not directely translate svg image into a move.
@@ -331,6 +325,12 @@ class pyMCDSts:
             this images, from which the movie will be gererated, have to exist.
             they can be generated with the make_jpeg, make_png, or make_tiff
             function.
+
+            moviefile: sting; default 'movie.mp4'
+            mp4 movie file name.
+
+            frame_rate: integer; default 24
+            specifies how many images per secound will be use.
 
         output:
             mp4 move file in output_path directory.

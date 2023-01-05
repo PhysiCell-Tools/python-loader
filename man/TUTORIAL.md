@@ -385,9 +385,47 @@ df.head()
 df.plot(kind='scatter', x='time_min', y='cell_count', grid=True)
 ```
 
-#### Times Series SVG Images
-PhysiCell offers the possibility to generat svg plots.
+#### Times Series Scatterplot Images and Movies
 
+With PhysiCell is not only possible to take data snapshots, but as well [svg](https://en.wikipedia.org/wiki/SVG) vector graphics images snapshots.\
+PhysiCell's [Makefile](https://en.wikipedia.org/wiki/Make_(software)) has code to translate those svg images into [gif](https://en.wikipedia.org/wiki/GIF), [jpeg](https://en.wikipedia.org/wiki/JPEG), [png](https://en.wikipedia.org/wiki/Portable_Network_Graphics), or [tiff](https://en.wikipedia.org/wiki/TIFF) fomat, making use of the [image magick](https://en.wikipedia.org/wiki/ImageMagick) library, and to translate the jpeg, png, or tiff images into an [mp4](https://en.wikipedia.org/wiki/MP4_file_format) movie, therefore making use from the [ffmpeg](https://en.wikipedia.org/wiki/FFmpeg) library.\
+pyMCDSts instances provides the same functionallity.\
+This means this following code will only run if image magick and ffmpeg are installed on your operating system.\
+The svg images might be quite huge. You can always use the `resize_factor` parameter to scale donw the image size for the resulting images. Resizing will lead to processing time speed up and saves disk space.\
 
+Translate physicells svg images into static raster graphic images:
+```python
+# resize factor 1 will leave the image size as it is.
+mcds.make_jpeg()  # resize factor 1 
+mcds.make_png()  # resize factor 1
+mcds.make_tiff()  # esize factor 1
+
+# resize factor 0.2 will down scale to 20% width and length of the image.
+mcds.make_jpeg(0.2) 
+mcds.make_png(0.2)
+mcds.make_tiff(0.2)
+```
+
+Translate physicells svg images into a dynamic gif image:\
+The default file name for the resulting gif image is timeseries.gif.
+```python
+# resize factor 1 
+make_gif()
+
+# resize factor 0.2
+make_gif(0.2)
+```
+
+Translate physicells svg images into an mp4 movie:\
+Movies can only be generated for already existing jpeg, png, or tiff moves!\
+By default jpegs files will be used to generat the movie.\
+If png or tiff files should be used as source, then this have to be explicite stated.\
+The default file name from the resulting movie is movie.mp4.
+```python
+make_movie()  # generate move from jpeg files
+make_movie('jpeg')  # generate move from jpeg files
+make_movie('png')  # generate move from png files
+make_movie('tiff')  # generate move from tiff files
+```
 
 **That's all Folks!**
