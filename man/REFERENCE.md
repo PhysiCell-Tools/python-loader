@@ -1,8 +1,8 @@
-# pcDataLoader Refrence Man Page                                                
-                                                                                
+# pcDataLoader Reference Man Page
+
 This is the technical descriptions of the machinery and how to operate it.\
 References are maintained in each module's [docstring](https://en.wikipedia.org/wiki/Docstring).\
-You can access the by [source code](https://github.com/elmbeech/pcDataLoader/tree/master/pcDataLoader), or by first load PhysiCell Data Loader.
+You can access them through the [source code](https://github.com/elmbeech/pcDataLoader/tree/master/pcDataLoader), or by first load PhysiCell Data Loader.
 
 ```python3
 import pcDataLoader as pc
@@ -37,7 +37,7 @@ help(pc.pyMCDS.get_voxel_volume)
 help(pc.pyMCDS.get_voxel_ijk)
 help(pc.pyMCDS.is_in_mesh)
 
-# pyMCDS micronenvironment
+# pyMCDS microenvironment
 help(pc.pyMCDS.get_substrate_names)
 help(pc.pyMCDS.get_substrate_df)
 help(pc.pyMCDS.get_concentration)
@@ -49,7 +49,7 @@ help(pc.pyMCDS.get_cell_variables)
 help(pc.pyMCDS.get_cell_df)
 help(pc.pyMCDS.get_cell_df_at)
 
-# pyMCDS graph
+# pyMCDS graphs
 help(pc.pyMCDS.get_attached_graph_dict)
 help(pc.pyMCDS.get_neighbor_graph_dict)
 
