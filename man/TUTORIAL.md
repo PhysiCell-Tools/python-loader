@@ -389,7 +389,7 @@ df.plot(kind='scatter', x='time_min', y='cell_count', grid=True)
 
 With PhysiCell is not only possible to take data snapshots, but as well [svg](https://en.wikipedia.org/wiki/SVG) vector graphics images snapshots.\
 PhysiCell's [Makefile](https://en.wikipedia.org/wiki/Make_(software)) has code to translate those svg images into [gif](https://en.wikipedia.org/wiki/GIF), [jpeg](https://en.wikipedia.org/wiki/JPEG), [png](https://en.wikipedia.org/wiki/Portable_Network_Graphics), or [tiff](https://en.wikipedia.org/wiki/TIFF) fomat, making use of the [image magick](https://en.wikipedia.org/wiki/ImageMagick) library, and to translate the jpeg, png, or tiff images into an [mp4](https://en.wikipedia.org/wiki/MP4_file_format) movie, therefore making use from the [ffmpeg](https://en.wikipedia.org/wiki/FFmpeg) library.\
-pyMCDSts instances provides the same functionallity.\
+pyMCDSts instances provides the similar functionallity.\
 This means this following code will only run if image magick and ffmpeg are installed on your operating system.\
 The svg images might be quite huge. You can always use the `resize_factor` parameter to scale donw the image size for the resulting images. Resizing will lead to processing time speed up and saves disk space.\
 

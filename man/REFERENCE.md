@@ -71,10 +71,10 @@ help(pc.pyMCDSts.get_xmlfile_list)
 help(pc.pyMCDSts.read_mcds)
 
 # pyMCDSts images and movies
-help(pc.pyMCDSts.make_gif)
 help(pc.pyMCDSts.make_jpeg)
 help(pc.pyMCDSts.make_png)
 help(pc.pyMCDSts.make_tiff)
+help(pc.pyMCDSts.make_gif)
 help(pc.pyMCDSts.make_movie)
 
 # pyMCDSts internal functions
