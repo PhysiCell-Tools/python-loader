@@ -1,4 +1,4 @@
-![pcDataLoader logo & title](man/img/pcdataloader_title_v3.0.0.png) 
+![pcDataLoader logo & title](man/img/pcdataloader_title_v3.0.0.png)
 
 ## Abstract:
 pcDataLoader provides a platform independent, python3 based, [pip](https://en.wikipedia.org/wiki/Pip_(package_manager)) installable interface
@@ -10,11 +10,11 @@ pcDataLoader was forked from the original [PhysiCell-Tools](https://github.com/P
 The pcDataLoader python3 library will maintain two main branches:
 
 + **Branch version 2** will be strictly compatible with the original PhysiCell-Tools/python-loader code, although pip installable.
-+ **Branch version 3** might break with old habits, although tries to be as mutch downwards compatible as possible.
++ **Branch version 3** might break with old habits, although tries to be as much downward compatible as possible.
   The aim of the v3 branch is to get a very lean and agile python3 physicell output interface, for the ones coming from the python world.
 
 Note: there can only be one version of pcDataLoader installed in each python3 environment.
-In the HowTo guide is in detail explained, how to install and unistall pcDataLoader branches.
+In the HowTo guide is in detail explained, how to install and uninstall pcDataLoader branches.
 
 
 ## Header:
@@ -55,14 +55,14 @@ Within the pcDataLoader library, we tried to stick to the documentation policy l
 
 ## Release Notes:
 + version 3.0.0 (2023-01-03): elmbeech/pcDataLoader
-    + **pyMCDS** parameter **xml_file** can now handle path/file.xml (unix) or path\file.xml (dos) input, aslong output\_path is the default.
+    + **pyMCDS** parameter **xml_file** can now handle path/file.xml (unix) or path\file.xml (dos) input, as long output\_path is the default.
     + **pyMCDS** has a new additional boolean **microenv** parameter, to specify if the microenvironment (substrates) should be read (for completeness) or not (for speed increase and less memory usage).
     + **pyMCDS** has a new additional boolean **graph** parameter, to specify if the attached and neighbor graph should be read.
     + **pyMCDS** has a new additional boolean **verbose** parameter, to specify if there should be text output while processing.
     + pyMCDS **mcds.get_2D_mesh** was renamed to **mcds.get_mesh_2D** for consistency.
     + pyMCDS **mcds.get_linear_voxels** was renamed to **mcds.get_mesh_coordinate** for consistency.
-    + pyMCDS **mcds.get_containing_voxel_ijk** was renamed to **mcds.get_voxel_ijk** for biefness.
-    + pyMCDS **mcds.get_voxel_spacing** returns now 3 specific values, one for x, y, and z, insted of 1 general value.
+    + pyMCDS **mcds.get_containing_voxel_ijk** was renamed to **mcds.get_voxel_ijk** for briefness.
+    + pyMCDS **mcds.get_voxel_spacing** returns now 3 specific values, one for x, y, and z, instead of 1 general value.
     + pyMCDS **mcds.get_concentrations** was renamed to **mcds.get_concentration** for consistency
     + pyMCDS **mcds.get_concentrations_at** was renamed to **mcds.get_concentration_at** for consistency
     + pyMCDS **mcds.get_concentration_at** if z\_slice is not a mesh center value, the function will by default adjust to nearest and no longer break.
@@ -86,7 +86,7 @@ Within the pcDataLoader library, we tried to stick to the documentation policy l
     + new pyMCDS **mcds.is_in_mesh** function.
     + new pyMCDS **mcds.get_attached_graph_dict** function.
     + new pyMCDS **mcds.get_neigbor_graph_dict** function.
-    + class **pyMCDS_timeseries** was renamed to **pyMCDSts** and completly rewritten.
+    + class **pyMCDS_timeseries** was renamed to **pyMCDSts** and completely rewritten.
     + new pyMCDSts **get_xmlfile_list** function.
     + new pyMCDSts **read_mcds** function.
     + new pyMCDSts **make_jpeg** function.
@@ -94,8 +94,8 @@ Within the pcDataLoader library, we tried to stick to the documentation policy l
     + new pyMCDSts **make_tiff** function.
     + new pyMCDSts **make_gif** function.
     + new pyMCDSts **make_movie** function.
-    + all **plotting** functions were removed, because pcDataLoader only focus on making the raw data in python easy accessible for in-depth analysis.
-    + cell positon coordinats are now constandly labeld as **x,y,z**, mesh center coordinates as **m,n,p**, and voxel coordinates as **i,j,k**.
+    + all **plotting** functions were removed because pcDataLoader only focus on making the raw data in python easy accessible for in-depth analysis.
+    + cell position coordinates are now constantly labeled as **x,y,z**, mesh center coordinates as **m,n,p**, and voxel coordinates as **i,j,k**.
     + the underling [mcds object data dictionary structure](https://github.com/elmbeech/pcDataLoader/tree/master/man/img/pcdataloader_data_dictionary_v3.0.0.png) has changed.
     + [pytest](https://en.wikipedia.org/wiki/Pytest) unit tests exist now for all pyMCDS and pyMCDSts functions.
 
