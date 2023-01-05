@@ -202,6 +202,7 @@ mcds.get_voxel_ijk(x=111, y=22, z=-5.1)  # None and Warning @ pyMCDS.is_in_mesh 
 ```
 
 #### Microenvironment (Continuum Variables) Data
+
 Let's have a look at the substrate.
 We can retrive an alphabetically ordered list of all the substrates processes in the simulation.
 In the loaded data set only one substarte, oxygen, was part of the simulation.
@@ -223,13 +224,13 @@ Regaridng the concentration, we can retieve:
 ```python
 # all contration values at particular coordinate
 mcds.get_concentration_at(x=0, y=0, z=0)  # array([34.4166271])
-mcds.get_concentration_at(x=111, y=22, z=-5)
-mcds.get_concentration_at(x=111, y=22, z=-5.1)
+mcds.get_concentration_at(x=111, y=22, z=-5)  # array([18.80652216])
+mcds.get_concentration_at(x=111, y=22, z=-5.1)  # None and Warning @ pyMCDS.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0).
 
 # concentration meshgrid for a particular substrate
 oxygen_3d = mcds.get_concentration('oxygen')
 oxygen_2d = mcds.get_concentration('oxygen', z_slice=0)
-oxygen_3d .shape  # (11, 11, 1)
+oxygen_3d.shape  # (11, 11, 1)
 oxygen_2d.shape  # (11, 11)
 
 # dataframe with complete voxel cordinate (ijk), mesh coordiante (mnp), and substarte concentration mapping.
@@ -237,138 +238,75 @@ df = mcds.get_concentration_df()
 df.head()
 ```
 
-
 #### Cell (Discrete Cells) Data
 
+Now, lets have a look at all variables we track from each agent.\
+It is quite a list.\
+This list is ordered alphabetically, except the for first entry, which always is ID.
 ```python
-help(pc.pyMCDS.get_cell_variables)
-help(pc.pyMCDS.get_cell_df)
-help(pc.pyMCDS.get_cell_df_at)
-
-help(pc.pyMCDS.get_attached_graph_dict)
-help(pc.pyMCDS.get_neighbor_graph_dict)
+mcds.get_cell_variables()  # ['ID', 'attachment_elastic_constant', ..., 'velocity_z']
+len(mcds.get_cell_variables())  # 77
 ```
 
+The data itslef we can retireve as dataframe.
+There exit two function to do so. 
+One that retriefs data from all agents in the whole domain, the oder retrievs only data fromm the agenetis in a particular voxel, specified by the xyz coordinate.
 
-### Units
+Please note, this dataframes not only hold the exact x,y,z coordinate and all dicret variables mentioned above, 
+they list additionally all agent surrounding substrate concentartion, the containg i,j,k voxel coordinate and m,n,p mesh center coordinate.
+
 ```python
-help(pc.pyMCDS.get_unit_df)
+# data from all agent in the domain.
+df = mcds.get_cell_df()
+df.shape  # (992, 87)  this mean: 992 agent in the whole domain, 87 tracked variables.
+df.info()
+df.head()
+
+# data from all agents in the xyz specified voxel.
+df = mcds.get_cell_df_at(x=0,y=0,z=0)
+df.shape  # (4, 87)
+
+df = mcds.get_cell_df_at(x=111,y=22,z=-5)
+df.shape  # (3, 87)
+
+df = mcds.get_cell_df_at(x=111,y=22,z=-5.1)  # None and Warning @ pyMCDS.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0).  
 ```
 
->>> mcds.data['metadata']['time_units']
-'min'
+Since lately, PysiCell tracks for each cell, if it touches other cells.
+This data is stored in two dictionaries of sets of integers which link the corresponding cell ids.
+We have here a closer look at the neighbour graph because the attached graph is in this particular study not really intresting.
+```python
+# attached graph
+graph = mcds.get_attached_graph_dict()
+len(graph)  # 992
+
+# neighbor graph
+graph = mcds.get_neighbor_graph_dict()
+len(graph)  # 992
+graph.keys()  # dict_keys([0, 1, ..., 993])
+graph[0]  # {1, 31, 33, 929, 935, 950}
+```
+
+#### Units
+Finally, it is possible to retrieve a dataframe, listing all units from all tracked variables, from metadata, mesh, continuum\_variables, discrete\_cells.
+```python
+df = mcds.get_unit_df()
+df.shape  # (82, 1)
+df.columns  # Index(['unit'], dtype='object')
+df.index  # Index(['attachment_elastic_constant', 'attachment_rate', ..., 'velocity_z'], dtype='object', name='parameter')
+df.head()
+```
+
+### Working With PhysiCell MultiCellDigital Time Series into Python3
 
 
 ################
 ## HERE I AM ##
 ###############
 
-Discrete Cells
+from first implementation:
+In this tutorial we will load the 24[h] time step data snapshot from the 3D cancer-immune-sample project, provided as test data with this libarary.
 
-expanded cells dictionary
-
-The discrete cells dictionary is relatively straightforward.
-It contains a number of numpy arrays that contain information regarding individual cells.
-These are all 1-dimensional arrays and each corresponds to one of the variables specified in the output*.xml file.
-With the default settings, these are:
-
-    ID: unique integer that will identify the cell throughout its lifetime in the simulation
-    position(_x, _y, _z): floating point positions for the cell in x, y, and z directions
-    total_volume: total volume of the cell
-    cell_type: integer label for the cell as used in PhysiCell
-    cycle_model: integer label for the cell cycle model as used in PhysiCell
-    current_phase: integer specification for which phase of the cycle model the cell is currently in
-    elapsed_time_in_phase: time that cell has been in current phase of cell cycle model
-    nuclear_volume: volume of cell nucleus
-    cytoplasmic_volume: volume of cell cytoplasm
-    fluid_fraction: proportion of the volume due to fliud
-    calcified_fraction: proportion of volume consisting of calcified material
-    orientation(_x, _y, _z): direction in which cell is pointing
-    polarity:
-    migration_speed: current speed of cell
-    motility_vector(_x, _y, _z): current direction of movement of cell
-    migration_bias: coefficient for stochastic movement (higher is “more deterministic”)
-    motility_bias_direction(_x, _y, _z): direction of movement bias
-    persistence_time: time in-between direction changes for cell
-    motility_reserved:
-
-?
-
-# Extracting single variables is just like before
->>> cell_ids = mcds.data['discrete_cells']['ID']
->>> cell_ids.shape
-(18595,)
->>> cell_ids[:4]
-array([0., 1., 2., 3.])
-
-# If we're clever we can extract 2D arrays
->>> cell_vec = np.zeros((cell_ids.shape[0], 3))
->>> vec_list = ['position_x', 'position_y', 'position_z']
->>> for i, lab in enumerate(vec_list):
-...     cell_vec[:, i] = mcds.data['discrete_cells'][lab]
-...
-array([[ -69.72657128,  -39.02046405, -233.63178904],
-       [ -69.84507464,  -22.71693265, -233.59277388],
-       [ -69.84891462,   -6.04070516, -233.61816711],
-       [ -69.845265  ,   10.80035554, -233.61667313]])
-
-# We can get the list of all of the variables stored in this dictionary
->>> mcds.get_cell_variables()
-['ID',
- 'position_x',
- 'position_y',
- 'position_z',
- 'total_volume',
- 'cell_type',
- 'cycle_model',
- 'current_phase',
- 'elapsed_time_in_phase',
- 'nuclear_volume',
- 'cytoplasmic_volume',
- 'fluid_fraction',
- 'calcified_fraction',
- 'orientation_x',
- 'orientation_y',
- 'orientation_z',
- 'polarity',
- 'migration_speed',
- 'motility_vector_x',
- 'motility_vector_y',
- 'motility_vector_z',
- 'migration_bias',
- 'motility_bias_direction_x',
- 'motility_bias_direction_y',
- 'motility_bias_direction_z',
- 'persistence_time',
- 'motility_reserved',
- 'oncoprotein',
- 'elastic_coefficient',
- 'kill_rate',
- 'attachment_lifetime',
- 'attachment_rate']
-# We can also get all of the cell data as a pandas DataFrame
->>> cell_df = mcds.get_cell_df()
->>> cell_df.head()
-ID     position_x   position_y    position_z total_volume cell_type cycle_model ...
-0.0   - 69.726571  - 39.020464  - 233.631789       2494.0       0.0         5.0 ...
-1.0   - 69.845075  - 22.716933  - 233.592774       2494.0       0.0         5.0 ...
-2.0   - 69.848915  - 6.040705   - 233.618167       2494.0       0.0         5.0 ...
-3.0   - 69.845265    10.800356  - 233.616673       2494.0       0.0         5.0 ...
-4.0   - 69.828161    27.324530  - 233.631579       2494.0       0.0         5.0 ...
-
-# if we want to we can also get just the subset of cells that
-# are in a specific voxel
->>> vox_df = mcds.get_cell_df_at(x=0.0, y=550.0, z=0.0)
->>> vox_df.iloc[:, :5]
-             ID  position_x  position_y  position_z  total_volume
-26718  228761.0    6.623617  536.709341   -1.282934   2454.814507
-52736  270274.0   -7.990034  538.184921    9.648955   1523.386488
-Examples
-
-These examples will not be made using our toy dataset described above but will instead be made using a single timepoint dataset that can be found at:
-
-https://sourceforge.net/projects/physicell/files/Tutorials/MultiCellDS/3D_PhysiCell_matlab_sample.zip/download
-Substrate contour plot
 
 One of the big advantages of working with PhysiCell data in python is that we have access to its plotting tools. For the sake of example let’s plot the partial pressure of oxygen throughout the computational domain along the z=0 plane. Once we’ve loaded our data by initializing a pyMCDS object, we can work entirely within python to produce the plot.
 ?
@@ -497,15 +435,4 @@ adding a cell layer to the oxygen plot
 Future Direction
 
 The first extension of this project will be timeseries functionality. This will provide similar data loading functionality but for a time series of MultiCell Digital Snapshots instead of simply one point in time.
-
-
-
-########################
-# first impelmentation #
-########################
-
-# Loading a Data Snapshot
-
-In this tutorial we will load the 24[h] time step data snapshot from the 3D cancer-immune-sample project, provided as test data with this libarary.
-Feel free to run the tutorila with your own PhysiCell data output.
 

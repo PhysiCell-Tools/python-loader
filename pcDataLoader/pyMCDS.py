@@ -609,15 +609,24 @@ class pyMCDS:
             inside a particular voxel that contains the point specified
             in the arguments.
         """
-        i, j, k = self.get_voxel_ijk(x, y, z)
-        ls_substrate = self.get_substrate_names()
-        ar_concs = np.zeros(len(ls_substrate))
+        ar_concs = None
 
-        for n, s_substrate in enumerate(ls_substrate):
-            ar_concs[n] = self.get_concentration(s_substrate)[j, i, k]
-            if self.verbose:
-                print(f'pyMCD.get_concentration_at(x={x},y={y},z={z}) > jkl: [{i},{j},{k}] > substrate: {s_substrate} {ar_concs[n]}')
+        # is coordinate inside the domain?
+        b_calc = self.is_in_mesh(x=x, y=y, z=z, halt=False)
+        if b_calc:
 
+            # get voxel coordinate and substrate names
+            i, j, k = self.get_voxel_ijk(x, y, z, is_in_mesh=False)
+            ls_substrate = self.get_substrate_names()
+            ar_concs = np.zeros(len(ls_substrate))
+
+            # get substrate concentrations
+            for n, s_substrate in enumerate(ls_substrate):
+                ar_concs[n] = self.get_concentration(s_substrate)[j, i, k]
+                if self.verbose:
+                    print(f'pyMCD.get_concentration_at(x={x},y={y},z={z}) > jkl: [{i},{j},{k}] > substrate: {s_substrate} {ar_concs[n]}')
+
+        # output
         return ar_concs
 
 
@@ -821,27 +830,35 @@ class pyMCDS:
             function returns the cell dataframe for the voxel
             specified with the x, y, z position coordinate.
         """
-        # get mesh and mesh spacing
-        dm, dn, dp = self.get_voxel_spacing()
-        ar_m, ar_n, ar_p = self.get_mesh()
+        df_voxel = None
 
-        # get voxel coordinate
-        i, j, k = self.get_voxel_ijk(x, y, z)
-        m = ar_m[j, i, k]
-        n = ar_n[j, i, k]
-        p = ar_p[j, i, k]
+        # is coordinate inside the domain?
+        b_calc = self.is_in_mesh(x=x, y=y, z=z, halt=False)
+        if b_calc:
 
-        # get voxel
-        df_cell = self.get_cell_df()
-        inside_voxel = (
-            (df_cell['position_x'] <= m + dm / 2) &
-            (df_cell['position_x'] >= m - dm / 2) &
-            (df_cell['position_y'] <= n + dn / 2) &
-            (df_cell['position_y'] >= n - dn / 2) &
-            (df_cell['position_z'] <= p + dp / 2) &
-            (df_cell['position_z'] >= p - dp / 2)
-        )
-        df_voxel = df_cell[inside_voxel]
+            # get mesh and mesh spacing
+            dm, dn, dp = self.get_voxel_spacing()
+            ar_m, ar_n, ar_p = self.get_mesh()
+
+            # get voxel coordinate
+            i, j, k = self.get_voxel_ijk(x, y, z, is_in_mesh=False)
+            m = ar_m[j, i, k]
+            n = ar_n[j, i, k]
+            p = ar_p[j, i, k]
+
+            # get voxel
+            df_cell = self.get_cell_df()
+            inside_voxel = (
+                (df_cell['position_x'] <= m + dm / 2) &
+                (df_cell['position_x'] >= m - dm / 2) &
+                (df_cell['position_y'] <= n + dn / 2) &
+                (df_cell['position_y'] >= n - dn / 2) &
+                (df_cell['position_z'] <= p + dp / 2) &
+                (df_cell['position_z'] >= p - dp / 2)
+            )
+            df_voxel = df_cell[inside_voxel]
+
+        # output
         return df_voxel
 
 
