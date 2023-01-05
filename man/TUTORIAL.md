@@ -204,19 +204,19 @@ mcds.get_voxel_ijk(x=111, y=22, z=-5.1)  # None and Warning @ pyMCDS.is_in_mesh 
 #### Microenvironment (Continuum Variables) Data
 
 Let's have a look at the substrate.
-We can retrive an alphabetically ordered list of all the substrates processes in the simulation.
+We can retrieve an alphabetically ordered list of all the substrates processes in the simulation.
 In the loaded data set only one substarte, oxygen, was part of the simulation.
 ```python
 mcds.get_substrate_names()  # ['oxygen']
 ```
 
-We can retrieve a pandas dataframe withe the parameters (decay\_rate, diffusion\_coefficient) that ware set for in each substrate.
+We can retrieve a pandas dataframe withe the parameters (decay\_rate, diffusion\_coefficient) that were set for in each substrate.
 ```python
 df = mcds.get_substrate_df()
 df.head()
 ```
 
-Regaridng the concentration, we can retieve:
+Regaridng the concentrations, we can retieve:
 + a **numpy array** of all substratd concentrations at a particular xyz coordinate, ordered alphabetically by substrate name, like the list retieved by the get\_substrate\_names function.
 + substrate specific 3D or 2D **meshgrid numpy arrays**.
   To get a 2D meshgrids you can slice though any z stack value, the fuction will always pick the closest mesh coordinate, the smaller coordinate, if you hit the saddlepont between two voxels.
@@ -248,11 +248,10 @@ mcds.get_cell_variables()  # ['ID', 'attachment_elastic_constant', ..., 'velocit
 len(mcds.get_cell_variables())  # 77
 ```
 
-The data itslef we can retireve as dataframe.
-There exit two function to do so. 
-One that retriefs data from all agents in the whole domain, the oder retrievs only data fromm the agenetis in a particular voxel, specified by the xyz coordinate.
-
-Please note, this dataframes not only hold the exact x,y,z coordinate and all dicret variables mentioned above, 
+The data itslef we can retireve as dataframe.\
+There exit two function to do so.\
+One that retriefs data from all agents in the whole domain, the oder retrievs only data fromm the agenetis in a particular voxel, specified by the xyz coordinate.\
+Please note, this dataframes not only hold the exact x,y,z coordinate and all dicret variables mentioned above,
 they list additionally all agent surrounding substrate concentartion, the containg i,j,k voxel coordinate and m,n,p mesh center coordinate.
 
 ```python
@@ -269,11 +268,11 @@ df.shape  # (4, 87)
 df = mcds.get_cell_df_at(x=111,y=22,z=-5)
 df.shape  # (3, 87)
 
-df = mcds.get_cell_df_at(x=111,y=22,z=-5.1)  # None and Warning @ pyMCDS.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0).  
+df = mcds.get_cell_df_at(x=111,y=22,z=-5.1)  # None and Warning @ pyMCDS.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0).
 ```
 
-Since lately, PysiCell tracks for each cell, if it touches other cells.
-This data is stored in two dictionaries of sets of integers which link the corresponding cell ids.
+Since lately, PysiCell tracks for each cell, if it touches other cells.\
+This data is stored in two dictionaries of sets of integers which link the corresponding cell ids.\
 We have here a closer look at the neighbour graph because the attached graph is in this particular study not really intresting.
 ```python
 # attached graph
@@ -289,7 +288,7 @@ graph[0]  # {1, 31, 33, 929, 935, 950}
 
 #### Units
 
-Finally, it is possible to retrieve a dataframe, listing all units from all tracked variables, from metadata, mesh, continuum\_variables, discrete\_cells.
+Finally, it is possible to retrieve a dataframe that lists all units from all tracked variables, from metadata, mesh, continuum\_variables, and discrete\_cells.
 ```python
 df = mcds.get_unit_df()
 df.shape  # (82, 1)
