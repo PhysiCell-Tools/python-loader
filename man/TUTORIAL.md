@@ -12,7 +12,7 @@ The original python-loader tutorial can be found here.
 
 ## Tutorial - branch v3
 
-### Introduction: Anatomy of a PhysiCell MultiCellDigital Snapshot
+### Introduction: PhysiCell's MultiCellDigital Snapshot (MCDS) Anatomy
 
 Each time PhysiCell’s internal time tracker passes a time step where data is to be saved, it generates a number of files of various types.\
 Each of these files will have a number at the end that indicates where it belongs in the sequence of outputs.\
@@ -34,7 +34,7 @@ The files we care about most from this set consists of:
 + **output00000012_microenvironment0.mat**: This is a MATLAB matrix file that contains all of the data about the microenvironment at this time step.
 
 
-### Load the Data form a PhysiCell MultiCellDigital Snapshot into Python3
+### Loading an MCDS into Python3
 In this paragraph we will load the pcDataLoder library and data snapshot 00000012, described above, from [data timeseries 2d](https://github.com/elmbeech/pcDataLoader/tree/v3/pcDataLoader/data_timeseries_2d) from the test dataset.
 (There is no need to extra install the test data set.
 In fact, both test datasets are already installed.
@@ -67,7 +67,7 @@ For speed and less memory usage, it is however possible to only load the essenti
 mcds = pc.pyMCDS(s_pathfile, graph=False, microenv=False)
 ```
 
-### Loaded Data Structure
+### The Loaded Data Structure
 
 All loaded  data lievs in `mcds.data` dictionary.\
 As in **version 1**, we’ve tried to keep everything organized inside of this dictionary.\
@@ -118,7 +118,7 @@ mcds.pyMCDS.get_runtime()  # will retun a float value like 15.596373
 mcds.get_timestamp()  # will retun a sting like 2022-10-19T01:12:01Z
 ```
 
-#### Mesh data
+#### Mesh Data
 
 Let's start by the voxel.\
 It is common, but not necessary, that the voxels width, heigth, and depth is the same.\
@@ -288,6 +288,7 @@ graph[0]  # {1, 31, 33, 929, 935, 950}
 ```
 
 #### Units
+
 Finally, it is possible to retrieve a dataframe, listing all units from all tracked variables, from metadata, mesh, continuum\_variables, discrete\_cells.
 ```python
 df = mcds.get_unit_df()
@@ -297,7 +298,8 @@ df.index  # Index(['attachment_elastic_constant', 'attachment_rate', ..., 'veloc
 df.head()
 ```
 
-### Working With PhysiCell MultiCellDigital Time Series into Python3
+
+### Working With MCDS Time Series in Python3
 
 
 ################
