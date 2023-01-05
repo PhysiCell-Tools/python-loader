@@ -59,7 +59,7 @@ class pyMCDS:
     input:
         xmlfile: string
             name of the xml file with or without path.
-            in the with path case output_path has to be set to the default!
+            in the which path case output_path has to be set to the default!
 
         output_path: string; default '.'
             relative or absolute path to the directory where
@@ -126,7 +126,7 @@ class pyMCDS:
 
         description:
             function returns as a string the PhysiCell version
-            that was used to generated this data.
+            that was used to generate this data.
         """
         return self.data['metadata']['physicell_version']
 
@@ -273,11 +273,11 @@ class pyMCDS:
 
         output:
             aar_meshgrid : 4-way or 3-way numpy arrays tensor of floating point numbers.
-                meshgrid shaped object,  with the mesh center
+                meshgrid shaped object, with the mesh center
                 coordinate values from the m, n, p-axis or m, n-axis.
 
         description:
-            function returns an numpy array of meshgrids each stores the
+            function returns a numpy array of meshgrids each stores the
             mesh center coordinate values from one particular axis.
             the function can either return meshgrids for the full
             m, n, p 3D cube, or only the 2D planes along the p axis.
@@ -653,7 +653,7 @@ class pyMCDS:
 
         description:
             function returns a dataframe with concentration values
-            for all chemical species in all voxels. additionall this
+            for all chemical species in all voxels. additionally, this
             dataframe lists voxel and mesh center coordinates.
         """
         # check if z_slice is a mesh center or None

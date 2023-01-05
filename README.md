@@ -54,7 +54,7 @@ Within the pcDataLoader library, we tried to stick to the documentation policy l
 
 
 ## Release Notes:
-+ version 3.0.0 (2023-01-03): elmbeech/pcDataLoader
++ version 3.0.0 (2023-01-05): elmbeech/pcDataLoader
     + **pyMCDS** parameter **xml_file** can now handle path/file.xml (unix) or path\file.xml (dos) input, as long output\_path is the default.
     + **pyMCDS** has a new additional boolean **microenv** parameter, to specify if the microenvironment (substrates) should be read (for completeness) or not (for speed increase and less memory usage).
     + **pyMCDS** has a new additional boolean **graph** parameter, to specify if the attached and neighbor graph should be read.

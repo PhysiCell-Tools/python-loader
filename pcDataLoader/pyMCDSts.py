@@ -12,7 +12,7 @@
 #     PhysiCell model output directory. pyMCDSts.py was first froked from
 #     PhysiCell-Tools python-loader, where it was implemented as
 #     pyMCDS_timeseries.py, then totally rewritten and further developed.
-#     the make_image and  make_movie functions are cloned from the PhysiCell
+#     the make_image and make_movie functions are cloned from the PhysiCell
 #     Makefile.
 #
 #     note on difference image magick convert and mogrify
@@ -54,7 +54,7 @@ class pyMCDSts:
     output:
         mcdsts: pyMCDSts class instance
             this instance offers functions to process all stored time steps
-            for an simulation. no data is fetched by initialization.
+            for a simulation. no data is fetched by initialization.
 
     description:
         pyMCDSts.__init__ generates a class instance and stores there
@@ -156,7 +156,7 @@ class pyMCDSts:
             to specify image maginfied or scale down.
             the resize parameter will in any case be adjusted,
             so that the resulting image's hight and width are
-            integer divisable by 2. this is becasue of an
+            integer divisable by 2. this is becasue of a
             ffmpeg constrain for generating a movie out of images.
 
         output:
@@ -224,7 +224,7 @@ class pyMCDSts:
             to specify image maginfied or scale down.
             the resize parameter will in any case be adjusted,
             so that the resulting image's hight and width are
-            integer divisable by 2. this is becasue of an
+            integer divisable by 2. this is becasue of a
             ffmpeg constrain for generating a movie out of images.
 
         output:
@@ -256,7 +256,7 @@ class pyMCDSts:
             to specify image maginfied or scale down.
             the resize parameter will in any case be adjusted,
             so that the resulting image's hight and width are
-            integer divisable by 2. this is becasue of an
+            integer divisable by 2. this is becasue of a
             ffmpeg constrain for generating a movie out of images.
 
             addargs: string; default '-transparent white'
@@ -292,7 +292,7 @@ class pyMCDSts:
             to specify image maginfied or scale down.
             the resize parameter will in any case be adjusted,
             so that the resulting image's hight and width are
-            integer divisable by 2. this is becasue of an
+            integer divisable by 2. this is becasue of a
             ffmpeg constrain for generating a movie out of images.
 
         output:
@@ -330,7 +330,7 @@ class pyMCDSts:
             mp4 movie file name.
 
             frame_rate: integer; default 24
-            specifies how many images per secound will be use.
+            specifies how many images per secound will be used.
 
         output:
             mp4 move file in output_path directory.
