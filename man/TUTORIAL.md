@@ -16,7 +16,7 @@ The original python-loader tutorial can be found here.
 
 Each time PhysiCell’s internal time tracker passes a time step where data is to be saved, it generates a number of files of various types.\
 Each of these files will have a number at the end that indicates where it belongs in the sequence of outputs.\
-All of the files from the first round of output will end in 00000000.* and the second round will be 00000001.* and so on.\
+All files from the first round of output will end in 00000000.* and the second round will be 00000001.* and so on.\
 Have a look at this [PhysiCell data time series](https://github.com/elmbeech/pcDataLoader/tree/v3/pcDataLoader/data_timeseries_2d).
 
 Let’s say we captured data every simmulation time hour, and we’re interested in the set of output, half a day through the run, the 13th set of output files.\
@@ -29,9 +29,9 @@ The files we care about most from this set consists of:
     parameters for diffusing substrates in the microenvironment (variables),\
     column labels and units for the cell data (cell_population),\
     file names for the files that contain microenvironment and cell data at this time step (mat and possibly graph.txt files),
-+ **output00000012_cells.mat**: This is a MATLAB matrix file that contains all of the tracked information about the individual cells in the model.
++ **output00000012_cells.mat**: This is a MATLAB matrix file that contains all tracked information about the individual cells in the model.
     It tells us things like the cells’ position, volume, secretion, cell cycle status, and user-defined cell parameters.
-+ **output00000012_microenvironment0.mat**: This is a MATLAB matrix file that contains all of the data about the microenvironment at this time step.
++ **output00000012_microenvironment0.mat**: This is a MATLAB matrix file that contains all data about the microenvironment at this time step.
 
 
 ### Loading an MCDS into Python3
@@ -53,29 +53,34 @@ print('mcds xml:', s_pathfile)
 mcds = pc.pyMCDS(s_pathfile)  # loads whole snapshot: the xml and all realated mat and graph files.
 ```
 
-Side notes: in general, unix and windows path notation will work.\
-Additionaly, legacy way of data loaing works too.
+Side note: in general, unix and windows path notation will work.\
+The legacy way of data loaing works too.
 ```python
-# legacy way of loading an mcds object
+# legacy way of loading a mcds object
 mcds = pc.pyMCDS('output00000012.xml', s_path)
 ```
 
-By default all data realted to the snapshot is loaded.\
+By default, all data realted to the snapshot is loaded.\
 For speed and less memory usage, it is however possible to only load the essential (xml and cell mat data), and exclude microenviroment and graph data loading.
 ```python
-# fine tuned way of loading an mcds object
+# fine tuned way of loading a mcds object
 mcds = pc.pyMCDS(s_pathfile, graph=False, microenv=False)
+```
+
+This is the easiest way to check, which version of pcDataLoader you run.
+```python
+pc.__version__
 ```
 
 ### The Loaded Data Structure
 
-All loaded  data lievs in `mcds.data` dictionary.\
-As in **version 1**, we’ve tried to keep everything organized inside of this dictionary.\
-Regarding **version 1**, the structure has slightly change.\
+All loaded data lievs in `mcds.data` dictionary.\
+As in **version 1**, we’ve tried to keep everything organized inside this dictionary.\
+Regarding **version 1**, the structure has slightly changed.\
 However, in **version 3**, all data is accessible by functions, thus there should be no need to fetch data directely form the `mcds.data` dictionary!\
 Anyhow, let’s take a look at what we actually have in here.
 
-![mcds.data dictionary blue print](img/pcdataloader_data_dictionary_v3.0.0.png)
+![mcds.data dictionary blueprint](img/pcdataloader_data_dictionary_v3.0.0.png)
 
 ```python
 # main data branches
@@ -108,7 +113,7 @@ We will explor this functions in this paragaraph.
 Fetch the data's MultiCellDS version, and the PhysiCell version the data was generated.
 ```python
 mcds.get_multicellds_version()  # will retuns a string like MultiCellDS_2 or MultiCellDS_0.5
-mcds.get_physicell_version()  # will returns a string like PhysiCell_1.10.4 or BioFVM_1.1.7
+mcds.get_physicell_version()  # will return a string like PhysiCell_1.10.4 or BioFVM_1.1.7
 ```
 
 Fetch simulation time, runtime, and time stamp when the data was processed.
@@ -121,7 +126,7 @@ mcds.get_timestamp()  # will retun a sting like 2022-10-19T01:12:01Z
 #### Mesh Data
 
 Let's start by the voxel.\
-It is common, but not necessary, that the voxels width, heigth, and depth is the same.\
+It is common, but not necessary, that the voxel's width, heigth, and depth is the same.\
 However, you will find that in this test dataset this is not the case. \
 In the related `PhysiCell_settings.xml` file the voxel was defined by 30[nm] high, 20[nm] wide, and 10[nm] deep.\
 We can retrive the voxel spacing value and voxel volume. \
@@ -152,14 +157,14 @@ The domain benchmarks are:
 + mesh center values strech from -15[nm] to 285[nm] longitude (m), -10[nm] to 190[nm] latitude (n), and the depth mesh center (p) is at zero.
 + cell can hold a positioned between -30[nm] and 300[nm] longitude (x), -20[nm] and 200[nm] latitude (y), and -5[nm] and 5[nm] depth (z).
 
-For voxel and  mesh centers we can fetch the axis tick lists.
+For voxel and mesh centers we can fetch the axis tick lists.
 Each of this function will return a list of 3 numpy arrays, orderd ijk or mnp, respective.
 ```python
 mcds.get_voxel_ijk_axis()
 mcds.get_mesh_mnp_axis()
 ```
 
-We can even retive all mnp mesh center coordinate triplets, and the meshgrids in 2D or 3D form it self.
+We can even retive all mnp mesh center coordinate triplets, and the meshgrids in 2D or 3D form itself.
 The coordinate triplets are returned as numpy array
 The mesh grids are retunred as 3 and 4 way tensors numpy array, but showen below, it is easy to subseted these tensors.
 ```python
@@ -210,7 +215,7 @@ In the loaded data set only one substarte, oxygen, was part of the simulation.
 mcds.get_substrate_names()  # ['oxygen']
 ```
 
-We can retrieve a pandas dataframe withe the parameters (decay\_rate, diffusion\_coefficient) that were set for in each substrate.
+We can retrieve a pandas dataframe with the parameters (decay\_rate, diffusion\_coefficient) that were set for in each substrate.
 ```python
 df = mcds.get_substrate_df()
 df.head()
@@ -240,7 +245,7 @@ df.head()
 
 #### Cell (Discrete Cells) Data
 
-Now, lets have a look at all variables we track from each agent.\
+Now, let's have a look at all variables we track from each agent.\
 It is quite a list.\
 This list is ordered alphabetically, except the for first entry, which always is ID.
 ```python
@@ -316,7 +321,7 @@ mcdsts = pc.pyMCDSts(s_path)
 Like in the pyMCDs class, for memory consumption and processing speed control, we can specify if we later on want to load microenviroment data and graph data from the snapshots we later on analyse.\
 By default all data realted to the snapshot is loaded.\
 ```python
-# fine tuned way of loading an mcds object
+# fine tuned way of loading a mcds object
 mcdsts = pc.pyMCDSts(s_pathfile, graph=False, microenv=False)
 ```
 
@@ -324,10 +329,9 @@ mcdsts = pc.pyMCDSts(s_pathfile, graph=False, microenv=False)
 
 Now, let's have a look at the pyMCDSts instances data analysis functions.\
 
-+ **get_xmlfile_list** will simply return a list of absolute path of the the mcds xml files.\
-This list can be maipulated an later be fed into the objetcs read\_xml function to only read sudden snapshots into memory.\
-For example, you want only to analys the last hour 11, 12, 13 from your run.
-Or or data form every other hour will be enough.
++ **get_xmlfile_list** will simply return a list of absolute path of the mcds xml files.\
+This list can be maipulated a later be fed into the objetcs read\_xml function to only read sudden snapshots into memory.\
+For example, you want only to analys the last hour 11, 12, 13 from your run, or data form every other hour will be enough.
 ```python
 ls_xml = mcdsts.get_xmlfile_list()
 ls_xml   # ['/path/to/output00000000.xml', '/path/to/output00000001.xml', ..., '/path/to/output00000024.xml']
@@ -359,7 +363,7 @@ len(ls_xml_even)  # 13
 ```
 
 Single now snapshots can be accessed by indexing.\
-With a single snapshot you work in exactely same way as with a object loaded by pyMCDS.\
+With a single snapshot you work in exactely same way as with an object loaded by pyMCDS.\
 ```python
 # get the simmulation time
 l_mcds[12].get_time()  # 720.0 
@@ -388,7 +392,7 @@ df.plot(kind='scatter', x='time_min', y='cell_count', grid=True)
 #### Times Series Scatterplot Images and Movies
 
 With PhysiCell is not only possible to take data snapshots, but as well [svg](https://en.wikipedia.org/wiki/SVG) vector graphics images snapshots.\
-PhysiCell's [Makefile](https://en.wikipedia.org/wiki/Make_(software)) has code to translate those svg images into [gif](https://en.wikipedia.org/wiki/GIF), [jpeg](https://en.wikipedia.org/wiki/JPEG), [png](https://en.wikipedia.org/wiki/Portable_Network_Graphics), or [tiff](https://en.wikipedia.org/wiki/TIFF) fomat, making use of the [image magick](https://en.wikipedia.org/wiki/ImageMagick) library, and to translate the jpeg, png, or tiff images into an [mp4](https://en.wikipedia.org/wiki/MP4_file_format) movie, therefore making use from the [ffmpeg](https://en.wikipedia.org/wiki/FFmpeg) library.\
+PhysiCell's [Makefile](https://en.wikipedia.org/wiki/Make_(software)) has code to translate those svg images into [gif](https://en.wikipedia.org/wiki/GIF), [jpeg](https://en.wikipedia.org/wiki/JPEG), [png](https://en.wikipedia.org/wiki/Portable_Network_Graphics), or [tiff](https://en.wikipedia.org/wiki/TIFF) fomat, making use of the [image magick](https://en.wikipedia.org/wiki/ImageMagick) library, and to translate the jpeg, png, or tiff images into a [mp4](https://en.wikipedia.org/wiki/MP4_file_format) movie, therefore making use from the [ffmpeg](https://en.wikipedia.org/wiki/FFmpeg) library.\
 pyMCDSts instances provides the similar functionallity.\
 This means this following code will only run if image magick and ffmpeg are installed on your operating system.\
 The svg images might be quite huge. You can always use the `resize_factor` parameter to scale donw the image size for the resulting images. Resizing will lead to processing time speed up and saves disk space.\
@@ -416,7 +420,7 @@ make_gif()
 make_gif(0.2)
 ```
 
-Translate physicells svg images into an mp4 movie:\
+Translate physicells svg images into a mp4 movie:\
 Movies can only be generated for already existing jpeg, png, or tiff moves!\
 By default jpegs files will be used to generat the movie.\
 If png or tiff files should be used as source, then this have to be explicite stated.\
