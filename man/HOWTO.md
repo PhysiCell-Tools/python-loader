@@ -9,7 +9,7 @@ pip3 install "pcDataLoader<3"
 ```
 
 ### How to update to the latest pcDataLoader from the v2 branch?
-This works, even when you have a v3 branch installation.
+Note: this works, even when you have a v3 branch installation.
 ```bash
 pip3 install -U "pcDataLoader<3"
 ```
@@ -23,20 +23,20 @@ pip3 install pcDataLoader
 ```
 
 ### How to update to the latest pcDataLoader from the v3 branch?
-This works, even when you have a v2 branch installation.
+Note: this works, even when you have a v2 branch installation.
 ```bash
 pip3 install -U pcDataLoader
 ```
 
 ### Howto run the unit test code?
-The pcDataLoader version3 sorce code has full unit test coverage.\
+The pcDataLoader version3 source code has full unit test coverage.\
 Unitest were written with in [pytest](https://docs.pytest.org/).\
 All unit test code is in the [test](https://github.com/elmbeech/pcDataLoader/tree/master/test) directory.
 ```python3
 import os
 import pathlib
 import pcDataLoader as pc
-s_path = str(pathlib.Path(pc.__file__).parent.parent.resolve())  # get path to the installed libray
+s_path = str(pathlib.Path(pc.__file__).parent.parent.resolve())  # get path to the installed library
 os.system(f'pytest {s_path}')  # run tests
 ```
 
