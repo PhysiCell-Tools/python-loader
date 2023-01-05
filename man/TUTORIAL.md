@@ -35,7 +35,7 @@ The files we care about most from this set consists of:
 
 
 ### Loading an MCDS into Python3
-In this paragraph we will load the pcDataLoder library and data snapshot 00000012, described above, from [data timeseries 2d](https://github.com/elmbeech/pcDataLoader/tree/v3/pcDataLoader/data_timeseries_2d) from the test dataset.
+In this paragraph we will load the pcDataLoder library and use its pyMCDS class to load the data snapshot 00000012, described above, from [data timeseries 2d](https://github.com/elmbeech/pcDataLoader/tree/v3/pcDataLoader/data_timeseries_2d) from the test dataset.
 (There is no need to extra install the test data set.
 In fact, both test datasets are already installed.
 They ship with the pip3 pcDataLoader installation.)
@@ -47,7 +47,7 @@ import pcDataLoader as pc  # the PhysiCell data loader library
 s_path = str(pathlib.Path(pc.__file__).parent.joinpath('data_timeseries_2d'))  # local path to the installed test data set
 s_file = 'output00000012.xml'  # the snapshot we want to analyse
 s_pathfile = f'{s_path}/{s_file}'
-print('mcds snapshot xml:', s_pathfile)
+print('mcds xml:', s_pathfile)
 
 # load mcds - multi cell digital snapshot - object
 mcds = pc.pyMCDS(s_pathfile)  # loads whole snapshot: the xml and all realated mat and graph files.
@@ -300,140 +300,94 @@ df.head()
 
 ### Working With MCDS Time Series in Python3
 
+An exciting thing about modeling is to have time series data.\
+pcDataLoader's pyMCDSts class is here to make handle of a time series of MCD snapshots easy.\
+```python
+import pathlib  # library to locate the test data
+import pcDataLoader as pc  # the PhysiCell data loader library
 
-################
-## HERE I AM ##
-###############
+s_path = str(pathlib.Path(pc.__file__).parent.joinpath('data_timeseries_2d'))  # local path to the installed test data set
+print('mcds time series:', s_path)
 
-from first implementation:
-In this tutorial we will load the 24[h] time step data snapshot from the 3D cancer-immune-sample project, provided as test data with this libarary.
+# load mcds - multi cell digital snapshot - object
+mcdsts = pc.pyMCDSts(s_path)  
+```
+
+Like in the pyMCDs class, for memory consumption and processing speed control, we can specify if we later on want to load microenviroment data and graph data from the snapshots we later on analyse.\
+By default all data realted to the snapshot is loaded.\
+```python
+# fine tuned way of loading an mcds object
+mcdsts = pc.pyMCDSts(s_pathfile, graph=False, microenv=False)
+```
+
+#### Times Series MCDS Data
+
+Now, let's have a look at the pyMCDSts instances data analysis functions.\
+
++ **get_xmlfile_list** will simply return a list of absolute path of the the mcds xml files.\
+This list can be maipulated an later be fed into the objetcs read\_xml function to only read sudden snapshots into memory.\
+For example, you want only to analys the last hour 11, 12, 13 from your run.
+Or or data form every other hour will be enough.
+```python
+ls_xml = mcdsts.get_xmlfile_list()
+ls_xml   # ['/path/to/output00000000.xml', '/path/to/output00000001.xml', ..., '/path/to/output00000024.xml']
+
+# filter for snapshot 11,12, and 13
+ls_xml_11_12_13 = ls_xml[11:14] 
+ls_xml_11_12_13  # ['/path/to/output00000011.xml', '/path/to/output00000012.xml', '/path/to/output00000013.xml']
+
+# filter for every other snapshot
+ls_xml_even = [s_xml for i, s_xml in enumerate(ls_xml) if (i%2 == 0)]
+ls_xml_even  # ['/path/to/output00000000.xml', '/path/to/output00000002.xml', ..., /path/to/output00000024.xml']
+```
+
++ **read_xml** will actually read the snapshots into RAM.\
+The default setting will read all snapshots from a timeseris, however, you can alway use a filtered ls\_xml list to only load a subset of snapshots.
+```python
+# load all snapshots
+l_mcds = mcdsts.read_mcds()
+l_mcds  # YMMV! [<pcDataLoader.pyMCDS.pyMCDS at 0x7fa660996b00>, <pcDataLoader.pyMCDS.pyMCDS at 0x7fa67673e1d0>, ..., <pcDataLoader.pyMCDS.pyMCDS at 0x7fa660950f10>]
+len(l_mcds)  # 25
+
+# load snapshot 11, 12, and 13
+l_mcds_11_12_13 = mcdsts.read_mcds(ls_xml_11_12_13)
+len(l_mcds_11_12_13)  # 3
+
+# load all even snapshots
+ls_xml_even = mcdsts.read_mcds(ls_xml_even)
+len(ls_xml_even)  # 13
+```
+
+Single now snapshots can be accessed by indexing.\
+With a single snapshot you work in exactely same way as with a object loaded by pyMCDS.\
+```python
+# get the simmulation time
+l_mcds[12].get_time()  # 720.0 
+
+# get the cell data frame
+df = l_mcds[12].get_cell_df()
+df.shape  # (992, 87)
+df.head()
+```
+
+It is very easy to loop over the whole time series to analyse timeseris data and generate time series plots.
+```python
+# load library
+import pandas as pd
+
+# fetch data
+lr_time = [mcds.get_time() for mcds in l_mcds]  # [0.0, 60.0, ..., 1440.0]
+li_cellcount = li_cellcount = [mcds.get_cell_df().shape[0] for mcds in l_mcds]  # [889, 898, ..., 1099]
+
+# plot data
+df = pd.DataFrame([lr_time,li_cellcount], index=['time_min','cell_count']).T
+df.head()
+df.plot(kind='scatter', x='time_min', y='cell_count', grid=True)
+```
+
+#### Times Series SVG Images
+PhysiCell offers the possibility to generat svg plots.
 
 
-One of the big advantages of working with PhysiCell data in python is that we have access to its plotting tools. For the sake of example let’s plot the partial pressure of oxygen throughout the computational domain along the z=0 plane. Once we’ve loaded our data by initializing a pyMCDS object, we can work entirely within python to produce the plot.
-?
 
-from pyMCDS import pyMCDS
-import numpy as np
-import matplotlib.pyplot as plt
-
-# load data
-mcds = pyMCDS('output00003696.xml', '../output')
-
-# Set our z plane and get our substrate values along it
-z_val = 0.00
-plane_oxy = mcds.get_concentrations('oxygen', z_slice=z_val)
-
-# Get the 2D mesh for contour plotting
-xx, yy = mcds.get_mesh()
-
-# We want to be able to control the number of contour levels so we
-# need to do a little set up
-num_levels = 21
-min_conc = plane_oxy.min()
-max_conc = plane_oxy.max()
-my_levels = np.linspace(min_conc, max_conc, num_levels)
-
-# set up the figure area and add data layers
-fig, ax = plt.subplot()
-cs = ax.contourf(xx, yy, plane_oxy, levels=my_levels)
-ax.contour(xx, yy, plane_oxy, color='black', levels = my_levels,
-           linewidths=0.5)
-
-# Now we need to add our color bar
-cbar1 = fig.colorbar(cs, shrink=0.75)
-cbar1.set_label('mmHg')
-
-# Let's put the time in to make these look nice
-ax.set_aspect('equal')
-ax.set_xlabel('x (micron)')
-ax.set_ylabel('y (micron)')
-ax.set_title('oxygen (mmHg) at t = {:.1f} {:s}, z = {:.2f} {:s}'.format(
-                                        mcds.get_time(),
-                                        mcds.data['metadata']['time_units'],
-                                        z_val,
-                                        mcds.data['metadata']['spatial_units'])
-
-plt.show()
-oxygen partial pressures over z=0
-
-Adding a cells layer
-
-We can also use pandas to do fairly complex selections of cells to add to our plots. Below we use pandas and the previous plot to add a cells layer.
-?
-
-from pyMCDS import pyMCDS
-import numpy as np
-import matplotlib.pyplot as plt
-
-# load data
-mcds = pyMCDS('output00003696.xml', '../output')
-
-# Set our z plane and get our substrate values along it
-z_val = 0.00
-plane_oxy = mcds.get_concentrations('oxygen', z_slice=z_val)
-
-# Get the 2D mesh for contour plotting
-xx, yy = mcds.get_mesh()
-
-# We want to be able to control the number of contour levels so we
-# need to do a little set up
-num_levels = 21
-min_conc = plane_oxy.min()
-max_conc = plane_oxy.max()
-my_levels = np.linspace(min_conc, max_conc, num_levels)
-
-# get our cells data and figure out which cells are in the plane
-cell_df = mcds.get_cell_df()
-ds = mcds.get_mesh_spacing()
-inside_plane = (cell_df['position_z'] < z_val + ds) \ & (cell_df['position_z'] > z_val - ds)
-plane_cells = cell_df[inside_plane]
-
-# We're going to plot two types of cells and we want it to look nice
-colors = ['black', 'grey']
-sizes = [20, 8]
-labels = ['Alive', 'Dead']
-
-# set up the figure area and add microenvironment layer
-fig, ax = plt.subplot()
-cs = ax.contourf(xx, yy, plane_oxy, levels=my_levels)
-
-# get our cells of interest
-# alive_cells = plane_cells[plane_cells['cycle_model'] < 6]
-# dead_cells = plane_cells[plane_cells['cycle_model'] > 6]
-# -- for newer versions of PhysiCell
-alive_cells = plane_cells[plane_cells['cycle_model'] < 100]
-dead_cells = plane_cells[plane_cells['cycle_model'] >= 100]
-
-# plot the cell layer
-for i, plot_cells in enumerate((alive_cells, dead_cells)):
-    ax.scatter(plot_cells['position_x'].values,
-            plot_cells['position_y'].values,
-            facecolor='none',
-            edgecolors=colors[i],
-            alpha=0.6,
-            s=sizes[i],
-            label=labels[i])
-
-# Now we need to add our color bar
-cbar1 = fig.colorbar(cs, shrink=0.75)
-cbar1.set_label('mmHg')
-
-# Let's put the time in to make these look nice
-ax.set_aspect('equal')
-ax.set_xlabel('x (micron)')
-ax.set_ylabel('y (micron)')
-ax.set_title('oxygen (mmHg) at t = {:.1f} {:s}, z = {:.2f} {:s}'.format(
-                                        mcds.get_time(),
-                                        mcds.data['metadata']['time_units'],
-                                        z_val,
-                                        mcds.data['metadata']['spatial_units'])
-ax.legend(loc='upper right')
-
-plt.show()
-
-adding a cell layer to the oxygen plot
-
-Future Direction
-
-The first extension of this project will be timeseries functionality. This will provide similar data loading functionality but for a time series of MultiCell Digital Snapshots instead of simply one point in time.
-
+**That's all Folks!**
