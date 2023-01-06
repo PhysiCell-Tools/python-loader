@@ -37,7 +37,7 @@ class TestPyMcdsMicroenvFalse3D(object):
         print(f'process: pc.pyMCDS(xmlfile={s_file_3d}, output_path={s_path_3d}, microenv=False) ...')
         assert str(type(mcds)) == "<class 'pcDataLoader.pyMCDS.pyMCDS'>"
 
-    ## metadata realted functions
+    ## metadata related functions
     # nop
 
     ## mesh related functions
@@ -120,7 +120,7 @@ class TestPyMcdsMicroenvFalse3D(object):
         er_m_cube = set(ar_m_cube.flatten())
         er_n_cube = set(ar_n_cube.flatten())
         er_p_cube = set(ar_p_cube.flatten())
-        # linear coordiantes
+        # linear coordinates
         aar_voxel = mcds.get_mesh_coordinate()
         assert (str(type(aar_voxel)) == "<class 'numpy.ndarray'>") and \
                (len(aar_voxel) == 3) and \
@@ -164,7 +164,7 @@ class TestPyMcdsMicroenvFalse3D(object):
     ## micro environment related functions
     # nop
 
-    ## cell realted functions
+    ## cell related functions
     def test_mcds_get_cell_variables(self, mcds=mcds):
         ls_variable = mcds.get_cell_variables()
         assert (str(type(ls_variable)) == "<class 'list'>") and \

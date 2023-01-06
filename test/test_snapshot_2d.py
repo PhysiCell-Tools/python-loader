@@ -138,7 +138,7 @@ class TestPyMcdsMicroenvTrue2D(object):
         er_m_cube = set(ar_m_cube.flatten())
         er_n_cube = set(ar_n_cube.flatten())
         er_p_cube = set(ar_p_cube.flatten())
-        # linear coordiantes
+        # linear coordinates
         aar_voxel = mcds.get_mesh_coordinate()
         assert (str(type(aar_voxel)) == "<class 'numpy.ndarray'>") and \
                (len(aar_voxel) == 3) and \
