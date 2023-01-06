@@ -28,9 +28,9 @@ import time
 i_sleep = 6
 s_path_2d = str(pathlib.Path(pc.__file__).parent.resolve()/'data_timeseries_2d')
 
-# load physicell data timeseries
+# load physicell data time series
 class TestPyMcdsTs(object):
-    ''' test for pc.pyMCDStimeseries data loader. '''
+    ''' test for pc.pyMCDSts data loader. '''
     mcds = pc.pyMCDSts(s_path_2d, verbose=False)
 
     ## magick command ##
