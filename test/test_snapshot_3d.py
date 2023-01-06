@@ -69,45 +69,18 @@ class TestPyMcds3D(object):
         r_runtime = mcds.get_runtime()
         assert r_runtime == 313.35264
 
-    ## graph related functions
-    def test_mcds_get_attached_graph_dict(self, mcds=mcds):
-        dei_graph = mcds.data['discrete_cells']['graph']['attached_cells']
-        assert (str(type(dei_graph)) == "<class 'dict'>") and \
-               (len(dei_graph) == 20460) and \
-               (len(dei_graph[20459]) == 0)
-
-    def test_mcds_get_neighbor_graph_dict(self, mcds=mcds):
-        dei_graph = mcds.data['discrete_cells']['graph']['neighbor_cells']
-        assert (str(type(dei_graph)) == "<class 'dict'>") and \
-               (len(dei_graph) == 20460) and \
-               (len(dei_graph[20459]) == 13)
-
     ## mesh related functions
-    def test_mcds_get_xyz_range(self, mcds=mcds):
-        ltr_range = mcds.get_xyz_range()
-        assert ltr_range == [(-30, 300), (-20, 200), (-10, 100)]
+    def test_mcds_get_voxel_ijk_range(self, mcds=mcds):
+        ltr_range = mcds.get_voxel_ijk_range()
+        assert ltr_range == [(0, 10), (0, 10), (0, 10)]
 
     def test_mcds_get_mesh_mnp_range(self, mcds=mcds):
         ltr_range = mcds.get_mesh_mnp_range()
         assert ltr_range == [(-15, 285), (-10, 190), (-5, 95)]
 
-    def test_mcds_get_voxel_ijk_range(self, mcds=mcds):
-        ltr_range = mcds.get_voxel_ijk_range()
-        assert ltr_range == [(0, 10), (0, 10), (0, 10)]
-
-    def test_mcds_get_mesh_mnp_axis(self, mcds=mcds):
-        lar_axis = mcds.get_mesh_mnp_axis()
-        assert (str(type(lar_axis)) == "<class 'list'>") and \
-               (len(lar_axis) == 3) and \
-               (str(type(lar_axis[0])) == "<class 'numpy.ndarray'>") and \
-               (str(lar_axis[0].dtype) == "float64") and \
-               (lar_axis[0].shape == (11,)) and \
-               (str(type(lar_axis[1])) == "<class 'numpy.ndarray'>") and \
-               (str(lar_axis[1].dtype) == "float64") and \
-               (lar_axis[1].shape == (11,)) and \
-               (str(type(lar_axis[2])) == "<class 'numpy.ndarray'>") and \
-               (str(lar_axis[2].dtype) == "float64") and \
-               (lar_axis[2].shape == (11,))
+    def test_mcds_get_xyz_range(self, mcds=mcds):
+        ltr_range = mcds.get_xyz_range()
+        assert ltr_range == [(-30, 300), (-20, 200), (-10, 100)]
 
     def test_mcds_get_voxel_ijk_axis(self, mcds=mcds):
         lar_axis = mcds.get_voxel_ijk_axis()
@@ -121,6 +94,20 @@ class TestPyMcds3D(object):
                (lar_axis[1].shape == (11,)) and \
                (str(type(lar_axis[2])) == "<class 'numpy.ndarray'>") and \
                (str(lar_axis[2].dtype) == "int64") and \
+               (lar_axis[2].shape == (11,))
+
+    def test_mcds_get_mesh_mnp_axis(self, mcds=mcds):
+        lar_axis = mcds.get_mesh_mnp_axis()
+        assert (str(type(lar_axis)) == "<class 'list'>") and \
+               (len(lar_axis) == 3) and \
+               (str(type(lar_axis[0])) == "<class 'numpy.ndarray'>") and \
+               (str(lar_axis[0].dtype) == "float64") and \
+               (lar_axis[0].shape == (11,)) and \
+               (str(type(lar_axis[1])) == "<class 'numpy.ndarray'>") and \
+               (str(lar_axis[1].dtype) == "float64") and \
+               (lar_axis[1].shape == (11,)) and \
+               (str(type(lar_axis[2])) == "<class 'numpy.ndarray'>") and \
+               (str(lar_axis[2].dtype) == "float64") and \
                (lar_axis[2].shape == (11,))
 
     def test_mcds_get_mesh_flat_false(self, mcds=mcds):
@@ -179,6 +166,10 @@ class TestPyMcds3D(object):
                (set(aar_voxel[2]) == er_p_cube) and \
                (aar_voxel[2].shape == (1331,))
 
+    def test_mcds_get_voxel_volume(self, mcds=mcds):
+        r_volume = mcds.get_voxel_volume()
+        assert r_volume == 6000.0
+
     def test_mcds_get_mesh_spacing(self, mcds=mcds):
         lr_spacing = mcds.get_mesh_spacing()
         assert lr_spacing == [30.0, 20.0, 10.0]
@@ -187,9 +178,9 @@ class TestPyMcds3D(object):
         lr_spacing = mcds.get_voxel_spacing()
         assert lr_spacing == [30.0, 20.0, 10.0]
 
-    def test_mcds_get_voxel_volume(self, mcds=mcds):
-        r_volume = mcds.get_voxel_volume()
-        assert r_volume == 6000.0
+    def test_mcds_is_in_mesh(self, mcds=mcds):
+        assert mcds.is_in_mesh(x=42, y=42, z=42, halt=False) and \
+               not mcds.is_in_mesh(x=-42, y=-42, z=-42, halt=False)
 
     def test_mcds_get_voxel_ijk(self, mcds=mcds):
         li_voxel_0 = mcds.get_voxel_ijk(x=0, y=0, z=0)
@@ -198,10 +189,6 @@ class TestPyMcds3D(object):
         assert (li_voxel_0 == [0, 0, 0]) and \
                (li_voxel_1 == [1, 1, 1]) and \
                (li_voxel_2 == [2, 2, 2])
-
-    def test_mcds_is_in_mesh(self, mcds=mcds):
-        assert mcds.is_in_mesh(x=42, y=42, z=42, halt=False) and \
-               not mcds.is_in_mesh(x=-42, y=-42, z=-42, halt=False)
 
     ## micro environment related functions
     def test_mcds_get_substrate_names(self, mcds=mcds):
@@ -264,6 +251,19 @@ class TestPyMcds3D(object):
         df_cell = mcds.get_cell_df_at(x=0, y=0, z=0)
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_cell.shape == (5, 110))
+
+    ## graph related functions
+    def test_mcds_get_attached_graph_dict(self, mcds=mcds):
+        dei_graph = mcds.data['discrete_cells']['graph']['attached_cells']
+        assert (str(type(dei_graph)) == "<class 'dict'>") and \
+               (len(dei_graph) == 20460) and \
+               (len(dei_graph[20459]) == 0)
+
+    def test_mcds_get_neighbor_graph_dict(self, mcds=mcds):
+        dei_graph = mcds.data['discrete_cells']['graph']['neighbor_cells']
+        assert (str(type(dei_graph)) == "<class 'dict'>") and \
+               (len(dei_graph) == 20460) and \
+               (len(dei_graph[20459]) == 13)
 
     ## unit related functions
     def test_mcds_get_unit_df(self, mcds=mcds):
