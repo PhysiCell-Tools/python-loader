@@ -19,15 +19,15 @@ Each of these files will have a number at the end that indicates where it belong
 All files from the first round of output will end in 00000000.\*, and the second round will be 00000001.\*, and so on.\
 Have a look at this [PhysiCell data time series](https://github.com/elmbeech/pcDataLoader/tree/v3/pcDataLoader/data_timeseries_2d).
 
-Let's say we captured data every simulation time hour, and we're interested in the set of output half a day through the run, the 13th set of output files.\
+Let's assume we captured data every simulation time hour, and we're interested in the set of output half a day through the run, the 13th set of output files.\
 The files we care about most from this set consists of:
 
 + **output00000012.xml**: This file is the main organizer of the data.
     It contains an overview of the data stored in the MultiCellDS as well as some actual data, including:\
     metadata (MultiCellDS version, PhysiCell or BioFVM version, simulation time, runtime, and processing time stamp),\
     coordinates for the computational domain (mesh),\
-    parameters for diffusing substrates in the microenvironment (variables),\
-    column labels and units for the cell data (cell_population),\
+    parameters for diffusing substrates in the microenvironment (continuum\_variables),\
+    column labels and units for the cell data (cell\_population),\
     file names for the files that contain microenvironment and cell data at this time step (mat and possibly graph.txt files),
 + **output00000012_cells.mat**: This is a MATLAB matrix file that contains tracked information about the individual cells in the model.
     It tells us things like the cells' position, volume, secretion, cell cycle status, and user defined cell parameters.
@@ -35,7 +35,7 @@ The files we care about most from this set consists of:
 
 
 ### Loading an MCDS into Python3
-In this section, we will load the pcDataLoder library, and use its pyMCDS class to load the data snapshot 00000012, described above, from [data timeseries 2d](https://github.com/elmbeech/pcDataLoader/tree/v3/pcDataLoader/data_timeseries_2d) from the test dataset.
+In this section, we will load the pcDataLoder library, and use its pyMCDS class to load the data snapshot 00000012, described above, from [data\_timeseries\_ 2d](https://github.com/elmbeech/pcDataLoader/tree/v3/pcDataLoader/data_timeseries_2d) from the test dataset.
 (There is no need to extra install the test data set. In fact, both test datasets are already installed. They ship with the pip3 pcDataLoader installation.)
 
 ```python
@@ -223,7 +223,7 @@ Regarding the concentrations, we can retrieve:
   To get a 2D meshgrids you can slice though any z stack value, the function will always pick the closest mesh center coordinate, the smaller coordinate, if you hit the saddle point between two voxels.
 + a **pandas dataframe** with voxel ijk coordinate values, mesh center mnp coordinate values, and concentrations values for all substrates.
 ```python
-# all concentration values at a articular coordinate
+# all concentration values at a particular coordinate
 mcds.get_concentration_at(x=0, y=0, z=0)  # array([34.4166271])
 mcds.get_concentration_at(x=111, y=22, z=-5)  # array([18.80652216])
 mcds.get_concentration_at(x=111, y=22, z=-5.1)  # None and Warning @ pyMCDS.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0).
@@ -380,7 +380,7 @@ import pandas as pd
 lr_time = [mcds.get_time() for mcds in l_mcds]  # [0.0, 60.0, ..., 1440.0]
 li_cellcount = li_cellcount = [mcds.get_cell_df().shape[0] for mcds in l_mcds]  # [889, 898, ..., 1099]
 
-# pack data into a pandas datafarme
+# pack data into a pandas datafarm
 df = pd.DataFrame([lr_time,li_cellcount], index=['time_min','cell_count']).T
 df.head()
 
@@ -426,9 +426,9 @@ If png or tiff files should be used as source, then this have to be explicitly s
 The default file name for the resulting movie is to movie.mp4.
 ```python
 make_movie()  # generate move from jpeg files
-make_movie('jpeg')  # generate move from jpeg files
-make_movie('png')  # generate move from png files
-make_movie('tiff')  # generate move from tiff files
+make_movie('jpeg')  # generates a move from jpeg files
+make_movie('png')  # generates a move from png files
+make_movie('tiff')  # generates a move from tiff files
 ```
 
 **That's all Folks!**
