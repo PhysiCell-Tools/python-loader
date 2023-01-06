@@ -91,7 +91,7 @@ class pyMCDS:
         the same directory. data is loaded by reading the xml file
         for a particular timestep and the therein referenced files.
     """
-    def __init__(self, xmlfile, output_path='.', graph=True, microenv=True, verbose=True):
+    def __init__(self, xmlfile, output_path='.', microenv=True, graph=True, verbose=True):
         self.microenv = microenv
         self.graph = graph
         self.verbose = verbose

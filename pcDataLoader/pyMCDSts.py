@@ -7,15 +7,14 @@
 # authors: Patrick Wall, Randy Heiland, Paul Macklin, Elmar Bucher
 #
 # description:
-#     pyMCDSts.py defineds an object class, able to load and access
-#     within python a time series of mcds objects loaded form a single
-#     PhysiCell model output directory. pyMCDSts.py was first froked from
+#     pyMCDSts.py defines an object class, able to load and access
+#     within python a time series of mcds objects loaded from a single
+#     PhysiCell model output directory. pyMCDSts.py was first forked from
 #     PhysiCell-Tools python-loader, where it was implemented as
 #     pyMCDS_timeseries.py, then totally rewritten and further developed.
-#     the make_image and make_movie functions are cloned from the PhysiCell
-#     Makefile.
 #
-#     note on difference image magick convert and mogrify
+#     the make_image and make_movie functions are cloned from the PhysiCell
+#     Makefile. note on difference image magick convert and mogrify:
 #     + https://graphicsmagick-tools.narkive.com/9Sowc4HF/gm-tools-mogrify-vs-convert
 #########
 
@@ -57,15 +56,15 @@ class pyMCDSts:
             for a simulation. no data is fetched by initialization.
 
     description:
-        pyMCDSts.__init__ generates a class instance and stores there
+        pyMCDSts.__init__ generates a class instance and stores
         the input parameters. no data is fetched at initialization.
-        the instance offers functions to process all timesteps
+        the instance offers functions to process all time steps
         in the output_path directory.
     """
-    def __init__(self, output_path='.', graph=True, microenv=True, verbose=True):
+    def __init__(self, output_path='.', microenv=True, graph=True, verbose=True):
         self.output_path = output_path
-        self.graph = graph
         self.microenv = microenv
+        self.graph = graph
         self.verbose = verbose
 
 
@@ -96,10 +95,10 @@ class pyMCDSts:
             self: pyMCDSts class instance.
 
             xmlfile_list: list of strings; default None
-            list of physicell output xml pathfiles.
+            list of physicell output /path/to/output*.xml strings.
 
         output:
-            l_mcds: listof mcds objetcs
+            l_mcds: list of mcds objects
 
         description:
             the function returns a list of mcds objects loaded by
@@ -120,7 +119,7 @@ class pyMCDSts:
             )
             l_mcds.append(mcds)
             if self.verbose:
-                print() # carriage retun
+                print() # carriage return
 
         # output
         return(l_mcds)
@@ -153,10 +152,10 @@ class pyMCDSts:
             self: pyMCDSts class instance.
 
             resize_factor: floating point number; default 1
-            to specify image maginfied or scale down.
+            to specify image magnification or scale down.
             the resize parameter will in any case be adjusted,
-            so that the resulting image's hight and width are
-            integer divisable by 2. this is becasue of a
+            so that the resulting image's height and width are
+            integer divisible by 2. this is because of a
             ffmpeg constrain for generating a movie out of images.
 
         output:
@@ -168,7 +167,7 @@ class pyMCDSts:
             resize parameter setting, which in any case, even when
             resize_factor is 1, will generate ffmpeg compatible images.
         """
-        # extract information form svg and resize
+        # extract information from svg and resize
         tree = ET.parse(f'{self.output_path}/initial.svg')
         root = tree.getroot()
         r_width = float(root.get('width')) * resize_factor
@@ -189,12 +188,12 @@ class pyMCDSts:
             giffile: string; default 'timeseries.gif'
             gif image filename.
 
-            resize_factor: floating point number; defaulat 1
-            to specify image maginfied or scale down.
+            resize_factor: floating point number; default 1
+            to specify image magnification or scale down.
 
         output:
             gif file in output_path directory.
-`            additionally, function will retun the path and filename.
+`            additionally, function will return the path and filename.
 
         description:
             this function generate a gif image from all snapshot svg files
@@ -221,10 +220,10 @@ class pyMCDSts:
             wildcard filename pattern.
 
             resize_factor: floating point number; default 1
-            to specify image maginfied or scale down.
+            to specify image magnification or scale down.
             the resize parameter will in any case be adjusted,
-            so that the resulting image's hight and width are
-            integer divisable by 2. this is becasue of a
+            so that the resulting image's height and width are
+            integer divisible by 2. this is because of a
             ffmpeg constrain for generating a movie out of images.
 
         output:
@@ -253,10 +252,10 @@ class pyMCDSts:
             self: pyMCDSts class instance.
 
             resize_factor: floating point number; defaulat 1
-            to specify image maginfied or scale down.
+            to specify image magnification or scale down.
             the resize parameter will in any case be adjusted,
-            so that the resulting image's hight and width are
-            integer divisable by 2. this is becasue of a
+            so that the resulting image's height and width are
+            integer divisible by 2. this is because of a
             ffmpeg constrain for generating a movie out of images.
 
             addargs: string; default '-transparent white'
@@ -289,10 +288,10 @@ class pyMCDSts:
             self: pyMCDSts class instance.
 
             resize_factor: floating point number; defaulat 1
-            to specify image maginfied or scale down.
+            to specify image magnification or scale down.
             the resize parameter will in any case be adjusted,
-            so that the resulting image's hight and width are
-            integer divisable by 2. this is becasue of a
+            so that the resulting image's height and width are
+            integer divisible by 2. this is because of a
             ffmpeg constrain for generating a movie out of images.
 
         output:
@@ -330,12 +329,12 @@ class pyMCDSts:
             mp4 movie file name.
 
             frame_rate: integer; default 24
-            specifies how many images per secound will be used.
+            specifies how many images per second will be used.
 
         output:
             mp4 move file in output_path directory.
             interface image files in output_path directory.
-`           additionally, function will retun the movie path and filename.
+`           additionally, function will return the movie path and filename.
 
         description:
             this function generates a movie from all interface image files
