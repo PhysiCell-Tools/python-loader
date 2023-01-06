@@ -311,7 +311,7 @@ s_path = str(pathlib.Path(pc.__file__).parent.joinpath('data_timeseries_2d'))  #
 print('mcds time series:', s_path)
 
 # generate a mcds time series instance
-mcdsts = pc.pyMCDSts(s_path)  
+mcdsts = pc.pyMCDSts(s_path)
 ```
 
 Like in the pyMCDs class, for memory consumption and processing speed control, we can specify if we want to load microenvironment data and graph data from the snapshots we later on analyze.\
@@ -333,7 +333,7 @@ ls_xml = mcdsts.get_xmlfile_list()
 ls_xml   # ['/path/to/output00000000.xml', '/path/to/output00000001.xml', ..., '/path/to/output00000024.xml']
 
 # filter for snapshot 11,12, and 13
-ls_xml_11_12_13 = ls_xml[11:14] 
+ls_xml_11_12_13 = ls_xml[11:14]
 ls_xml_11_12_13  # ['/path/to/output00000011.xml', '/path/to/output00000012.xml', '/path/to/output00000013.xml']
 
 # filter for every other snapshot
@@ -363,7 +363,7 @@ Single snapshots can now be accessed by indexing.\
 With a single snapshot, you work exactly in the same way as with an object loaded by pyMCDS.
 ```python
 # get the simulation time
-l_mcds[12].get_time()  # 720.0 
+l_mcds[12].get_time()  # 720.0
 
 # get the cell data frame
 df = l_mcds[12].get_cell_df()
@@ -399,12 +399,12 @@ The svg images might be quite huge. You can always use the `resize_factor` param
 Translate physicell svg images into static raster graphic images:
 ```python
 # resize factor 1 will leave the image size as it is.
-mcds.make_jpeg()  # resize factor 1 
+mcds.make_jpeg()  # resize factor 1
 mcds.make_png()  # resize factor 1
 mcds.make_tiff()  # resize factor 1
 
 # resize factor 0.2 will down scale to 20% width and length of the image.
-mcds.make_jpeg(0.2) 
+mcds.make_jpeg(0.2)
 mcds.make_png(0.2)
 mcds.make_tiff(0.2)
 ```
@@ -412,7 +412,7 @@ mcds.make_tiff(0.2)
 Translate physicell svg images into a dynamic gif image:\
 The default file name for the resulting gif image is set to timeseries.gif.
 ```python
-# resize factor 1 
+# resize factor 1
 make_gif()
 
 # resize factor 0.2
