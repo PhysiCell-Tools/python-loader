@@ -99,7 +99,7 @@ sorted(mcds.data['discrete_cells']['graph'].keys())  # neighbor_cells and attach
 ```
 
 ### Accessing the Loaded Data by the pyMCDS Class Functions
-Once again, for the ones in the back, in version 3, all data is accessible by functions.\
+Once again, loud, for the ones in the back, in version 3, all data is accessible by functions.\
 There should be no need to fetch data directly from the `mcds.data` dictionary of dictionaries.\
 We will explore these functions in this section.
 

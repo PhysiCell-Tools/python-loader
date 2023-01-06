@@ -4,7 +4,7 @@ import pandas as pd
 
 
 # function
-def annD(xml_file, output_path='.', microenv=True, categorcal={}):  # numerical, ordinal
+def annD(xml_file, output_path='.', microenv=True, categorical={}):  # numerical, ordinal
     '''
     '''
     # test case
@@ -50,7 +50,7 @@ def annD(xml_file, output_path='.', microenv=True, categorcal={}):  # numerical,
     # extract discrete cell data
     df_cell = mcds.get_cell_df()
 
-    # extract contiuous microenv data
+    # extract continuous microenv data
     if microenv:
         df_cell.reset_index(inplace=True)
         df_conc = mcds.get_concentrations_df()
