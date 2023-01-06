@@ -115,8 +115,16 @@ setup(
     # If there are data files included in your packages that need to be
     # installed, specify them here.
     package_data={  # Optional
-        "pcDataLoader.data_timeseries_2d": ["*.mat", "*.svg", "*.txt", "*.xml"],
-        "pcDataLoader.data_timeseries_3d": ["*.mat", "*.svg", "*.txt", "*.xml"],
+        "pcDataLoader": [
+            "data_timeseries_2d/*.mat",
+            "data_timeseries_2d/*.svg",
+            "data_timeseries_2d/*.txt",
+            "data_timeseries_2d/*.xml"
+            "data_timeseries_3d/*.mat",
+            "data_timeseries_3d/*.svg",
+            "data_timeseries_3d/*.txt",
+            "data_timeseries_3d/*.xml"
+        ],
     },
 
     # Although 'package_data' is the preferred approach, in some case you may
