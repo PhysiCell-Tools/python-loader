@@ -27,7 +27,7 @@ from .pyMCDS import pyMCDS
 import xml.etree.ElementTree as ET
 
 # constants
-es_resize = {'*0.svg','*1.svg','*2.svg','*3.svg','*4.svg','*5.svg','*6.svg','*7.svg','*8.svg','*9.svg'} # only those this will be resized
+es_resize = {'*0.svg','*1.svg','*2.svg','*3.svg','*4.svg','*5.svg','*6.svg','*7.svg','*8.svg','*9.svg'} # only files matching this glob patterns will be resized
 ls_glob = sorted(es_resize) + ['initial.svg','legend.svg']
 
 # classes
@@ -45,7 +45,7 @@ class pyMCDSts:
 
         graph: boole; default True
             should the graphs be extracted?
-            setting grap to False will use less memory and speed up processing.
+            setting graph to False will use less memory and speed up processing.
 
         verbose: boole; default True
             setting verbose to False for less text output, while processing.
@@ -53,7 +53,7 @@ class pyMCDSts:
     output:
         mcdsts: pyMCDSts class instance
             this instance offers functions to process all stored time steps
-            for a simulation. no data is fetched by initialization.
+            from a simulation. no data is fetched by initialization.
 
     description:
         pyMCDSts.__init__ generates a class instance and stores
@@ -76,7 +76,7 @@ class pyMCDSts:
 
         output:
             xmlfile_list: list of strings
-            alphanumerical sorted list of physicell xml output files.
+            alphanumerical sorted list of /path/to/output*.xml strings.
 
         description:
             function returns an alphanumerical (and as such chronological)
@@ -193,10 +193,10 @@ class pyMCDSts:
 
         output:
             gif file in output_path directory.
-`            additionally, function will return the path and filename.
+`            additionally, the function will return the path and filename.
 
         description:
-            this function generate a gif image from all snapshot svg files
+            this function generates a gif image from all snapshot svg files
             found in the output_path directory.
         """
         s_magick = self._handle_magick()
@@ -230,7 +230,7 @@ class pyMCDSts:
             jpeg files in output_path directory.
 
         description:
-            this function generate jpeg image equivalents from all svg files
+            this function generates jpeg image equivalents from all svg files
             found in the output_path directory.
             jpeg is by definition a lossy compressed image format.
             https://en.wikipedia.org/wiki/JPEG
@@ -251,7 +251,7 @@ class pyMCDSts:
         input:
             self: pyMCDSts class instance.
 
-            resize_factor: floating point number; defaulat 1
+            resize_factor: floating point number; default 1
             to specify image magnification or scale down.
             the resize parameter will in any case be adjusted,
             so that the resulting image's height and width are
@@ -259,14 +259,14 @@ class pyMCDSts:
             ffmpeg constrain for generating a movie out of images.
 
             addargs: string; default '-transparent white'
-            sting to additional image mackig parameters.
-            by default alpha channel transparence is set to white.
+            sting to additional image magick parameters.
+            by default, alpha channel transparency is set to white.
 
         output:
             png files in output_path directory.
 
         description:
-            this function generate png image equivalents from all svg files
+            this function generates png image equivalents from all svg files
             found in the output_path directory.
             png is by definition a lossless compressed image format.
             https://en.wikipedia.org/wiki/Portable_Network_Graphics
@@ -287,7 +287,7 @@ class pyMCDSts:
         input:
             self: pyMCDSts class instance.
 
-            resize_factor: floating point number; defaulat 1
+            resize_factor: floating point number; default 1
             to specify image magnification or scale down.
             the resize parameter will in any case be adjusted,
             so that the resulting image's height and width are
@@ -298,7 +298,7 @@ class pyMCDSts:
             tiff files in output_path directory.
 
         decription:
-            this function generate tiff image equivalents from all svg files
+            this function generates tiff image equivalents from all svg files
             found in the output_path directory.
             https://en.wikipedia.org/wiki/TIFF
         """
@@ -319,9 +319,9 @@ class pyMCDSts:
             self: pyMCDSts class instance.
 
             interface: string; default jpeg
-            ffmpeg can not directely translate svg image into a move.
+            ffmpeg cannot directly translate svg image into a move.
             the interface image format will be used to bridge the gap.
-            this images, from which the movie will be gererated, have to exist.
+            this images, from which the movie will be generated, have to exist.
             they can be generated with the make_jpeg, make_png, or make_tiff
             function.
 
@@ -334,7 +334,7 @@ class pyMCDSts:
         output:
             mp4 move file in output_path directory.
             interface image files in output_path directory.
-`           additionally, function will return the movie path and filename.
+`           additionally, the function will return the movie path and filename.
 
         description:
             this function generates a movie from all interface image files
