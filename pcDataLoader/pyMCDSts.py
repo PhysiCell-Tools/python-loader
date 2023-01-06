@@ -76,7 +76,7 @@ class pyMCDSts:
 
         output:
             xmlfile_list: list of strings
-            alphanumerical sorted list of /path/to/output*.xml strings.
+                alphanumerical sorted list of /path/to/output*.xml strings.
 
         description:
             function returns an alphanumerical (and as such chronological)
@@ -95,7 +95,7 @@ class pyMCDSts:
             self: pyMCDSts class instance.
 
             xmlfile_list: list of strings; default None
-            list of physicell output /path/to/output*.xml strings.
+                list of physicell output /path/to/output*.xml strings.
 
         output:
             l_mcds: list of mcds objects
@@ -133,7 +133,7 @@ class pyMCDSts:
 
         output:
             s_magick: string
-            image magick command line command call
+                image magick command line command call
 
         description:
             internal function manipulates the command line command call,
@@ -152,15 +152,15 @@ class pyMCDSts:
             self: pyMCDSts class instance.
 
             resize_factor: floating point number; default 1
-            to specify image magnification or scale down.
-            the resize parameter will in any case be adjusted,
-            so that the resulting image's height and width are
-            integer divisible by 2. this is because of a
-            ffmpeg constrain for generating a movie out of images.
+                to specify image magnification or scale down.
+                the resize parameter will in any case be adjusted,
+                so that the resulting image's height and width are
+                integer divisible by 2. this is because of a
+                ffmpeg constrain for generating a movie out of images.
 
         output:
             s_resize: string
-            image magick command resize parameter setting.
+                image magick command resize parameter setting.
 
         description:
             internal function returns image magick command
@@ -186,14 +186,14 @@ class pyMCDSts:
             self: pyMCDSts class instance.
 
             giffile: string; default 'timeseries.gif'
-            gif image filename.
+                gif image filename.
 
             resize_factor: floating point number; default 1
-            to specify image magnification or scale down.
+                to specify image magnification or scale down.
 
         output:
             gif file in output_path directory.
-`            additionally, the function will return the path and filename.
+`               additionally, the function will return the path and filename.
 
         description:
             this function generates a gif image from all snapshot svg files
@@ -217,14 +217,14 @@ class pyMCDSts:
             self: pyMCDSts class instance.
 
             glob: string
-            wildcard filename pattern.
+                wildcard filename pattern.
 
             resize_factor: floating point number; default 1
-            to specify image magnification or scale down.
-            the resize parameter will in any case be adjusted,
-            so that the resulting image's height and width are
-            integer divisible by 2. this is because of a
-            ffmpeg constrain for generating a movie out of images.
+                to specify image magnification or scale down.
+                the resize parameter will in any case be adjusted,
+                so that the resulting image's height and width are
+                integer divisible by 2. this is because of a
+                ffmpeg constrain for generating a movie out of images.
 
         output:
             jpeg files in output_path directory.
@@ -252,15 +252,15 @@ class pyMCDSts:
             self: pyMCDSts class instance.
 
             resize_factor: floating point number; default 1
-            to specify image magnification or scale down.
-            the resize parameter will in any case be adjusted,
-            so that the resulting image's height and width are
-            integer divisible by 2. this is because of a
-            ffmpeg constrain for generating a movie out of images.
+                to specify image magnification or scale down.
+                the resize parameter will in any case be adjusted,
+                so that the resulting image's height and width are
+                integer divisible by 2. this is because of a
+                ffmpeg constrain for generating a movie out of images.
 
             addargs: string; default '-transparent white'
-            sting to additional image magick parameters.
-            by default, alpha channel transparency is set to white.
+                sting to additional image magick parameters.
+                by default, alpha channel transparency is set to white.
 
         output:
             png files in output_path directory.
@@ -288,11 +288,11 @@ class pyMCDSts:
             self: pyMCDSts class instance.
 
             resize_factor: floating point number; default 1
-            to specify image magnification or scale down.
-            the resize parameter will in any case be adjusted,
-            so that the resulting image's height and width are
-            integer divisible by 2. this is because of a
-            ffmpeg constrain for generating a movie out of images.
+                to specify image magnification or scale down.
+                the resize parameter will in any case be adjusted,
+                so that the resulting image's height and width are
+                integer divisible by 2. this is because of a
+                ffmpeg constrain for generating a movie out of images.
 
         output:
             tiff files in output_path directory.
@@ -319,22 +319,22 @@ class pyMCDSts:
             self: pyMCDSts class instance.
 
             interface: string; default jpeg
-            ffmpeg cannot directly translate svg image into a move.
-            the interface image format will be used to bridge the gap.
-            this images, from which the movie will be generated, have to exist.
-            they can be generated with the make_jpeg, make_png, or make_tiff
-            function.
+                ffmpeg cannot directly translate svg image into a move.
+                the interface image format will be used to bridge the gap.
+                this images, from which the movie will be generated, have to exist.
+                they can be generated with the make_jpeg, make_png, or make_tiff
+                function.
 
             moviefile: sting; default 'movie.mp4'
-            mp4 movie file name.
+                mp4 movie file name.
 
             frame_rate: integer; default 24
-            specifies how many images per second will be used.
+                specifies how many images per second will be used.
 
         output:
             mp4 move file in output_path directory.
-            interface image files in output_path directory.
-`           additionally, the function will return the movie path and filename.
+                interface image files in output_path directory.
+`               additionally, the function will return the movie path and filename.
 
         description:
             this function generates a movie from all interface image files
