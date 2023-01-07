@@ -5,10 +5,11 @@ https://packaging.python.org/guides/distributing-packages-using-setuptools/
 https://github.com/pypa/sampleproject
 
 pip releasing a next version:
-1. vim pcDataLoader/VERSION.py  # increase version number in file
-2. git add pcDataLoader/VERSION.py
-3. git commit -m'@ pcDataLoader : next release.'
-4. git tag -a v0.0.0 -m'version 0.0.0'
+0. vim pcDataLoader/VERSION.py  # increase version number in file
+1. git add pcDataLoader/VERSION.py
+2. git commit -m'@ pcDataLoader : next release.'
+3. git tag -a v0.0.0 -m'version 0.0.0'
+4. rm -r build dist
 5. python3 -m build --sdist  # make source distribution
 6. python3 -m build --wheel  # make binary distribution python wheel
 7. twine upload dist/* --verbose
@@ -119,11 +120,11 @@ setup(
             "data_timeseries_2d/*.mat",
             "data_timeseries_2d/*.svg",
             "data_timeseries_2d/*.txt",
-            "data_timeseries_2d/*.xml"
+            "data_timeseries_2d/*.xml",
             "data_timeseries_3d/*.mat",
             "data_timeseries_3d/*.svg",
             "data_timeseries_3d/*.txt",
-            "data_timeseries_3d/*.xml"
+            "data_timeseries_3d/*.xml",
         ],
     },
 
