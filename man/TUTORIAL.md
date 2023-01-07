@@ -93,8 +93,8 @@ sorted(mcds.data['continuum_variables']['oxygen'].keys())  # substrate related d
 
 # cell
 sorted(mcds.data['discrete_cells'].keys())  # data, units, and graph dictionaries.
-sorted(mcds.data['discrete_cells']['data'].keys()  # all cell related, tracked data.
-sorted(mcds.data['discrete_cells']['unit'].keys()  # all units from the cell related, tracked data.
+sorted(mcds.data['discrete_cells']['data'].keys())  # all cell related, tracked data.
+sorted(mcds.data['discrete_cells']['units'].keys())  # all units from the cell related, tracked data.
 sorted(mcds.data['discrete_cells']['graph'].keys())  # neighbor_cells and attached_cells graph dictionaries.
 ```
 
@@ -113,8 +113,8 @@ mcds.get_physicell_version()  # will return a string like PhysiCell_1.10.4 or Bi
 
 Fetch simulation time, runtime, and time stamp when the data was processed.
 ```python
-mcds.pyMCDS.get_time()   # will return a float value like 720.0
-mcds.pyMCDS.get_runtime()  # will return a float value like 15.596373
+mcds.get_time()   # will return a float value like 720.0
+mcds.get_runtime()  # will return a float value like 15.596373
 mcds.get_timestamp()  # will return a sting like 2022-10-19T01:12:01Z
 ```
 
@@ -318,7 +318,7 @@ Like in the pyMCDs class, for memory consumption and processing speed control, w
 By default, all data related to the snapshot is loaded.
 ```python
 # fine tuned the way mcds objects will be loaded
-mcdsts = pc.pyMCDSts(s_pathfile, graph=False, microenv=False)
+mcdsts = pc.pyMCDSts(s_path, graph=False, microenv=False)
 ```
 
 #### Times Series MCDS Data
@@ -355,8 +355,8 @@ l_mcds_11_12_13 = mcdsts.read_mcds(ls_xml_11_12_13)
 len(l_mcds_11_12_13)  # 3
 
 # load all even snapshots
-ls_xml_even = mcdsts.read_mcds(ls_xml_even)
-len(ls_xml_even)  # 13
+ls_mcds_even = mcdsts.read_mcds(ls_xml_even)
+len(ls_mcds_even)  # 13
 ```
 
 Single snapshots can now be accessed by indexing.\
