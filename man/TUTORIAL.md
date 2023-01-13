@@ -374,6 +374,7 @@ df.head()
 It is very easy to loop over the whole time series, to analyze time series data, and generate time series plots.
 ```python
 # load library
+import matplotlib.pyplot as plt
 import pandas as pd
 
 # fetch data
@@ -385,7 +386,29 @@ df = pd.DataFrame([lr_time,li_cellcount], index=['time_min','cell_count']).T
 df.head()
 
 # plot data
-df.plot(kind='scatter', x='time_min', y='cell_count', ylim=(800,1200), grid=True, title='2D time series test data')
+df.plot(
+    kind = 'scatter',
+    x = 'time_min',
+    y = 'cell_count',
+    ylim = (800,1200),
+    grid=True,
+    title='2D time series test data'
+)
+
+# save plot to file
+fig, ax = plt.subplots()
+df.plot(
+    kind = 'scatter',
+    x = 'time_min',
+    y = 'cell_count',
+    ylim = (800,1200),
+    grid = True,
+    title = '2D time series test data',
+    ax = ax,
+)
+plt.tight_layout()
+fig.savefig('pymcdsts_2d_cellcount.png', facecolor='white')
+plt.close()
 ```
 
 #### Times Series Scatter Plot Images and Movies
