@@ -422,24 +422,24 @@ The svg images might be quite huge. You can always use the `resize_factor` param
 Translate physicell svg images into static raster graphic images:
 ```python
 # resize factor 1 will leave the image size as it is.
-mcds.make_jpeg()  # resize factor 1
-mcds.make_png()  # resize factor 1
-mcds.make_tiff()  # resize factor 1
+mcdsts.make_jpeg()  # resize factor 1
+mcdsts.make_png()  # resize factor 1
+mcdsts.make_tiff()  # resize factor 1
 
 # resize factor 0.2 will down scale to 20% width and length of the image.
-mcds.make_jpeg(0.2)
-mcds.make_png(0.2)
-mcds.make_tiff(0.2)
+mcdsts.make_jpeg(0.2)
+mcdsts.make_png(0.2)
+mcdsts.make_tiff(0.2)
 ```
 
 Translate physicell svg images into a dynamic gif image:\
 The default file name for the resulting gif image is set to timeseries.gif.
 ```python
 # resize factor 1
-make_gif()
+mcdsts.make_gif()
 
 # resize factor 0.2
-make_gif(0.2)
+mcdsts.make_gif(0.2)
 ```
 
 Translate physicell svg images into a mp4 movie:\
@@ -448,10 +448,10 @@ By default, jpeg files will be used, to generate the movie.\
 If png or tiff files should be used as source, then this have to be explicitly stated.\
 The default file name for the resulting movie is to movie.mp4.
 ```python
-make_movie()  # generate move from jpeg files
-make_movie('jpeg')  # generates a move from jpeg files
-make_movie('png')  # generates a move from png files
-make_movie('tiff')  # generates a move from tiff files
+mcdsts.make_movie()  # generate move from jpeg files
+mcdsts.make_movie('jpeg')  # generates a move from jpeg files
+mcdsts.make_movie('png')  # generates a move from png files
+mcdsts.make_movie('tiff')  # generates a move from tiff files
 ```
 
 **That's all Folks!**
