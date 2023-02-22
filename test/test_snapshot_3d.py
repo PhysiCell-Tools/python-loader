@@ -235,6 +235,14 @@ class TestPyMcds3D(object):
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_conc.shape == (121, 8))
 
+    def test_mcds_get_contour(self, mcds=mcds):
+        fig = mcds.get_contour('oxygen', z_slice=-3.333, vmin=None, vmax=None, alpha=1, fill=False, cmap='viridis', ax=None)
+        assert(str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+
+    def test_mcds_get_contourf(self, mcds=mcds):
+        fig = mcds.get_contour('oxygen', z_slice=0, vmin=None, vmax=None, alpha=1, fill=True, cmap='viridis', ax=None)
+        assert(str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+
     ## cell related functions
     def test_mcds_get_cell_variables(self, mcds=mcds):
         ls_variable = mcds.get_cell_variables()

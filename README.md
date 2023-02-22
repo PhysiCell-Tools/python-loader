@@ -54,6 +54,10 @@ Within the pcDataLoader library, we tried to stick to the documentation policy l
 
 
 ## Release Notes:
++ version 3.0.4 (2023-02-xx): elmbeech/pcDataLoader
+    + pyMCDS **mcds.get_contour** function, to easily generate for substrates matplotlib contourf and contour plots because they do not exist as pandas plots.
+
++ version 3.0.3 (2023-02-19): elmbeech/pcDataLoader branch 3 has no longer anndata and as such hdf5 dependency.
 + version 3.0.2 (2023-01-06): elmbeech/pcDataLoader bugfix installing package data.
 + version 3.0.0 (2023-01-06): elmbeech/pcDataLoader
     + **pyMCDS** parameter **xml_file** can now handle path/file.xml (unix) or path\file.xml (dos) input, as long output\_path is the default.

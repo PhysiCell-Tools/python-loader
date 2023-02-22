@@ -43,6 +43,7 @@ help(pc.pyMCDS.get_substrate_df)
 help(pc.pyMCDS.get_concentration)
 help(pc.pyMCDS.get_concentration_df)
 help(pc.pyMCDS.get_concentration_at)
+help(pc.pyMCDS.get_contour)
 
 # pyMCDS cells and other agents
 help(pc.pyMCDS.get_cell_variables)

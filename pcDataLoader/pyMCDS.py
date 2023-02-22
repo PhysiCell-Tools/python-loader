@@ -15,6 +15,8 @@
 
 
 # load library
+import matplotlib.pyplot as plt
+from matplotlib import cm
 import numpy as np
 import pandas as pd
 import pathlib
@@ -705,7 +707,94 @@ class pyMCDS:
            df_conc = df_conc.loc[df_conc.mesh_center_p == z_slice, :]
 
         # output
+        df_conc.sort_values(['voxel_i', 'voxel_j', 'voxel_k'], inplace=True)
         return df_conc
+
+
+    def get_contour(self, substrate, z_slice=0, vmin=None, vmax=None, alpha=1, fill=True, cmap='viridis', ax=None):
+        """
+        input:
+            self: pyMCDS class instance.
+
+            substrate: string
+                substrate name.
+
+            z_slice: floating point number; default is 0
+                z-axis position to slice a 2D xy-plain out of the
+                3D substrate concentration mesh. if z_slize position
+                is not an exact mesh center coordinate, then z_slice
+                will be adjusted to the nearest mesh center value,
+                the smaller one, if the coordinate lies on a saddle point.
+
+            vmin: floating point number; default is None
+                color scale min value.
+                None will take the min value found in the data.
+
+            vmax: floating point number; default is None
+                color scale max value.
+                None will take the max value found in the data.
+
+            alpha: floating point number; default is 1
+                alpha channel transparency value
+                between 1 (not transparent at all) and 0 (totally transparent).
+
+            fill: boolean
+                True generates a matplotlib contourf plot.
+                False generates a matplotlib contour plot.
+
+            cmap: string; default is viridis
+                matplotlib color map color label.
+                https://matplotlib.org/stable/tutorials/colors/colormaps.html
+
+            ax: matplotlib axis object; default setting is None
+                the ax object, which will be used as a canvas for plotting.
+                None will generate a figure and ax object from scratch.
+
+        output:
+            fig: matplotlib figure, containing the ax axis object,
+                with contour plot and color bar.
+
+        description:
+            function returns a matplotlib contour (or contourf) plot,
+            inclusive color bar, for the substrate specified.
+        """
+        # handle z_slice input
+        _, _, ar_p_axis = self.get_mesh_mnp_axis()
+        if not (z_slice in ar_p_axis):
+            z_slice = ar_p_axis[(ar_p_axis - z_slice).argmin()]
+            print(f'z_slice set to {z_slice}.')
+
+        # get data
+        df_conc = self.get_concentration_df()
+        df_conc = df_conc.loc[(df_conc.mesh_center_p == z_slice),:]
+        ti_shape = (self.get_voxel_ijk_axis()[0].shape[0], self.get_voxel_ijk_axis()[1].shape[0])
+        x = (df_conc.loc[:,'mesh_center_m'].values).reshape(ti_shape)
+        y = (df_conc.loc[:,'mesh_center_n'].values).reshape(ti_shape)
+        z = (df_conc.loc[:,substrate].values).reshape(ti_shape)
+
+        # handle vmin and vmax input
+        if (vmin is None):
+            vmin = np.floor(df_conc.loc[:,substrate].min())
+        if (vmax is None):
+            vmax = np.ceil(df_conc.loc[:,substrate].max())
+
+        # get figure and axis orbject
+        if (ax is None):
+            fig, ax = plt.subplots()
+        else:
+            fig = plt.gcf()
+
+        # get contour plot
+        if fill:
+            ax.contourf(x,y,z, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
+        else:
+            ax.contour(x,y,z, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
+
+        # get colorbar
+        plt.colorbar(mappable=cm.ScalarMappable(cmap=cmap), label=substrate, ax=ax)
+
+        # output
+        return(fig)
 
 
     ## CELL RELATED FUNCTIONS ##

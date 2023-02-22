@@ -221,6 +221,7 @@ Regarding the concentrations, we can retrieve:
 + a **numpy array** of all substrate concentrations at a particular xyz coordinate, ordered alphabetically by substrate name, like the list retrieved by the get\_substrate\_names function.
 + substrate specific 3D or 2D **meshgrid numpy arrays**.
   To get a 2D meshgrids you can slice though any z stack value, the function will always pick the closest mesh center coordinate, the smaller coordinate, if you hit the saddle point between two voxels.
++ **matplotlib contour and contourf plots**, for any substrate, through any z\_slice.
 + a **pandas dataframe** with voxel ijk coordinate values, mesh center mnp coordinate values, and concentrations values for all substrates.
 ```python
 # all concentration values at a particular coordinate
@@ -233,6 +234,11 @@ oxygen_3d = mcds.get_concentration('oxygen')
 oxygen_2d = mcds.get_concentration('oxygen', z_slice=0)
 oxygen_3d.shape  # (11, 11, 1)
 oxygen_2d.shape  # (11, 11)
+
+# contour plot
+fig = mcds.get_contour('oxygen')
+fig = mcds.get_contour('oxygen', z_slice=3.333)
+fig.show()
 
 # dataframe with complete voxel coordinate (ijk), mesh coordinate (mnp), and substrate concentration mapping.
 df = mcds.get_concentration_df()
@@ -296,6 +302,56 @@ df.shape  # (82, 1)
 df.columns  # Index(['unit'], dtype='object')
 df.index  # Index(['attachment_elastic_constant', 'attachment_rate', ..., 'velocity_z'], dtype='object', name='parameter')
 df.head()
+```
+
+### MCDS Plotting
+
+Since microenvironment data and cell data can be retrieved as pandas datafarme,
+basic plotting
+(line plot, bar plot, histogram, boxplot, kernel density estimation plot, area plot, pie plot, scatter plot, hexbin plot)
+can easily be generated with the **pandas plot function**.
+As mentioned above, for microenvironment data the pyMCDS class has a mcds.get\_contour function because pandas has no contour and contourf plots implementation.
+All these plots are mathplotlib plots, hence fine tuning can always be done using the matplotlib library.
+
++ https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.plot.html
++ https://matplotlib.org/
+
+```python
+# load library
+import matplotlib.pyplot as plt
+
+# set constantes
+z_slice = 0
+
+# generate plot
+fig, ax = plt.subplots(figsize=(7,4))
+
+# plot microenvironment
+mcds.get_contour('oxygen', z_slice=z_slice, ax=ax)
+
+# plot cells
+df = mcds.get_cell_df()
+df = df.loc[(df.mesh_center_p == z_slice),:]
+df.plot(
+    kind = 'scatter',
+    x = 'position_x',
+    y = 'position_y',
+    s = 10,
+    c = 'oncoprotein',
+    cmap = 'magma',
+    vmin = 0,
+    vmax = 2,
+    grid = True,
+    title = 'cells and microenvironment',
+    ax = ax,
+)
+ax.axis('equal')
+plt.tight_layout()
+
+# save plot to file
+# bue 20230101: note, in this test dataset, cells were seeded outside the actual domain.
+fig.savefig('pymcds_2d_cell_and_microenvironment.png', facecolor='white')
+plt.close()
 ```
 
 
