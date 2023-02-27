@@ -764,10 +764,25 @@ class pyMCDS:
             z_slice = ar_p_axis[(ar_p_axis - z_slice).argmin()]
             print(f'z_slice set to {z_slice}.')
 
-        # get data
+        # get data z slice
         df_conc = self.get_concentration_df()
         df_conc = df_conc.loc[(df_conc.mesh_center_p == z_slice),:]
-        ti_shape = (self.get_voxel_ijk_axis()[0].shape[0], self.get_voxel_ijk_axis()[1].shape[0])
+        # extend to x y domain border
+        df_mmin = df_conc.loc[(df_conc.mesh_center_m == df_conc.mesh_center_m.min()), :].copy()
+        df_mmin.mesh_center_m = self.get_xyz_range()[0][0]
+        df_mmax = df_conc.loc[(df_conc.mesh_center_m == df_conc.mesh_center_m.max()), :].copy()
+        df_mmax.mesh_center_m = self.get_xyz_range()[0][1]
+        df_conc = pd.concat([df_conc, df_mmin, df_mmax], axis=0)
+        df_nmin = df_conc.loc[(df_conc.mesh_center_n == df_conc.mesh_center_n.min()), :].copy()
+        df_nmin.mesh_center_n =self.get_xyz_range()[1][0]
+        df_nmax = df_conc.loc[(df_conc.mesh_center_n == df_conc.mesh_center_n.max()), :].copy()
+        df_nmax.mesh_center_n = self.get_xyz_range()[1][1]
+        df_conc = pd.concat([df_conc, df_nmin, df_nmax], axis=0)
+        # sort dataframe
+        df_conc.sort_values(['mesh_center_m', 'mesh_center_n', 'mesh_center_p'], inplace=True)
+
+        # meshgrid shape
+        ti_shape = (self.get_voxel_ijk_axis()[0].shape[0]+2, self.get_voxel_ijk_axis()[1].shape[0]+2)
         x = (df_conc.loc[:,'mesh_center_m'].values).reshape(ti_shape)
         y = (df_conc.loc[:,'mesh_center_n'].values).reshape(ti_shape)
         z = (df_conc.loc[:,substrate].values).reshape(ti_shape)
