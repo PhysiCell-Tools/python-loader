@@ -54,6 +54,7 @@ Within the pcDataLoader library, we tried to stick to the documentation policy l
 
 
 ## Release Notes:
++ version 3.0.5 (2023-02-26): elmbeech/pcDataLoader **mcds.get_contour**  plots span now the whole domain and not only to the border voxel centers.
 + version 3.0.4 (2023-02-21): elmbeech/pcDataLoader
     + pyMCDS **mcds.get_contour** function, to easily generate for substrates matplotlib contourf and contour plots because they do not exist as pandas plots.
 
