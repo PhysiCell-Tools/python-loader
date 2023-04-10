@@ -291,10 +291,14 @@ class pyMCDSts:
                 ax=ax
             )
 
-            # set figure background color and size
+            # set figure background color
             fig.set_facecolor(figbgcolor)
-            fig.set_figwidth(figsize[0])
-            fig.set_figheight(figsize[1])
+
+            # set figure size
+            i_x = figsize[0] - (figsize[0] % 2) # enforce even number
+            i_y = figsize[1] - (figsize[1] % 2)
+            fig.set_figwidth(i_x)
+            fig.set_figheight(i_y)
 
             # generate file name and save image file
             s_filename = f'{self.output_path}/{focus}_{mcds.get_time()}.{ext}'
@@ -346,8 +350,12 @@ class pyMCDSts:
 
             # set figure background color and size
             fig.set_facecolor(figbgcolor)
-            fig.set_figwidth(figsize[0])
-            fig.set_figheight(figsize[1])
+            
+             # set figure size
+            i_x = figsize[0] - (figsize[0] % 2) # enforce even number
+            i_y = figsize[1] - (figsize[1] % 2)
+            fig.set_figwidth(i_x)
+            fig.set_figheight(i_y)
 
             # generate file name and save image file
             s_filename = f'{self.output_path}/{focus}_{mcds.get_time()}.{ext}'
