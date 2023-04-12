@@ -26,6 +26,7 @@ import platform
 from .pyMCDS import pyMCDS
 import xml.etree.ElementTree as ET
 import matplotlib.pyplot as plt
+from glob import glob
 
 # classes
 class pyMCDSts:
@@ -363,7 +364,7 @@ class pyMCDSts:
 
         
 
-    def make_gif(self, focus, interface='jpeg', resize_factor=1, giffile='timeseries.gif'):
+    def make_gif(self, focus, interface='jpeg'):
         """
         input:
             self: pyMCDSts class instance.
@@ -377,12 +378,6 @@ class pyMCDSts:
                 this images, from which the movie will be generated, have to exist.
                 they can be generated with the make_jpeg, make_png, or make_tiff
                 function.
-
-            giffile: string; default 'timeseries.gif'
-                gif image filename.
-
-            resize_factor: floating point number; default 1
-                to specify image magnification or scale down.
 
         output:
             gif file in output_path directory.
@@ -392,18 +387,22 @@ class pyMCDSts:
             this function generates a gif image from all snapshot svg files
             found in the output_path directory.
         """
-        # s_magick = self._handle_magick()
-        # s_resize = self._handle_resize(resize_factor=resize_factor)
+        s_magick = self._handle_magick()
+        # bue: use convert, mogrify will cause troubles here!
+        s_opathfile = f'{self.output_path}/{focus}_{interface}.gif'
+        s_ipathfiles = f'{self.output_path}/{focus}_*.{interface}'
 
-        # # generate gif
-        # # bue: use convert, mogrify will cause troubles here!
-        # s_opathfile = f'{self.output_path}/{giffile}'
-        # os.system(f'{s_magick}convert {s_resize} {self.output_path}/snapshot*.svg {s_opathfile}')
+        # check files exist
+        if not glob(s_ipathfiles): # list returned by glob (files matching wildcard) is empty
+            raise Exception('make_gif : images not found in output directory for given focus string')
+        
+        # make system call
+        os.system(f'{s_magick}convert {s_ipathfiles} {s_opathfile}')
 
-        # # output
-        # return(s_opathfile)
+        # output
+        return(s_opathfile)
 
-    def make_movie(self, focus, interface='jpeg', moviefile='movie.mp4', frame_rate=24):
+    def make_movie(self, focus, interface='jpeg', frame_rate=24):
         """
         input:
             self: pyMCDSts class instance.
@@ -417,9 +416,6 @@ class pyMCDSts:
                 this images, from which the movie will be generated, have to exist.
                 they can be generated with the make_jpeg, make_png, or make_tiff
                 function.
-
-            moviefile: sting; default 'movie.mp4'
-                mp4 movie file name.
 
             frame_rate: integer; default 24
                 specifies how many images per second will be used.
@@ -433,9 +429,15 @@ class pyMCDSts:
             this function generates a movie from all interface image files
             found in the output_path directory.
         """
-        # # generate movie
-        # s_opathfile = f'{self.output_path}/{moviefile}'
-        # os.system(f'ffmpeg -r {frame_rate} -f image2 -i {self.output_path}/snapshot%08d.{interface} -vcodec libx264 -pix_fmt yuv420p -strict -2 -tune animation -crf 15 -acodec none {s_opathfile}')
+        s_opathfile = f'{self.output_path}/{focus}_{interface}.mp4'
+        s_ipathfiles = f'{self.output_path}/{focus}_*.{interface}'
 
-        # # output
-        # return(s_opathfile)
+        # check files exist
+        if not glob(s_ipathfiles): # list returned by glob (files matching wildcard) is empty
+            raise Exception('make_gif : images not found in output directory for given focus string')
+        
+        # system call
+        os.system(f'ffmpeg -r {frame_rate} -f image2 -i {s_ipathfiles} -vcodec libx264 -pix_fmt yuv420p -strict -2 -tune animation -crf 15 -acodec none {s_opathfile}')
+
+        # output
+        return(s_opathfile)
