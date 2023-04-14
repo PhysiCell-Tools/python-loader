@@ -279,9 +279,13 @@ class pyMCDSts:
             if range is not None:
                 df_filter = range[0] <= df_cell <= range[1]
                 df_cell = df_cell[df_filter]
+
+            # set figure size
+            i_x = figsize[0] - (figsize[0] % 2) # enforce even number
+            i_y = figsize[1] - (figsize[1] % 2)
             
             # plot
-            fig, ax = plt.subplots()
+            fig, ax = plt.subplots(figsize=(i_x, i_y))
             df_cell.loc[:, focus].plot(
                 kind='scatter', 
                 x='position_x',
@@ -293,19 +297,14 @@ class pyMCDSts:
             )
 
             # set figure background color
-            fig.set_facecolor(figbgcolor)
-
-            # set figure size
-            i_x = figsize[0] - (figsize[0] % 2) # enforce even number
-            i_y = figsize[1] - (figsize[1] % 2)
-            fig.set_figwidth(i_x)
-            fig.set_figheight(i_y)
+            if figbgcolor is not None:
+                fig.set_facecolor(figbgcolor)
 
             # generate file name and save image file
             s_filename = f'{self.output_path}/{focus}_{mcds.get_time()}.{ext}'
             fig.savefig(fname=s_filename)
 
-    def make_imgsubstrate(self, focus, cmap, s, figsize, ext, range=None, figbgcolor=None):
+    def make_imgsubstrate(self, focus, cmap, figsize, ext, range=None, figbgcolor=None):
         """
         input:
             self: pyMCDSts class instance
@@ -316,9 +315,6 @@ class pyMCDSts:
 
             cmap: string
                 matplotlib colormap
-
-            s: integer
-                scatter plot dot size in pixel
             
             figsize: tuple (int, int)
                 size of the figure in pixels, (x, y)
@@ -346,17 +342,17 @@ class pyMCDSts:
             if focus not in mcds.get_substrate_names():
                 raise Exception(f'make_imgsubstrate : given focus string "{focus}" not a valid substrate name')
             
-            fig, ax = plt.subplots()
-            fig = mcds.get_contour(substrate=focus, cmap=cmap, ax=ax)
-
-            # set figure background color and size
-            fig.set_facecolor(figbgcolor)
-            
-             # set figure size
+            # set figure size
             i_x = figsize[0] - (figsize[0] % 2) # enforce even number
             i_y = figsize[1] - (figsize[1] % 2)
-            fig.set_figwidth(i_x)
-            fig.set_figheight(i_y)
+
+            # plot
+            fig, ax = plt.subplots(figsize=(i_x, i_y))
+            fig = mcds.get_contour(substrate=focus, cmap=cmap, ax=ax)
+
+            # set figure background color
+            if figbgcolor is not None:
+                fig.set_facecolor(figbgcolor)
 
             # generate file name and save image file
             s_filename = f'{self.output_path}/{focus}_{mcds.get_time()}.{ext}'
