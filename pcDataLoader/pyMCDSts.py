@@ -20,13 +20,14 @@
 
 
 # load libraries
+import matplotlib.pyplot as plt
+from glob import glob
+import numpy as np
 import os
 import pathlib
 import platform
 from .pyMCDS import pyMCDS
-import xml.etree.ElementTree as ET
-import matplotlib.pyplot as plt
-from glob import glob
+import shutil
 
 # classes
 class pyMCDSts:
@@ -63,6 +64,8 @@ class pyMCDSts:
         self.output_path = output_path
         self.microenv = microenv
         self.graph = graph
+        self.verbose = False
+        self.l_mcds = self.read_mcds()
         self.verbose = verbose
 
 
@@ -103,7 +106,7 @@ class pyMCDSts:
             pyMCDS calls.
         """
         # handle input
-        if (xmlfile_list is None):
+        if xmlfile_list is None:
             xmlfile_list = self.get_xmlfile_list()
 
         # load mcds objects into list
@@ -120,6 +123,7 @@ class pyMCDSts:
                 print() # carriage return
 
         # output
+        self.l_mcds = l_mcds
         return(l_mcds)
 
 
@@ -131,309 +135,323 @@ class pyMCDSts:
 
         output:
             s_magick: string
-                image magick command line command call
+                image magick command line command call.
 
         description:
             internal function manipulates the command line command call,
             so that the call as well works on linux systems, which all
-            too often run image magick < 7.0
+            too often run image magick < 7.0.
         """
         s_magick = 'magick '
         if (platform.system() in {'Linux'}) and (os.system('magick --version') != 0) and (os.system('convert --version') == 0):
             s_magick = ''
         return(s_magick)
-    
-    # def make_jpeg(self, resize_factor=1):
-    #     """
-    #     input:
-    #         self: pyMCDSts class instance.
-    #         glob: string
-    #             wildcard filename pattern.
-    #         resize_factor: floating point number; default 1
-    #             to specify image magnification or scale down.
-    #             the resize parameter will in any case be adjusted,
-    #             so that the resulting image's height and width are
-    #             integer divisible by 2. this is because of a
-    #             ffmpeg constrain for generating a movie out of images.
-    #     output:
-    #         jpeg files in output_path directory.
-    #     description:
-    #         this function generates jpeg image equivalents from all svg files
-    #         found in the output_path directory.
-    #         jpeg is by definition a lossy compressed image format.
-    #         https://en.wikipedia.org/wiki/JPEG
-    #     """
-    #     # bue: use mogrify, convert might cause troubles here!
-    #     s_magick = self._handle_magick()
-    #     s_resize = self._handle_resize(resize_factor=resize_factor)
-    #     for s_glob in ls_glob:
-    #         if (len(set(pathlib.Path(self.output_path).glob(s_glob))) > 0):
-    #             if (s_glob in es_resize):
-    #                 os.system(f'{s_magick}mogrify {s_resize} -format jpeg {self.output_path}/{s_glob} &')
-    #             else:
-    #                 os.system(f'{s_magick}mogrify -format jpeg {self.output_path}/{s_glob} &')
 
 
-    # def make_png(self, resize_factor=1, addargs='-transparent white'):
-    #     """
-    #     input:
-    #         self: pyMCDSts class instance.
-    #         resize_factor: floating point number; default 1
-    #             to specify image magnification or scale down.
-    #             the resize parameter will in any case be adjusted,
-    #             so that the resulting image's height and width are
-    #             integer divisible by 2. this is because of a
-    #             ffmpeg constrain for generating a movie out of images.
-    #         addargs: string; default '-transparent white'
-    #             sting to additional image magick parameters.
-    #             by default, alpha channel transparency is set to white.
-    #     output:
-    #         png files in output_path directory.
-    #     description:
-    #         this function generates png image equivalents from all svg files
-    #         found in the output_path directory.
-    #         png is by definition a lossless compressed image format.
-    #         https://en.wikipedia.org/wiki/Portable_Network_Graphics
-    #     """
-    #     # bue: use mogrify, convert might cause troubles here!
-    #     s_magick = self._handle_magick()
-    #     s_resize = self._handle_resize(resize_factor=resize_factor)
-    #     for s_glob in ls_glob:
-    #         if (len(set(pathlib.Path(self.output_path).glob(s_glob))) > 0):
-    #             if (s_glob in es_resize):
-    #                 os.system(f'{s_magick}mogrify {s_resize} {addargs} -format png {self.output_path}/{s_glob} &')
-    #             else:
-    #                 os.system(f'{s_magick}mogrify {addargs} -format png {self.output_path}/{s_glob} &')
-
-
-    # def make_tiff(self, resize_factor=1):
-    #     """
-    #     input:
-    #         self: pyMCDSts class instance.
-    #         resize_factor: floating point number; default 1
-    #             to specify image magnification or scale down.
-    #             the resize parameter will in any case be adjusted,
-    #             so that the resulting image's height and width are
-    #             integer divisible by 2. this is because of a
-    #             ffmpeg constrain for generating a movie out of images.
-    #     output:
-    #         tiff files in output_path directory.
-    #     decription:
-    #         this function generates tiff image equivalents from all svg files
-    #         found in the output_path directory.
-    #         https://en.wikipedia.org/wiki/TIFF
-    #     """
-    #     # bue: use mogrify, convert might cause troubles here!
-    #     s_magick = self._handle_magick()
-    #     s_resize = self._handle_resize(resize_factor=resize_factor)
-    #     for s_glob in ls_glob:
-    #         if (len(set(pathlib.Path(self.output_path).glob(s_glob))) > 0):
-    #             if (s_glob in es_resize):
-    #                 os.system(f'{s_magick}mogrify {s_resize} -format tiff {self.output_path}/{s_glob} & ')
-    #             else:
-    #                 os.system(f'{s_magick}mogrify -format tiff {self.output_path}/{s_glob} & ')
-    
-    def make_imgcell(self, cmap, s, figsize, ext, focus='cellt_type', range=None, figbgcolor=None):
+    def make_imgcell(self, focus='cell_type', z_slice=0, extrema=None, cmap='viridis', s=20, figsizepx=[640, 480], ext='jpeg', figbgcolor=None):
         """
         input:
             self: pyMCDSts class instance
 
-            cmap: string
-                matplotlib colormap
+            focus: string; default is 'cell_type'
+                column name within cell dataframe.
+
+            z_slice: floating point number; default is 0
+                z-axis position to slice a 2D xy-plain out of the
+                3D substrate concentration mesh. if z_slize position
+                is not an exact mesh center coordinate, then z_slice
+                will be adjusted to the nearest mesh center value,
+                the smaller one, if the coordinate lies on a saddle point.
+
+            extrema: tuple of two floats; default is None
+                default takes min and max from data.
+
+            cmap: string; default viridis.
+                matplotlib colormap.
+                https://matplotlib.org/stable/tutorials/colors/colormaps.html
+
+            s: integer; default 20
+                scatter plot dot size in pixel.
+
+            figsizepx: list of two integers, default is [640, 480]
+                size of the figure in pixels, (x, y).
+                the given x and y will be rounded to the nearest even number,
+                to be able to generate movies from the images.
+
+            ext: string
+                output image format. possible formats are jpeg, png, and tiff.
+
+            figbgcolor: string; default is None which is transparent (png)
+                or white (jpeg, tiff).
+                figure background color.
+
+        output:
+            image files under the returned path.
+
+        description:
+            this function generates image time series
+            based on the physicell data output.
+            jpeg is by definition a lossy compressed image format.
+            png is by definition a lossless compressed image format.
+            https://en.wikipedia.org/wiki/JPEG
+            https://en.wikipedia.org/wiki/Portable_Network_Graphics
+            https://en.wikipedia.org/wiki/TIFF
+        """
+        # handle z_slice
+        _, _, ar_p_axis = self.l_mcds[0].get_mesh_mnp_axis()
+        if not (z_slice in ar_p_axis):
+            z_slice = ar_p_axis[(ar_p_axis - z_slice).argmin()]
+            print(f'z_slice set to {z_slice}.')
+
+        # handle extrema
+        if extrema == None:
+            extrema = [None, None]
+            for mcds in self.l_mcds:
+                df_cell = mcds.get_cell_df()
+                r_min = df_cell.loc[:,focus].min()
+                r_max = df_cell.loc[:,focus].max()
+                if (extrema[0] is None) or (extrema[0] > r_min):
+                    extrema[0] = np.floor(r_min)
+                if (extrema[1] is None) or (extrema[1] < r_max):
+                    extrema[1] = np.ceil(r_max)
+            print(f'min max extrema set to {extrema}.')
+
+        # handle figure size
+        figsizepx[0] = figsizepx[0] - (figsizepx[0] % 2)  # enforce even pixel number
+        figsizepx[1] = figsizepx[1] - (figsizepx[1] % 2)
+        r_px = 1 / plt.rcParams['figure.dpi']  # translate px to inch
+        figsize = [None, None]
+        figsize[0] = figsizepx[0] * r_px
+        figsize[1] = figsizepx[1] * r_px
+        if self.verbose:
+            print(f'px figure size set to {figsizepx}.')
+
+        # handle figure background color
+        if figbgcolor is None:
+            figbgcolor = 'auto'
+
+        # handle output path
+        s_path = f'{self.output_path}cell_{focus}_z{z_slice}/'
+        if os.path.exists(s_path):
+            shutil.rmtree(s_path)
+
+        # plotting
+        for mcds in self.l_mcds:
+            df_cell = mcds.get_cell_df()
+            df_cell = df_cell.loc[(df_cell.position_z == z_slice), :]
+            fig, ax = plt.subplots(figsize=figsize)
+            df_cell.plot(
+                kind = 'scatter',
+                x = 'position_x',
+                y = 'position_y',
+                c = focus,
+                vmin = extrema[0],
+                vmax = extrema[1],
+                cmap = cmap,
+                s = s,
+                ax = ax,
+            )
+            os.makedirs(s_path, exist_ok=True)
+            s_pathfile = f'{s_path}{focus}_{mcds.get_time()}.{ext}'
+            fig.savefig(s_pathfile, facecolor=figbgcolor)
+            plt.close(fig)
+
+        # output
+        return(s_path)
+
+
+    def make_imgsubs(self, focus, z_slice=0, extrema=None, alpha=1, fill=True, cmap='viridis', s=20, figsizepx=[640, 480], ext='jpeg', figbgcolor=None):
+        """
+        input:
+            self: pyMCDSts class instance
+
+            focus: string; default is 'cell_type'
+                column name within cell dataframe.
+
+            z_slice: floating point number; default is 0
+                z-axis position to slice a 2D xy-plain out of the
+                3D substrate concentration mesh. if z_slize position
+                is not an exact mesh center coordinate, then z_slice
+                will be adjusted to the nearest mesh center value,
+                the smaller one, if the coordinate lies on a saddle point.
+
+            extrema: tuple of two floats; default is None
+                default takes min and max from data.
+
+            alpha: floating point number; default is 1
+                alpha channel transparency value
+                between 1 (not transparent at all) and 0 (totally transparent).
+
+            fill: boolean
+                True generates a matplotlib contourf plot.
+                False generates a matplotlib contour plot.
+
+            cmap: string; default viridis.
+                matplotlib colormap.
+                https://matplotlib.org/stable/tutorials/colors/colormaps.html
 
             s: integer
-                scatter plot dot size in pixel
-            
-            figsize: tuple (int, int)
-                size of the figure in pixels, (x, y)
-                (given x and y will be rounded to nearest even number)
+                scatter plot dot size in pixel.
+
+            figsizepx: tuple of two integers, default is (640, 480)
+                size of the figure in pixels, (x, y).
+                the given x and y will be rounded to the nearest even number,
+                to be able to generate movies from the images.
 
             ext: string
-                output image interface (jpeg, png, tiff)
-            
-            focus: string; default is 'cellt_type'
-                column name within cell dataframe;
-                returns error if string not a valid name in df
-            
+                output image format. possible formats are jpeg, png, and tiff.
 
-            range: tuple (float, float); default is None
-                default takes min and max from data
-            
-            figbgcolor: string; default is None (transparent)
-                figure background color
+            figbgcolor: string; default is None which is transparent (png)
+                or white (jpeg, tiff).
+                figure background color.
 
         output:
+            image files under the returned path.
 
         description:
+            this function generates image time series
+            based on the physicell data output.
+            jpeg is by definition a lossy compressed image format.
+            png is by definition a lossless compressed image format.
+            https://en.wikipedia.org/wiki/JPEG
+            https://en.wikipedia.org/wiki/Portable_Network_Graphics
+            https://en.wikipedia.org/wiki/TIFF
         """
-        # generate image of cell of given extension type
-        ls_xmlfilelist = self.get_xmlfile_list()
-        l_mcds = self.read_mcds(ls_xmlfilelist)
+        # handle extrema
+        if extrema == None:
+            extrema = [None, None]
+            for mcds in self.l_mcds:
+                df_cell = mcds.get_cell_df()
+                r_min = df_cell.loc[:,focus].min()
+                r_max = df_cell.loc[:,focus].max()
+                if (extrema[0] is None) or (extrema[0] > r_min):
+                    extrema[0] = np.floor(r_min)
+                if (extrema[1] is None) or (extrema[1] < r_max):
+                    extrema[1] = np.ceil(r_max)
+            print(f'min max extrema set to {extrema}.')
 
-        for mcds in l_mcds:
-            df_cell = mcds.get_cell_df()
-            if focus not in df_cell.columns:
-                raise Exception(f'make_imgcell : given focus string "{focus}" not a valid key in dataframe')
-            
-            # filter data
-            if range is not None:
-                df_filter = range[0] <= df_cell <= range[1]
-                df_cell = df_cell[df_filter]
+        # handle figure size
+        figsizepx[0] = figsizepx[0] - (figsizepx[0] % 2)  # enforce even pixel number
+        figsizepx[1] = figsizepx[1] - (figsizepx[1] % 2)
+        r_px = 1 / plt.rcParams['figure.dpi']  # translate px to inch
+        figsize = [None, None]
+        figsize[0] = figsizepx[0] * r_px
+        figsize[1] = figsizepx[1] * r_px
+        if self.verbose:
+            print(f'px figure size set to {figsizepx}.')
 
-            # set figure size
-            i_x = figsize[0] - (figsize[0] % 2) # enforce even number
-            i_y = figsize[1] - (figsize[1] % 2)
-            
-            # plot
-            fig, ax = plt.subplots(figsize=(i_x, i_y))
-            df_cell.loc[:, focus].plot(
-                kind='scatter', 
-                x='position_x',
-                y='position_y',
-                c=focus,
-                cmap=cmap,
-                s=s,
-                ax=ax
+        # handle figure background color
+        if figbgcolor is None:
+            figbgcolor = 'auto'
+
+        # handle output path
+        s_path = f'{self.output_path}substrate_{focus}_z{z_slice}/'
+        if os.path.exists(s_path):
+            shutil.rmtree(s_path)
+
+        # plotting
+        for mcds in self.l_mcds:
+            fig, ax = plt.subplots(figsize=figsize)
+            mcds.get_contour(
+                substrate = focus,
+                z_slice = z_slice,
+                vmin = extrema[0],
+                vmax = extrema[1],
+                alpha = alpha,
+                fill = fill,
+                cmap = cmap,
+                ax = ax,
             )
+            os.makedirs(s_path, exist_ok=True)
+            s_pathfile = f'{s_path}{focus}_{mcds.get_time()}.{ext}'
+            fig.savefig(s_pathfile, facecolor=figbgcolor)
+            plt.close(fig)
 
-            # set figure background color
-            if figbgcolor is not None:
-                fig.set_facecolor(figbgcolor)
+        # output
+        return(s_path)
 
-            # generate file name and save image file
-            s_filename = f'{self.output_path}/{focus}_{mcds.get_time()}.{ext}'
-            fig.savefig(fname=s_filename)
 
-    def make_imgsubstrate(self, focus, cmap, figsize, ext, range=None, figbgcolor=None):
-        """
-        input:
-            self: pyMCDSts class instance
-            
-            focus: string
-                column name within cell dataframe;
-                returns error if string not a valid name in df
-
-            cmap: string
-                matplotlib colormap
-            
-            figsize: tuple (int, int)
-                size of the figure in pixels, (x, y)
-                (given x and y will be rounded to nearest even number)
-
-            ext: string
-                output image interface (jpeg, png, tiff)
-            
-            range: tuple (float, float); default is None
-                default takes min and max from data
-            
-            figbgcolor: string; default is None (transparent)
-                figure background color
-                
-
-        output:
-
-        description:
-        """
-        # generate image of substrate of given extension type
-        ls_xmlfilelist = self.get_xmlfile_list()
-        l_mcds = self.read_mcds(ls_xmlfilelist)
-
-        for mcds in l_mcds:
-            if focus not in mcds.get_substrate_names():
-                raise Exception(f'make_imgsubstrate : given focus string "{focus}" not a valid substrate name')
-            
-            # set figure size
-            i_x = figsize[0] - (figsize[0] % 2) # enforce even number
-            i_y = figsize[1] - (figsize[1] % 2)
-
-            # plot
-            fig, ax = plt.subplots(figsize=(i_x, i_y))
-            fig = mcds.get_contour(substrate=focus, cmap=cmap, ax=ax)
-
-            # set figure background color
-            if figbgcolor is not None:
-                fig.set_facecolor(figbgcolor)
-
-            # generate file name and save image file
-            s_filename = f'{self.output_path}/{focus}_{mcds.get_time()}.{ext}'
-            fig.savefig(fname=s_filename)
-
-        
-
-    def make_gif(self, focus, interface='jpeg'):
+    def make_gif(self, path, interface='jpeg'):
         """
         input:
             self: pyMCDSts class instance.
 
-            focus: string
-                specifies either cell variable or substrate
+            path: string
+                relative or absolute path to where the images are
+                from which the gif will be genearted.
 
             interface: string; default jpeg
-                ffmpeg cannot directly translate svg image into a move.
-                the interface image format will be used to bridge the gap.
-                this images, from which the movie will be generated, have to exist.
-                they can be generated with the make_jpeg, make_png, or make_tiff
+                this images, from which the gif will be generated
+                have to exist under the given path.
+                they can be generated with the make_imgcell or make_imgsubs
                 function.
 
         output:
-            gif file in output_path directory.
-`               additionally, the function will return the path and filename.
+            gif file in the path directory.
+`               additionally, the function will return the gif's path and filename.
 
         description:
-            this function generates a gif image from all snapshot svg files
-            found in the output_path directory.
+            this function generates a gif image from all interface image files
+            found in the path directory.
+            https://en.wikipedia.org/wiki/GIF
         """
         s_magick = self._handle_magick()
-        # bue: use convert, mogrify will cause troubles here!
-        s_opathfile = f'{self.output_path}/{focus}_{interface}.gif'
-        s_ipathfiles = f'{self.output_path}/{focus}_*.{interface}'
-
-        # check files exist
-        if not glob(s_ipathfiles): # list returned by glob (files matching wildcard) is empty
-            raise Exception('make_gif : images not found in output directory for given focus string')
-        
-        # make system call
+        # handle path and file name
+        path = path.replace('\\','/')
+        if path.endswith('/'): path = path[:-1]
+        s_file = path.split('/')[-1]
+        if s_file.startswith('.'): s_file = s_file[1:]
+        if (len(s_file) == 0): s_file = 'movie'
+        s_file += f'_{interface}.gif'
+        s_opathfile = f'{path}/{s_file}'
+        s_ipathfiles = f'{path}/*.{interface}'
+        # genaerate gif
         os.system(f'{s_magick}convert {s_ipathfiles} {s_opathfile}')
 
         # output
         return(s_opathfile)
 
-    def make_movie(self, focus, interface='jpeg', frame_rate=24):
+
+    def make_movie(self, path, interface='jpeg', framerate=12):
         """
         input:
             self: pyMCDSts class instance.
 
-            focus: string
-                specifies either cell variable or substrate
+            path: string
+                relative or absolute path to where the images are
+                from which the movie will be genearted.
 
             interface: string; default jpeg
-                ffmpeg cannot directly translate svg image into a move.
-                the interface image format will be used to bridge the gap.
-                this images, from which the movie will be generated, have to exist.
-                they can be generated with the make_jpeg, make_png, or make_tiff
+                this images, from which the mp4 movie will be generated
+                have to exist under the given path.
+                they can be generated with the make_imgcell or make_imgsubs
                 function.
 
-            frame_rate: integer; default 24
+            framerate: integer; default 24
                 specifies how many images per second will be used.
 
         output:
-            mp4 move file in output_path directory.
-                interface image files in output_path directory.
-`               additionally, the function will return the movie path and filename.
+            mp4 move file in the path directory.
+`               additionally, the function will return the mp4's path and filename.
 
         description:
             this function generates a movie from all interface image files
-            found in the output_path directory.
+            found in the path directory.
+            https://en.wikipedia.org/wiki/MP4_file_format
         """
-        s_opathfile = f'{self.output_path}/{focus}_{interface}.mp4'
-        s_ipathfiles = f'{self.output_path}/{focus}_*.{interface}'
+        # handle path and file name
+        path = path.replace('\\','/')
+        if path.endswith('/'): path = path[:-1]
+        s_file = path.split('/')[-1]
+        if s_file.startswith('.'): s_file = s_file[1:]
+        if (len(s_file) == 0): s_file = 'movie'
+        s_file += f'_{interface}{framerate}.mp4'
+        s_opathfile = f'{path}/{s_file}'
+        s_ipathfiles = f'{path}/*.{interface}'
 
-        # check files exist
-        if not glob(s_ipathfiles): # list returned by glob (files matching wildcard) is empty
-            raise Exception('make_gif : images not found in output directory for given focus string')
-        
-        # system call
-        os.system(f'ffmpeg -r {frame_rate} -f image2 -i {s_ipathfiles} -vcodec libx264 -pix_fmt yuv420p -strict -2 -tune animation -crf 15 -acodec none {s_opathfile}')
+        # generate movie
+        s_cmd = f'ffmpeg -r {framerate} -f image2 -pattern_type glob -i "{s_ipathfiles}" -vcodec libx264 -pix_fmt yuv420p -strict -2 -tune animation -crf 15 -acodec none {s_opathfile}'
+        os.system(s_cmd)
 
         # output
         return(s_opathfile)

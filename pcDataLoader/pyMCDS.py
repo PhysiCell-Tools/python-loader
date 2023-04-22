@@ -17,6 +17,7 @@
 # load library
 import matplotlib.pyplot as plt
 from matplotlib import cm
+from matplotlib import colors
 import numpy as np
 import pandas as pd
 import pathlib
@@ -806,7 +807,11 @@ class pyMCDS:
             ax.contour(x,y,z, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
 
         # get colorbar
-        plt.colorbar(mappable=cm.ScalarMappable(cmap=cmap), label=substrate, ax=ax)
+        fig.colorbar(
+            mappable=cm.ScalarMappable(norm=colors.Normalize(vmin=vmin, vmax=vmax), cmap=cmap),
+            label=substrate,
+            ax=ax
+        )
 
         # output
         return(fig)
