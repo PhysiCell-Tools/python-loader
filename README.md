@@ -54,14 +54,18 @@ Within the pcDataLoader library, we tried to stick to the documentation policy l
 
 
 ## Release Notes:
-+ version 3.0.5 (2023-02-26): elmbeech/pcDataLoader **mcds.get_contour**  plots span now the whole domain and not only to the border voxel centers.
++ version 3.0.6 (2023-04-29): elmbeech/pcDataLoader
+    + pyMCDS **\_read_xml** branch 3 is now able to loading time steps with zero cell.
+    + pyMCDS **mcds.get_contour** can handle more input parameters.
+
++ version 3.0.5 (2023-02-26): elmbeech/pcDataLoader pyMCDS **mcds.get_contour**  plots span now the whole domain and not only to the border voxel centers.
 + version 3.0.4 (2023-02-21): elmbeech/pcDataLoader
     + pyMCDS **mcds.get_contour** function, to easily generate for substrates matplotlib contourf and contour plots because they do not exist as pandas plots.
 
 + version 3.0.3 (2023-02-19): elmbeech/pcDataLoader branch 3 has no longer anndata and as such hdf5 dependency.
 + version 3.0.2 (2023-01-06): elmbeech/pcDataLoader bugfix installing package data.
 + version 3.0.0 (2023-01-06): elmbeech/pcDataLoader
-    + **pyMCDS** parameter **xml_file** can now handle path/file.xml (unix) or path\file.xml (dos) input, as long output\_path is the default.
+    + **pyMCDS** parameter **xml_file** can now handle path/file.xml (unix) or path\file.xml (dos) input, as long output_path is the default.
     + **pyMCDS** has a new additional boolean **microenv** parameter, to specify if the microenvironment (substrates) should be read (for completeness) or not (for speed increase and less memory usage).
     + **pyMCDS** has a new additional boolean **graph** parameter, to specify if the attached and neighbor graph should be read.
     + **pyMCDS** has a new additional boolean **verbose** parameter, to specify if there should be text output while processing.
@@ -71,7 +75,7 @@ Within the pcDataLoader library, we tried to stick to the documentation policy l
     + pyMCDS **mcds.get_voxel_spacing** returns now 3 specific values, one for x, y, and z, instead of 1 general value.
     + pyMCDS **mcds.get_concentrations** was renamed to **mcds.get_concentration** for consistency
     + pyMCDS **mcds.get_concentrations_at** was renamed to **mcds.get_concentration_at** for consistency
-    + pyMCDS **mcds.get_concentration_at** if z\_slice is not a mesh center value, the function will by default adjust to nearest and no longer break.
+    + pyMCDS **mcds.get_concentration_at** if z_slice is not a mesh center value, the function will by default adjust to nearest and no longer break.
     + pyMCDS **mcds.get_cell_variables** and **mcds.get_substrate_names** return now a strictly alphabetically ordered list.
     + pyMCDS **mcds.get_cell_df** returns now a pandas dataframe with the cell IDs as the index and not as a column.
       additionally, this dataframe contains now voxel, mesh_center, substrate parameter, substrate concentration, and cell density information too.

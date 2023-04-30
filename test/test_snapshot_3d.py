@@ -236,11 +236,25 @@ class TestPyMcds3D(object):
                (df_conc.shape == (121, 8))
 
     def test_mcds_get_contour(self, mcds=mcds):
-        fig = mcds.get_contour('oxygen', z_slice=-3.333, vmin=None, vmax=None, alpha=1, fill=False, cmap='viridis', ax=None)
+        fig = mcds.get_contour(
+            'oxygen',
+            z_slice = -3.333,
+            vmin = None,
+            vmax = None,
+            alpha = 1,
+            fill = False,
+            cmap = 'viridis',
+            title = 'test_mcds_get_contour',
+            grid = False,
+            xlim = None,
+            ylim = None,
+            figsize = None,
+            ax = None
+        )
         assert(str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
 
     def test_mcds_get_contourf(self, mcds=mcds):
-        fig = mcds.get_contour('oxygen', z_slice=0, vmin=None, vmax=None, alpha=1, fill=True, cmap='viridis', ax=None)
+        fig = mcds.get_contour('oxygen', z_slice=0, vmin=None, vmax=None, alpha=1, fill=True, cmap='viridis', title='test_mcds_get_contourf', grid=True, xlim=None, ylim=None, figsize=None, ax=None)
         assert(str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
 
     ## cell related functions

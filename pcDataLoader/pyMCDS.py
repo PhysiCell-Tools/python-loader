@@ -712,7 +712,7 @@ class pyMCDS:
         return df_conc
 
 
-    def get_contour(self, substrate, z_slice=0, vmin=None, vmax=None, alpha=1, fill=True, cmap='viridis', ax=None):
+    def get_contour(self, substrate, z_slice=0, vmin=None, vmax=None, alpha=1, fill=True, cmap='viridis', title=None, grid=True, xlim=None, ylim=None, figsize=None, ax=None):
         """
         input:
             self: pyMCDS class instance.
@@ -739,13 +739,32 @@ class pyMCDS:
                 alpha channel transparency value
                 between 1 (not transparent at all) and 0 (totally transparent).
 
-            fill: boolean
+            fill: boolean; default is True
                 True generates a matplotlib contourf plot.
                 False generates a matplotlib contour plot.
 
             cmap: string; default is viridis
                 matplotlib color map color label.
                 https://matplotlib.org/stable/tutorials/colors/colormaps.html
+
+            title: string; default None
+                possible plot title string.
+
+            grid: boolean; default True
+                should be plotted on  a grid or on a blank page?
+                True will plot on a grid.
+
+            xlim: tuple of two floating point numbers; default is None
+                to specify min and max x axis value.
+                None will extract agreeable values from the data.
+
+            ylim: tuple of two floating point numbers; default is None
+                to specify min and max y axis value.
+                None will extract agreeable values from the data.
+
+            figsize: tuple of floating point numbers; default is None
+                the specif the figure x and y measurement in inch.
+                None result in the default matplotlib setting, which is [6.4, 4.8].
 
             ax: matplotlib axis object; default setting is None
                 the ax object, which will be used as a canvas for plotting.
@@ -794,17 +813,34 @@ class pyMCDS:
         if (vmax is None):
             vmax = np.ceil(df_conc.loc[:,substrate].max())
 
+        # handle figsize
+        if (figsize is None):
+            figsize = (6.4, 4.8)
+
         # get figure and axis orbject
         if (ax is None):
-            fig, ax = plt.subplots()
+            fig, ax = plt.subplots(figsize=figsize)
         else:
-            fig = plt.gcf()
+            fig = plt.gcf(figsize=figsize)
 
         # get contour plot
         if fill:
             ax.contourf(x,y,z, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
         else:
             ax.contour(x,y,z, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
+
+        # set title
+        if not (title is None):
+            ax.set_title(title)
+
+        # set grid
+        ax.grid(visible=grid)
+
+        # set axis lim
+        if not (xlim is None):
+            ax.xlim(xlim[0], xlim[1])
+        if not (ylim is None):
+            ax.ylim(ylim[0], ylim[1])
 
         # get colorbar
         fig.colorbar(
@@ -1203,14 +1239,9 @@ class pyMCDS:
         # voxel data must be loaded from .mat file
         voxelfile = mesh_node.find('voxels').find('filename').text
         voxelpathfile = output_path / voxelfile
-        try:
-            initial_mesh = io.loadmat(voxelpathfile)['mesh']
-            if self.verbose:
-                print(f'reading: {voxelpathfile}')
-        except:
-            raise FileNotFoundError(f'Error @ pyMCDS._read_xml : no such file or directory: {voxelpathfile}\nreferenced in: {xmlpathfile}.')
-            sys.exit(1)
-
+        initial_mesh = io.loadmat(voxelpathfile)['mesh']
+        if self.verbose:
+            print(f'reading: {voxelpathfile}')
 
         # center of voxel specified by first three rows [ x, y, z ]
         # volume specified by fourth row
@@ -1362,14 +1393,19 @@ class pyMCDS:
             cell_data = io.loadmat(cellpathfile)['cells']
             if self.verbose:
                 print(f'reading: {cellpathfile}')
-        except:
-            raise FileNotFoundError(f'Error @ pyMCDS._read_xml : no such file or directory: {cellpathfile}\nreferenced in: {xmlpathfile}.')
-            sys.exit(1)
 
-        # store data
-        MCDS['discrete_cells']['data'] = {}
-        for col in range(len(data_labels)):
-            MCDS['discrete_cells']['data'][data_labels[col]] = cell_data[col, :]
+            # store data
+            MCDS['discrete_cells']['data'] = {}
+            for col in range(len(data_labels)):
+                MCDS['discrete_cells']['data'][data_labels[col]] = cell_data[col, :]
+
+        except ValueError:
+            print(f'Warning @ pyMCDS._read_xml : mat file with no cell detected! {cellpathfile}')
+
+            # store data
+            MCDS['discrete_cells']['data'] = {}
+            for col in range(len(data_labels)):
+                MCDS['discrete_cells']['data'][data_labels[col]] = np.array([])
 
 
         #####################
@@ -1387,13 +1423,9 @@ class pyMCDS:
             cellgraph_node = cell_node.find('neighbor_graph')
             cellfile = cellgraph_node.find('filename').text
             cellpathfile = output_path / cellfile
-            try:
-                dei_graph = graphfile_parser(s_pathfile=cellpathfile)
-                if self.verbose:
-                    print(f'reading: {cellpathfile}')
-            except:
-                raise FileNotFoundError(f'Error @ pyMCDS._read_xml : no such file or directory: {cellpathfile}\nreferenced in: {xmlpathfile}.')
-                sys.exit(1)
+            dei_graph = graphfile_parser(s_pathfile=cellpathfile)
+            if self.verbose:
+                print(f'reading: {cellpathfile}')
 
             # store data
             MCDS['discrete_cells']['graph'].update({'neighbor_cells': dei_graph})
@@ -1402,13 +1434,9 @@ class pyMCDS:
             cellgraph_node = cell_node.find('attached_cells_graph')
             cellfile = cellgraph_node.find('filename').text
             cellpathfile = output_path / cellfile
-            try:
-                dei_graph = graphfile_parser(s_pathfile=cellpathfile)
-                if self.verbose:
-                    print(f'reading: {cellpathfile}')
-            except:
-                raise FileNotFoundError(f'Error @ pyMCDS._read_xml : no such file or directory: {cellpathfile}\nreferenced in: {xmlpathfile}.')
-                sys.exit(1)
+            dei_graph = graphfile_parser(s_pathfile=cellpathfile)
+            if self.verbose:
+                print(f'reading: {cellpathfile}')
 
             # store data
             MCDS['discrete_cells']['graph'].update({'attached_cells': dei_graph})
