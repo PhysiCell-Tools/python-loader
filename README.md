@@ -55,7 +55,7 @@ Within the pcDataLoader library, we tried to stick to the documentation policy l
 
 ## Release Notes:
 + version 3.0.6 (2023-04-29): elmbeech/pcDataLoader
-    + pyMCDS **\_read_xml** branch 3 is now able to loading time steps with zero cell.
+    + pyMCDS **\_read_xml** is now able to loading time steps with zero cell.
     + pyMCDS **mcds.get_contour** can handle more input parameters.
 
 + version 3.0.5 (2023-02-26): elmbeech/pcDataLoader pyMCDS **mcds.get_contour**  plots span now the whole domain and not only to the border voxel centers.
