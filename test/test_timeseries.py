@@ -20,7 +20,7 @@
 # load library
 import os
 import pathlib
-import pcDataLoader as pc
+import pcdataloader as pc
 
 # const
 s_path_2d = str(pathlib.Path(pc.__file__).parent.resolve()/'data_timeseries_2d')

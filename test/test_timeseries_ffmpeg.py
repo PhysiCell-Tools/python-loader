@@ -20,7 +20,7 @@
 # load library
 import os
 import pathlib
-import pcDataLoader as pc
+import pcdataloader as pc
 import time
 
 # const
@@ -36,7 +36,7 @@ class TestPyMcdsTs(object):
     def test_ffmpeg(self):
         b_ok = (os.system('ffmpeg -version') == 0)
         if not b_ok:
-            print('Warning @ pcDataLoader : ffmpeg is not installed!')
+            print('Warning @ pcdataloader : ffmpeg is not installed!')
         assert b_ok
 
     ## making movies with jpeg as interface ##

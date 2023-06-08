@@ -1,7 +1,7 @@
-# pcDataLoader Tutorial Man Page
+# Pcdataloader Tutorial Man Page
 
-Please install the latest version of pcDataLoader, as described in the [HowTo](https://github.com/elmbeech/pcDataLoader/blob/v3/man/HOWTO.md) section.\
-If you are new to pcDataLoader, install from branch v3.\
+Please install the latest version of pcdataloader, as described in the [HowTo](https://github.com/elmbeech/pcdataloader/blob/v3/man/HOWTO.md) section.\
+If you are new to pcdataloader, install from branch v3.\
 Branch v2 exists mainly for backwards compatibility.
 
 
@@ -17,7 +17,7 @@ The original python-loader tutorial can be found here.
 Each time PhysiCell's internal time tracker passes a time step where data is to be saved, it generates a number of files of various types.\
 Each of these files will have a number at the end that indicates where it belongs in the sequence of outputs.\
 All files from the first round of output will end in 00000000.\*, and the second round will be 00000001.\*, and so on.\
-Have a look at this [PhysiCell data time series](https://github.com/elmbeech/pcDataLoader/tree/v3/pcDataLoader/data_timeseries_2d).
+Have a look at this [PhysiCell data time series](https://github.com/elmbeech/pcdataloader/tree/v3/pcdataloader/data_timeseries_2d).
 
 Let's assume we captured data every simulation time hour, and we're interested in the set of output half a day through the run, the 13th set of output files.\
 The files we care about most from this set consists of:
@@ -35,14 +35,14 @@ The files we care about most from this set consists of:
 
 
 ### Loading an MCDS into Python3
-In this section, we will load the pcDataLoder library, and use its pyMCDS class to load the data snapshot 00000012, described above, from [data\_timeseries\_ 2d](https://github.com/elmbeech/pcDataLoader/tree/v3/pcDataLoader/data_timeseries_2d) from the test dataset.
-(There is no need to extra install the test data set. In fact, both test datasets are already installed. They ship with the pip3 pcDataLoader installation.)
+In this section, we will load the pcDataLoder library, and use its pyMCDS class to load the data snapshot 00000012, described above, from [data\_timeseries\_ 2d](https://github.com/elmbeech/pcdataloader/tree/v3/pcdataloader/data_timeseries_2d) from the test dataset.
+(There is no need to extra install the test data set. In fact, both test datasets are already installed. They ship with the pip3 pcdataloader installation.)
 
 ```python
 import pathlib  # library to locate the test data
-import pcDataLoader as pc  # the physicell data loader library
+import pcdataloader as pc  # the physicell data loader library
 
-print('pcDataLoader version:', pc.__version__)  # it is easy to figure out which version you run
+print('pcdataloader version:', pc.__version__)  # it is easy to figure out which version you run
 
 s_path = str(pathlib.Path(pc.__file__).parent.joinpath('data_timeseries_2d'))  # local path to the installed test data set
 s_file = 'output00000012.xml'  # the snapshot we want to analyze
@@ -358,10 +358,10 @@ plt.close()
 ### Working With MCDS Time Series in Python3
 
 An exciting thing about modeling is to have time series data.\
-pcDataLoader's pyMCDSts class is here to make the handling of a time series of MCD snapshots easy.
+Pcdataloader's pyMCDSts class is here to make the handling of a time series of MCD snapshots easy.
 ```python
 import pathlib  # library to locate the test data
-import pcDataLoader as pc  # the physicell data loader library
+import pcdataloader as pc  # the physicell data loader library
 
 s_path = str(pathlib.Path(pc.__file__).parent.joinpath('data_timeseries_2d'))  # local path to the installed test data set
 print('mcds time series:', s_path)
@@ -403,7 +403,7 @@ However, you can always use a filtered ls\_xml list to only load a subset of sna
 ```python
 # load all snapshots
 l_mcds = mcdsts.read_mcds()
-l_mcds  # YMMV! [<pcDataLoader.pyMCDS.pyMCDS at 0x7fa660996b00>, <pcDataLoader.pyMCDS.pyMCDS at 0x7fa67673e1d0>, ..., <pcDataLoader.pyMCDS.pyMCDS at 0x7fa660950f10>]
+l_mcds  # YMMV! [<pcdataloader.pyMCDS.pyMCDS at 0x7fa660996b00>, <pcdataloader.pyMCDS.pyMCDS at 0x7fa67673e1d0>, ..., <pcdataloader.pyMCDS.pyMCDS at 0x7fa660950f10>]
 len(l_mcds)  # 25
 
 # load snapshot 11, 12, and 13

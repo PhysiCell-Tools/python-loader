@@ -1,14 +1,14 @@
-# pcDataLoader Reference Man Page
+# Pcdataloader Reference Man Page
 
 This is the technical descriptions of the machinery and how to operate it.\
 References are maintained in each module's [docstring](https://en.wikipedia.org/wiki/Docstring).\
-You can access them through the [source code](https://github.com/elmbeech/pcDataLoader/tree/master/pcDataLoader), or by first load PhysiCell Data Loader.
+You can access them through the [source code](https://github.com/elmbeech/pcdataloader/tree/master/pcdataloader), or by first load PhysiCell Data Loader.
 
 ```python3
-import pcDataLoader as pc
+import pcdataloader as pc
 ```
 
-Then, for each pcDataLoader module, get on the fly reference information with the [help](https://en.wikipedia.org/wiki/Help!) command.
+Then, for each pcdataloader module, get on the fly reference information with the [help](https://en.wikipedia.org/wiki/Help!) command.
 
 # pyMCDS
 ```

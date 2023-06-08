@@ -19,7 +19,7 @@
 
 # load library
 import pathlib
-import pcDataLoader as pc
+import pcdataloader as pc
 
 # const
 s_path_2d = str(pathlib.Path(pc.__file__).parent.resolve()/'data_timeseries_2d')
@@ -35,7 +35,7 @@ class TestPyMcdsMicroenvTrue2D(object):
     def test_pyMCDS(self, mcds=mcds):
         # load physicell data
         print(f'process: pc.pyMCDS(xmlfile={s_file_2d}, output_path={s_path_2d}, microenv=True) ...')
-        assert str(type(mcds)) == "<class 'pcDataLoader.pyMCDS.pyMCDS'>"
+        assert str(type(mcds)) == "<class 'pcdataloader.pyMCDS.pyMCDS'>"
 
     ## metadata related functions
     def test_mcds_get_multicellds_version(self, mcds=mcds):
