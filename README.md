@@ -54,11 +54,13 @@ Within the pcdataloader library, we tried to stick to the documentation policy l
 
 
 ## Release Notes:
-+ version 3.0.7 (2023-06-0?): elmbeech/pcdataloader
-    + get rid of pcdataloader in between letter capitalization.
++ version 3.0.7 (2023-06-08): elmbeech/pcdataloader
+    + get rid of pcdataloader library names in between letter capitalization.
+    + pyMCDSts: replaces the svg dependent **mcdsts.make_jpeg**, **mcdsts.make_png**, and **mcdsts.make_tiff** with **mcdsts.make_imgcell** and **mcdsts.make_imgsubs** which generate images straight out of the loaded data. the **mcdsts.make_gif** and **mcdsts.make_movie** functions were adjusted accordingly.
+    + pyMCDSts: **mcdsts.read_mcds** loads now automatically all mcds snapshots, if no xmlfile_list is provided (default).
 
 + version 3.0.6 (2023-04-29): elmbeech/pcdataloader
-    + pyMCDS **\_read_xml** is now able to loading time steps with zero cell.
+    + pyMCDS **\_read_xml** is now able to load time steps with zero cells.
     + pyMCDS **mcds.get_contour** can handle more input parameters.
 
 + version 3.0.5 (2023-02-26): elmbeech/pcdataloader pyMCDS **mcds.get_contour**  plots span now the whole domain and not only to the border voxel centers.

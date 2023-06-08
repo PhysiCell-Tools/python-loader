@@ -350,6 +350,12 @@ class pyMCDSts:
             https://en.wikipedia.org/wiki/Portable_Network_Graphics
             https://en.wikipedia.org/wiki/TIFF
         """
+        # handle z_slice
+        _, _, ar_p_axis = self.l_mcds[0].get_mesh_mnp_axis()
+        if not (z_slice in ar_p_axis):
+            z_slice = ar_p_axis[(ar_p_axis - z_slice).argmin()]
+            print(f'z_slice set to {z_slice}.')
+
         # handle extrema
         if extrema == None:
             extrema = [None, None]
@@ -390,8 +396,7 @@ class pyMCDSts:
 
         # plotting
         for mcds in self.l_mcds:
-            fig, ax = plt.subplots(figsize=figsize)
-            mcds.get_contour(
+            fig = mcds.get_contour(
                 substrate = focus,
                 z_slice = z_slice,
                 vmin = extrema[0],
@@ -403,8 +408,8 @@ class pyMCDSts:
                 grid = grid,
                 xlim = xlim,
                 ylim = ylim,
-                figsizepx = figsizepx,
-                ax = ax,
+                figsize = figsize,
+                ax = None,
             )
             os.makedirs(s_path, exist_ok=True)
             s_pathfile = f'{s_path}{focus}_{str(mcds.get_time()).zfill(11)}.{ext}'
