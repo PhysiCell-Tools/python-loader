@@ -446,6 +446,7 @@ df.plot(
     kind = 'scatter',
     x = 'time_min',
     y = 'cell_count',
+    s = 36,
     ylim = (800,1200),
     grid=True,
     title='2D time series test data'
@@ -457,6 +458,7 @@ df.plot(
     kind = 'scatter',
     x = 'time_min',
     y = 'cell_count',
+    s = 36,
     ylim = (800,1200),
     grid = True,
     title = '2D time series test data',
@@ -467,47 +469,68 @@ fig.savefig('pymcdsts_2d_cellcount.png', facecolor='white')
 plt.close()
 ```
 
-#### Times Series Scatter Plot Images and Movies
+#### Times Series Scatter Plot Images, Contour Plot Images, and Movies
 
 With PhysiCell it is not only possible to take data snapshots, but as well [svg](https://en.wikipedia.org/wiki/SVG) vector graphics images snapshots.\
 PhysiCell's [Makefile](https://en.wikipedia.org/wiki/Make_(software)) has code to translate those svg images into [gif](https://en.wikipedia.org/wiki/GIF), [jpeg](https://en.wikipedia.org/wiki/JPEG), [png](https://en.wikipedia.org/wiki/Portable_Network_Graphics), or [tiff](https://en.wikipedia.org/wiki/TIFF) format, making use of the [image magick](https://en.wikipedia.org/wiki/ImageMagick) library, and to translate the jpeg, png, or tiff images into a [mp4](https://en.wikipedia.org/wiki/MP4_file_format) movie, therefore making use from the [ffmpeg](https://en.wikipedia.org/wiki/FFmpeg) library.\
-pyMCDSts instances provides a similar functionality.\
-This means this following code will only run if image magick and ffmpeg are installed on your operating system.\
-The svg images might be quite huge. You can always use the `resize_factor` parameter to scale down the image size for the resulting images. Resizing will lead to processing time speed up and saves disk space.\
+pyMCDSts instances provides a similar functionality, although the images are generated straight from data and not for the svg files.\
+Anyhow, mp4 movies and gif images are generated in the same way.\
+This means the mcdsts.make_gif code will only run if image magick and mcdsts.make_movie code will only run if ffmpeg is installed on your computer.
 
 Translate physicell svg images into static raster graphic images:
-```python
-# resize factor 1 will leave the image size as it is.
-mcdsts.make_jpeg()  # resize factor 1
-mcdsts.make_png()  # resize factor 1
-mcdsts.make_tiff()  # resize factor 1
 
-# resize factor 0.2 will down scale to 20% width and length of the image.
-mcdsts.make_jpeg(0.2)
-mcdsts.make_png(0.2)
-mcdsts.make_tiff(0.2)
+```python
+## cell data ##
+
+# cell images colored by cell_type
+mcdsts.make_imgcell()  # jpeg images colored by cell_type
+mcdsts.make_imgcell(ext='png')  # png images colored by cell_type
+mcdsts.make_imgcell(ext='tiff')  # tiff images colored by cell_type
+
+# cell images can be colored by any cell dataframe column,
+# like, for example, by pressure.
+mcdsts.make_imgcell(focus='pressure')  # jpeg images colored by pressure values
+
+# there are parameters to adjust cell size and more.
 ```
 
-Translate physicell svg images into a dynamic gif image:\
-The default file name for the resulting gif image is set to timeseries.gif.
-```python
-# resize factor 1
-mcdsts.make_gif()
+```
+## substrate data ##
 
-# resize factor 0.2
-mcdsts.make_gif(0.2)
+# there is an equivalent function for substrate data,
+# being able to display any substrate dataframe column.
+mcdsts.make_imgsubs(focus='oxygen')  # jpeg images colored by oxygen values
 ```
 
-Translate physicell svg images into a mp4 movie:\
-Movies can only be generated for already existing jpeg, png, or tiff images!\
+Translate raster graphic images into a dynamic gif image:\
+Gif images can only be generated for already existing jpeg, png, or tiff images!\
 By default, jpeg files will be used, to generate the movie.\
-If png or tiff files should be used as source, then this have to be explicitly stated.\
-The default file name for the resulting movie is to movie.mp4.
+If png or tiff files should be used as source, then this has to be explicitly stated.\
+
 ```python
-mcdsts.make_movie()  # generate move from jpeg files
-mcdsts.make_movie('jpeg')  # generates a move from jpeg files
-mcdsts.make_movie('png')  # generates a move from png files
-mcdsts.make_movie('tiff')  # generates a move from tiff files
+# using jpeg images for input
+s_path = mcdsts.make_imgcell()
+mcdsts.make_gif(s_path)
+
+# using jpeg images one-liner
+mcdsts.make_gif(mcdsts.make_imgcell())
+
+# using tiff images for input
+s_path = mcdsts.make_imgcell(ext='tiff')
+mcdsts.make_gif(s_path, interface='tiff')
+```
+
+Translate physicell svg images into an mp4 movie:\
+Movies can only be generated for already existing jpeg, png, or tiff images!\
+
+```python
+# using jpeg images for input
+s_path = mcdsts.make_imgcell()
+mcdsts.make_movie(s_path)
+
+# using tiff images for input
+s_path = mcdsts.make_imgcell(ext='tiff')
+mcdsts.make_movie(s_path, interface='tiff')
 ```
 
 **That's all Folks!**

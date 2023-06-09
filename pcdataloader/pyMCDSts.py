@@ -27,7 +27,7 @@ import os
 import pathlib
 import platform
 from .pyMCDS import pyMCDS
-import shutil
+#import shutil
 
 # classes
 class pyMCDSts:
@@ -148,7 +148,7 @@ class pyMCDSts:
         return(s_magick)
 
 
-    def make_imgcell(self, focus='cell_type', z_slice=0, extrema=None, cmap='viridis', grid=True, xlim=None, ylim=None, s=9, figsizepx=[640, 480], ext='jpeg', figbgcolor=None):
+    def make_imgcell(self, focus='cell_type', z_slice=0, extrema=None, cmap='viridis', grid=True, xlim=None, ylim=None, s=plt.rcParams['lines.markersize']**2, figsizepx=[640, 480], ext='jpeg', figbgcolor=None):
         """
         input:
             self: pyMCDSts class instance
@@ -181,10 +181,11 @@ class pyMCDSts:
                 y axis min and max value.
                 default takes min and max from mesh y axis range.
 
-            s: integer; default 9
+            s: integer; default is plt.rcParams['lines.markersize']**2
                 scatter plot dot size in pixel.
                 Typographic points are 1/72 inch.
                 The marker size s is specified in points**2.
+                plt.rcParams['lines.markersize']**2 is in my case 36.
 
             figsizepx: list of two integers, default is [640, 480]
                 size of the figure in pixels, (x, y).
@@ -252,8 +253,8 @@ class pyMCDSts:
 
         # handle output path
         s_path = f'{self.output_path}cell_{focus}_z{z_slice}/'
-        if os.path.exists(s_path):
-            shutil.rmtree(s_path)
+        #if os.path.exists(s_path):
+        #    shutil.rmtree(s_path)
 
         # plotting
         for mcds in self.l_mcds:
@@ -391,8 +392,8 @@ class pyMCDSts:
 
         # handle output path
         s_path = f'{self.output_path}substrate_{focus}_z{z_slice}/'
-        if os.path.exists(s_path):
-            shutil.rmtree(s_path)
+        #if os.path.exists(s_path):
+        #    shutil.rmtree(s_path)
 
         # plotting
         for mcds in self.l_mcds:

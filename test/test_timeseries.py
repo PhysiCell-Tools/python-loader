@@ -70,7 +70,7 @@ class TestPyMcdsTs(object):
             #grid = True,  # matplotlib
             xlim = None,  # test if
             ylim = None,  # test if
-            #s = 9,  # matplotlib
+            #s = 36,  # matplotlib
             figsizepx = [641, 481],  # test non even pixel number
             ext = 'jpeg',
             figbgcolor = None,  # test if
