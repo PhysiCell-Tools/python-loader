@@ -5,9 +5,9 @@ https://packaging.python.org/guides/distributing-packages-using-setuptools/
 https://github.com/pypa/sampleproject
 
 pip releasing a next version:
-0. vim pcDataLoader/VERSION.py  # increase version number in file
-1. git add pcDataLoader/VERSION.py
-2. git commit -m'@ pcDataLoader : next release.'
+0. vim pcdataloader/VERSION.py  # increase version number in file
+1. git add pcdataloader/VERSION.py
+2. git commit -m'@ pcdataloader : next release.'
 3. git tag -a v0.0.0 -m'version 0.0.0'
 4. rm -r build dist
 5. python3 -m build --sdist  # make source distribution
@@ -27,23 +27,23 @@ here = pathlib.Path(__file__).parent.resolve()
 long_description = (here / "README.md").read_text(encoding="utf-8")
 
 # Get the version number from the VERSION.py file
-exec(open('./pcDataLoader/VERSION.py').read())
+exec(open('./pcdataloader/VERSION.py').read())
 
 # Arguments marked as "Required" below must be included for upload to PyPI.
 # Fields marked as "Optional" may be commented out.
 
 setup(
     # the basics
-    name="pcDataLoader",  # Required
+    name="pcdataloader",  # Required
     version=__version__,  # Required
 
     # description
-    description="pcDataLoader provides a platform independent, python3 based, pip installable interface to load output, generated with the PhysiCell agent based modeling framework, into python3.",  # Optional
+    description="pcdataloader provides a platform independent, python3 based, pip installable interface to load output, generated with the PhysiCell agent based modeling framework, into python3.",  # Optional
     long_description=long_description,  # Optional
     long_description_content_type="text/markdown",  # Optional (see note above)
 
     # the project's main homepage.
-    url="https://github.com/elmbeech/pcDataLoader",  # Optional
+    url="https://github.com/elmbeech/pcdataloader",  # Optional
     author="Elmar Bucher",  # Optional
     author_email="epbucher@iu.edu",  # Optional
     #author_email="heiland@iu.edu",  # Optional
@@ -116,7 +116,7 @@ setup(
     # If there are data files included in your packages that need to be
     # installed, specify them here.
     package_data={  # Optional
-        "pcDataLoader": [
+        "pcdataloader": [
             "data_timeseries_2d/*.mat",
             "data_timeseries_2d/*.svg",
             "data_timeseries_2d/*.txt",
@@ -158,9 +158,9 @@ setup(
     # maintainers, and where to support the project financially. The key is
     # what's used to render the link text on PyPI.
     project_urls={  # Optional
-        "Bug Reports": "https://github.com/elmbeech/pcDataLoader/issues",
+        "Bug Reports": "https://github.com/elmbeech/pcdataloader/issues",
         "Funding": "http://www.mathcancer.org/",
         "Say Thanks!": "http://physicell.org/",
-        "Source": "https://github.com/elmbeech/pcDataLoader",
+        "Source": "https://github.com/elmbeech/pcdataloader",
     },
 )

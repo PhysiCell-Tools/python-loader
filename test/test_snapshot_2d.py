@@ -19,7 +19,7 @@
 
 # load library
 import pathlib
-import pcDataLoader as pc
+import pcdataloader as pc
 
 # const
 s_path_2d = str(pathlib.Path(pc.__file__).parent.resolve()/'data_timeseries_2d')
@@ -35,7 +35,7 @@ class TestPyMcdsMicroenvTrue2D(object):
     def test_pyMCDS(self, mcds=mcds):
         # load physicell data
         print(f'process: pc.pyMCDS(xmlfile={s_file_2d}, output_path={s_path_2d}, microenv=True) ...')
-        assert str(type(mcds)) == "<class 'pcDataLoader.pyMCDS.pyMCDS'>"
+        assert str(type(mcds)) == "<class 'pcdataloader.pyMCDS.pyMCDS'>"
 
     ## metadata related functions
     def test_mcds_get_multicellds_version(self, mcds=mcds):
@@ -222,36 +222,36 @@ class TestPyMcdsMicroenvTrue2D(object):
     def test_mcds_get_contour(self, mcds=mcds):
         fig = mcds.get_contour(
             'oxygen',
-            z_slice = -3.333,
-            vmin = None,
-            vmax = None,
-            alpha = 1,
-            fill = False,
-            cmap = 'viridis',
-            title = 'test_mcds_get_contour',
-            grid = False,
-            xlim = None,
-            ylim = None,
-            figsize = None,
-            ax = None
+            z_slice = -3.333,  # test if
+            vmin = None,  # test if
+            vmax = None,  # test if
+            #alpha = 1,  # matplotlib
+            fill = False,  # contour case
+            #cmap = 'viridis',  matplotlib
+            title = 'test_mcds_get_contour',  # test if
+            #grid = False, # matplotlib
+            xlim = None,  # test if
+            ylim = None,  # test if
+            figsize = None,  # test if
+            ax = None  # generate fig ax case
         )
         assert(str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
 
     def test_mcds_get_contourf(self, mcds=mcds):
         fig = mcds.get_contour(
             'oxygen',
-            z_slice = 0,
-            vmin = None,
-            vmax = None,
-            alpha = 1,
-            fill = True,
-            cmap = 'viridis',
-            title = 'test_mcds_get_contourf',
-            grid = True,
+            z_slice = 0,  # jum over if
+            vmin = None,  # test if
+            vmax = None,  # test if
+            #alpha = 1,  # matplotlib
+            fill = True,  # contourf case
+            #cmap = 'viridis',  # matplotlib
+            title = 'test_mcds_get_contourf',  # test if
+            #grid = True,  # matplotlib
             xlim = None,
             ylim = None,
             figsize = None,
-            ax = None
+            ax = None  # generate fig ax case
         )
         assert(str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
 

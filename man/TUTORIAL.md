@@ -1,7 +1,7 @@
-# pcDataLoader Tutorial Man Page
+# Pcdataloader Tutorial Man Page
 
-Please install the latest version of pcDataLoader, as described in the [HowTo](https://github.com/elmbeech/pcDataLoader/blob/v3/man/HOWTO.md) section.\
-If you are new to pcDataLoader, install from branch v3.\
+Please install the latest version of pcdataloader, as described in the [HowTo](https://github.com/elmbeech/pcdataloader/blob/v3/man/HOWTO.md) section.\
+If you are new to pcdataloader, install from branch v3.\
 Branch v2 exists mainly for backwards compatibility.
 
 
@@ -17,7 +17,7 @@ The original python-loader tutorial can be found here.
 Each time PhysiCell's internal time tracker passes a time step where data is to be saved, it generates a number of files of various types.\
 Each of these files will have a number at the end that indicates where it belongs in the sequence of outputs.\
 All files from the first round of output will end in 00000000.\*, and the second round will be 00000001.\*, and so on.\
-Have a look at this [PhysiCell data time series](https://github.com/elmbeech/pcDataLoader/tree/v3/pcDataLoader/data_timeseries_2d).
+Have a look at this [PhysiCell data time series](https://github.com/elmbeech/pcdataloader/tree/v3/pcdataloader/data_timeseries_2d).
 
 Let's assume we captured data every simulation time hour, and we're interested in the set of output half a day through the run, the 13th set of output files.\
 The files we care about most from this set consists of:
@@ -35,14 +35,14 @@ The files we care about most from this set consists of:
 
 
 ### Loading an MCDS into Python3
-In this section, we will load the pcDataLoder library, and use its pyMCDS class to load the data snapshot 00000012, described above, from [data\_timeseries\_ 2d](https://github.com/elmbeech/pcDataLoader/tree/v3/pcDataLoader/data_timeseries_2d) from the test dataset.
-(There is no need to extra install the test data set. In fact, both test datasets are already installed. They ship with the pip3 pcDataLoader installation.)
+In this section, we will load the pcDataLoder library, and use its pyMCDS class to load the data snapshot 00000012, described above, from [data\_timeseries\_ 2d](https://github.com/elmbeech/pcdataloader/tree/v3/pcdataloader/data_timeseries_2d) from the test dataset.
+(There is no need to extra install the test data set. In fact, both test datasets are already installed. They ship with the pip3 pcdataloader installation.)
 
 ```python
 import pathlib  # library to locate the test data
-import pcDataLoader as pc  # the physicell data loader library
+import pcdataloader as pc  # the physicell data loader library
 
-print('pcDataLoader version:', pc.__version__)  # it is easy to figure out which version you run
+print('pcdataloader version:', pc.__version__)  # it is easy to figure out which version you run
 
 s_path = str(pathlib.Path(pc.__file__).parent.joinpath('data_timeseries_2d'))  # local path to the installed test data set
 s_file = 'output00000012.xml'  # the snapshot we want to analyze
@@ -358,10 +358,10 @@ plt.close()
 ### Working With MCDS Time Series in Python3
 
 An exciting thing about modeling is to have time series data.\
-pcDataLoader's pyMCDSts class is here to make the handling of a time series of MCD snapshots easy.
+Pcdataloader's pyMCDSts class is here to make the handling of a time series of MCD snapshots easy.
 ```python
 import pathlib  # library to locate the test data
-import pcDataLoader as pc  # the physicell data loader library
+import pcdataloader as pc  # the physicell data loader library
 
 s_path = str(pathlib.Path(pc.__file__).parent.joinpath('data_timeseries_2d'))  # local path to the installed test data set
 print('mcds time series:', s_path)
@@ -403,7 +403,7 @@ However, you can always use a filtered ls\_xml list to only load a subset of sna
 ```python
 # load all snapshots
 l_mcds = mcdsts.read_mcds()
-l_mcds  # YMMV! [<pcDataLoader.pyMCDS.pyMCDS at 0x7fa660996b00>, <pcDataLoader.pyMCDS.pyMCDS at 0x7fa67673e1d0>, ..., <pcDataLoader.pyMCDS.pyMCDS at 0x7fa660950f10>]
+l_mcds  # YMMV! [<pcdataloader.pyMCDS.pyMCDS at 0x7fa660996b00>, <pcdataloader.pyMCDS.pyMCDS at 0x7fa67673e1d0>, ..., <pcdataloader.pyMCDS.pyMCDS at 0x7fa660950f10>]
 len(l_mcds)  # 25
 
 # load snapshot 11, 12, and 13
@@ -446,6 +446,7 @@ df.plot(
     kind = 'scatter',
     x = 'time_min',
     y = 'cell_count',
+    s = 36,
     ylim = (800,1200),
     grid=True,
     title='2D time series test data'
@@ -457,6 +458,7 @@ df.plot(
     kind = 'scatter',
     x = 'time_min',
     y = 'cell_count',
+    s = 36,
     ylim = (800,1200),
     grid = True,
     title = '2D time series test data',
@@ -467,47 +469,68 @@ fig.savefig('pymcdsts_2d_cellcount.png', facecolor='white')
 plt.close()
 ```
 
-#### Times Series Scatter Plot Images and Movies
+#### Times Series Scatter Plot Images, Contour Plot Images, and Movies
 
 With PhysiCell it is not only possible to take data snapshots, but as well [svg](https://en.wikipedia.org/wiki/SVG) vector graphics images snapshots.\
 PhysiCell's [Makefile](https://en.wikipedia.org/wiki/Make_(software)) has code to translate those svg images into [gif](https://en.wikipedia.org/wiki/GIF), [jpeg](https://en.wikipedia.org/wiki/JPEG), [png](https://en.wikipedia.org/wiki/Portable_Network_Graphics), or [tiff](https://en.wikipedia.org/wiki/TIFF) format, making use of the [image magick](https://en.wikipedia.org/wiki/ImageMagick) library, and to translate the jpeg, png, or tiff images into a [mp4](https://en.wikipedia.org/wiki/MP4_file_format) movie, therefore making use from the [ffmpeg](https://en.wikipedia.org/wiki/FFmpeg) library.\
-pyMCDSts instances provides a similar functionality.\
-This means this following code will only run if image magick and ffmpeg are installed on your operating system.\
-The svg images might be quite huge. You can always use the `resize_factor` parameter to scale down the image size for the resulting images. Resizing will lead to processing time speed up and saves disk space.\
+pyMCDSts instances provides a similar functionality, although the images are generated straight from data and not for the svg files.\
+Anyhow, mp4 movies and gif images are generated in the same way.\
+This means the mcdsts.make_gif code will only run if image magick and mcdsts.make_movie code will only run if ffmpeg is installed on your computer.
 
 Translate physicell svg images into static raster graphic images:
-```python
-# resize factor 1 will leave the image size as it is.
-mcdsts.make_jpeg()  # resize factor 1
-mcdsts.make_png()  # resize factor 1
-mcdsts.make_tiff()  # resize factor 1
 
-# resize factor 0.2 will down scale to 20% width and length of the image.
-mcdsts.make_jpeg(0.2)
-mcdsts.make_png(0.2)
-mcdsts.make_tiff(0.2)
+```python
+## cell data ##
+
+# cell images colored by cell_type
+mcdsts.make_imgcell()  # jpeg images colored by cell_type
+mcdsts.make_imgcell(ext='png')  # png images colored by cell_type
+mcdsts.make_imgcell(ext='tiff')  # tiff images colored by cell_type
+
+# cell images can be colored by any cell dataframe column,
+# like, for example, by pressure.
+mcdsts.make_imgcell(focus='pressure')  # jpeg images colored by pressure values
+
+# there are parameters to adjust cell size and more.
 ```
 
-Translate physicell svg images into a dynamic gif image:\
-The default file name for the resulting gif image is set to timeseries.gif.
-```python
-# resize factor 1
-mcdsts.make_gif()
+```
+## substrate data ##
 
-# resize factor 0.2
-mcdsts.make_gif(0.2)
+# there is an equivalent function for substrate data,
+# being able to display any substrate dataframe column.
+mcdsts.make_imgsubs(focus='oxygen')  # jpeg images colored by oxygen values
 ```
 
-Translate physicell svg images into a mp4 movie:\
-Movies can only be generated for already existing jpeg, png, or tiff images!\
+Translate raster graphic images into a dynamic gif image:\
+Gif images can only be generated for already existing jpeg, png, or tiff images!\
 By default, jpeg files will be used, to generate the movie.\
-If png or tiff files should be used as source, then this have to be explicitly stated.\
-The default file name for the resulting movie is to movie.mp4.
+If png or tiff files should be used as source, then this has to be explicitly stated.\
+
 ```python
-mcdsts.make_movie()  # generate move from jpeg files
-mcdsts.make_movie('jpeg')  # generates a move from jpeg files
-mcdsts.make_movie('png')  # generates a move from png files
-mcdsts.make_movie('tiff')  # generates a move from tiff files
+# using jpeg images for input
+s_path = mcdsts.make_imgcell()
+mcdsts.make_gif(s_path)
+
+# using jpeg images one-liner
+mcdsts.make_gif(mcdsts.make_imgcell())
+
+# using tiff images for input
+s_path = mcdsts.make_imgcell(ext='tiff')
+mcdsts.make_gif(s_path, interface='tiff')
+```
+
+Translate physicell svg images into an mp4 movie:\
+Movies can only be generated for already existing jpeg, png, or tiff images!\
+
+```python
+# using jpeg images for input
+s_path = mcdsts.make_imgcell()
+mcdsts.make_movie(s_path)
+
+# using tiff images for input
+s_path = mcdsts.make_imgcell(ext='tiff')
+mcdsts.make_movie(s_path, interface='tiff')
 ```
 
 **That's all Folks!**

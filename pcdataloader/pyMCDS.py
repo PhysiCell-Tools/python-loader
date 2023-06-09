@@ -813,15 +813,14 @@ class pyMCDS:
         if (vmax is None):
             vmax = np.ceil(df_conc.loc[:,substrate].max())
 
-        # handle figsize
-        if (figsize is None):
-            figsize = (6.4, 4.8)
-
         # get figure and axis orbject
         if (ax is None):
+            # handle figsize
+            if (figsize is None):
+                figsize = (6.4, 4.8)
             fig, ax = plt.subplots(figsize=figsize)
         else:
-            fig = plt.gcf(figsize=figsize)
+            fig = plt.gcf()
 
         # get contour plot
         if fill:
@@ -838,9 +837,9 @@ class pyMCDS:
 
         # set axis lim
         if not (xlim is None):
-            ax.xlim(xlim[0], xlim[1])
+            ax.set_xlim(xlim[0], xlim[1])
         if not (ylim is None):
-            ax.ylim(ylim[0], ylim[1])
+            ax.set_ylim(ylim[0], ylim[1])
 
         # get colorbar
         fig.colorbar(
