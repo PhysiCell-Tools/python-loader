@@ -10,7 +10,7 @@
 # 1. git add pyproject.toml
 # 2. git commit -m'@ physicelldataloader : next release.'
 # 3. git tag -a v0.0.0 -m'version 0.0.0'
-# 4. rm -r build dist
+# 4. rm -r build dist pcdl.egg-info
 # 5. python3 -m build --sdist  # make source distribution
 # 6. python3 -m build --wheel  # make binary distribution python wheel
 # 7. twine upload dist/* --verbose
@@ -101,12 +101,27 @@ dependencies = ["matplotlib", "numpy", "pandas", "scipy"]  # Optional
 #[project.scripts]  # Optional
 #sample = "sample:main"
 
+# setuptool
+[tool.setuptools.packages.find]
+include = ["pcdl"]
+exclude = ["man"]
+
 # This is configuration specific to the `setuptools` build backend.
 # If you are using a different build backend, you will need to change this.
 [tool.setuptools]
 # If there are data files included in your packages that need to be
 # installed, specify them here.
-package-data = {"data_timeseries_2d"=["*.mat", "*.svg", "*.txt", "*.xml"], "data_timeseries_3d"=["*.mat", "*.svg", "*.txt", "*.xml"]}
+#package-data = {"data_timeseries_2d"=["*.mat", "*.svg", "*.txt", "*.xml"], "data_timeseries_3d"=["*.mat", "*.svg", "*.txt", "*.xml"]}
+package-data = {"pcdl"=[
+    "data_timeseries_2d/*.mat", 
+    "data_timeseries_2d/*.svg", 
+    "data_timeseries_2d/*.txt", 
+    "data_timeseries_2d/*.xml", 
+    "data_timeseries_3d/*.mat", 
+    "data_timeseries_3d/*.svg", 
+    "data_timeseries_3d/*.txt", 
+    "data_timeseries_3d/*.xml",
+]}
 
 [build-system]
 # These are the assumed default build requirements from pip:
