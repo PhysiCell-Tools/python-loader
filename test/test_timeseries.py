@@ -20,17 +20,17 @@
 # load library
 import os
 import pathlib
-import pcdataloader as pc
+import pcdl
 import platform
 import shutil
 
 # const
-s_path_2d = str(pathlib.Path(pc.__file__).parent.resolve()/'data_timeseries_2d')
+s_path_2d = str(pathlib.Path(pcdl.__file__).parent.resolve()/'data_timeseries_2d')
 
 # load physicell data time series
 class TestPyMcdsTs(object):
-    ''' test for pc.pyMCDSts data loader. '''
-    mcdsts = pc.pyMCDSts(s_path_2d, verbose=False)
+    ''' test for pcdl.pyMCDSts data loader. '''
+    mcdsts = pcdl.pyMCDSts(s_path_2d, verbose=False)
 
     ## get_xmlfile and read_mcds command ##
     def test_mcdsts_get_xmlfile_list(self, mcdsts=mcdsts):

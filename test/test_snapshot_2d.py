@@ -19,23 +19,23 @@
 
 # load library
 import pathlib
-import pcdataloader as pc
+import pcdl
 
 # const
-s_path_2d = str(pathlib.Path(pc.__file__).parent.resolve()/'data_timeseries_2d')
+s_path_2d = str(pathlib.Path(pcdl.__file__).parent.resolve()/'data_timeseries_2d')
 s_file_2d = 'output00000024.xml'
 s_pathfile_2d = f'{s_path_2d}/{s_file_2d}'
 
 
 # load physicell data with microenvironment
 class TestPyMcdsMicroenvTrue2D(object):
-    ''' test for pc.pyMCDS data loader, the complete data set. '''
-    mcds = pc.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, microenv=True)
+    ''' test for pcdl.pyMCDS data loader, the complete data set. '''
+    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, microenv=True)
 
     def test_pyMCDS(self, mcds=mcds):
         # load physicell data
-        print(f'process: pc.pyMCDS(xmlfile={s_file_2d}, output_path={s_path_2d}, microenv=True) ...')
-        assert str(type(mcds)) == "<class 'pcdataloader.pyMCDS.pyMCDS'>"
+        print(f'process: pcdl.pyMCDS(xmlfile={s_file_2d}, output_path={s_path_2d}, microenv=True) ...')
+        assert str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>"
 
     ## metadata related functions
     def test_mcds_get_multicellds_version(self, mcds=mcds):

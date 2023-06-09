@@ -1,48 +1,47 @@
-# Pcdataloader How To Man Page
+# PhysiCell Data Loader How To Man Page
 
 
 ## HowTo - branch v2 specific:
 
-### How to install the latest pcdataloader from the v2 branch?
+### How to install the latest pcdl from the v2 branch?
 ```bash
-pip3 install "pcdataloader<3"
+pip3 install "pcdl<3"
 ```
 
-### How to update to the latest pcdataloader from the v2 branch?
+### How to update to the latest physicelldataloader from the v2 branch?
 Note: this works, even when you have a v3 branch installation.
 ```bash
-pip3 install -U "pcdataloader<3"
+pip3 install -U "pcdl<3"
 ```
 
 
 ## HowTo - branch v3 specific:
 
-### How to install the latest pcdataloader from the v3 branch?
+### How to install the latest physicelldataloader from the v3 branch?
 ```bash
-pip3 install pcdataloader
+pip3 install pcdl
 ```
 
-### How to update to the latest pcdataloader from the v3 branch?
+### How to update to the latest physicelldataloader from the v3 branch?
 Note: this works, even when you have a v2 branch installation.
 ```bash
-pip3 install -U pcdataloader
+pip3 install -U pcdl
 ```
 
 ## HowTo - branch generic:
 
-### How to uninstall pcdataloader from your python3 environment?
+### How to uninstall physicelldataloader from your python3 environment?
 ```bash
-pip3 uninstall pcdataloader
+pip3 uninstall pcdl
 ```
 
-### How to load the pcdataloader library?
+### How to load the physicelldataloader library?
 ```python3
-import pcdataloader as pc
+import pcdl
 ```
 
-### How to check for the current installed pcdataloader version?
+### How to check for the current installed physicelldataloader version?
 ```python3
-import pcdataloader as pc
-pc.__version__
+import pcdl
+pcdl.__version__
 ```
-

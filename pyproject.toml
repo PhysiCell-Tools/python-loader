@@ -1,0 +1,115 @@
+#####
+# A setuptools based setup module.
+#
+# See:
+# https://packaging.python.org/guides/distributing-packages-using-setuptools/
+# https://github.com/pypa/sampleproject
+#
+# releasing a next version on pypi:
+# 0. increase version number in this pyproject.toml file
+# 1. git add pyproject.toml
+# 2. git commit -m'@ physicelldataloader : next release.'
+# 3. git tag -a v0.0.0 -m'version 0.0.0'
+# 4. rm -r build dist
+# 5. python3 -m build --sdist  # make source distribution
+# 6. python3 -m build --wheel  # make binary distribution python wheel
+# 7. twine upload dist/* --verbose
+# 8. git push origin master
+# 9. git push --tag
+#####
+
+[project]
+# name of the project
+# pip install pcdl
+# import pcdl
+name = "pcdl"  # Required
+
+# version
+version = "3.1.0" # Required
+
+# tag
+description = "physicell data loader (pcdl) provides a platform independent, python3 based, pip installable interface to load output, generated with the PhysiCell agent based modeling framework, into python3."  # Optional
+readme = "README.md" # Optional
+
+# python version
+requires-python = ">=3.6"  # >=3.6, <4
+
+# license
+license = {file = "LICENSE"}
+
+# what does your project relate to?
+keywords = ["physicell, python3, data analysis"]  # Optional
+
+# programer
+authors = [
+  {name="Elmar Bucher", email="epbucher@iu.edu"} # Optional
+]
+maintainers = [
+  {name="Elmar Bucher", email="epbucher@iu.edu" } # Optional
+]
+
+# Classifiers help users find your project by categorizing it.
+#
+# For a list of valid classifiers, see https://pypi.org/classifiers/
+classifiers = [  # Optional
+  # How mature is this project? Common values are
+  #   3 - Alpha
+  #   4 - Beta
+  #   5 - Production/Stable
+  "Development Status :: 3 - Alpha",
+
+  # Indicate who your project is intended for
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering :: Bio-Informatics",
+
+  # Pick your license as you wish
+  "License :: OSI Approved :: BSD License",
+
+  # Specify the Python versions you support here. In particular, ensure
+  # that you indicate you support Python 3. These classifiers are *not*
+  # checked by "pip install". See instead "python_requires" below.
+  "Programming Language :: Python :: 3 :: Only",
+]
+
+# packages that the project depends on to run.
+# any package here will be installed by pip when your project is installed
+dependencies = ["matplotlib", "numpy", "pandas", "scipy"]  # Optional
+
+# List additional groups of dependencies here (e.g. development
+# dependencies). Users will be able to install these using the "extras"
+# syntax, for example:
+#
+#   $ pip install sampleproject[dev]
+#
+# Similar to `dependencies` above, these must be valid existing
+# projects.
+#[project.optional-dependencies] # Optional
+#dev = ["check-manifest"]
+#test = ["coverage"]
+
+# URLs that are relevant for the project
+[project.urls]  # Optional
+"Homepage" = "https://github.com/elmbeech/physicelldataloader"
+"Bug Reports" = "https://github.com/elmbeech/physicellcdataloader/issues"
+"Funding" = "http://www.mathcancer.org/"
+"Say Thanks!" = "http://physicell.org/"
+"Source" = "https://github.com/elmbeech/physicelldataloader"
+
+# The following would provide a command line executable called `sample`
+# which executes the function `main` from this package when invoked.
+#[project.scripts]  # Optional
+#sample = "sample:main"
+
+# This is configuration specific to the `setuptools` build backend.
+# If you are using a different build backend, you will need to change this.
+[tool.setuptools]
+# If there are data files included in your packages that need to be
+# installed, specify them here.
+package-data = {"data_timeseries_2d"=["*.mat", "*.svg", "*.txt", "*.xml"], "data_timeseries_3d"=["*.mat", "*.svg", "*.txt", "*.xml"]}
+
+[build-system]
+# These are the assumed default build requirements from pip:
+# https://pip.pypa.io/en/stable/reference/pip/#pep-517-and-518-support
+requires = ["setuptools>=43.0.0", "wheel"]
+build-backend = "setuptools.build_meta"

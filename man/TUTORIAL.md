@@ -1,7 +1,7 @@
-# Pcdataloader Tutorial Man Page
+# Physicell Data Loader Tutorial Man Page
 
-Please install the latest version of pcdataloader, as described in the [HowTo](https://github.com/elmbeech/pcdataloader/blob/v3/man/HOWTO.md) section.\
-If you are new to pcdataloader, install from branch v3.\
+Please install the latest version of physicelldataloader (pcdl), as described in the [HowTo](https://github.com/elmbeech/physicelldataloader/blob/master/man/HOWTO.md) section.\
+If you are new to pcdl, install from branch v3.\
 Branch v2 exists mainly for backwards compatibility.
 
 
@@ -17,7 +17,7 @@ The original python-loader tutorial can be found here.
 Each time PhysiCell's internal time tracker passes a time step where data is to be saved, it generates a number of files of various types.\
 Each of these files will have a number at the end that indicates where it belongs in the sequence of outputs.\
 All files from the first round of output will end in 00000000.\*, and the second round will be 00000001.\*, and so on.\
-Have a look at this [PhysiCell data time series](https://github.com/elmbeech/pcdataloader/tree/v3/pcdataloader/data_timeseries_2d).
+Have a look at this [PhysiCell data time series](https://github.com/elmbeech/physicelldataloader/tree/master/pcdl/data_timeseries_2d).
 
 Let's assume we captured data every simulation time hour, and we're interested in the set of output half a day through the run, the 13th set of output files.\
 The files we care about most from this set consists of:
@@ -35,36 +35,36 @@ The files we care about most from this set consists of:
 
 
 ### Loading an MCDS into Python3
-In this section, we will load the pcDataLoder library, and use its pyMCDS class to load the data snapshot 00000012, described above, from [data\_timeseries\_ 2d](https://github.com/elmbeech/pcdataloader/tree/v3/pcdataloader/data_timeseries_2d) from the test dataset.
-(There is no need to extra install the test data set. In fact, both test datasets are already installed. They ship with the pip3 pcdataloader installation.)
+In this section, we will load the pcDataLoder library, and use its pyMCDS class to load the data snapshot 00000012, described above, from [data\_timeseries\_ 2d](https://github.com/elmbeech/physicelldataloader/tree/master/pcdl/data_timeseries_2d) from the test dataset.
+(There is no need to extra install the test data set. In fact, both test datasets are already installed. They ship with the pip3 pcdl installation.)
 
 ```python
 import pathlib  # library to locate the test data
-import pcdataloader as pc  # the physicell data loader library
+import pcdl  # the physicell data loader library
 
-print('pcdataloader version:', pc.__version__)  # it is easy to figure out which version you run
+print('pcdl version:', pcdl.__version__)  # it is easy to figure out which version you run
 
-s_path = str(pathlib.Path(pc.__file__).parent.joinpath('data_timeseries_2d'))  # local path to the installed test data set
+s_path = str(pathlib.Path(pcdl.__file__).parent.joinpath('data_timeseries_2d'))  # local path to the installed test data set
 s_file = 'output00000012.xml'  # the snapshot we want to analyze
 s_pathfile = f'{s_path}/{s_file}'
 print('mcds xml:', s_pathfile)
 
 # load mcds - multi cell digital snapshot - object
-mcds = pc.pyMCDS(s_pathfile)  # loads the whole snapshot: the xml and all related mat and graph files.
+mcds = pcdl.pyMCDS(s_pathfile)  # loads the whole snapshot: the xml and all related mat and graph files.
 ```
 
 Side note: in general, unix and windows path notation will work.\
 The legacy way of loading data works too.
 ```python
 # legacy way of loading a mcds object
-mcds = pc.pyMCDS('output00000012.xml', s_path)
+mcds = pcdl.pyMCDS('output00000012.xml', s_path)
 ```
 
 By default, all data related to the snapshot is loaded.\
 For speed and less memory usage, it is however possible to only load the essential (xml and cell mat data), and exclude microenvironment and graph data loading.
 ```python
 # fine tuned way of loading a mcds object
-mcds = pc.pyMCDS(s_pathfile, graph=False, microenv=False)
+mcds = pcdl.pyMCDS(s_pathfile, graph=False, microenv=False)
 ```
 
 ### The Loaded Data Structure
@@ -75,7 +75,7 @@ Regarding **version 1**, the structure has slightly changed.\
 However, in **version 3**, all data is accessible by functions. There should be no need to fetch data directly from the `mcds.data` dictionary!\
 Anyhow, let's take a look at what we actually have in here.
 
-![mcds.data dictionary blueprint](img/pcdataloader_data_dictionary_v3.0.0.png)
+![mcds.data dictionary blueprint](img/physicelldataloader_data_dictionary_v3.0.0.png)
 
 ```python
 # main data branches
@@ -358,23 +358,23 @@ plt.close()
 ### Working With MCDS Time Series in Python3
 
 An exciting thing about modeling is to have time series data.\
-Pcdataloader's pyMCDSts class is here to make the handling of a time series of MCD snapshots easy.
+Pcdl's pyMCDSts class is here to make the handling of a time series of MCD snapshots easy.
 ```python
 import pathlib  # library to locate the test data
-import pcdataloader as pc  # the physicell data loader library
+import pcdl  # the physicell data loader library
 
-s_path = str(pathlib.Path(pc.__file__).parent.joinpath('data_timeseries_2d'))  # local path to the installed test data set
+s_path = str(pathlib.Path(pcdl.__file__).parent.joinpath('data_timeseries_2d'))  # local path to the installed test data set
 print('mcds time series:', s_path)
 
 # generate a mcds time series instance
-mcdsts = pc.pyMCDSts(s_path)
+mcdsts = pcdl.pyMCDSts(s_path)
 ```
 
 Like in the pyMCDs class, for memory consumption and processing speed control, we can specify if we want to load microenvironment data and graph data from the snapshots we later on analyze.\
 By default, all data related to the snapshot is loaded.
 ```python
 # fine tuned the way mcds objects will be loaded
-mcdsts = pc.pyMCDSts(s_path, graph=False, microenv=False)
+mcdsts = pcdl.pyMCDSts(s_path, graph=False, microenv=False)
 ```
 
 #### Times Series MCDS Data
@@ -403,7 +403,7 @@ However, you can always use a filtered ls\_xml list to only load a subset of sna
 ```python
 # load all snapshots
 l_mcds = mcdsts.read_mcds()
-l_mcds  # YMMV! [<pcdataloader.pyMCDS.pyMCDS at 0x7fa660996b00>, <pcdataloader.pyMCDS.pyMCDS at 0x7fa67673e1d0>, ..., <pcdataloader.pyMCDS.pyMCDS at 0x7fa660950f10>]
+l_mcds  # YMMV! [<pcdl.pyMCDS.pyMCDS at 0x7fa660996b00>, <pcdl.pyMCDS.pyMCDS at 0x7fa67673e1d0>, ..., <pcdl.pyMCDS.pyMCDS at 0x7fa660950f10>]
 len(l_mcds)  # 25
 
 # load snapshot 11, 12, and 13
@@ -474,7 +474,7 @@ plt.close()
 With PhysiCell it is not only possible to take data snapshots, but as well [svg](https://en.wikipedia.org/wiki/SVG) vector graphics images snapshots.\
 PhysiCell's [Makefile](https://en.wikipedia.org/wiki/Make_(software)) has code to translate those svg images into [gif](https://en.wikipedia.org/wiki/GIF), [jpeg](https://en.wikipedia.org/wiki/JPEG), [png](https://en.wikipedia.org/wiki/Portable_Network_Graphics), or [tiff](https://en.wikipedia.org/wiki/TIFF) format, making use of the [image magick](https://en.wikipedia.org/wiki/ImageMagick) library, and to translate the jpeg, png, or tiff images into a [mp4](https://en.wikipedia.org/wiki/MP4_file_format) movie, therefore making use from the [ffmpeg](https://en.wikipedia.org/wiki/FFmpeg) library.\
 pyMCDSts instances provides a similar functionality, although the images are generated straight from data and not for the svg files.\
-Anyhow, mp4 movies and gif images are generated in the same way.\
+However, mp4 movies and gif images are generated in the same way.\
 This means the mcdsts.make_gif code will only run if image magick and mcdsts.make_movie code will only run if ffmpeg is installed on your computer.
 
 Translate physicell svg images into static raster graphic images:
@@ -494,7 +494,7 @@ mcdsts.make_imgcell(focus='pressure')  # jpeg images colored by pressure values
 # there are parameters to adjust cell size and more.
 ```
 
-```
+```python
 ## substrate data ##
 
 # there is an equivalent function for substrate data,
@@ -505,7 +505,7 @@ mcdsts.make_imgsubs(focus='oxygen')  # jpeg images colored by oxygen values
 Translate raster graphic images into a dynamic gif image:\
 Gif images can only be generated for already existing jpeg, png, or tiff images!\
 By default, jpeg files will be used, to generate the movie.\
-If png or tiff files should be used as source, then this has to be explicitly stated.\
+If png or tiff files should be used as source, then this has to be explicitly stated.
 
 ```python
 # using jpeg images for input
@@ -521,7 +521,7 @@ mcdsts.make_gif(s_path, interface='tiff')
 ```
 
 Translate physicell svg images into an mp4 movie:\
-Movies can only be generated for already existing jpeg, png, or tiff images!\
+Movies can only be generated for already existing jpeg, png, or tiff images!
 
 ```python
 # using jpeg images for input

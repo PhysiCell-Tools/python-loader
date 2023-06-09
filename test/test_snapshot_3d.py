@@ -19,34 +19,34 @@
 
 # load library
 import pathlib
-import pcdataloader as pc
+import pcdl
 
 # const
-s_path_3d = str(pathlib.Path(pc.__file__).parent.resolve()/'data_timeseries_3d')
+s_path_3d = str(pathlib.Path(pcdl.__file__).parent.resolve()/'data_timeseries_3d')
 s_file_3d = 'output00000024.xml'
 s_pathfile_3d = f'{s_path_3d}/{s_file_3d}'
 
 
 # load physicell data shortcut
 class TestPyMcdsShortcut3D(object):
-    ''' test for pc.pyMCDS data loader shortcut '''
+    ''' test for pcdl.pyMCDS data loader shortcut '''
 
     def test_pyMCDS(self):
         # load physicell data shortcut
-        print(f'process: pc.pyMCDS(xmlfile={s_pathfile_3d}) ...')
-        mcds = pc.pyMCDS(xmlfile=s_pathfile_3d)
-        assert str(type(mcds)) == "<class 'pcdataloader.pyMCDS.pyMCDS'>"
+        print(f'process: pcdl.pyMCDS(xmlfile={s_pathfile_3d}) ...')
+        mcds = pcdl.pyMCDS(xmlfile=s_pathfile_3d)
+        assert str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>"
 
 
 # load physicell data with microenvironment
 class TestPyMcds3D(object):
-    ''' test for pc.pyMCDS data loader microenvironment True'''
-    mcds = pc.pyMCDS(xmlfile=s_file_3d, output_path=s_path_3d)  # graph=True, microenv=True
+    ''' test for pcdl.pyMCDS data loader microenvironment True'''
+    mcds = pcdl.pyMCDS(xmlfile=s_file_3d, output_path=s_path_3d)  # graph=True, microenv=True
 
     def test_pyMCDS(self, mcds=mcds):
         # load physicell data
-        print(f'process: pc.pyMCDS(xmlfile={s_file_3d}, output_path={s_path_3d}, microenv=True) ...')
-        assert str(type(mcds)) == "<class 'pcdataloader.pyMCDS.pyMCDS'>"
+        print(f'process: pcdl.pyMCDS(xmlfile={s_file_3d}, output_path={s_path_3d}, microenv=True) ...')
+        assert str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>"
 
     ## metadata related functions
     def test_mcds_get_multicellds_version(self, mcds=mcds):

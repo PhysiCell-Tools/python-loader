@@ -19,23 +19,23 @@
 
 # load library
 import pathlib
-import pcdataloader as pc
+import pcdl
 
 # const
-s_path_3d = str(pathlib.Path(pc.__file__).parent.resolve()/'data_timeseries_3d')
+s_path_3d = str(pathlib.Path(pcdl.__file__).parent.resolve()/'data_timeseries_3d')
 s_file_3d = 'output00000024.xml'
 s_pathfile_3d = f'{s_path_3d}/{s_file_3d}'
 
 
 # test function
 class TestPyMcdsMicroenvFalse3D(object):
-    ''' test for pc.pyMCDS data loader microenvironment False '''
-    mcds = pc.pyMCDS(xmlfile=s_file_3d, output_path=s_path_3d, microenv=False)
+    ''' test for pcdl.pyMCDS data loader microenvironment False '''
+    mcds = pcdl.pyMCDS(xmlfile=s_file_3d, output_path=s_path_3d, microenv=False)
 
     def test_pyMCDS(self, mcds=mcds):
         # load physicell data
-        print(f'process: pc.pyMCDS(xmlfile={s_file_3d}, output_path={s_path_3d}, microenv=False) ...')
-        assert str(type(mcds)) == "<class 'pcdataloader.pyMCDS.pyMCDS'>"
+        print(f'process: pcdl.pyMCDS(xmlfile={s_file_3d}, output_path={s_path_3d}, microenv=False) ...')
+        assert str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>"
 
     ## metadata related functions
     # nop
