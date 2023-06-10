@@ -385,6 +385,7 @@ Now, let's have a look at the pyMCDSts instances data analysis functions.\
 This list can be manipulated, and later be fed into the objects read\_xml function, to only read specific snapshots into memory.
 For example, if you want only to analyze hour 11, 12, and 13 from your run, or if data from every other hour will be enough.
 ```python
+mcdsts = pcdl.pyMCDSts(s_path)
 ls_xml = mcdsts.get_xmlfile_list()
 ls_xml   # ['/path/to/output00000000.xml', '/path/to/output00000001.xml', ..., '/path/to/output00000024.xml']
 
@@ -434,8 +435,10 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 # fetch data
+mcdsts = pcdl.pyMCDSts(s_path)
+l_mcds = mcdsts.read_mcds()
 lr_time = [mcds.get_time() for mcds in l_mcds]  # [0.0, 60.0, ..., 1440.0]
-li_cellcount = li_cellcount = [mcds.get_cell_df().shape[0] for mcds in l_mcds]  # [889, 898, ..., 1099]
+li_cellcount = [mcds.get_cell_df().shape[0] for mcds in l_mcds]  # [889, 898, ..., 1099]
 
 # pack data into a pandas datafarm
 df = pd.DataFrame([lr_time,li_cellcount], index=['time_min','cell_count']).T
@@ -477,6 +480,11 @@ pyMCDSts instances provides a similar functionality, although the images are gen
 However, mp4 movies and gif images are generated in the same way.\
 This means the mcdsts.make_gif code will only run if image magick and mcdsts.make_movie code will only run if ffmpeg is installed on your computer.
 
+```python
+# fetch data
+mcdsts = pcdl.pyMCDSts(s_path)
+```
+
 Translate physicell svg images into static raster graphic images:
 
 ```python
@@ -492,9 +500,8 @@ mcdsts.make_imgcell(ext='tiff')  # tiff images colored by cell_type
 mcdsts.make_imgcell(focus='pressure')  # jpeg images colored by pressure values
 
 # there are parameters to adjust cell size and more.
-```
 
-```python
+
 ## substrate data ##
 
 # there is an equivalent function for substrate data,

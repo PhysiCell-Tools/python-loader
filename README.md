@@ -55,7 +55,7 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 
 ## Release Notes:
 + version 3.1.0: elmbeech/physicelldataloader
-    + resolve pypa problem.
+    + moving from systemtools to the hatching build system.
     + change the pcDataLoader library name to pcdl.
 
 + version 3.0.7 (2023-06-08): elmbeech/physicelldataloader
