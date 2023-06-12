@@ -7,14 +7,12 @@ into [python3](https://en.wikipedia.org/wiki/Python_(programming_language)).
 
 pcdl was forked from the original [PhysiCell-Tools](https://github.com/PhysiCell-Tools) [python-loader](https://github.com/PhysiCell-Tools/python-loader) implementation.
 
-The pcdl python3 library will maintain two main branches:
+The pcdl python3 library maintains three branches branches:
 
++ **Branch version 1** is the original PhysiCell-Tools/python-loader code.
 + **Branch version 2** will be strictly compatible with the original PhysiCell-Tools/python-loader code, although pip installable.
 + **Branch version 3** might break with old habits, although tries to be as much downward compatible as possible.
   The aim of the v3 branch is to get a very lean and agile python3 physicell output interface, for the ones coming from the python world.
-
-Note: there can only be one version of pcdl installed in each python3 environment.
-In the HowTo guide is in detail explained, how to install and uninstall pcdl branches.
 
 
 ## Header:
@@ -120,6 +118,7 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 + version 2.0.2 (2023-01-06): elmbeech/physicelldataloader reset patch voxel spacing bugfix, so that branch2 is full compatible with branch1 again. use branch3 for a bugfixed version!
 + version 2.0.1 (2022-11-08): elmbeech/physicelldataloader beta release patch voxel spacing bugfix.
 + version 2.0.0 (2022-08-30): elmbeech/physicelldataloader pip installable release, derived from and compatible with PhysiCell-Tools/python-loader release 1.1.0 (2022-07-20).
+
 + version 1.1.0 (2022-05-09): Physicell-Tools/python-loader release compatible with pre-v1.10.x of PhysiCell
 + version 1.0.1 (2020-01-25): Physicell-Tools/python-loader time-series related bug fix
 + version 1.0.0 (2019-09-28): Physicell-Tools/python-loader first public release!

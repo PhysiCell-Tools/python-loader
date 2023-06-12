@@ -1,11 +1,11 @@
 # Physicell Data Loader Tutorial Man Page
 
-Please install the latest version of physicelldataloader (pcdl), as described in the [HowTo](https://github.com/elmbeech/physicelldataloader/blob/master/man/HOWTO.md) section.\
-If you are new to pcdl, install from branch v3.\
-Branch v2 exists mainly for backwards compatibility.
+Please install the latest version of physicelldataloader (pcdl) branch v3, 
+as described in the [HowTo](https://github.com/elmbeech/physicelldataloader/blob/master/man/HOWTO.md) section.\
+Branch v1 and v2 exists mainly for backwards compatibility.
 
 
-## Tutorial - branch v2
+## Tutorial - branch v1 and v2
 The original python-loader tutorial can be found here.
 + http://www.mathcancer.org/blog/python-loader/
 
