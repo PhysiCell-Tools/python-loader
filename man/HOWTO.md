@@ -7,7 +7,6 @@
 ```bash
 pip3 install "pcdl<3"
 ```
-
 ### How to update to the latest physicelldataloader from the v2 branch?
 Note: this works, even when you have a v3 branch installation.
 ```bash
@@ -25,13 +24,11 @@ pip3 uninstall pcdl
 ```bash
 pip3 install pcdl
 ```
-
 ### How to update to the latest physicelldataloader from the v3 branch?
 Note: this works, even when you have a v2 branch installation.
 ```bash
 pip3 install -U pcdl
 ```
-
 ### How to uninstall physicelldataloader from your python3 environment?
 Note: For the pcdl library > branch 2, this is a two-step procedure.
 First, possibly installed test data and tutorial output will be removed.
@@ -42,11 +39,12 @@ pip3 uninstall pcdl
 ```
 
 
+## HowTo - branch generic:
+
 ### How to load the physicelldataloader library?
 ```python3
 import pcdl
 ```
-
 ### How to check for the current installed physicelldataloader version?
 ```python3
 import pcdl
