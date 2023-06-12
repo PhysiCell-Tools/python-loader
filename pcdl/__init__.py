@@ -1,9 +1,5 @@
-import importlib.metadata
 from .pyMCDS import pyMCDS
 from .pyMCDSts import pyMCDSts
-
-# extract version
-try: 
-    __version__ = importlib.metadata.version("pcdl")
-except importlib.metadata.PackageNotFoundError:
-    __version__ = "development"
+from .data_timeseries import install_data
+from .data_timeseries import uninstall_data
+from .VERSION import __version__

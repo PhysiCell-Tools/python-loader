@@ -18,6 +18,7 @@
 #####
 
 # load library
+import os
 import pathlib
 import pcdl
 
@@ -26,6 +27,9 @@ s_path_2d = str(pathlib.Path(pcdl.__file__).parent.resolve()/'data_timeseries_2d
 s_file_2d = 'output00000024.xml'
 s_pathfile_2d = f'{s_path_2d}/{s_file_2d}'
 
+# test data
+if not os.path.exists(s_path_2d):
+    pcdl.install_data()
 
 # load physicell data with microenvironment
 class TestPyMcdsMicroenvTrue2D(object):

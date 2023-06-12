@@ -26,6 +26,9 @@ s_path_3d = str(pathlib.Path(pcdl.__file__).parent.resolve()/'data_timeseries_3d
 s_file_3d = 'output00000024.xml'
 s_pathfile_3d = f'{s_path_3d}/{s_file_3d}'
 
+# test data
+if not os.path.exists(s_path_3d):
+    pcdl.install_data()
 
 # load physicell data shortcut
 class TestPyMcdsShortcut3D(object):

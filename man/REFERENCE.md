@@ -81,3 +81,8 @@ help(pcdl.pyMCDSts.make_movie)
 help(pcdl.pyMCDSts._handle_magick)
 ```
 
+# test data sets
+```
+help(pcdl.install_data)
+help(pcdl.uninstall_data)
+```

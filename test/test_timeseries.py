@@ -27,6 +27,10 @@ import shutil
 # const
 s_path_2d = str(pathlib.Path(pcdl.__file__).parent.resolve()/'data_timeseries_2d')
 
+# test data
+if not os.path.exists(s_path_2d):
+    pcdl.install_data()
+
 # load physicell data time series
 class TestPyMcdsTs(object):
     ''' test for pcdl.pyMCDSts data loader. '''

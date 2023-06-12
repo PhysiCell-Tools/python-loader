@@ -1,13 +1,18 @@
 # the basics
 *~
-.DS_Store
+**/.DS_Store
+**/._.DS_Store
 
 # python
 __init__.pyc
 __pycache__/
 .mypy_cache/
 
+# pytest
+.pytest_cache/
+
 # pip
 build/
 dist/
-pcDataLoader.egg-info/
+pcdl.egg-info/
+

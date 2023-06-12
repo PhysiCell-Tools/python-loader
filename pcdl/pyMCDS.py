@@ -1354,24 +1354,24 @@ class pyMCDS:
                 # tags to differentiate repeated labels (usually space related)
                 # print("n=",n)
                 spatial_type = False
-                if( fixed_label == 'position' ):
+                if (fixed_label == 'position'):
                     spatial_type = True
-                elif( fixed_label == 'orientation' ):
+                elif (fixed_label == 'orientation'):
                     spatial_type = True
-                elif( fixed_label == 'velocity' ):
+                elif (fixed_label == 'velocity'):
                     spatial_type = True
-                elif( fixed_label == 'migration_bias_direction' ):
+                elif (fixed_label == 'migration_bias_direction'):
                     spatial_type = True
-                elif( fixed_label == 'motility_vector' ):
+                elif (fixed_label == 'motility_vector'):
                     spatial_type = True
 
-                if( nlabels == 3 and spatial_type == True ):
+                if (nlabels == 3) and (spatial_type == True):
                     dir_label = ['_x', '_y', '_z']
                 else:
                     dir_label = [];
                     for nn in range(100):
                         dir_label.append( '_%u' % nn )
-                # print( dir_label )
+                # print(dir_label)
                 for i in range(int(label.get('size'))):
                     s_label = fixed_label + dir_label[i]
                     # print(s_label)

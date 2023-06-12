@@ -55,8 +55,10 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 
 ## Release Notes:
 + version 3.1.0: elmbeech/physicelldataloader
-    + moving from setuptools to the hatching build system.
-    + change the python library name from pcDataLoader to pcdl.
+    + change build system from setuptools to hatching.
+    + change the library name from pcDataLoader to pcdl.
+    + to make the library installation more lightweight, test data was excluded from the basic installation.
+      given the computer is connected to the internet, test data can easily be installed and removed with the **pcdl.install_data()** and **pcdl.uninstall_data()** functions now.
 
 + version 3.0.7 (2023-06-08): elmbeech/physicelldataloader
     + pyMCDSts: replaces the svg dependent **mcdsts.make_jpeg**, **mcdsts.make_png**, and **mcdsts.make_tiff** with **mcdsts.make_imgcell** and **mcdsts.make_imgsubs** which generate images straight out of the loaded data. the **mcdsts.make_gif** and **mcdsts.make_movie** functions were adjusted accordingly.

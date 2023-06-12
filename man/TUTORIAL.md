@@ -35,14 +35,15 @@ The files we care about most from this set consists of:
 
 
 ### Loading an MCDS into Python3
-In this section, we will load the pcDataLoder library, and use its pyMCDS class to load the data snapshot 00000012, described above, from [data\_timeseries\_ 2d](https://github.com/elmbeech/physicelldataloader/tree/master/pcdl/data_timeseries_2d) from the test dataset.
-(There is no need to extra install the test data set. In fact, both test datasets are already installed. They ship with the pip3 pcdl installation.)
+In this section, we will load the pcDataLoder library, and use its pyMCDS class to load the data snapshot 00000012, described above, from [data\_timeseries\_ 2d](https://github.com/elmbeech/physicelldataloader/tree/master/pcdl/data_timeseries_2d) from the 2D timeseries test dataset.
 
 ```python
 import pathlib  # library to locate the test data
 import pcdl  # the physicell data loader library
 
-print('pcdl version:', pcdl.__version__)  # it is easy to figure out which version you run
+print('pcdl version:', pcdl.__version__)  # it is easy to figure out which pcdl version you run
+
+pcdl.install_data()  # to install the test datasets
 
 s_path = str(pathlib.Path(pcdl.__file__).parent.joinpath('data_timeseries_2d'))  # local path to the installed test data set
 s_file = 'output00000012.xml'  # the snapshot we want to analyze
@@ -539,5 +540,14 @@ mcdsts.make_movie(s_path)
 s_path = mcdsts.make_imgcell(ext='tiff')
 mcdsts.make_movie(s_path, interface='tiff')
 ```
+
+
+### Data Clean Up ###
+After you are done checking out the results,
+you can uninstall the test datasets and all files stored within its folders.
+```
+pcdl.uninstall_data()
+```
+
 
 **That's all Folks!**

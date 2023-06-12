@@ -13,6 +13,10 @@ Note: this works, even when you have a v3 branch installation.
 ```bash
 pip3 install -U "pcdl<3"
 ```
+### How to uninstall physicelldataloader from your python3 environment?
+```bash
+pip3 uninstall pcdl
+```
 
 
 ## HowTo - branch v3 specific:
@@ -28,12 +32,15 @@ Note: this works, even when you have a v2 branch installation.
 pip3 install -U pcdl
 ```
 
-## HowTo - branch generic:
-
 ### How to uninstall physicelldataloader from your python3 environment?
+Note: For the pcdl library > branch 2, this is a two-step procedure.
+First, possibly installed test data and tutorial output will be removed.
+Then, the software will be uninstalled.
 ```bash
+python3 -c "import pcdl; pcdl.uninstall_data()"
 pip3 uninstall pcdl
 ```
+
 
 ### How to load the physicelldataloader library?
 ```python3
