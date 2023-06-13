@@ -53,7 +53,7 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 
 ## Release Notes:
 + version 3.2.0: elmbeech/physicelldataloader
-    + pypi odyssey is comming to an end.
+    + pypa odyssey is comming to an end.
     + change build system from setuptools to hatching.
     + change the library name from pcDataLoader to pcdl.
     + to make the library installation more lightweight, test data was excluded from the basic installation.

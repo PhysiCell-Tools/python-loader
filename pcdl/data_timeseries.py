@@ -57,8 +57,6 @@ class install_data:
             # extract tar.gz file
             f = tarfile.open(s_pathfile, 'r')
             f.extractall(s_path)
-            # delete tar.gz file
-            os.remove(s_pathfile)
 
 
 class uninstall_data:
