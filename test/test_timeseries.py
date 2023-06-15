@@ -112,7 +112,7 @@ class TestPyMcdsTs(object):
         )
         assert os.path.exists(s_opathfile) and \
             (s_opathfile == s_path+'data_timeseries_2dcell_cell_type_z0_jpeg.gif')
-        #shutil.rmtree(s_path)
+        shutil.rmtree(s_path)
 
     ## make_movie command ##
     def test_mcdsts_make_movie(self, mcdsts=mcdsts):

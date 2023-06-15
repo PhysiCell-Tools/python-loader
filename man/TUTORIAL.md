@@ -1,6 +1,6 @@
 # Physicell Data Loader Tutorial Man Page
 
-Please install the latest version of physicelldataloader (pcdl) branch v3, 
+Please install the latest version of physicelldataloader (pcdl) branch v3,
 as described in the [HowTo](https://github.com/elmbeech/physicelldataloader/blob/master/man/HOWTO.md) section.\
 Branch v1 and v2 exists mainly for backwards compatibility.
 
@@ -76,14 +76,14 @@ Regarding **version 1**, the structure has slightly changed.\
 However, in **version 3**, all data is accessible by functions. There should be no need to fetch data directly from the `mcds.data` dictionary!\
 Anyhow, let's take a look at what we actually have in here.
 
-![mcds.data dictionary blueprint](img/physicelldataloader_data_dictionary_v3.0.0.png)
+![mcds.data dictionary blueprint](img/physicelldataloader_data_dictionary_v3.2.2.png)
 
 ```python
 # main data branches
 sorted(mcds.data.keys())  # metadata, mesh, substrate (continuum_variables), and agent (discrete_cells).
 
 # metadata
-sorted(mcds.data['metadata'].keys())  # multicellds version, physicell version, simulation time, runtime, time stamp, time unit, and spatial unit.
+sorted(mcds.data['metadata'].keys())  # multicellds version, physicell version, simulation time, runtime, time stamp, time unit, spatial unit, and substrate and cell type ID label mappings.
 
 # mesh
 sorted(mcds.data['mesh'].keys())  # voxel (ijk), mesh (nmp), and position (xyz) range, axis, coordinate, grid objects, and voxel volume.
@@ -117,6 +117,12 @@ Fetch simulation time, runtime, and time stamp when the data was processed.
 mcds.get_time()   # will return a float value like 720.0
 mcds.get_runtime()  # will return a float value like 15.596373
 mcds.get_timestamp()  # will return a sting like 2022-10-19T01:12:01Z
+```
+
+Fetch substrate and cell type ID label mappings.
+```python
+mcds.get_substarte_dict()  # will return a dictionary, which maps substrate IDs to labels.
+mcds.get_celltype_dict()   # will return a dictionary, which maps cell type IDs to labels.
 ```
 
 #### Mesh Data
@@ -486,7 +492,7 @@ This means the mcdsts.make_gif code will only run if image magick and mcdsts.mak
 mcdsts = pcdl.pyMCDSts(s_path)
 ```
 
-Translate physicell svg images into static raster graphic images:
+Translate physicell output data into static raster graphic images:
 
 ```python
 ## cell data ##
@@ -535,6 +541,9 @@ Movies can only be generated for already existing jpeg, png, or tiff images!
 # using jpeg images for input
 s_path = mcdsts.make_imgcell()
 mcdsts.make_movie(s_path)
+
+# using jpeg images one-liner
+mcdsts.make_movie(mcdsts.make_imgcell())
 
 # using tiff images for input
 s_path = mcdsts.make_imgcell(ext='tiff')

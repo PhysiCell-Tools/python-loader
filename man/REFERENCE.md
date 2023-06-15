@@ -39,6 +39,7 @@ help(pcdl.pyMCDS.is_in_mesh)
 
 # pyMCDS microenvironment
 help(pcdl.pyMCDS.get_substrate_names)
+help(pcdl.pyMCDS.get_substrate_dict)
 help(pcdl.pyMCDS.get_substrate_df)
 help(pcdl.pyMCDS.get_concentration)
 help(pcdl.pyMCDS.get_concentration_df)
@@ -46,6 +47,7 @@ help(pcdl.pyMCDS.get_concentration_at)
 help(pcdl.pyMCDS.get_contour)
 
 # pyMCDS cells and other agents
+help(pcdl.pyMCDS.get_celltype_dict)
 help(pcdl.pyMCDS.get_cell_variables)
 help(pcdl.pyMCDS.get_cell_df)
 help(pcdl.pyMCDS.get_cell_df_at)

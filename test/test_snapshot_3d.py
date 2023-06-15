@@ -199,6 +199,11 @@ class TestPyMcds3D(object):
         ls_substrate = mcds.get_substrate_names()
         assert ls_substrate == ['immunostimulatory_factor', 'oxygen']
 
+    def test_mcds_get_substrate_dict(self, mcds=mcds):
+        ds_substrate = mcds.get_substrate_dict()
+        assert (str(type(ds_substrate)) == "<class 'dict'>") and \
+               (len(ds_substrate) == 2)
+
     def test_mcds_get_substrate_df(self, mcds=mcds):
         df_substrate = mcds.get_substrate_df()
         assert (str(type(df_substrate)) == "<class 'pandas.core.frame.DataFrame'>") and \
@@ -276,6 +281,11 @@ class TestPyMcds3D(object):
         assert(str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
 
     ## cell related functions
+    def test_mcds_get_celltype_dict(self, mcds=mcds):
+        ds_celltype = mcds.get_celltype_dict()
+        assert (str(type(ds_celltype)) == "<class 'dict'>") and \
+               (len(ds_celltype) == 2)
+
     def test_mcds_get_cell_variables(self, mcds=mcds):
         ls_variable = mcds.get_cell_variables()
         assert (str(type(ls_variable)) == "<class 'list'>") and \
@@ -285,12 +295,12 @@ class TestPyMcds3D(object):
     def test_mcds_get_cell_df(self, mcds=mcds):
         df_cell = mcds.get_cell_df()
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (20460, 110))
+               (df_cell.shape == (20460, 115))
 
     def test_mcds_get_cell_df_at(self, mcds=mcds):
         df_cell = mcds.get_cell_df_at(x=0, y=0, z=0)
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (5, 110))
+               (df_cell.shape == (5, 115))
 
     ## graph related functions
     def test_mcds_get_attached_graph_dict(self, mcds=mcds):

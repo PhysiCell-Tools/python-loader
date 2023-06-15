@@ -166,9 +166,21 @@ class TestPyMcdsMicroenvFalse3D(object):
                (li_voxel_2 == [2, 2, 2])
 
     ## micro environment related functions
+
+    def test_mcds_get_substrate_dict(self, mcds=mcds):
+        ds_substrate = mcds.get_substrate_dict()
+        assert (str(type(ds_substrate)) == "<class 'dict'>") and \
+               (len(ds_substrate) == 2)
+
     # nop
 
     ## cell related functions
+
+    def test_mcds_get_celltype_dict(self, mcds=mcds):
+        ds_celltype = mcds.get_celltype_dict()
+        assert (str(type(ds_celltype)) == "<class 'dict'>") and \
+               (len(ds_celltype) == 2)
+
     def test_mcds_get_cell_variables(self, mcds=mcds):
         ls_variable = mcds.get_cell_variables()
         assert (str(type(ls_variable)) == "<class 'list'>") and \
@@ -178,12 +190,12 @@ class TestPyMcdsMicroenvFalse3D(object):
     def test_mcds_get_cell_df(self, mcds=mcds):
         df_cell = mcds.get_cell_df()
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (20460, 101))
+               (df_cell.shape == (20460, 106))
 
     def test_mcds_get_cell_df_at(self, mcds=mcds):
         df_cell = mcds.get_cell_df_at(x=0, y=0, z=0)
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (5, 101))
+               (df_cell.shape == (5, 106))
 
     ## unit related functions
     def test_mcds_get_unit_df(self, mcds=mcds):

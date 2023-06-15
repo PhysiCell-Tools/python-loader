@@ -25,6 +25,111 @@ from scipy import io
 import sys
 import xml.etree.ElementTree as ET
 
+
+# const physicell codec
+# implemation based on PhysiCell/core/PhysiCell_constants.h.
+ds_cycle_model = {
+    '0' : 'advanced_Ki67_cycle_model',
+    '1' : 'basic_Ki67_cycle_model',
+    '2' : 'flow_cytometry_cycle_model',
+    '3' : 'live_apoptotic_cycle_model',
+    '4' : 'total_cells_cycle_model',
+    '5' : 'live_cells_cycle_model',
+    '6' : 'flow_cytometry_separated_cycle_model',
+    '7' : 'cycling_quiescent_model',
+}
+ds_death_model = {
+    '100' : 'apoptosis_death_model',
+    '101' : 'necrosis_death_model',
+    '102' : 'autophagy_death_model',
+    '9999' : 'custom_cycle_model',
+}
+
+ds_cycle_phase = {
+    '0' : 'Ki67_positive_premitotic',
+    '1' : 'Ki67_positive_postmitotic',
+    '2' : 'Ki67_positive',
+    '3' : 'Ki67_negative',
+    '4' : 'G0G1_phase',
+    '5' : 'G0_phase',
+    '6' : 'G1_phase',
+    '7' : 'G1a_phase',
+    '8' : 'G1b_phase',
+    '9' : 'G1c_phase',
+    '10' : 'S_phase',
+    '11' : 'G2M_phase',
+    '12' : 'G2_phase',
+    '13' : 'M_phase',
+    '14' : 'live',
+    '15' : 'G1pm_phase',
+    '16' : 'G1ps_phase',
+    '17' : 'cycling',
+    '18' : 'quiescent',
+    '9999' : 'custom_phase',
+}
+ds_death_phase = {
+    '100' : 'apoptotic',
+    '101' : 'necrotic_swelling',
+    '102' : 'necrotic_lysed',
+    '103' : 'necrotic',
+    '104' : 'debris',
+}
+
+# const physicell variable names
+es_var_subs = {
+    'chemotactic_sensitivities',
+    'fraction_released_at_death',
+    'fraction_transferred_when_ingested',
+    'internalized_total_substrates',
+    'net_export_rates',
+    'saturation_densities',
+    'secretion_rates',
+    'uptake_rates',
+}
+es_var_death = {
+    'death_rates',
+}
+es_var_cell = {
+    'attack_rates',
+    'cell_adhesion_affinities',
+    'fusion_rates',
+    'live_phagocytosis_rates',
+    'transformation_rates',
+}
+es_var_spatial = {
+    'migration_bias_direction',
+    'motility_vector',
+    'orientation',
+    'position',
+    'velocity',
+}
+
+# const physicell variable types
+do_vartype_int = {
+    # integer
+    'cell_count_voxel': int,
+    'chemotaxis_index': int,
+    'maximum_number_of_attachments': int,
+    'number_of_nuclei': int,
+    # boolean
+    'contact_with_basement_membrane': bool,
+    'dead': bool,
+    'is_motile': bool,
+    # categorical
+    'cell_type': int,  # id mapping
+    'current_death_model': int,  # codec mapping
+    'current_phase': int,  # codec mapping
+    'cycle_model': int,  # codec mapping
+}
+do_vartype_str = {
+    # categorical
+    'cell_type': str,  # id mapping
+    'current_death_model': str,  # codec mapping
+    'current_phase': str,  # codec mapping
+    'cycle_model': str,  # codec mapping
+}
+
+
 # functions
 def graphfile_parser(s_pathfile):
     """
@@ -495,16 +600,31 @@ class pyMCDS:
             self: pyMCDS class instance.
 
         output:
-            ls_substrat: list of stings
+            ls_substrate: list of stings
             alphabetically ordered list of all tracked substrates.
 
         description:
             function returns all chemical species names,
             modeled in the microenvironment.
         """
-        ls_substrat = sorted(self.data['continuum_variables'].keys())
-        return ls_substrat
+        ls_substrate = sorted(self.data['continuum_variables'].keys())
+        return ls_substrate
 
+    def get_substrate_dict(self):
+        """
+        input:
+            self: pyMCDS class instance.
+
+        output:
+            ds_substrate: dictionary of stings
+            dictionary that maps substrate IDs to labels.
+
+        description:
+            function returns a dictionary that maps ID and name from all
+            microenvironment_setup variables,
+            specified in the PhysiCell_settings.xml file.
+        """
+        return self.data['metadata']['substrate']
 
     def get_substrate_df(self):
         """
@@ -870,6 +990,20 @@ class pyMCDS:
         ls_variables = sorted(self.data['discrete_cells']['data'].keys())
         return ls_variables
 
+    def get_celltype_dict(self):
+        """
+        input:
+            self: pyMCDS class instance.
+
+        output:
+            ds_celltype: dictionary of stings
+            dictionary that maps cell_type IDs to labels.
+
+        description:
+            function returns a dictionary that maps ID and name from all
+            cell_definitions, specified in the PhysiCell_settings.xml file.
+        """
+        return self.data['metadata']['cell_type']
 
     def get_cell_df(self):
         """
@@ -928,6 +1062,24 @@ class pyMCDS:
             how = 'left',
         )
 
+        # get vector length
+        for s_var_spatial in es_var_spatial:
+            ls_vector = [f'{s_var_spatial}_x',f'{s_var_spatial}_y',f'{s_var_spatial}_z']
+            # linear algebra
+            #a_vector = df_cell.loc[:,ls_vector].values
+            #a_length = np.sqrt(np.diag(np.dot(a_vector, a_vector.T)))
+            # pythoagoras
+            a_length = None
+            for s_vector in ls_vector:
+                a_vectorsq = df_cell.loc[:,s_vector].values**2
+                if (a_length is None):
+                    a_length = a_vectorsq
+                else:
+                    a_length += a_vectorsq
+            a_length = a_length**(1/2)
+            # result
+            df_cell[f'{s_var_spatial}_vectorlength'] = a_length
+
         # microenvironment
         if self.microenv:
             # merge substrate (left join)
@@ -945,6 +1097,20 @@ class pyMCDS:
                 on = ['voxel_i', 'voxel_j', 'voxel_k'],
                 how = 'left',
             )
+
+        # variable typing
+        ls_vartype_int = sorted(do_vartype_int.keys())
+        df_cell.loc[:,ls_vartype_int] = df_cell.loc[:,ls_vartype_int].round()
+        df_cell = df_cell.astype(do_vartype_int)
+        df_cell = df_cell.astype(do_vartype_str)
+
+        # categorical
+        #df_cell.loc[:,'current_death_model'].replace(ds_death_model, inplace=True)  # bue 20230614: this column looks like an artefact to me
+        df_cell.loc[:,'cycle_model'].replace(ds_cycle_model, inplace=True)
+        df_cell.loc[:,'cycle_model'].replace(ds_death_model, inplace=True)
+        df_cell.loc[:,'current_phase'].replace(ds_cycle_phase, inplace=True)
+        df_cell.loc[:,'current_phase'].replace(ds_death_phase, inplace=True)
+        df_cell.loc[:,'cell_type'].replace(self.data['metadata']['cell_type'], inplace=True)
 
         # output
         df_cell = df_cell.loc[:, sorted(df_cell.columns)]
@@ -1110,6 +1276,10 @@ class pyMCDS:
             internal function to load the data from the PhysiCell output files
             into the pyMCDS instance.
         """
+        #####################
+        # path and filename #
+        #####################
+
         # file and path manipulation
         xmlfile = xmlfile.replace('\\','/')
         if (xmlfile.find('/') > -1) and (output_path == '.'):
@@ -1118,13 +1288,47 @@ class pyMCDS:
             output_path = '/'.join(ls_xmlfile)
         output_path = pathlib.Path(output_path)
         xmlpathfile = output_path / xmlfile
+        xmlpcsetting = output_path / 'PhysiCell_settings.xml'
 
-        # read xml path/file
-        # 20221027 juliano: d = xmltodict.parse(open('PhysiCell_settings.xml').read(), process_namespaces=True)
+        ###############################
+        # read PhysiCell_settings.xml #
+        ###############################
+        tree = ET.parse(xmlpcsetting)
+        if self.verbose:
+            print(f'reading: {xmlpcsetting}')
+        root = tree.getroot()
+
+        ### find the microenvironment node ###
+        ds_substrate = {}
+        microenvironment_node = root.find('microenvironment_setup')
+        var_children = microenvironment_node.findall('variable')
+        # substrate loop
+        for substrate in var_children:
+            i_id = int(substrate.get('ID'))
+            s_substrate = substrate.get('name').replace(' ', '_')
+            ds_substrate.update({i_id : s_substrate})
+        # continuum_variable id label sorting
+        ls_substrate = [s_substrate for _, s_substrate in sorted(ds_substrate.items())]
+
+        ### find the celldefinition node ###
+        ds_celltype = {}
+        cells_node = root.find('cell_definitions')
+        var_children = cells_node.findall('cell_definition')
+        # cell loop
+        for celltype in var_children:
+            i_id = int(celltype.get('ID'))
+            s_celltype = celltype.get('name').replace(' ', '_')
+            ds_celltype.update({str(i_id) : s_celltype})
+        # discrete_cells id label sorting
+        ls_celltype = [s_celltype for _, s_celltype in sorted(ds_celltype.items())]
+
+
+        #######################################
+        # read physicell output xml path/file #
+        #######################################
         tree = ET.parse(xmlpathfile)
         if self.verbose:
             print(f'reading: {xmlpathfile}')
-
         root = tree.getroot()
         MCDS = {}
 
@@ -1139,6 +1343,10 @@ class pyMCDS:
         ### find the metadata node ###
         metadata_node = root.find('metadata')
         MCDS['metadata'] = {}
+
+        # store id label mapping extracted from PhysiCell_settings.xml
+        MCDS['metadata']['cell_type'] = ds_celltype
+        MCDS['metadata']['substrate'] = ds_substrate
 
         # get multicellds xml version
         MCDS['metadata']['multicellds_version'] = f"MultiCellDS_{root.get('version')}"
@@ -1343,44 +1551,42 @@ class pyMCDS:
         MCDS['discrete_cells'] = {}
 
         # iterate over labels which are children of labels these will be used to label data arrays
-        data_labels = []
+        ls_variable = []
         ds_unit = {}
+
         for label in cellchild_node.find('labels').findall('label'):
             # I don't like spaces in my dictionary keys!
-            fixed_label = label.text.replace(' ', '_')
-            nlabels = int(label.get('size'))
+            s_variable = label.text.replace(' ', '_')
+            i_variable = int(label.get('size'))
             s_unit = label.get('units')
-            if nlabels > 1:
-                # tags to differentiate repeated labels (usually space related)
-                # print("n=",n)
-                spatial_type = False
-                if (fixed_label == 'position'):
-                    spatial_type = True
-                elif (fixed_label == 'orientation'):
-                    spatial_type = True
-                elif (fixed_label == 'velocity'):
-                    spatial_type = True
-                elif (fixed_label == 'migration_bias_direction'):
-                    spatial_type = True
-                elif (fixed_label == 'motility_vector'):
-                    spatial_type = True
 
-                if (nlabels == 3) and (spatial_type == True):
-                    dir_label = ['_x', '_y', '_z']
-                else:
-                    dir_label = [];
-                    for nn in range(100):
-                        dir_label.append( '_%u' % nn )
-                # print(dir_label)
-                for i in range(int(label.get('size'))):
-                    s_label = fixed_label + dir_label[i]
-                    # print(s_label)
-                    data_labels.append(s_label)
-                    ds_unit.update({s_label : s_unit})
+            if s_variable in es_var_subs:
+                for s_substrate in ls_substrate:
+                    s_variable_subs = s_variable + '_' + s_substrate
+                    ls_variable.append(s_variable_subs)
+                    ds_unit.update({s_variable_subs : s_unit})
+
+            elif s_variable in es_var_death:
+                for i_deathrate in range(i_variable):
+                    s_variable_deathrate = s_variable + '_' + str(i_deathrate)
+                    ls_variable.append(s_variable_deathrate)
+                    ds_unit.update({s_variable_deathrate : s_unit})
+
+            elif s_variable in es_var_cell:
+                for s_celltype in ls_celltype:
+                    s_variable_cell = s_variable + '_' + s_celltype
+                    ls_variable.append(s_variable_cell)
+                    ds_unit.update({s_variable_cell : s_unit})
+
+            elif s_variable in es_var_spatial:
+                for s_axis in ['_x','_y','_z']:
+                    s_variable_spatial = s_variable + s_axis
+                    ls_variable.append(s_variable_spatial)
+                    ds_unit.update({s_variable_spatial: s_unit})
+
             else:
-                # print(fixed_label)
-                data_labels.append(fixed_label)
-                ds_unit.update({fixed_label : s_unit})
+                ls_variable.append(s_variable)
+                ds_unit.update({s_variable : s_unit})
 
         # store unit
         MCDS['discrete_cells']['units'] = ds_unit
@@ -1395,16 +1601,16 @@ class pyMCDS:
 
             # store data
             MCDS['discrete_cells']['data'] = {}
-            for col in range(len(data_labels)):
-                MCDS['discrete_cells']['data'][data_labels[col]] = cell_data[col, :]
+            for col in range(len(ls_variable)):
+                MCDS['discrete_cells']['data'][ls_variable[col]] = cell_data[col, :]
 
         except ValueError:
             print(f'Warning @ pyMCDS._read_xml : mat file with no cell detected! {cellpathfile}')
 
             # store data
             MCDS['discrete_cells']['data'] = {}
-            for col in range(len(data_labels)):
-                MCDS['discrete_cells']['data'][data_labels[col]] = np.array([])
+            for col in range(len(ls_variable)):
+                MCDS['discrete_cells']['data'][ls_variable[col]] = np.array([])
 
 
         #####################
@@ -1444,3 +1650,4 @@ class pyMCDS:
         if self.verbose:
             print('done!')
         return MCDS
+

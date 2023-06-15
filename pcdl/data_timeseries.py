@@ -34,7 +34,7 @@ class install_data:
     """
     def __init__(self):
         # get pcdl library installation path
-        s_path = str(pathlib.Path(pcdl.__file__).parent) + '/'
+        s_path = str(pathlib.Path(pcdl.__file__).parent).replace('\\','/') + '/'
 
         # for each timeseries
         for s_url in [

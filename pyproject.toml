@@ -12,11 +12,12 @@
 # 2. git commit -m'@ physicelldataloader : next release.'
 # 3. git tag -a v0.0.0 -m'version 0.0.0'
 # 4. rm -r dist
-# 5. python3 -m build --sdist  # make source distribution
-# 6. python3 -m build --wheel  # make binary distribution python wheel
-# 7. twine upload dist/* --verbose
-# 8. git push origin master
-# 9. git push --tag
+# 5. python3 -c "import pcdl; pcdl.uninstall_data()"
+# 6. python3 -m build --sdist  # make source distribution
+# 7. python3 -m build --wheel  # make binary distribution python wheel
+# 8. twine upload dist/* --verbose
+# 9. git push origin master
+# 10. git push --tag
 #####
 
 

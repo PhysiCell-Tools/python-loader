@@ -25,9 +25,11 @@ from glob import glob
 import numpy as np
 import os
 import pathlib
+from pcdl import pdplt
 import platform
 from .pyMCDS import pyMCDS
 #import shutil
+
 
 # classes
 class pyMCDSts:
@@ -223,21 +225,28 @@ class pyMCDSts:
             extrema = [None, None]
             for mcds in self.l_mcds:
                 df_cell = mcds.get_cell_df()
-                r_min = df_cell.loc[:,focus].min()
-                r_max = df_cell.loc[:,focus].max()
-                if (extrema[0] is None) or (extrema[0] > r_min):
-                    extrema[0] = np.floor(r_min)
-                if (extrema[1] is None) or (extrema[1] < r_max):
-                    extrema[1] = np.ceil(r_max)
+                if str(df_cell.loc[:,focus].dtype) in {'bool', 'object'}:
+                    break
+                else:
+                    r_min = df_cell.loc[:,focus].min()
+                    r_max = df_cell.loc[:,focus].max()
+                    if (extrema[0] is None) or (extrema[0] > r_min):
+                        extrema[0] = np.floor(r_min)
+                    if (extrema[1] is None) or (extrema[1] < r_max):
+                        extrema[1] = np.ceil(r_max)
             print(f'min max extrema set to {extrema}.')
 
         # handle xlim and ylim
-        if (xlim is None):
+        if xlim is None:
             xlim = self.l_mcds[0].get_mesh_mnp_range()[0]
-        if (ylim is None):
+        if ylim is None:
             ylim = self.l_mcds[0].get_mesh_mnp_range()[1]
 
+        # handle s
+        # bue 20230615: if None get s from cells circle r in initial.svg xml
+
         # handle figure size
+        # bue 20230615: if None get figsize from initial.svg xml
         figsizepx[0] = figsizepx[0] - (figsizepx[0] % 2)  # enforce even pixel number
         figsizepx[1] = figsizepx[1] - (figsizepx[1] % 2)
         r_px = 1 / plt.rcParams['figure.dpi']  # translate px to inch
@@ -253,19 +262,37 @@ class pyMCDSts:
 
         # handle output path
         s_path = f'{self.output_path}cell_{focus}_z{z_slice}/'
-        #if os.path.exists(s_path):
-        #    shutil.rmtree(s_path)
 
         # plotting
         for mcds in self.l_mcds:
+            fig, ax = plt.subplots(figsize=figsize)
             df_cell = mcds.get_cell_df()
             df_cell = df_cell.loc[(df_cell.position_z == z_slice), :]
-            fig, ax = plt.subplots(figsize=figsize)
+            if str(df_cell.loc[:,focus].dtype) in {'bool', 'object'}:
+                s_focus_color = focus + '_color'
+                pdplt.df_label_to_color(
+                    df_abc = df_cell,
+                    s_label = focus,
+                    s_cmap = cmap,
+                    b_shuffle = False,
+                )
+                pdplt.ax_colorlegend(
+                    ax = ax,
+                    df_abc = df_cell,
+                    s_label = focus,
+                    s_color = s_focus_color,
+                    r_x_figure2legend_space = 0.01,
+                    s_fontsize = 'small',
+                )
+                c = df_cell.loc[:, s_focus_color]
+                cmap = None
+            else:
+                c = focus
             df_cell.plot(
                 kind = 'scatter',
                 x = 'position_x',
                 y = 'position_y',
-                c = focus,
+                c = c,
                 vmin = extrema[0],
                 vmax = extrema[1],
                 cmap = cmap,
