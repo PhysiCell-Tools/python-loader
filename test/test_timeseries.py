@@ -1,10 +1,10 @@
 # load library
 import pathlib
-import pcDataLoader
-from pcDataLoader import pyMCDS_timeseries
+import pcdl
+from pcdl import pyMCDS_timeseries
 
 # load physicell timeseries data
-mcds = pyMCDS_timeseries(str(pathlib.Path(pcDataLoader.__file__).parent.resolve() / 'data_timeseries'))
+mcds = pyMCDS_timeseries(str(pathlib.Path(pcdl.__file__).parent.resolve() / 'data_timeseries_2d'))
 
 # command to extract basic timeseries information
 mcds.get_times()

@@ -1,13 +1,13 @@
 # load library
 import pathlib
-import pcDataLoader
-from pcDataLoader import pyMCDS
-from pcDataLoader import read_MultiCellDS_xml
+import pcdl
+from pcdl import pyMCDS
+from pcdl import read_MultiCellDS_xml
 
 # load physicell data
-mcds1 = pyMCDS('output00000001.xml', output_path=str(pathlib.Path(pcDataLoader.__file__).parent.resolve() / 'data_timeseries'))
-mcds2 = pyMCDS('output00000002.xml', output_path=str(pathlib.Path(pcDataLoader.__file__).parent.resolve() / 'data_timeseries'))
-mcds3 = read_MultiCellDS_xml('output00000004.xml', output_path=str(pathlib.Path(pcDataLoader.__file__).parent.resolve() / 'data_timeseries'))
+mcds1 = pyMCDS('output00000001.xml', output_path=str(pathlib.Path(pcdl.__file__).parent.resolve() / 'data_timeseries_2d'))
+mcds2 = pyMCDS('output00000002.xml', output_path=str(pathlib.Path(pcdl.__file__).parent.resolve() / 'data_timeseries_2d'))
+mcds3 = read_MultiCellDS_xml('output00000004.xml', output_path=str(pathlib.Path(pcdl.__file__).parent.resolve() / 'data_timeseries_2d'))
 
 # commands to extract basic information
 print(mcds1.get_time())
@@ -24,4 +24,4 @@ print(mcds1.get_mesh())
 print(mcds1.get_2D_mesh())
 print(mcds1.get_linear_voxels())
 print(mcds1.get_containing_voxel_ijk(x=0,y=0,z=0))
-print(mcds1.get_concentrations('quorum'))
+print(mcds1.get_concentrations('oxygen'))
