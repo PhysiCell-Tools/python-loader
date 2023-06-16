@@ -52,12 +52,13 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 
 
 ## Release Notes:
-+ version 3.2.2: elmbeech/physicelldataloader
++ version 3.2.2 (2023-06-16): elmbeech/physicelldataloader
     + pyMCDS **mcds.get_cell_df** sets distinct boolean, categorical, integer number, and real number variable types. categorical number codes are translated. for all spatial variables, the vector length value is calculated and added automatically.
     + new pyMCDS **mcds.get_celltype_dict** function.
     + new pyMCDS **mcds.get_substrate_dict** function.
+    + pyMCDSts **mcdsts.make_imgcell** and **mcdsts.make_imgsubs** functions improved.
 
-+ version 3.2.1: elmbeech/physicelldataloader
++ version 3.2.1 (2023-06-12): elmbeech/physicelldataloader
     + pypa odyssey is comming to an end.
     + change build system from setuptools to hatching.
     + change the library name from pcDataLoader to pcdl.
