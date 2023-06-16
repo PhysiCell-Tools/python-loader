@@ -74,9 +74,10 @@ class TestPyMcdsTs(object):
             #grid = True,  # matplotlib
             xlim = None,  # test if
             ylim = None,  # test if
-            #s = 36,  # matplotlib
+            xyequal = True,  # test if
+            s = None,  # test if
             figsizepx = [641, 481],  # test non even pixel number
-            ext = 'jpeg',
+            ext = 'jpeg', # test if
             figbgcolor = None,  # test if
         )
         assert os.path.exists(s_path + 'cell_type_000000000.0.jpeg') and \
@@ -95,6 +96,7 @@ class TestPyMcdsTs(object):
             #grid = True,  # matplotlib
             xlim = None,  # test if
             ylim = None,  # test if
+            xyequal = True,  # test if
             figsizepx = [641, 481],  # test non even pixel number
             ext = 'jpeg',
             figbgcolor = None,  # test if
@@ -111,7 +113,7 @@ class TestPyMcdsTs(object):
             #interface = 'jpeg',
         )
         assert os.path.exists(s_opathfile) and \
-            (s_opathfile == s_path+'data_timeseries_2dcell_cell_type_z0_jpeg.gif')
+            (s_opathfile == s_path+'cell_cell_type_z0_jpeg.gif')
         shutil.rmtree(s_path)
 
     ## make_movie command ##
@@ -123,6 +125,6 @@ class TestPyMcdsTs(object):
             #framerate = 12,
         )
         assert os.path.exists(s_opathfile) and \
-            (s_opathfile == s_path+'data_timeseries_2dcell_cell_type_z0_jpeg12.mp4')
+            (s_opathfile == s_path+'cell_cell_type_z0_jpeg12.mp4')
         shutil.rmtree(s_path)
 

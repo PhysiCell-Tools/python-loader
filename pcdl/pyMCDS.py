@@ -832,7 +832,7 @@ class pyMCDS:
         return df_conc
 
 
-    def get_contour(self, substrate, z_slice=0, vmin=None, vmax=None, alpha=1, fill=True, cmap='viridis', title=None, grid=True, xlim=None, ylim=None, figsize=None, ax=None):
+    def get_contour(self, substrate, z_slice=0, vmin=None, vmax=None, alpha=1, fill=True, cmap='viridis', title=None, grid=True, xlim=None, ylim=None, xyequal=True, figsize=None, ax=None):
         """
         input:
             self: pyMCDS class instance.
@@ -881,6 +881,9 @@ class pyMCDS:
             ylim: tuple of two floating point numbers; default is None
                 to specify min and max y axis value.
                 None will extract agreeable values from the data.
+
+            xyequal: boolean; default True
+                to specify equal axis spacing for x and y axis.
 
             figsize: tuple of floating point numbers; default is None
                 the specif the figure x and y measurement in inch.
@@ -960,6 +963,10 @@ class pyMCDS:
             ax.set_xlim(xlim[0], xlim[1])
         if not (ylim is None):
             ax.set_ylim(ylim[0], ylim[1])
+
+        # set equal axis spacing
+        if xyequal:
+            ax.axis('equal')
 
         # get colorbar
         fig.colorbar(
@@ -1115,6 +1122,7 @@ class pyMCDS:
         # output
         df_cell = df_cell.loc[:, sorted(df_cell.columns)]
         df_cell.set_index('ID', inplace=True)
+        df_cell = df_cell.copy()
         return df_cell
 
 

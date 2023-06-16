@@ -257,6 +257,7 @@ class TestPyMcds3D(object):
             #grid = False,  # matplotlib
             xlim = None,  # test if
             ylim = None,  # test if
+            xyequal = True,  # test if
             figsize = None,  # test if
             ax = None  # generate fig ax case
         )
@@ -273,9 +274,10 @@ class TestPyMcds3D(object):
             #cmap = 'viridis',  # matplotlib
             title = 'test_mcds_get_contourf',  # test if
             #grid = True,  # matplotlib
-            xlim = None,
-            ylim = None,
-            figsize = None,
+            xlim = None,  # test if
+            ylim = None,  # test if
+            xyequal = True,  # test if
+            figsize = None,  # test if
             ax = None  # generate fig ax case
         )
         assert(str(type(fig)) == "<class 'matplotlib.figure.Figure'>")

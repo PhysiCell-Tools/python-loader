@@ -29,6 +29,7 @@ from pcdl import pdplt
 import platform
 from .pyMCDS import pyMCDS
 #import shutil
+import xml.etree.ElementTree as ET
 
 
 # classes
@@ -63,6 +64,9 @@ class pyMCDSts:
         in the output_path directory.
     """
     def __init__(self, output_path='.', microenv=True, graph=True, verbose=True):
+        output_path = output_path.replace('\\','/')
+        if (output_path[-1] != '/'):
+            output_path = output_path + '/'
         self.output_path = output_path
         self.microenv = microenv
         self.graph = graph
@@ -150,7 +154,7 @@ class pyMCDSts:
         return(s_magick)
 
 
-    def make_imgcell(self, focus='cell_type', z_slice=0, extrema=None, cmap='viridis', grid=True, xlim=None, ylim=None, s=plt.rcParams['lines.markersize']**2, figsizepx=[640, 480], ext='jpeg', figbgcolor=None):
+    def make_imgcell(self, focus='cell_type', z_slice=0, extrema=None, cmap='viridis', grid=True, xlim=None, ylim=None, xyequal=True, s=None, figsizepx=None, ext='jpeg', figbgcolor=None):
         """
         input:
             self: pyMCDSts class instance
@@ -183,16 +187,23 @@ class pyMCDSts:
                 y axis min and max value.
                 default takes min and max from mesh y axis range.
 
-            s: integer; default is plt.rcParams['lines.markersize']**2
-                scatter plot dot size in pixel.
-                Typographic points are 1/72 inch.
-                The marker size s is specified in points**2.
-                plt.rcParams['lines.markersize']**2 is in my case 36.
+            xyequal: boolean; default True
+                to specify equal axis spacing for x and y axis.
 
-            figsizepx: list of two integers, default is [640, 480]
+            s: integer; default is None
+                scatter plot dot size in pixel.
+                typographic points are 1/72 inch.
+                the marker size s is specified in points**2.
+                plt.rcParams['lines.markersize']**2 is in my case 36.
+                None tries to take the value from the initial.svg file.
+                fall back setting is 36.
+
+            figsizepx: list of two integers, default is None
                 size of the figure in pixels, (x, y).
                 the given x and y will be rounded to the nearest even number,
                 to be able to generate movies from the images.
+                None tries to take the values from the initial.svg file.
+                fall back setting is [640, 480].
 
             ext: string
                 output image format. possible formats are jpeg, png, and tiff.
@@ -214,6 +225,31 @@ class pyMCDSts:
             https://en.wikipedia.org/wiki/Portable_Network_Graphics
             https://en.wikipedia.org/wiki/TIFF
         """
+        # handle initial.svg for s and figsizepx
+        if (s is None) or (figsizepx is None):
+            s_pathfile = self.output_path + 'initial.svg'
+            try:
+                tree = ET.parse(s_pathfile)
+                root = tree.getroot()
+                if s is None:
+                    circle_element = root.find('.//{*}circle')
+                    r_radius = float(circle_element.get('r')) # px
+                    s = int(round((r_radius)**2))
+                    if self.verbose:
+                        print(f's set to {s}.')
+                if figsizepx is None:
+                    i_width = int(np.ceil(float(root.get('width')))) # px
+                    i_height = int(np.ceil(float(root.get('height'))))  # px
+                    figsizepx = [i_width, i_height]
+            except FileNotFoundError:
+                print(f'Warning @ pyMCDSts.make_imgcell : could not load {s_pathfile}.')
+                if s is None:
+                    s = plt.rcParams['lines.markersize']**2
+                    if self.verbose:
+                        print(f's set to {s}.')
+                if figsizepx is None:
+                    figsizepx = [640, 480]
+
         # handle z_slice
         _, _, ar_p_axis = self.l_mcds[0].get_mesh_mnp_axis()
         if not (z_slice in ar_p_axis):
@@ -242,11 +278,7 @@ class pyMCDSts:
         if ylim is None:
             ylim = self.l_mcds[0].get_mesh_mnp_range()[1]
 
-        # handle s
-        # bue 20230615: if None get s from cells circle r in initial.svg xml
-
         # handle figure size
-        # bue 20230615: if None get figsize from initial.svg xml
         figsizepx[0] = figsizepx[0] - (figsizepx[0] % 2)  # enforce even pixel number
         figsizepx[1] = figsizepx[1] - (figsizepx[1] % 2)
         r_px = 1 / plt.rcParams['figure.dpi']  # translate px to inch
@@ -284,10 +316,11 @@ class pyMCDSts:
                     r_x_figure2legend_space = 0.01,
                     s_fontsize = 'small',
                 )
-                c = df_cell.loc[:, s_focus_color]
-                cmap = None
+                c = list(df_cell.loc[:, s_focus_color].values)
+                s_cmap = None
             else:
                 c = focus
+                s_cmap = cmap
             df_cell.plot(
                 kind = 'scatter',
                 x = 'position_x',
@@ -295,7 +328,7 @@ class pyMCDSts:
                 c = c,
                 vmin = extrema[0],
                 vmax = extrema[1],
-                cmap = cmap,
+                cmap = s_cmap,
                 xlim = xlim,
                 ylim = ylim,
                 s = s,
@@ -303,6 +336,8 @@ class pyMCDSts:
                 title = f'{mcds.get_time()}[min] {df_cell.shape[0]}[agent]',
                 ax = ax,
             )
+            if xyequal:
+                ax.axis('equal')
             os.makedirs(s_path, exist_ok=True)
             s_pathfile = f'{s_path}{focus}_{str(mcds.get_time()).zfill(11)}.{ext}'
             fig.savefig(s_pathfile, facecolor=figbgcolor)
@@ -312,7 +347,7 @@ class pyMCDSts:
         return(s_path)
 
 
-    def make_imgsubs(self, focus, z_slice=0, extrema=None, alpha=1, fill=True, cmap='viridis', grid=True, xlim=None, ylim=None, figsizepx=[640, 480], ext='jpeg', figbgcolor=None):
+    def make_imgsubs(self, focus, z_slice=0, extrema=None, alpha=1, fill=True, cmap='viridis', grid=True, xlim=None, ylim=None, xyequal=True, figsizepx=None, ext='jpeg', figbgcolor=None):
         """
         input:
             self: pyMCDSts class instance
@@ -353,10 +388,15 @@ class pyMCDSts:
                 y axis min and max value.
                 default takes min and max from mesh y axis range.
 
-            figsizepx: tuple of two integers, default is (640, 480)
+            xyequal: boolean; default True
+                to specify equal axis spacing for x and y axis.
+
+            figsizepx: list of two integers, default is None
                 size of the figure in pixels, (x, y).
                 the given x and y will be rounded to the nearest even number,
                 to be able to generate movies from the images.
+                None tries to take the values from the initial.svg file.
+                fall back setting is [640, 480].
 
             ext: string
                 output image format. possible formats are jpeg, png, and tiff.
@@ -378,6 +418,19 @@ class pyMCDSts:
             https://en.wikipedia.org/wiki/Portable_Network_Graphics
             https://en.wikipedia.org/wiki/TIFF
         """
+        # handle initial.svg for s and figsizepx
+        if (figsizepx is None):
+            s_pathfile = self.output_path + 'initial.svg'
+            try:
+                tree = ET.parse(s_pathfile)
+                root = tree.getroot()
+                i_width = int(np.ceil(float(root.get('width')))) # px
+                i_height = int(np.ceil(float(root.get('height'))))  # px
+                figsizepx = [i_width, i_height]
+            except FileNotFoundError:
+                print(f'Warning @ pyMCDSts.make_imgcell : could not load {s_pathfile}.')
+                figsizepx = [640, 480]
+
         # handle z_slice
         _, _, ar_p_axis = self.l_mcds[0].get_mesh_mnp_axis()
         if not (z_slice in ar_p_axis):
@@ -436,6 +489,7 @@ class pyMCDSts:
                 grid = grid,
                 xlim = xlim,
                 ylim = ylim,
+                xyequal = xyequal,
                 figsize = figsize,
                 ax = None,
             )
