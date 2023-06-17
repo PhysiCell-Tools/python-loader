@@ -28,7 +28,6 @@ import pathlib
 from pcdl import pdplt
 import platform
 from .pyMCDS import pyMCDS
-#import shutil
 import xml.etree.ElementTree as ET
 
 
@@ -154,7 +153,7 @@ class pyMCDSts:
         return(s_magick)
 
 
-    def make_imgcell(self, focus='cell_type', z_slice=0, extrema=None, cmap='viridis', grid=True, xlim=None, ylim=None, xyequal=True, s=None, figsizepx=None, ext='jpeg', figbgcolor=None):
+    def make_imgcell(self, focus='cell_type', z_slice=0, z_axis=None, cmap='viridis', grid=True, xlim=None, ylim=None, xyequal=True, s=None, figsizepx=None, ext='jpeg', figbgcolor=None):
         """
         input:
             self: pyMCDSts class instance
@@ -169,8 +168,10 @@ class pyMCDSts:
                 will be adjusted to the nearest mesh center value,
                 the smaller one, if the coordinate lies on a saddle point.
 
-            extrema: tuple of two floats; default is None
-                default takes min and max from data.
+            z_axis: for a categorical focus: set of labels;
+               for a numeric focus: tuple of two floats; default is None
+               depending on the focus column variable dtype, default extracts
+               labels or min and max values from data.
 
             cmap: string; default viridis.
                 matplotlib colormap.
@@ -256,21 +257,39 @@ class pyMCDSts:
             z_slice = ar_p_axis[(ar_p_axis - z_slice).argmin()]
             print(f'z_slice set to {z_slice}.')
 
-        # handle extrema
-        if extrema == None:
-            extrema = [None, None]
-            for mcds in self.l_mcds:
-                df_cell = mcds.get_cell_df()
-                if str(df_cell.loc[:,focus].dtype) in {'bool', 'object'}:
-                    break
-                else:
+        # handle z_axis categorical cases
+        df_cell = self.l_mcds[0].get_cell_df()
+        if (str(df_cell.loc[:,focus].dtype) in {'bool', 'object'}):
+            lr_extrema = [None, None]
+            if (z_axis is None):
+                # extract set of labels from data
+                es_label = set()
+                for mcds in self.l_mcds:
+                    df_cell = mcds.get_cell_df()
+                    es_label = es_label.union(set(df_cell.loc[:,focus]))
+            else:
+                es_label = z_axis
+
+        # handle z_axis numerical cases
+        else:  # df_cell.loc[:,focus].dtype is numeric
+            es_label = None
+            if (z_axis is None):
+                # extract min and max values from data
+                lr_extrema = [None, None]
+                for mcds in self.l_mcds:
+                    df_cell = mcds.get_cell_df()
                     r_min = df_cell.loc[:,focus].min()
                     r_max = df_cell.loc[:,focus].max()
-                    if (extrema[0] is None) or (extrema[0] > r_min):
-                        extrema[0] = np.floor(r_min)
-                    if (extrema[1] is None) or (extrema[1] < r_max):
-                        extrema[1] = np.ceil(r_max)
-            print(f'min max extrema set to {extrema}.')
+                    if (lr_extrema[0] is None) or (lr_extrema[0] > r_min):
+                        lr_extrema[0] = np.floor(r_min)
+                    if (lr_extrema[1] is None) or (lr_extrema[1] < r_max):
+                        lr_extrema[1] = np.ceil(r_max)
+            else:
+                lr_extrema = z_axis
+
+        # handle z_axis summary
+        print(f'labels found: {es_label}.')
+        print(f'min max extrema set to: {lr_extrema}.')
 
         # handle xlim and ylim
         if xlim is None:
@@ -299,23 +318,22 @@ class pyMCDSts:
         for mcds in self.l_mcds:
             fig, ax = plt.subplots(figsize=figsize)
             df_cell = mcds.get_cell_df()
-            df_cell = df_cell.loc[(df_cell.position_z == z_slice), :]
-            if str(df_cell.loc[:,focus].dtype) in {'bool', 'object'}:
-                s_focus_color = focus + '_color'
-                pdplt.df_label_to_color(
+            df_cell = df_cell.loc[(df_cell.position_z == z_slice),:]
+            if not (es_label is None):
+                ds_color = pdplt.df_label_to_color(
                     df_abc = df_cell,
                     s_label = focus,
+                    es_label = es_label,
                     s_cmap = cmap,
                     b_shuffle = False,
                 )
                 pdplt.ax_colorlegend(
                     ax = ax,
-                    df_abc = df_cell,
-                    s_label = focus,
-                    s_color = s_focus_color,
+                    ds_color = ds_color,
                     r_x_figure2legend_space = 0.01,
                     s_fontsize = 'small',
                 )
+                s_focus_color = focus + '_color'
                 c = list(df_cell.loc[:, s_focus_color].values)
                 s_cmap = None
             else:
@@ -326,8 +344,8 @@ class pyMCDSts:
                 x = 'position_x',
                 y = 'position_y',
                 c = c,
-                vmin = extrema[0],
-                vmax = extrema[1],
+                vmin = lr_extrema[0],
+                vmax = lr_extrema[1],
                 cmap = s_cmap,
                 xlim = xlim,
                 ylim = ylim,
@@ -472,8 +490,6 @@ class pyMCDSts:
 
         # handle output path
         s_path = f'{self.output_path}substrate_{focus}_z{z_slice}/'
-        #if os.path.exists(s_path):
-        #    shutil.rmtree(s_path)
 
         # plotting
         for mcds in self.l_mcds:

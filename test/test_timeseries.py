@@ -65,23 +65,42 @@ class TestPyMcdsTs(object):
 
 
     ## make_imgcell command ##
-    def test_mcdsts_make_imgcell(self, mcdsts=mcdsts):
+    def test_mcdsts_make_imgcell_cat(self, mcdsts=mcdsts):
         s_path = mcdsts.make_imgcell(
-            focus='cell_type',
+            focus='cell_type',  # case categorical
             z_slice = -3.333,   # test if
-            extrema = None,  # test if
+            z_axis = None,  # test if categorical
             #cmap = 'viridis',  # matplotlib
             #grid = True,  # matplotlib
             xlim = None,  # test if
             ylim = None,  # test if
             xyequal = True,  # test if
             s = None,  # test if
-            figsizepx = [641, 481],  # test non even pixel number
+            figsizepx = [641, 481],  # case non even pixel number
             ext = 'jpeg', # test if
             figbgcolor = None,  # test if
         )
         assert os.path.exists(s_path + 'cell_type_000000000.0.jpeg') and \
                os.path.exists(s_path + 'cell_type_000001440.0.jpeg')
+        shutil.rmtree(s_path)
+
+    def test_mcdsts_make_imgcell_num(self, mcdsts=mcdsts):
+        s_path = mcdsts.make_imgcell(
+            focus='pressure',  # case numeric
+            z_slice = -3.333,   # test if
+            z_axis = None,  # test if numeric
+            #cmap = 'viridis',  # matplotlib
+            #grid = True,  # matplotlib
+            xlim = None,  # test if
+            ylim = None,  # test if
+            xyequal = True,  # test if
+            s = None,  # test if
+            figsizepx = None,  # case extract from initial.svg
+            ext = 'jpeg', # test if
+            figbgcolor = None,  # test if
+        )
+        assert os.path.exists(s_path + 'pressure_000000000.0.jpeg') and \
+               os.path.exists(s_path + 'pressure_000001440.0.jpeg')
         shutil.rmtree(s_path)
 
     ## make_imgsubs command ##

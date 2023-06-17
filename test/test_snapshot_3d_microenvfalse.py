@@ -33,8 +33,8 @@ if not os.path.exists(s_path_3d):
 
 # test function
 class TestPyMcdsMicroenvFalse3D(object):
-    ''' test for pcdl.pyMCDS data loader microenvironment False '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_3d, output_path=s_path_3d, microenv=False)
+    ''' test for pcdl.pyMCDS data loader with microenvironment, graph, and settingxml set to False '''
+    mcds = pcdl.pyMCDS(xmlfile=s_file_3d, output_path=s_path_3d, microenv=False, graph=False, settingxml=False)
 
     def test_pyMCDS(self, mcds=mcds):
         # load physicell data
@@ -166,20 +166,16 @@ class TestPyMcdsMicroenvFalse3D(object):
                (li_voxel_2 == [2, 2, 2])
 
     ## micro environment related functions
-
     def test_mcds_get_substrate_dict(self, mcds=mcds):
         ds_substrate = mcds.get_substrate_dict()
         assert (str(type(ds_substrate)) == "<class 'dict'>") and \
-               (len(ds_substrate) == 2)
-
-    # nop
+               (len(ds_substrate) == 0)
 
     ## cell related functions
-
     def test_mcds_get_celltype_dict(self, mcds=mcds):
         ds_celltype = mcds.get_celltype_dict()
         assert (str(type(ds_celltype)) == "<class 'dict'>") and \
-               (len(ds_celltype) == 2)
+               (len(ds_celltype) == 0)
 
     def test_mcds_get_cell_variables(self, mcds=mcds):
         ls_variable = mcds.get_cell_variables()

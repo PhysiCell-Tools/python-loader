@@ -32,11 +32,12 @@ import random
 
 
 # plot stuff
-def df_label_to_color(df_abc, s_label, s_cmap='viridis', b_shuffle=False):
+def df_label_to_color(df_abc, s_label, es_label=None, s_cmap='viridis', b_shuffle=False):
     '''
     input:
         df_abc: dataframe to which the color column will be added.
         s_label: column name with sample labels for which a color column will be generated.
+        es_label: set of labels. if None, es_label will be extracted for the s_label column.
         s_cmap:  matplotlib color map label.
             https://matplotlib.org/stable/tutorials/colors/colormaps.html
         b_shuffle: should colors be given by alphabetical order,
@@ -44,25 +45,31 @@ def df_label_to_color(df_abc, s_label, s_cmap='viridis', b_shuffle=False):
 
     output:
         df_abc: dataframe updated with color column.
+        ds_color: lable to hex color string mapping dictionary
 
     description:
         function adds for the selected label column
         a color column to the df_abc dataframe.
     '''
-    ls_label = sorted(df_abc.loc[:,s_label].unique())
+    if (es_label is None):
+        es_label = set(df_abc.loc[:,s_label])
+    ls_label = sorted(es_label)
     if b_shuffle:
        random.shuffle(ls_label)
     a_color = plt.get_cmap(s_cmap)(np.linspace(0, 1, len(ls_label)))
-    d_color = dict(zip(ls_label, a_color))
-    df_abc[f'{s_label}_color'] = [colors.to_hex(d_color[s_scene]) for s_scene in df_abc.loc[:,s_label]]
+    do_color = dict(zip(ls_label, a_color))
+    ds_color = {}
+    for s_category, o_color in do_color.items():
+        ds_color.update({s_category : colors.to_hex(o_color)})
+    # output
+    df_abc[f'{s_label}_color'] = [ds_color[s_scene] for s_scene in df_abc.loc[:,s_label]]
+    return(ds_color)
 
-def ax_colorlegend(ax, df_abc, s_label, s_color, r_x_figure2legend_space=0.01, s_fontsize='small'):
+def ax_colorlegend(ax, ds_color, r_x_figure2legend_space=0.01, s_fontsize='small'):
     '''
     input:
         ax: matplotlib axis object to which a color legend will be added.
-        df_abc: dataframe
-        s_label: column name with sample labels.
-        s_color: column name with hex colors or as web color labels.
+        ds_color: lables to color strings mapping dictionary
         r_x_figure2legend_space: space between plot and legend.
             -1 is left plot border, 0 is right plot border.
         s_fontsize: font size used for the legend. known are:
@@ -74,9 +81,8 @@ def ax_colorlegend(ax, df_abc, s_label, s_color, r_x_figure2legend_space=0.01, s
     description:
         function to add color legend to a figure.
     '''
-    d_color = df_abc.loc[:,[s_label,s_color]].drop_duplicates().set_index(s_label).loc[:,s_color].to_dict()
     lo_patch = []
-    for s_label, s_color in sorted(d_color.items()):
+    for s_label, s_color in sorted(ds_color.items()):
         o_patch = mpatches.Patch(color=s_color, label=s_label)
         lo_patch.append(o_patch)
     ax.legend(
