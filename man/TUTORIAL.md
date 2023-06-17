@@ -62,10 +62,11 @@ mcds = pcdl.pyMCDS('output00000012.xml', s_path)
 ```
 
 By default, all data related to the snapshot is loaded.\
-For speed and less memory usage, it is however possible to only load the essential (xml and cell mat data), and exclude microenvironment and graph data loading.
+For speed and less memory usage, it is however possible to only load the essential (output xml and cell mat data), 
+and exclude microenvironment, graph data, and ID label mapping loading.
 ```python
 # fine tuned way of loading a mcds object
-mcds = pcdl.pyMCDS(s_pathfile, graph=False, microenv=False)
+mcds = pcdl.pyMCDS(s_pathfile, microenv=False, graph=False, settingxml=False)
 ```
 
 ### The Loaded Data Structure
@@ -119,7 +120,7 @@ mcds.get_runtime()  # will return a float value like 15.596373
 mcds.get_timestamp()  # will return a sting like 2022-10-19T01:12:01Z
 ```
 
-Fetch substrate and cell type ID label mappings.
+Fetch substrate and cell type ID label mappings, read out from the PhysiCell_settings.xml file.
 ```python
 mcds.get_substarte_dict()  # will return a dictionary, which maps substrate IDs to labels.
 mcds.get_celltype_dict()   # will return a dictionary, which maps cell type IDs to labels.

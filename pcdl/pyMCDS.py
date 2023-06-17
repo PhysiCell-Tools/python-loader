@@ -182,6 +182,11 @@ class pyMCDS:
             should the graphs be extracted?
             setting graph to False will use less memory and speed up processing.
 
+        settingxml: boole; default True
+            should the substrate and cell type ID label mapping defined in
+            PhysiCell_settings.xml be extracted?
+            only set to False if the xml file is missing.
+
         verbose: boole; default True
             setting verbose to False for less text output, while processing.
 
@@ -199,9 +204,10 @@ class pyMCDS:
         the same directory. data is loaded by reading the xml file
         for a particular time step and the therein referenced files.
     """
-    def __init__(self, xmlfile, output_path='.', microenv=True, graph=True, verbose=True):
+    def __init__(self, xmlfile, output_path='.', microenv=True, graph=True, settingxml=True, verbose=True):
         self.microenv = microenv
         self.graph = graph
+        self.settingxml = settingxml
         self.verbose = verbose
         self.data = self._read_xml(xmlfile, output_path)
 
@@ -1298,37 +1304,40 @@ class pyMCDS:
         xmlpathfile = output_path / xmlfile
         xmlpcsetting = output_path / 'PhysiCell_settings.xml'
 
+
         ###############################
         # read PhysiCell_settings.xml #
         ###############################
-        tree = ET.parse(xmlpcsetting)
-        if self.verbose:
-            print(f'reading: {xmlpcsetting}')
-        root = tree.getroot()
-
-        ### find the microenvironment node ###
         ds_substrate = {}
-        microenvironment_node = root.find('microenvironment_setup')
-        var_children = microenvironment_node.findall('variable')
-        # substrate loop
-        for substrate in var_children:
-            i_id = int(substrate.get('ID'))
-            s_substrate = substrate.get('name').replace(' ', '_')
-            ds_substrate.update({i_id : s_substrate})
-        # continuum_variable id label sorting
-        ls_substrate = [s_substrate for _, s_substrate in sorted(ds_substrate.items())]
-
-        ### find the celldefinition node ###
         ds_celltype = {}
-        cells_node = root.find('cell_definitions')
-        var_children = cells_node.findall('cell_definition')
-        # cell loop
-        for celltype in var_children:
-            i_id = int(celltype.get('ID'))
-            s_celltype = celltype.get('name').replace(' ', '_')
-            ds_celltype.update({str(i_id) : s_celltype})
-        # discrete_cells id label sorting
-        ls_celltype = [s_celltype for _, s_celltype in sorted(ds_celltype.items())]
+
+        if self.settingxml:
+            tree = ET.parse(xmlpcsetting)
+            if self.verbose:
+                print(f'reading: {xmlpcsetting}')
+            root = tree.getroot()
+
+            ### find the microenvironment node ###
+            microenvironment_node = root.find('microenvironment_setup')
+            var_children = microenvironment_node.findall('variable')
+            # substrate loop
+            for substrate in var_children:
+                i_id = int(substrate.get('ID'))
+                s_substrate = substrate.get('name').replace(' ', '_')
+                ds_substrate.update({i_id : s_substrate})
+            # continuum_variable id label sorting
+            ls_substrate = [s_substrate for _, s_substrate in sorted(ds_substrate.items())]
+
+            ### find the celldefinition node ###
+            cells_node = root.find('cell_definitions')
+            var_children = cells_node.findall('cell_definition')
+            # cell loop
+            for celltype in var_children:
+                i_id = int(celltype.get('ID'))
+                s_celltype = celltype.get('name').replace(' ', '_')
+                ds_celltype.update({str(i_id) : s_celltype})
+            # discrete_cells id label sorting
+            ls_celltype = [s_celltype for _, s_celltype in sorted(ds_celltype.items())]
 
 
         #######################################
@@ -1479,14 +1488,9 @@ class pyMCDS:
             file_node = me_node.find('data').find('filename')
             mefile = file_node.text
             mepathfile = output_path / mefile
-            # Changes here
-            try:
-                me_data = io.loadmat(mepathfile)['multiscale_microenvironment']
-                if self.verbose:
-                    print(f'reading: {mepathfile}')
-            except:
-                raise FileNotFoundError(f'Error @ pyMCDS._read_xml : no such file or directory: {mepathfile,}\nreferenced in: {xmlpathfile}.')
-                sys.exit(1)
+            me_data = io.loadmat(mepathfile)['multiscale_microenvironment']
+            if self.verbose:
+                print(f'reading: {mepathfile}')
 
             # continuum_variables, unlike in the matlab version the individual chemical
             # species will be primarily accessed through their names e.g.
@@ -1569,6 +1573,8 @@ class pyMCDS:
             s_unit = label.get('units')
 
             if s_variable in es_var_subs:
+                if not self.settingxml:
+                    ls_substrate = [str(i_substrate) for i_substrate in range(i_variable)]
                 for s_substrate in ls_substrate:
                     s_variable_subs = s_variable + '_' + s_substrate
                     ls_variable.append(s_variable_subs)
@@ -1581,10 +1587,12 @@ class pyMCDS:
                     ds_unit.update({s_variable_deathrate : s_unit})
 
             elif s_variable in es_var_cell:
+                if not self.settingxml:
+                    ls_celltype = [str(i_celltype) for i_celltype in range(i_variable)]
                 for s_celltype in ls_celltype:
-                    s_variable_cell = s_variable + '_' + s_celltype
-                    ls_variable.append(s_variable_cell)
-                    ds_unit.update({s_variable_cell : s_unit})
+                    s_variable_celltype = s_variable + '_' + s_celltype
+                    ls_variable.append(s_variable_celltype)
+                    ds_unit.update({s_variable_celltype : s_unit})
 
             elif s_variable in es_var_spatial:
                 for s_axis in ['_x','_y','_z']:
@@ -1602,23 +1610,14 @@ class pyMCDS:
         # load the file
         cellfile = cellchild_node.find('filename').text
         cellpathfile = output_path / cellfile
-        try:
-            cell_data = io.loadmat(cellpathfile)['cells']
-            if self.verbose:
-                print(f'reading: {cellpathfile}')
+        cell_data = io.loadmat(cellpathfile)['cells']
+        if self.verbose:
+            print(f'reading: {cellpathfile}')
 
-            # store data
-            MCDS['discrete_cells']['data'] = {}
-            for col in range(len(ls_variable)):
-                MCDS['discrete_cells']['data'][ls_variable[col]] = cell_data[col, :]
-
-        except ValueError:
-            print(f'Warning @ pyMCDS._read_xml : mat file with no cell detected! {cellpathfile}')
-
-            # store data
-            MCDS['discrete_cells']['data'] = {}
-            for col in range(len(ls_variable)):
-                MCDS['discrete_cells']['data'][ls_variable[col]] = np.array([])
+        # store data
+        MCDS['discrete_cells']['data'] = {}
+        for col in range(len(ls_variable)):
+            MCDS['discrete_cells']['data'][ls_variable[col]] = cell_data[col, :]
 
 
         #####################
