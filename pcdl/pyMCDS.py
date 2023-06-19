@@ -1075,23 +1075,27 @@ class pyMCDS:
             how = 'left',
         )
 
+        # get column label set
+        es_column = set(df_cell.columns)
+
         # get vector length
         for s_var_spatial in es_var_spatial:
-            ls_vector = [f'{s_var_spatial}_x',f'{s_var_spatial}_y',f'{s_var_spatial}_z']
-            # linear algebra
-            #a_vector = df_cell.loc[:,ls_vector].values
-            #a_length = np.sqrt(np.diag(np.dot(a_vector, a_vector.T)))
-            # pythoagoras
-            a_length = None
-            for s_vector in ls_vector:
-                a_vectorsq = df_cell.loc[:,s_vector].values**2
-                if (a_length is None):
-                    a_length = a_vectorsq
-                else:
-                    a_length += a_vectorsq
-            a_length = a_length**(1/2)
-            # result
-            df_cell[f'{s_var_spatial}_vectorlength'] = a_length
+            es_vector = es_column.intersection({f'{s_var_spatial}_x',f'{s_var_spatial}_y',f'{s_var_spatial}_z'})
+            if len(es_vector) > 0:
+                # linear algebra
+                #a_vector = df_cell.loc[:,ls_vector].values
+                #a_length = np.sqrt(np.diag(np.dot(a_vector, a_vector.T)))
+                # pythoagoras
+                a_length = None
+                for s_vector in es_vector:
+                    a_vectorsq = df_cell.loc[:,s_vector].values**2
+                    if (a_length is None):
+                        a_length = a_vectorsq
+                    else:
+                        a_length += a_vectorsq
+                a_length = a_length**(1/2)
+                # result
+                df_cell[f'{s_var_spatial}_vectorlength'] = a_length
 
         # microenvironment
         if self.microenv:
@@ -1112,10 +1116,14 @@ class pyMCDS:
             )
 
         # variable typing
-        ls_vartype_int = sorted(do_vartype_int.keys())
-        df_cell.loc[:,ls_vartype_int] = df_cell.loc[:,ls_vartype_int].round()
-        df_cell = df_cell.astype(do_vartype_int)
-        df_cell = df_cell.astype(do_vartype_str)
+        do_int = {}
+        do_str = {}
+        [do_int.update({k:v}) for k,v in do_vartype_int.items() if k in es_column]
+        [do_str.update({k:v}) for k,v in do_vartype_str.items() if k in es_column]
+        ls_int = sorted(do_int.keys())
+        df_cell.loc[:,ls_int] = df_cell.loc[:,ls_int].round()
+        df_cell = df_cell.astype(do_int)
+        df_cell = df_cell.astype(do_str)
 
         # categorical
         #df_cell.loc[:,'current_death_model'].replace(ds_death_model, inplace=True)  # bue 20230614: this column looks like an artefact to me
@@ -1126,7 +1134,7 @@ class pyMCDS:
         df_cell.loc[:,'cell_type'].replace(self.data['metadata']['cell_type'], inplace=True)
 
         # output
-        df_cell = df_cell.loc[:, sorted(df_cell.columns)]
+        df_cell = df_cell.loc[:,sorted(df_cell.columns)]
         df_cell.set_index('ID', inplace=True)
         df_cell = df_cell.copy()
         return df_cell
@@ -1488,7 +1496,7 @@ class pyMCDS:
             file_node = me_node.find('data').find('filename')
             mefile = file_node.text
             mepathfile = output_path / mefile
-            me_data = io.loadmat(mepathfile)['multiscale_microenvironment']
+            ar_microenv = io.loadmat(mepathfile)['multiscale_microenvironment']
             if self.verbose:
                 print(f'reading: {mepathfile}')
 
@@ -1539,7 +1547,7 @@ class pyMCDS:
                     k = np.where(np.abs(ar_center[2] - MCDS['mesh']['mnp_axis'][2]) < 1e-10)[0][0]
 
                     # store value
-                    MCDS['continuum_variables'][s_substrate]['data'][j, i, k] = me_data[4+i_s, vox_idx]
+                    MCDS['continuum_variables'][s_substrate]['data'][j, i, k] = ar_microenv[4+i_s, vox_idx]
 
 
         ####################
@@ -1610,14 +1618,18 @@ class pyMCDS:
         # load the file
         cellfile = cellchild_node.find('filename').text
         cellpathfile = output_path / cellfile
-        cell_data = io.loadmat(cellpathfile)['cells']
-        if self.verbose:
-            print(f'reading: {cellpathfile}')
+        try:
+            ar_cell = io.loadmat(cellpathfile)['cells']
+            if self.verbose:
+                print(f'reading: {cellpathfile}')
+        except ValueError:  # hack: some old PhysiCell versions generates a corrupt cells.mat file, if there are zero cells.
+            print(f'Warning @ pyMCDS._read_xml : corrupt {cellpathfile} detected!\nassuming time step with zero cells because of a known bug in PhysiCell MultiCellDS version 0.5 output.')
+            ar_cell = np.empty([len(ls_variable),0])
 
         # store data
         MCDS['discrete_cells']['data'] = {}
         for col in range(len(ls_variable)):
-            MCDS['discrete_cells']['data'][ls_variable[col]] = cell_data[col, :]
+            MCDS['discrete_cells']['data'][ls_variable[col]] = ar_cell[col,:]
 
 
         #####################

@@ -52,8 +52,11 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 
 
 ## Release Notes:
++ version 3.2.5 (2023-06-19): elmbeech/physicelldataloader
+    + pyMCDS resolve incompatibility with earlier PhysiCell and MultiCellDS versions.
+
 + version 3.2.4 (2023-06-17): elmbeech/physicelldataloader
-    + pyMCDS **\__init__** seetingxml parameter for cases where in the output folder no PhysiCell_settings.xml find can be found.
+    + pyMCDS **_\_init__** seetingxml parameter for cases where in the output folder no PhysiCell_settings.xml find can be found.
     + pyMCDSts **mcdsts.make_imgcell** extrema parameter replaced by z_axis parameter to account for numerical and categorical variable types.
 
 + version 3.2.2 (2023-06-16): elmbeech/physicelldataloader
