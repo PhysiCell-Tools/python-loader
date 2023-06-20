@@ -34,11 +34,11 @@ if not os.path.exists(s_path_3d):
 # test function
 class TestPyMcdsMicroenvFalse3D(object):
     ''' test for pcdl.pyMCDS data loader with microenvironment, graph, and settingxml set to False '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_3d, output_path=s_path_3d, microenv=False, graph=False, settingxml=False)
+    mcds = pcdl.pyMCDS(xmlfile=s_file_3d, output_path=s_path_3d, custom_type={}, microenv=False, graph=False, settingxml=False)
 
     def test_pyMCDS(self, mcds=mcds):
         # load physicell data
-        print(f'process: pcdl.pyMCDS(xmlfile={s_file_3d}, output_path={s_path_3d}, microenv=False) ...')
+        print(f'process: pcdl.pyMCDS(xmlfile={s_file_3d}, output_path={s_path_3d}, custom_type={{}}, microenv=False, graph=False, settingxml=False) ...')
         assert str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>"
 
     ## metadata related functions

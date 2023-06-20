@@ -34,11 +34,11 @@ if not os.path.exists(s_path_2d):
 # load physicell data with microenvironment
 class TestPyMcdsMicroenvTrue2D(object):
     ''' test for pcdl.pyMCDS data loader, the complete data set. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, microenv=True)
+    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml=True)
 
     def test_pyMCDS(self, mcds=mcds):
         # load physicell data
-        print(f'process: pcdl.pyMCDS(xmlfile={s_file_2d}, output_path={s_path_2d}, microenv=True) ...')
+        print(f'process: pcdl.pyMCDS(xmlfile={s_file_2d}, output_path={s_path_2d}, custom_type={{}}, microenv=True, graph=True, settingxml=True) ...')
         assert str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>"
 
     ## metadata related functions

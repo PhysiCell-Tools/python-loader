@@ -45,11 +45,11 @@ class TestPyMcdsShortcut3D(object):
 # load physicell data with microenvironment
 class TestPyMcds3D(object):
     ''' test for pcdl.pyMCDS data loader microenvironment True'''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_3d, output_path=s_path_3d)  # graph=True, microenv=True
+    mcds = pcdl.pyMCDS(xmlfile=s_file_3d, output_path=s_path_3d)  # custom_type={}, microenv=True, graph=True, settingxml=True
 
     def test_pyMCDS(self, mcds=mcds):
         # load physicell data
-        print(f'process: pcdl.pyMCDS(xmlfile={s_file_3d}, output_path={s_path_3d}, microenv=True) ...')
+        print(f'process: pcdl.pyMCDS(xmlfile={s_file_3d}, output_path={s_path_3d}, custom_type={{}}, microenv=True, graph=True, settingxml=True) ...')
         assert str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>"
 
     ## metadata related functions

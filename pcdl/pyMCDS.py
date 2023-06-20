@@ -105,7 +105,7 @@ es_var_spatial = {
 }
 
 # const physicell variable types
-do_vartype_int = {
+do_var_type = {
     # integer
     'cell_count_voxel': int,
     'chemotaxis_index': int,
@@ -115,13 +115,6 @@ do_vartype_int = {
     'contact_with_basement_membrane': bool,
     'dead': bool,
     'is_motile': bool,
-    # categorical
-    'cell_type': int,  # id mapping
-    'current_death_model': int,  # codec mapping
-    'current_phase': int,  # codec mapping
-    'cycle_model': int,  # codec mapping
-}
-do_vartype_str = {
     # categorical
     'cell_type': str,  # id mapping
     'current_death_model': str,  # codec mapping
@@ -173,6 +166,12 @@ class pyMCDS:
             relative or absolute path to the directory where
             the PhysiCell output files are stored.
 
+        custom_type: dictionary; default is {}
+            variable enables the to specify custom_data variable types
+            other then float (int, bool, str).
+            down streem float and int will be handled as numeric,
+            bool as Boolean, and str as categorical data.
+
         microenv: booler; default True
             should the microenvironment be extracted?
             setting microenv to False will use less memory and speed up
@@ -204,7 +203,8 @@ class pyMCDS:
         the same directory. data is loaded by reading the xml file
         for a particular time step and the therein referenced files.
     """
-    def __init__(self, xmlfile, output_path='.', microenv=True, graph=True, settingxml=True, verbose=True):
+    def __init__(self, xmlfile, output_path='.', custom_type={}, microenv=True, graph=True, settingxml=True, verbose=True):
+        self.custom_type = custom_type
         self.microenv = microenv
         self.graph = graph
         self.settingxml = settingxml
@@ -1035,7 +1035,6 @@ class pyMCDS:
             function returns a dataframe with a cell centric view
             of the simulation.
         """
-
         # get cell position and more
         df_cell = pd.DataFrame(self.data['discrete_cells']['data'])
         df_voxel = df_cell.loc[:,['position_x','position_y','position_z']].copy()
@@ -1116,16 +1115,14 @@ class pyMCDS:
             )
 
         # variable typing
-        do_int = {}
-        do_str = {}
-        [do_int.update({k:v}) for k,v in do_vartype_int.items() if k in es_column]
-        [do_str.update({k:v}) for k,v in do_vartype_str.items() if k in es_column]
-        ls_int = sorted(do_int.keys())
-        df_cell.loc[:,ls_int] = df_cell.loc[:,ls_int].round()
-        df_cell = df_cell.astype(do_int)
-        df_cell = df_cell.astype(do_str)
+        do_type = {}
+        [do_type.update({k:v}) for k,v in do_var_type.items() if k in es_column]
+        do_type.update(self.custom_type)
+        ls_int = sorted(do_type.keys())
+        df_cell.loc[:,ls_int] = df_cell.loc[:,ls_int].round().astype(int)
+        df_cell = df_cell.astype(do_type)
 
-        # categorical
+        # categorical translation
         #df_cell.loc[:,'current_death_model'].replace(ds_death_model, inplace=True)  # bue 20230614: this column looks like an artefact to me
         df_cell.loc[:,'cycle_model'].replace(ds_cycle_model, inplace=True)
         df_cell.loc[:,'cycle_model'].replace(ds_death_model, inplace=True)
@@ -1318,6 +1315,7 @@ class pyMCDS:
         ###############################
         ds_substrate = {}
         ds_celltype = {}
+        es_customdata = set()
 
         if self.settingxml:
             tree = ET.parse(xmlpcsetting)
@@ -1344,6 +1342,19 @@ class pyMCDS:
                 i_id = int(celltype.get('ID'))
                 s_celltype = celltype.get('name').replace(' ', '_')
                 ds_celltype.update({str(i_id) : s_celltype})
+                # search for custom data
+                celltype.find('custom_data')
+                for celltype in var_children:
+                    customdata = celltype.find('custom_data')
+                    for element in customdata.iter():
+                        if element.tag != 'custom_data':
+                            es_customdata.add(element.tag)
+
+            # if custom data was found
+            if (len(es_customdata) > 0):
+                print(f'Warning @ pyMCDS._read_xml : custom_data without variable type setting detected. {sorted(es_customdata)}')
+                print('use the pyMCDS(custom_type={var: dtype, ...}) to set variables to other types (bool, int, str) than float.')
+
             # discrete_cells id label sorting
             ls_celltype = [s_celltype for _, s_celltype in sorted(ds_celltype.items())]
 

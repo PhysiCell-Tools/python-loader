@@ -52,6 +52,9 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 
 
 ## Release Notes:
++ version 3.2.6 (2023-06-20): elmbeech/physicelldataloader
+    + pyMCDS and pyMCDSts **custom_type** parameter to specify other custom_data variable types (int, bool, str) then the generic float. 
+
 + version 3.2.5 (2023-06-19): elmbeech/physicelldataloader
     + pyMCDS resolve incompatibility with earlier PhysiCell and MultiCellDS versions.
 

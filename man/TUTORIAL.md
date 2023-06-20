@@ -62,11 +62,12 @@ mcds = pcdl.pyMCDS('output00000012.xml', s_path)
 ```
 
 By default, all data related to the snapshot is loaded.\
-For speed and less memory usage, it is however possible to only load the essential (output xml and cell mat data), 
-and exclude microenvironment, graph data, and ID label mapping loading.
+For speed and less memory usage, it is however possible to only load the essential (output xml and cell mat data),
+and exclude microenvironment, graph data, and ID label mapping loading.\
+Additionally, it is possible to specify for custom_data variable types other than the generic float type, namely: int, bool, and str.
 ```python
 # fine tuned way of loading a mcds object
-mcds = pcdl.pyMCDS(s_pathfile, microenv=False, graph=False, settingxml=False)
+mcds = pcdl.pyMCDS(s_pathfile, custom_type={}, microenv=False, graph=False, settingxml=False)
 ```
 
 ### The Loaded Data Structure
@@ -379,10 +380,11 @@ mcdsts = pcdl.pyMCDSts(s_path)
 ```
 
 Like in the pyMCDs class, for memory consumption and processing speed control, we can specify if we want to load microenvironment data and graph data from the snapshots we later on analyze.\
-By default, all data related to the snapshot is loaded.
+By default, all data related to the snapshot is loaded.\
+Additionally, we can exclude to read the PhysiCell_settings.xml file, if it is not available, and fine tune variable typing.
 ```python
 # fine tuned the way mcds objects will be loaded
-mcdsts = pcdl.pyMCDSts(s_path, graph=False, microenv=False)
+mcdsts = pcdl.pyMCDSts(s_path, custom_type={}, microenv=False, graph=False, settingxml=False)
 ```
 
 #### Times Series MCDS Data
@@ -411,27 +413,27 @@ The default setting will read all snapshots from a time series. \
 However, you can always use a filtered ls\_xml list to only load a subset of snapshots.
 ```python
 # load all snapshots
-l_mcds = mcdsts.read_mcds()
-l_mcds  # YMMV! [<pcdl.pyMCDS.pyMCDS at 0x7fa660996b00>, <pcdl.pyMCDS.pyMCDS at 0x7fa67673e1d0>, ..., <pcdl.pyMCDS.pyMCDS at 0x7fa660950f10>]
-len(l_mcds)  # 25
+mcdsts.read_mcds()
+mcdsts.l_mcds  # YMMV! [<pcdl.pyMCDS.pyMCDS at 0x7fa660996b00>, <pcdl.pyMCDS.pyMCDS at 0x7fa67673e1d0>, ..., <pcdl.pyMCDS.pyMCDS at 0x7fa660950f10>]
+len(mcdsts.l_mcds)  # 25
 
 # load snapshot 11, 12, and 13
-l_mcds_11_12_13 = mcdsts.read_mcds(ls_xml_11_12_13)
-len(l_mcds_11_12_13)  # 3
+mcdsts.l_mcds = mcdsts.read_mcds(ls_xml_11_12_13)
+len(mcdsts.l_mcds)  # 3
 
 # load all even snapshots
-ls_mcds_even = mcdsts.read_mcds(ls_xml_even)
-len(ls_mcds_even)  # 13
+mcdsts.ls_mcds = mcdsts.read_mcds(ls_xml_even)
+len(mcdsts.ls_mcds)  # 13
 ```
 
 Single snapshots can now be accessed by indexing.\
 With a single snapshot, you work exactly in the same way as with an object loaded by pyMCDS.
 ```python
 # get the simulation time
-l_mcds[12].get_time()  # 720.0
+mcdsts.l_mcds[12].get_time()  # 720.0
 
 # get the cell data frame
-df = l_mcds[12].get_cell_df()
+df = mcdsts.l_mcds[12].get_cell_df()
 df.shape  # (992, 87)
 df.head()
 ```
@@ -444,9 +446,9 @@ import pandas as pd
 
 # fetch data
 mcdsts = pcdl.pyMCDSts(s_path)
-l_mcds = mcdsts.read_mcds()
-lr_time = [mcds.get_time() for mcds in l_mcds]  # [0.0, 60.0, ..., 1440.0]
-li_cellcount = [mcds.get_cell_df().shape[0] for mcds in l_mcds]  # [889, 898, ..., 1099]
+mcdsts.read_mcds()
+lr_time = [mcds.get_time() for mcds in mcdsts.l_mcds]  # [0.0, 60.0, ..., 1440.0]
+li_cellcount = [mcds.get_cell_df().shape[0] for mcds in mcdsts.l_mcds]  # [889, 898, ..., 1099]
 
 # pack data into a pandas datafarm
 df = pd.DataFrame([lr_time,li_cellcount], index=['time_min','cell_count']).T

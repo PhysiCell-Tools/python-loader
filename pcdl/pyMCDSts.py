@@ -39,6 +39,12 @@ class pyMCDSts:
             relative or absolute path to the directory where
             the PhysiCell output files are stored.
 
+        custom_type: dictionary; default is {}
+            variable enables the to specify custom_data variable types
+            other then float (int, bool, str).
+            down streem float and int will be handled as numeric,
+            bool as Boolean, and str as categorical data.
+
         microenv: booler; default True
             should the microenvironment be extracted?
             setting microenv to False will use less memory and speed up
@@ -62,11 +68,12 @@ class pyMCDSts:
         the instance offers functions to process all time steps
         in the output_path directory.
     """
-    def __init__(self, output_path='.', microenv=True, graph=True, verbose=True):
+    def __init__(self, output_path='.', custom_type={}, microenv=True, graph=True, verbose=True):
         output_path = output_path.replace('\\','/')
         if (output_path[-1] != '/'):
             output_path = output_path + '/'
         self.output_path = output_path
+        self.custom_type = custom_type
         self.microenv = microenv
         self.graph = graph
         self.verbose = False
@@ -119,6 +126,7 @@ class pyMCDSts:
         for s_pathfile in xmlfile_list:
             mcds = pyMCDS(
                 xmlfile = s_pathfile,
+                custom_type = self.custom_type,
                 microenv = self.microenv,
                 graph = self.graph,
                 verbose = self.verbose
