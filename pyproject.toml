@@ -17,7 +17,7 @@
 # 7. python3 -m build --sdist  # make source distribution
 # 8. python3 -m build --wheel  # make binary distribution python wheel
 # 9. twine upload dist/* --verbose
-# 10. git push origin master
+# 10. git push origin
 # 11. git push --tag
 #####
 

@@ -759,7 +759,7 @@ class pyMCDS:
         return ar_concs
 
 
-    def get_concentration_df(self, z_slice=None, halt=False):
+    def get_concentration_df(self, z_slice=None, halt=False, minstate=1):
         """
         input:
             self: pyMCDS class instance.
@@ -775,6 +775,11 @@ class pyMCDS:
                 if False, z_slice will be adjusted to the nearest
                 mesh center value, the smaller one, if the coordinate
                 lies on a saddle point.
+
+            minstate: integer; default is 1
+                minimal number of states a variable has to have to be outputted.
+                variables that have only 1 state carry no information.
+                None is a state too.
 
         output:
             df_conc : pandas dataframe
@@ -811,10 +816,11 @@ class pyMCDS:
         ai_k = ((ar_p - ar_p.min()) / dp)
 
         # handle coordinates
-        ls_column = [
+        ls_coor = [
             'voxel_i','voxel_j','voxel_k',
             'mesh_center_m','mesh_center_n','mesh_center_p'
         ]
+        ls_column = ls_coor.copy()
         la_data = [ai_i, ai_j, ai_k, ar_m, ar_n, ar_p]
 
         # handle concentrations
@@ -829,9 +835,17 @@ class pyMCDS:
         d_dtype = {'voxel_i': int, 'voxel_j': int, 'voxel_k': int}
         df_conc = df_conc.astype(d_dtype)
 
-        # filter
+        # filter z_slize
         if not (z_slice is None):
            df_conc = df_conc.loc[df_conc.mesh_center_p == z_slice, :]
+
+        # filter min state
+        if (minstate > 1):
+            es_delete = set()
+            for s_column in set(df_conc.columns).difference(set(ls_coor)):
+                if len(set(df_conc.loc[:,s_column])) < minstate:
+                    es_delete.add(s_column)
+            df_conc.drop(es_delete, axis=1, inplace=True)
 
         # output
         df_conc.sort_values(['voxel_i', 'voxel_j', 'voxel_k'], inplace=True)
@@ -914,7 +928,7 @@ class pyMCDS:
             print(f'z_slice set to {z_slice}.')
 
         # get data z slice
-        df_conc = self.get_concentration_df()
+        df_conc = self.get_concentration_df(minstate=1)
         df_conc = df_conc.loc[(df_conc.mesh_center_p == z_slice),:]
         # extend to x y domain border
         df_mmin = df_conc.loc[(df_conc.mesh_center_m == df_conc.mesh_center_m.min()), :].copy()
@@ -1018,7 +1032,7 @@ class pyMCDS:
         """
         return self.data['metadata']['cell_type']
 
-    def get_cell_df(self):
+    def get_cell_df(self, minstate=1):
         """
         input:
             self: pyMCDS class instance.
@@ -1035,6 +1049,13 @@ class pyMCDS:
             function returns a dataframe with a cell centric view
             of the simulation.
         """
+        # const
+        ls_coor = [
+            'voxel_i', 'voxel_j', 'voxel_k',
+            'mesh_center_m', 'mesh_center_n', 'mesh_center_p',
+            'position_x', 'position_y', 'position_z',
+        ]
+
         # get cell position and more
         df_cell = pd.DataFrame(self.data['discrete_cells']['data'])
         df_voxel = df_cell.loc[:,['position_x','position_y','position_z']].copy()
@@ -1106,7 +1127,7 @@ class pyMCDS:
                      df_cell[s_var] = df_sub.loc[s_sub,s_rate]
 
             # merge concentration (left join)
-            df_conc = self.get_concentration_df(z_slice=None)
+            df_conc = self.get_concentration_df(z_slice=None, minstate=1)
             df_cell = pd.merge(
                 df_cell,
                 df_conc,
@@ -1133,6 +1154,14 @@ class pyMCDS:
         df_cell.loc[:,'current_phase'].replace(ds_death_phase, inplace=True)
         df_cell.loc[:,'cell_type'].replace(self.data['metadata']['cell_type'], inplace=True)
 
+        # filter min state
+        if (minstate > 1):
+            es_delete = set()
+            for s_column in set(df_cell.columns).difference(set(ls_coor)):
+                if len(set(df_cell.loc[:,s_column])) < minstate:
+                    es_delete.add(s_column)
+            df_cell.drop(es_delete, axis=1, inplace=True)
+
         # output
         df_cell = df_cell.loc[:,sorted(df_cell.columns)]
         df_cell.set_index('ID', inplace=True)
@@ -1140,7 +1169,7 @@ class pyMCDS:
         return df_cell
 
 
-    def get_cell_df_at(self, x, y, z=0):
+    def get_cell_df_at(self, x, y, z=0, minstate=1):
         """
         input:
             self: pyMCDS class instance.
@@ -1179,7 +1208,7 @@ class pyMCDS:
             p = ar_p[j, i, k]
 
             # get voxel
-            df_cell = self.get_cell_df()
+            df_cell = self.get_cell_df(minstate=minstate)
             inside_voxel = (
                 (df_cell['position_x'] <= m + dm / 2) &
                 (df_cell['position_x'] >= m - dm / 2) &

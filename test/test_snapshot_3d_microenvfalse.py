@@ -184,12 +184,17 @@ class TestPyMcdsMicroenvFalse3D(object):
                (ls_variable[0] == 'ID')
 
     def test_mcds_get_cell_df(self, mcds=mcds):
-        df_cell = mcds.get_cell_df()
+        df_cell = mcds.get_cell_df(minstate=0)
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_cell.shape == (20460, 106))
 
+    def test_mcds_get_cell_df_minstate(self, mcds=mcds):
+        df_cell = mcds.get_cell_df(minstate=2)
+        assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
+               (df_cell.shape == (20460, 25))
+
     def test_mcds_get_cell_df_at(self, mcds=mcds):
-        df_cell = mcds.get_cell_df_at(x=0, y=0, z=0)
+        df_cell = mcds.get_cell_df_at(x=0, y=0, z=0, minstate=1)
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_cell.shape == (5, 106))
 
