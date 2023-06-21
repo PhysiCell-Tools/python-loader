@@ -1,4 +1,4 @@
-# Physicell Data Loader Tutorial Man Page
+# PhysiCell Data Loader Tutorial Man Page
 
 Please install the latest version of physicelldataloader (pcdl) branch v3,
 as described in the [HowTo](https://github.com/elmbeech/physicelldataloader/blob/master/man/HOWTO.md) section.\

@@ -167,12 +167,12 @@ class pyMCDS:
             the PhysiCell output files are stored.
 
         custom_type: dictionary; default is {}
-            variable enables the to specify custom_data variable types
-            other then float (int, bool, str).
-            down streem float and int will be handled as numeric,
+            variable to specify custom_data variable types
+            other than float (int, bool, str) like this: {var: dtype, ...}.
+            down stream float and int will be handled as numeric,
             bool as Boolean, and str as categorical data.
 
-        microenv: booler; default True
+        microenv: boole; default True
             should the microenvironment be extracted?
             setting microenv to False will use less memory and speed up
             processing, similar to the original pyMCDS_cells.py script.
@@ -1118,8 +1118,11 @@ class pyMCDS:
         do_type = {}
         [do_type.update({k:v}) for k,v in do_var_type.items() if k in es_column]
         do_type.update(self.custom_type)
-        ls_int = sorted(do_type.keys())
-        df_cell.loc[:,ls_int] = df_cell.loc[:,ls_int].round().astype(int)
+        do_int = do_type.copy()
+        [do_int.update({k:int}) for k in do_int.keys()]
+        ls_int = sorted(do_int.keys())
+        df_cell.loc[:,ls_int] = df_cell.loc[:,ls_int].round()
+        df_cell = df_cell.astype(do_int)
         df_cell = df_cell.astype(do_type)
 
         # categorical translation
@@ -1353,7 +1356,6 @@ class pyMCDS:
             # if custom data was found
             if (len(es_customdata) > 0):
                 print(f'Warning @ pyMCDS._read_xml : custom_data without variable type setting detected. {sorted(es_customdata)}')
-                print('use the pyMCDS(custom_type={var: dtype, ...}) to set variables to other types (bool, int, str) than float.')
 
             # discrete_cells id label sorting
             ls_celltype = [s_celltype for _, s_celltype in sorted(ds_celltype.items())]

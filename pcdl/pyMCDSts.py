@@ -40,9 +40,9 @@ class pyMCDSts:
             the PhysiCell output files are stored.
 
         custom_type: dictionary; default is {}
-            variable enables the to specify custom_data variable types
-            other then float (int, bool, str).
-            down streem float and int will be handled as numeric,
+            variable to specify custom_data variable types
+            other than float (int, bool, str) like this: {var: dtype, ...}.
+            down stream float and int will be handled as numeric,
             bool as Boolean, and str as categorical data.
 
         microenv: booler; default True
@@ -53,6 +53,11 @@ class pyMCDSts:
         graph: boole; default True
             should the graphs be extracted?
             setting graph to False will use less memory and speed up processing.
+
+        settingxml: boole; default True
+            should the substrate and cell type ID label mapping defined in
+            PhysiCell_settings.xml be extracted?
+            only set to False if the xml file is missing.
 
         verbose: boole; default True
             setting verbose to False for less text output, while processing.
@@ -68,7 +73,7 @@ class pyMCDSts:
         the instance offers functions to process all time steps
         in the output_path directory.
     """
-    def __init__(self, output_path='.', custom_type={}, microenv=True, graph=True, verbose=True):
+    def __init__(self, output_path='.', custom_type={}, microenv=True, graph=True, settingxml=True, verbose=True):
         output_path = output_path.replace('\\','/')
         if (output_path[-1] != '/'):
             output_path = output_path + '/'
@@ -76,6 +81,7 @@ class pyMCDSts:
         self.custom_type = custom_type
         self.microenv = microenv
         self.graph = graph
+        self.settingxml = settingxml,
         self.verbose = False
         self.l_mcds = self.read_mcds()
         self.verbose = verbose
@@ -129,6 +135,7 @@ class pyMCDSts:
                 custom_type = self.custom_type,
                 microenv = self.microenv,
                 graph = self.graph,
+                settingxml = self.settingxml,
                 verbose = self.verbose
             )
             l_mcds.append(mcds)

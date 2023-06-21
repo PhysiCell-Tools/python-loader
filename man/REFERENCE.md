@@ -1,4 +1,4 @@
-# Physicell Data Loader Reference Man Page
+# PhysiCell Data Loader Reference Man Page
 
 This is the technical descriptions of the machinery and how to operate it.\
 References are maintained in each module's [docstring](https://en.wikipedia.org/wiki/Docstring).\
