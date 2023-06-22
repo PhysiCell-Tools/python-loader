@@ -52,8 +52,15 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 
 
 ## Release Notes:
++ version 3.2.8 (2023-06-21): elmbeech/physicelldataloader
+    + pyMCDS **get_concentration_df** minstate parameter to filter out non-informative variables.
+    + pyMCDS **get_cell_df** minstate parameter to filter out non-informative variables.
+    + pyMCDSts **_\_init__** load parameter to specify if the whole time series data straight at object initialization should be loaded.
+    + new pyMCDSts **get_cell_minstate_col** function to scan the whole time series for informative variables.
+    + new pyMCDSts **get_concentartion_minstate_col** function to scan the whole time series for informative variables.
+
 + version 3.2.7 (2023-06-20): elmbeech/physicelldataloader
-    + pyMCDS and pyMCDSts **custom_type** parameter to specify other custom_data variable types (int, bool, str) then the generic float. 
+    + pyMCDS and pyMCDSts **_\_init__** custom_type parameter to specify other custom_data variable types (int, bool, str) then the generic float.
 
 + version 3.2.5 (2023-06-19): elmbeech/physicelldataloader
     + pyMCDS resolve incompatibility with earlier PhysiCell and MultiCellDS versions.

@@ -45,7 +45,11 @@ class pyMCDSts:
             down stream float and int will be handled as numeric,
             bool as Boolean, and str as categorical data.
 
-        microenv: booler; default True
+        load: boole; default True
+            should the whole time series data, all time steps, straight at
+            object initialization be read and stored to mcdsts.l_mcds?
+
+        microenv: boole; default True
             should the microenvironment be extracted?
             setting microenv to False will use less memory and speed up
             processing, similar to the original pyMCDS_cells.py script.
@@ -57,7 +61,7 @@ class pyMCDSts:
         settingxml: boole; default True
             should the substrate and cell type ID label mapping defined in
             PhysiCell_settings.xml be extracted?
-            only set to False if the xml file is missing.
+            only set to False if the xml file is missing!
 
         verbose: boole; default True
             setting verbose to False for less text output, while processing.
@@ -73,18 +77,20 @@ class pyMCDSts:
         the instance offers functions to process all time steps
         in the output_path directory.
     """
-    def __init__(self, output_path='.', custom_type={}, microenv=True, graph=True, settingxml=True, verbose=True):
+    def __init__(self, output_path='.', custom_type={}, load=True, microenv=True, graph=True, settingxml=True, verbose=True):
         output_path = output_path.replace('\\','/')
         if (output_path[-1] != '/'):
             output_path = output_path + '/'
+        if not os.path.isdir(output_path):
+            print(f'Error @ pyMCDSts.__init__ : this is not a path! could not load {output_path}.')
         self.output_path = output_path
         self.custom_type = custom_type
         self.microenv = microenv
         self.graph = graph
-        self.settingxml = settingxml,
-        self.verbose = False
-        self.l_mcds = self.read_mcds()
+        self.settingxml = settingxml
         self.verbose = verbose
+        if load:
+            self.read_mcds()
 
 
     ## LOAD DATA
@@ -105,7 +111,7 @@ class pyMCDSts:
         """
         # bue 2022-10-22: is output*.xml always the correct pattern?
         ls_pathfile = [o_pathfile.as_posix() for o_pathfile in sorted(pathlib.Path(self.output_path).glob('output*.xml'))]
-        return(ls_pathfile)
+        return ls_pathfile
 
 
     def read_mcds(self, xmlfile_list=None):
@@ -144,7 +150,101 @@ class pyMCDSts:
 
         # output
         self.l_mcds = l_mcds
-        return(l_mcds)
+        return l_mcds
+
+
+    ## TRIAGE DATA
+    def get_cell_minstate_col(self, minstate=2):
+        """
+        input:
+            minstate: integer; default is 2
+                minimal number of states a variable has to have,
+                in any of the mcds time steps, to be outputted.
+                variables that have only 1 state carry no information.
+                None is a state too.
+
+        output:
+            ls_minstate: list of strings
+                list of all non-coordinate column names, that at least in
+                one of the time steps or in between time steps reach
+                the given minimal state count.
+
+        description:
+            function to detect informative variables in a time series.
+            this function detects even variables, which have in each
+            time step less than the minimal state count, but different values
+            from time step to time step.
+        """
+        # const
+        es_coor = {
+            'voxel_i', 'voxel_j', 'voxel_k',
+            'mesh_center_m', 'mesh_center_n', 'mesh_center_p',
+            'position_x', 'position_y', 'position_z',
+        }
+        # processing
+        es_minstate = set()
+        des_minstate = {}
+        for mcds in self.l_mcds:
+            df_cell = mcds.get_cell_df()
+            for s_column in df_cell.columns:
+                if not (s_column in es_coor):
+                    es_state = set(df_cell.loc[:,s_column])
+                    try:
+                        des_minstate[s_column] = des_minstate[s_column].union(es_state)
+                    except KeyError:
+                        des_minstate.update({s_column: es_state})
+        for s_column, es_state in des_minstate.items():
+            if len(es_state) >= minstate:
+                es_minstate.add(s_column)
+        # output
+        ls_minstate = sorted(es_minstate)
+        return ls_minstate
+
+
+    def get_concentration_minstate_col(self, minstate=2):
+        """
+        input:
+            minstate: integer; default is 2
+                minimal number of states a variable has to have,
+                in any of the mcds time steps, to be outputted.
+                variables that have only 1 state carry no information.
+                None is a state too.
+
+        output:
+            ls_minstate: list of strings
+                list of all non-coordinate column names, that at least in
+                one of the time steps or in between time steps reach
+                the given minimal state count.
+
+        description:
+            function to detect informative substrate concentration variables
+            in a time series. this function detects even variables, which have
+            in each time step less than the minimal state count, but
+            different values from time step to time step.
+        """
+        # const
+        es_coor = {
+            'voxel_i', 'voxel_j', 'voxel_k',
+            'mesh_center_m', 'mesh_center_n', 'mesh_center_p',
+        }
+        # processing
+        es_minstate = set()
+        des_minstate = {}
+        for mcds in self.l_mcds:
+            df_conc = mcds.get_concentration_df()
+            for s_column in df_conc.columns:
+                if not (s_column in es_coor):
+                    es_state = set(df_conc.loc[:,s_column])
+                    try:
+                        des_minstate[s_column] = des_minstate[s_column].union(es_state)
+                    except KeyError:
+                        des_minstate.update({s_column: es_state})
+        for s_column, es_state in des_minstate.items():
+            if len(es_state) >= minstate:
+                es_minstate.add(s_column)
+        # output
+        ls_minstate = sorted(es_minstate)
+        return ls_minstate
 
 
     ## GENERATE AND TRANSFORM IMAGES
@@ -165,7 +265,7 @@ class pyMCDSts:
         s_magick = 'magick '
         if (platform.system() in {'Linux'}) and (os.system('magick --version') != 0) and (os.system('convert --version') == 0):
             s_magick = ''
-        return(s_magick)
+        return s_magick
 
 
     def make_imgcell(self, focus='cell_type', z_slice=0, z_axis=None, cmap='viridis', grid=True, xlim=None, ylim=None, xyequal=True, s=None, figsizepx=None, ext='jpeg', figbgcolor=None):
@@ -377,7 +477,7 @@ class pyMCDSts:
             plt.close(fig)
 
         # output
-        return(s_path)
+        return s_path
 
 
     def make_imgsubs(self, focus, z_slice=0, extrema=None, alpha=1, fill=True, cmap='viridis', grid=True, xlim=None, ylim=None, xyequal=True, figsizepx=None, ext='jpeg', figbgcolor=None):
@@ -461,7 +561,7 @@ class pyMCDSts:
                 i_height = int(np.ceil(float(root.get('height'))))  # px
                 figsizepx = [i_width, i_height]
             except FileNotFoundError:
-                print(f'Warning @ pyMCDSts.make_imgcell : could not load {s_pathfile}.')
+                print(f'Warning @ pyMCDSts.make_imgsubs : could not load {s_pathfile}.')
                 figsizepx = [640, 480]
 
         # handle z_slice
@@ -530,7 +630,7 @@ class pyMCDSts:
             plt.close(fig)
 
         # output
-        return(s_path)
+        return s_path
 
 
     def make_gif(self, path, interface='jpeg'):
@@ -571,7 +671,7 @@ class pyMCDSts:
         os.system(f'{s_magick}convert {s_ipathfiles} {s_opathfile}')
 
         # output
-        return(s_opathfile)
+        return s_opathfile
 
 
     def make_movie(self, path, interface='jpeg', framerate=12):
@@ -617,4 +717,4 @@ class pyMCDSts:
         os.system(s_cmd)
 
         # output
-        return(s_opathfile)
+        return s_opathfile

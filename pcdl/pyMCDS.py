@@ -107,6 +107,7 @@ es_var_spatial = {
 # const physicell variable types
 do_var_type = {
     # integer
+    'ID': int,
     'cell_count_voxel': int,
     'chemotaxis_index': int,
     'maximum_number_of_attachments': int,
@@ -1037,6 +1038,11 @@ class pyMCDS:
         input:
             self: pyMCDS class instance.
 
+            minstate: integer; default is 1
+                minimal number of states a variable has to have to be outputted.
+                variables that have only 1 state carry no information.
+                None is a state too.
+
         output:
             df_cell: pandas dataframe
             dataframe lists, one cell per row, all tracked variables
@@ -1182,6 +1188,11 @@ class pyMCDS:
 
             z: floating point number; default is 0
                 position z-coordinate.
+
+            minstate: integer; default is 1
+                minimal number of states a variable has to have to be outputted.
+                variables that have only 1 state carry no information.
+                None is a state too.
 
         output:
             df_voxel: pandas dataframe

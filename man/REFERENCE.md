@@ -73,6 +73,10 @@ help(pcdl.pyMCDSts.__init__)
 help(pcdl.pyMCDSts.get_xmlfile_list)
 help(pcdl.pyMCDSts.read_mcds)
 
+# pyMCDSts triage data
+help(pcdl.pyMCDSts.get_cell_minstate_col)
+help(pcdl.pyMCDSts.get_concentration_minstate_col)
+
 # pyMCDSts images and movies
 help(pcdl.pyMCDSts.make_imgcell)
 help(pcdl.pyMCDSts.make_imgsubs)
