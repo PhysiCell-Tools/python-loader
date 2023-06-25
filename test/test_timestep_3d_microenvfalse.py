@@ -2,12 +2,12 @@
 # title: test_snapshot_3d_microenvfalse.py
 #
 # language: python3
-# author: bue
+# author: Elmar Bucher
 # date: 2022-10-15
 # license: BSD 3-Clause
 #
 # description:
-#   pytest unit test library for heat.py
+#   pytest unit test library for the pcdl library pyMCDS class.
 #   + https://docs.pytest.org/
 #
 #   note:
@@ -17,19 +17,23 @@
 #   pytest.approx for real values
 #####
 
+
 # load library
 import os
 import pathlib
 import pcdl
+
 
 # const
 s_path_3d = str(pathlib.Path(pcdl.__file__).parent.resolve()/'data_timeseries_3d')
 s_file_3d = 'output00000024.xml'
 s_pathfile_3d = f'{s_path_3d}/{s_file_3d}'
 
+
 # test data
 if not os.path.exists(s_path_3d):
     pcdl.install_data()
+
 
 # test function
 class TestPyMcdsMicroenvFalse3D(object):
@@ -186,17 +190,17 @@ class TestPyMcdsMicroenvFalse3D(object):
     def test_mcds_get_cell_df(self, mcds=mcds):
         df_cell = mcds.get_cell_df(minstate=0)
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (20460, 106))
+               (df_cell.shape == (20460, 107))
 
     def test_mcds_get_cell_df_minstate(self, mcds=mcds):
         df_cell = mcds.get_cell_df(minstate=2)
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (20460, 25))
+               (df_cell.shape == (20460, 26))
 
     def test_mcds_get_cell_df_at(self, mcds=mcds):
         df_cell = mcds.get_cell_df_at(x=0, y=0, z=0, minstate=1)
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (5, 106))
+               (df_cell.shape == (5, 107))
 
     ## unit related functions
     def test_mcds_get_unit_df(self, mcds=mcds):

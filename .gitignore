@@ -4,12 +4,12 @@
 **/._.DS_Store
 
 # python
-__init__.pyc
-__pycache__/
-.mypy_cache/
+**/__init__.pyc
+**/__pycache__/
+**/.mypy_cache/
 
 # pytest
-.pytest_cache/
+**/.pytest_cache/
 
 # pip
 build/

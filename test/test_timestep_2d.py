@@ -2,12 +2,12 @@
 # title: test_snapshot_2d.py
 #
 # language: python3
-# author: bue
+# author: Elmar Bucher
 # date: 2022-10-15
 # license: BSD 3-Clause
 #
 # description:
-#   pytest unit test library for heat.py
+#   pytest unit test library for the pcdl library pyMCDS class.
 #   + https://docs.pytest.org/
 #
 #   note:
@@ -17,19 +17,23 @@
 #   pytest.approx for real values
 #####
 
+
 # load library
 import os
 import pathlib
 import pcdl
+
 
 # const
 s_path_2d = str(pathlib.Path(pcdl.__file__).parent.resolve()/'data_timeseries_2d')
 s_file_2d = 'output00000024.xml'
 s_pathfile_2d = f'{s_path_2d}/{s_file_2d}'
 
+
 # test data
 if not os.path.exists(s_path_2d):
     pcdl.install_data()
+
 
 # load physicell data with microenvironment
 class TestPyMcdsMicroenvTrue2D(object):
@@ -286,17 +290,17 @@ class TestPyMcdsMicroenvTrue2D(object):
     def test_mcds_get_cell_df(self, mcds=mcds):
         df_cell = mcds.get_cell_df(minstate=0)
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (1099, 92))
+               (df_cell.shape == (1099, 93))
 
     def test_mcds_get_cell_df_minstate(self, mcds=mcds):
         df_cell = mcds.get_cell_df(minstate=2)
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (1099, 37))
+               (df_cell.shape == (1099, 38))
 
     def test_mcds_get_cell_df_at(self, mcds=mcds):
         df_cell = mcds.get_cell_df_at(x=0, y=0, z=0, minstate=1)
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (5, 92))
+               (df_cell.shape == (5, 93))
 
     ## graph related functions
     def test_mcds_get_attached_graph_dict(self, mcds=mcds):

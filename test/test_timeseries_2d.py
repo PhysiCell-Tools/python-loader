@@ -2,12 +2,12 @@
 # title: test_timeseries.py
 #
 # language: python3
-# author: bue
+# author: Elmar Bucher
 # date: 2022-10-15
 # license: BSD 3-Clause
 #
 # description:
-#   pytest unit test library for heat.py
+#   pytest unit test library for the pcdl library pyMCDSts class.
 #   + https://docs.pytest.org/
 #
 #   note:
@@ -17,6 +17,7 @@
 #   pytest.approx for real values
 #####
 
+
 # load library
 import os
 import pathlib
@@ -24,12 +25,15 @@ import pcdl
 import platform
 import shutil
 
+
 # const
 s_path_2d = str(pathlib.Path(pcdl.__file__).parent.resolve()/'data_timeseries_2d')
+
 
 # test data
 if not os.path.exists(s_path_2d):
     pcdl.install_data()
+
 
 # load physicell data time series
 class TestPyMcdsTs(object):
@@ -54,17 +58,15 @@ class TestPyMcdsTs(object):
         assert len(ls_mcds) == 25 and \
                ls_mcds[-1].get_time() == 1440
 
-
     ## data triage command ##
     def test_mcdsts_get_cell_minstate_col(self, mcdsts=mcdsts):
         ls_minstate = mcdsts.get_cell_minstate_col()
-        assert len(ls_minstate) == 28 and \
+        assert len(ls_minstate) == 29 and \
                ls_minstate[-1] == 'uptake_rates_oxygen'
 
     def test_mcdsts_get_concentration_minstate_col(self, mcdsts=mcdsts):
         ls_minstate = mcdsts.get_concentration_minstate_col()
         assert ls_minstate == ['oxygen']
-
 
     ## magick command ##
     def test_mcdsts_handle_magick(self, mcdsts=mcdsts):
@@ -73,7 +75,6 @@ class TestPyMcdsTs(object):
             s_magick = None
             print('Error @ pyMCDSts._handle_magick : image magick installation version >= 7.0 missing!')
         assert s_magick in {'', 'magick '}
-
 
     ## make_imgcell command ##
     def test_mcdsts_make_imgcell_cat(self, mcdsts=mcdsts):

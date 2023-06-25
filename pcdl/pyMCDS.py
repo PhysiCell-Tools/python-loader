@@ -1060,10 +1060,12 @@ class pyMCDS:
             'voxel_i', 'voxel_j', 'voxel_k',
             'mesh_center_m', 'mesh_center_n', 'mesh_center_p',
             'position_x', 'position_y', 'position_z',
+            'time',
         ]
 
         # get cell position and more
         df_cell = pd.DataFrame(self.data['discrete_cells']['data'])
+        df_cell['time'] = self.get_time()
         df_voxel = df_cell.loc[:,['position_x','position_y','position_z']].copy()
 
         # get mesh spacing

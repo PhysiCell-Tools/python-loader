@@ -26,8 +26,8 @@ import numpy as np
 import os
 import pathlib
 from pcdl import pdplt
+from pcdl.pyMCDS import pyMCDS
 import platform
-from .pyMCDS import pyMCDS
 import xml.etree.ElementTree as ET
 
 

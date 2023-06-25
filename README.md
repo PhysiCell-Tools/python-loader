@@ -20,6 +20,7 @@ The pcdl python3 library maintains three branches branches:
 + Library dependencies: anndata, matplotlib, numpy, pandas
 + Date of origin original PhysiCell-Tools python-loader: 2019-09-02
 + Date of origin pcdl fork: 2022-08-30
++ DOI:
 + License: [BSD-3-Clause](https://en.wikipedia.org/wiki/BSD_licenses)
 + User manual: this README.md file
 + Source code: [https://github.com/elmbeech/physicelldataloader](https://github.com/elmbeech/physicelldataloader)
@@ -51,7 +52,17 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 + fork pcdl co-programmer and tester: Heber Rocha, Marshal Gress
 
 
+## Road Map:
++ [vtk file format](https://docs.vtk.org/en/latest/design_documents/VTKFileFormats.html) output.
+
+
 ## Release Notes:
++ version 3.2.9 (2023-07-14): elmbeech/physicelldataloader
+    + new class **TimeStep** can do everything pyMCDS can do and more.
+    + new class **TimeSeries** can do everything pyMCDSts can do and more.
+    + new TimeStep **anndata_trafo** function to transform physicell output into [AnnData](https://anndata.readthedocs.io/en/latest/) objects.
+    + new TimeSeries **anndata_trafo** function to transform physicell output into [AnnData](https://anndata.readthedocs.io/en/latest/) objects.
+
 + version 3.2.8 (2023-06-21): elmbeech/physicelldataloader
     + pyMCDS **get_concentration_df** minstate parameter to filter out non-informative variables.
     + pyMCDS **get_cell_df** minstate parameter to filter out non-informative variables.
