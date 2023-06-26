@@ -75,10 +75,10 @@ class TestTimeStep(object):
     ''' test for pcdl.TimeStep class. '''
     mcds = pcdl.TimeStep(s_pathfile_2d, verbose=False)
 
-    ## anndata_trafo command ##
+    ## get_anndata command ##
     @pytest.mark.filterwarnings("ignore:invalid value encountered in divide")
-    def test_mcds_anndata_trafo(self, mcds=mcds):
-        ann = mcds.anndata_trafo(states=1, drop=set(), scale='maxabs')
+    def test_mcds_get_anndata(self, mcds=mcds):
+        ann = mcds.get_anndata(states=1, drop=set(), scale='maxabs')
         assert (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
                (ann.X.shape == (1099, 79)) and \
                (ann.obs.shape == (1099, 4)) and \
@@ -92,10 +92,10 @@ class TestTimeSeries(object):
     ''' test for pcdl.TestSeries class. '''
     mcdsts = pcdl.TimeSeries(s_path_2d, verbose=False)
 
-    ## anndata_trafo command ##
+    ## get_anndata command ##
     @pytest.mark.filterwarnings("ignore:invalid value encountered in divide")
-    def test_mcdsts_anndata_trafo_collapse_mcds(self, mcdsts=mcdsts):
-        ann = mcdsts.anndata_trafo(states=1, drop=set(), scale='maxabs', collapse=True, keep_mcds=True)
+    def test_mcdsts_get_anndata_collapse_mcds(self, mcdsts=mcdsts):
+        ann = mcdsts.get_anndata(states=1, drop=set(), scale='maxabs', collapse=True, keep_mcds=True)
         assert (len(mcdsts.l_mcds) == 25) and \
                (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
                (ann.X.shape == (24758, 79)) and \
@@ -105,8 +105,8 @@ class TestTimeSeries(object):
                (len(ann.uns) == 0)
 
     @pytest.mark.filterwarnings("ignore:invalid value encountered in divide")
-    def test_mcdsts_anndata_trafo_noncollapse_nonmcds(self, mcdsts=mcdsts):
-        d_ann = mcdsts.anndata_trafo(states=1, drop=set(), scale='maxabs', collapse=False, keep_mcds=False)
+    def test_mcdsts_get_anndata_noncollapse_nonmcds(self, mcdsts=mcdsts):
+        d_ann = mcdsts.get_anndata(states=1, drop=set(), scale='maxabs', collapse=False, keep_mcds=False)
         assert (len(mcdsts.l_mcds) == 0) and \
                (str(type(d_ann)) == "<class 'dict'>") and \
                (len(d_ann) == 25) and \

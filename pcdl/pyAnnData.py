@@ -144,7 +144,7 @@ def extract(df_cell, scale='maxabs'):
         elif str(se_cell.dtype).startswith('object'):
             des_type['str'].add(se_cell.name)
         else:
-            print(f'Error @ TimeSeries.anndata_trafo : column {se_cell.name} detected with unknown dtype {str(se_cell.dtype)}.')
+            print(f'Error @ TimeSeries.get_anndata : column {se_cell.name} detected with unknown dtype {str(se_cell.dtype)}.')
 
     # build anndata object
     df_spatial = df_cell.loc[:,['position_x', 'position_y','position_z','time']].copy()
@@ -211,7 +211,7 @@ class TimeStep(pyMCDS):
     def __init__(self, xmlfile, output_path='.', custom_type={}, microenv=True, graph=True, settingxml=True, verbose=True):
         pyMCDS.__init__(self, xmlfile=xmlfile, output_path=output_path, custom_type=custom_type, microenv=microenv, graph=graph, settingxml=settingxml, verbose=verbose)
 
-    def anndata_trafo(self, states=1, drop=set(), scale='maxabs'):
+    def get_anndata(self, states=1, drop=set(), scale='maxabs'):
         """
         input:
             states: integer; default is 1
@@ -292,7 +292,7 @@ class TimeSeries(pyMCDSts):
     def __init__(self, output_path='.', custom_type={}, load=True, microenv=True, graph=True, settingxml=True, verbose=True):
         pyMCDSts.__init__(self, output_path=output_path, custom_type=custom_type, load=load, microenv=microenv, graph=graph, settingxml=settingxml, verbose=verbose)
 
-    def anndata_trafo(self, states=1, drop=set(), scale='maxabs', collapse=True, keep_mcds=True):
+    def get_anndata(self, states=1, drop=set(), scale='maxabs', collapse=True, keep_mcds=True):
         """
         input:
             states: integer; default is 1

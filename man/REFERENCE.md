@@ -8,12 +8,13 @@ You can access them through the [source code](https://github.com/elmbeech/physic
 import pcdl
 ```
 
-Then, for each pcdl module, get on the fly reference information with the [help](https://en.wikipedia.org/wiki/Help!) command.
-
+Then, for each pcdl module, get on the fly reference information with the [help](https://en.wikipedia.org/wiki/Help!) command.\
+The **workhorse functions** are the ones most important for data analysis.
+Familiarize yourself with all of their parameters!
 
 # TimeStep
-```
-help(pcdl.TimeStep)
+```python3
+help(pcdl.TimeStep)  # ! make class instance
 help(pcdl.TimeStep.__init__)
 
 # TimeStep medata
@@ -43,25 +44,26 @@ help(pcdl.TimeStep.get_substrate_names)
 help(pcdl.TimeStep.get_substrate_dict)
 help(pcdl.TimeStep.get_substrate_df)
 help(pcdl.TimeStep.get_concentration)
-help(pcdl.TimeStep.get_concentration_df)
+help(pcdl.TimeStep.get_concentration_df)  # ! workhorse function
+help(pcdl.TimeStep.get_conc_df)  # ! shorthand
 help(pcdl.TimeStep.get_concentration_at)
-help(pcdl.TimeStep.get_contour)
+help(pcdl.TimeStep.get_contour)  # ! workhorse function
 
 # TimeStep cells and other agents
 help(pcdl.TimeStep.get_celltype_dict)
 help(pcdl.TimeStep.get_cell_variables)
-help(pcdl.TimeStep.get_cell_df)
+help(pcdl.TimeStep.get_cell_df)  # ! workhorse function
 help(pcdl.TimeStep.get_cell_df_at)
 
 # TimeStep graphs
-help(pcdl.TimeStep.get_attached_graph_dict)
-help(pcdl.TimeStep.get_neighbor_graph_dict)
+help(pcdl.TimeStep.get_attached_graph_dict)  # !
+help(pcdl.TimeStep.get_neighbor_graph_dict)  # !
 
 # TimeStep unit
-help(pcdl.TimeStep.get_unit_df)
+help(pcdl.TimeStep.get_unit_df)  # ! workhorse function
 
 # TimeStep anndata
-help(pcdl.TimeStep.anndata_trafo)
+help(pcdl.TimeStep.get_anndata)  # ! workhorse function
 
 # TimeStep internal functions
 help(pcdl.TimeStep._read_xml)
@@ -73,7 +75,7 @@ help(pcdl.scaler)
 
 # TimeStep time series
 ```
-help(pcdl.TimeSeries)
+help(pcdl.TimeSeries)  # ! make class instance
 help(pcdl.TimeSeries.__init__)
 
 # TimeSeries load data
@@ -85,13 +87,13 @@ help(pcdl.TimeSeries.get_cell_df_columns_min_states)
 help(pcdl.TimeSeries.get_conc_df_columns_min_states)
 
 # TimeSeries images and movies
-help(pcdl.TimeSeries.make_imgcell)
-help(pcdl.TimeSeries.make_imgsubs)
-help(pcdl.TimeSeries.make_gif)
-help(pcdl.TimeSeries.make_movie)
+help(pcdl.TimeSeries.make_imgcell)  # ! workhorse function
+help(pcdl.TimeSeries.make_imgsubs)  # ! workhorse function
+help(pcdl.TimeSeries.make_gif)  # ! workhorse function
+help(pcdl.TimeSeries.make_movie)  # ! workhorse function
 
 # TimeSeries anndata
-help(pcdl.TimeSeries.anndata_trafo)
+help(pcdl.TimeSeries.get_anndata)  # ! workhorse function
 
 # TimeSeries internal functions
 help(pcdl.TimeSeries._handle_magick)

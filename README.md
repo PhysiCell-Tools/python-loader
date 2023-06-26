@@ -60,8 +60,8 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 + version 3.2.9 (2023-07-14): elmbeech/physicelldataloader
     + new class **TimeStep** can do everything pyMCDS can do and more.
     + new class **TimeSeries** can do everything pyMCDSts can do and more.
-    + new TimeStep **anndata_trafo** function to transform physicell output into [AnnData](https://anndata.readthedocs.io/en/latest/) objects.
-    + new TimeSeries **anndata_trafo** function to transform physicell output into [AnnData](https://anndata.readthedocs.io/en/latest/) objects.
+    + new TimeStep **get_anndata** function to transform physicell output into [AnnData](https://anndata.readthedocs.io/en/latest/) objects.
+    + new TimeSeries **get_anndata** function to transform physicell output into [AnnData](https://anndata.readthedocs.io/en/latest/) objects.
     + pyMCDS **get_concentration_df** drop parameter to declare a set of columns to be droped.
     + pyMCDS **get_cell_df** drop parameter to declare a set of columns to be droped.
     + new pyMCDS **get_conc_df** shorthand for get_concentration_df.
