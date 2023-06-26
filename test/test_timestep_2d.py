@@ -223,19 +223,19 @@ class TestPyMcdsMicroenvTrue2D(object):
                (ar_conc.shape == (1,))
 
     def test_mcds_get_concentration_df(self, mcds=mcds):
-        df_conc = mcds.get_concentration_df(z_slice=None, minstate=0)
+        df_conc = mcds.get_concentration_df(z_slice=None, states=0)
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_conc.shape == (121, 7))
+               (df_conc.shape == (121, 8))
 
     def test_mcds_get_concentration_df_zslice(self, mcds=mcds):
-        df_conc = mcds.get_concentration_df(z_slice=0, minstate=1)
+        df_conc = mcds.get_concentration_df(z_slice=0, states=1)
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_conc.shape == (121, 7))
+               (df_conc.shape == (121, 8))
 
-    def test_mcds_get_concentration_df_minstate(self, mcds=mcds):
-        df_conc = mcds.get_concentration_df(z_slice=None, minstate=2)
+    def test_mcds_get_concentration_df_states(self, mcds=mcds):
+        df_conc = mcds.get_concentration_df(z_slice=None, states=2)
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_conc.shape == (121, 7))
+               (df_conc.shape == (121, 8))
 
     def test_mcds_get_contour(self, mcds=mcds):
         fig = mcds.get_contour(
@@ -288,17 +288,17 @@ class TestPyMcdsMicroenvTrue2D(object):
                (ls_variable[0] == 'ID')
 
     def test_mcds_get_cell_df(self, mcds=mcds):
-        df_cell = mcds.get_cell_df(minstate=0)
+        df_cell = mcds.get_cell_df(states=0)
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_cell.shape == (1099, 93))
 
-    def test_mcds_get_cell_df_minstate(self, mcds=mcds):
-        df_cell = mcds.get_cell_df(minstate=2)
+    def test_mcds_get_cell_df_states(self, mcds=mcds):
+        df_cell = mcds.get_cell_df(states=2)
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_cell.shape == (1099, 38))
 
     def test_mcds_get_cell_df_at(self, mcds=mcds):
-        df_cell = mcds.get_cell_df_at(x=0, y=0, z=0, minstate=1)
+        df_cell = mcds.get_cell_df_at(x=0, y=0, z=0, states=1)
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_cell.shape == (5, 93))
 

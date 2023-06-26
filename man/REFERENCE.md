@@ -10,82 +10,93 @@ import pcdl
 
 Then, for each pcdl module, get on the fly reference information with the [help](https://en.wikipedia.org/wiki/Help!) command.
 
-# pyMCDS
+
+# TimeStep
 ```
-help(pcdl.pyMCDS)
-help(pcdl.pyMCDS.__init__)
+help(pcdl.TimeStep)
+help(pcdl.TimeStep.__init__)
 
-# pyMCDS medata
-help(pcdl.pyMCDS.get_multicellds_version)
-help(pcdl.pyMCDS.get_physicell_version)
-help(pcdl.pyMCDS.get_timestamp)
-help(pcdl.pyMCDS.get_time)
-help(pcdl.pyMCDS.get_runtime)
+# TimeStep medata
+help(pcdl.TimeStep.get_multicellds_version)
+help(pcdl.TimeStep.get_physicell_version)
+help(pcdl.TimeStep.get_timestamp)
+help(pcdl.TimeStep.get_time)
+help(pcdl.TimeStep.get_runtime)
 
-# pyMCDS mesh
-help(pcdl.pyMCDS.get_voxel_ijk_range)
-help(pcdl.pyMCDS.get_mesh_mnp_range)
-help(pcdl.pyMCDS.get_xyz_range)
-help(pcdl.pyMCDS.get_voxel_ijk_axis)
-help(pcdl.pyMCDS.get_mesh_mnp_axis)
-help(pcdl.pyMCDS.get_mesh)
-help(pcdl.pyMCDS.get_mesh_2D)
-help(pcdl.pyMCDS.get_mesh_coordinate)
-help(pcdl.pyMCDS.get_mesh_spacing)
-help(pcdl.pyMCDS.get_voxel_spacing)
-help(pcdl.pyMCDS.get_voxel_volume)
-help(pcdl.pyMCDS.get_voxel_ijk)
-help(pcdl.pyMCDS.is_in_mesh)
+# TimeStep mesh
+help(pcdl.TimeStep.get_voxel_ijk_range)
+help(pcdl.TimeStep.get_mesh_mnp_range)
+help(pcdl.TimeStep.get_xyz_range)
+help(pcdl.TimeStep.get_voxel_ijk_axis)
+help(pcdl.TimeStep.get_mesh_mnp_axis)
+help(pcdl.TimeStep.get_mesh)
+help(pcdl.TimeStep.get_mesh_2D)
+help(pcdl.TimeStep.get_mesh_coordinate)
+help(pcdl.TimeStep.get_mesh_spacing)
+help(pcdl.TimeStep.get_voxel_spacing)
+help(pcdl.TimeStep.get_voxel_volume)
+help(pcdl.TimeStep.get_voxel_ijk)
+help(pcdl.TimeStep.is_in_mesh)
 
-# pyMCDS microenvironment
-help(pcdl.pyMCDS.get_substrate_names)
-help(pcdl.pyMCDS.get_substrate_dict)
-help(pcdl.pyMCDS.get_substrate_df)
-help(pcdl.pyMCDS.get_concentration)
-help(pcdl.pyMCDS.get_concentration_df)
-help(pcdl.pyMCDS.get_concentration_at)
-help(pcdl.pyMCDS.get_contour)
+# TimeStep microenvironment
+help(pcdl.TimeStep.get_substrate_names)
+help(pcdl.TimeStep.get_substrate_dict)
+help(pcdl.TimeStep.get_substrate_df)
+help(pcdl.TimeStep.get_concentration)
+help(pcdl.TimeStep.get_concentration_df)
+help(pcdl.TimeStep.get_concentration_at)
+help(pcdl.TimeStep.get_contour)
 
-# pyMCDS cells and other agents
-help(pcdl.pyMCDS.get_celltype_dict)
-help(pcdl.pyMCDS.get_cell_variables)
-help(pcdl.pyMCDS.get_cell_df)
-help(pcdl.pyMCDS.get_cell_df_at)
+# TimeStep cells and other agents
+help(pcdl.TimeStep.get_celltype_dict)
+help(pcdl.TimeStep.get_cell_variables)
+help(pcdl.TimeStep.get_cell_df)
+help(pcdl.TimeStep.get_cell_df_at)
 
-# pyMCDS graphs
-help(pcdl.pyMCDS.get_attached_graph_dict)
-help(pcdl.pyMCDS.get_neighbor_graph_dict)
+# TimeStep graphs
+help(pcdl.TimeStep.get_attached_graph_dict)
+help(pcdl.TimeStep.get_neighbor_graph_dict)
 
-# pyMCDS unit
-help(pcdl.pyMCDS.get_unit_df)
+# TimeStep unit
+help(pcdl.TimeStep.get_unit_df)
 
-# pyMCDS internal functions
-help(pcdl.pyMCDS._read_xml)
+# TimeStep anndata
+help(pcdl.TimeStep.anndata_trafo)
+
+# TimeStep internal functions
+help(pcdl.TimeStep._read_xml)
 help(pcdl.graphfile_parser)
+help(pcdl.extract)
+help(pcdl.scaler)
 ```
 
-# pyMCDS time series
+
+# TimeStep time series
 ```
-help(pcdl.pyMCDSts)
-help(pcdl.pyMCDSts.__init__)
+help(pcdl.TimeSeries)
+help(pcdl.TimeSeries.__init__)
 
-# pyMCDSts load data
-help(pcdl.pyMCDSts.get_xmlfile_list)
-help(pcdl.pyMCDSts.read_mcds)
+# TimeSeries load data
+help(pcdl.TimeSeries.get_xmlfile_list)
+help(pcdl.TimeSeries.read_mcds)
 
-# pyMCDSts triage data
-help(pcdl.pyMCDSts.get_cell_minstate_col)
-help(pcdl.pyMCDSts.get_concentration_minstate_col)
+# TimeSeries triage data
+help(pcdl.TimeSeries.get_cell_df_columns_min_states)
+help(pcdl.TimeSeries.get_conc_df_columns_min_states)
 
-# pyMCDSts images and movies
-help(pcdl.pyMCDSts.make_imgcell)
-help(pcdl.pyMCDSts.make_imgsubs)
-help(pcdl.pyMCDSts.make_gif)
-help(pcdl.pyMCDSts.make_movie)
+# TimeSeries images and movies
+help(pcdl.TimeSeries.make_imgcell)
+help(pcdl.TimeSeries.make_imgsubs)
+help(pcdl.TimeSeries.make_gif)
+help(pcdl.TimeSeries.make_movie)
 
-# pyMCDSts internal functions
-help(pcdl.pyMCDSts._handle_magick)
+# TimeSeries anndata
+help(pcdl.TimeSeries.anndata_trafo)
+
+# TimeSeries internal functions
+help(pcdl.TimeSeries._handle_magick)
 ```
+
 
 # test data sets
 ```

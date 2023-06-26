@@ -123,6 +123,19 @@ do_var_type = {
     'cycle_model': str,  # codec mapping
 }
 
+# const coordinate variable names
+es_coor_conc = {
+    'voxel_i','voxel_j','voxel_k',
+    'mesh_center_m','mesh_center_n','mesh_center_p',
+    'time',
+}
+es_coor_cell = {
+    'voxel_i', 'voxel_j', 'voxel_k',
+    'mesh_center_m', 'mesh_center_n', 'mesh_center_p',
+    'position_x', 'position_y', 'position_z',
+    'time',
+}
+
 
 # functions
 def graphfile_parser(s_pathfile):
@@ -211,6 +224,7 @@ class pyMCDS:
         self.settingxml = settingxml
         self.verbose = verbose
         self.data = self._read_xml(xmlfile, output_path)
+        self.get_conc_df = self.get_concentration_df
 
 
     ## METADATA RELATED FUNCTIONS ##
@@ -524,7 +538,7 @@ class pyMCDS:
 
         output:
             b_isinmesh: boolean
-            states if the given coordinate is inside the mesh.
+            declares if the given coordinate is inside the mesh.
 
         description:
             function evaluates, if the given position coordinate
@@ -760,7 +774,7 @@ class pyMCDS:
         return ar_concs
 
 
-    def get_concentration_df(self, z_slice=None, halt=False, minstate=1):
+    def get_concentration_df(self, z_slice=None, halt=False, states=1):
         """
         input:
             self: pyMCDS class instance.
@@ -777,7 +791,7 @@ class pyMCDS:
                 mesh center value, the smaller one, if the coordinate
                 lies on a saddle point.
 
-            minstate: integer; default is 1
+            states: integer; default is 1
                 minimal number of states a variable has to have to be outputted.
                 variables that have only 1 state carry no information.
                 None is a state too.
@@ -817,11 +831,10 @@ class pyMCDS:
         ai_k = ((ar_p - ar_p.min()) / dp)
 
         # handle coordinates
-        ls_coor = [
+        ls_column = [
             'voxel_i','voxel_j','voxel_k',
             'mesh_center_m','mesh_center_n','mesh_center_p'
         ]
-        ls_column = ls_coor.copy()
         la_data = [ai_i, ai_j, ai_k, ar_m, ar_n, ar_p]
 
         # handle concentrations
@@ -836,20 +849,23 @@ class pyMCDS:
         d_dtype = {'voxel_i': int, 'voxel_j': int, 'voxel_k': int}
         df_conc = df_conc.astype(d_dtype)
 
+        # add time coordiane
+        df_conc['time'] = self.get_time()
+
         # filter z_slize
         if not (z_slice is None):
            df_conc = df_conc.loc[df_conc.mesh_center_p == z_slice, :]
 
         # filter min state
-        if (minstate > 1):
+        if (states > 1):
             es_delete = set()
-            for s_column in set(df_conc.columns).difference(set(ls_coor)):
-                if len(set(df_conc.loc[:,s_column])) < minstate:
+            for s_column in set(df_conc.columns).difference(es_coor_conc):
+                if len(set(df_conc.loc[:,s_column])) < states:
                     es_delete.add(s_column)
             df_conc.drop(es_delete, axis=1, inplace=True)
 
         # output
-        df_conc.sort_values(['voxel_i', 'voxel_j', 'voxel_k'], inplace=True)
+        df_conc.sort_values(['voxel_i', 'voxel_j', 'voxel_k', 'time'], inplace=True)
         return df_conc
 
 
@@ -929,7 +945,7 @@ class pyMCDS:
             print(f'z_slice set to {z_slice}.')
 
         # get data z slice
-        df_conc = self.get_concentration_df(minstate=1)
+        df_conc = self.get_concentration_df(states=1)
         df_conc = df_conc.loc[(df_conc.mesh_center_p == z_slice),:]
         # extend to x y domain border
         df_mmin = df_conc.loc[(df_conc.mesh_center_m == df_conc.mesh_center_m.min()), :].copy()
@@ -1033,12 +1049,12 @@ class pyMCDS:
         """
         return self.data['metadata']['cell_type']
 
-    def get_cell_df(self, minstate=1):
+    def get_cell_df(self, states=1):
         """
         input:
             self: pyMCDS class instance.
 
-            minstate: integer; default is 1
+            states: integer; default is 1
                 minimal number of states a variable has to have to be outputted.
                 variables that have only 1 state carry no information.
                 None is a state too.
@@ -1055,14 +1071,6 @@ class pyMCDS:
             function returns a dataframe with a cell centric view
             of the simulation.
         """
-        # const
-        ls_coor = [
-            'voxel_i', 'voxel_j', 'voxel_k',
-            'mesh_center_m', 'mesh_center_n', 'mesh_center_p',
-            'position_x', 'position_y', 'position_z',
-            'time',
-        ]
-
         # get cell position and more
         df_cell = pd.DataFrame(self.data['discrete_cells']['data'])
         df_cell['time'] = self.get_time()
@@ -1135,11 +1143,11 @@ class pyMCDS:
                      df_cell[s_var] = df_sub.loc[s_sub,s_rate]
 
             # merge concentration (left join)
-            df_conc = self.get_concentration_df(z_slice=None, minstate=1)
+            df_conc = self.get_concentration_df(z_slice=None, states=1)
             df_cell = pd.merge(
                 df_cell,
                 df_conc,
-                on = ['voxel_i', 'voxel_j', 'voxel_k'],
+                on = ['voxel_i', 'voxel_j', 'voxel_k', 'time'],
                 how = 'left',
             )
 
@@ -1163,10 +1171,10 @@ class pyMCDS:
         df_cell.loc[:,'cell_type'].replace(self.data['metadata']['cell_type'], inplace=True)
 
         # filter min state
-        if (minstate > 1):
+        if (states > 1):
             es_delete = set()
-            for s_column in set(df_cell.columns).difference(set(ls_coor)):
-                if len(set(df_cell.loc[:,s_column])) < minstate:
+            for s_column in set(df_cell.columns).difference(es_coor_cell):
+                if len(set(df_cell.loc[:,s_column])) < states:
                     es_delete.add(s_column)
             df_cell.drop(es_delete, axis=1, inplace=True)
 
@@ -1177,7 +1185,7 @@ class pyMCDS:
         return df_cell
 
 
-    def get_cell_df_at(self, x, y, z=0, minstate=1):
+    def get_cell_df_at(self, x, y, z=0, states=1):
         """
         input:
             self: pyMCDS class instance.
@@ -1191,7 +1199,7 @@ class pyMCDS:
             z: floating point number; default is 0
                 position z-coordinate.
 
-            minstate: integer; default is 1
+            states: integer; default is 1
                 minimal number of states a variable has to have to be outputted.
                 variables that have only 1 state carry no information.
                 None is a state too.
@@ -1221,7 +1229,7 @@ class pyMCDS:
             p = ar_p[j, i, k]
 
             # get voxel
-            df_cell = self.get_cell_df(minstate=minstate)
+            df_cell = self.get_cell_df(states=states)
             inside_voxel = (
                 (df_cell['position_x'] <= m + dm / 2) &
                 (df_cell['position_x'] >= m - dm / 2) &

@@ -59,14 +59,14 @@ class TestPyMcdsTs(object):
                ls_mcds[-1].get_time() == 1440
 
     ## data triage command ##
-    def test_mcdsts_get_cell_minstate_col(self, mcdsts=mcdsts):
-        ls_minstate = mcdsts.get_cell_minstate_col()
-        assert len(ls_minstate) == 29 and \
-               ls_minstate[-1] == 'uptake_rates_oxygen'
+    def test_mcdsts_get_cell_df_columns_min_states(self, mcdsts=mcdsts):
+        ls_col = mcdsts.get_cell_df_columns_min_states(states=2)
+        assert len(ls_col) == 28 and \
+               ls_col[-1] == 'uptake_rates_oxygen'
 
-    def test_mcdsts_get_concentration_minstate_col(self, mcdsts=mcdsts):
-        ls_minstate = mcdsts.get_concentration_minstate_col()
-        assert ls_minstate == ['oxygen']
+    def test_mcdsts_get_conc_df_columns_min_states(self, mcdsts=mcdsts):
+        ls_col = mcdsts.get_conc_df_columns_min_states(states=2)
+        assert ls_col == ['oxygen']
 
     ## magick command ##
     def test_mcdsts_handle_magick(self, mcdsts=mcdsts):

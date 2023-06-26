@@ -26,7 +26,7 @@ import numpy as np
 import os
 import pathlib
 from pcdl import pdplt
-from pcdl.pyMCDS import pyMCDS
+from pcdl.pyMCDS import pyMCDS, es_coor_cell, es_coor_conc
 import platform
 import xml.etree.ElementTree as ET
 
@@ -69,13 +69,11 @@ class pyMCDSts:
     output:
         mcdsts: pyMCDSts class instance
             this instance offers functions to process all stored time steps
-            from a simulation. no data is fetched by initialization.
+            from a simulation.
 
     description:
-        pyMCDSts.__init__ generates a class instance and stores
-        the input parameters. no data is fetched at initialization.
-        the instance offers functions to process all time steps
-        in the output_path directory.
+        pyMCDSts.__init__ generates a class instance the instance offers
+        functions to process all time steps in the output_path directory.
     """
     def __init__(self, output_path='.', custom_type={}, load=True, microenv=True, graph=True, settingxml=True, verbose=True):
         output_path = output_path.replace('\\','/')
@@ -154,17 +152,17 @@ class pyMCDSts:
 
 
     ## TRIAGE DATA
-    def get_cell_minstate_col(self, minstate=2):
+    def get_cell_df_columns_min_states(self, states=2):
         """
         input:
-            minstate: integer; default is 2
+            states: integer; default is 2
                 minimal number of states a variable has to have,
                 in any of the mcds time steps, to be outputted.
                 variables that have only 1 state carry no information.
                 None is a state too.
 
         output:
-            ls_minstate: list of strings
+            ls_variable: list of strings
                 list of all non-coordinate column names, that at least in
                 one of the time steps or in between time steps reach
                 the given minimal state count.
@@ -175,43 +173,37 @@ class pyMCDSts:
             time step less than the minimal state count, but different values
             from time step to time step.
         """
-        # const
-        es_coor = {
-            'voxel_i', 'voxel_j', 'voxel_k',
-            'mesh_center_m', 'mesh_center_n', 'mesh_center_p',
-            'position_x', 'position_y', 'position_z',
-        }
         # processing
-        es_minstate = set()
-        des_minstate = {}
+        des_variable = {}
         for mcds in self.l_mcds:
             df_cell = mcds.get_cell_df()
             for s_column in df_cell.columns:
-                if not (s_column in es_coor):
+                if not (s_column in es_coor_cell):
                     es_state = set(df_cell.loc[:,s_column])
                     try:
-                        des_minstate[s_column] = des_minstate[s_column].union(es_state)
+                        des_variable[s_column] = des_variable[s_column].union(es_state)
                     except KeyError:
-                        des_minstate.update({s_column: es_state})
-        for s_column, es_state in des_minstate.items():
-            if len(es_state) >= minstate:
-                es_minstate.add(s_column)
+                        des_variable.update({s_column: es_state})
+        es_variable = set()
+        for s_column, es_state in des_variable.items():
+            if len(es_state) >= states:
+                es_variable.add(s_column)
         # output
-        ls_minstate = sorted(es_minstate)
-        return ls_minstate
+        ls_variable = sorted(es_variable)
+        return ls_variable
 
 
-    def get_concentration_minstate_col(self, minstate=2):
+    def get_conc_df_columns_min_states(self, states=2):
         """
         input:
-            minstate: integer; default is 2
+            states: integer; default is 2
                 minimal number of states a variable has to have,
                 in any of the mcds time steps, to be outputted.
                 variables that have only 1 state carry no information.
                 None is a state too.
 
         output:
-            ls_minstate: list of strings
+            ls_variable: list of strings
                 list of all non-coordinate column names, that at least in
                 one of the time steps or in between time steps reach
                 the given minimal state count.
@@ -222,29 +214,24 @@ class pyMCDSts:
             in each time step less than the minimal state count, but
             different values from time step to time step.
         """
-        # const
-        es_coor = {
-            'voxel_i', 'voxel_j', 'voxel_k',
-            'mesh_center_m', 'mesh_center_n', 'mesh_center_p',
-        }
         # processing
-        es_minstate = set()
-        des_minstate = {}
+        des_variable = {}
         for mcds in self.l_mcds:
             df_conc = mcds.get_concentration_df()
             for s_column in df_conc.columns:
-                if not (s_column in es_coor):
+                if not (s_column in es_coor_conc):
                     es_state = set(df_conc.loc[:,s_column])
                     try:
-                        des_minstate[s_column] = des_minstate[s_column].union(es_state)
+                        des_variable[s_column] = des_variable[s_column].union(es_state)
                     except KeyError:
-                        des_minstate.update({s_column: es_state})
-        for s_column, es_state in des_minstate.items():
-            if len(es_state) >= minstate:
-                es_minstate.add(s_column)
+                        des_variable.update({s_column: es_state})
+        es_variable = set()
+        for s_column, es_state in des_variable.items():
+            if len(es_state) >= states:
+                es_variable.add(s_column)
         # output
-        ls_minstate = sorted(es_minstate)
-        return ls_minstate
+        ls_variable = sorted(es_variable)
+        return ls_variable
 
 
     ## GENERATE AND TRANSFORM IMAGES

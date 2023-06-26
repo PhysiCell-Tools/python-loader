@@ -34,7 +34,7 @@ The files we care about most from this set consists of:
 + **output00000012_microenvironment0.mat**: This is a MATLAB matrix file that contains data about the microenvironment at this time step.
 
 
-### Legacy Way to Run pyMCDS
+### The Legacy Way to Run pyMCDS
 
 In the early days, PhysiCell output was with the help of a script loaded into MATLAB for analysis.\
 In 2019, a similar loader script was written for phython3.
@@ -47,16 +47,19 @@ A python3 shell was fired up in the directory where this file resisted, and the 
 from pyMCDS import pyMCDS
 ```
 
-In autumn 2022 an endeavor was undertaken to pack this pyMCDS.py script into a pip installable python3 library and develop it further, but always in a way, that, if needed, the code still could be run like in the early days.
+In autumn 2022 an endeavor was undertaken to pack this pyMCDS.py script into a pip installable python3 library and develop it further, but always in such a way that, if necessary, the code could still be run like in the early days.
 
 All this resulted in the PhysiCell data loader (pcdl) library here.
 
-If you inspect today's pcdl source code, you will see that the pyMCDS.py file still exists, and if you feel so, it is still possible to load PhysiCell output in this ancient way!
+If you inspect today's pcdl source code, you will see that the [pyMCDS.py](https://raw.githubusercontent.com/elmbeech/physicelldataloader/master/pcdl/pyMCDS.py) file still exists.
+And if you feel so, it is still possible to load PhysiCell output the ancient way!
+
+the pyMCDS class as such evolved into the TimeStep class, which is more powerful although it has heavier library dependencies too.
 
 
 ### Loading an MCDS into Python3
 
-In this section, we will load the pcDataLoder library, and use its pyMCDS class to load the data snapshot 00000012, described above, from [data\_timeseries\_ 2d](https://github.com/elmbeech/physicelldataloader/tree/master/pcdl/data_timeseries_2d) from the 2D timeseries test dataset.
+In this section, we will load the pcdl library and use its TimeStep class to load the data snapshot 00000012, described above, from [data\_timeseries\_ 2d](https://github.com/elmbeech/physicelldataloader/tree/master/pcdl/data_timeseries_2d) from the 2D time series test dataset.
 
 ```python
 import pathlib  # library to locate the test data
@@ -72,7 +75,7 @@ s_pathfile = f'{s_path}/{s_file}'
 print('mcds xml:', s_pathfile)
 
 # load mcds - multi cell data standard - object
-mcds = pcdl.pyMCDS(s_pathfile)  # loads the whole snapshot: the xml and all related mat and graph files
+mcds = pcdl.TimeStep(s_pathfile)  # loads the whole snapshot: the xml and all related mat and graph files
 ```
 
 Side note: for path, in general, unix (slash) and windows (backslash) notation will work.
@@ -81,7 +84,7 @@ The legacy way of loading data, where filename and path had to be separated, wor
 
 ```python
 # legacy way of loading a mcds object
-mcds = pcdl.pyMCDS('output00000012.xml', s_path)
+mcds = pcdl.TimeStep('output00000012.xml', s_path)
 ```
 
 By default, all data related to the snapshot is loaded.\
@@ -90,7 +93,7 @@ Additionally, it is possible to specify for custom_data variable types other tha
 
 ```python
 # fine tuned way of loading a mcds object
-mcds = pcdl.pyMCDS(s_pathfile, custom_type={}, microenv=False, graph=False, settingxml=False)
+mcds = pcdl.TimeStep(s_pathfile, custom_type={}, microenv=False, graph=False, settingxml=False)
 ```
 
 
@@ -98,7 +101,7 @@ mcds = pcdl.pyMCDS(s_pathfile, custom_type={}, microenv=False, graph=False, sett
 
 ```python
 # fetch data
-mcds = pcdl.pyMCDS(s_pathfile)
+mcds = pcdl.TimeStep(s_pathfile)
 ```
 
 All loaded data lives in `mcds.data` dictionary.\
@@ -131,14 +134,14 @@ sorted(mcds.data['discrete_cells']['graph'].keys())  # neighbor_cells and attach
 ```
 
 
-### Accessing the Loaded Data by the pyMCDS Class Functions
+### Accessing the Loaded Data by the TimeStep Class Functions
 Once again, loud, for the ones in the back, in version 3, all data is accessible by functions.\
 There should be no need to fetch data directly from the `mcds.data` dictionary of dictionaries.\
 We will explore these functions in this section.
 
 ```python
 # fetch data
-mcds = pcdl.pyMCDS(s_pathfile)
+mcds = pcdl.TimeStep(s_pathfile)
 ```
 
 #### Metadata
@@ -376,10 +379,10 @@ df.head()
 ```
 
 
-### MCDS Time Step Pandas and Plotting
+### MCDS Time Step and Pandas and Plotting
 
 Since microenvironment data and cell data can be retrieved as pandas datafarme, basic plotting (line plot, bar plot, histogram, boxplot, kernel density estimation plot, area plot, pie plot, scatter plot, hexbin plot) can easily be generated with the **pandas plot function**.
-As mentioned above, for microenvironment data the pyMCDS class has a mcds.get\_contour function because pandas has no contour and contourf plots implementation.
+As mentioned above, for microenvironment data, the TimeStep class has a mcds.get\_contour function because pandas has no contour and contourf plots implementation.
 All these plots are mathplotlib plots, hence fine tuning can always be done using the matplotlib library.
 
 + https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.plot.html
@@ -427,7 +430,7 @@ plt.close()
 ### Working With MCDS Time Series in Python3
 
 An exciting thing about modeling is to have time series data.\
-Pcdl's pyMCDSts class is here to make the handling of a time series of MCD snapshots easy.
+Pcdl's TimeSeries class is here to make the handling of a time series of MCD snapshots easy.
 
 ```python
 import pathlib  # library to locate the test data
@@ -437,7 +440,7 @@ s_path = str(pathlib.Path(pcdl.__file__).parent.joinpath('data_timeseries_2d')) 
 print('mcds time series:', s_path)
 
 # generate a mcds time series instance
-mcdsts = pcdl.pyMCDSts(s_path)
+mcdsts = pcdl.TimeSeries(s_path)
 ```
 
 Like in the pyMCDs class, for memory consumption and processing speed control, we can specify if we want to load microenvironment data and graph data from the snapshots we later on analyze.\
@@ -446,17 +449,17 @@ Additionally, we can exclude to read the PhysiCell_settings.xml file, if it is n
 
 ```python
 # fine tuned the way mcds objects will be loaded
-mcdsts = pcdl.pyMCDSts(s_path, custom_type={}, load=True, microenv=False, graph=False, settingxml=False)
+mcdsts = pcdl.TimeSeries(s_path, custom_type={}, load=True, microenv=False, graph=False, settingxml=False)
 ```
 
 
 #### Times Series MCDS Data
 
-Now, let's have a look at the pyMCDSts instances data analysis functions.
+Now, let's have a look at the TimeSeries instances data analysis functions.
 
 ```python
 # fetch data
-mcdsts = pcdl.pyMCDSts(s_path, load=False)
+mcdsts = pcdl.TimeSeries(s_path, load=False)
 ```
 
 + **get_xmlfile_list** will simply return a list of absolute path and mcds xml file name strings.\
@@ -496,7 +499,7 @@ len(mcdsts.ls_mcds)  # 13
 ```
 
 Single snapshots can now be accessed by indexing.\
-With a single snapshot, you work exactly in the same way as with an object loaded by pyMCDS.
+With a single snapshot, you work exactly in the same way as with an object loaded by TimeStep.
 
 ```python
 # get the simulation time
@@ -516,7 +519,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 # fetch data
-mcdsts = pcdl.pyMCDSts(s_path)
+mcdsts = pcdl.TimeSeries(s_path)
 
 # loop over the time series to gather temporal information like, for example, data for a growth curve
 lr_time = [mcds.get_time() for mcds in mcdsts.l_mcds]  # [0.0, 60.0, ..., 1440.0]
@@ -562,18 +565,18 @@ Similarly, substrates variables that over the whole domain overall time steps ha
 
 ```python
 # fetch data
-mcdsts = pcdl.pyMCDSts(s_path)
+mcdsts = pcdl.TimeSeries(s_path)
 ```
 
 Like for a single time steps, there is an easy way to triage over the whole time series for variables that carry information, by checking for variables with more than one state.
 
 ```
 # cell data
-ls_cell = mcdsts.get_cell_minstate_col()
+ls_cell = mcdsts.get_cell_df_columns_min_states()
 len()
 
 # substrate data
-ls_substarte = mcdsts.get_concentration_minstate_col()
+ls_substarte = mcdsts.get_conc_df_columns_min_states()
 ```
 
 
@@ -581,13 +584,13 @@ ls_substarte = mcdsts.get_concentration_minstate_col()
 
 With PhysiCell it is not only possible to take data snapshots, but as well [svg](https://en.wikipedia.org/wiki/SVG) vector graphics images snapshots.\
 PhysiCell's [Makefile](https://en.wikipedia.org/wiki/Make_(software)) has code to translate those svg images into [gif](https://en.wikipedia.org/wiki/GIF), [jpeg](https://en.wikipedia.org/wiki/JPEG), [png](https://en.wikipedia.org/wiki/Portable_Network_Graphics), or [tiff](https://en.wikipedia.org/wiki/TIFF) format, making use of the [image magick](https://en.wikipedia.org/wiki/ImageMagick) library, and to translate the jpeg, png, or tiff images into a [mp4](https://en.wikipedia.org/wiki/MP4_file_format) movie, therefore making use from the [ffmpeg](https://en.wikipedia.org/wiki/FFmpeg) library.\
-pyMCDSts instances provides a similar functionality, although the images are generated straight from data and not for the svg files.\
+TimeSeries instances provide similar functionality, although the images are generated straight from the data and not from the svg files.\
 However, mp4 movies and gif images are generated in the same way.\
 This means the mcdsts.make_gif code will only run if image magick and mcdsts.make_movie code will only run if ffmpeg is installed on your computer.
 
 ```python
 # fetch data
-mcdsts = pcdl.pyMCDSts(s_path)
+mcdsts = pcdl.TimeSeries(s_path)
 ```
 
 Translate physicell output data into static raster graphic images:

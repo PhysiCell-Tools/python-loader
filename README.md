@@ -17,7 +17,7 @@ The pcdl python3 library maintains three branches branches:
 
 ## Header:
 + Language: python >= 3.6
-+ Library dependencies: anndata, matplotlib, numpy, pandas
++ Library dependencies: anndata, matplotlib, numpy, pandas, scipy
 + Date of origin original PhysiCell-Tools python-loader: 2019-09-02
 + Date of origin pcdl fork: 2022-08-30
 + DOI:
@@ -62,13 +62,14 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
     + new class **TimeSeries** can do everything pyMCDSts can do and more.
     + new TimeStep **anndata_trafo** function to transform physicell output into [AnnData](https://anndata.readthedocs.io/en/latest/) objects.
     + new TimeSeries **anndata_trafo** function to transform physicell output into [AnnData](https://anndata.readthedocs.io/en/latest/) objects.
+    + new pyMCDS **get_conc_df** shorthand for get_concentration_df.
 
 + version 3.2.8 (2023-06-21): elmbeech/physicelldataloader
-    + pyMCDS **get_concentration_df** minstate parameter to filter out non-informative variables.
-    + pyMCDS **get_cell_df** minstate parameter to filter out non-informative variables.
+    + pyMCDS **get_concentration_df** states parameter to filter out non-informative variables.
+    + pyMCDS **get_cell_df** states parameter to filter out non-informative variables.
     + pyMCDSts **_\_init__** load parameter to specify if the whole time series data straight at object initialization should be loaded.
-    + new pyMCDSts **get_cell_minstate_col** function to scan the whole time series for informative variables.
-    + new pyMCDSts **get_concentartion_minstate_col** function to scan the whole time series for informative variables.
+    + new pyMCDSts **get_cell_df_columns_min_states** function to scan the whole time series for informative variables.
+    + new pyMCDSts **get_conc_df_columns_min_states** function to scan the whole time series for informative variables.
 
 + version 3.2.7 (2023-06-20): elmbeech/physicelldataloader
     + pyMCDS and pyMCDSts **_\_init__** custom_type parameter to specify other custom_data variable types (int, bool, str) then the generic float.
