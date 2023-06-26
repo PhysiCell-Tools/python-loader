@@ -774,7 +774,7 @@ class pyMCDS:
         return ar_concs
 
 
-    def get_concentration_df(self, z_slice=None, halt=False, states=1):
+    def get_concentration_df(self, z_slice=None, halt=False, states=1, drop={}):
         """
         input:
             self: pyMCDS class instance.
@@ -795,6 +795,9 @@ class pyMCDS:
                 minimal number of states a variable has to have to be outputted.
                 variables that have only 1 state carry no information.
                 None is a state too.
+
+            drop: set of strings; default is an empty set
+                set of column labels to be dropped for the dataframe.
 
         output:
             df_conc : pandas dataframe
@@ -945,7 +948,7 @@ class pyMCDS:
             print(f'z_slice set to {z_slice}.')
 
         # get data z slice
-        df_conc = self.get_concentration_df(states=1)
+        df_conc = self.get_concentration_df(states=1, drop=set())
         df_conc = df_conc.loc[(df_conc.mesh_center_p == z_slice),:]
         # extend to x y domain border
         df_mmin = df_conc.loc[(df_conc.mesh_center_m == df_conc.mesh_center_m.min()), :].copy()
@@ -1049,7 +1052,7 @@ class pyMCDS:
         """
         return self.data['metadata']['cell_type']
 
-    def get_cell_df(self, states=1):
+    def get_cell_df(self, states=1, drop=set()):
         """
         input:
             self: pyMCDS class instance.
@@ -1058,6 +1061,9 @@ class pyMCDS:
                 minimal number of states a variable has to have to be outputted.
                 variables that have only 1 state carry no information.
                 None is a state too.
+
+            drop: set of strings; default is an empty set
+                set of column labels to be dropped for the dataframe.
 
         output:
             df_cell: pandas dataframe
@@ -1143,7 +1149,7 @@ class pyMCDS:
                      df_cell[s_var] = df_sub.loc[s_sub,s_rate]
 
             # merge concentration (left join)
-            df_conc = self.get_concentration_df(z_slice=None, states=1)
+            df_conc = self.get_concentration_df(z_slice=None, states=1, drop=set())
             df_cell = pd.merge(
                 df_cell,
                 df_conc,
@@ -1170,13 +1176,13 @@ class pyMCDS:
         df_cell.loc[:,'current_phase'].replace(ds_death_phase, inplace=True)
         df_cell.loc[:,'cell_type'].replace(self.data['metadata']['cell_type'], inplace=True)
 
-        # filter min state
-        if (states > 1):
-            es_delete = set()
+        # filter
+        es_delete = drop  # by parameter declaraion
+        if (states > 1):  # by minimal number of states
             for s_column in set(df_cell.columns).difference(es_coor_cell):
                 if len(set(df_cell.loc[:,s_column])) < states:
                     es_delete.add(s_column)
-            df_cell.drop(es_delete, axis=1, inplace=True)
+        df_cell.drop(es_delete, axis=1, inplace=True)
 
         # output
         df_cell = df_cell.loc[:,sorted(df_cell.columns)]
@@ -1185,7 +1191,7 @@ class pyMCDS:
         return df_cell
 
 
-    def get_cell_df_at(self, x, y, z=0, states=1):
+    def get_cell_df_at(self, x, y, z=0, states=1, drop=set()):
         """
         input:
             self: pyMCDS class instance.
@@ -1203,6 +1209,9 @@ class pyMCDS:
                 minimal number of states a variable has to have to be outputted.
                 variables that have only 1 state carry no information.
                 None is a state too.
+
+            drop: set of strings; default is an empty set
+                set of column labels to be dropped for the dataframe.
 
         output:
             df_voxel: pandas dataframe
@@ -1229,7 +1238,7 @@ class pyMCDS:
             p = ar_p[j, i, k]
 
             # get voxel
-            df_cell = self.get_cell_df(states=states)
+            df_cell = self.get_cell_df(states=states, drop=drop)
             inside_voxel = (
                 (df_cell['position_x'] <= m + dm / 2) &
                 (df_cell['position_x'] >= m - dm / 2) &

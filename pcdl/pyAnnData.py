@@ -211,13 +211,16 @@ class TimeStep(pyMCDS):
     def __init__(self, xmlfile, output_path='.', custom_type={}, microenv=True, graph=True, settingxml=True, verbose=True):
         pyMCDS.__init__(self, xmlfile=xmlfile, output_path=output_path, custom_type=custom_type, microenv=microenv, graph=graph, settingxml=settingxml, verbose=verbose)
 
-    def anndata_trafo(self, states=1, scale='maxabs'):
+    def anndata_trafo(self, states=1, drop=set(), scale='maxabs'):
         """
         input:
             states: integer; default is 1
                 minimal number of states a variable has to have to be outputted.
                 variables that have only 1 state carry no information.
                 None is a state too.
+
+            drop: set of strings; default is an empty set
+                set of column labels to be dropped for the dataframe.
 
             scale: string; default 'maxabs'
                 specify how the data should be scaled.
@@ -233,12 +236,9 @@ class TimeStep(pyMCDS):
             for downstream analysis.
         """
         # processing
-        df_cell = self.get_cell_df(states=states)
-        print(list(df_cell.columns))
+        print(f'processing: 1/1 {self.get_time()}[min] mcds into anndata obj.')
+        df_cell = self.get_cell_df(states=states, drop=drop)
         df_count, df_obs, df_spatial = extract(df_cell=df_cell, scale=scale)
-        print('spatial', df_spatial)
-        print('obs', df_obs)
-        print('count', df_count)
         anmcds = ad.AnnData(X=df_count, obs=df_obs, obsm={"spatial": df_spatial.values})
 
         # output
@@ -292,13 +292,16 @@ class TimeSeries(pyMCDSts):
     def __init__(self, output_path='.', custom_type={}, load=True, microenv=True, graph=True, settingxml=True, verbose=True):
         pyMCDSts.__init__(self, output_path=output_path, custom_type=custom_type, load=load, microenv=microenv, graph=graph, settingxml=settingxml, verbose=verbose)
 
-    def anndata_trafo(self, states=1, scale='maxabs', collapse=True, keep_mcds=True):
+    def anndata_trafo(self, states=1, drop=set(), scale='maxabs', collapse=True, keep_mcds=True):
         """
         input:
             states: integer; default is 1
                 minimal number of states a variable has to have to be outputted.
                 variables that have only 1 state carry no information.
                 None is a state too.
+
+            drop: set of strings; default is an empty set
+                set of column labels to be dropped for the dataframe.
 
             scale: string; default 'maxabs'
                 specify how the data should be scaled.
@@ -329,7 +332,7 @@ class TimeSeries(pyMCDSts):
 
         # variable triage
         ls_column = sorted(es_coor_cell)
-        ls_column.extend(self.get_cell_df_columns_min_states(states=states))
+        ls_column.extend(self.get_cell_df_columns_min_states(states=states, drop=drop))
 
         # processing
         i_mcds = len(self.l_mcds)
@@ -341,7 +344,7 @@ class TimeSeries(pyMCDSts):
                 mcds = self.l_mcds.pop(0)
             # extract time and dataframes
             i_time = int(round(mcds.get_time()))
-            print(f'processing: {i+1}/{i_mcds} {i_time}[min] mcds.')
+            print(f'processing: {i+1}/{i_mcds} {i_time}[min] mcds into anndata obj.')
             df_cell = mcds.get_cell_df()
             df_cell = df_cell.loc[:,ls_column]
             df_count, df_obs, df_spatial = extract(df_cell=df_cell, scale=scale)

@@ -60,12 +60,12 @@ class TestPyMcdsTs(object):
 
     ## data triage command ##
     def test_mcdsts_get_cell_df_columns_min_states(self, mcdsts=mcdsts):
-        ls_col = mcdsts.get_cell_df_columns_min_states(states=2)
+        ls_col = mcdsts.get_cell_df_columns_min_states(states=2, drop=set())
         assert len(ls_col) == 28 and \
                ls_col[-1] == 'uptake_rates_oxygen'
 
     def test_mcdsts_get_conc_df_columns_min_states(self, mcdsts=mcdsts):
-        ls_col = mcdsts.get_conc_df_columns_min_states(states=2)
+        ls_col = mcdsts.get_conc_df_columns_min_states(states=2, drop=set())
         assert ls_col == ['oxygen']
 
     ## magick command ##

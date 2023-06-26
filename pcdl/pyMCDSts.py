@@ -152,7 +152,7 @@ class pyMCDSts:
 
 
     ## TRIAGE DATA
-    def get_cell_df_columns_min_states(self, states=2):
+    def get_cell_df_columns_min_states(self, states=2, drop=set()):
         """
         input:
             states: integer; default is 2
@@ -160,6 +160,9 @@ class pyMCDSts:
                 in any of the mcds time steps, to be outputted.
                 variables that have only 1 state carry no information.
                 None is a state too.
+
+            drop: set of strings; default is an empty set
+                set of column labels to be dropped for the dataframe.
 
         output:
             ls_variable: list of strings
@@ -176,7 +179,7 @@ class pyMCDSts:
         # processing
         des_variable = {}
         for mcds in self.l_mcds:
-            df_cell = mcds.get_cell_df()
+            df_cell = mcds.get_cell_df(drop=drop)
             for s_column in df_cell.columns:
                 if not (s_column in es_coor_cell):
                     es_state = set(df_cell.loc[:,s_column])
@@ -193,7 +196,7 @@ class pyMCDSts:
         return ls_variable
 
 
-    def get_conc_df_columns_min_states(self, states=2):
+    def get_conc_df_columns_min_states(self, states=2, drop={}):
         """
         input:
             states: integer; default is 2
@@ -201,6 +204,9 @@ class pyMCDSts:
                 in any of the mcds time steps, to be outputted.
                 variables that have only 1 state carry no information.
                 None is a state too.
+
+            drop: set of strings; default is an empty set
+                set of column labels to be dropped for the dataframe.
 
         output:
             ls_variable: list of strings
@@ -217,7 +223,7 @@ class pyMCDSts:
         # processing
         des_variable = {}
         for mcds in self.l_mcds:
-            df_conc = mcds.get_concentration_df()
+            df_conc = mcds.get_concentration_df(drop=drop)
             for s_column in df_conc.columns:
                 if not (s_column in es_coor_conc):
                     es_state = set(df_conc.loc[:,s_column])
@@ -453,7 +459,7 @@ class pyMCDSts:
                 ylim = ylim,
                 s = s,
                 grid = grid,
-                title = f'{mcds.get_time()}[min] {df_cell.shape[0]}[agent]',
+                title = f'{focus}\n{df_cell.shape[0]}[agent] {mcds.get_time()}[min]',
                 ax = ax,
             )
             if xyequal:
@@ -561,9 +567,9 @@ class pyMCDSts:
         if extrema == None:
             extrema = [None, None]
             for mcds in self.l_mcds:
-                df_cell = mcds.get_cell_df()
-                r_min = df_cell.loc[:,focus].min()
-                r_max = df_cell.loc[:,focus].max()
+                df_conc = mcds.get_concentration_df()
+                r_min = df_conc.loc[:,focus].min()
+                r_max = df_conc.loc[:,focus].max()
                 if (extrema[0] is None) or (extrema[0] > r_min):
                     extrema[0] = np.floor(r_min)
                 if (extrema[1] is None) or (extrema[1] < r_max):
@@ -603,7 +609,7 @@ class pyMCDSts:
                 alpha = alpha,
                 fill = fill,
                 cmap = cmap,
-                title = f'{mcds.get_time()}[min] {df_cell.shape[0]}[agent]',
+                title = f'{focus}\n{mcds.get_time()}[min]',
                 grid = grid,
                 xlim = xlim,
                 ylim = ylim,

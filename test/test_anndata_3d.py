@@ -46,7 +46,7 @@ class TestTimeStep(object):
     ## anndata_trafo command ##
     @pytest.mark.filterwarnings("ignore:invalid value encountered in divide")
     def test_mcds_anndata_trafo(self, mcds=mcds):
-        ann = mcds.anndata_trafo(states=1, scale='maxabs')
+        ann = mcds.anndata_trafo(states=1, drop=set(), scale='maxabs')
         assert (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
                (ann.X.shape == (20460, 102)) and \
                (ann.obs.shape == (20460, 4)) and \
@@ -63,7 +63,7 @@ class TestTimeSeries(object):
     ## anndata_trafo command ##
     @pytest.mark.filterwarnings("ignore:invalid value encountered in divide")
     def test_mcdsts_anndata_trafo_collapse_mcds(self, mcdsts=mcdsts):
-        ann = mcdsts.anndata_trafo(states=1, scale='maxabs', collapse=True, keep_mcds=True)
+        ann = mcdsts.anndata_trafo(states=1, drop=set(), scale='maxabs', collapse=True, keep_mcds=True)
         assert (len(mcdsts.l_mcds) == 25) and \
                (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
                (ann.X.shape == (481651, 102)) and \
@@ -74,7 +74,7 @@ class TestTimeSeries(object):
 
     @pytest.mark.filterwarnings("ignore:invalid value encountered in divide")
     def test_mcdsts_anndata_trafo_noncollapse_nonmcds(self, mcdsts=mcdsts):
-        d_ann = mcdsts.anndata_trafo(states=1, scale='maxabs', collapse=False, keep_mcds=False)
+        d_ann = mcdsts.anndata_trafo(states=1, drop=set(), scale='maxabs', collapse=False, keep_mcds=False)
         assert (len(mcdsts.l_mcds) == 0) and \
                (str(type(d_ann)) == "<class 'dict'>") and \
                (len(d_ann) == 25) and \
