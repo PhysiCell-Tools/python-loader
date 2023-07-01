@@ -40,15 +40,15 @@ def read_MultiCellDS_xml(xml_file, output_path='.'):
     # while we're at it, find the mesh
     coord_str = mesh_node.find('x_coordinates').text
     delimiter = mesh_node.find('x_coordinates').get('delimiter')
-    x_coords = np.array(coord_str.split(delimiter), dtype=np.float)
+    x_coords = np.array(coord_str.split(delimiter), dtype=np.float64)
 
     coord_str = mesh_node.find('y_coordinates').text
     delimiter = mesh_node.find('y_coordinates').get('delimiter')
-    y_coords = np.array(coord_str.split(delimiter), dtype=np.float)
+    y_coords = np.array(coord_str.split(delimiter), dtype=np.float64)
 
     coord_str = mesh_node.find('z_coordinates').text
     delimiter = mesh_node.find('z_coordinates').get('delimiter')
-    z_coords = np.array(coord_str.split(delimiter), dtype=np.float)
+    z_coords = np.array(coord_str.split(delimiter), dtype=np.float64)
 
     # reshape into a mesh grid
     xx, yy, zz = np.meshgrid(x_coords, y_coords, z_coords)

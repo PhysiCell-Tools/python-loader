@@ -38,7 +38,7 @@ class pyMCDS_timeseries:
         
         Returns
         -------
-        time_array : ndaray (np.float) [n_timesteps,]
+        time_array : ndaray (np.float64) [n_timesteps,]
             Contains the 'current time' at each recorded point.
         '''
         time_array = np.zeros(self.timeseries.shape[0])
@@ -93,5 +93,3 @@ class pyMCDS_timeseries:
         ax.set_ylabel('# of cells in system')
         ax.legend()
         plt.show()
-
-
