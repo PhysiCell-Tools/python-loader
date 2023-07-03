@@ -42,7 +42,7 @@ class pyMCDSts:
         custom_type: dictionary; default is {}
             variable to specify custom_data variable types
             other than float (int, bool, str) like this: {var: dtype, ...}.
-            down stream float and int will be handled as numeric,
+            downstream float and int will be handled as numeric,
             bool as Boolean, and str as categorical data.
 
         load: boole; default True

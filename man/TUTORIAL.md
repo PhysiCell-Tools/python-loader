@@ -164,7 +164,7 @@ mcds.get_timestamp()  # will return a sting like 2022-10-19T01:12:01Z
 Fetch substrate and cell type ID label mappings, read out from the PhysiCell_settings.xml file.
 
 ```python
-mcds.get_substarte_dict()  # will return a dictionary, which maps substrate IDs to labels
+mcds.get_substrate_dict()  # will return a dictionary, which maps substrate IDs to labels
 mcds.get_celltype_dict()   # will return a dictionary, which maps cell type IDs to labels
 ```
 
@@ -366,12 +366,12 @@ graph[0]  # {1, 31, 33, 929, 935, 950}
 ```
 
 
-#### Unites
+#### Units
 
-Finally, it is possible to retrieve a dataframe that lists all units from all tracked variables, from metadata, mesh, continuum\_variables, and discrete\_cells.
+Finally, it is possible to retrieve a pandas series that lists all units from all tracked variables, from metadata, mesh, continuum\_variables, and discrete\_cells.
 
 ```python
-df = mcds.get_unit_df()
+df = mcds.get_unit_se()
 df.shape  # (82, 1)
 df.columns  # Index(['unit'], dtype='object')
 df.index  # Index(['attachment_elastic_constant', 'attachment_rate', ..., 'velocity_z'], dtype='object', name='parameter')
@@ -576,7 +576,7 @@ ls_cell = mcdsts.get_cell_df_columns_min_states()
 len()
 
 # substrate data
-ls_substarte = mcdsts.get_conc_df_columns_min_states()
+ls_substrate = mcdsts.get_conc_df_columns_min_states()
 ```
 
 

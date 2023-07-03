@@ -203,8 +203,8 @@ class TestPyMcdsMicroenvFalse3D(object):
                (df_cell.shape == (5, 107))
 
     ## unit related functions
-    def test_mcds_get_unit_df(self, mcds=mcds):
-        df_unit = mcds.get_unit_df()
-        assert (str(type(df_unit)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_unit.shape == (99, 1))
+    def test_mcds_get_unit_se(self, mcds=mcds):
+        se_unit = mcds.get_unit_se()
+        assert (str(type(se_unit)) == "<class 'pandas.core.series.Series'>") and \
+               (se_unit.shape == (99,))
 

@@ -64,12 +64,14 @@ def scaler(df_x, scale='maxabs'):
         inspired by scikit-learn's preprocessing scaling method, this function
         offers a re-implementation of the linear re-scaling methods maxabs,
         minmax, and scale.
+
         the robust scaler methods (quantile based) found there are missing.
         since we deal with simulated data, we don't expect heavy outliers,
         and if they exist, then they are of interest.
         the power and quantile based transformation methods and unit circle
         based normalizer methods found there are missing too.
-        you can apply any such methods to an anndata object as listed below.
+        if you need to apply any such methods, you can do so to an anndata object
+        like this:
 
         from sklearn import preprocessing
         adata.obsm["X_scaled"] = preprocessing.scale(adata.X)
@@ -105,7 +107,7 @@ def scaler(df_x, scale='maxabs'):
     return df_x
 
 
-def extract(df_cell, scale='maxabs'):
+def _anndextract(df_cell, scale='maxabs'):
     """
     input:
         df_cell:  pandas dataframe
@@ -114,7 +116,7 @@ def extract(df_cell, scale='maxabs'):
         scale: string; default 'maxabs'
             specify how the data should be scaled.
             possible values are None, maxabs, minmax, std.
-            for more input, check out: help(pcdl.scaler)
+            for more input, check out: help(pcdl.scaler).
 
     output:
         df_count, df_obs, df_spatial pandas dataframes
@@ -174,8 +176,8 @@ class TimeStep(pyMCDS):
 
         custom_type: dictionary; default is {}
             variable to specify custom_data variable types
-            other than float (int, bool, str) like this: {var: dtype, ...}.
-            down stream float and int will be handled as numeric,
+            besides float (int, bool, str) like this: {var: dtype, ...}.
+            downstream float and int will be handled as numeric,
             bool as Boolean, and str as categorical data.
 
         microenv: boole; default True
@@ -238,7 +240,7 @@ class TimeStep(pyMCDS):
         # processing
         print(f'processing: 1/1 {self.get_time()}[min] mcds into anndata obj.')
         df_cell = self.get_cell_df(states=states, drop=drop)
-        df_count, df_obs, df_spatial = extract(df_cell=df_cell, scale=scale)
+        df_count, df_obs, df_spatial = _anndextract(df_cell=df_cell, scale=scale)
         anmcds = ad.AnnData(X=df_count, obs=df_obs, obsm={"spatial": df_spatial.values})
 
         # output
@@ -254,8 +256,8 @@ class TimeSeries(pyMCDSts):
 
         custom_type: dictionary; default is {}
             variable to specify custom_data variable types
-            other than float (int, bool, str) like this: {var: dtype, ...}.
-            down stream float and int will be handled as numeric,
+            besides float (int, bool, str) like this: {var: dtype, ...}.
+            downstream float and int will be handled as numeric,
             bool as Boolean, and str as categorical data.
 
         load: boole; default True
@@ -322,8 +324,8 @@ class TimeSeries(pyMCDSts):
                 what is returned depends on the collapse setting.
 
         description:
-            function to transform a mcds time step into an anndata object
-            for downstream analysis.
+            function to transform mcds time steps into one or many
+            anndata objects for downstream analysis.
         """
         d_ann = {}
         df_anncount = None
@@ -347,7 +349,7 @@ class TimeSeries(pyMCDSts):
             print(f'processing: {i+1}/{i_mcds} {i_time}[min] mcds into anndata obj.')
             df_cell = mcds.get_cell_df()
             df_cell = df_cell.loc[:,ls_column]
-            df_count, df_obs, df_spatial = extract(df_cell=df_cell, scale=scale)
+            df_count, df_obs, df_spatial = _anndextract(df_cell=df_cell, scale=scale)
             # pack collapsed
             if collapse:
                 # count

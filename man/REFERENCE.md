@@ -12,6 +12,7 @@ Then, for each pcdl module, get on the fly reference information with the [help]
 The **workhorse functions** are the ones most important for data analysis.
 Familiarize yourself with all of their parameters!
 
+
 # TimeStep
 ```python3
 help(pcdl.TimeStep)  # ! make class instance
@@ -60,21 +61,21 @@ help(pcdl.TimeStep.get_attached_graph_dict)  # !
 help(pcdl.TimeStep.get_neighbor_graph_dict)  # !
 
 # TimeStep unit
-help(pcdl.TimeStep.get_unit_df)  # ! workhorse function
+help(pcdl.TimeStep.get_unit_se)  # ! workhorse function
 
 # TimeStep anndata
 help(pcdl.TimeStep.get_anndata)  # ! workhorse function
 
 # TimeStep internal functions
+help(pcdl.TimeStep._anndextract)
 help(pcdl.TimeStep._read_xml)
-help(pcdl.graphfile_parser)
-help(pcdl.extract)
-help(pcdl.scaler)
+help(pcdl.TimeStep.graphfile_parser)
+help(pcdl.TimeStep.scaler)
 ```
 
 
 # TimeStep time series
-```
+```python3
 help(pcdl.TimeSeries)  # ! make class instance
 help(pcdl.TimeSeries.__init__)
 
@@ -101,7 +102,7 @@ help(pcdl.TimeSeries._handle_magick)
 
 
 # test data sets
-```
+```python3
 help(pcdl.install_data)
 help(pcdl.uninstall_data)
 ```

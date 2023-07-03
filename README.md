@@ -53,8 +53,9 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 
 
 ## Road Map:
-+ [vtk file format](https://docs.vtk.org/en/latest/design_documents/VTKFileFormats.html) output.
-
++ PhysiCell_seetings.xml and rules.csv parameter loader.
++ [vtk file format](https://docs.vtk.org/en/latest/design_documents/VTKFileFormats.html) output, maybe [stl](https://en.wikipedia.org/wiki/STL_(file_format)) and [wavefront obj](https://en.wikipedia.org/wiki/Wavefront_.obj_file) output.
++ [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) ([networkx](https://networkx.org/) compatile) graph output.
 
 ## Release Notes:
 + version 3.2.9 (2023-07-14): elmbeech/physicelldataloader
@@ -62,8 +63,10 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
     + new class **TimeSeries** can do everything pyMCDSts can do and more.
     + new TimeStep **get_anndata** function to transform physicell output into [AnnData](https://anndata.readthedocs.io/en/latest/) objects.
     + new TimeSeries **get_anndata** function to transform physicell output into [AnnData](https://anndata.readthedocs.io/en/latest/) objects.
-    + pyMCDS **get_concentration_df** drop parameter to declare a set of columns to be droped.
-    + pyMCDS **get_cell_df** drop parameter to declare a set of columns to be droped.
+    + internal pyAnnData **scaler** function.
+    + internal pyAnnData **\_anndextract** function.
+    + pyMCDS **get_cell_df** drop parameter to declare a set of columns to be dropped.
+    + pyMCDS **get_concentration_df** drop parameter to declare a set of columns to be dropped.
     + new pyMCDS **get_conc_df** shorthand for get_concentration_df.
 
 + version 3.2.8 (2023-06-21): elmbeech/physicelldataloader
@@ -90,7 +93,7 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
     + pyMCDSts **mcdsts.make_imgcell** and **mcdsts.make_imgsubs** functions improved.
 
 + version 3.2.1 (2023-06-12): elmbeech/physicelldataloader
-    + pypa odyssey is comming to an end.
+    + pypa odyssey is coming to an end.
     + change build system from setuptools to hatching.
     + change the library name from pcDataLoader to pcdl.
     + to make the library installation more lightweight, test data was excluded from the basic installation.
@@ -125,7 +128,7 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
       additionally, this dataframe contains now voxel, mesh_center, substrate parameter, substrate concentration, and cell density information too.
     + new pyMCDS **mcds.get_concentration_df** function.
     + new pyMCDS **mcds.get_substrate_df** function.
-    + new pyMCDS **mcds.get_unit_df** function.
+    + new pyMCDS **mcds.get_unit_se** function.
     + new pyMCDS **mcds.get_multicellds_version** function.
     + new pyMCDS **mcds.get_physicell_version** function.
     + new pyMCDS **mcds.get_runtime** function.
@@ -153,10 +156,12 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
     + the underling [mcds object data dictionary structure](https://github.com/elmbeech/physicelldataloader/tree/master/man/img/physicelldataloader_data_dictionary_v3.0.0.png) has changed.
     + [pytest](https://en.wikipedia.org/wiki/Pytest) unit tests exist now for all pyMCDS and pyMCDSts functions.
 
++ version 2.0.3 (2023-06-16): elmbeech/physicelldataloader pypa odyssey is coming to an end.
 + version 2.0.2 (2023-01-06): elmbeech/physicelldataloader reset patch voxel spacing bugfix, so that branch2 is full compatible with branch1 again. use branch3 for a bugfixed version!
 + version 2.0.1 (2022-11-08): elmbeech/physicelldataloader beta release patch voxel spacing bugfix.
 + version 2.0.0 (2022-08-30): elmbeech/physicelldataloader pip installable release, derived from and compatible with PhysiCell-Tools/python-loader release 1.1.0 (2022-07-20).
 
-+ version 1.1.0 (2022-05-09): Physicell-Tools/python-loader release compatible with pre-v1.10.x of PhysiCell
-+ version 1.0.1 (2020-01-25): Physicell-Tools/python-loader time-series related bug fix
++ version 1.1.1 (2022-07-01): elmbeech/physicelldataloader deprecated np.float replaced with np.float64.
++ version 1.1.0 (2022-05-09): Physicell-Tools/python-loader release compatible with pre-v1.10.x of PhysiCell.
++ version 1.0.1 (2020-01-25): Physicell-Tools/python-loader time-series related bug fix.
 + version 1.0.0 (2019-09-28): Physicell-Tools/python-loader first public release!

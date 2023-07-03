@@ -316,8 +316,8 @@ class TestPyMcdsMicroenvTrue2D(object):
                (len(dei_graph[1098]) == 7)
 
     ## unit related functions
-    def test_mcds_get_unit_df(self, mcds=mcds):
-        df_unit = mcds.get_unit_df()
-        assert (str(type(df_unit)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_unit.shape == (82, 1))
+    def test_mcds_get_unit_se(self, mcds=mcds):
+        se_unit = mcds.get_unit_se()
+        assert (str(type(se_unit)) == "<class 'pandas.core.series.Series'>") and \
+               (se_unit.shape == (82,))
 
