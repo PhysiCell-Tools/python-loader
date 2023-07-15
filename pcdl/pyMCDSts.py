@@ -58,10 +58,10 @@ class pyMCDSts:
             should the graphs be extracted?
             setting graph to False will use less memory and speed up processing.
 
-        settingxml: boole; default True
-            should the substrate and cell type ID label mapping defined in
-            PhysiCell_settings.xml be extracted?
-            only set to False if the xml file is missing!
+        settingxml: string; default PhysiCell_settings.xml
+            from which settings.xml should the substrate and cell type
+            ID label mapping be extracted?
+            set to None or False if the xml file is missing!
 
         verbose: boole; default True
             setting verbose to False for less text output, while processing.
@@ -75,7 +75,7 @@ class pyMCDSts:
         pyMCDSts.__init__ generates a class instance the instance offers
         functions to process all time steps in the output_path directory.
     """
-    def __init__(self, output_path='.', custom_type={}, load=True, microenv=True, graph=True, settingxml=True, verbose=True):
+    def __init__(self, output_path='.', custom_type={}, load=True, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True):
         output_path = output_path.replace('\\','/')
         if (output_path[-1] != '/'):
             output_path = output_path + '/'
@@ -152,92 +152,136 @@ class pyMCDSts:
 
 
     ## TRIAGE DATA
-    def get_cell_df_columns_min_states(self, states=2, drop=set()):
+    def get_cell_df_columns_min_states(self, states=1, drop=set(), keep=set(), allvalues=False):
         """
         input:
-            states: integer; default is 2
-                minimal number of states a variable has to have,
-                in any of the mcds time steps, to be outputted.
+            states: integer; default is 1
+                minimal number of states a variable has to have
+                in any of the mcds time steps to be outputted.
                 variables that have only 1 state carry no information.
                 None is a state too.
 
             drop: set of strings; default is an empty set
                 set of column labels to be dropped for the dataframe.
+                don't worry: essential columns like ID, coordinates
+                and time will never be dropped.
+                Attention: when the keep parameter is given, then
+                the drop parameter has to be an empty set!
+
+            keep: set of strings; default is an empty set
+                set of column labels to be kept in the dataframe.
+                set states=1 to be sure that all variables are kept.
+                don't worry: essential columns like ID, coordinates
+                and time will always be kept.
+
+            allvalues: boolean; default is False
+                for numeric data, should only the min and max values or
+                all values be returned?
 
         output:
-            ls_variable: list of strings
-                list of all non-coordinate column names, that at least in
-                one of the time steps or in between time steps reach
-                the given minimal state count.
+            dl_variable: dictionary of list
+                dictionary with an entry of all non-coordinate column names
+                that at least in one of the time steps or in between
+                time steps, reach the given minimal state count.
+                key is the column name, and the value is a list of all states
+                (bool, str, and, if allvalues is True, int and float) or
+                a list with minimum and maximum values from all the states
+                (int, float).
 
         description:
             function to detect informative variables in a time series.
-            this function detects even variables, which have in each
-            time step less than the minimal state count, but different values
+            this function detects even variables which have less than the
+            minimal state count in each time step, but different values
             from time step to time step.
         """
-        # processing
-        des_variable = {}
+        # gather data
+        de_variable_state = {}
         for mcds in self.l_mcds:
-            df_cell = mcds.get_cell_df(drop=drop)
+            df_cell = mcds.get_cell_df(drop=drop, keep=keep)
             for s_column in df_cell.columns:
                 if not (s_column in es_coor_cell):
-                    es_state = set(df_cell.loc[:,s_column])
+                    e_state = set(df_cell.loc[:,s_column])
                     try:
-                        des_variable[s_column] = des_variable[s_column].union(es_state)
+                        de_variable_state[s_column] = de_variable_state[s_column].union(e_state)
                     except KeyError:
-                        des_variable.update({s_column: es_state})
-        es_variable = set()
-        for s_column, es_state in des_variable.items():
-            if len(es_state) >= states:
-                es_variable.add(s_column)
+                        de_variable_state.update({s_column: e_state})
+        # extract
+        dl_variable_range = dict()
+        for s_column, e_state in de_variable_state.items():
+            if len(e_state) >= states:
+                o_state = list(e_state)[0]
+                if (type(o_state) in {float, int}) and not(allvalues):  # min max values (numeric)
+                    l_range = [min(e_state), max(e_state)]
+                else:  # bool, str, and all values (numeric)
+                    l_range = sorted(e_state)
+                dl_variable_range.update({s_column : l_range})
         # output
-        ls_variable = sorted(es_variable)
-        return ls_variable
+        return dl_variable_range
 
 
-    def get_conc_df_columns_min_states(self, states=2, drop={}):
+    def get_conc_df_columns_min_states(self, states=1, drop=set(), keep=set(), allvalues=False):
         """
         input:
-            states: integer; default is 2
-                minimal number of states a variable has to have,
-                in any of the mcds time steps, to be outputted.
+            states: integer; default is 1
+                minimal number of states a variable has to have
+                in any of the mcds time steps to be outputted.
                 variables that have only 1 state carry no information.
                 None is a state too.
 
             drop: set of strings; default is an empty set
                 set of column labels to be dropped for the dataframe.
+                don't worry: essential columns like ID, coordinates
+                and time will never be dropped.
+                Attention: when the keep parameter is given, then
+                the drop parameter has to be an empty set!
+
+            keep: set of strings; default is an empty set
+                set of column labels to be kept in the dataframe.
+                set states=1 to be sure that all variables are kept.
+                don't worry: essential columns like ID, coordinates
+                and time will always be kept.
+
+            allvalues: boolean; default is False
+                should only the min and max values or all values be returned?
 
         output:
-            ls_variable: list of strings
-                list of all non-coordinate column names, that at least in
-                one of the time steps or in between time steps reach
-                the given minimal state count.
+            dl_variable: dictionary of list
+                dictionary with an entry of all non-coordinate column names
+                that at least in one of the time steps or in between time
+                steps, reach the given minimal state count.
+                key is the column name, and the value is a list with the
+                minimum and maximum values from all the states if allvaue
+                is set to False, or a list of all states if allvalues is
+                set to True.
 
         description:
             function to detect informative substrate concentration variables
-            in a time series. this function detects even variables, which have
-            in each time step less than the minimal state count, but
+            in a time series. this function detects even variables which have
+            less than the minimal state count in each time step, but
             different values from time step to time step.
         """
-        # processing
-        des_variable = {}
+        # gather data
+        der_variable_state = {}
         for mcds in self.l_mcds:
-            df_conc = mcds.get_concentration_df(drop=drop)
+            df_conc = mcds.get_concentration_df(drop=drop, keep=keep)
             for s_column in df_conc.columns:
                 if not (s_column in es_coor_conc):
-                    es_state = set(df_conc.loc[:,s_column])
+                    er_state = set(df_conc.loc[:,s_column])
                     try:
-                        des_variable[s_column] = des_variable[s_column].union(es_state)
+                        der_variable_state[s_column] = der_variable_state[s_column].union(er_state)
                     except KeyError:
-                        des_variable.update({s_column: es_state})
-        es_variable = set()
-        for s_column, es_state in des_variable.items():
-            if len(es_state) >= states:
-                es_variable.add(s_column)
+                        der_variable_state.update({s_column: er_state})
+        # extract
+        dlr_variable_range = dict()
+        for s_column, er_state in der_variable.items():
+            if len(er_state) >= states:
+                if allvalues:
+                    lr_range = sorted(er_state)
+                else:
+                    lr_range = [min(er_state), max(er_state)]
+                dlr_variable_range.update({s_column : lr_range})
         # output
-        ls_variable = sorted(es_variable)
-        return ls_variable
+        return dlr_variable_range
 
 
     ## GENERATE AND TRANSFORM IMAGES

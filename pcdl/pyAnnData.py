@@ -189,10 +189,10 @@ class TimeStep(pyMCDS):
             should the graphs be extracted?
             setting graph to False will use less memory and speed up processing.
 
-        settingxml: boole; default True
-            should the substrate and cell type ID label mapping defined in
-            PhysiCell_settings.xml be extracted?
-            only set to False if the xml file is missing.
+        settingxml: string; default PhysiCell_settings.xml
+            from which settings.xml should the substrate and cell type
+            ID label mapping be extracted?
+            set to None or False if the xml file is missing!
 
         verbose: boole; default True
             setting verbose to False for less text output while processing.
@@ -210,10 +210,10 @@ class TimeStep(pyMCDS):
         in the same directory. data is loaded by reading the xml file for
         a particular time step and the therein referenced files.
     """
-    def __init__(self, xmlfile, output_path='.', custom_type={}, microenv=True, graph=True, settingxml=True, verbose=True):
+    def __init__(self, xmlfile, output_path='.', custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True):
         pyMCDS.__init__(self, xmlfile=xmlfile, output_path=output_path, custom_type=custom_type, microenv=microenv, graph=graph, settingxml=settingxml, verbose=verbose)
 
-    def get_anndata(self, states=1, drop=set(), scale='maxabs'):
+    def get_anndata(self, states=1, drop=set(), keep=set(), scale='maxabs'):
         """
         input:
             states: integer; default is 1
@@ -223,6 +223,16 @@ class TimeStep(pyMCDS):
 
             drop: set of strings; default is an empty set
                 set of column labels to be dropped for the dataframe.
+                don't worry: essential columns like ID, coordinates
+                and time will never be dropped.
+                Attention: when the keep parameter is given, then
+                the drop parameter has to be an empty set!
+
+            keep: set of strings; default is an empty set
+                set of column labels to be kept in the dataframe.
+                set states=1 to be sure that all variables are kept.
+                don't worry: essential columns like ID, coordinates
+                and time will always be kept.
 
             scale: string; default 'maxabs'
                 specify how the data should be scaled.
@@ -239,7 +249,7 @@ class TimeStep(pyMCDS):
         """
         # processing
         print(f'processing: 1/1 {self.get_time()}[min] mcds into anndata obj.')
-        df_cell = self.get_cell_df(states=states, drop=drop)
+        df_cell = self.get_cell_df(states=states, drop=drop, keep=keep)
         df_count, df_obs, df_spatial = _anndextract(df_cell=df_cell, scale=scale)
         anmcds = ad.AnnData(X=df_count, obs=df_obs, obsm={"spatial": df_spatial.values})
 
@@ -273,10 +283,10 @@ class TimeSeries(pyMCDSts):
             should the graphs be extracted?
             setting graph to False will use less memory and speed up processing.
 
-        settingxml: boole; default True
-            should the substrate and cell type ID label mapping defined in
-            PhysiCell_settings.xml be extracted?
-            only set to False if the xml file is missing!
+        settingxml: string; default PhysiCell_settings.xml
+            from which settings.xml should the substrate and cell type
+            ID label mapping be extracted?
+            set to None or False if the xml file is missing!
 
         verbose: boole; default True
             setting verbose to False for less text output while processing.
@@ -291,10 +301,10 @@ class TimeSeries(pyMCDSts):
         class instance. this instance offers functions to process all time steps
         in the output_path directory.
     """
-    def __init__(self, output_path='.', custom_type={}, load=True, microenv=True, graph=True, settingxml=True, verbose=True):
+    def __init__(self, output_path='.', custom_type={}, load=True, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True):
         pyMCDSts.__init__(self, output_path=output_path, custom_type=custom_type, load=load, microenv=microenv, graph=graph, settingxml=settingxml, verbose=verbose)
 
-    def get_anndata(self, states=1, drop=set(), scale='maxabs', collapse=True, keep_mcds=True):
+    def get_anndata(self, states=1, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=True):
         """
         input:
             states: integer; default is 1
@@ -304,6 +314,15 @@ class TimeSeries(pyMCDSts):
 
             drop: set of strings; default is an empty set
                 set of column labels to be dropped for the dataframe.
+                don't worry: essential columns like ID, coordinates
+                and time will never be dropped.
+                Attention: when the keep parameter is given, then
+                the drop parameter has to be an empty set!
+
+            keep: set of strings; default is an empty set
+                set of column labels to be kept in the dataframe.
+                don't worry: essential columns like ID, coordinates
+                and time will always be kept.
 
             scale: string; default 'maxabs'
                 specify how the data should be scaled.
@@ -333,8 +352,11 @@ class TimeSeries(pyMCDSts):
         df_annspatial = None
 
         # variable triage
-        ls_column = sorted(es_coor_cell)
-        ls_column.extend(self.get_cell_df_columns_min_states(states=states, drop=drop))
+        if (states < 2):
+            ls_column = self.l_mcds[0].get_cell_df()
+        else:
+            ls_column = sorted(es_coor_cell.difference({'ID'}))
+            ls_column.extend(self.get_cell_df_columns_min_states(states=states, drop=drop, keep=keep))
 
         # processing
         i_mcds = len(self.l_mcds)
@@ -355,7 +377,7 @@ class TimeSeries(pyMCDSts):
                 # count
                 df_count.reset_index(inplace=True)
                 df_count.index = df_count.ID + f'id_{i_time}min'
-                df_count.index.name = 'IDtime'
+                df_count.index.name = 'ID_time'
                 df_count.drop('ID', axis=1, inplace=True)
                 if df_anncount is None:
                     df_anncount = df_count
@@ -364,7 +386,7 @@ class TimeSeries(pyMCDSts):
                 # obs
                 df_obs.reset_index(inplace=True)
                 df_obs.index = df_obs.ID + f'id_{i_time}min'
-                df_obs.index.name = 'IDtime'
+                df_obs.index.name = 'ID_time'
                 if df_annobs is None:
                     df_annobs = df_obs
                 else:
@@ -372,7 +394,7 @@ class TimeSeries(pyMCDSts):
                 # spatial
                 df_spatial.reset_index(inplace=True)
                 df_spatial.index = df_spatial.ID + f'id_{i_time}min'
-                df_spatial.index.name = 'IDtime'
+                df_spatial.index.name = 'ID_time'
                 df_spatial.drop('ID', axis=1, inplace=True)
                 if df_annspatial is None:
                     df_annspatial = df_spatial

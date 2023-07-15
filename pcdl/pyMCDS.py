@@ -124,11 +124,13 @@ do_var_type = {
 
 # const coordinate variable names
 es_coor_conc = {
+    'ID',
     'voxel_i','voxel_j','voxel_k',
     'mesh_center_m','mesh_center_n','mesh_center_p',
     'time',
 }
 es_coor_cell = {
+    'ID',
     'voxel_i', 'voxel_j', 'voxel_k',
     'mesh_center_m', 'mesh_center_n', 'mesh_center_p',
     'position_x', 'position_y', 'position_z',
@@ -194,10 +196,10 @@ class pyMCDS:
             should the graphs be extracted?
             setting graph to False will use less memory and speed up processing.
 
-        settingxml: boole; default True
-            should the substrate and cell type ID label mapping defined in
-            PhysiCell_settings.xml be extracted?
-            only set to False if the xml file is missing.
+        settingxml: string; default PhysiCell_settings.xml
+            from which settings.xml should the substrate and cell type
+            ID label mapping be extracted?
+            set to None or False if the xml file is missing!
 
         verbose: boole; default True
             setting verbose to False for less text output, while processing.
@@ -216,11 +218,11 @@ class pyMCDS:
         the same directory. data is loaded by reading the xml file
         for a particular time step and the therein referenced files.
     """
-    def __init__(self, xmlfile, output_path='.', custom_type={}, microenv=True, graph=True, settingxml=True, verbose=True):
+    def __init__(self, xmlfile, output_path='.', custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True):
         self.custom_type = custom_type
         self.microenv = microenv
         self.graph = graph
-        self.settingxml = settingxml
+        self.settingxml = settingxml.replace('\\','/').split('/')[-1]
         self.verbose = verbose
         self.data = self._read_xml(xmlfile, output_path)
         self.get_conc_df = self.get_concentration_df
@@ -776,7 +778,7 @@ class pyMCDS:
         return ar_concs
 
 
-    def get_concentration_df(self, z_slice=None, halt=False, states=1, drop={}):
+    def get_concentration_df(self, z_slice=None, halt=False, states=1, drop=set(), keep=set()):
         """
         input:
             self: pyMCDS class instance.
@@ -800,6 +802,16 @@ class pyMCDS:
 
             drop: set of strings; default is an empty set
                 set of column labels to be dropped for the dataframe.
+                don't worry: essential columns like ID, coordinates
+                and time will never be dropped.
+                Attention: when the keep parameter is given, then
+                the drop parameter has to be an empty set!
+
+            keep: set of strings; default is an empty set
+                set of column labels to be kept in the dataframe.
+                set states=1 to be sure that all variables are kept.
+                don't worry: essential columns like ID, coordinates
+                and time will always be kept.
 
         output:
             df_conc : pandas dataframe
@@ -810,6 +822,14 @@ class pyMCDS:
             for all chemical species in all voxels. additionally, this
             dataframe lists voxel and mesh center coordinates.
         """
+        # handle keep and drop
+        if (len(keep) > 0) and (len(drop) > 0):
+            sys.exit(f"Error @ pyMCDS.get_concentration_df : when keep is given {keep}, then drop has to be an empty set {drop}!")
+        if (len(keep) > 0):
+            es_drop = set(self.get_cell_df().columns).difference(keep)
+        else:
+            es_drop = drop
+
         # check if z_slice is a mesh center or None
         if not (z_slice is None):
             _, _, ar_p_axis = self.get_mesh_mnp_axis()
@@ -861,13 +881,13 @@ class pyMCDS:
         if not (z_slice is None):
            df_conc = df_conc.loc[df_conc.mesh_center_p == z_slice, :]
 
-        # filter min state
+        # filter
+        es_delete = es_drop.difference(es_coor_conc)  # by parameter declaraion
         if (states > 1):
-            es_delete = set()
             for s_column in set(df_conc.columns).difference(es_coor_conc):
                 if len(set(df_conc.loc[:,s_column])) < states:
                     es_delete.add(s_column)
-            df_conc.drop(es_delete, axis=1, inplace=True)
+        df_conc.drop(es_delete, axis=1, inplace=True)
 
         # output
         df_conc.sort_values(['voxel_i', 'voxel_j', 'voxel_k', 'time'], inplace=True)
@@ -950,7 +970,7 @@ class pyMCDS:
             print(f'z_slice set to {z_slice}.')
 
         # get data z slice
-        df_conc = self.get_concentration_df(states=1, drop=set())
+        df_conc = self.get_concentration_df(states=1, drop=set(), keep=set())
         df_conc = df_conc.loc[(df_conc.mesh_center_p == z_slice),:]
         # extend to x y domain border
         df_mmin = df_conc.loc[(df_conc.mesh_center_m == df_conc.mesh_center_m.min()), :].copy()
@@ -1056,7 +1076,7 @@ class pyMCDS:
         return self.data['metadata']['cell_type'].copy()
 
 
-    def get_cell_df(self, states=1, drop=set()):
+    def get_cell_df(self, states=1, drop=set(), keep=set()):
         """
         input:
             self: pyMCDS class instance.
@@ -1068,6 +1088,16 @@ class pyMCDS:
 
             drop: set of strings; default is an empty set
                 set of column labels to be dropped for the dataframe.
+                don't worry: essential columns like ID, coordinates
+                and time will never be dropped.
+                Attention: when the keep parameter is given, then
+                the drop parameter has to be an empty set!
+
+            keep: set of strings; default is an empty set
+                set of column labels to be kept in the dataframe.
+                set states=1 to be sure that all variables are kept.
+                don't worry: essential columns like ID, coordinates
+                and time will always be kept.
 
         output:
             df_cell: pandas dataframe
@@ -1081,6 +1111,14 @@ class pyMCDS:
             function returns a dataframe with a cell centric view
             of the simulation.
         """
+        # handle keep and drop
+        if (len(keep) > 0) and (len(drop) > 0):
+            sys.exit(f"Error @ pyMCDS.get_concentration_df : when keep is given {keep}, then drop has to be an empty set {drop}!")
+        if (len(keep) > 0):
+            es_drop = set(self.get_cell_df().columns).difference(keep)
+        else:
+            es_drop = drop
+
         # get cell position and more
         df_cell = pd.DataFrame(self.data['discrete_cells']['data'])
         df_cell['time'] = self.get_time()
@@ -1153,7 +1191,7 @@ class pyMCDS:
                      df_cell[s_var] = df_sub.loc[s_sub,s_rate]
 
             # merge concentration (left join)
-            df_conc = self.get_concentration_df(z_slice=None, states=1, drop=set())
+            df_conc = self.get_concentration_df(z_slice=None, states=1, drop=set(), keep=set())
             df_cell = pd.merge(
                 df_cell,
                 df_conc,
@@ -1181,7 +1219,7 @@ class pyMCDS:
         df_cell.loc[:,'cell_type'].replace(self.data['metadata']['cell_type'], inplace=True)
 
         # filter
-        es_delete = drop  # by parameter declaraion
+        es_delete = es_drop.difference(es_coor_cell)  # by parameter declaraion
         if (states > 1):  # by minimal number of states
             for s_column in set(df_cell.columns).difference(es_coor_cell):
                 if len(set(df_cell.loc[:,s_column])) < states:
@@ -1195,7 +1233,7 @@ class pyMCDS:
         return df_cell
 
 
-    def get_cell_df_at(self, x, y, z=0, states=1, drop=set()):
+    def get_cell_df_at(self, x, y, z=0, states=1, drop=set(), keep=set()):
         """
         input:
             self: pyMCDS class instance.
@@ -1216,6 +1254,16 @@ class pyMCDS:
 
             drop: set of strings; default is an empty set
                 set of column labels to be dropped for the dataframe.
+                don't worry: essential columns like ID, coordinates
+                and time will never be dropped.
+                Attention: when the keep parameter is given, then
+                the drop parameter has to be an empty set!
+
+            keep: set of strings; default is an empty set
+                set of column labels to be kept in the dataframe.
+                set states=1 to be sure that all variables are kept.
+                don't worry: essential columns like ID, coordinates
+                and time will always be kept.
 
         output:
             df_voxel: pandas dataframe
@@ -1242,7 +1290,7 @@ class pyMCDS:
             p = ar_p[j, i, k]
 
             # get voxel
-            df_cell = self.get_cell_df(states=states, drop=drop)
+            df_cell = self.get_cell_df(states=states, drop=drop, keep=keep)
             inside_voxel = (
                 (df_cell['position_x'] <= m + dm / 2) &
                 (df_cell['position_x'] >= m - dm / 2) &
@@ -1373,8 +1421,6 @@ class pyMCDS:
             s_xmlfile = ls_xmlfile.pop(-1)
             output_path = '/'.join(ls_xmlfile)
         s_outputpath = output_path
-        s_xmlpathfile_output= s_outputpath + '/' + s_xmlfile
-        s_xmlpathfile_setting = s_outputpath + '/PhysiCell_settings.xml'
 
         # generate output dictionary
         d_mcds = {}
@@ -1390,8 +1436,9 @@ class pyMCDS:
         # PhysiCell_settings.xml extraction #
         #####################################
 
-        if self.settingxml:
+        if not ((self.settingxml is None) or (self.settingxml is False) or (self.settingxml == 'False')):
             # load Physicell_settings xml file
+            s_xmlpathfile_setting = s_outputpath + '/' + self.settingxml
             x_tree = ET.parse(s_xmlpathfile_setting)
             if self.verbose:
                 print(f'reading: {s_xmlpathfile_setting}')
@@ -1405,7 +1452,7 @@ class pyMCDS:
                 # basics
                 i_id = int(x_variable.get('ID'))
                 s_substrate = x_variable.get('name').replace(' ', '_')
-                ds_substrate.update({i_id : s_substrate})
+                ds_substrate.update({str(i_id) : s_substrate})
 
             # find the cell definition node
             # cell loop
@@ -1415,7 +1462,7 @@ class pyMCDS:
                 # basics
                 i_id = int(x_celltype.get('ID'))
                 s_celltype = x_celltype.get('name').replace(' ', '_')
-                ds_celltype.update({i_id : s_celltype})
+                ds_celltype.update({str(i_id) : s_celltype})
                 # custom data
                 try:
                     for x_element in x_celltype.find('custom_data').iter():
@@ -1440,6 +1487,7 @@ class pyMCDS:
         # read physicell output xml path/file #
         #######################################
 
+        s_xmlpathfile_output= s_outputpath + '/' + s_xmlfile
         x_tree = ET.parse(s_xmlpathfile_output)
         if self.verbose:
             print(f'reading: {s_xmlpathfile_output}')
