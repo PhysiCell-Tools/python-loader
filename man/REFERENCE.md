@@ -82,10 +82,11 @@ help(pcdl.TimeSeries.__init__)
 # TimeSeries load data
 help(pcdl.TimeSeries.get_xmlfile_list)
 help(pcdl.TimeSeries.read_mcds)
+help(pcdl.TimeSeries.get_mcds_list)
 
 # TimeSeries triage data
-help(pcdl.TimeSeries.get_cell_df_columns_min_states)
-help(pcdl.TimeSeries.get_conc_df_columns_min_states)
+help(pcdl.TimeSeries.get_cell_df_columns_states)
+help(pcdl.TimeSeries.get_conc_df_columns_states)
 
 # TimeSeries images and movies
 help(pcdl.TimeSeries.make_imgcell)  # ! workhorse function

@@ -151,6 +151,7 @@ def _anndextract(df_cell, scale='maxabs'):
     # build anndata object
     df_spatial = df_cell.loc[:,['position_x', 'position_y','position_z','time']].copy()
     df_obs = df_cell.loc[:,sorted(des_type['str'])].copy()
+    #df_obs = pd.merge(df_obs, df_spatial, left_index=True, right_index=True)
     es_num = des_type['float'].union(des_type['int'].union(des_type['bool']))
     es_num = es_num.difference(set(df_spatial.columns))
     df_count = df_cell.loc[:,sorted(es_num)].copy()
@@ -353,10 +354,10 @@ class TimeSeries(pyMCDSts):
 
         # variable triage
         if (states < 2):
-            ls_column = self.l_mcds[0].get_cell_df()
+            ls_column = list(self.l_mcds[0].get_cell_df().columns)
         else:
             ls_column = sorted(es_coor_cell.difference({'ID'}))
-            ls_column.extend(self.get_cell_df_columns_min_states(states=states, drop=drop, keep=keep))
+            ls_column.extend(sorted(self.get_cell_df_columns_states(states=states, drop=drop, keep=keep, allvalues=False).keys()))
 
         # processing
         i_mcds = len(self.l_mcds)

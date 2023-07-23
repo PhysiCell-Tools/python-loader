@@ -89,11 +89,11 @@ mcds = pcdl.TimeStep('output00000012.xml', s_path)
 
 By default, all data related to the snapshot is loaded.\
 For speed and less memory usage, it is however possible to only load the essential (output xml and cell mat data), and exclude microenvironment, graph data, and ID label mapping loading.\
-Additionally, it is possible to specify for custom_data variable types other than the generic float type, namely: int, bool, and str.
+Additionally, it is possible to specify for custom\_data variable types other than the generic float type, namely: int, bool, and str.
 
 ```python
 # fine tuned way of loading a mcds object
-mcds = pcdl.TimeStep(s_pathfile, custom_type={}, microenv=False, graph=False, settingxml=False)
+mcds = pcdl.TimeStep(s_pathfile, custom_type={}, microenv=False, graph=False, settingxml=None)
 ```
 
 
@@ -161,7 +161,7 @@ mcds.get_runtime()  # will return a float value like 15.596373
 mcds.get_timestamp()  # will return a sting like 2022-10-19T01:12:01Z
 ```
 
-Fetch substrate and cell type ID label mappings, read out from the PhysiCell_settings.xml file.
+Fetch substrate and cell type ID label mappings, read out from the PhysiCell\_settings.xml file.
 
 ```python
 mcds.get_substrate_dict()  # will return a dictionary, which maps substrate IDs to labels
@@ -306,7 +306,7 @@ df = mcds.get_concentration_df()
 df.head()
 
 # detect substrates that not over whole domain have the same concentration
-df = mcds.get_concentration_df(minstate=2)
+df = mcds.get_concentration_df(states=2)
 df.head()  # oxygen concentration varies over the domain
 ```
 
@@ -330,21 +330,21 @@ Please note, this dataframes not only hold the exact xyz coordinate, and all dis
 ```python
 # data from all agents in the domain
 df = mcds.get_cell_df()
-df.shape  # (992, 87)  this means: 992 agents in the whole domain, 87 tracked variables
+df.shape  # (992, 94)  this means: 992 agents in the whole domain, 94 tracked variables
 df.info()
 df.head()
 
 # data variables that are in all agents the same carry no information
 # let's filter for variables that carry at least 2 states
-df = mcds.get_cell_df(minstate=2)
-df.shape # (992, 37) this means: 992 agents in the whole domain, 37 tracked variables have more than 2 states
+df = mcds.get_cell_df(states=2)
+df.shape # (992, 38) this means: 992 agents in the whole domain, 38 tracked variables have more than 2 states
 
 # data from all agents in the xyz specified voxel
 df = mcds.get_cell_df_at(x=0,y=0,z=0)
-df.shape  # (4, 87)
+df.shape  # (4, 94)
 
 df = mcds.get_cell_df_at(x=111,y=22,z=-5)
-df.shape  # (3, 87)
+df.shape  # (3, 94)
 
 df = mcds.get_cell_df_at(x=111,y=22,z=-5.1)  # None and Warning @ pyMCDS.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0)
 ```
@@ -371,19 +371,19 @@ graph[0]  # {1, 31, 33, 929, 935, 950}
 Finally, it is possible to retrieve a pandas series that lists all units from all tracked variables, from metadata, mesh, continuum\_variables, and discrete\_cells.
 
 ```python
-df = mcds.get_unit_se()
-df.shape  # (82, 1)
-df.columns  # Index(['unit'], dtype='object')
-df.index  # Index(['attachment_elastic_constant', 'attachment_rate', ..., 'velocity_z'], dtype='object', name='parameter')
-df.head()
+se = mcds.get_unit_se()
+se.shape  # (82,)
+se.name  # 'unit'
+se.index  # Index(['attachment_elastic_constant', 'attachment_rate', ..., 'velocity_z'], dtype='object', name='feature')
+se.head()
 ```
 
 
-### MCDS Time Step and Pandas and Plotting
+#### MCDS Time Steps, Pandas, and Plotting
 
 Since microenvironment data and cell data can be retrieved as pandas datafarme, basic plotting (line plot, bar plot, histogram, boxplot, kernel density estimation plot, area plot, pie plot, scatter plot, hexbin plot) can easily be generated with the **pandas plot function**.
 As mentioned above, for microenvironment data, the TimeStep class has a mcds.get\_contour function because pandas has no contour and contourf plots implementation.
-All these plots are mathplotlib plots, hence fine tuning can always be done using the matplotlib library.
+All these plots are **mathplotlib** plots, hence fine tuning can always be done using the matplotlib library.
 
 + https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.plot.html
 + https://matplotlib.org/
@@ -427,6 +427,61 @@ plt.close()
 ```
 
 
+#### Transform an MCDS Time Step into an AnnData Object
+
+The [AnnData](https://anndata.readthedocs.io/en/latest/) format is the de facto standard for single cell data analysis in python.\
+It is a one-liner to transform a mcds object onto an anndata object.\
+This is the gate to a whole new universe.
+
++ https://scverse.org/
+
+```python
+ann = mcds.get_anndata()
+print(ann)  # AnnData object with n_obs × n_vars = 1099 × 80
+            #     obs: 'ID', 'current_phase', 'cycle_model'
+            #     obsm: 'spatial'
+```
+
+The output tells us that we have loaded a time step  with 1099 cells (agents) and 80 features.
+And that we have spatial coordinate annotation (position\_x, position\_y, position\_z, time) of the loaded data.
+
+Whatever you d'like to do with your physicell data, it most probably was already done with single cell wet lab data.
+That's being said: PhysiCell data is different scdata than scRNA seq, for example.
+scRNA seq data is higher dimensional (e.g. for the human genome, over 20000 genes each time step) than PhysiCell data (tens, maybe hundreds of features).
+scRNA seq data is always single time step data because the measurement consumes the sample.
+PhysiCell data is always time series data, even we look at this moment only at one time step.
+This all means, the wet lab bioinformatics will partially try to solve problems (e.g. trajectory inference), that simply are no problems for us and the other way around.
+
+Anyhow, the gate is open.
+For the shake of appearances, let's do a cluster analysis on PhysiCell output using scanpy.
+
+```python
+import scanpy as sc
+
+# loads only feature that have not the same value in all cells.
+# max absolute scales the features into a range between -1 and 1.
+ann = mcds.get_anndata(states=2, scale='maxabs')
+
+# principal component analysis
+sc.tl.pca(ann)  # process anndata object with the pca tool.
+sc.pl.pca(ann)  # plot pca result.
+ann.var_names  # list the numerical features we have at hand (alternative way: ann.var.index).
+ann.obs_keys()  # list the categories features we have at hand (alternative way: ann.obs.columns).
+sc.pl.pca(ann, color=['current_phase','oxygen'])  # plot the pca results colored by some features.
+sc.pl.pca(ann, color=list(ann.var_names)+list(ann.obs_keys()))  # gotta catch 'em all!
+sc.pl.pca_variance_ratio(ann)  # plot how much of the variation each principal component captures.
+
+# neighborhood graph clustering
+sc.pp.neighbors(ann, n_neighbors=15)  # compute the neighborhood graph with the neighbors preprocess step.
+sc.tl.leiden(ann, resolution=0.01)  # cluster the neighborhood graph with the leiden tool.
+sc.pl.pca(ann, color='leiden')  # plot the pca results colored by leiden clusters.
+
+# umap dimensional reduction embedding
+sc.tl.umap(ann)  # process anndata object with the umap tool.
+sc.pl.umap(ann, color=['current_phase','oxygen','leiden'])  # plot the umap result colored by some features.
+```
+
+
 ### Working With MCDS Time Series in Python3
 
 An exciting thing about modeling is to have time series data.\
@@ -445,15 +500,15 @@ mcdsts = pcdl.TimeSeries(s_path)
 
 Like in the pyMCDs class, for memory consumption and processing speed control, we can specify if we want to load microenvironment data and graph data from the snapshots we later on analyze.\
 By default, all data related to the snapshot is loaded, if needed, we can set load to False.\
-Additionally, we can exclude to read the PhysiCell_settings.xml file, if it is not available, and fine tune variable typing.
+Additionally, we can exclude to read the PhysiCell\_settings.xml file, if it is not available, and fine tune variable typing.
 
 ```python
 # fine tuned the way mcds objects will be loaded
-mcdsts = pcdl.TimeSeries(s_path, custom_type={}, load=True, microenv=False, graph=False, settingxml=False)
+mcdsts = pcdl.TimeSeries(s_path, custom_type={}, load=True, microenv=False, graph=False, settingxml=None)
 ```
 
 
-#### Times Series MCDS Data
+#### MCDS Times Series Data Analysis - the Basics
 
 Now, let's have a look at the TimeSeries instances data analysis functions.
 
@@ -486,16 +541,16 @@ However, you can always use a filtered ls\_xml list to only load a subset of sna
 ```python
 # load all snapshots
 mcdsts.read_mcds()
-mcdsts.l_mcds  # YMMV! [<pcdl.pyMCDS.pyMCDS at 0x7fa660996b00>, <pcdl.pyMCDS.pyMCDS at 0x7fa67673e1d0>, ..., <pcdl.pyMCDS.pyMCDS at 0x7fa660950f10>]
-len(mcdsts.l_mcds)  # 25
+mcdsts.get_mcds_list()  # YMMV! [<pcdl.pyMCDS.pyMCDS at 0x7fa660996b00>, <pcdl.pyMCDS.pyMCDS at 0x7fa67673e1d0>, ..., <pcdl.pyMCDS.pyMCDS at 0x7fa660950f10>]
+len(mcdsts.get_mcds_list())  # 25
 
 # load snapshot 11, 12, and 13
-mcdsts.l_mcds = mcdsts.read_mcds(ls_xml_11_12_13)
-len(mcdsts.l_mcds)  # 3
+mcdsts.read_mcds(ls_xml_11_12_13)
+len(mcdsts.get_mcds_list())  # 3
 
 # load all even snapshots
-mcdsts.ls_mcds = mcdsts.read_mcds(ls_xml_even)
-len(mcdsts.ls_mcds)  # 13
+mcdsts.read_mcds(ls_xml_even)
+len(mcdsts.get_mcds_list())  # 13
 ```
 
 Single snapshots can now be accessed by indexing.\
@@ -503,10 +558,10 @@ With a single snapshot, you work exactly in the same way as with an object loade
 
 ```python
 # get the simulation time
-mcdsts.l_mcds[12].get_time()  # 720.0
+mcdsts.get_mcds_list()[12].get_time()  # 720.0
 
 # get the cell data frame
-df = mcdsts.l_mcds[12].get_cell_df()
+df = mcdsts.get_mcds_list()[12].get_cell_df()
 df.shape  # (992, 87)
 df.head()
 ```
@@ -522,8 +577,8 @@ import pandas as pd
 mcdsts = pcdl.TimeSeries(s_path)
 
 # loop over the time series to gather temporal information like, for example, data for a growth curve
-lr_time = [mcds.get_time() for mcds in mcdsts.l_mcds]  # [0.0, 60.0, ..., 1440.0]
-li_cellcount = [mcds.get_cell_df().shape[0] for mcds in mcdsts.l_mcds]  # [889, 898, ..., 1099]
+lr_time = [mcds.get_time() for mcds in mcdsts.get_mcds_list()]  # [0.0, 60.0, ..., 1440.0]
+li_cellcount = [mcds.get_cell_df().shape[0] for mcds in mcdsts.get_mcds_list()]  # [889, 898, ..., 1099]
 
 # pack data into a pandas datafarm
 df = pd.DataFrame([lr_time,li_cellcount], index=['time_min','cell_count']).T
@@ -558,35 +613,14 @@ plt.close()
 ```
 
 
-#### Times Series Data Triage
-
-Cell variables that have no variance, zero entropy, that are in all agent overall time steps in the same state, have always exacted the same value, carry no information.
-Similarly, substrates variables that over the whole domain overall time steps have the same concentration are not interesting.
-
-```python
-# fetch data
-mcdsts = pcdl.TimeSeries(s_path)
-```
-
-Like for a single time steps, there is an easy way to triage over the whole time series for variables that carry information, by checking for variables with more than one state.
-
-```
-# cell data
-ls_cell = mcdsts.get_cell_df_columns_min_states()
-len()
-
-# substrate data
-ls_substrate = mcdsts.get_conc_df_columns_min_states()
-```
-
-
 #### Times Series Data Scatter Plot Images, Contour Plot Images, and Movies
 
 With PhysiCell it is not only possible to take data snapshots, but as well [svg](https://en.wikipedia.org/wiki/SVG) vector graphics images snapshots.\
-PhysiCell's [Makefile](https://en.wikipedia.org/wiki/Make_(software)) has code to translate those svg images into [gif](https://en.wikipedia.org/wiki/GIF), [jpeg](https://en.wikipedia.org/wiki/JPEG), [png](https://en.wikipedia.org/wiki/Portable_Network_Graphics), or [tiff](https://en.wikipedia.org/wiki/TIFF) format, making use of the [image magick](https://en.wikipedia.org/wiki/ImageMagick) library, and to translate the jpeg, png, or tiff images into a [mp4](https://en.wikipedia.org/wiki/MP4_file_format) movie, therefore making use from the [ffmpeg](https://en.wikipedia.org/wiki/FFmpeg) library.\
-TimeSeries instances provide similar functionality, although the images are generated straight from the data and not from the svg files.\
-However, mp4 movies and gif images are generated in the same way.\
-This means the mcdsts.make_gif code will only run if image magick and mcdsts.make_movie code will only run if ffmpeg is installed on your computer.
+PhysiCell's [Makefile](https://en.wikipedia.org/wiki/Make_(software)) has code to translate those svg images into [gif](https://en.wikipedia.org/wiki/GIF), [jpeg](https://en.wikipedia.org/wiki/JPEG), [png](https://en.wikipedia.org/wiki/Portable_Network_Graphics), or [tiff](https://en.wikipedia.org/wiki/TIFF) format, making use of the [image magick](https://en.wikipedia.org/wiki/ImageMagick) library.
+The Makefile also has  code to translate the jpeg, png, or tiff images into a [mp4](https://en.wikipedia.org/wiki/MP4_file_format) movie, therefore utilizing the [ffmpeg](https://en.wikipedia.org/wiki/FFmpeg) library.\
+TimeSeries instances provide similar functionality, although the jpeg, png, and tiff images are generated straight from data and not from the svg files.
+However, mp4 movies and gif images are generated in the same way.
+This means the mcdsts.make\_gif code will only run if image magick and mcdsts.make\_movie code will only run if ffmpeg is installed on your computer.
 
 ```python
 # fetch data
@@ -612,7 +646,7 @@ mcdsts.make_imgsubs(focus='oxygen')  # jpeg images colored by oxygen values
 
 Translate raster graphic images into a dynamic gif image:\
 Gif images can only be generated for already existing jpeg, png, or tiff images!\
-By default, jpeg files will be used, to generate the movie.\
+By default, jpeg files will be used, to generate the gif.\
 If png or tiff files should be used as source, then this has to be explicitly stated.
 
 ```python
@@ -628,7 +662,7 @@ s_path = mcdsts.make_imgcell(ext='tiff')
 mcdsts.make_gif(s_path, interface='tiff')
 ```
 
-Translate physicell svg images into an mp4 movie:\
+Translate raster graphic images into an mp4 movie:\
 Movies can only be generated for already existing jpeg, png, or tiff images!
 
 ```python
@@ -642,6 +676,64 @@ mcdsts.make_movie(mcdsts.make_imgcell())
 # using tiff images for input
 s_path = mcdsts.make_imgcell(ext='tiff')
 mcdsts.make_movie(s_path, interface='tiff')
+```
+
+
+#### MCDS Times Series Data Triage
+
+Cell variables that have no variance, zero entropy, that are in all agent overall time steps in the same state, have always exacted the same value, carry no information.
+Similarly, substrates variables that over the whole domain overall time steps have the same concentration are not interesting.
+
+```python
+# fetch data
+mcdsts = pcdl.TimeSeries(s_path)
+```
+
+There are functions to help triage over the entier time series for features that more likely might carry information, by checking for variables with variation.
+```
+# cell data min max values
+dl_cell = mcdsts.get_cell_df_columns_states()  # returns a dictionary with all features, listing all accessed states
+len(dl_cell)  # 84 features
+dl_cell.keys()  # list feature names
+dl_cell['oxygen']  # list min and max oxygen values found, surrounding a cell, over the whole series
+
+# cell data number of states
+di_state = {}
+[di_state.update({s_feature: len(li_state)}) for s_feature, li_state in mcdsts.get_cell_df_columns_states(allvalues=True).items()]
+di_state['oxygen']  # cell surrounding oxygen was found occupying 2388 different states (values) over the whole time series
+
+# substrate data
+dl_conc = mcdsts.get_conc_df_columns_states()
+dl_conc.keys()  # list feature names
+dl_conc['oxygen']  # list min and max oxygen values found in the domain over the whole series
+```
+
+
+#### Transform MCDS Time Series into AnnData Objects
+
+```python
+# fetch data
+mcdsts = pcdl.TimeSeries(s_path)
+```
+
+A mcds time series can be translated into one single anndata (default).
+```python
+ann = mcdsts.get_anndata(states=2, scale='maxabs', collapse=True)
+print(ann)  # AnnData object with n_obs × n_vars = 24758 × 27
+            #     obs: 'ID', 'current_phase', 'cycle_model'
+            #     obsm: 'spatial'
+```
+The output tells us that we have loaded a time series with 24758 cell (agent) snapshots and 27 features.
+And that we have spatial coordinate annotation (position\_x, position\_y, position\_z, time) of the loaded data.
+
+
+A mcds time series can be translated into a dictionary of anndata objects, where each entry is a single time step.
+```python
+d_ann = mcdsts.get_anndata(states=2, scale='maxabs', collapse=False)
+d_ann.keys()  # dict_keys([0, 60, ..., 1440])
+d_ann[1440]  # AnnData object with n_obs × n_vars = 1099 × 27
+             #     obs: 'ID', 'current_phase', 'cycle_model'
+             #     obsm: 'spatial'
 ```
 
 

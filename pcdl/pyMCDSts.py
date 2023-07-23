@@ -89,6 +89,8 @@ class pyMCDSts:
         self.verbose = verbose
         if load:
             self.read_mcds()
+        else:
+            self.l_mcds = None
 
 
     ## LOAD DATA
@@ -121,7 +123,7 @@ class pyMCDSts:
                 list of physicell output /path/to/output*.xml strings.
 
         output:
-            l_mcds: list of mcds objects
+            self.l_mcds: list of mcds objects
 
         description:
             the function returns a list of mcds objects loaded by
@@ -151,8 +153,24 @@ class pyMCDSts:
         return l_mcds
 
 
+    def get_mcds_list(self):
+        """
+        input:
+            self: pyMCDSts class instance.
+
+        output:
+            self.l_mcds: list of mcds objects.
+            watch out, this is a dereferenced pointer to the
+            self.l_mcds list of mcds objects, not a copy of self.l_mcds!
+
+        description:
+            function returns a binding to the self.l_mcds list of mcds objects.
+        """
+        return self.l_mcds
+
+
     ## TRIAGE DATA
-    def get_cell_df_columns_min_states(self, states=1, drop=set(), keep=set(), allvalues=False):
+    def get_cell_df_columns_states(self, states=1, drop=set(), keep=set(), allvalues=False):
         """
         input:
             states: integer; default is 1
@@ -219,7 +237,7 @@ class pyMCDSts:
         return dl_variable_range
 
 
-    def get_conc_df_columns_min_states(self, states=1, drop=set(), keep=set(), allvalues=False):
+    def get_conc_df_columns_states(self, states=1, drop=set(), keep=set(), allvalues=False):
         """
         input:
             states: integer; default is 1
@@ -273,7 +291,7 @@ class pyMCDSts:
                         der_variable_state.update({s_column: er_state})
         # extract
         dlr_variable_range = dict()
-        for s_column, er_state in der_variable.items():
+        for s_column, er_state in der_variable_state.items():
             if len(er_state) >= states:
                 if allvalues:
                     lr_range = sorted(er_state)
@@ -325,8 +343,9 @@ class pyMCDSts:
                depending on the focus column variable dtype, default extracts
                labels or min and max values from data.
 
-            cmap: string; default viridis.
-                matplotlib colormap.
+            cmap: dictionary of strings or string; default viridis.
+                dictionary that maps labels to colors strings.
+                matplotlib colormap string.
                 https://matplotlib.org/stable/tutorials/colors/colormaps.html
 
             grid: boolean default True.
@@ -471,26 +490,37 @@ class pyMCDSts:
             fig, ax = plt.subplots(figsize=figsize)
             df_cell = mcds.get_cell_df()
             df_cell = df_cell.loc[(df_cell.position_z == z_slice),:]
+            # categorical variable
             if not (es_label is None):
-                ds_color = pdplt.df_label_to_color(
-                    df_abc = df_cell,
-                    s_label = focus,
-                    es_label = es_label,
-                    s_cmap = cmap,
-                    b_shuffle = False,
-                )
+                s_focus_color = focus + '_color'
+                # use specified label color dictionary
+                if type(cmap) is dict:
+                    ds_color = cmap
+                    df_cell[s_focus_color] = [ds_color[s_label] for s_label in df_cell.loc[:,s_focus]]
+                # generate label color dictionary
+                else:
+                    ds_color = pdplt.df_label_to_color(
+                        df_abc = df_cell,
+                        s_label = focus,
+                        es_label = es_label,
+                        s_cmap = cmap,
+                        b_shuffle = False,
+                    )
+                # generate legend
                 pdplt.ax_colorlegend(
                     ax = ax,
                     ds_color = ds_color,
                     r_x_figure2legend_space = 0.01,
                     s_fontsize = 'small',
                 )
-                s_focus_color = focus + '_color'
+                # generate color list
                 c = list(df_cell.loc[:, s_focus_color].values)
                 s_cmap = None
+            # numeric variable
             else:
                 c = focus
                 s_cmap = cmap
+            # plot
             df_cell.plot(
                 kind = 'scatter',
                 x = 'position_x',

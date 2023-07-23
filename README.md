@@ -55,7 +55,7 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 ## Road Map:
 + PhysiCell_seetings.xml and rules.csv parameter loader.
 + [vtk file format](https://docs.vtk.org/en/latest/design_documents/VTKFileFormats.html) output, maybe [stl](https://en.wikipedia.org/wiki/STL_(file_format)) and [wavefront obj](https://en.wikipedia.org/wiki/Wavefront_.obj_file) output.
-+ [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) ([networkx](https://networkx.org/) compatile) graph output.
++ [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) ([networkx](https://networkx.org/) compatible) graph output.
 
 ## Release Notes:
 + version 3.2.9 (2023-07-14): elmbeech/physicelldataloader
@@ -68,13 +68,14 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
     + pyMCDS **get_cell_df** drop parameter to declare a set of columns to be dropped.
     + pyMCDS **get_concentration_df** drop parameter to declare a set of columns to be dropped.
     + new pyMCDS **get_conc_df** shorthand for get_concentration_df.
+    + new pyMCDSts **get_mcds_list** function which, points to the self.l_mcds object.
 
 + version 3.2.8 (2023-06-21): elmbeech/physicelldataloader
     + pyMCDS **get_concentration_df** states parameter to filter out non-informative variables.
     + pyMCDS **get_cell_df** states parameter to filter out non-informative variables.
     + pyMCDSts **_\_init__** load parameter to specify if the whole time series data straight at object initialization should be loaded.
-    + new pyMCDSts **get_cell_df_columns_min_states** function to scan the whole time series for informative variables.
-    + new pyMCDSts **get_conc_df_columns_min_states** function to scan the whole time series for informative variables.
+    + new pyMCDSts **get_cell_df_columns_states** function to scan the whole time series for informative variables.
+    + new pyMCDSts **get_conc_df_columns_states** function to scan the whole time series for informative variables.
 
 + version 3.2.7 (2023-06-20): elmbeech/physicelldataloader
     + pyMCDS and pyMCDSts **_\_init__** custom_type parameter to specify other custom_data variable types (int, bool, str) then the generic float.

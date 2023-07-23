@@ -127,7 +127,7 @@ es_coor_conc = {
     'ID',
     'voxel_i','voxel_j','voxel_k',
     'mesh_center_m','mesh_center_n','mesh_center_p',
-    'time',
+    'time', 'runtime'
 }
 es_coor_cell = {
     'ID',
@@ -222,7 +222,9 @@ class pyMCDS:
         self.custom_type = custom_type
         self.microenv = microenv
         self.graph = graph
-        self.settingxml = settingxml.replace('\\','/').split('/')[-1]
+        if type(settingxml) is str:
+            settingxml = settingxml.replace('\\','/').split('/')[-1]
+        self.settingxml = settingxml
         self.verbose = verbose
         self.data = self._read_xml(xmlfile, output_path)
         self.get_conc_df = self.get_concentration_df
@@ -772,7 +774,7 @@ class pyMCDS:
             for n, s_substrate in enumerate(ls_substrate):
                 ar_concs[n] = self.get_concentration(s_substrate)[j, i, k]
                 if self.verbose:
-                    print(f'pyMCD.get_concentration_at(x={x},y={y},z={z}) > jkl: [{i},{j},{k}] > substrate: {s_substrate} {ar_concs[n]}')
+                    print(f'pyMCD.get_concentration_at(x={x},y={y},z={z}) | jkl: [{i},{j},{k}] | substrate: {s_substrate} {ar_concs[n]}')
 
         # output
         return ar_concs
@@ -1096,8 +1098,8 @@ class pyMCDS:
             keep: set of strings; default is an empty set
                 set of column labels to be kept in the dataframe.
                 set states=1 to be sure that all variables are kept.
-                don't worry: essential columns like ID, coordinates
-                and time will always be kept.
+                don't worry: essential columns like ID, coordinates,
+                time and runtime (wall time) will always be kept.
 
         output:
             df_cell: pandas dataframe
@@ -1122,6 +1124,7 @@ class pyMCDS:
         # get cell position and more
         df_cell = pd.DataFrame(self.data['discrete_cells']['data'])
         df_cell['time'] = self.get_time()
+        df_cell['runtime'] = self.get_runtime() / 60  # in min
         df_voxel = df_cell.loc[:,['position_x','position_y','position_z']].copy()
 
         # get mesh spacing
@@ -1436,7 +1439,7 @@ class pyMCDS:
         # PhysiCell_settings.xml extraction #
         #####################################
 
-        if not ((self.settingxml is None) or (self.settingxml is False) or (self.settingxml == 'False')):
+        if not ((self.settingxml is None) or (self.settingxml is False)):
             # load Physicell_settings xml file
             s_xmlpathfile_setting = s_outputpath + '/' + self.settingxml
             x_tree = ET.parse(s_xmlpathfile_setting)
