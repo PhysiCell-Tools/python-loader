@@ -20,7 +20,7 @@ The pcdl python3 library maintains three branches branches:
 + Library dependencies: anndata, matplotlib, numpy, pandas, scipy
 + Date of origin original PhysiCell-Tools python-loader: 2019-09-02
 + Date of origin pcdl fork: 2022-08-30
-+ DOI:
++ DOI: [![DOI](https://zenodo.org/badge/236172723.svg)](https://zenodo.org/badge/latestdoi/236172723)
 + License: [BSD-3-Clause](https://en.wikipedia.org/wiki/BSD_licenses)
 + User manual: this README.md file
 + Source code: [https://github.com/elmbeech/physicelldataloader](https://github.com/elmbeech/physicelldataloader)
