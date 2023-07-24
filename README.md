@@ -53,12 +53,12 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 
 
 ## Road Map:
-+ PhysiCell_seetings.xml and rules.csv parameter loader.
++ PhysiCell\_seetings.xml and rules.csv parameter loader.
 + [vtk file format](https://docs.vtk.org/en/latest/design_documents/VTKFileFormats.html) output, maybe [stl](https://en.wikipedia.org/wiki/STL_(file_format)) and [wavefront obj](https://en.wikipedia.org/wiki/Wavefront_.obj_file) output.
 + [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) ([networkx](https://networkx.org/) compatible) graph output.
 
 ## Release Notes:
-+ version 3.2.9 (2023-07-14): elmbeech/physicelldataloader
++ version 3.2.9 (2023-07-23): elmbeech/physicelldataloader
     + new class **TimeStep** can do everything pyMCDS can do and more.
     + new class **TimeSeries** can do everything pyMCDSts can do and more.
     + new TimeStep **get_anndata** function to transform physicell output into [AnnData](https://anndata.readthedocs.io/en/latest/) objects.
@@ -78,14 +78,14 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
     + new pyMCDSts **get_conc_df_columns_states** function to scan the whole time series for informative variables.
 
 + version 3.2.7 (2023-06-20): elmbeech/physicelldataloader
-    + pyMCDS and pyMCDSts **_\_init__** custom_type parameter to specify other custom_data variable types (int, bool, str) then the generic float.
+    + pyMCDS and pyMCDSts **_\_init__** custom\_type parameter to specify other custom\_data variable types (int, bool, str) then the generic float.
 
 + version 3.2.5 (2023-06-19): elmbeech/physicelldataloader
     + pyMCDS resolve incompatibility with earlier PhysiCell and MultiCellDS versions.
 
 + version 3.2.4 (2023-06-17): elmbeech/physicelldataloader
-    + pyMCDS **_\_init__** seetingxml parameter for cases where in the output folder no PhysiCell_settings.xml find can be found.
-    + pyMCDSts **mcdsts.make_imgcell** extrema parameter replaced by z_axis parameter to account for numerical and categorical variable types.
+    + pyMCDS **_\_init__** seetingxml parameter for cases where in the output folder no PhysiCell\_settings.xml find can be found.
+    + pyMCDSts **mcdsts.make_imgcell** extrema parameter replaced by z\_axis parameter to account for numerical and categorical variable types.
 
 + version 3.2.2 (2023-06-16): elmbeech/physicelldataloader
     + pyMCDS **mcds.get_cell_df** sets distinct boolean, categorical, integer number, and real number variable types. categorical number codes are translated. for all spatial variables, the vector length value is calculated and added automatically.
@@ -102,7 +102,7 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 
 + version 3.0.7 (2023-06-08): elmbeech/physicelldataloader
     + pyMCDSts: replaces the svg dependent **mcdsts.make_jpeg**, **mcdsts.make_png**, and **mcdsts.make_tiff** with **mcdsts.make_imgcell** and **mcdsts.make_imgsubs** which generate images straight out of the loaded data. the **mcdsts.make_gif** and **mcdsts.make_movie** functions were adjusted accordingly.
-    + pyMCDSts: **mcdsts.read_mcds** loads now automatically all mcds snapshots, if no xmlfile_list is provided (default).
+    + pyMCDSts: **mcdsts.read_mcds** loads now automatically all mcds snapshots, if no xmlfile\_list is provided (default).
 
 + version 3.0.6 (2023-04-29): elmbeech/physicelldataloader
     + pyMCDS **\_read_xml** is now able to load time steps with zero cells.
