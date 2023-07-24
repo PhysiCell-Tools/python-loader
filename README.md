@@ -66,15 +66,14 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 
 
 ## Road Map:
-+ PhysiCell\_seetings.xml and rules.csv parameter loader.
 + [vtk file format](https://docs.vtk.org/en/latest/design_documents/VTKFileFormats.html) output, maybe [stl](https://en.wikipedia.org/wiki/STL_(file_format)) and [wavefront obj](https://en.wikipedia.org/wiki/Wavefront_.obj_file) output.
 + [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) ([networkx](https://networkx.org/) compatible) graph output.
 
 
 ## Release Notes:
-+ version 3.2.10 (2023-07-23): elmbeech/physicelldataloader
-    + rename pyMCDSts get_cell_minstate_col to **get_cell_df_states** for conciseness.
-    + rename pyMCDSts get_concentartion_minstate_col to **get_conc_df_states** for conciseness.
++ version 3.2.10 (2023-07-24): elmbeech/physicelldataloader
+    + rename pyMCDSts get\_cell\_df\_columns\_states to **get_cell_df_states** for conciseness.
+    + rename pyMCDSts get\_conc\_df\_columns\_states to **get_conc_df_states** for conciseness.
 
 + version 3.2.9 (2023-07-23): elmbeech/physicelldataloader
     + new class **TimeStep** can do everything pyMCDS can do and more.
@@ -83,10 +82,13 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
     + new TimeSeries **get_anndata** function to transform physicell output into [AnnData](https://anndata.readthedocs.io/en/latest/) objects.
     + internal pyAnnData **scaler** function.
     + internal pyAnnData **\_anndextract** function.
-    + pyMCDS **get_cell_df** drop keep parameter to declare a set of columns to be dropped or kept.
-    + pyMCDS **get_concentration_df** drop and keep parameter to declare a set of columns to be dropped or kept.
-    + new pyMCDS **get_conc_df** shorthand for get_concentration_df.
-    + new pyMCDSts **get_mcds_list** function which, points to the self.l_mcds object.
+    + pyMCDS **_\_init__** seetingxml parameter changed from boolean to string to accept other PhysiCell\_settings.xml filenames than the default.
+    + pyMCDS **get_cell_df** drop and keep parameters to declare a set of columns to be dropped or kept.
+    + pyMCDS **get_concentration_df** drop and keep parameters to declare a set of columns to be dropped or kept.
+    + new pyMCDS **get_conc_df** shorthand for get\_concentration\_df.
+    + pyMCDSts get\_cell\_minstate\_col reimplementation as more powerful **get_cell_df_columns_states** function.
+    + pyMCDSts get\_concentartion\_minstate\_col reimplementation as more powerful **get_conc_df_columns_states** function.
+    + new pyMCDSts **get_mcds_list** function which, points to the self.l\_mcds object.
 
 + version 3.2.8 (2023-06-21): elmbeech/physicelldataloader
     + pyMCDS **get_concentration_df** states parameter to filter out non-informative variables.
