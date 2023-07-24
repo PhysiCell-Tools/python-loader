@@ -86,8 +86,8 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
     + pyMCDS **get_cell_df** drop and keep parameters to declare a set of columns to be dropped or kept.
     + pyMCDS **get_concentration_df** drop and keep parameters to declare a set of columns to be dropped or kept.
     + new pyMCDS **get_conc_df** shorthand for get\_concentration\_df.
-    + pyMCDSts get\_cell\_minstate\_col reimplementation as more powerful **get_cell_df_columns_states** function.
-    + pyMCDSts get\_concentartion\_minstate\_col reimplementation as more powerful **get_conc_df_columns_states** function.
+    + pyMCDSts get\_cell\_minstate\_col reimplementation as **get_cell_df_columns_states** function.
+    + pyMCDSts get\_concentartion\_minstate\_col reimplementation as **get_conc_df_columns_states** function.
     + new pyMCDSts **get_mcds_list** function which, points to the self.l\_mcds object.
 
 + version 3.2.8 (2023-06-21): elmbeech/physicelldataloader
