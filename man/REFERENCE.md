@@ -8,87 +8,102 @@ You can access them through the [source code](https://github.com/elmbeech/physic
 import pcdl
 ```
 
-Then, for each pcdl module, get on the fly reference information with the [help](https://en.wikipedia.org/wiki/Help!) command.
+Then, for each pcdl module, get on the fly reference information with the [help](https://en.wikipedia.org/wiki/Help!) command.\
+The **workhorse functions** are the ones most important for data analysis.
+Familiarize yourself with all of their parameters!
 
-# pyMCDS
+
+# TimeStep
+```python3
+help(pcdl.TimeStep)  # ! make class instance
+help(pcdl.TimeStep.__init__)
+
+# TimeStep medata
+help(pcdl.TimeStep.get_multicellds_version)
+help(pcdl.TimeStep.get_physicell_version)
+help(pcdl.TimeStep.get_timestamp)
+help(pcdl.TimeStep.get_time)
+help(pcdl.TimeStep.get_runtime)
+
+# TimeStep mesh
+help(pcdl.TimeStep.get_voxel_ijk_range)
+help(pcdl.TimeStep.get_mesh_mnp_range)
+help(pcdl.TimeStep.get_xyz_range)
+help(pcdl.TimeStep.get_voxel_ijk_axis)
+help(pcdl.TimeStep.get_mesh_mnp_axis)
+help(pcdl.TimeStep.get_mesh)
+help(pcdl.TimeStep.get_mesh_2D)
+help(pcdl.TimeStep.get_mesh_coordinate)
+help(pcdl.TimeStep.get_mesh_spacing)
+help(pcdl.TimeStep.get_voxel_spacing)
+help(pcdl.TimeStep.get_voxel_volume)
+help(pcdl.TimeStep.get_voxel_ijk)
+help(pcdl.TimeStep.is_in_mesh)
+
+# TimeStep microenvironment
+help(pcdl.TimeStep.get_substrate_names)
+help(pcdl.TimeStep.get_substrate_dict)
+help(pcdl.TimeStep.get_substrate_df)
+help(pcdl.TimeStep.get_concentration)
+help(pcdl.TimeStep.get_concentration_df)  # ! workhorse function
+help(pcdl.TimeStep.get_conc_df)  # ! shorthand
+help(pcdl.TimeStep.get_concentration_at)
+help(pcdl.TimeStep.get_contour)  # ! workhorse function
+
+# TimeStep cells and other agents
+help(pcdl.TimeStep.get_celltype_dict)
+help(pcdl.TimeStep.get_cell_variables)
+help(pcdl.TimeStep.get_cell_df)  # ! workhorse function
+help(pcdl.TimeStep.get_cell_df_at)
+
+# TimeStep graphs
+help(pcdl.TimeStep.get_attached_graph_dict)  # !
+help(pcdl.TimeStep.get_neighbor_graph_dict)  # !
+
+# TimeStep unit
+help(pcdl.TimeStep.get_unit_se)  # ! workhorse function
+
+# TimeStep anndata
+help(pcdl.TimeStep.get_anndata)  # ! workhorse function
+
+# TimeStep internal functions
+help(pcdl.TimeStep._anndextract)
+help(pcdl.TimeStep._read_xml)
+help(pcdl.TimeStep.graphfile_parser)
+help(pcdl.TimeStep.scaler)
 ```
-help(pcdl.pyMCDS)
-help(pcdl.pyMCDS.__init__)
 
-# pyMCDS medata
-help(pcdl.pyMCDS.get_multicellds_version)
-help(pcdl.pyMCDS.get_physicell_version)
-help(pcdl.pyMCDS.get_timestamp)
-help(pcdl.pyMCDS.get_time)
-help(pcdl.pyMCDS.get_runtime)
 
-# pyMCDS mesh
-help(pcdl.pyMCDS.get_voxel_ijk_range)
-help(pcdl.pyMCDS.get_mesh_mnp_range)
-help(pcdl.pyMCDS.get_xyz_range)
-help(pcdl.pyMCDS.get_voxel_ijk_axis)
-help(pcdl.pyMCDS.get_mesh_mnp_axis)
-help(pcdl.pyMCDS.get_mesh)
-help(pcdl.pyMCDS.get_mesh_2D)
-help(pcdl.pyMCDS.get_mesh_coordinate)
-help(pcdl.pyMCDS.get_mesh_spacing)
-help(pcdl.pyMCDS.get_voxel_spacing)
-help(pcdl.pyMCDS.get_voxel_volume)
-help(pcdl.pyMCDS.get_voxel_ijk)
-help(pcdl.pyMCDS.is_in_mesh)
+# TimeStep time series
+```python3
+help(pcdl.TimeSeries)  # ! make class instance
+help(pcdl.TimeSeries.__init__)
 
-# pyMCDS microenvironment
-help(pcdl.pyMCDS.get_substrate_names)
-help(pcdl.pyMCDS.get_substrate_dict)
-help(pcdl.pyMCDS.get_substrate_df)
-help(pcdl.pyMCDS.get_concentration)
-help(pcdl.pyMCDS.get_concentration_df)
-help(pcdl.pyMCDS.get_concentration_at)
-help(pcdl.pyMCDS.get_contour)
+# TimeSeries load data
+help(pcdl.TimeSeries.get_xmlfile_list)
+help(pcdl.TimeSeries.read_mcds)
+help(pcdl.TimeSeries.get_mcds_list)
 
-# pyMCDS cells and other agents
-help(pcdl.pyMCDS.get_celltype_dict)
-help(pcdl.pyMCDS.get_cell_variables)
-help(pcdl.pyMCDS.get_cell_df)
-help(pcdl.pyMCDS.get_cell_df_at)
+# TimeSeries triage data
+help(pcdl.TimeSeries.get_cell_df_columns_states)
+help(pcdl.TimeSeries.get_conc_df_columns_states)
 
-# pyMCDS graphs
-help(pcdl.pyMCDS.get_attached_graph_dict)
-help(pcdl.pyMCDS.get_neighbor_graph_dict)
+# TimeSeries images and movies
+help(pcdl.TimeSeries.make_imgcell)  # ! workhorse function
+help(pcdl.TimeSeries.make_imgsubs)  # ! workhorse function
+help(pcdl.TimeSeries.make_gif)  # ! workhorse function
+help(pcdl.TimeSeries.make_movie)  # ! workhorse function
 
-# pyMCDS unit
-help(pcdl.pyMCDS.get_unit_df)
+# TimeSeries anndata
+help(pcdl.TimeSeries.get_anndata)  # ! workhorse function
 
-# pyMCDS internal functions
-help(pcdl.pyMCDS._read_xml)
-help(pcdl.graphfile_parser)
+# TimeSeries internal functions
+help(pcdl.TimeSeries._handle_magick)
 ```
 
-# pyMCDS time series
-```
-help(pcdl.pyMCDSts)
-help(pcdl.pyMCDSts.__init__)
-
-# pyMCDSts load data
-help(pcdl.pyMCDSts.get_xmlfile_list)
-help(pcdl.pyMCDSts.read_mcds)
-
-# pyMCDSts triage data
-help(pcdl.pyMCDSts.get_cell_minstate_col)
-help(pcdl.pyMCDSts.get_concentration_minstate_col)
-
-# pyMCDSts images and movies
-help(pcdl.pyMCDSts.make_imgcell)
-help(pcdl.pyMCDSts.make_imgsubs)
-help(pcdl.pyMCDSts.make_gif)
-help(pcdl.pyMCDSts.make_movie)
-
-# pyMCDSts internal functions
-help(pcdl.pyMCDSts._handle_magick)
-```
 
 # test data sets
-```
+```python3
 help(pcdl.install_data)
 help(pcdl.uninstall_data)
 ```

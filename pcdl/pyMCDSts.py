@@ -26,8 +26,8 @@ import numpy as np
 import os
 import pathlib
 from pcdl import pdplt
+from pcdl.pyMCDS import pyMCDS, es_coor_cell, es_coor_conc
 import platform
-from .pyMCDS import pyMCDS
 import xml.etree.ElementTree as ET
 
 
@@ -42,7 +42,7 @@ class pyMCDSts:
         custom_type: dictionary; default is {}
             variable to specify custom_data variable types
             other than float (int, bool, str) like this: {var: dtype, ...}.
-            down stream float and int will be handled as numeric,
+            downstream float and int will be handled as numeric,
             bool as Boolean, and str as categorical data.
 
         load: boole; default True
@@ -58,10 +58,10 @@ class pyMCDSts:
             should the graphs be extracted?
             setting graph to False will use less memory and speed up processing.
 
-        settingxml: boole; default True
-            should the substrate and cell type ID label mapping defined in
-            PhysiCell_settings.xml be extracted?
-            only set to False if the xml file is missing!
+        settingxml: string; default PhysiCell_settings.xml
+            from which settings.xml should the substrate and cell type
+            ID label mapping be extracted?
+            set to None or False if the xml file is missing!
 
         verbose: boole; default True
             setting verbose to False for less text output, while processing.
@@ -69,15 +69,13 @@ class pyMCDSts:
     output:
         mcdsts: pyMCDSts class instance
             this instance offers functions to process all stored time steps
-            from a simulation. no data is fetched by initialization.
+            from a simulation.
 
     description:
-        pyMCDSts.__init__ generates a class instance and stores
-        the input parameters. no data is fetched at initialization.
-        the instance offers functions to process all time steps
-        in the output_path directory.
+        pyMCDSts.__init__ generates a class instance the instance offers
+        functions to process all time steps in the output_path directory.
     """
-    def __init__(self, output_path='.', custom_type={}, load=True, microenv=True, graph=True, settingxml=True, verbose=True):
+    def __init__(self, output_path='.', custom_type={}, load=True, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True):
         output_path = output_path.replace('\\','/')
         if (output_path[-1] != '/'):
             output_path = output_path + '/'
@@ -91,6 +89,8 @@ class pyMCDSts:
         self.verbose = verbose
         if load:
             self.read_mcds()
+        else:
+            self.l_mcds = None
 
 
     ## LOAD DATA
@@ -123,7 +123,7 @@ class pyMCDSts:
                 list of physicell output /path/to/output*.xml strings.
 
         output:
-            l_mcds: list of mcds objects
+            self.l_mcds: list of mcds objects
 
         description:
             the function returns a list of mcds objects loaded by
@@ -153,98 +153,153 @@ class pyMCDSts:
         return l_mcds
 
 
-    ## TRIAGE DATA
-    def get_cell_minstate_col(self, minstate=2):
+    def get_mcds_list(self):
         """
         input:
-            minstate: integer; default is 2
-                minimal number of states a variable has to have,
-                in any of the mcds time steps, to be outputted.
+            self: pyMCDSts class instance.
+
+        output:
+            self.l_mcds: list of mcds objects.
+            watch out, this is a dereferenced pointer to the
+            self.l_mcds list of mcds objects, not a copy of self.l_mcds!
+
+        description:
+            function returns a binding to the self.l_mcds list of mcds objects.
+        """
+        return self.l_mcds
+
+
+    ## TRIAGE DATA
+    def get_cell_df_columns_states(self, states=1, drop=set(), keep=set(), allvalues=False):
+        """
+        input:
+            states: integer; default is 1
+                minimal number of states a variable has to have
+                in any of the mcds time steps to be outputted.
                 variables that have only 1 state carry no information.
                 None is a state too.
 
+            drop: set of strings; default is an empty set
+                set of column labels to be dropped for the dataframe.
+                don't worry: essential columns like ID, coordinates
+                and time will never be dropped.
+                Attention: when the keep parameter is given, then
+                the drop parameter has to be an empty set!
+
+            keep: set of strings; default is an empty set
+                set of column labels to be kept in the dataframe.
+                set states=1 to be sure that all variables are kept.
+                don't worry: essential columns like ID, coordinates
+                and time will always be kept.
+
+            allvalues: boolean; default is False
+                for numeric data, should only the min and max values or
+                all values be returned?
+
         output:
-            ls_minstate: list of strings
-                list of all non-coordinate column names, that at least in
-                one of the time steps or in between time steps reach
-                the given minimal state count.
+            dl_variable: dictionary of list
+                dictionary with an entry of all non-coordinate column names
+                that at least in one of the time steps or in between
+                time steps, reach the given minimal state count.
+                key is the column name, and the value is a list of all states
+                (bool, str, and, if allvalues is True, int and float) or
+                a list with minimum and maximum values from all the states
+                (int, float).
 
         description:
             function to detect informative variables in a time series.
-            this function detects even variables, which have in each
-            time step less than the minimal state count, but different values
+            this function detects even variables which have less than the
+            minimal state count in each time step, but different values
             from time step to time step.
         """
-        # const
-        es_coor = {
-            'voxel_i', 'voxel_j', 'voxel_k',
-            'mesh_center_m', 'mesh_center_n', 'mesh_center_p',
-            'position_x', 'position_y', 'position_z',
-        }
-        # processing
-        es_minstate = set()
-        des_minstate = {}
+        # gather data
+        de_variable_state = {}
         for mcds in self.l_mcds:
-            df_cell = mcds.get_cell_df()
+            df_cell = mcds.get_cell_df(drop=drop, keep=keep)
             for s_column in df_cell.columns:
-                if not (s_column in es_coor):
-                    es_state = set(df_cell.loc[:,s_column])
+                if not (s_column in es_coor_cell):
+                    e_state = set(df_cell.loc[:,s_column])
                     try:
-                        des_minstate[s_column] = des_minstate[s_column].union(es_state)
+                        de_variable_state[s_column] = de_variable_state[s_column].union(e_state)
                     except KeyError:
-                        des_minstate.update({s_column: es_state})
-        for s_column, es_state in des_minstate.items():
-            if len(es_state) >= minstate:
-                es_minstate.add(s_column)
+                        de_variable_state.update({s_column: e_state})
+        # extract
+        dl_variable_range = dict()
+        for s_column, e_state in de_variable_state.items():
+            if len(e_state) >= states:
+                o_state = list(e_state)[0]
+                if (type(o_state) in {float, int}) and not(allvalues):  # min max values (numeric)
+                    l_range = [min(e_state), max(e_state)]
+                else:  # bool, str, and all values (numeric)
+                    l_range = sorted(e_state)
+                dl_variable_range.update({s_column : l_range})
         # output
-        ls_minstate = sorted(es_minstate)
-        return ls_minstate
+        return dl_variable_range
 
 
-    def get_concentration_minstate_col(self, minstate=2):
+    def get_conc_df_columns_states(self, states=1, drop=set(), keep=set(), allvalues=False):
         """
         input:
-            minstate: integer; default is 2
-                minimal number of states a variable has to have,
-                in any of the mcds time steps, to be outputted.
+            states: integer; default is 1
+                minimal number of states a variable has to have
+                in any of the mcds time steps to be outputted.
                 variables that have only 1 state carry no information.
                 None is a state too.
 
+            drop: set of strings; default is an empty set
+                set of column labels to be dropped for the dataframe.
+                don't worry: essential columns like ID, coordinates
+                and time will never be dropped.
+                Attention: when the keep parameter is given, then
+                the drop parameter has to be an empty set!
+
+            keep: set of strings; default is an empty set
+                set of column labels to be kept in the dataframe.
+                set states=1 to be sure that all variables are kept.
+                don't worry: essential columns like ID, coordinates
+                and time will always be kept.
+
+            allvalues: boolean; default is False
+                should only the min and max values or all values be returned?
+
         output:
-            ls_minstate: list of strings
-                list of all non-coordinate column names, that at least in
-                one of the time steps or in between time steps reach
-                the given minimal state count.
+            dl_variable: dictionary of list
+                dictionary with an entry of all non-coordinate column names
+                that at least in one of the time steps or in between time
+                steps, reach the given minimal state count.
+                key is the column name, and the value is a list with the
+                minimum and maximum values from all the states if allvaue
+                is set to False, or a list of all states if allvalues is
+                set to True.
 
         description:
             function to detect informative substrate concentration variables
-            in a time series. this function detects even variables, which have
-            in each time step less than the minimal state count, but
+            in a time series. this function detects even variables which have
+            less than the minimal state count in each time step, but
             different values from time step to time step.
         """
-        # const
-        es_coor = {
-            'voxel_i', 'voxel_j', 'voxel_k',
-            'mesh_center_m', 'mesh_center_n', 'mesh_center_p',
-        }
-        # processing
-        es_minstate = set()
-        des_minstate = {}
+        # gather data
+        der_variable_state = {}
         for mcds in self.l_mcds:
-            df_conc = mcds.get_concentration_df()
+            df_conc = mcds.get_concentration_df(drop=drop, keep=keep)
             for s_column in df_conc.columns:
-                if not (s_column in es_coor):
-                    es_state = set(df_conc.loc[:,s_column])
+                if not (s_column in es_coor_conc):
+                    er_state = set(df_conc.loc[:,s_column])
                     try:
-                        des_minstate[s_column] = des_minstate[s_column].union(es_state)
+                        der_variable_state[s_column] = der_variable_state[s_column].union(er_state)
                     except KeyError:
-                        des_minstate.update({s_column: es_state})
-        for s_column, es_state in des_minstate.items():
-            if len(es_state) >= minstate:
-                es_minstate.add(s_column)
+                        der_variable_state.update({s_column: er_state})
+        # extract
+        dlr_variable_range = dict()
+        for s_column, er_state in der_variable_state.items():
+            if len(er_state) >= states:
+                if allvalues:
+                    lr_range = sorted(er_state)
+                else:
+                    lr_range = [min(er_state), max(er_state)]
+                dlr_variable_range.update({s_column : lr_range})
         # output
-        ls_minstate = sorted(es_minstate)
-        return ls_minstate
+        return dlr_variable_range
 
 
     ## GENERATE AND TRANSFORM IMAGES
@@ -288,8 +343,9 @@ class pyMCDSts:
                depending on the focus column variable dtype, default extracts
                labels or min and max values from data.
 
-            cmap: string; default viridis.
-                matplotlib colormap.
+            cmap: dictionary of strings or string; default viridis.
+                dictionary that maps labels to colors strings.
+                matplotlib colormap string.
                 https://matplotlib.org/stable/tutorials/colors/colormaps.html
 
             grid: boolean default True.
@@ -434,26 +490,37 @@ class pyMCDSts:
             fig, ax = plt.subplots(figsize=figsize)
             df_cell = mcds.get_cell_df()
             df_cell = df_cell.loc[(df_cell.position_z == z_slice),:]
+            # categorical variable
             if not (es_label is None):
-                ds_color = pdplt.df_label_to_color(
-                    df_abc = df_cell,
-                    s_label = focus,
-                    es_label = es_label,
-                    s_cmap = cmap,
-                    b_shuffle = False,
-                )
+                s_focus_color = focus + '_color'
+                # use specified label color dictionary
+                if type(cmap) is dict:
+                    ds_color = cmap
+                    df_cell[s_focus_color] = [ds_color[s_label] for s_label in df_cell.loc[:, focus]]
+                # generate label color dictionary
+                else:
+                    ds_color = pdplt.df_label_to_color(
+                        df_abc = df_cell,
+                        s_label = focus,
+                        es_label = es_label,
+                        s_cmap = cmap,
+                        b_shuffle = False,
+                    )
+                # generate legend
                 pdplt.ax_colorlegend(
                     ax = ax,
                     ds_color = ds_color,
                     r_x_figure2legend_space = 0.01,
                     s_fontsize = 'small',
                 )
-                s_focus_color = focus + '_color'
+                # generate color list
                 c = list(df_cell.loc[:, s_focus_color].values)
                 s_cmap = None
+            # numeric variable
             else:
                 c = focus
                 s_cmap = cmap
+            # plot
             df_cell.plot(
                 kind = 'scatter',
                 x = 'position_x',
@@ -466,7 +533,7 @@ class pyMCDSts:
                 ylim = ylim,
                 s = s,
                 grid = grid,
-                title = f'{mcds.get_time()}[min] {df_cell.shape[0]}[agent]',
+                title = f'{focus}\n{df_cell.shape[0]}[agent] {mcds.get_time()}[min]',
                 ax = ax,
             )
             if xyequal:
@@ -574,9 +641,9 @@ class pyMCDSts:
         if extrema == None:
             extrema = [None, None]
             for mcds in self.l_mcds:
-                df_cell = mcds.get_cell_df()
-                r_min = df_cell.loc[:,focus].min()
-                r_max = df_cell.loc[:,focus].max()
+                df_conc = mcds.get_concentration_df()
+                r_min = df_conc.loc[:,focus].min()
+                r_max = df_conc.loc[:,focus].max()
                 if (extrema[0] is None) or (extrema[0] > r_min):
                     extrema[0] = np.floor(r_min)
                 if (extrema[1] is None) or (extrema[1] < r_max):
@@ -616,7 +683,7 @@ class pyMCDSts:
                 alpha = alpha,
                 fill = fill,
                 cmap = cmap,
-                title = f'{mcds.get_time()}[min] {df_cell.shape[0]}[agent]',
+                title = f'{focus}\n{mcds.get_time()}[min]',
                 grid = grid,
                 xlim = xlim,
                 ylim = ylim,

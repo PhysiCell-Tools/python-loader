@@ -65,6 +65,7 @@ classifiers = [
 ]
 
 dependencies = [
+    "anndata",
     "matplotlib",
     "numpy",
     "pandas",
@@ -80,6 +81,7 @@ Hompage = "https://github.com/elmbeech/physicelldataloader"
 Documentation = "https://github.com/elmbeech/physicelldataloader/tree/master/man"
 Issues = "https://github.com/elmbeech/physicelldataloader/issues"
 Source = "https://github.com/elmbeech/physicelldataloader"
+#DOI = "https://"
 
 
 [tool.hatch.version]
