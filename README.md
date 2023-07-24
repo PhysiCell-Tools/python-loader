@@ -72,6 +72,10 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 
 
 ## Release Notes:
++ version 3.2.10 (2023-07-23): elmbeech/physicelldataloader
+    + rename pyMCDSts get_cell_minstate_col to **get_cell_df_states** for conciseness.
+    + rename pyMCDSts get_concentartion_minstate_col to **get_conc_df_states** for conciseness.
+
 + version 3.2.9 (2023-07-23): elmbeech/physicelldataloader
     + new class **TimeStep** can do everything pyMCDS can do and more.
     + new class **TimeSeries** can do everything pyMCDSts can do and more.
@@ -79,8 +83,8 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
     + new TimeSeries **get_anndata** function to transform physicell output into [AnnData](https://anndata.readthedocs.io/en/latest/) objects.
     + internal pyAnnData **scaler** function.
     + internal pyAnnData **\_anndextract** function.
-    + pyMCDS **get_cell_df** drop parameter to declare a set of columns to be dropped.
-    + pyMCDS **get_concentration_df** drop parameter to declare a set of columns to be dropped.
+    + pyMCDS **get_cell_df** drop keep parameter to declare a set of columns to be dropped or kept.
+    + pyMCDS **get_concentration_df** drop and keep parameter to declare a set of columns to be dropped or kept.
     + new pyMCDS **get_conc_df** shorthand for get_concentration_df.
     + new pyMCDSts **get_mcds_list** function which, points to the self.l_mcds object.
 
@@ -88,8 +92,8 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
     + pyMCDS **get_concentration_df** states parameter to filter out non-informative variables.
     + pyMCDS **get_cell_df** states parameter to filter out non-informative variables.
     + pyMCDSts **_\_init__** load parameter to specify if the whole time series data straight at object initialization should be loaded.
-    + new pyMCDSts **get_cell_df_columns_states** function to scan the whole time series for informative variables.
-    + new pyMCDSts **get_conc_df_columns_states** function to scan the whole time series for informative variables.
+    + new pyMCDSts **get_cell_minstate_col** function to scan the whole time series for informative features.
+    + new pyMCDSts **get_concentartion_minstate_col** function to scan the whole time series for informative features.
 
 + version 3.2.7 (2023-06-20): elmbeech/physicelldataloader
     + pyMCDS and pyMCDSts **_\_init__** custom\_type parameter to specify other custom\_data variable types (int, bool, str) then the generic float.
@@ -98,7 +102,7 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
     + pyMCDS resolve incompatibility with earlier PhysiCell and MultiCellDS versions.
 
 + version 3.2.4 (2023-06-17): elmbeech/physicelldataloader
-    + pyMCDS **_\_init__** seetingxml parameter for cases where in the output folder no PhysiCell\_settings.xml find can be found.
+    + pyMCDS **_\_init__** seetingxml parameter for cases where in the output folder no PhysiCell\_settings.xml can be found.
     + pyMCDSts **mcdsts.make_imgcell** extrema parameter replaced by z\_axis parameter to account for numerical and categorical variable types.
 
 + version 3.2.2 (2023-06-16): elmbeech/physicelldataloader

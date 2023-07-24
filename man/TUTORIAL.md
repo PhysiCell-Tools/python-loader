@@ -692,18 +692,18 @@ mcdsts = pcdl.TimeSeries(s_path)
 There are functions to help triage over the entier time series for features that more likely might carry information, by checking for variables with variation.
 ```
 # cell data min max values
-dl_cell = mcdsts.get_cell_df_columns_states()  # returns a dictionary with all features, listing all accessed states
+dl_cell = mcdsts.get_cell_df_states()  # returns a dictionary with all features, listing all accessed states
 len(dl_cell)  # 84 features
 dl_cell.keys()  # list feature names
 dl_cell['oxygen']  # list min and max oxygen values found, surrounding a cell, over the whole series
 
 # cell data number of states
 di_state = {}
-[di_state.update({s_feature: len(li_state)}) for s_feature, li_state in mcdsts.get_cell_df_columns_states(allvalues=True).items()]
+[di_state.update({s_feature: len(li_state)}) for s_feature, li_state in mcdsts.get_cell_df_states(allvalues=True).items()]
 di_state['oxygen']  # cell surrounding oxygen was found occupying 2388 different states (values) over the whole time series
 
 # substrate data
-dl_conc = mcdsts.get_conc_df_columns_states()
+dl_conc = mcdsts.get_conc_df_states()
 dl_conc.keys()  # list feature names
 dl_conc['oxygen']  # list min and max oxygen values found in the domain over the whole series
 ```

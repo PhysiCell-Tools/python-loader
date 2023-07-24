@@ -357,7 +357,7 @@ class TimeSeries(pyMCDSts):
             ls_column = list(self.l_mcds[0].get_cell_df().columns)
         else:
             ls_column = sorted(es_coor_cell.difference({'ID'}))
-            ls_column.extend(sorted(self.get_cell_df_columns_states(states=states, drop=drop, keep=keep, allvalues=False).keys()))
+            ls_column.extend(sorted(self.get_cell_df_states(states=states, drop=drop, keep=keep, allvalues=False).keys()))
 
         # processing
         i_mcds = len(self.l_mcds)

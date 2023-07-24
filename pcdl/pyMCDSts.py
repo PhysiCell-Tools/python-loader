@@ -170,7 +170,7 @@ class pyMCDSts:
 
 
     ## TRIAGE DATA
-    def get_cell_df_columns_states(self, states=1, drop=set(), keep=set(), allvalues=False):
+    def get_cell_df_states(self, states=1, drop=set(), keep=set(), allvalues=False):
         """
         input:
             states: integer; default is 1
@@ -237,7 +237,7 @@ class pyMCDSts:
         return dl_variable_range
 
 
-    def get_conc_df_columns_states(self, states=1, drop=set(), keep=set(), allvalues=False):
+    def get_conc_df_states(self, states=1, drop=set(), keep=set(), allvalues=False):
         """
         input:
             states: integer; default is 1
