@@ -20,7 +20,7 @@ The pcdl python3 library maintains three branches branches:
 + Library dependencies: anndata, matplotlib, numpy, pandas, scipy
 + Date of origin original PhysiCell-Tools python-loader: 2019-09-02
 + Date of origin pcdl fork: 2022-08-30
-+ DOI: https://doi.org/10.5281/ZENODO.8176399
++ Doi: https://doi.org/10.5281/ZENODO.8176399
 + License: [BSD-3-Clause](https://en.wikipedia.org/wiki/BSD_licenses)
 + User manual: this README.md file
 + Source code: [https://github.com/elmbeech/physicelldataloader](https://github.com/elmbeech/physicelldataloader)
@@ -55,7 +55,7 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 ## Cite:
 ```bibtex
 @Misc{bucher2023,
-  author    = {Bucher, Elmar and Wall, Patrick and Heiland, Randy and Macklin, Paul},
+  author    = {Bucher, Elmar and Wall, Patrick and Gress, Marshal and Rocha, Heber and Heiland, Randy and Macklin, Paul},
   title     = {elmbeech/physicelldataloader: pcdl platform-independent, pip-installable interface to load PhysiCell agent-based modeling framework output into python3.},
   year      = {2023},
   copyright = {Open Access},
