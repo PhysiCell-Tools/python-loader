@@ -65,23 +65,23 @@ class TestPyMcdsTs(object):
         assert l_mcds == mcdsts.l_mcds
 
     ## data triage command ##
-    def test_mcdsts_get_cell_df_columns_min_states(self, mcdsts=mcdsts):
-        dl_cell = mcdsts.get_cell_df_columns_states(states=2, drop=set(), keep=set(), allvalues=False)
+    def test_mcdsts_get_cell_df_states(self, mcdsts=mcdsts):
+        dl_cell = mcdsts.get_cell_df_states(states=2, drop=set(), keep=set(), allvalues=False)
         assert len(dl_cell.keys()) == 29 and \
                len(dl_cell['oxygen']) == 2
 
-    def test_mcdsts_get_cell_df_columns_min_states_allvalues(self, mcdsts=mcdsts):
-        dl_cell = mcdsts.get_cell_df_columns_states(states=2, drop=set(), keep=set(), allvalues=True)
+    def test_mcdsts_get_cell_df_states_allvalues(self, mcdsts=mcdsts):
+        dl_cell = mcdsts.get_cell_df_states(states=2, drop=set(), keep=set(), allvalues=True)
         assert len(dl_cell.keys()) == 29 and \
                len(dl_cell['oxygen']) > 2
 
-    def test_mcdsts_get_conc_df_columns_min_states(self, mcdsts=mcdsts):
-        dl_conc = mcdsts.get_conc_df_columns_states(states=2, drop=set(), keep=set(), allvalues=False)
+    def test_mcdsts_get_conc_df_states(self, mcdsts=mcdsts):
+        dl_conc = mcdsts.get_conc_df_states(states=2, drop=set(), keep=set(), allvalues=False)
         assert len(dl_conc.keys()) == 1 and \
                len(dl_conc['oxygen']) == 2
 
-    def test_mcdsts_get_conc_df_columns_min_states_allvalues(self, mcdsts=mcdsts):
-        dl_conc = mcdsts.get_conc_df_columns_states(states=2, drop=set(), keep=set(), allvalues=True)
+    def test_mcdsts_get_conc_df_states_allvalues(self, mcdsts=mcdsts):
+        dl_conc = mcdsts.get_conc_df_states(states=2, drop=set(), keep=set(), allvalues=True)
         assert len(dl_conc.keys()) == 1 and \
                len(dl_conc['oxygen']) > 2
 
