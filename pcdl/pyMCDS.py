@@ -828,7 +828,7 @@ class pyMCDS:
         if (len(keep) > 0) and (len(drop) > 0):
             sys.exit(f"Error @ pyMCDS.get_concentration_df : when keep is given {keep}, then drop has to be an empty set {drop}!")
         if (len(keep) > 0):
-            es_drop = set(self.get_cell_df().columns).difference(keep)
+            es_drop = set(self.get_concentration_df().columns).difference(keep)
         else:
             es_drop = drop
 
@@ -873,11 +873,9 @@ class pyMCDS:
         # generate dataframe
         aa_data  = np.array(la_data)
         df_conc = pd.DataFrame(aa_data.T, columns=ls_column)
+        df_conc['time'] = self.get_time()
         d_dtype = {'voxel_i': int, 'voxel_j': int, 'voxel_k': int}
         df_conc = df_conc.astype(d_dtype)
-
-        # add time coordiane
-        df_conc['time'] = self.get_time()
 
         # filter z_slize
         if not (z_slice is None):
@@ -1115,7 +1113,7 @@ class pyMCDS:
         """
         # handle keep and drop
         if (len(keep) > 0) and (len(drop) > 0):
-            sys.exit(f"Error @ pyMCDS.get_concentration_df : when keep is given {keep}, then drop has to be an empty set {drop}!")
+            sys.exit(f"Error @ pyMCDS.get_cell_df : when keep is given {keep}, then drop has to be an empty set {drop}!")
         if (len(keep) > 0):
             es_drop = set(self.get_cell_df().columns).difference(keep)
         else:

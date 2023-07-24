@@ -48,25 +48,42 @@ class TestPyMcdsTs(object):
     def test_mcdsts_get_xmlfile_list_read_mcds(self, mcdsts=mcdsts):
         ls_xmlfile = mcdsts.get_xmlfile_list()
         ls_xmlfile = ls_xmlfile[-3:]
-        ls_mcds = mcdsts.read_mcds(ls_xmlfile)
+        l_mcds = mcdsts.read_mcds(ls_xmlfile)
         assert len(ls_xmlfile) == 3 and \
-               len(ls_mcds) == 3 and \
-               ls_mcds[2].get_time() == 1440
+               len(l_mcds) == 3 and \
+               len(mcdsts.l_mcds) == 3 and \
+               mcdsts.l_mcds[2].get_time() == 1440
 
     def test_mcdsts_read_mcds(self, mcdsts=mcdsts):
-        ls_mcds = mcdsts.read_mcds()
-        assert len(ls_mcds) == 25 and \
-               ls_mcds[-1].get_time() == 1440
+        l_mcds = mcdsts.read_mcds()
+        assert len(l_mcds) == 25 and \
+               len(mcdsts.l_mcds) == 25 and \
+               mcdsts.l_mcds[-1].get_time() == 1440
+
+    def test_mcdsts_get_mcds_list(self, mcdsts=mcdsts):
+        l_mcds = mcdsts.get_mcds_list()
+        assert l_mcds == mcdsts.l_mcds
 
     ## data triage command ##
     def test_mcdsts_get_cell_df_columns_min_states(self, mcdsts=mcdsts):
-        ls_col = mcdsts.get_cell_df_columns_min_states(states=2, drop=set())
-        assert len(ls_col) == 28 and \
-               ls_col[-1] == 'total_volume'
+        dl_cell = mcdsts.get_cell_df_columns_states(states=2, drop=set(), keep=set(), allvalues=False)
+        assert len(dl_cell.keys()) == 29 and \
+               len(dl_cell['oxygen']) == 2
+
+    def test_mcdsts_get_cell_df_columns_min_states_allvalues(self, mcdsts=mcdsts):
+        dl_cell = mcdsts.get_cell_df_columns_states(states=2, drop=set(), keep=set(), allvalues=True)
+        assert len(dl_cell.keys()) == 29 and \
+               len(dl_cell['oxygen']) > 2
 
     def test_mcdsts_get_conc_df_columns_min_states(self, mcdsts=mcdsts):
-        ls_col = mcdsts.get_conc_df_columns_min_states(states=2, drop=set())
-        assert ls_col == ['oxygen']
+        dl_conc = mcdsts.get_conc_df_columns_states(states=2, drop=set(), keep=set(), allvalues=False)
+        assert len(dl_conc.keys()) == 1 and \
+               len(dl_conc['oxygen']) == 2
+
+    def test_mcdsts_get_conc_df_columns_min_states_allvalues(self, mcdsts=mcdsts):
+        dl_conc = mcdsts.get_conc_df_columns_states(states=2, drop=set(), keep=set(), allvalues=True)
+        assert len(dl_conc.keys()) == 1 and \
+               len(dl_conc['oxygen']) > 2
 
     ## magick command ##
     def test_mcdsts_handle_magick(self, mcdsts=mcdsts):
@@ -83,6 +100,25 @@ class TestPyMcdsTs(object):
             z_slice = -3.333,   # test if
             z_axis = None,  # test if categorical
             #cmap = 'viridis',  # matplotlib
+            #grid = True,  # matplotlib
+            xlim = None,  # test if
+            ylim = None,  # test if
+            xyequal = True,  # test if
+            s = None,  # test if
+            figsizepx = [641, 481],  # case non even pixel number
+            ext = 'jpeg', # test if
+            figbgcolor = None,  # test if
+        )
+        assert os.path.exists(s_path + 'cell_type_000000000.0.jpeg') and \
+               os.path.exists(s_path + 'cell_type_000001440.0.jpeg')
+        shutil.rmtree(s_path)
+
+    def test_mcdsts_make_imgcell_cat_cmap(self, mcdsts=mcdsts):
+        s_path = mcdsts.make_imgcell(
+            focus='cell_type',  # case categorical
+            z_slice = -3.333,   # test if
+            z_axis = None,  # test if categorical
+            cmap = {'cancer_cell': 'maroon'},  # matplotlib
             #grid = True,  # matplotlib
             xlim = None,  # test if
             ylim = None,  # test if

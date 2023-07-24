@@ -49,11 +49,11 @@ class TestPyMcdsShortcut3D(object):
 # load physicell data with microenvironment
 class TestPyMcds3D(object):
     ''' test for pcdl.pyMCDS data loader microenvironment True'''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_3d, output_path=s_path_3d)  # custom_type={}, microenv=True, graph=True, settingxml=True
+    mcds = pcdl.pyMCDS(xmlfile=s_file_3d, output_path=s_path_3d)  # custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True
 
     def test_pyMCDS(self, mcds=mcds):
         # load physicell data
-        print(f'process: pcdl.pyMCDS(xmlfile={s_file_3d}, output_path={s_path_3d}, custom_type={{}}, microenv=True, graph=True, settingxml=True) ...')
+        print(f"process: pcdl.pyMCDS(xmlfile={s_file_3d}, output_path={s_path_3d}, custom_type={{}}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True) ...")
         assert str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>"
 
     ## metadata related functions
@@ -191,12 +191,14 @@ class TestPyMcds3D(object):
                not mcds.is_in_mesh(x=-42, y=-42, z=-42, halt=False)
 
     def test_mcds_get_voxel_ijk(self, mcds=mcds):
-        li_voxel_0 = mcds.get_voxel_ijk(x=0, y=0, z=0)
-        li_voxel_1 = mcds.get_voxel_ijk(x=15, y=10, z=5)
-        li_voxel_2 = mcds.get_voxel_ijk(x=30, y=20, z=10)
+        li_voxel_0 = mcds.get_voxel_ijk(x=0, y=0, z=0, is_in_mesh=True)
+        li_voxel_1 = mcds.get_voxel_ijk(x=15, y=10, z=5, is_in_mesh=True)
+        li_voxel_2 = mcds.get_voxel_ijk(x=30, y=20, z=10, is_in_mesh=True)
+        li_voxel_3 = mcds.get_voxel_ijk(x=333, y=222, z=111, is_in_mesh=True)
         assert (li_voxel_0 == [0, 0, 0]) and \
                (li_voxel_1 == [1, 1, 1]) and \
-               (li_voxel_2 == [2, 2, 2])
+               (li_voxel_2 == [2, 2, 2]) and \
+               (li_voxel_3 == None)
 
     ## micro environment related functions
     def test_mcds_get_substrate_names(self, mcds=mcds):
@@ -214,17 +216,17 @@ class TestPyMcds3D(object):
                (df_substrate.shape == (2, 2))
 
     def test_mcds_get_concentration(self, mcds=mcds):
-        ar_conc = mcds.get_concentration(substrate='oxygen', z_slice=None)
+        ar_conc = mcds.get_concentration(substrate='oxygen', z_slice=None, halt=False)
         assert (str(type(ar_conc)) == "<class 'numpy.ndarray'>") and \
                (ar_conc.shape == (11, 11, 11))
 
     def test_mcds_get_concentration_zslice_meshcenter(self, mcds=mcds):
-        ar_conc = mcds.get_concentration(substrate='oxygen', z_slice=-5)
+        ar_conc = mcds.get_concentration(substrate='oxygen', z_slice=-5, halt=False)
         assert (str(type(ar_conc)) == "<class 'numpy.ndarray'>") and \
                (ar_conc.shape == (11, 11))
 
     def test_mcds_get_concentration_zslice_non_meshcenter(self, mcds=mcds):
-        ar_conc = mcds.get_concentration(substrate='oxygen', z_slice=-3.333)
+        ar_conc = mcds.get_concentration(substrate='oxygen', z_slice=-3.333, halt=False)
         assert (str(type(ar_conc)) == "<class 'numpy.ndarray'>") and \
                (ar_conc.shape == (11, 11))
 
@@ -234,24 +236,29 @@ class TestPyMcds3D(object):
                (ar_conc.shape == (2,))
 
     def test_mcds_get_concentration_df(self, mcds=mcds):
-        df_conc = mcds.get_concentration_df(z_slice=None, states=0, drop=set())
+        df_conc = mcds.get_concentration_df(z_slice=None, halt=False, states=0, drop=set(), keep=set())
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_conc.shape == (1331, 9))
 
     def test_mcds_get_concentration_df_zslice_meshcenter(self, mcds=mcds):
-        df_conc = mcds.get_concentration_df(z_slice=-5, states=1, drop=set())
+        df_conc = mcds.get_concentration_df(z_slice=-5, halt=False, states=1, drop=set(), keep=set())
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_conc.shape == (121, 9))
 
     def test_mcds_get_concentration_df_zslice_non_meshcenter(self, mcds=mcds):
-        df_conc = mcds.get_concentration_df(z_slice=-3.333, states=1, drop=set())
+        df_conc = mcds.get_concentration_df(z_slice=-3.333, halt=False, states=1, drop=set(), keep=set())
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_conc.shape == (121, 9))
 
     def test_mcds_get_concentration_df_states(self, mcds=mcds):
-        df_conc = mcds.get_concentration_df(z_slice=None, states=2, drop=set())
+        df_conc = mcds.get_concentration_df(z_slice=None, halt=False, states=2, drop=set(), keep=set())
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_conc.shape == (1331, 9))
+
+    def test_mcds_get_concentration_df_keep(self, mcds=mcds):
+        df_conc = mcds.get_concentration_df(z_slice=None, halt=False, states=0, drop=set(), keep={'oxygen'})
+        assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
+               (df_conc.shape == (1331, 8))
 
     def test_mcds_get_contour(self, mcds=mcds):
         fig = mcds.get_contour(
@@ -292,31 +299,36 @@ class TestPyMcds3D(object):
         assert(str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
 
     ## cell related functions
-    def test_mcds_get_celltype_dict(self, mcds=mcds):
-        ds_celltype = mcds.get_celltype_dict()
-        assert (str(type(ds_celltype)) == "<class 'dict'>") and \
-               (len(ds_celltype) == 2)
-
     def test_mcds_get_cell_variables(self, mcds=mcds):
         ls_variable = mcds.get_cell_variables()
         assert (str(type(ls_variable)) == "<class 'list'>") and \
                (len(ls_variable) == 97) and \
                (ls_variable[0] == 'ID')
 
+    def test_mcds_get_celltype_dict(self, mcds=mcds):
+        ds_celltype = mcds.get_celltype_dict()
+        assert (str(type(ds_celltype)) == "<class 'dict'>") and \
+               (len(ds_celltype) == 2)
+
     def test_mcds_get_cell_df(self, mcds=mcds):
-        df_cell = mcds.get_cell_df(states=0, drop=set())
+        df_cell = mcds.get_cell_df(states=0, drop=set(), keep=set())
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (20460, 116))
+               (df_cell.shape == (20460, 117))
 
     def test_mcds_get_cell_df_states(self, mcds=mcds):
-        df_cell = mcds.get_cell_df(states=2, drop=set())
+        df_cell = mcds.get_cell_df(states=2, drop=set(), keep=set())
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_cell.shape == (20460, 31))
 
-    def test_mcds_get_cell_df_at(self, mcds=mcds):
-        df_cell = mcds.get_cell_df_at(x=0, y=0, z=0, states=1, drop=set())
+    def test_mcds_get_cell_df_keep(self, mcds=mcds):
+        df_cell = mcds.get_cell_df(states=0, drop=set(), keep={'oxygen'})
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (5, 116))
+               (df_cell.shape == (20460, 11))
+
+    def test_mcds_get_cell_df_at(self, mcds=mcds):
+        df_cell = mcds.get_cell_df_at(x=0, y=0, z=0, states=1, drop=set(), keep=set())
+        assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
+               (df_cell.shape == (5, 117))
 
     ## graph related functions
     def test_mcds_get_attached_graph_dict(self, mcds=mcds):

@@ -38,11 +38,11 @@ if not os.path.exists(s_path_3d):
 # test function
 class TestPyMcdsMicroenvFalse3D(object):
     ''' test for pcdl.pyMCDS data loader with microenvironment, graph, and settingxml set to False '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_3d, output_path=s_path_3d, custom_type={}, microenv=False, graph=False, settingxml=False)
+    mcds = pcdl.pyMCDS(xmlfile=s_file_3d, output_path=s_path_3d, custom_type={}, microenv=False, graph=False, settingxml=None, verbose=True)
 
     def test_pyMCDS(self, mcds=mcds):
         # load physicell data
-        print(f'process: pcdl.pyMCDS(xmlfile={s_file_3d}, output_path={s_path_3d}, custom_type={{}}, microenv=False, graph=False, settingxml=False) ...')
+        print(f'process: pcdl.pyMCDS(xmlfile={s_file_3d}, output_path={s_path_3d}, custom_type={{}}, microenv=False, graph=False, settingxml=False, verbose=True) ...')
         assert str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>"
 
     ## metadata related functions
@@ -162,45 +162,57 @@ class TestPyMcdsMicroenvFalse3D(object):
                not mcds.is_in_mesh(x=-42, y=-42, z=-42, halt=False)
 
     def test_mcds_get_voxel_ijk(self, mcds=mcds):
-        li_voxel_0 = mcds.get_voxel_ijk(x=0, y=0, z=0)
-        li_voxel_1 = mcds.get_voxel_ijk(x=15, y=10, z=5)
-        li_voxel_2 = mcds.get_voxel_ijk(x=30, y=20, z=10)
+        li_voxel_0 = mcds.get_voxel_ijk(x=0, y=0, z=0, is_in_mesh=True)
+        li_voxel_1 = mcds.get_voxel_ijk(x=15, y=10, z=5, is_in_mesh=True)
+        li_voxel_2 = mcds.get_voxel_ijk(x=30, y=20, z=10, is_in_mesh=True)
+        li_voxel_3 = mcds.get_voxel_ijk(x=333, y=222, z=111, is_in_mesh=True)
         assert (li_voxel_0 == [0, 0, 0]) and \
                (li_voxel_1 == [1, 1, 1]) and \
-               (li_voxel_2 == [2, 2, 2])
+               (li_voxel_2 == [2, 2, 2]) and \
+               (li_voxel_3 is None)
 
     ## micro environment related functions
+    def test_mcds_get_substrate_names(self, mcds=mcds):
+        ls_substrate = mcds.get_substrate_names()
+        assert (str(type(ls_substrate)) == "<class 'list'>") and \
+               (len(ls_substrate) == 0)
+
     def test_mcds_get_substrate_dict(self, mcds=mcds):
         ds_substrate = mcds.get_substrate_dict()
         assert (str(type(ds_substrate)) == "<class 'dict'>") and \
                (len(ds_substrate) == 0)
 
     ## cell related functions
-    def test_mcds_get_celltype_dict(self, mcds=mcds):
-        ds_celltype = mcds.get_celltype_dict()
-        assert (str(type(ds_celltype)) == "<class 'dict'>") and \
-               (len(ds_celltype) == 0)
-
     def test_mcds_get_cell_variables(self, mcds=mcds):
         ls_variable = mcds.get_cell_variables()
         assert (str(type(ls_variable)) == "<class 'list'>") and \
                (len(ls_variable) == 97) and \
                (ls_variable[0] == 'ID')
 
+    def test_mcds_get_celltype_dict(self, mcds=mcds):
+        ds_celltype = mcds.get_celltype_dict()
+        assert (str(type(ds_celltype)) == "<class 'dict'>") and \
+               (len(ds_celltype) == 0)
+
     def test_mcds_get_cell_df(self, mcds=mcds):
-        df_cell = mcds.get_cell_df(states=0, drop=set())
+        df_cell = mcds.get_cell_df(states=0, drop=set(), keep=set())
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (20460, 107))
+               (df_cell.shape == (20460, 108))
 
     def test_mcds_get_cell_df_states(self, mcds=mcds):
-        df_cell = mcds.get_cell_df(states=2, drop=set())
+        df_cell = mcds.get_cell_df(states=2, drop=set(), keep=set())
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_cell.shape == (20460, 26))
 
-    def test_mcds_get_cell_df_at(self, mcds=mcds):
-        df_cell = mcds.get_cell_df_at(x=0, y=0, z=0, states=1, drop=set())
+    def test_mcds_get_cell_df_keep(self, mcds=mcds):
+        df_cell = mcds.get_cell_df(states=0, drop=set(), keep={'total_volume'})
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (5, 107))
+               (df_cell.shape == (20460, 8))
+
+    def test_mcds_get_cell_df_at(self, mcds=mcds):
+        df_cell = mcds.get_cell_df_at(x=0, y=0, z=0, states=1, drop=set(), keep=set())
+        assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
+               (df_cell.shape == (5, 108))
 
     ## unit related functions
     def test_mcds_get_unit_se(self, mcds=mcds):

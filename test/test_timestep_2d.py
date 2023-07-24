@@ -38,11 +38,11 @@ if not os.path.exists(s_path_2d):
 # load physicell data with microenvironment
 class TestPyMcdsMicroenvTrue2D(object):
     ''' test for pcdl.pyMCDS data loader, the complete data set. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml=True)
+    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
     def test_pyMCDS(self, mcds=mcds):
         # load physicell data
-        print(f'process: pcdl.pyMCDS(xmlfile={s_file_2d}, output_path={s_path_2d}, custom_type={{}}, microenv=True, graph=True, settingxml=True) ...')
+        print(f"process: pcdl.pyMCDS(xmlfile={s_file_2d}, output_path={s_path_2d}, custom_type={{}}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True) ...")
         assert str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>"
 
     ## metadata related functions
@@ -180,12 +180,14 @@ class TestPyMcdsMicroenvTrue2D(object):
                not mcds.is_in_mesh(x=-42, y=-42, z=-42, halt=False)
 
     def test_mcds_get_voxel_ijk(self, mcds=mcds):
-        li_voxel_0 = mcds.get_voxel_ijk(x=0, y=0, z=0)
-        li_voxel_1 = mcds.get_voxel_ijk(x=15, y=10, z=0)
-        li_voxel_2 = mcds.get_voxel_ijk(x=30, y=20, z=0)
+        li_voxel_0 = mcds.get_voxel_ijk(x=0, y=0, z=0, is_in_mesh=True)
+        li_voxel_1 = mcds.get_voxel_ijk(x=15, y=10, z=0, is_in_mesh=True)
+        li_voxel_2 = mcds.get_voxel_ijk(x=30, y=20, z=0, is_in_mesh=True)
+        li_voxel_3 = mcds.get_voxel_ijk(x=42, y=42, z=42, is_in_mesh=True)
         assert (li_voxel_0 == [0, 0, 0]) and \
                (li_voxel_1 == [1, 1, 0]) and \
-               (li_voxel_2 == [2, 2, 0])
+               (li_voxel_2 == [2, 2, 0]) and \
+               (li_voxel_3 is None)
 
     ## micro environment related functions
     def test_mcds_get_substrate_names(self, mcds=mcds):
@@ -208,12 +210,12 @@ class TestPyMcdsMicroenvTrue2D(object):
                (ar_conc.shape == (11, 11, 1))
 
     def test_mcds_get_concentration_zslice_meshcenter(self, mcds=mcds):
-        ar_conc = mcds.get_concentration(substrate='oxygen', z_slice=0)
+        ar_conc = mcds.get_concentration(substrate='oxygen', z_slice=0, halt=False)
         assert (str(type(ar_conc)) == "<class 'numpy.ndarray'>") and \
                (ar_conc.shape == (11, 11))
 
     def test_mcds_get_concentration_zslice_non_meshcenter(self, mcds=mcds):
-        ar_conc = mcds.get_concentration(substrate='oxygen', z_slice=-3.333)
+        ar_conc = mcds.get_concentration(substrate='oxygen', z_slice=-3.333, halt=False)
         assert (str(type(ar_conc)) == "<class 'numpy.ndarray'>") and \
                (ar_conc.shape == (11, 11))
 
@@ -223,17 +225,17 @@ class TestPyMcdsMicroenvTrue2D(object):
                (ar_conc.shape == (1,))
 
     def test_mcds_get_concentration_df(self, mcds=mcds):
-        df_conc = mcds.get_concentration_df(z_slice=None, states=0, drop=set())
+        df_conc = mcds.get_concentration_df(z_slice=None, halt=False, states=0, drop=set(), keep=set())
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_conc.shape == (121, 8))
 
     def test_mcds_get_concentration_df_zslice(self, mcds=mcds):
-        df_conc = mcds.get_concentration_df(z_slice=0, states=1, drop=set())
+        df_conc = mcds.get_concentration_df(z_slice=0, halt=False, states=1, drop=set(), keep=set())
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_conc.shape == (121, 8))
 
     def test_mcds_get_concentration_df_states(self, mcds=mcds):
-        df_conc = mcds.get_concentration_df(z_slice=None, states=2, drop=set())
+        df_conc = mcds.get_concentration_df(z_slice=None, halt=False, states=2, drop=set(), keep={'oxygen'})
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_conc.shape == (121, 8))
 
@@ -276,31 +278,36 @@ class TestPyMcdsMicroenvTrue2D(object):
         assert(str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
 
     ## cell related functions
-    def test_mcds_get_celltype_dict(self, mcds=mcds):
-        ds_celltype = mcds.get_celltype_dict()
-        assert (str(type(ds_celltype)) == "<class 'dict'>") and \
-               (len(ds_celltype) == 1)
-
-    def test_mcds_get_variables(self, mcds=mcds):
+    def test_mcds_get_cell_variables(self, mcds=mcds):
         ls_variable = mcds.get_cell_variables()
         assert (str(type(ls_variable)) == "<class 'list'>") and \
                (len(ls_variable) == 77) and \
                (ls_variable[0] == 'ID')
 
+    def test_mcds_get_celltype_dict(self, mcds=mcds):
+        ds_celltype = mcds.get_celltype_dict()
+        assert (str(type(ds_celltype)) == "<class 'dict'>") and \
+               (len(ds_celltype) == 1)
+
     def test_mcds_get_cell_df(self, mcds=mcds):
-        df_cell = mcds.get_cell_df(states=0, drop=set())
+        df_cell = mcds.get_cell_df(states=0, drop=set(), keep=set())
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (1099, 93))
+               (df_cell.shape == (1099, 94))
 
     def test_mcds_get_cell_df_states(self, mcds=mcds):
-        df_cell = mcds.get_cell_df(states=2, drop=set())
+        df_cell = mcds.get_cell_df(states=2, drop=set(), keep=set())
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_cell.shape == (1099, 38))
 
-    def test_mcds_get_cell_df_at(self, mcds=mcds):
-        df_cell = mcds.get_cell_df_at(x=0, y=0, z=0, states=1, drop=set())
+    def test_mcds_get_cell_df_keep(self, mcds=mcds):
+        df_cell = mcds.get_cell_df(states=0, drop=set(), keep={'oxygen'})
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (5, 93))
+               (df_cell.shape == (1099, 11))
+
+    def test_mcds_get_cell_df_at(self, mcds=mcds):
+        df_cell = mcds.get_cell_df_at(x=0, y=0, z=0, states=1, drop=set(), keep=set())
+        assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
+               (df_cell.shape == (5, 94))
 
     ## graph related functions
     def test_mcds_get_attached_graph_dict(self, mcds=mcds):

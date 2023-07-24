@@ -496,7 +496,7 @@ class pyMCDSts:
                 # use specified label color dictionary
                 if type(cmap) is dict:
                     ds_color = cmap
-                    df_cell[s_focus_color] = [ds_color[s_label] for s_label in df_cell.loc[:,s_focus]]
+                    df_cell[s_focus_color] = [ds_color[s_label] for s_label in df_cell.loc[:, focus]]
                 # generate label color dictionary
                 else:
                     ds_color = pdplt.df_label_to_color(
