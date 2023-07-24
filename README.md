@@ -52,10 +52,24 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 + fork pcdl co-programmer and tester: Heber Rocha, Marshal Gress
 
 
+## Cite:
+```bibtex
+@Misc{bucher2023,
+  author    = {Bucher, Elmar and Wall, Patrick and Heiland, Randy and Macklin, Paul},
+  title     = {elmbeech/physicelldataloader: pcdl platform-independent, pip-installable interface to load PhysiCell agent-based modeling framework output into python3.},
+  year      = {2023},
+  copyright = {Open Access},
+  doi       = {10.5281/ZENODO.8176399},
+  publisher = {Zenodo},
+}
+```
+
+
 ## Road Map:
 + PhysiCell\_seetings.xml and rules.csv parameter loader.
 + [vtk file format](https://docs.vtk.org/en/latest/design_documents/VTKFileFormats.html) output, maybe [stl](https://en.wikipedia.org/wiki/STL_(file_format)) and [wavefront obj](https://en.wikipedia.org/wiki/Wavefront_.obj_file) output.
 + [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) ([networkx](https://networkx.org/) compatible) graph output.
+
 
 ## Release Notes:
 + version 3.2.9 (2023-07-23): elmbeech/physicelldataloader
