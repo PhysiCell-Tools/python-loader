@@ -159,7 +159,7 @@ class pyMCDSts:
             self: pyMCDSts class instance.
 
         output:
-            self.l_mcds: list of mcds objects.
+            self.l_mcds: list of chronologically ordered mcds objects.
             watch out, this is a dereferenced pointer to the
             self.l_mcds list of mcds objects, not a copy of self.l_mcds!
 
@@ -780,7 +780,7 @@ class pyMCDSts:
         s_ipathfiles = f'{path}/*.{interface}'
 
         # generate movie
-        s_cmd = f'ffmpeg -r {framerate} -f image2 -pattern_type glob -i "{s_ipathfiles}" -vcodec libx264 -pix_fmt yuv420p -strict -2 -tune animation -crf 15 -acodec none {s_opathfile}'
+        s_cmd = f'ffmpeg -y -r {framerate} -f image2 -pattern_type glob -i "{s_ipathfiles}" -vcodec libx264 -pix_fmt yuv420p -strict -2 -tune animation -crf 15 -acodec none {s_opathfile}'
         os.system(s_cmd)
 
         # output
