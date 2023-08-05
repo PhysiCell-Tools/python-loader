@@ -323,7 +323,7 @@ class pyMCDSts:
         return s_magick
 
 
-    def make_imgcell(self, focus='cell_type', z_slice=0, z_axis=None, cmap='viridis', grid=True, xlim=None, ylim=None, xyequal=True, s=None, figsizepx=None, ext='jpeg', figbgcolor=None):
+    def make_imgcell(self, focus='cell_type', z_slice=0, z_axis=None, cmap='viridis', grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=None, figsizepx=None, ext='jpeg', figbgcolor=None):
         """
         input:
             self: pyMCDSts class instance
@@ -333,7 +333,7 @@ class pyMCDSts:
 
             z_slice: floating point number; default is 0
                 z-axis position to slice a 2D xy-plain out of the
-                3D substrate concentration mesh. if z_slize position
+                3D substrate concentration mesh. if z_slice position
                 is not an exact mesh center coordinate, then z_slice
                 will be adjusted to the nearest mesh center value,
                 the smaller one, if the coordinate lies on a saddle point.
@@ -350,6 +350,13 @@ class pyMCDSts:
 
             grid: boolean default True.
                 plot axis grid lines.
+
+            legend_loc: string; default is 'lower left'.
+                the location of the categorical legend, if applicable.
+                possible strings are: best,
+                upper right, upper center, upper left, center left,
+                lower left, lower center, lower right, center right,
+                center.
 
             xlim: tuple of two floats; default is None
                 x axis min and max value.
@@ -425,7 +432,7 @@ class pyMCDSts:
         # handle z_slice
         _, _, ar_p_axis = self.l_mcds[0].get_mesh_mnp_axis()
         if not (z_slice in ar_p_axis):
-            z_slice = ar_p_axis[(ar_p_axis - z_slice).argmin()]
+            z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
             print(f'z_slice set to {z_slice}.')
 
         # handle z_axis categorical cases
@@ -463,10 +470,12 @@ class pyMCDSts:
         print(f'min max extrema set to: {lr_extrema}.')
 
         # handle xlim and ylim
-        if xlim is None:
-            xlim = self.l_mcds[0].get_mesh_mnp_range()[0]
-        if ylim is None:
-            ylim = self.l_mcds[0].get_mesh_mnp_range()[1]
+        if (xlim is None):
+            xlim = self.l_mcds[0].get_xyz_range()[0]
+            print(f'xlim set to: {xlim}.')
+        if (ylim is None):
+            ylim = self.l_mcds[0].get_xyz_range()[1]
+            print(f'ylim set to: {ylim}.')
 
         # handle figure size
         figsizepx[0] = figsizepx[0] - (figsizepx[0] % 2)  # enforce even pixel number
@@ -487,10 +496,13 @@ class pyMCDSts:
 
         # plotting
         for mcds in self.l_mcds:
-            fig, ax = plt.subplots(figsize=figsize)
             df_cell = mcds.get_cell_df()
-            df_cell = df_cell.loc[(df_cell.position_z == z_slice),:]
-            # categorical variable
+            df_cell = df_cell.loc[(df_cell.mesh_center_p == z_slice),:]
+            # layout the canavas
+            fig, ax = plt.subplots(figsize=figsize)
+            if xyequal:
+                ax.axis('equal')
+            # handle categorical variable
             if not (es_label is None):
                 s_focus_color = focus + '_color'
                 # use specified label color dictionary
@@ -506,21 +518,14 @@ class pyMCDSts:
                         s_cmap = cmap,
                         b_shuffle = False,
                     )
-                # generate legend
-                pdplt.ax_colorlegend(
-                    ax = ax,
-                    ds_color = ds_color,
-                    r_x_figure2legend_space = 0.01,
-                    s_fontsize = 'small',
-                )
                 # generate color list
                 c = list(df_cell.loc[:, s_focus_color].values)
                 s_cmap = None
-            # numeric variable
+            # handle numeric variable
             else:
                 c = focus
                 s_cmap = cmap
-            # plot
+            # plot scatter
             df_cell.plot(
                 kind = 'scatter',
                 x = 'position_x',
@@ -533,13 +538,20 @@ class pyMCDSts:
                 ylim = ylim,
                 s = s,
                 grid = grid,
-                title = f'{focus}\n{df_cell.shape[0]}[agent] {mcds.get_time()}[min]',
+                title = f'{focus}\n{df_cell.shape[0]}[agent] {round(mcds.get_time(),9)}[min]',
                 ax = ax,
             )
-            if xyequal:
-                ax.axis('equal')
+            # plot categirical data legen
+            if not (es_label is None):
+                pdplt.ax_colorlegend(
+                    ax = ax,
+                    ds_color = ds_color,
+                    s_loc = legend_loc,
+                    s_fontsize = 'small',
+                )
+            # finalize
             os.makedirs(s_path, exist_ok=True)
-            s_pathfile = f'{s_path}{focus}_{str(mcds.get_time()).zfill(11)}.{ext}'
+            s_pathfile = f'{s_path}{focus}_{str(round(mcds.get_time(),9)).zfill(11)}.{ext}'
             fig.savefig(s_pathfile, facecolor=figbgcolor)
             plt.close(fig)
 
@@ -557,7 +569,7 @@ class pyMCDSts:
 
             z_slice: floating point number; default is 0
                 z-axis position to slice a 2D xy-plain out of the
-                3D substrate concentration mesh. if z_slize position
+                3D substrate concentration mesh. if z_slice position
                 is not an exact mesh center coordinate, then z_slice
                 will be adjusted to the nearest mesh center value,
                 the smaller one, if the coordinate lies on a saddle point.
@@ -634,7 +646,7 @@ class pyMCDSts:
         # handle z_slice
         _, _, ar_p_axis = self.l_mcds[0].get_mesh_mnp_axis()
         if not (z_slice in ar_p_axis):
-            z_slice = ar_p_axis[(ar_p_axis - z_slice).argmin()]
+            z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
             print(f'z_slice set to {z_slice}.')
 
         # handle extrema
@@ -652,9 +664,11 @@ class pyMCDSts:
 
         # handle xlim and ylim
         if (xlim is None):
-            xlim = self.l_mcds[0].get_mesh_mnp_range()[0]
+            xlim = self.l_mcds[0].get_xyz_range()[0]
+            print(f'xlim set to {xlim}.')
         if (ylim is None):
-            ylim = self.l_mcds[0].get_mesh_mnp_range()[1]
+            ylim = self.l_mcds[0].get_xyz_range()[1]
+            print(f'ylim set to {ylim}.')
 
         # handle figure size
         figsizepx[0] = figsizepx[0] - (figsizepx[0] % 2)  # enforce even pixel number
@@ -683,7 +697,7 @@ class pyMCDSts:
                 alpha = alpha,
                 fill = fill,
                 cmap = cmap,
-                title = f'{focus}\n{mcds.get_time()}[min]',
+                title = f'{focus}\n{round(mcds.get_time(),9)}[min]',
                 grid = grid,
                 xlim = xlim,
                 ylim = ylim,
@@ -692,7 +706,7 @@ class pyMCDSts:
                 ax = None,
             )
             os.makedirs(s_path, exist_ok=True)
-            s_pathfile = f'{s_path}{focus}_{str(mcds.get_time()).zfill(11)}.{ext}'
+            s_pathfile = f'{s_path}{focus}_{str(round(mcds.get_time(),9)).zfill(11)}.{ext}'
             fig.savefig(s_pathfile, facecolor=figbgcolor)
             plt.close(fig)
 

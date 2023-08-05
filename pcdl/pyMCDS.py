@@ -127,14 +127,14 @@ es_coor_conc = {
     'ID',
     'voxel_i','voxel_j','voxel_k',
     'mesh_center_m','mesh_center_n','mesh_center_p',
-    'time', 'runtime'
+    'time', 'runtime',
 }
 es_coor_cell = {
     'ID',
     'voxel_i', 'voxel_j', 'voxel_k',
     'mesh_center_m', 'mesh_center_n', 'mesh_center_p',
     'position_x', 'position_y', 'position_z',
-    'time',
+    'time', 'runtime',
 }
 
 
@@ -699,7 +699,7 @@ class pyMCDS:
 
             halt: boolean; default is False
                 should program execution break or just spit out a warning,
-                if z_slize position is not an exact mesh center coordinate?
+                if z_slice position is not an exact mesh center coordinate?
                 if False, z_slice will be adjusted to the nearest
                 mesh center value, the smaller one, if the coordinate
                 lies on a saddle point.
@@ -723,7 +723,7 @@ class pyMCDS:
                 if halt:
                     sys.exit('Processing stopped!')
                 else:
-                    z_slice = ar_p_axis[(ar_p_axis - z_slice).argmin()]
+                    z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
                     print(f'z_slice set to {z_slice}.')
 
             # filter by z_slice
@@ -792,7 +792,7 @@ class pyMCDS:
 
             halt: boolean; default is False
                 should program execution break or just spit out a warning,
-                if z_slize position is not an exact mesh center coordinate?
+                if z_slice position is not an exact mesh center coordinate?
                 if False, z_slice will be adjusted to the nearest
                 mesh center value, the smaller one, if the coordinate
                 lies on a saddle point.
@@ -824,13 +824,9 @@ class pyMCDS:
             for all chemical species in all voxels. additionally, this
             dataframe lists voxel and mesh center coordinates.
         """
-        # handle keep and drop
+        # check keep and drop
         if (len(keep) > 0) and (len(drop) > 0):
             sys.exit(f"Error @ pyMCDS.get_concentration_df : when keep is given {keep}, then drop has to be an empty set {drop}!")
-        if (len(keep) > 0):
-            es_drop = set(self.get_concentration_df().columns).difference(keep)
-        else:
-            es_drop = drop
 
         # check if z_slice is a mesh center or None
         if not (z_slice is None):
@@ -840,7 +836,7 @@ class pyMCDS:
                 if halt:
                     sys.exit('Processing stopped!')
                 else:
-                    z_slice = ar_p_axis[(ar_p_axis - z_slice).argmin()]
+                    z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
                     print(f'z_slice set to {z_slice}.')
 
         # flatten mesh coordnates
@@ -874,19 +870,26 @@ class pyMCDS:
         aa_data  = np.array(la_data)
         df_conc = pd.DataFrame(aa_data.T, columns=ls_column)
         df_conc['time'] = self.get_time()
+        df_conc['runtime'] = self.get_runtime() / 60  # in min
         d_dtype = {'voxel_i': int, 'voxel_j': int, 'voxel_k': int}
         df_conc = df_conc.astype(d_dtype)
 
-        # filter z_slize
+        # filter z_slice
         if not (z_slice is None):
            df_conc = df_conc.loc[df_conc.mesh_center_p == z_slice, :]
 
         # filter
-        es_delete = es_drop.difference(es_coor_conc)  # by parameter declaraion
+        es_feature = set(df_conc.columns).difference(es_coor_conc)
+        if (len(keep) > 0):
+            es_delete = es_feature.difference(keep)
+        else:
+            es_delete = es_feature.intersection(drop)
+
         if (states > 1):
             for s_column in set(df_conc.columns).difference(es_coor_conc):
                 if len(set(df_conc.loc[:,s_column])) < states:
                     es_delete.add(s_column)
+                    print('es_delete:', es_delete)
         df_conc.drop(es_delete, axis=1, inplace=True)
 
         # output
@@ -904,7 +907,7 @@ class pyMCDS:
 
             z_slice: floating point number; default is 0
                 z-axis position to slice a 2D xy-plain out of the
-                3D substrate concentration mesh. if z_slize position
+                3D substrate concentration mesh. if z_slice position
                 is not an exact mesh center coordinate, then z_slice
                 will be adjusted to the nearest mesh center value,
                 the smaller one, if the coordinate lies on a saddle point.
@@ -966,7 +969,7 @@ class pyMCDS:
         # handle z_slice input
         _, _, ar_p_axis = self.get_mesh_mnp_axis()
         if not (z_slice in ar_p_axis):
-            z_slice = ar_p_axis[(ar_p_axis - z_slice).argmin()]
+            z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
             print(f'z_slice set to {z_slice}.')
 
         # get data z slice
@@ -1007,6 +1010,10 @@ class pyMCDS:
         else:
             fig = plt.gcf()
 
+        # set equal axis spacing
+        if xyequal:
+            ax.axis('equal')
+
         # get contour plot
         if fill:
             ax.contourf(x,y,z, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
@@ -1025,10 +1032,6 @@ class pyMCDS:
             ax.set_xlim(xlim[0], xlim[1])
         if not (ylim is None):
             ax.set_ylim(ylim[0], ylim[1])
-
-        # set equal axis spacing
-        if xyequal:
-            ax.axis('equal')
 
         # get colorbar
         fig.colorbar(
@@ -1111,13 +1114,9 @@ class pyMCDS:
             function returns a dataframe with a cell centric view
             of the simulation.
         """
-        # handle keep and drop
+        # check keep and drop
         if (len(keep) > 0) and (len(drop) > 0):
             sys.exit(f"Error @ pyMCDS.get_cell_df : when keep is given {keep}, then drop has to be an empty set {drop}!")
-        if (len(keep) > 0):
-            es_drop = set(self.get_cell_df().columns).difference(keep)
-        else:
-            es_drop = drop
 
         # get cell position and more
         df_cell = pd.DataFrame(self.data['discrete_cells']['data'])
@@ -1193,10 +1192,11 @@ class pyMCDS:
 
             # merge concentration (left join)
             df_conc = self.get_concentration_df(z_slice=None, states=1, drop=set(), keep=set())
+            df_conc.drop({'time', 'runtime'}, axis=1, inplace=True)
             df_cell = pd.merge(
                 df_cell,
                 df_conc,
-                on = ['voxel_i', 'voxel_j', 'voxel_k', 'time'],
+                on = ['voxel_i', 'voxel_j', 'voxel_k'],
                 how = 'left',
             )
 
@@ -1220,7 +1220,12 @@ class pyMCDS:
         df_cell.loc[:,'cell_type'].replace(self.data['metadata']['cell_type'], inplace=True)
 
         # filter
-        es_delete = es_drop.difference(es_coor_cell)  # by parameter declaraion
+        es_feature = set(df_cell.columns).difference(es_coor_cell)
+        if (len(keep) > 0):
+            es_delete = es_feature.difference(keep)
+        else:
+            es_delete = es_feature.intersection(drop)
+
         if (states > 1):  # by minimal number of states
             for s_column in set(df_cell.columns).difference(es_coor_cell):
                 if len(set(df_cell.loc[:,s_column])) < states:

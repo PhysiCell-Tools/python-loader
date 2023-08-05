@@ -67,10 +67,18 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 
 ## Road Map:
 + [vtk file format](https://docs.vtk.org/en/latest/design_documents/VTKFileFormats.html) output, maybe [stl](https://en.wikipedia.org/wiki/STL_(file_format)) and [wavefront obj](https://en.wikipedia.org/wiki/Wavefront_.obj_file) output.
-+ [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) ([networkx](https://networkx.org/) compatible) graph output.
++ [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) ([networkx](https://networkx.org/) and [igraph](https://igraph.org/) compatible) output.
 
 
 ## Release Notes:
++ version 3.2.11 (2023-08-): elmbeech/physicelldatalodader
+    + **pip install pcdl**: will only install the bare minimum library dependencies.
+    + **pip install pcdl[data]**: will install the minimum dependencies plus the dependencies to download the test dataset.
+    + **pip install pcdl[scverse]**: will install the minimum dependencies plus the dependencies needed to generate anndata object.
+    + **pip install pcdl[all]**: will always install all dependencies.
+    + **mcdsts.make_imgcell** and **mcdsts.make_imgsubs** bug fixes.
+    + **TimeStep** and **TimeSeries** **get_anndata** evolution.
+
 + version 3.2.10 (2023-07-24): elmbeech/physicelldataloader
     + rename pyMCDSts get\_cell\_df\_columns\_states to **get_cell_df_states** for conciseness.
     + rename pyMCDSts get\_conc\_df\_columns\_states to **get_conc_df_states** for conciseness.

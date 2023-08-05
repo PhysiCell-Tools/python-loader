@@ -74,7 +74,7 @@ help(pcdl.TimeStep.scaler)
 ```
 
 
-# TimeStep time series
+# TimeSeries
 ```python3
 help(pcdl.TimeSeries)  # ! make class instance
 help(pcdl.TimeSeries.__init__)

@@ -202,12 +202,12 @@ class TestPyMcdsMicroenvFalse3D(object):
     def test_mcds_get_cell_df_states(self, mcds=mcds):
         df_cell = mcds.get_cell_df(states=2, drop=set(), keep=set())
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (20460, 26))
+               (df_cell.shape == (20460, 27))
 
     def test_mcds_get_cell_df_keep(self, mcds=mcds):
         df_cell = mcds.get_cell_df(states=0, drop=set(), keep={'total_volume'})
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (20460, 8))
+               (df_cell.shape == (20460, 9))
 
     def test_mcds_get_cell_df_at(self, mcds=mcds):
         df_cell = mcds.get_cell_df_at(x=0, y=0, z=0, states=1, drop=set(), keep=set())

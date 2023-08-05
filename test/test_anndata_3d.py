@@ -48,10 +48,10 @@ class TestTimeStep(object):
     def test_mcds_get_anndata(self, mcds=mcds):
         ann = mcds.get_anndata(states=1, drop=set(), keep=set(), scale='maxabs')
         assert (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
-               (ann.X.shape == (20460, 103)) and \
-               (ann.obs.shape == (20460, 4)) and \
-               (ann.obsm['spatial'].shape == (20460, 4)) and \
-               (ann.var.shape == (103, 0)) and \
+               (ann.X.shape == (20460, 102)) and \
+               (ann.obs.shape == (20460, 6)) and \
+               (ann.obsm['spatial'].shape == (20460, 3)) and \
+               (ann.var.shape == (102, 0)) and \
                (len(ann.uns) == 0)
 
 
@@ -66,10 +66,10 @@ class TestTimeSeries(object):
         ann = mcdsts.get_anndata(states=1, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=True)
         assert (len(mcdsts.l_mcds) == 25) and \
                (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
-               (ann.X.shape == (481651, 103)) and \
-               (ann.obs.shape == (481651, 5)) and \
-               (ann.obsm['spatial'].shape == (481651, 4)) and \
-               (ann.var.shape == (103, 0)) and \
+               (ann.X.shape == (481651, 102)) and \
+               (ann.obs.shape == (481651, 7)) and \
+               (ann.obsm['spatial'].shape == (481651, 3)) and \
+               (ann.var.shape == (102, 0)) and \
                (len(ann.uns) == 0)
 
     @pytest.mark.filterwarnings("ignore:invalid value encountered in divide")
@@ -78,11 +78,11 @@ class TestTimeSeries(object):
         assert (len(mcdsts.l_mcds) == 0) and \
                (str(type(d_ann)) == "<class 'dict'>") and \
                (len(d_ann) == 25) and \
-               (all([str(type(i_time)) == "<class 'int'>" for i_time in d_ann.keys()])) and \
+               (all([str(type(r_time)) == "<class 'float'>" for r_time in d_ann.keys()])) and \
                (all([str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>" for ann in d_ann.values()])) and \
-               (d_ann[1440].X.shape == (20460, 103)) and \
-               (d_ann[1440].obs.shape == (20460, 4)) and \
-               (d_ann[1440].obsm['spatial'].shape == (20460, 4)) and \
-               (d_ann[1440].var.shape == (103, 0)) and \
+               (d_ann[1440].X.shape == (20460, 102)) and \
+               (d_ann[1440].obs.shape == (20460, 6)) and \
+               (d_ann[1440].obsm['spatial'].shape == (20460, 3)) and \
+               (d_ann[1440].var.shape == (102, 0)) and \
                (len(d_ann[1440].uns) == 0)
 

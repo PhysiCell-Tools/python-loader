@@ -238,27 +238,27 @@ class TestPyMcds3D(object):
     def test_mcds_get_concentration_df(self, mcds=mcds):
         df_conc = mcds.get_concentration_df(z_slice=None, halt=False, states=0, drop=set(), keep=set())
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_conc.shape == (1331, 9))
+               (df_conc.shape == (1331, 10))
 
     def test_mcds_get_concentration_df_zslice_meshcenter(self, mcds=mcds):
         df_conc = mcds.get_concentration_df(z_slice=-5, halt=False, states=1, drop=set(), keep=set())
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_conc.shape == (121, 9))
+               (df_conc.shape == (121, 10))
 
     def test_mcds_get_concentration_df_zslice_non_meshcenter(self, mcds=mcds):
         df_conc = mcds.get_concentration_df(z_slice=-3.333, halt=False, states=1, drop=set(), keep=set())
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_conc.shape == (121, 9))
+               (df_conc.shape == (121, 10))
 
     def test_mcds_get_concentration_df_states(self, mcds=mcds):
         df_conc = mcds.get_concentration_df(z_slice=None, halt=False, states=2, drop=set(), keep=set())
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_conc.shape == (1331, 9))
+               (df_conc.shape == (1331, 10))
 
     def test_mcds_get_concentration_df_keep(self, mcds=mcds):
         df_conc = mcds.get_concentration_df(z_slice=None, halt=False, states=0, drop=set(), keep={'oxygen'})
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_conc.shape == (1331, 8))
+               (df_conc.shape == (1331, 9))
 
     def test_mcds_get_contour(self, mcds=mcds):
         fig = mcds.get_contour(
@@ -318,12 +318,12 @@ class TestPyMcds3D(object):
     def test_mcds_get_cell_df_states(self, mcds=mcds):
         df_cell = mcds.get_cell_df(states=2, drop=set(), keep=set())
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (20460, 31))
+               (df_cell.shape == (20460, 32))
 
     def test_mcds_get_cell_df_keep(self, mcds=mcds):
         df_cell = mcds.get_cell_df(states=0, drop=set(), keep={'oxygen'})
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (20460, 11))
+               (df_cell.shape == (20460, 12))
 
     def test_mcds_get_cell_df_at(self, mcds=mcds):
         df_cell = mcds.get_cell_df_at(x=0, y=0, z=0, states=1, drop=set(), keep=set())
