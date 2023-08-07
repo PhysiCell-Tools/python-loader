@@ -25,7 +25,6 @@ from glob import glob
 import numpy as np
 import os
 import pathlib
-from pcdl import pdplt
 from pcdl.pyMCDS import pyMCDS, es_coor_cell, es_coor_conc
 import platform
 import xml.etree.ElementTree as ET
@@ -438,36 +437,29 @@ class pyMCDSts:
         # handle z_axis categorical cases
         df_cell = self.l_mcds[0].get_cell_df()
         if (str(df_cell.loc[:,focus].dtype) in {'bool', 'object'}):
-            lr_extrema = [None, None]
             if (z_axis is None):
                 # extract set of labels from data
-                es_label = set()
+                z_axis = set()
                 for mcds in self.l_mcds:
                     df_cell = mcds.get_cell_df()
-                    es_label = es_label.union(set(df_cell.loc[:,focus]))
-            else:
-                es_label = z_axis
+                    z_axis = z_axis.union(set(df_cell.loc[:,focus]))
 
         # handle z_axis numerical cases
         else:  # df_cell.loc[:,focus].dtype is numeric
-            es_label = None
             if (z_axis is None):
                 # extract min and max values from data
-                lr_extrema = [None, None]
+                z_axis = [None, None]
                 for mcds in self.l_mcds:
                     df_cell = mcds.get_cell_df()
                     r_min = df_cell.loc[:,focus].min()
                     r_max = df_cell.loc[:,focus].max()
-                    if (lr_extrema[0] is None) or (lr_extrema[0] > r_min):
-                        lr_extrema[0] = np.floor(r_min)
-                    if (lr_extrema[1] is None) or (lr_extrema[1] < r_max):
-                        lr_extrema[1] = np.ceil(r_max)
-            else:
-                lr_extrema = z_axis
+                    if (z_axis[0] is None) or (z_axis[0] > r_min):
+                        z_axis[0] = np.floor(r_min)
+                    if (z_axis[1] is None) or (z_axis[1] < r_max):
+                        z_axis[1] = np.ceil(r_max)
 
         # handle z_axis summary
-        print(f'labels found: {es_label}.')
-        print(f'min max extrema set to: {lr_extrema}.')
+        print(f'z_axis detected: {z_axis}.')
 
         # handle xlim and ylim
         if (xlim is None):
@@ -496,59 +488,21 @@ class pyMCDSts:
 
         # plotting
         for mcds in self.l_mcds:
-            df_cell = mcds.get_cell_df()
-            df_cell = df_cell.loc[(df_cell.mesh_center_p == z_slice),:]
-            # layout the canavas
-            fig, ax = plt.subplots(figsize=figsize)
-            if xyequal:
-                ax.axis('equal')
-            # handle categorical variable
-            if not (es_label is None):
-                s_focus_color = focus + '_color'
-                # use specified label color dictionary
-                if type(cmap) is dict:
-                    ds_color = cmap
-                    df_cell[s_focus_color] = [ds_color[s_label] for s_label in df_cell.loc[:, focus]]
-                # generate label color dictionary
-                else:
-                    ds_color = pdplt.df_label_to_color(
-                        df_abc = df_cell,
-                        s_label = focus,
-                        es_label = es_label,
-                        s_cmap = cmap,
-                        b_shuffle = False,
-                    )
-                # generate color list
-                c = list(df_cell.loc[:, s_focus_color].values)
-                s_cmap = None
-            # handle numeric variable
-            else:
-                c = focus
-                s_cmap = cmap
-            # plot scatter
-            df_cell.plot(
-                kind = 'scatter',
-                x = 'position_x',
-                y = 'position_y',
-                c = c,
-                vmin = lr_extrema[0],
-                vmax = lr_extrema[1],
-                cmap = s_cmap,
+            fig = mcds.get_scatter(
+                focus = focus,
+                z_slice = z_slice,
+                z_axis = z_axis,
+                cmap = cmap,
+                title = f'{focus}\n{df_cell.shape[0]}[agent] {round(mcds.get_time(),9)}[min]',
+                grid = grid,
+                legend_loc = legend_loc,
                 xlim = xlim,
                 ylim = ylim,
+                xyequal = xyequal,
                 s = s,
-                grid = grid,
-                title = f'{focus}\n{df_cell.shape[0]}[agent] {round(mcds.get_time(),9)}[min]',
-                ax = ax,
+                figsize = figsize,
+                ax = None,
             )
-            # plot categirical data legen
-            if not (es_label is None):
-                pdplt.ax_colorlegend(
-                    ax = ax,
-                    ds_color = ds_color,
-                    s_loc = legend_loc,
-                    s_fontsize = 'small',
-                )
             # finalize
             os.makedirs(s_path, exist_ok=True)
             s_pathfile = f'{s_path}{focus}_{str(round(mcds.get_time(),9)).zfill(11)}.{ext}'

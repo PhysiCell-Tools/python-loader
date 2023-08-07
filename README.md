@@ -76,8 +76,10 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
     + **pip install pcdl[data]**: will install the minimum dependencies plus the dependencies to download the test dataset.
     + **pip install pcdl[scverse]**: will install the minimum dependencies plus the dependencies needed to generate anndata object.
     + **pip install pcdl[all]**: will always install all dependencies.
-    + **mcdsts.make_imgcell** and **mcdsts.make_imgsubs** bug fixes.
-    + **TimeStep** and **TimeSeries** **get_anndata** evolution.
+    + new TimeSeries **get_anmcds_list** function, which, points to the self.l\_anmcds object.
+    + new pyMCDS **get_scatter** function split off from pyMCDSts make\_imgcell.
+    + pyMCDSts **make_imgcell** and **make_imgsubs** bug fixes.
+    + TimeStep and TimeSeries **get_anndata** evolution.
 
 + version 3.2.10 (2023-07-24): elmbeech/physicelldataloader
     + rename pyMCDSts get\_cell\_df\_columns\_states to **get_cell_df_states** for conciseness.

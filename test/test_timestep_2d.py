@@ -309,6 +309,64 @@ class TestPyMcdsMicroenvTrue2D(object):
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_cell.shape == (5, 94))
 
+    ## get_scatter command ##
+    def test_mcds_get_scatter_cat(self, mcdsts=mcdsts):
+        s_path = mcds.get_scatter(
+            focus='cell_type',  # case categorical
+            z_slice = -3.333,   # test if
+            z_axis = None,  # test if categorical
+            #cmap = 'viridis',  # matplotlib
+            #grid = True,  # matplotlib
+            xlim = None,  # test if
+            ylim = None,  # test if
+            xyequal = True,  # test if
+            s = None,  # test if
+            figsizepx = [641, 481],  # case non even pixel number
+            ext = 'jpeg', # test if
+            figbgcolor = None,  # test if
+        )
+        assert os.path.exists(s_path + 'cell_type_000000000.0.jpeg') and \
+               os.path.exists(s_path + 'cell_type_000001440.0.jpeg')
+        shutil.rmtree(s_path)
+
+    def test_mcds_get_scatter_cat_cmap(self, mcdsts=mcdsts):
+        s_path = mcds.get_scatter(
+            focus='cell_type',  # case categorical
+            z_slice = -3.333,   # test if
+            z_axis = None,  # test if categorical
+            cmap = {'cancer_cell': 'maroon'},  # matplotlib
+            #grid = True,  # matplotlib
+            xlim = None,  # test if
+            ylim = None,  # test if
+            xyequal = True,  # test if
+            s = None,  # test if
+            figsizepx = [641, 481],  # case non even pixel number
+            ext = 'jpeg', # test if
+            figbgcolor = None,  # test if
+        )
+        assert os.path.exists(s_path + 'cell_type_000000000.0.jpeg') and \
+               os.path.exists(s_path + 'cell_type_000001440.0.jpeg')
+        shutil.rmtree(s_path)
+
+    def test_mcds_get_scatter_num(self, mcdsts=mcdsts):
+        s_path = mcds.get_scatter(
+            focus='pressure',  # case numeric
+            z_slice = -3.333,   # test if
+            z_axis = None,  # test if numeric
+            #cmap = 'viridis',  # matplotlib
+            #grid = True,  # matplotlib
+            xlim = None,  # test if
+            ylim = None,  # test if
+            xyequal = True,  # test if
+            s = None,  # test if
+            figsizepx = None,  # case extract from initial.svg
+            ext = 'jpeg', # test if
+            figbgcolor = None,  # test if
+        )
+        assert os.path.exists(s_path + 'pressure_000000000.0.jpeg') and \
+               os.path.exists(s_path + 'pressure_000001440.0.jpeg')
+        shutil.rmtree(s_path)
+
     ## graph related functions
     def test_mcds_get_attached_graph_dict(self, mcds=mcds):
         dei_graph = mcds.data['discrete_cells']['graph']['attached_cells']

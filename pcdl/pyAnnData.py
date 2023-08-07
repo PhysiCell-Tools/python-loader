@@ -316,6 +316,7 @@ class TimeSeries(pyMCDSts):
     """
     def __init__(self, output_path='.', custom_type={}, load=True, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True):
         pyMCDSts.__init__(self, output_path=output_path, custom_type=custom_type, load=load, microenv=microenv, graph=graph, settingxml=settingxml, verbose=verbose)
+        self.l_anmcds = None
 
     def get_anndata(self, states=1, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=True):
         """
@@ -352,14 +353,14 @@ class TimeSeries(pyMCDSts):
                 after transformation?
 
         output:
-            anmcds or l_anmcds: anndata object or list of anndata objects.
+            anmcds or self.l_anmcds: anndata object or list of anndata objects.
                 what is returned depends on the collapse setting.
 
         description:
             function to transform mcds time steps into one or many
             anndata objects for downstream analysis.
         """
-        d_ann = {}
+        l_anmcds = []
         df_anncount = None
         df_annobs = None
         df_annspatial = None
@@ -416,12 +417,29 @@ class TimeSeries(pyMCDSts):
             # pack not collapsed
             else:
                 annmcds = ad.AnnData(X=df_count, obs=df_obs, obsm={"spatial": df_spatial.values})
-                d_ann.update({r_time : annmcds})
+                l_anmcds.append(annmcds)
 
         # output
         if collapse:
             annmcdsts = ad.AnnData(X=df_anncount, obs=df_annobs, obsm={"spatial": df_annspatial.values})
         else:
-            annmcdsts = d_ann
-        return annmcdsts
+            self.l_anmcds = l_anmcds
+            annmcdsts = l_anmcds
+        return annmcdstsa
+
+
+    def get_anmcds_list(self):
+        """
+        input:
+            self: TimeSeries class instance.
+
+        output:
+            self.l_anmcds: list of chronologically ordered anndata mcds objects.
+            watch out, this is a dereferenced pointer to the
+            self.l_anmcds list of anndata mcds objects, not a copy of self.l_anmcds!
+
+        description:
+            function returns a binding to the self.l_anmcds list of anndata mcds objects.
+        """
+        return self.l_anmcds
 
