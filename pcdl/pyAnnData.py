@@ -165,7 +165,6 @@ def _anndextract(df_cell, scale='maxabs'):
     df_cat = df_cell.loc[:,sorted(des_type['str'])].copy()
     df_obs = pd.merge(df_obs, df_cat, left_index=True, right_index=True)
     es_num = des_type['float'].union(des_type['int'].union(des_type['bool']))
-    print(sorted(es_num))
     df_count = df_cell.loc[:,sorted(es_num)].copy()
     for s_col in des_type['bool']:
         df_count[s_col] = df_count[s_col].astype(int)
@@ -425,7 +424,7 @@ class TimeSeries(pyMCDSts):
         else:
             self.l_anmcds = l_anmcds
             annmcdsts = l_anmcds
-        return annmcdstsa
+        return annmcdsts
 
 
     def get_anmcds_list(self):
