@@ -13,7 +13,7 @@ The **workhorse functions** are the ones most important for data analysis.
 Familiarize yourself with all of their parameters!
 
 
-# TimeStep
+# TimeStep Class
 ```python3
 help(pcdl.TimeStep)  # ! make class instance
 help(pcdl.TimeStep.__init__)
@@ -75,7 +75,7 @@ help(pcdl.TimeStep.scaler)
 ```
 
 
-# TimeSeries
+# TimeSeries Class
 ```python3
 help(pcdl.TimeSeries)  # ! make class instance
 help(pcdl.TimeSeries.__init__)
