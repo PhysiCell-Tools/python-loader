@@ -118,3 +118,8 @@ class TestTimeSeries(object):
                (d_ann[1440].var.shape == (79, 0)) and \
                (len(d_ann[1440].uns) == 0)
 
+    ## get_annmcds_list command ##
+    def test_mcdsts_get_annmcds_list(self, mcdsts=mcdsts):
+        l_annmcds = mcdsts.get_annmcds_list()
+        assert l_annmcds == mcdsts.l_annmcds
+

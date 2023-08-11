@@ -40,7 +40,7 @@ class TestPyMcdsTs(object):
     ''' test for pcdl.pyMCDSts data loader. '''
     mcdsts = pcdl.pyMCDSts(s_path_2d, verbose=False)
 
-    ## get_xmlfile and read_mcds command ##
+    ## get_xmlfile and read_mcds command and get_mcds_list ##
     def test_mcdsts_get_xmlfile_list(self, mcdsts=mcdsts):
         ls_xmlfile = mcdsts.get_xmlfile_list()
         assert len(ls_xmlfile) == 25
@@ -101,6 +101,7 @@ class TestPyMcdsTs(object):
             z_axis = None,  # test if categorical
             #cmap = 'viridis',  # matplotlib
             #grid = True,  # matplotlib
+            #legend_loc='lower left',  # matplotlib
             xlim = None,  # test if
             ylim = None,  # test if
             xyequal = True,  # test if
@@ -120,6 +121,7 @@ class TestPyMcdsTs(object):
             z_axis = None,  # test if categorical
             cmap = {'cancer_cell': 'maroon'},  # matplotlib
             #grid = True,  # matplotlib
+            #legend_loc='lower left',  # matplotlib
             xlim = None,  # test if
             ylim = None,  # test if
             xyequal = True,  # test if
@@ -139,6 +141,7 @@ class TestPyMcdsTs(object):
             z_axis = None,  # test if numeric
             #cmap = 'viridis',  # matplotlib
             #grid = True,  # matplotlib
+            #legend_loc='lower left',  # matplotlib
             xlim = None,  # test if
             ylim = None,  # test if
             xyequal = True,  # test if

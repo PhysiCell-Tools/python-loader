@@ -84,7 +84,7 @@ help(pcdl.TimeSeries.__init__)
 help(pcdl.TimeSeries.get_xmlfile_list)
 help(pcdl.TimeSeries.read_mcds)
 help(pcdl.TimeSeries.get_mcds_list)  # ! workhorse function
-help(pcdl.TimeSeries.get_anmcds_list)  # ! workhorse function
+help(pcdl.TimeSeries.get_annmcds_list)  # ! workhorse function
 
 # TimeSeries triage data
 help(pcdl.TimeSeries.get_cell_df_states)  # ! workhorse function

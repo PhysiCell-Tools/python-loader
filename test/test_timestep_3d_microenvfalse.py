@@ -19,6 +19,7 @@
 
 
 # load library
+import matplotlib.pyplot as plt
 import os
 import pathlib
 import pcdl
@@ -213,6 +214,61 @@ class TestPyMcdsMicroenvFalse3D(object):
         df_cell = mcds.get_cell_df_at(x=0, y=0, z=0, states=1, drop=set(), keep=set())
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_cell.shape == (5, 108))
+
+    def test_mcds_get_scatter_cat(self, mcds=mcds):
+        fig = mcds.get_scatter(
+            focus='cell_type',  # case categorical
+            z_slice = -3.333,   # test if
+            z_axis = None,  # test if categorical
+            #cmap = 'viridis',  # matplotlib
+            #title = None, # matplotlib
+            #grid = True,  # matplotlib
+            #legend_loc = 'lower left',  # matplotlib
+            xlim = None,  # test if
+            ylim = None,  # test if
+            xyequal = True,  # test if
+            s = None,  # test if
+            figsize = (6.4, 4.8),  # test if case
+            ax = None,  # generate matplotlib figure
+        )
+        assert (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+
+    def test_mcds_get_scatter_cat_cmap(self, mcds=mcds):
+        fig, ax = plt.subplots()
+        mcds.get_scatter(
+            focus='cell_type',  # case categorical
+            z_slice = 0,  # jump over if
+            z_axis = None,  # test if categorical
+            cmap = {'cancer_cell': 'maroon'},  # matplotlib
+            title ='scatter cat',  # matplotlib
+            #grid = True,  # matplotlib
+            #legend_loc = 'lower left',  # matplotlib
+            xlim = None,  # test if
+            ylim = None,  # test if
+            xyequal = True,  # test if
+            s = None,  # test if
+            #figsize = None,  # test if ax case
+            ax = ax,  # use axis from existing matplotlib figure
+        )
+        assert (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+
+    def test_mcds_get_scatter_num(self, mcds=mcds):
+        fig = mcds.get_scatter(
+            focus='pressure',  # case numeric
+            z_slice = -3.333,   # test if
+            z_axis = None,  # test if numeric
+            #cmap = 'viridis',  # matplotlib
+            #title = None, # matplotlib
+            #grid = True,  # matplotlib
+            #legend_loc = 'lower left',  # matplotlib
+            xlim = None,  # test if
+            ylim = None,  # test if
+            xyequal = True,  # test if
+            s = None,  # test if
+            figsize = None,  # else case
+            ax = None,  # generate matplotlib figure
+        )
+        assert (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
 
     ## unit related functions
     def test_mcds_get_unit_se(self, mcds=mcds):
