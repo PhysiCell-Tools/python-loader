@@ -1191,15 +1191,15 @@ class pyMCDS:
                      s_var = f'{s_sub}_{s_rate}'
                      df_cell[s_var] = df_sub.loc[s_sub,s_rate]
 
-            # merge concentration (left join)
-            df_conc = self.get_concentration_df(z_slice=None, states=1, drop=set(), keep=set())
-            df_conc.drop({'time', 'runtime'}, axis=1, inplace=True)
-            df_cell = pd.merge(
-                df_cell,
-                df_conc,
-                on = ['voxel_i', 'voxel_j', 'voxel_k'],
-                how = 'left',
-            )
+        # merge concentration (left join)
+        df_conc = self.get_concentration_df(z_slice=None, states=1, drop=set(), keep=set())
+        df_conc.drop({'time', 'runtime'}, axis=1, inplace=True)
+        df_cell = pd.merge(
+            df_cell,
+            df_conc,
+            on = ['voxel_i', 'voxel_j', 'voxel_k'],
+            how = 'left',
+        )
 
         # variable typing
         do_type = {}
@@ -1213,7 +1213,7 @@ class pyMCDS:
         df_cell = df_cell.astype(do_type)
 
         # categorical translation
-        #df_cell.loc[:,'current_death_model'].replace(ds_death_model, inplace=True)  # bue 20230614: this column looks like an artefact to me
+        df_cell.loc[:,'current_death_model'].replace(ds_death_model, inplace=True)  # bue 20230614: this column looks like an artefact to me
         df_cell.loc[:,'cycle_model'].replace(ds_cycle_model, inplace=True)
         df_cell.loc[:,'cycle_model'].replace(ds_death_model, inplace=True)
         df_cell.loc[:,'current_phase'].replace(ds_cycle_phase, inplace=True)
