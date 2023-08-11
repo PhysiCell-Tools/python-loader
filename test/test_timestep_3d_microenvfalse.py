@@ -37,13 +37,13 @@ if not os.path.exists(s_path_3d):
 
 
 # test function
-class TestPyMcdsMicroenvFalse3D(object):
+class TestyMcdsMicroenvFalse3D(object):
     ''' test for pcdl.pyMCDS data loader with microenvironment, graph, and settingxml set to False '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_3d, output_path=s_path_3d, custom_type={}, microenv=False, graph=False, settingxml=None, verbose=True)
+    mcds = pcdl.pyMCDS(xmlfile=s_file_3d, output_path=s_path_3d, custom_type={}, microenv=False, graph=False, settingxml=False, verbose=True)
 
     def test_pyMCDS(self, mcds=mcds):
         # load physicell data
-        print(f'process: pcdl.pyMCDS(xmlfile={s_file_3d}, output_path={s_path_3d}, custom_type={{}}, microenv=False, graph=False, settingxml=False, verbose=True) ...')
+        print(f"process: pcdl.pyMCDS(xmlfile={s_file_3d}, output_path={s_path_3d}, custom_type={{}}, microenv=False, graph=False, settingxml=False, verbose=True) ...")
         assert str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>"
 
     ## metadata related functions
@@ -181,7 +181,7 @@ class TestPyMcdsMicroenvFalse3D(object):
     def test_mcds_get_substrate_dict(self, mcds=mcds):
         ds_substrate = mcds.get_substrate_dict()
         assert (str(type(ds_substrate)) == "<class 'dict'>") and \
-               (len(ds_substrate) == 0)
+               (len(ds_substrate) == 0)  # settingxml=False
 
     ## cell related functions
     def test_mcds_get_cell_variables(self, mcds=mcds):
@@ -193,7 +193,7 @@ class TestPyMcdsMicroenvFalse3D(object):
     def test_mcds_get_celltype_dict(self, mcds=mcds):
         ds_celltype = mcds.get_celltype_dict()
         assert (str(type(ds_celltype)) == "<class 'dict'>") and \
-               (len(ds_celltype) == 0)
+               (len(ds_celltype) == 0)  # settingxml=False
 
     def test_mcds_get_cell_df(self, mcds=mcds):
         df_cell = mcds.get_cell_df(states=0, drop=set(), keep=set())
@@ -239,7 +239,7 @@ class TestPyMcdsMicroenvFalse3D(object):
             focus='cell_type',  # case categorical
             z_slice = 0,  # jump over if
             z_axis = None,  # test if categorical
-            cmap = {'cancer_cell': 'maroon'},  # matplotlib
+            cmap = {'0': 'maroon'},  # matplotlib and label '0' because settingxml=False.
             title ='scatter cat',  # matplotlib
             #grid = True,  # matplotlib
             #legend_loc = 'lower left',  # matplotlib
