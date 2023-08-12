@@ -2,7 +2,7 @@
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
 
 name: pytest pcdl 
-run-name: ${{ github.actor }} is pytesting the pcdl library on all valid operating systems and python versions.
+run-name: ${{ github.actor }} is pytesting the pcdl library on all valid python versions.
 
 on:
   push:
@@ -13,12 +13,11 @@ on:
 jobs:
   build-linux:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest   # windows-latest, macos-latest
     strategy:
       fail-fast: false
       matrix:
-        #os: [ubuntu-latest]  # windows-latest, macos-latest, macos-latest-x1
-        python-version: ["3.11"]  # "3.6", "3.7", "3.8", "3.9", "3.10",
+        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
 
     steps:
     - uses: actions/checkout@v3
