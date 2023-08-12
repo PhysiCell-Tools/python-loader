@@ -16,3 +16,5 @@ build/
 dist/
 pcdl.egg-info/
 
+# jupyter
+**/.ipynb_checkpoints/

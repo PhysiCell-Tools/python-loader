@@ -13,7 +13,7 @@ The **workhorse functions** are the ones most important for data analysis.
 Familiarize yourself with all of their parameters!
 
 
-# TimeStep
+# TimeStep Class
 ```python3
 help(pcdl.TimeStep)  # ! make class instance
 help(pcdl.TimeStep.__init__)
@@ -55,6 +55,7 @@ help(pcdl.TimeStep.get_celltype_dict)
 help(pcdl.TimeStep.get_cell_variables)
 help(pcdl.TimeStep.get_cell_df)  # ! workhorse function
 help(pcdl.TimeStep.get_cell_df_at)
+help(pcdl.TimeStep.get_scatter)  # ! workhorse function
 
 # TimeStep graphs
 help(pcdl.TimeStep.get_attached_graph_dict)  # !
@@ -74,7 +75,7 @@ help(pcdl.TimeStep.scaler)
 ```
 
 
-# TimeStep time series
+# TimeSeries Class
 ```python3
 help(pcdl.TimeSeries)  # ! make class instance
 help(pcdl.TimeSeries.__init__)
@@ -83,6 +84,7 @@ help(pcdl.TimeSeries.__init__)
 help(pcdl.TimeSeries.get_xmlfile_list)
 help(pcdl.TimeSeries.read_mcds)
 help(pcdl.TimeSeries.get_mcds_list)  # ! workhorse function
+help(pcdl.TimeSeries.get_annmcds_list)  # ! workhorse function
 
 # TimeSeries triage data
 help(pcdl.TimeSeries.get_cell_df_states)  # ! workhorse function

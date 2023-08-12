@@ -19,6 +19,7 @@
 
 
 # load library
+import matplotlib.pyplot as plt
 import os
 import pathlib
 import pcdl
@@ -227,17 +228,17 @@ class TestPyMcdsMicroenvTrue2D(object):
     def test_mcds_get_concentration_df(self, mcds=mcds):
         df_conc = mcds.get_concentration_df(z_slice=None, halt=False, states=0, drop=set(), keep=set())
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_conc.shape == (121, 8))
+               (df_conc.shape == (121, 9))
 
     def test_mcds_get_concentration_df_zslice(self, mcds=mcds):
         df_conc = mcds.get_concentration_df(z_slice=0, halt=False, states=1, drop=set(), keep=set())
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_conc.shape == (121, 8))
+               (df_conc.shape == (121, 9))
 
     def test_mcds_get_concentration_df_states(self, mcds=mcds):
         df_conc = mcds.get_concentration_df(z_slice=None, halt=False, states=2, drop=set(), keep={'oxygen'})
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_conc.shape == (121, 8))
+               (df_conc.shape == (121, 9))
 
     def test_mcds_get_contour(self, mcds=mcds):
         fig = mcds.get_contour(
@@ -297,17 +298,72 @@ class TestPyMcdsMicroenvTrue2D(object):
     def test_mcds_get_cell_df_states(self, mcds=mcds):
         df_cell = mcds.get_cell_df(states=2, drop=set(), keep=set())
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (1099, 38))
+               (df_cell.shape == (1099, 39))
 
     def test_mcds_get_cell_df_keep(self, mcds=mcds):
         df_cell = mcds.get_cell_df(states=0, drop=set(), keep={'oxygen'})
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (1099, 11))
+               (df_cell.shape == (1099, 12))
 
     def test_mcds_get_cell_df_at(self, mcds=mcds):
         df_cell = mcds.get_cell_df_at(x=0, y=0, z=0, states=1, drop=set(), keep=set())
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_cell.shape == (5, 94))
+
+    def test_mcds_get_scatter_cat(self, mcds=mcds):
+        fig = mcds.get_scatter(
+            focus='cell_type',  # case categorical
+            z_slice = -3.333,   # test if
+            z_axis = None,  # test if categorical
+            #cmap = 'viridis',  # matplotlib
+            #title = None, # matplotlib
+            #grid = True,  # matplotlib
+            #legend_loc = 'lower left',  # matplotlib
+            xlim = None,  # test if
+            ylim = None,  # test if
+            xyequal = True,  # test if
+            s = None,  # test if
+            figsize = (6.4, 4.8),  # test if case
+            ax = None,  # generate matplotlib figure
+        )
+        assert (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+
+    def test_mcds_get_scatter_cat_cmap(self, mcds=mcds):
+        fig, ax = plt.subplots()
+        mcds.get_scatter(
+            focus='cell_type',  # case categorical
+            z_slice = 0,  # jump over if
+            z_axis = None,  # test if categorical
+            cmap = {'cancer_cell': 'maroon'},  # matplotlib
+            title ='scatter cat',  # matplotlib
+            #grid = True,  # matplotlib
+            #legend_loc = 'lower left',  # matplotlib
+            xlim = None,  # test if
+            ylim = None,  # test if
+            xyequal = True,  # test if
+            s = None,  # test if
+            #figsize = None,  # test if ax case
+            ax = ax,  # use axis from existing matplotlib figure
+        )
+        assert (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+
+    def test_mcds_get_scatter_num(self, mcds=mcds):
+        fig = mcds.get_scatter(
+            focus='pressure',  # case numeric
+            z_slice = -3.333,   # test if
+            z_axis = None,  # test if numeric
+            #cmap = 'viridis',  # matplotlib
+            #title = None, # matplotlib
+            #grid = True,  # matplotlib
+            #legend_loc = 'lower left',  # matplotlib
+            xlim = None,  # test if
+            ylim = None,  # test if
+            xyequal = True,  # test if
+            s = None,  # test if
+            figsize = None,  # else case
+            ax = None,  # generate matplotlib figure
+        )
+        assert (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
 
     ## graph related functions
     def test_mcds_get_attached_graph_dict(self, mcds=mcds):

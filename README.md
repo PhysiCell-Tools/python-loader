@@ -32,7 +32,7 @@ The pcdl python3 library maintains three branches branches:
 
 ## Tutorial:
 + Check out: [man/TUTORIAL.md](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL.md)!
-
++ Check out: [man/jupyter/pcdl\_repl\_programming.ipynb](https://github.com/elmbeech/physicelldataloader/tree/master/man/jupyter/pcdl_repl_programming.ipynb)
 
 ## Reference Manual:
 + Check out: [man/REFERENCE.md](https://github.com/elmbeech/physicelldataloader/tree/master/man/REFERENCE.md)!
@@ -67,10 +67,23 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 
 ## Road Map:
 + [vtk file format](https://docs.vtk.org/en/latest/design_documents/VTKFileFormats.html) output, maybe [stl](https://en.wikipedia.org/wiki/STL_(file_format)) and [wavefront obj](https://en.wikipedia.org/wiki/Wavefront_.obj_file) output.
-+ [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) ([networkx](https://networkx.org/) compatible) graph output.
++ [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) ([networkx](https://networkx.org/) and [igraph](https://igraph.org/) compatible) output.
 
 
 ## Release Notes:
++ version 3.2.12 (2023-08-10): elmbeech/physicelldatalodader
+    + add **pcdl_repl_programming.ipynb** : Jupyter notebook to give an idea about how to work with pcdl in a Python3 REPL.
+
++ version 3.2.11 (2023-08-08): elmbeech/physicelldatalodader
+    + **pip install pcdl**: will only install the bare minimum library dependencies.
+    + **pip install pcdl[data]**: will install the minimum dependencies plus the dependencies to download the test dataset.
+    + **pip install pcdl[scverse]**: will install the minimum dependencies plus the dependencies needed to generate anndata object.
+    + **pip install pcdl[all]**: will always install all dependencies.
+    + new TimeSeries **get_annmcds_list** function, which, points to the self.l\_annmcds object.
+    + new pyMCDS **get_scatter** function split off from pyMCDSts make\_imgcell.
+    + pyMCDSts **make_imgcell** and **make_imgsubs** bug fixes.
+    + TimeStep and TimeSeries **get_anndata** evolution.
+
 + version 3.2.10 (2023-07-24): elmbeech/physicelldataloader
     + rename pyMCDSts get\_cell\_df\_columns\_states to **get_cell_df_states** for conciseness.
     + rename pyMCDSts get\_conc\_df\_columns\_states to **get_conc_df_states** for conciseness.

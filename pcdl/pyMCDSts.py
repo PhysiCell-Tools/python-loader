@@ -25,7 +25,6 @@ from glob import glob
 import numpy as np
 import os
 import pathlib
-from pcdl import pdplt
 from pcdl.pyMCDS import pyMCDS, es_coor_cell, es_coor_conc
 import platform
 import xml.etree.ElementTree as ET
@@ -159,7 +158,7 @@ class pyMCDSts:
             self: pyMCDSts class instance.
 
         output:
-            self.l_mcds: list of mcds objects.
+            self.l_mcds: list of chronologically ordered mcds objects.
             watch out, this is a dereferenced pointer to the
             self.l_mcds list of mcds objects, not a copy of self.l_mcds!
 
@@ -323,7 +322,7 @@ class pyMCDSts:
         return s_magick
 
 
-    def make_imgcell(self, focus='cell_type', z_slice=0, z_axis=None, cmap='viridis', grid=True, xlim=None, ylim=None, xyequal=True, s=None, figsizepx=None, ext='jpeg', figbgcolor=None):
+    def make_imgcell(self, focus='cell_type', z_slice=0, z_axis=None, cmap='viridis', grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=None, figsizepx=None, ext='jpeg', figbgcolor=None):
         """
         input:
             self: pyMCDSts class instance
@@ -333,7 +332,7 @@ class pyMCDSts:
 
             z_slice: floating point number; default is 0
                 z-axis position to slice a 2D xy-plain out of the
-                3D substrate concentration mesh. if z_slize position
+                3D substrate concentration mesh. if z_slice position
                 is not an exact mesh center coordinate, then z_slice
                 will be adjusted to the nearest mesh center value,
                 the smaller one, if the coordinate lies on a saddle point.
@@ -350,6 +349,13 @@ class pyMCDSts:
 
             grid: boolean default True.
                 plot axis grid lines.
+
+            legend_loc: string; default is 'lower left'.
+                the location of the categorical legend, if applicable.
+                possible strings are: best,
+                upper right, upper center, upper left, center left,
+                lower left, lower center, lower right, center right,
+                center.
 
             xlim: tuple of two floats; default is None
                 x axis min and max value.
@@ -425,48 +431,43 @@ class pyMCDSts:
         # handle z_slice
         _, _, ar_p_axis = self.l_mcds[0].get_mesh_mnp_axis()
         if not (z_slice in ar_p_axis):
-            z_slice = ar_p_axis[(ar_p_axis - z_slice).argmin()]
+            z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
             print(f'z_slice set to {z_slice}.')
 
         # handle z_axis categorical cases
         df_cell = self.l_mcds[0].get_cell_df()
         if (str(df_cell.loc[:,focus].dtype) in {'bool', 'object'}):
-            lr_extrema = [None, None]
             if (z_axis is None):
                 # extract set of labels from data
-                es_label = set()
+                z_axis = set()
                 for mcds in self.l_mcds:
                     df_cell = mcds.get_cell_df()
-                    es_label = es_label.union(set(df_cell.loc[:,focus]))
-            else:
-                es_label = z_axis
+                    z_axis = z_axis.union(set(df_cell.loc[:,focus]))
 
         # handle z_axis numerical cases
         else:  # df_cell.loc[:,focus].dtype is numeric
-            es_label = None
             if (z_axis is None):
                 # extract min and max values from data
-                lr_extrema = [None, None]
+                z_axis = [None, None]
                 for mcds in self.l_mcds:
                     df_cell = mcds.get_cell_df()
                     r_min = df_cell.loc[:,focus].min()
                     r_max = df_cell.loc[:,focus].max()
-                    if (lr_extrema[0] is None) or (lr_extrema[0] > r_min):
-                        lr_extrema[0] = np.floor(r_min)
-                    if (lr_extrema[1] is None) or (lr_extrema[1] < r_max):
-                        lr_extrema[1] = np.ceil(r_max)
-            else:
-                lr_extrema = z_axis
+                    if (z_axis[0] is None) or (z_axis[0] > r_min):
+                        z_axis[0] = np.floor(r_min)
+                    if (z_axis[1] is None) or (z_axis[1] < r_max):
+                        z_axis[1] = np.ceil(r_max)
 
         # handle z_axis summary
-        print(f'labels found: {es_label}.')
-        print(f'min max extrema set to: {lr_extrema}.')
+        print(f'z_axis detected: {z_axis}.')
 
         # handle xlim and ylim
-        if xlim is None:
-            xlim = self.l_mcds[0].get_mesh_mnp_range()[0]
-        if ylim is None:
-            ylim = self.l_mcds[0].get_mesh_mnp_range()[1]
+        if (xlim is None):
+            xlim = self.l_mcds[0].get_xyz_range()[0]
+            print(f'xlim set to: {xlim}.')
+        if (ylim is None):
+            ylim = self.l_mcds[0].get_xyz_range()[1]
+            print(f'ylim set to: {ylim}.')
 
         # handle figure size
         figsizepx[0] = figsizepx[0] - (figsizepx[0] % 2)  # enforce even pixel number
@@ -487,59 +488,24 @@ class pyMCDSts:
 
         # plotting
         for mcds in self.l_mcds:
-            fig, ax = plt.subplots(figsize=figsize)
-            df_cell = mcds.get_cell_df()
-            df_cell = df_cell.loc[(df_cell.position_z == z_slice),:]
-            # categorical variable
-            if not (es_label is None):
-                s_focus_color = focus + '_color'
-                # use specified label color dictionary
-                if type(cmap) is dict:
-                    ds_color = cmap
-                    df_cell[s_focus_color] = [ds_color[s_label] for s_label in df_cell.loc[:, focus]]
-                # generate label color dictionary
-                else:
-                    ds_color = pdplt.df_label_to_color(
-                        df_abc = df_cell,
-                        s_label = focus,
-                        es_label = es_label,
-                        s_cmap = cmap,
-                        b_shuffle = False,
-                    )
-                # generate legend
-                pdplt.ax_colorlegend(
-                    ax = ax,
-                    ds_color = ds_color,
-                    r_x_figure2legend_space = 0.01,
-                    s_fontsize = 'small',
-                )
-                # generate color list
-                c = list(df_cell.loc[:, s_focus_color].values)
-                s_cmap = None
-            # numeric variable
-            else:
-                c = focus
-                s_cmap = cmap
-            # plot
-            df_cell.plot(
-                kind = 'scatter',
-                x = 'position_x',
-                y = 'position_y',
-                c = c,
-                vmin = lr_extrema[0],
-                vmax = lr_extrema[1],
-                cmap = s_cmap,
+            fig = mcds.get_scatter(
+                focus = focus,
+                z_slice = z_slice,
+                z_axis = z_axis,
+                cmap = cmap,
+                title = f'{focus}\n{df_cell.shape[0]}[agent] {round(mcds.get_time(),9)}[min]',
+                grid = grid,
+                legend_loc = legend_loc,
                 xlim = xlim,
                 ylim = ylim,
+                xyequal = xyequal,
                 s = s,
-                grid = grid,
-                title = f'{focus}\n{df_cell.shape[0]}[agent] {mcds.get_time()}[min]',
-                ax = ax,
+                figsize = figsize,
+                ax = None,
             )
-            if xyequal:
-                ax.axis('equal')
+            # finalize
             os.makedirs(s_path, exist_ok=True)
-            s_pathfile = f'{s_path}{focus}_{str(mcds.get_time()).zfill(11)}.{ext}'
+            s_pathfile = f'{s_path}{focus}_{str(round(mcds.get_time(),9)).zfill(11)}.{ext}'
             fig.savefig(s_pathfile, facecolor=figbgcolor)
             plt.close(fig)
 
@@ -557,7 +523,7 @@ class pyMCDSts:
 
             z_slice: floating point number; default is 0
                 z-axis position to slice a 2D xy-plain out of the
-                3D substrate concentration mesh. if z_slize position
+                3D substrate concentration mesh. if z_slice position
                 is not an exact mesh center coordinate, then z_slice
                 will be adjusted to the nearest mesh center value,
                 the smaller one, if the coordinate lies on a saddle point.
@@ -634,7 +600,7 @@ class pyMCDSts:
         # handle z_slice
         _, _, ar_p_axis = self.l_mcds[0].get_mesh_mnp_axis()
         if not (z_slice in ar_p_axis):
-            z_slice = ar_p_axis[(ar_p_axis - z_slice).argmin()]
+            z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
             print(f'z_slice set to {z_slice}.')
 
         # handle extrema
@@ -652,9 +618,11 @@ class pyMCDSts:
 
         # handle xlim and ylim
         if (xlim is None):
-            xlim = self.l_mcds[0].get_mesh_mnp_range()[0]
+            xlim = self.l_mcds[0].get_xyz_range()[0]
+            print(f'xlim set to {xlim}.')
         if (ylim is None):
-            ylim = self.l_mcds[0].get_mesh_mnp_range()[1]
+            ylim = self.l_mcds[0].get_xyz_range()[1]
+            print(f'ylim set to {ylim}.')
 
         # handle figure size
         figsizepx[0] = figsizepx[0] - (figsizepx[0] % 2)  # enforce even pixel number
@@ -683,7 +651,7 @@ class pyMCDSts:
                 alpha = alpha,
                 fill = fill,
                 cmap = cmap,
-                title = f'{focus}\n{mcds.get_time()}[min]',
+                title = f'{focus}\n{round(mcds.get_time(),9)}[min]',
                 grid = grid,
                 xlim = xlim,
                 ylim = ylim,
@@ -692,7 +660,7 @@ class pyMCDSts:
                 ax = None,
             )
             os.makedirs(s_path, exist_ok=True)
-            s_pathfile = f'{s_path}{focus}_{str(mcds.get_time()).zfill(11)}.{ext}'
+            s_pathfile = f'{s_path}{focus}_{str(round(mcds.get_time(),9)).zfill(11)}.{ext}'
             fig.savefig(s_pathfile, facecolor=figbgcolor)
             plt.close(fig)
 
@@ -780,7 +748,7 @@ class pyMCDSts:
         s_ipathfiles = f'{path}/*.{interface}'
 
         # generate movie
-        s_cmd = f'ffmpeg -r {framerate} -f image2 -pattern_type glob -i "{s_ipathfiles}" -vcodec libx264 -pix_fmt yuv420p -strict -2 -tune animation -crf 15 -acodec none {s_opathfile}'
+        s_cmd = f'ffmpeg -y -r {framerate} -f image2 -pattern_type glob -i "{s_ipathfiles}" -vcodec libx264 -pix_fmt yuv420p -strict -2 -tune animation -crf 15 -acodec none {s_opathfile}'
         os.system(s_cmd)
 
         # output

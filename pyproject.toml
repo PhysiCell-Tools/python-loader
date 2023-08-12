@@ -65,14 +65,23 @@ classifiers = [
 ]
 
 dependencies = [
-    "anndata",
     "matplotlib",
     "numpy",
     "pandas",
-    "requests",
     "scipy",
 ]
 
+[project.optional-dependencies]
+data = [
+    "requests",
+]
+scverse = [
+    "anndata",
+]
+all = [
+    "pcdl[data]",
+    "pcdl[scverse]",
+]
 
 [project.urls]
 "Homepage lab" = "http://www.mathcancer.org/"

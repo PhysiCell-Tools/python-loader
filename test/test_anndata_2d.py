@@ -80,10 +80,10 @@ class TestTimeStep(object):
     def test_mcds_get_anndata(self, mcds=mcds):
         ann = mcds.get_anndata(states=1, drop=set(), keep=set(), scale='maxabs')
         assert (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
-               (ann.X.shape == (1099, 80)) and \
-               (ann.obs.shape == (1099, 4)) and \
-               (ann.obsm['spatial'].shape == (1099, 4)) and \
-               (ann.var.shape == (80, 0)) and \
+               (ann.X.shape == (1099, 79)) and \
+               (ann.obs.shape == (1099, 6)) and \
+               (ann.obsm['spatial'].shape == (1099, 2)) and \
+               (ann.var.shape == (79, 0)) and \
                (len(ann.uns) == 0)
 
 
@@ -98,23 +98,27 @@ class TestTimeSeries(object):
         ann = mcdsts.get_anndata(states=1, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=True)
         assert (len(mcdsts.l_mcds) == 25) and \
                (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
-               (ann.X.shape == (24758, 80)) and \
-               (ann.obs.shape == (24758, 5)) and \
-               (ann.obsm['spatial'].shape == (24758, 4)) and \
-               (ann.var.shape == (80, 0)) and \
+               (ann.X.shape == (24758, 79)) and \
+               (ann.obs.shape == (24758, 7)) and \
+               (ann.obsm['spatial'].shape == (24758, 2)) and \
+               (ann.var.shape == (79, 0)) and \
                (len(ann.uns) == 0)
 
     @pytest.mark.filterwarnings("ignore:invalid value encountered in divide")
     def test_mcdsts_get_anndata_noncollapse_nonmcds(self, mcdsts=mcdsts):
-        d_ann = mcdsts.get_anndata(states=1, drop=set(), keep=set(), scale='maxabs', collapse=False, keep_mcds=False)
+        l_ann = mcdsts.get_anndata(states=1, drop=set(), keep=set(), scale='maxabs', collapse=False, keep_mcds=False)
         assert (len(mcdsts.l_mcds) == 0) and \
-               (str(type(d_ann)) == "<class 'dict'>") and \
-               (len(d_ann) == 25) and \
-               (all([str(type(i_time)) == "<class 'int'>" for i_time in d_ann.keys()])) and \
-               (all([str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>" for ann in d_ann.values()])) and \
-               (d_ann[1440].X.shape == (1099, 80)) and \
-               (d_ann[1440].obs.shape == (1099, 4)) and \
-               (d_ann[1440].obsm['spatial'].shape == (1099, 4)) and \
-               (d_ann[1440].var.shape == (80, 0)) and \
-               (len(d_ann[1440].uns) == 0)
+               (str(type(l_ann)) == "<class 'list'>") and \
+               (len(l_ann) == 25) and \
+               (all([str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>" for ann in l_ann])) and \
+               (l_ann[24].X.shape == (1099, 79)) and \
+               (l_ann[24].obs.shape == (1099, 6)) and \
+               (l_ann[24].obsm['spatial'].shape == (1099, 2)) and \
+               (l_ann[24].var.shape == (79, 0)) and \
+               (len(l_ann[24].uns) == 0)
+
+    ## get_annmcds_list command ##
+    def test_mcdsts_get_annmcds_list(self, mcdsts=mcdsts):
+        l_annmcds = mcdsts.get_annmcds_list()
+        assert l_annmcds == mcdsts.l_annmcds
 

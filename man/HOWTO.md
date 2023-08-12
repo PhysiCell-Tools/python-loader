@@ -2,15 +2,23 @@
 
 ## How to install the latest physicelldataloader?
 
+Full-fledged installation, with all library dependencies installed.
 ```bash
-pip3 install pcdl
+pip3 install pcdl[all]
 ```
 
+If necessary, you can tweak your installation to make it more lightweight.
+```bash
+pip3 install pcdl  # The bare minimum. Installs only the pcdl core library dependencies.
+pip3 install pcdl[data]  # Installs pcdl core and test data library dependencies.
+pip3 install pcdl[scverse]  # Installs pcdl core and anndata library dependencies.
+pip3 install pcdl[all]  # Installs pcdl core, test data, and anndata library dependencies.
+```
 
 ## How to update to the latest physicelldataloader?
 
 ```bash
-pip3 install -U pcdl
+pip3 install -U pcdl[all]
 ```
 
 
@@ -19,6 +27,7 @@ pip3 install -U pcdl
 Note: For the pcdl library this is a two-step procedure.
 First, possibly installed test data and tutorial output will be removed.
 Then, the software will be uninstalled.
+Keep in mind that pcdl library dependencies (like anndata, matplotlib, numpy, pandas, scipy) will never be uninstalled automatically.
 
 ```bash
 python3 -c "import pcdl; pcdl.uninstall_data()"
@@ -54,7 +63,7 @@ The pcDataLoader library will thereafter act as a simple gateway to the latest i
 In future, you can just update the pcdl package to go with the latest version.
 
 ```
-pip install -U pcDataLoader pcdl
+pip install -U pcDataLoader pcdl[all]
 ```
 
 
