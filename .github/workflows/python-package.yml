@@ -6,9 +6,9 @@ run-name: ${{ github.actor }} is pytesting the pcdl library on all valid operati
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ["master", "ci"]
   pull_request:
-    branches: [ "master" ]
+    branches: ["master"]
 
 jobs:
   build-linux:
