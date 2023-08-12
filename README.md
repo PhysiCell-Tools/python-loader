@@ -71,7 +71,7 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 
 
 ## Release Notes:
-+ version 3.2.12 (2023-08-10): elmbeech/physicelldatalodader
++ version 3.2.12 (2023-08-12): elmbeech/physicelldatalodader
     + add **pcdl_repl_programming.ipynb** : Jupyter notebook to give an idea about how to work with pcdl in a Python3 REPL.
 
 + version 3.2.11 (2023-08-08): elmbeech/physicelldatalodader
