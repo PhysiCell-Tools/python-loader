@@ -1938,7 +1938,7 @@ class pyMCDS:
             if self.verbose:
                 print(f'reading: {s_cellpathfile}')
         except ValueError:  # hack: some old PhysiCell versions generates a corrupt cells.mat file, if there are zero cells.
-            print(f'Warning @ pyMCDS._read_xml : corrupt {cellpathfile} detected!\nassuming time step with zero cells because of a known bug in PhysiCell MultiCellDS version 0.5 output.')
+            print(f'Warning @ pyMCDS._read_xml : corrupt {s_cellpathfile} detected!\nassuming time step with zero cells because of a known bug in PhysiCell MultiCellDS version 0.5 output.')
             ar_cell = np.empty([len(ls_variable),0])
 
         # store data
