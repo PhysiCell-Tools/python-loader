@@ -83,6 +83,9 @@ jobs:
         #python-version: ["3.8", "3.9", "3.10", "3.11"]
         python-version: ["3.11"]
 
+    env:
+      PYTHONPATH: D:\a\physicelldataloader\physicelldataloader
+
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
@@ -94,7 +97,7 @@ jobs:
         choco install ffmpeg imagemagick
         python -m pip install --upgrade pip
         python -m pip install flake8 pytest matplotlib numpy pandas scipy requests anndata
-        echo 'set PYTHONPATH=D:\a\physicelldataloader\physicelldataloader' >> $GITHUB_ENV
+        #echo 'set PYTHONPATH=D:\a\physicelldataloader\physicelldataloader' >> $GITHUB_ENV
         #if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Lint with flake8
       run: |
