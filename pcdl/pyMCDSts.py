@@ -410,7 +410,7 @@ class pyMCDSts:
                 tree = ET.parse(s_pathfile)
                 root = tree.getroot()
                 if s is None:
-                    circle_element = root.find('.//{*}circle')
+                    circle_element = root.find('.//circle')
                     r_radius = float(circle_element.get('r')) # px
                     s = int(round((r_radius)**2))
                     if self.verbose:
