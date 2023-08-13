@@ -429,6 +429,7 @@ class pyMCDSts:
                     figsizepx = [640, 480]
 
         # handle z_slice
+        z_slice = float(z_slice)
         _, _, ar_p_axis = self.l_mcds[0].get_mesh_mnp_axis()
         if not (z_slice in ar_p_axis):
             z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
@@ -484,7 +485,7 @@ class pyMCDSts:
             figbgcolor = 'auto'
 
         # handle output path
-        s_path = f'{self.output_path}cell_{focus}_z{z_slice}/'
+        s_path = f'{self.output_path}cell_{focus}_z{round(z_slice,9)}/'
 
         # plotting
         for mcds in self.l_mcds:
@@ -598,6 +599,7 @@ class pyMCDSts:
                 figsizepx = [640, 480]
 
         # handle z_slice
+        z_slice = float(z_slice)
         _, _, ar_p_axis = self.l_mcds[0].get_mesh_mnp_axis()
         if not (z_slice in ar_p_axis):
             z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
@@ -639,7 +641,7 @@ class pyMCDSts:
             figbgcolor = 'auto'
 
         # handle output path
-        s_path = f'{self.output_path}substrate_{focus}_z{z_slice}/'
+        s_path = f'{self.output_path}substrate_{focus}_z{round(z_slice,9)}/'
 
         # plotting
         for mcds in self.l_mcds:
@@ -748,8 +750,15 @@ class pyMCDSts:
         s_ipathfiles = f'{path}/*.{interface}'
 
         # generate movie
-        s_cmd = f'ffmpeg -y -r {framerate} -f image2 -pattern_type glob -i "{s_ipathfiles}" -vcodec libx264 -pix_fmt yuv420p -strict -2 -tune animation -crf 15 -acodec none {s_opathfile}'
+        ls_ipatfile = sorted(glob(s_ipathfiles))
+        f = open('ffmpeginput.txt', 'w')
+        for s_ipatfile in ls_ipatfile:
+            f.write(f"file '{s_ipatfile}'\n")
+        f.close()
+
+        s_cmd = f'ffmpeg -y -r {framerate} -f concat -safe 0 -i ffmpeginput.txt -vcodec libx264 -pix_fmt yuv420p -strict -2 -tune animation -crf 15 -acodec none {s_opathfile}'
         os.system(s_cmd)
+        os.remove('ffmpeginput.txt')
 
         # output
         return s_opathfile
