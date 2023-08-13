@@ -33,6 +33,7 @@ The pcdl python3 library maintains three branches branches:
 ## Tutorial:
 + Check out: [man/TUTORIAL.md](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL.md)!
 + Check out: [man/jupyter/pcdl\_repl\_programming.ipynb](https://github.com/elmbeech/physicelldataloader/tree/master/man/jupyter/pcdl_repl_programming.ipynb)
++ Check out: [man/lecture](https://github.com/elmbeech/physicelldataloader/tree/master/man/lecture)
 
 ## Reference Manual:
 + Check out: [man/REFERENCE.md](https://github.com/elmbeech/physicelldataloader/tree/master/man/REFERENCE.md)!
