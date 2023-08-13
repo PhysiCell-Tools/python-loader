@@ -1,4 +1,4 @@
-####
+###
 # title: pyAnnData.py
 #
 # language: python3
@@ -127,12 +127,25 @@ def _anndextract(df_cell, scale='maxabs'):
         it into a set of three dataframes (df_count, df_obs, and df_spatial),
         which downstream might be transformed into an anndata object.
     """
-    # extract discrete cell data
-    df_cell.drop({
-        'voxel_i', 'voxel_j', 'voxel_k',
-        'mesh_center_m', 'mesh_center_n', 'mesh_center_p'
-    }, axis=1, inplace=True)  # maybe obs?
+    # transform index to string
     df_cell.index = df_cell.index.astype(str)
+
+    # build on spatial and obs anndata object
+    if (len(set(df_cell.position_z)) == 1):
+        df_spatial = df_cell.loc[:,['position_x', 'position_y']].copy()
+    else:
+        df_spatial = df_cell.loc[:,['position_x', 'position_y','position_z']].copy()
+    df_obs = df_cell.loc[:,['mesh_center_p', 'time']].copy()
+    df_obs.columns = ['z_layer', 'time']
+
+    # extract discrete cell data
+    es_drop = set(df_cell.columns).intersection({
+        'voxel_i', 'voxel_j', 'voxel_k',
+        'mesh_center_m', 'mesh_center_n', 'mesh_center_p',
+        'position_x', 'position_y','position_z',
+        'time', 'runtime',
+    })
+    df_cell.drop(es_drop, axis=1, inplace=True)  # maybe obs?
 
     # dectect variable types
     des_type = {'float': set(), 'int': set(), 'bool': set(), 'str': set()}
@@ -148,12 +161,10 @@ def _anndextract(df_cell, scale='maxabs'):
         else:
             print(f'Error @ TimeSeries.get_anndata : column {se_cell.name} detected with unknown dtype {str(se_cell.dtype)}.')
 
-    # build anndata object
-    df_spatial = df_cell.loc[:,['position_x', 'position_y','position_z','time']].copy()
-    df_obs = df_cell.loc[:,sorted(des_type['str'])].copy()
-    #df_obs = pd.merge(df_obs, df_spatial, left_index=True, right_index=True)
+    # build on obs and X anndata object
+    df_cat = df_cell.loc[:,sorted(des_type['str'])].copy()
+    df_obs = pd.merge(df_obs, df_cat, left_index=True, right_index=True)
     es_num = des_type['float'].union(des_type['int'].union(des_type['bool']))
-    es_num = es_num.difference(set(df_spatial.columns))
     df_count = df_cell.loc[:,sorted(es_num)].copy()
     for s_col in des_type['bool']:
         df_count[s_col] = df_count[s_col].astype(int)
@@ -241,7 +252,7 @@ class TimeStep(pyMCDS):
                 for more input, check out: help(pcdl.scaler)
 
         output:
-            anmcds: anndata object
+            annmcds: anndata object
                 for this one time step.
 
         description:
@@ -249,13 +260,13 @@ class TimeStep(pyMCDS):
             for downstream analysis.
         """
         # processing
-        print(f'processing: 1/1 {self.get_time()}[min] mcds into anndata obj.')
+        print(f'processing: 1/1 {round(self.get_time(),9)}[min] mcds into anndata obj.')
         df_cell = self.get_cell_df(states=states, drop=drop, keep=keep)
         df_count, df_obs, df_spatial = _anndextract(df_cell=df_cell, scale=scale)
-        anmcds = ad.AnnData(X=df_count, obs=df_obs, obsm={"spatial": df_spatial.values})
+        annmcds = ad.AnnData(X=df_count, obs=df_obs, obsm={"spatial": df_spatial.values})
 
         # output
-        return anmcds
+        return annmcds
 
 
 class TimeSeries(pyMCDSts):
@@ -304,6 +315,7 @@ class TimeSeries(pyMCDSts):
     """
     def __init__(self, output_path='.', custom_type={}, load=True, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True):
         pyMCDSts.__init__(self, output_path=output_path, custom_type=custom_type, load=load, microenv=microenv, graph=graph, settingxml=settingxml, verbose=verbose)
+        self.l_annmcds = None
 
     def get_anndata(self, states=1, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=True):
         """
@@ -340,14 +352,14 @@ class TimeSeries(pyMCDSts):
                 after transformation?
 
         output:
-            anmcds or l_anmcds: anndata object or list of anndata objects.
+            annmcds or self.l_annmcds: anndata object or list of anndata objects.
                 what is returned depends on the collapse setting.
 
         description:
             function to transform mcds time steps into one or many
             anndata objects for downstream analysis.
         """
-        d_ann = {}
+        l_annmcds = []
         df_anncount = None
         df_annobs = None
         df_annspatial = None
@@ -368,8 +380,8 @@ class TimeSeries(pyMCDSts):
             else:
                 mcds = self.l_mcds.pop(0)
             # extract time and dataframes
-            i_time = int(round(mcds.get_time()))
-            print(f'processing: {i+1}/{i_mcds} {i_time}[min] mcds into anndata obj.')
+            r_time = round(mcds.get_time(),9)
+            print(f'processing: {i+1}/{i_mcds} {r_time}[min] mcds into anndata obj.')
             df_cell = mcds.get_cell_df()
             df_cell = df_cell.loc[:,ls_column]
             df_count, df_obs, df_spatial = _anndextract(df_cell=df_cell, scale=scale)
@@ -377,8 +389,8 @@ class TimeSeries(pyMCDSts):
             if collapse:
                 # count
                 df_count.reset_index(inplace=True)
-                df_count.index = df_count.ID + f'id_{i_time}min'
-                df_count.index.name = 'ID_time'
+                df_count.index = df_count.ID + f'id_{r_time}min'
+                df_count.index.name = 'id_time'
                 df_count.drop('ID', axis=1, inplace=True)
                 if df_anncount is None:
                     df_anncount = df_count
@@ -386,16 +398,16 @@ class TimeSeries(pyMCDSts):
                     df_anncount = pd.concat([df_anncount, df_count], axis=0)
                 # obs
                 df_obs.reset_index(inplace=True)
-                df_obs.index = df_obs.ID + f'id_{i_time}min'
-                df_obs.index.name = 'ID_time'
+                df_obs.index = df_obs.ID + f'id_{r_time}min'
+                df_obs.index.name = 'id_time'
                 if df_annobs is None:
                     df_annobs = df_obs
                 else:
                     df_annobs = pd.concat([df_annobs, df_obs], axis=0)
                 # spatial
                 df_spatial.reset_index(inplace=True)
-                df_spatial.index = df_spatial.ID + f'id_{i_time}min'
-                df_spatial.index.name = 'ID_time'
+                df_spatial.index = df_spatial.ID + f'id_{r_time}min'
+                df_spatial.index.name = 'id_time'
                 df_spatial.drop('ID', axis=1, inplace=True)
                 if df_annspatial is None:
                     df_annspatial = df_spatial
@@ -404,12 +416,29 @@ class TimeSeries(pyMCDSts):
             # pack not collapsed
             else:
                 annmcds = ad.AnnData(X=df_count, obs=df_obs, obsm={"spatial": df_spatial.values})
-                d_ann.update({i_time : annmcds})
+                l_annmcds.append(annmcds)
 
         # output
         if collapse:
             annmcdsts = ad.AnnData(X=df_anncount, obs=df_annobs, obsm={"spatial": df_annspatial.values})
         else:
-            annmcdsts = d_ann
+            self.l_annmcds = l_annmcds
+            annmcdsts = l_annmcds
         return annmcdsts
+
+
+    def get_annmcds_list(self):
+        """
+        input:
+            self: TimeSeries class instance.
+
+        output:
+            self.l_annmcds: list of chronologically ordered anndata mcds objects.
+            watch out, this is a dereferenced pointer to the
+            self.l_annmcds list of anndata mcds objects, not a copy of self.l_annmcds!
+
+        description:
+            function returns a binding to the self.l_annmcds list of anndata mcds objects.
+        """
+        return self.l_annmcds
 

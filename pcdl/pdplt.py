@@ -24,8 +24,8 @@ import random
 # pandas to matplotlib
 #fig, ax = plt.subplots()
 #ax = ax.ravel()
-#df.plot(ax=ax)
 #ax.axis('equal')
+#df.plot(ax=ax)
 #plt.tight_layout()
 #fig.savefig(s_filename, facecolor='white')
 #plt.close()
@@ -65,13 +65,16 @@ def df_label_to_color(df_abc, s_label, es_label=None, s_cmap='viridis', b_shuffl
     df_abc[f'{s_label}_color'] = [ds_color[s_scene] for s_scene in df_abc.loc[:,s_label]]
     return(ds_color)
 
-def ax_colorlegend(ax, ds_color, r_x_figure2legend_space=0.01, s_fontsize='small'):
+def ax_colorlegend(ax, ds_color, s_loc='lower left', s_fontsize='small'):
     '''
     input:
         ax: matplotlib axis object to which a color legend will be added.
         ds_color: lables to color strings mapping dictionary
-        r_x_figure2legend_space: space between plot and legend.
-            -1 is left plot border, 0 is right plot border.
+        s_loc: the location of the legend.
+            possible strings are: best,
+            upper right, upper center, upper left, center left,
+            lower left, lower center, lower right, center right,
+            center.
         s_fontsize: font size used for the legend. known are:
             xx-small, x-small, small, medium, large, x-large, xx-large.
 
@@ -87,9 +90,7 @@ def ax_colorlegend(ax, ds_color, r_x_figure2legend_space=0.01, s_fontsize='small
         lo_patch.append(o_patch)
     ax.legend(
         handles = lo_patch,
-        bbox_to_anchor = (1+r_x_figure2legend_space, 0, 0, 0),
-        loc = 'lower left',
-        borderaxespad = 0.00,
+        loc = s_loc,
         fontsize = s_fontsize
     )
 

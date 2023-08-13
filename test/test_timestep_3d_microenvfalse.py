@@ -19,6 +19,7 @@
 
 
 # load library
+import matplotlib.pyplot as plt
 import os
 import pathlib
 import pcdl
@@ -36,13 +37,13 @@ if not os.path.exists(s_path_3d):
 
 
 # test function
-class TestPyMcdsMicroenvFalse3D(object):
+class TestyMcdsMicroenvFalse3D(object):
     ''' test for pcdl.pyMCDS data loader with microenvironment, graph, and settingxml set to False '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_3d, output_path=s_path_3d, custom_type={}, microenv=False, graph=False, settingxml=None, verbose=True)
+    mcds = pcdl.pyMCDS(xmlfile=s_file_3d, output_path=s_path_3d, custom_type={}, microenv=False, graph=False, settingxml=False, verbose=True)
 
     def test_pyMCDS(self, mcds=mcds):
         # load physicell data
-        print(f'process: pcdl.pyMCDS(xmlfile={s_file_3d}, output_path={s_path_3d}, custom_type={{}}, microenv=False, graph=False, settingxml=False, verbose=True) ...')
+        print(f"process: pcdl.pyMCDS(xmlfile={s_file_3d}, output_path={s_path_3d}, custom_type={{}}, microenv=False, graph=False, settingxml=False, verbose=True) ...")
         assert str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>"
 
     ## metadata related functions
@@ -66,13 +67,13 @@ class TestPyMcdsMicroenvFalse3D(object):
         assert (str(type(lar_axis)) == "<class 'list'>") and \
                (len(lar_axis) == 3) and \
                (str(type(lar_axis[0])) == "<class 'numpy.ndarray'>") and \
-               (str(lar_axis[0].dtype) == "int64") and \
+               (str(lar_axis[0].dtype) in {"int64", "int32"}) and \
                (lar_axis[0].shape == (11,)) and \
                (str(type(lar_axis[1])) == "<class 'numpy.ndarray'>") and \
-               (str(lar_axis[1].dtype) == "int64") and \
+               (str(lar_axis[1].dtype) in {"int64", "int32"}) and \
                (lar_axis[1].shape == (11,)) and \
                (str(type(lar_axis[2])) == "<class 'numpy.ndarray'>") and \
-               (str(lar_axis[2].dtype) == "int64") and \
+               (str(lar_axis[2].dtype) in {"int64", "int32"}) and \
                (lar_axis[2].shape == (11,))
 
     def test_mcds_get_mesh_mnp_axis(self, mcds=mcds):
@@ -180,7 +181,7 @@ class TestPyMcdsMicroenvFalse3D(object):
     def test_mcds_get_substrate_dict(self, mcds=mcds):
         ds_substrate = mcds.get_substrate_dict()
         assert (str(type(ds_substrate)) == "<class 'dict'>") and \
-               (len(ds_substrate) == 0)
+               (len(ds_substrate) == 0)  # settingxml=False
 
     ## cell related functions
     def test_mcds_get_cell_variables(self, mcds=mcds):
@@ -192,27 +193,82 @@ class TestPyMcdsMicroenvFalse3D(object):
     def test_mcds_get_celltype_dict(self, mcds=mcds):
         ds_celltype = mcds.get_celltype_dict()
         assert (str(type(ds_celltype)) == "<class 'dict'>") and \
-               (len(ds_celltype) == 0)
+               (len(ds_celltype) == 0)  # settingxml=False
 
     def test_mcds_get_cell_df(self, mcds=mcds):
         df_cell = mcds.get_cell_df(states=0, drop=set(), keep=set())
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (20460, 108))
+               (df_cell.shape == (20460, 111))
 
     def test_mcds_get_cell_df_states(self, mcds=mcds):
         df_cell = mcds.get_cell_df(states=2, drop=set(), keep=set())
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (20460, 26))
+               (df_cell.shape == (20460, 30))
 
     def test_mcds_get_cell_df_keep(self, mcds=mcds):
         df_cell = mcds.get_cell_df(states=0, drop=set(), keep={'total_volume'})
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (20460, 8))
+               (df_cell.shape == (20460, 12))
 
     def test_mcds_get_cell_df_at(self, mcds=mcds):
         df_cell = mcds.get_cell_df_at(x=0, y=0, z=0, states=1, drop=set(), keep=set())
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (5, 108))
+               (df_cell.shape == (5, 111))
+
+    def test_mcds_get_scatter_cat(self, mcds=mcds):
+        fig = mcds.get_scatter(
+            focus='cell_type',  # case categorical
+            z_slice = -3.333,   # test if
+            z_axis = None,  # test if categorical
+            #cmap = 'viridis',  # matplotlib
+            #title = None, # matplotlib
+            #grid = True,  # matplotlib
+            #legend_loc = 'lower left',  # matplotlib
+            xlim = None,  # test if
+            ylim = None,  # test if
+            xyequal = True,  # test if
+            s = None,  # test if
+            figsize = (6.4, 4.8),  # test if case
+            ax = None,  # generate matplotlib figure
+        )
+        assert (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+
+    def test_mcds_get_scatter_cat_cmap(self, mcds=mcds):
+        fig, ax = plt.subplots()
+        mcds.get_scatter(
+            focus='cell_type',  # case categorical
+            z_slice = 0,  # jump over if
+            z_axis = None,  # test if categorical
+            cmap = {'0': 'maroon'},  # matplotlib and label '0' because settingxml=False.
+            title ='scatter cat',  # matplotlib
+            #grid = True,  # matplotlib
+            #legend_loc = 'lower left',  # matplotlib
+            xlim = None,  # test if
+            ylim = None,  # test if
+            xyequal = True,  # test if
+            s = None,  # test if
+            #figsize = None,  # test if ax case
+            ax = ax,  # use axis from existing matplotlib figure
+        )
+        assert (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+
+    def test_mcds_get_scatter_num(self, mcds=mcds):
+        fig = mcds.get_scatter(
+            focus='pressure',  # case numeric
+            z_slice = -3.333,   # test if
+            z_axis = None,  # test if numeric
+            #cmap = 'viridis',  # matplotlib
+            #title = None, # matplotlib
+            #grid = True,  # matplotlib
+            #legend_loc = 'lower left',  # matplotlib
+            xlim = None,  # test if
+            ylim = None,  # test if
+            xyequal = True,  # test if
+            s = None,  # test if
+            figsize = None,  # else case
+            ax = None,  # generate matplotlib figure
+        )
+        assert (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
 
     ## unit related functions
     def test_mcds_get_unit_se(self, mcds=mcds):

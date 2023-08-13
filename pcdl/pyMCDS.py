@@ -20,6 +20,7 @@ from matplotlib import cm
 from matplotlib import colors
 import numpy as np
 import pandas as pd
+from pcdl import pdplt
 from scipy import io
 import sys
 import xml.etree.ElementTree as ET
@@ -127,14 +128,14 @@ es_coor_conc = {
     'ID',
     'voxel_i','voxel_j','voxel_k',
     'mesh_center_m','mesh_center_n','mesh_center_p',
-    'time', 'runtime'
+    'time', 'runtime',
 }
 es_coor_cell = {
     'ID',
     'voxel_i', 'voxel_j', 'voxel_k',
     'mesh_center_m', 'mesh_center_n', 'mesh_center_p',
     'position_x', 'position_y', 'position_z',
-    'time',
+    'time', 'runtime',
 }
 
 
@@ -699,7 +700,7 @@ class pyMCDS:
 
             halt: boolean; default is False
                 should program execution break or just spit out a warning,
-                if z_slize position is not an exact mesh center coordinate?
+                if z_slice position is not an exact mesh center coordinate?
                 if False, z_slice will be adjusted to the nearest
                 mesh center value, the smaller one, if the coordinate
                 lies on a saddle point.
@@ -723,7 +724,7 @@ class pyMCDS:
                 if halt:
                     sys.exit('Processing stopped!')
                 else:
-                    z_slice = ar_p_axis[(ar_p_axis - z_slice).argmin()]
+                    z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
                     print(f'z_slice set to {z_slice}.')
 
             # filter by z_slice
@@ -792,7 +793,7 @@ class pyMCDS:
 
             halt: boolean; default is False
                 should program execution break or just spit out a warning,
-                if z_slize position is not an exact mesh center coordinate?
+                if z_slice position is not an exact mesh center coordinate?
                 if False, z_slice will be adjusted to the nearest
                 mesh center value, the smaller one, if the coordinate
                 lies on a saddle point.
@@ -824,13 +825,9 @@ class pyMCDS:
             for all chemical species in all voxels. additionally, this
             dataframe lists voxel and mesh center coordinates.
         """
-        # handle keep and drop
+        # check keep and drop
         if (len(keep) > 0) and (len(drop) > 0):
             sys.exit(f"Error @ pyMCDS.get_concentration_df : when keep is given {keep}, then drop has to be an empty set {drop}!")
-        if (len(keep) > 0):
-            es_drop = set(self.get_concentration_df().columns).difference(keep)
-        else:
-            es_drop = drop
 
         # check if z_slice is a mesh center or None
         if not (z_slice is None):
@@ -840,7 +837,7 @@ class pyMCDS:
                 if halt:
                     sys.exit('Processing stopped!')
                 else:
-                    z_slice = ar_p_axis[(ar_p_axis - z_slice).argmin()]
+                    z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
                     print(f'z_slice set to {z_slice}.')
 
         # flatten mesh coordnates
@@ -874,19 +871,26 @@ class pyMCDS:
         aa_data  = np.array(la_data)
         df_conc = pd.DataFrame(aa_data.T, columns=ls_column)
         df_conc['time'] = self.get_time()
+        df_conc['runtime'] = self.get_runtime() / 60  # in min
         d_dtype = {'voxel_i': int, 'voxel_j': int, 'voxel_k': int}
         df_conc = df_conc.astype(d_dtype)
 
-        # filter z_slize
+        # filter z_slice
         if not (z_slice is None):
            df_conc = df_conc.loc[df_conc.mesh_center_p == z_slice, :]
 
         # filter
-        es_delete = es_drop.difference(es_coor_conc)  # by parameter declaraion
+        es_feature = set(df_conc.columns).difference(es_coor_conc)
+        if (len(keep) > 0):
+            es_delete = es_feature.difference(keep)
+        else:
+            es_delete = es_feature.intersection(drop)
+
         if (states > 1):
             for s_column in set(df_conc.columns).difference(es_coor_conc):
                 if len(set(df_conc.loc[:,s_column])) < states:
                     es_delete.add(s_column)
+                    print('es_delete:', es_delete)
         df_conc.drop(es_delete, axis=1, inplace=True)
 
         # output
@@ -904,7 +908,7 @@ class pyMCDS:
 
             z_slice: floating point number; default is 0
                 z-axis position to slice a 2D xy-plain out of the
-                3D substrate concentration mesh. if z_slize position
+                3D substrate concentration mesh. if z_slice position
                 is not an exact mesh center coordinate, then z_slice
                 will be adjusted to the nearest mesh center value,
                 the smaller one, if the coordinate lies on a saddle point.
@@ -966,7 +970,7 @@ class pyMCDS:
         # handle z_slice input
         _, _, ar_p_axis = self.get_mesh_mnp_axis()
         if not (z_slice in ar_p_axis):
-            z_slice = ar_p_axis[(ar_p_axis - z_slice).argmin()]
+            z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
             print(f'z_slice set to {z_slice}.')
 
         # get data z slice
@@ -1007,6 +1011,10 @@ class pyMCDS:
         else:
             fig = plt.gcf()
 
+        # set equal axis spacing
+        if xyequal:
+            ax.axis('equal')
+
         # get contour plot
         if fill:
             ax.contourf(x,y,z, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
@@ -1025,10 +1033,6 @@ class pyMCDS:
             ax.set_xlim(xlim[0], xlim[1])
         if not (ylim is None):
             ax.set_ylim(ylim[0], ylim[1])
-
-        # set equal axis spacing
-        if xyequal:
-            ax.axis('equal')
 
         # get colorbar
         fig.colorbar(
@@ -1111,13 +1115,9 @@ class pyMCDS:
             function returns a dataframe with a cell centric view
             of the simulation.
         """
-        # handle keep and drop
+        # check keep and drop
         if (len(keep) > 0) and (len(drop) > 0):
             sys.exit(f"Error @ pyMCDS.get_cell_df : when keep is given {keep}, then drop has to be an empty set {drop}!")
-        if (len(keep) > 0):
-            es_drop = set(self.get_cell_df().columns).difference(keep)
-        else:
-            es_drop = drop
 
         # get cell position and more
         df_cell = pd.DataFrame(self.data['discrete_cells']['data'])
@@ -1191,14 +1191,15 @@ class pyMCDS:
                      s_var = f'{s_sub}_{s_rate}'
                      df_cell[s_var] = df_sub.loc[s_sub,s_rate]
 
-            # merge concentration (left join)
-            df_conc = self.get_concentration_df(z_slice=None, states=1, drop=set(), keep=set())
-            df_cell = pd.merge(
-                df_cell,
-                df_conc,
-                on = ['voxel_i', 'voxel_j', 'voxel_k', 'time'],
-                how = 'left',
-            )
+        # merge concentration (left join)
+        df_conc = self.get_concentration_df(z_slice=None, states=1, drop=set(), keep=set())
+        df_conc.drop({'time', 'runtime'}, axis=1, inplace=True)
+        df_cell = pd.merge(
+            df_cell,
+            df_conc,
+            on = ['voxel_i', 'voxel_j', 'voxel_k'],
+            how = 'left',
+        )
 
         # variable typing
         do_type = {}
@@ -1212,7 +1213,7 @@ class pyMCDS:
         df_cell = df_cell.astype(do_type)
 
         # categorical translation
-        #df_cell.loc[:,'current_death_model'].replace(ds_death_model, inplace=True)  # bue 20230614: this column looks like an artefact to me
+        df_cell.loc[:,'current_death_model'].replace(ds_death_model, inplace=True)  # bue 20230614: this column looks like an artefact to me
         df_cell.loc[:,'cycle_model'].replace(ds_cycle_model, inplace=True)
         df_cell.loc[:,'cycle_model'].replace(ds_death_model, inplace=True)
         df_cell.loc[:,'current_phase'].replace(ds_cycle_phase, inplace=True)
@@ -1220,7 +1221,12 @@ class pyMCDS:
         df_cell.loc[:,'cell_type'].replace(self.data['metadata']['cell_type'], inplace=True)
 
         # filter
-        es_delete = es_drop.difference(es_coor_cell)  # by parameter declaraion
+        es_feature = set(df_cell.columns).difference(es_coor_cell)
+        if (len(keep) > 0):
+            es_delete = es_feature.difference(keep)
+        else:
+            es_delete = es_feature.intersection(drop)
+
         if (states > 1):  # by minimal number of states
             for s_column in set(df_cell.columns).difference(es_coor_cell):
                 if len(set(df_cell.loc[:,s_column])) < states:
@@ -1304,6 +1310,186 @@ class pyMCDS:
 
         # output
         return df_voxel
+
+
+    def get_scatter(self, focus='cell_type', z_slice=0, z_axis=None, cmap='viridis', title=None, grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=None, figsize=None, ax=None):
+        """
+        input:
+            self: pyMCDSts class instance
+
+            focus: string; default is 'cell_type'
+                column name within cell dataframe.
+
+            z_slice: floating point number; default is 0
+                z-axis position to slice a 2D xy-plain out of the
+                3D substrate concentration mesh. if z_slice position
+                is not an exact mesh center coordinate, then z_slice
+                will be adjusted to the nearest mesh center value,
+                the smaller one, if the coordinate lies on a saddle point.
+
+            z_axis: for a categorical focus: set of labels;
+               for a numeric focus: tuple of two floats; default is None
+               depending on the focus column variable dtype, default extracts
+               labels or min and max values from data.
+
+            cmap: dictionary of strings or string; default viridis.
+                dictionary that maps labels to colors strings.
+                matplotlib colormap string.
+                https://matplotlib.org/stable/tutorials/colors/colormaps.html
+
+            title: string; default None
+                possible plot title string.
+
+            grid: boolean default True.
+                plot axis grid lines.
+
+            legend_loc: string; default is 'lower left'.
+                the location of the categorical legend, if applicable.
+                possible strings are: best,
+                upper right, upper center, upper left, center left,
+                lower left, lower center, lower right, center right,
+                center.
+
+            xlim: tuple of two floats; default is None
+                x axis min and max value.
+                default takes min and max from mesh x axis range.
+
+            ylim: tuple of two floats; default is None
+                y axis min and max value.
+                default takes min and max from mesh y axis range.
+
+           xyequal: boolean; default True
+                to specify equal axis spacing for x and y axis.
+
+            s: integer; default is None
+                scatter plot dot size in pixel.
+                typographic points are 1/72 inch.
+                the marker size s is specified in points**2.
+                plt.rcParams['lines.markersize']**2 is in my case 36.
+                None tries to take the value from the initial.svg file.
+                fall back setting is 36.
+
+            figsize: tuple of floating point numbers; default is None
+                the specif the figure x and y measurement in inch.
+                None result in the default matplotlib setting, which is [6.4, 4.8].
+
+        output:
+            fig: matplotlib figure, containing the ax axis object,
+                with scatter plot and color bar (numerical data)
+                or color legend (categorical data).
+
+        description:
+            function returns a (pandas) matplotlib scatter plot,
+            inclusive color bar, for the substrate specified.
+        """
+        # handle z_slice
+        _, _, ar_p_axis = self.get_mesh_mnp_axis()
+        if not (z_slice in ar_p_axis):
+            z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
+            print(f'z_slice set to {z_slice}.')
+
+        # get data z slice
+        df_cell = self.get_cell_df(states=1, drop=set(), keep=set())
+        df_cell = df_cell.loc[(df_cell.mesh_center_p == z_slice),:]
+
+        # handle z_axis categorical cases
+        if (str(df_cell.loc[:,focus].dtype) in {'bool', 'object'}):
+            lr_extrema = [None, None]
+            if (z_axis is None):
+                # extract set of labels from data
+                es_label = set(df_cell.loc[:,focus])
+            else:
+                es_label = z_axis
+
+        # handle z_axis numerical cases
+        else:  # df_cell.loc[:,focus].dtype is numeric
+            es_label = None
+            if (z_axis is None):
+                # extract min and max values from data
+                r_min = df_cell.loc[:,focus].min()
+                r_max = df_cell.loc[:,focus].max()
+                lr_extrema = [r_min, r_max]
+            else:
+                lr_extrema = z_axis
+
+        # handle z_axis summary
+        print(f'labels found: {es_label}.')
+        print(f'min max extrema set to: {lr_extrema}.')
+
+        # handle xlim and ylim
+        if (xlim is None):
+            xlim = self.get_xyz_range()[0]
+            print(f'xlim set to: {xlim}.')
+        if (ylim is None):
+            ylim = self.get_xyz_range()[1]
+            print(f'ylim set to: {ylim}.')
+
+        # get figure and axis orbject
+        if (ax is None):
+            # handle figsize
+            if (figsize is None):
+                figsize = (6.4, 4.8)
+            fig, ax = plt.subplots(figsize=figsize)
+        else:
+            fig = plt.gcf()
+
+        # layout the canavas
+        if xyequal:
+            ax.axis('equal')
+
+        # handle categorical variable
+        if not (es_label is None):
+            s_focus_color = focus + '_color'
+            # use specified label color dictionary
+            if type(cmap) is dict:
+                ds_color = cmap
+                df_cell[s_focus_color] = [ds_color[s_label] for s_label in df_cell.loc[:, focus]]
+            # generate label color dictionary
+            else:
+                ds_color = pdplt.df_label_to_color(
+                    df_abc = df_cell,
+                    s_label = focus,
+                    es_label = es_label,
+                    s_cmap = cmap,
+                    b_shuffle = False,
+                )
+            # generate color list
+            c = list(df_cell.loc[:, s_focus_color].values)
+            s_cmap = None
+
+        # handle numeric variable
+        else:
+            c = focus
+            s_cmap = cmap
+
+        # plot scatter
+        df_cell.plot(
+            kind = 'scatter',
+            x = 'position_x',
+            y = 'position_y',
+            c = c,
+            vmin = lr_extrema[0],
+            vmax = lr_extrema[1],
+            cmap = s_cmap,
+            xlim = xlim,
+            ylim = ylim,
+            s = s,
+            grid = grid,
+            title = title,
+            ax = ax,
+        )
+
+        # plot categorical data legen
+        if not (es_label is None):
+            pdplt.ax_colorlegend(
+                ax = ax,
+                ds_color = ds_color,
+                s_loc = legend_loc,
+                s_fontsize = 'small',
+            )
+
+        # output
+        return fig
 
 
     ## GRAPH RELATED FUNCTIONS ##
@@ -1752,7 +1938,7 @@ class pyMCDS:
             if self.verbose:
                 print(f'reading: {s_cellpathfile}')
         except ValueError:  # hack: some old PhysiCell versions generates a corrupt cells.mat file, if there are zero cells.
-            print(f'Warning @ pyMCDS._read_xml : corrupt {cellpathfile} detected!\nassuming time step with zero cells because of a known bug in PhysiCell MultiCellDS version 0.5 output.')
+            print(f'Warning @ pyMCDS._read_xml : corrupt {s_cellpathfile} detected!\nassuming time step with zero cells because of a known bug in PhysiCell MultiCellDS version 0.5 output.')
             ar_cell = np.empty([len(ls_variable),0])
 
         # store data
