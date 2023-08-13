@@ -2,7 +2,7 @@
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
 
 name: pytest pcdl
-run-name: ${{ github.actor }} is pytesting the pcdl library on all valid python versions.
+run-name: ${{ github.actor }} is pytesting the pcdl library on all supported python versions and operating systems.
 
 on:
   push:
@@ -16,8 +16,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.11"]
-        #python-version: ["3.8", "3.9", "3.10", "3.11"]
+        #python-version: ["3.11"]
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
 
     env:
       PYTHONPATH: /home/runner/work/physicelldataloader/physicelldataloader
@@ -50,11 +50,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.11"]
-        #python-version: ["3.8", "3.9", "3.10", "3.11"]
+        #python-version: ["3.11"]
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
 
     env:
-      PYTHONPATH: /home/runner/work/physicelldataloader/physicelldataloader
+      PYTHONPATH: /Users/runner/work/physicelldataloader/physicelldataloader
 
     steps:
     - uses: actions/checkout@v3
@@ -84,8 +84,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.11"]
-        #python-version: ["3.8", "3.9", "3.10", "3.11"]
+        #python-version: ["3.11"]
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
 
     env:
       PYTHONPATH: D:\a\physicelldataloader\physicelldataloader
