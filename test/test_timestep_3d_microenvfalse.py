@@ -67,13 +67,13 @@ class TestyMcdsMicroenvFalse3D(object):
         assert (str(type(lar_axis)) == "<class 'list'>") and \
                (len(lar_axis) == 3) and \
                (str(type(lar_axis[0])) == "<class 'numpy.ndarray'>") and \
-               (str(lar_axis[0].dtype) == "int64") and \
+               (str(lar_axis[0].dtype) in {"int64", "int32"}) and \
                (lar_axis[0].shape == (11,)) and \
                (str(type(lar_axis[1])) == "<class 'numpy.ndarray'>") and \
-               (str(lar_axis[1].dtype) == "int64") and \
+               (str(lar_axis[1].dtype) in {"int64", "int32"}) and \
                (lar_axis[1].shape == (11,)) and \
                (str(type(lar_axis[2])) == "<class 'numpy.ndarray'>") and \
-               (str(lar_axis[2].dtype) == "int64") and \
+               (str(lar_axis[2].dtype) in {"int64", "int32"}) and \
                (lar_axis[2].shape == (11,))
 
     def test_mcds_get_mesh_mnp_axis(self, mcds=mcds):

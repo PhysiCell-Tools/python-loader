@@ -349,6 +349,17 @@ df.shape  # (3, 94)
 df = mcds.get_cell_df_at(x=111,y=22,z=-5.1)  # None and Warning @ pyMCDS.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0)
 ```
 
+Additionally, there is a scatter plot function available, shaped for df\_cell dataframe content.
+```
+# scatter plot
+fig = mcds.get_scatter()  # default focus is cell_type and z_slice=0
+fig.show()
+
+fig = mcds.get_scatter('oxygen', z_slice=3.333)
+fig.show()
+```
+
+
 Since lately, PhysiCell tracks for each cell, if this cell touches other cells.\
 This data is stored in two dictionaries of sets of integers which link the corresponding cell IDs.\
 We have here a closer look at the neighbor graph because the attached graph is in this particular study not really interesting.
@@ -719,21 +730,25 @@ mcdsts = pcdl.TimeSeries(s_path)
 A mcds time series can be translated into one single anndata (default).
 ```python
 ann = mcdsts.get_anndata(states=2, scale='maxabs', collapse=True)
-print(ann)  # AnnData object with n_obs × n_vars = 24758 × 27
-            #     obs: 'ID', 'current_phase', 'cycle_model'
+print(ann)  # AnnData object with n_obs × n_vars = 889 × 26
+            #     obs: 'z_layer', 'time', 'current_phase', 'cycle_model'
             #     obsm: 'spatial'
 ```
 The output tells us that we have loaded a time series with 24758 cell (agent) snapshots and 27 features.
 And that we have spatial coordinate annotation (position\_x, position\_y, position\_z, time) of the loaded data.
 
-
-A mcds time series can be translated into a dictionary of anndata objects, where each entry is a single time step.
+A mcds time series can be translated into a chronological list of anndata objects, where each entry is a single time step.
+After running get\_anndata, you can access the objects by the get\_annmcds\_list function.
 ```python
-d_ann = mcdsts.get_anndata(states=2, scale='maxabs', collapse=False)
-d_ann.keys()  # dict_keys([0, 60, ..., 1440])
-d_ann[1440]  # AnnData object with n_obs × n_vars = 1099 × 27
-             #     obs: 'ID', 'current_phase', 'cycle_model'
-             #     obsm: 'spatial'
+l_ann = mcdsts.get_anndata(states=2, scale='maxabs', collapse=False)
+len(l_ann)  # 25
+l_ann[24]  # AnnData object with n_obs × n_vars = 1099 × 79
+           #     obs: 'z_layer', 'time', 'cell_type', 'current_death_model', 'current_phase', 'cycle_model'
+           #     obsm: 'spatial'
+
+# load all snapshots
+mcdsts.get_annmcds_list()  # YMMV! [AnnData object with n_obs × n_vars ..., ..., ... obsm: 'spatial']
+len(mcdsts.get_annmcds_list())  # 25
 ```
 
 

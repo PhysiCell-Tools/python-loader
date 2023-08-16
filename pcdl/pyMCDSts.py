@@ -429,6 +429,7 @@ class pyMCDSts:
                     figsizepx = [640, 480]
 
         # handle z_slice
+        z_slice = float(z_slice)
         _, _, ar_p_axis = self.l_mcds[0].get_mesh_mnp_axis()
         if not (z_slice in ar_p_axis):
             z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
@@ -484,7 +485,7 @@ class pyMCDSts:
             figbgcolor = 'auto'
 
         # handle output path
-        s_path = f'{self.output_path}cell_{focus}_z{z_slice}/'
+        s_path = f'{self.output_path}cell_{focus}_z{round(z_slice,9)}/'
 
         # plotting
         for mcds in self.l_mcds:
@@ -598,6 +599,7 @@ class pyMCDSts:
                 figsizepx = [640, 480]
 
         # handle z_slice
+        z_slice = float(z_slice)
         _, _, ar_p_axis = self.l_mcds[0].get_mesh_mnp_axis()
         if not (z_slice in ar_p_axis):
             z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
@@ -639,7 +641,7 @@ class pyMCDSts:
             figbgcolor = 'auto'
 
         # handle output path
-        s_path = f'{self.output_path}substrate_{focus}_z{z_slice}/'
+        s_path = f'{self.output_path}substrate_{focus}_z{round(z_slice,9)}/'
 
         # plotting
         for mcds in self.l_mcds:
@@ -737,19 +739,31 @@ class pyMCDSts:
             https://en.wikipedia.org/wiki/MP4_file_format
             https://en.wikipedia.org/wiki/Making_Movies
         """
-        # handle path and file name
-        path = path.replace('\\','/')
-        if path.endswith('/'): path = path[:-1]
-        s_file = path.split('/')[-1]
-        if s_file.startswith('.'): s_file = s_file[1:]
-        if (len(s_file) == 0): s_file = 'movie'
-        s_file += f'_{interface}{framerate}.mp4'
-        s_opathfile = f'{path}/{s_file}'
-        s_ipathfiles = f'{path}/*.{interface}'
+        # handle path
+        s_pwd = os.getcwd()
+        s_path = path.replace('\\','/')
+        if s_path.endswith('/'): s_path = s_path[:-1]
 
-        # generate movie
-        s_cmd = f'ffmpeg -y -r {framerate} -f image2 -pattern_type glob -i "{s_ipathfiles}" -vcodec libx264 -pix_fmt yuv420p -strict -2 -tune animation -crf 15 -acodec none {s_opathfile}'
+        # handle output filename
+        s_ofile = s_path.split('/')[-1]
+        if s_ofile.startswith('.'): s_ofile = s_ofile[1:]
+        if (len(s_ofile) == 0): s_ofile = 'movie'
+        s_ofile += f'_{interface}{framerate}.mp4'
+        s_opathfile = f'{s_path}/{s_ofile}'
+
+        # generate input file list
+        os.chdir(s_path)
+        ls_ifile = sorted(glob(f'*.{interface}'))
+        f = open('ffmpeginput.txt', 'w')
+        for s_ifile in ls_ifile:
+            f.write(f"file '{s_ifile}'\n")
+        f.close()
+
+        # genearete movie
+        s_cmd = f'ffmpeg -y -r {framerate} -f concat -i ffmpeginput.txt -vcodec libx264 -pix_fmt yuv420p -strict -2 -tune animation -crf 15 -acodec none {s_ofile}'  # -safe 0
         os.system(s_cmd)
+        os.remove('ffmpeginput.txt')
 
         # output
+        os.chdir(s_pwd)
         return s_opathfile

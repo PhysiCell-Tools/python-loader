@@ -183,7 +183,7 @@ class TestPyMcdsTs(object):
             #interface = 'jpeg',
         )
         assert os.path.exists(s_opathfile) and \
-            (s_opathfile == s_path+'cell_cell_type_z0_jpeg.gif')
+            (s_opathfile == s_path+'cell_cell_type_z0.0_jpeg.gif')
         shutil.rmtree(s_path)
 
     ## make_movie command ##
@@ -195,6 +195,6 @@ class TestPyMcdsTs(object):
             #framerate = 12,
         )
         assert os.path.exists(s_opathfile) and \
-            (s_opathfile == s_path+'cell_cell_type_z0_jpeg12.mp4')
+            (s_opathfile == s_path+'cell_cell_type_z0.0_jpeg12.mp4')
         shutil.rmtree(s_path)
 

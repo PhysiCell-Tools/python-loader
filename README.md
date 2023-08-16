@@ -16,7 +16,7 @@ The pcdl python3 library maintains three branches branches:
 
 
 ## Header:
-+ Language: python >= 3.6
++ Language: python [>= 3.8](https://devguide.python.org/versions/)
 + Library dependencies: anndata, matplotlib, numpy, pandas, scipy
 + Date of origin original PhysiCell-Tools python-loader: 2019-09-02
 + Date of origin pcdl fork: 2022-08-30
@@ -72,8 +72,9 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 
 
 ## Release Notes:
-+ version 3.2.12 (2023-08-10): elmbeech/physicelldatalodader
++ version 3.2.12 (2023-08-12): elmbeech/physicelldatalodader
     + add **pcdl_repl_programming.ipynb** : Jupyter notebook to give an idea about how to work with pcdl in a Python3 REPL.
+    + add github **continuous integration**, all supported python versions, all supported operating systems.
 
 + version 3.2.11 (2023-08-08): elmbeech/physicelldatalodader
     + **pip install pcdl**: will only install the bare minimum library dependencies.
