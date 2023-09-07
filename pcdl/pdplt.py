@@ -32,12 +32,13 @@ import random
 
 
 # plot stuff
-def df_label_to_color(df_abc, s_label, es_label=None, s_cmap='viridis', b_shuffle=False):
+def df_label_to_color(df_abc, s_focus, es_label=None, s_nolabel='gray', s_cmap='viridis', b_shuffle=False):
     '''
     input:
         df_abc: dataframe to which the color column will be added.
-        s_label: column name with sample labels for which a color column will be generated.
-        es_label: set of labels. if None, es_label will be extracted for the s_label column.
+        s_focus: column name with sample labels for which a color column will be generated.
+        es_label: set of labels to color. if None, es_label will be extracted for the s_focus column.
+        s_nolabel: color for labels not defined in es_label.
         s_cmap:  matplotlib color map label.
             https://matplotlib.org/stable/tutorials/colors/colormaps.html
         b_shuffle: should colors be given by alphabetical order,
@@ -52,17 +53,21 @@ def df_label_to_color(df_abc, s_label, es_label=None, s_cmap='viridis', b_shuffl
         a color column to the df_abc dataframe.
     '''
     if (es_label is None):
-        es_label = set(df_abc.loc[:,s_label])
-    ls_label = sorted(es_label)
+        es_label = set(df_abc.loc[:,s_focus])
     if b_shuffle:
+       ls_label = list(es_label)
        random.shuffle(ls_label)
+    else:
+       ls_label = sorted(es_label)
     a_color = plt.get_cmap(s_cmap)(np.linspace(0, 1, len(ls_label)))
     do_color = dict(zip(ls_label, a_color))
+    df_abc[f'{s_focus}_color'] = s_nolabel
     ds_color = {}
     for s_category, o_color in do_color.items():
-        ds_color.update({s_category : colors.to_hex(o_color)})
+        s_color = colors.to_hex(o_color)
+        ds_color.update({s_category : s_color})
+        df_abc.loc[(df_abc.loc[:,s_focus] == s_category), f'{s_focus}_color'] = s_color
     # output
-    df_abc[f'{s_label}_color'] = [ds_color[s_scene] for s_scene in df_abc.loc[:,s_label]]
     return(ds_color)
 
 def ax_colorlegend(ax, ds_color, s_loc='lower left', s_fontsize='small'):

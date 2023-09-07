@@ -1397,13 +1397,13 @@ class pyMCDS:
             lr_extrema = [None, None]
             if (z_axis is None):
                 # extract set of labels from data
-                es_label = set(df_cell.loc[:,focus])
+                es_category = set(df_cell.loc[:,focus])
             else:
-                es_label = z_axis
+                es_category = z_axis
 
         # handle z_axis numerical cases
         else:  # df_cell.loc[:,focus].dtype is numeric
-            es_label = None
+            es_category = None
             if (z_axis is None):
                 # extract min and max values from data
                 r_min = df_cell.loc[:,focus].min()
@@ -1413,7 +1413,7 @@ class pyMCDS:
                 lr_extrema = z_axis
 
         # handle z_axis summary
-        print(f'labels found: {es_label}.')
+        print(f'categories found: {es_category}.')
         print(f'min max extrema set to: {lr_extrema}.')
 
         # handle xlim and ylim
@@ -1438,18 +1438,21 @@ class pyMCDS:
             ax.axis('equal')
 
         # handle categorical variable
-        if not (es_label is None):
+        if not (es_category is None):
             s_focus_color = focus + '_color'
-            # use specified label color dictionary
+            # use specified category color dictionary
             if type(cmap) is dict:
                 ds_color = cmap
-                df_cell[s_focus_color] = [ds_color[s_label] for s_label in df_cell.loc[:, focus]]
-            # generate label color dictionary
+                df_cell[s_focus_color] = 'gray'
+                for s_category, s_color in ds_color.items():
+                    df_cell.loc[(df_cell.loc[:,focus] == s_category), s_focus_color] = s_color
+            # generate category color dictionary
             else:
                 ds_color = pdplt.df_label_to_color(
                     df_abc = df_cell,
-                    s_label = focus,
-                    es_label = es_label,
+                    s_focus = focus,
+                    es_label = es_category,
+                    s_nolabel = 'gray',
                     s_cmap = cmap,
                     b_shuffle = False,
                 )
@@ -1480,7 +1483,7 @@ class pyMCDS:
         )
 
         # plot categorical data legen
-        if not (es_label is None):
+        if not (es_category is None):
             pdplt.ax_colorlegend(
                 ax = ax,
                 ds_color = ds_color,
