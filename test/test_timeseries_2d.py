@@ -154,9 +154,9 @@ class TestPyMcdsTs(object):
                os.path.exists(s_path + 'pressure_000001440.0.jpeg')
         shutil.rmtree(s_path)
 
-    ## make_imgsubs command ##
-    def test_mcdsts_make_imgsubs(self, mcdsts=mcdsts):
-        s_path = mcdsts.make_imgsubs(
+    ## make_imgconc command ##
+    def test_mcdsts_make_imgconc(self, mcdsts=mcdsts):
+        s_path = mcdsts.make_imgconc(
             focus = 'oxygen',
             z_slice = -3.333,  # test if
             extrema = None,  # test if

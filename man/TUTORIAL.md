@@ -652,7 +652,7 @@ mcdsts.make_imgcell(focus='pressure')  # jpeg images colored by pressure values
 
 # substrate data owns an equivalent function,
 # being able to display any substrate dataframe column
-mcdsts.make_imgsubs(focus='oxygen')  # jpeg images colored by oxygen values
+mcdsts.make_imgconc(focus='oxygen')  # jpeg images colored by oxygen values
 ```
 
 Translate raster graphic images into a dynamic gif image:\

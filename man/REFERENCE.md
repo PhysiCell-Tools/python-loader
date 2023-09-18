@@ -92,7 +92,7 @@ help(pcdl.TimeSeries.get_conc_df_states)  # ! workhorse function
 
 # TimeSeries images and movies
 help(pcdl.TimeSeries.make_imgcell)  # ! workhorse function
-help(pcdl.TimeSeries.make_imgsubs)  # ! workhorse function
+help(pcdl.TimeSeries.make_imgconc)  # ! workhorse function
 help(pcdl.TimeSeries.make_gif)  # ! workhorse function
 help(pcdl.TimeSeries.make_movie)  # ! workhorse function
 

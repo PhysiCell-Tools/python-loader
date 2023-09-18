@@ -1,4 +1,4 @@
-![physicellcdataloader logo & title](man/img/pcdataloader_title_v3.0.0.png)
+![physicellcdataloader logo & title](man/img/physicelldataloader_title_v3.0.0.png)
 
 ## Abstract:
 physicelldataloader (pcdl) provides a platform independent, python3 based, [pip](https://en.wikipedia.org/wiki/Pip_(package_manager)) installable interface
@@ -72,8 +72,13 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 
 
 ## Release Notes:
++ version 3.2.13 (2023-09-18): elmbeech/physicelldatalodader
+    + rename pyMCDSts make\_imgsubs to **make_imgconc** for consistency.
+    + add **man/lecture/20230917_pcdl_repl_programming_analysis_plots.pdf** slide deck.
+
 + version 3.2.12 (2023-08-12): elmbeech/physicelldatalodader
-    + add **pcdl_repl_programming.ipynb** : Jupyter notebook to give an idea about how to work with pcdl in a Python3 REPL.
+    + add **man/jupyter/pcdl_repl_programming.ipynb** : Jupyter notebook to give an idea about how to work with pcdl in a Python3 REPL.
+    + add **man/lecture/20230808_pcws2023_session07_pcdl.pdf** slide deck.
     + add github **continuous integration**, all supported python versions, all supported operating systems.
 
 + version 3.2.11 (2023-08-08): elmbeech/physicelldatalodader

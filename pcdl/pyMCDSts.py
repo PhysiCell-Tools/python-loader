@@ -514,7 +514,7 @@ class pyMCDSts:
         return s_path
 
 
-    def make_imgsubs(self, focus, z_slice=0, extrema=None, alpha=1, fill=True, cmap='viridis', grid=True, xlim=None, ylim=None, xyequal=True, figsizepx=None, ext='jpeg', figbgcolor=None):
+    def make_imgconc(self, focus, z_slice=0, extrema=None, alpha=1, fill=True, cmap='viridis', grid=True, xlim=None, ylim=None, xyequal=True, figsizepx=None, ext='jpeg', figbgcolor=None):
         """
         input:
             self: pyMCDSts class instance
@@ -595,7 +595,7 @@ class pyMCDSts:
                 i_height = int(np.ceil(float(root.get('height'))))  # px
                 figsizepx = [i_width, i_height]
             except FileNotFoundError:
-                print(f'Warning @ pyMCDSts.make_imgsubs : could not load {s_pathfile}.')
+                print(f'Warning @ pyMCDSts.make_imgconc : could not load {s_pathfile}.')
                 figsizepx = [640, 480]
 
         # handle z_slice
@@ -682,7 +682,7 @@ class pyMCDSts:
             interface: string; default jpeg
                 this images, from which the gif will be generated
                 have to exist under the given path.
-                they can be generated with the make_imgcell or make_imgsubs
+                they can be generated with the make_imgcell or make_imgconc
                 function.
 
         output:
@@ -723,7 +723,7 @@ class pyMCDSts:
             interface: string; default jpeg
                 this images, from which the mp4 movie will be generated
                 have to exist under the given path.
-                they can be generated with the make_imgcell or make_imgsubs
+                they can be generated with the make_imgcell or make_imgconc
                 function.
 
             framerate: integer; default 24
