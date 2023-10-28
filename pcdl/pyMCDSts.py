@@ -169,11 +169,11 @@ class pyMCDSts:
 
 
     ## TRIAGE DATA
-    def get_cell_df_states(self, states=1, drop=set(), keep=set(), allvalues=False):
+    def get_cell_df_features(self, values=1, drop=set(), keep=set(), allvalues=False):
         """
         input:
-            states: integer; default is 1
-                minimal number of states a variable has to have
+            : integer; default is 1
+                minimal number of values a variable has to have
                 in any of the mcds time steps to be outputted.
                 variables that have only 1 state carry no information.
                 None is a state too.
@@ -187,7 +187,7 @@ class pyMCDSts:
 
             keep: set of strings; default is an empty set
                 set of column labels to be kept in the dataframe.
-                set states=1 to be sure that all variables are kept.
+                set values=1 to be sure that all variables are kept.
                 don't worry: essential columns like ID, coordinates
                 and time will always be kept.
 
@@ -199,11 +199,10 @@ class pyMCDSts:
             dl_variable: dictionary of list
                 dictionary with an entry of all non-coordinate column names
                 that at least in one of the time steps or in between
-                time steps, reach the given minimal state count.
-                key is the column name, and the value is a list of all states
+                time steps, reach the given minimal value count.
+                key is the column name, mapped is a list of all values
                 (bool, str, and, if allvalues is True, int and float) or
-                a list with minimum and maximum values from all the states
-                (int, float).
+                a list with minimum and maximum values (int, float).
 
         description:
             function to detect informative variables in a time series.
@@ -225,7 +224,7 @@ class pyMCDSts:
         # extract
         dl_variable_range = dict()
         for s_column, e_state in de_variable_state.items():
-            if len(e_state) >= states:
+            if len(e_state) >= values:
                 o_state = list(e_state)[0]
                 if (type(o_state) in {float, int}) and not(allvalues):  # min max values (numeric)
                     l_range = [min(e_state), max(e_state)]
@@ -236,11 +235,11 @@ class pyMCDSts:
         return dl_variable_range
 
 
-    def get_conc_df_states(self, states=1, drop=set(), keep=set(), allvalues=False):
+    def get_conc_df_features(self, values=1, drop=set(), keep=set(), allvalues=False):
         """
         input:
-            states: integer; default is 1
-                minimal number of states a variable has to have
+            values: integer; default is 1
+                minimal number of values a variable has to have
                 in any of the mcds time steps to be outputted.
                 variables that have only 1 state carry no information.
                 None is a state too.
@@ -254,7 +253,7 @@ class pyMCDSts:
 
             keep: set of strings; default is an empty set
                 set of column labels to be kept in the dataframe.
-                set states=1 to be sure that all variables are kept.
+                set values=1 to be sure that all variables are kept.
                 don't worry: essential columns like ID, coordinates
                 and time will always be kept.
 
@@ -267,9 +266,8 @@ class pyMCDSts:
                 that at least in one of the time steps or in between time
                 steps, reach the given minimal state count.
                 key is the column name, and the value is a list with the
-                minimum and maximum values from all the states if allvaue
-                is set to False, or a list of all states if allvalues is
-                set to True.
+                minimum and maximum values if allvalues is set to False,
+                or a list of all values if allvalues is set to True.
 
         description:
             function to detect informative substrate concentration variables
@@ -291,7 +289,7 @@ class pyMCDSts:
         # extract
         dlr_variable_range = dict()
         for s_column, er_state in der_variable_state.items():
-            if len(er_state) >= states:
+            if len(er_state) >= values:
                 if allvalues:
                     lr_range = sorted(er_state)
                 else:
@@ -322,7 +320,7 @@ class pyMCDSts:
         return s_magick
 
 
-    def make_imgcell(self, focus='cell_type', z_slice=0, z_axis=None, cmap='viridis', grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=None, figsizepx=None, ext='jpeg', figbgcolor=None):
+    def plot_scatter(self, focus='cell_type', z_slice=0, z_axis=None, cmap='viridis', grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=None, figsizepx=None, ext='jpeg', figbgcolor=None):
         """
         input:
             self: pyMCDSts class instance
@@ -420,7 +418,7 @@ class pyMCDSts:
                     i_height = int(np.ceil(float(root.get('height'))))  # px
                     figsizepx = [i_width, i_height]
             except FileNotFoundError:
-                print(f'Warning @ pyMCDSts.make_imgcell : could not load {s_pathfile}.')
+                print(f'Warning @ pyMCDSts.plot_scatter : could not load {s_pathfile}.')
                 if s is None:
                     s = plt.rcParams['lines.markersize']**2
                     if self.verbose:
@@ -489,7 +487,7 @@ class pyMCDSts:
 
         # plotting
         for mcds in self.l_mcds:
-            fig = mcds.get_scatter(
+            fig = mcds.plot_scatter(
                 focus = focus,
                 z_slice = z_slice,
                 z_axis = z_axis,
@@ -514,7 +512,7 @@ class pyMCDSts:
         return s_path
 
 
-    def make_imgconc(self, focus, z_slice=0, extrema=None, alpha=1, fill=True, cmap='viridis', grid=True, xlim=None, ylim=None, xyequal=True, figsizepx=None, ext='jpeg', figbgcolor=None):
+    def plot_contour(self, focus, z_slice=0, extrema=None, alpha=1, fill=True, cmap='viridis', grid=True, xlim=None, ylim=None, xyequal=True, figsizepx=None, ext='jpeg', figbgcolor=None):
         """
         input:
             self: pyMCDSts class instance
@@ -595,7 +593,7 @@ class pyMCDSts:
                 i_height = int(np.ceil(float(root.get('height'))))  # px
                 figsizepx = [i_width, i_height]
             except FileNotFoundError:
-                print(f'Warning @ pyMCDSts.make_imgconc : could not load {s_pathfile}.')
+                print(f'Warning @ pyMCDSts.plot_contour : could not load {s_pathfile}.')
                 figsizepx = [640, 480]
 
         # handle z_slice
@@ -645,7 +643,7 @@ class pyMCDSts:
 
         # plotting
         for mcds in self.l_mcds:
-            fig = mcds.get_contour(
+            fig = mcds.plot_contour(
                 substrate = focus,
                 z_slice = z_slice,
                 vmin = extrema[0],
@@ -670,6 +668,12 @@ class pyMCDSts:
         return s_path
 
 
+    def plot_timeseries():
+        # BUE 20221028: code goes here.
+        # df_cell_df is default input, maybe df_conce can be used alternatively?
+        pass
+
+
     def make_gif(self, path, interface='jpeg'):
         """
         input:
@@ -682,7 +686,7 @@ class pyMCDSts:
             interface: string; default jpeg
                 this images, from which the gif will be generated
                 have to exist under the given path.
-                they can be generated with the make_imgcell or make_imgconc
+                they can be generated with the plot_scatter or plot_contour
                 function.
 
         output:
@@ -723,7 +727,7 @@ class pyMCDSts:
             interface: string; default jpeg
                 this images, from which the mp4 movie will be generated
                 have to exist under the given path.
-                they can be generated with the make_imgcell or make_imgconc
+                they can be generated with the plot_scatter or plot_contour
                 function.
 
             framerate: integer; default 24

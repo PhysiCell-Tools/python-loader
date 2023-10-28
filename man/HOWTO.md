@@ -80,5 +80,5 @@ from pyMCDS import pyMCDS
 Now you're rolling. \
 On the one hand, pyMCDS is very lightweight.
 Besides the python3 core library, this code has only matplotlib, numpy, pandas, and scipy library dependencies.
-On the other hand, the `pyMCDS` class lacks features present in the `pcdl.TimeStep` and `pcdl.TimeSeries` class.
+On the other hand, the `pyMCDS` class lacks functions present in the `pcdl.TimeStep` and `pcdl.TimeSeries` class.
 

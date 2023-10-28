@@ -140,6 +140,7 @@ es_coor_cell = {
 
 
 # functions
+# BUE 20221028: repelaced or kept?
 def graphfile_parser(s_pathfile):
     """
     input:
@@ -781,7 +782,7 @@ class pyMCDS:
         return ar_concs
 
 
-    def get_concentration_df(self, z_slice=None, halt=False, states=1, drop=set(), keep=set()):
+    def get_concentration_df(self, z_slice=None, halt=False, values=1, drop=set(), keep=set()):
         """
         input:
             self: pyMCDS class instance.
@@ -798,8 +799,8 @@ class pyMCDS:
                 mesh center value, the smaller one, if the coordinate
                 lies on a saddle point.
 
-            states: integer; default is 1
-                minimal number of states a variable has to have to be outputted.
+            values: integer; default is 1
+                minimal number of values a variable has to have to be outputted.
                 variables that have only 1 state carry no information.
                 None is a state too.
 
@@ -812,7 +813,7 @@ class pyMCDS:
 
             keep: set of strings; default is an empty set
                 set of column labels to be kept in the dataframe.
-                set states=1 to be sure that all variables are kept.
+                set values=1 to be sure that all variables are kept.
                 don't worry: essential columns like ID, coordinates
                 and time will always be kept.
 
@@ -886,9 +887,9 @@ class pyMCDS:
         else:
             es_delete = es_feature.intersection(drop)
 
-        if (states > 1):
+        if (values > 1):
             for s_column in set(df_conc.columns).difference(es_coor_conc):
-                if len(set(df_conc.loc[:,s_column])) < states:
+                if len(set(df_conc.loc[:,s_column])) < values:
                     es_delete.add(s_column)
                     print('es_delete:', es_delete)
         df_conc.drop(es_delete, axis=1, inplace=True)
@@ -898,7 +899,7 @@ class pyMCDS:
         return df_conc
 
 
-    def get_contour(self, substrate, z_slice=0, vmin=None, vmax=None, alpha=1, fill=True, cmap='viridis', title=None, grid=True, xlim=None, ylim=None, xyequal=True, figsize=None, ax=None):
+    def plot_contour(self, substrate, z_slice=0, vmin=None, vmax=None, alpha=1, fill=True, cmap='viridis', title=None, grid=True, xlim=None, ylim=None, xyequal=True, figsize=None, ax=None):
         """
         input:
             self: pyMCDS class instance.
@@ -974,7 +975,7 @@ class pyMCDS:
             print(f'z_slice set to {z_slice}.')
 
         # get data z slice
-        df_conc = self.get_concentration_df(states=1, drop=set(), keep=set())
+        df_conc = self.get_concentration_df(values=1, drop=set(), keep=set())
         df_conc = df_conc.loc[(df_conc.mesh_center_p == z_slice),:]
         # extend to x y domain border
         df_mmin = df_conc.loc[(df_conc.mesh_center_m == df_conc.mesh_center_m.min()), :].copy()
@@ -1080,13 +1081,13 @@ class pyMCDS:
         return self.data['metadata']['cell_type'].copy()
 
 
-    def get_cell_df(self, states=1, drop=set(), keep=set()):
+    def get_cell_df(self, values=1, drop=set(), keep=set()):
         """
         input:
             self: pyMCDS class instance.
 
-            states: integer; default is 1
-                minimal number of states a variable has to have to be outputted.
+            values: integer; default is 1
+                minimal number of values a variable has to have to be outputted.
                 variables that have only 1 state carry no information.
                 None is a state too.
 
@@ -1099,7 +1100,7 @@ class pyMCDS:
 
             keep: set of strings; default is an empty set
                 set of column labels to be kept in the dataframe.
-                set states=1 to be sure that all variables are kept.
+                set values=1 to be sure that all variables are kept.
                 don't worry: essential columns like ID, coordinates,
                 time and runtime (wall time) will always be kept.
 
@@ -1192,7 +1193,7 @@ class pyMCDS:
                      df_cell[s_var] = df_sub.loc[s_sub,s_rate]
 
         # merge concentration (left join)
-        df_conc = self.get_concentration_df(z_slice=None, states=1, drop=set(), keep=set())
+        df_conc = self.get_concentration_df(z_slice=None, values=1, drop=set(), keep=set())
         df_conc.drop({'time', 'runtime'}, axis=1, inplace=True)
         df_cell = pd.merge(
             df_cell,
@@ -1227,9 +1228,9 @@ class pyMCDS:
         else:
             es_delete = es_feature.intersection(drop)
 
-        if (states > 1):  # by minimal number of states
+        if (values > 1):  # by minimal number of states
             for s_column in set(df_cell.columns).difference(es_coor_cell):
-                if len(set(df_cell.loc[:,s_column])) < states:
+                if len(set(df_cell.loc[:,s_column])) < values:
                     es_delete.add(s_column)
         df_cell.drop(es_delete, axis=1, inplace=True)
 
@@ -1240,7 +1241,7 @@ class pyMCDS:
         return df_cell
 
 
-    def get_cell_df_at(self, x, y, z=0, states=1, drop=set(), keep=set()):
+    def get_cell_df_at(self, x, y, z=0, values=1, drop=set(), keep=set()):
         """
         input:
             self: pyMCDS class instance.
@@ -1254,8 +1255,8 @@ class pyMCDS:
             z: floating point number; default is 0
                 position z-coordinate.
 
-            states: integer; default is 1
-                minimal number of states a variable has to have to be outputted.
+            values: integer; default is 1
+                minimal number of values a variable has to have to be outputted.
                 variables that have only 1 state carry no information.
                 None is a state too.
 
@@ -1268,7 +1269,7 @@ class pyMCDS:
 
             keep: set of strings; default is an empty set
                 set of column labels to be kept in the dataframe.
-                set states=1 to be sure that all variables are kept.
+                set values=1 to be sure that all variables are kept.
                 don't worry: essential columns like ID, coordinates
                 and time will always be kept.
 
@@ -1297,7 +1298,7 @@ class pyMCDS:
             p = ar_p[j, i, k]
 
             # get voxel
-            df_cell = self.get_cell_df(states=states, drop=drop, keep=keep)
+            df_cell = self.get_cell_df(values=values, drop=drop, keep=keep)
             inside_voxel = (
                 (df_cell['position_x'] <= m + dm / 2) &
                 (df_cell['position_x'] >= m - dm / 2) &
@@ -1312,7 +1313,7 @@ class pyMCDS:
         return df_voxel
 
 
-    def get_scatter(self, focus='cell_type', z_slice=0, z_axis=None, cmap='viridis', title=None, grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=None, figsize=None, ax=None):
+    def plot_scatter(self, focus='cell_type', z_slice=0, z_axis=None, cmap='viridis', title=None, grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=None, figsize=None, ax=None):
         """
         input:
             self: pyMCDSts class instance
@@ -1389,7 +1390,7 @@ class pyMCDS:
             print(f'z_slice set to {z_slice}.')
 
         # get data z slice
-        df_cell = self.get_cell_df(states=1, drop=set(), keep=set())
+        df_cell = self.get_cell_df(values=1, drop=set(), keep=set())
         df_cell = df_cell.loc[(df_cell.mesh_center_p == z_slice),:]
 
         # handle z_axis categorical cases
@@ -1497,6 +1498,7 @@ class pyMCDS:
 
     ## GRAPH RELATED FUNCTIONS ##
 
+    # BUE 20221028: repelaced or kept?
     def get_attached_graph_dict(self):
         """
         input:
@@ -1511,7 +1513,7 @@ class pyMCDS:
         """
         return self.data['discrete_cells']['graph']['attached_cells'].copy()
 
-
+    # BUE 20221028: repelaced or kept?
     def get_neighbor_graph_dict(self):
         """
         input:
@@ -1525,6 +1527,10 @@ class pyMCDS:
             function returns the cell neighbor graph as a dictionary object.
         """
         return self.data['discrete_cells']['graph']['neighbor_cells'].copy()
+
+    def make_gml(self):
+        # BUE 20221028: code goes here.
+        pass
 
 
     ## UNIT RELATED FUNCTIONS ##
@@ -1959,6 +1965,7 @@ class pyMCDS:
             if self.verbose:
                 print('working on graph data ...')
 
+            # BUE 20221028: repelaced or kept?
             d_mcds['discrete_cells']['graph'] = {}
 
             # neighborhood cell graph

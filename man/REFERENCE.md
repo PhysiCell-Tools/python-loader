@@ -48,14 +48,14 @@ help(pcdl.TimeStep.get_concentration)
 help(pcdl.TimeStep.get_concentration_df)  # ! workhorse function
 help(pcdl.TimeStep.get_conc_df)  # ! shorthand
 help(pcdl.TimeStep.get_concentration_at)
-help(pcdl.TimeStep.get_contour)  # ! workhorse function
+help(pcdl.TimeStep.plot_contour)  # ! workhorse function
 
 # TimeStep cells and other agents
 help(pcdl.TimeStep.get_celltype_dict)
 help(pcdl.TimeStep.get_cell_variables)
 help(pcdl.TimeStep.get_cell_df)  # ! workhorse function
 help(pcdl.TimeStep.get_cell_df_at)
-help(pcdl.TimeStep.get_scatter)  # ! workhorse function
+help(pcdl.TimeStep.plot_scatter)  # ! workhorse function
 
 # TimeStep graphs
 help(pcdl.TimeStep.get_attached_graph_dict)  # !
@@ -87,12 +87,12 @@ help(pcdl.TimeSeries.get_mcds_list)  # ! workhorse function
 help(pcdl.TimeSeries.get_annmcds_list)  # ! workhorse function
 
 # TimeSeries triage data
-help(pcdl.TimeSeries.get_cell_df_states)  # ! workhorse function
-help(pcdl.TimeSeries.get_conc_df_states)  # ! workhorse function
+help(pcdl.TimeSeries.get_cell_df_features)  # ! workhorse function
+help(pcdl.TimeSeries.get_conc_df_features)  # ! workhorse function
 
 # TimeSeries images and movies
-help(pcdl.TimeSeries.make_imgcell)  # ! workhorse function
-help(pcdl.TimeSeries.make_imgconc)  # ! workhorse function
+help(pcdl.TimeSeries.plot_scatter)  # ! workhorse function
+help(pcdl.TimeSeries.plot_contour)  # ! workhorse function
 help(pcdl.TimeSeries.make_gif)  # ! workhorse function
 help(pcdl.TimeSeries.make_movie)  # ! workhorse function
 

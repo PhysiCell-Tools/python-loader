@@ -237,32 +237,32 @@ class TestPyMcds3D(object):
                (ar_conc.shape == (2,))
 
     def test_mcds_get_concentration_df(self, mcds=mcds):
-        df_conc = mcds.get_concentration_df(z_slice=None, halt=False, states=0, drop=set(), keep=set())
+        df_conc = mcds.get_concentration_df(z_slice=None, halt=False, values=0, drop=set(), keep=set())
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_conc.shape == (1331, 10))
 
     def test_mcds_get_concentration_df_zslice_meshcenter(self, mcds=mcds):
-        df_conc = mcds.get_concentration_df(z_slice=-5, halt=False, states=1, drop=set(), keep=set())
+        df_conc = mcds.get_concentration_df(z_slice=-5, halt=False, values=1, drop=set(), keep=set())
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_conc.shape == (121, 10))
 
     def test_mcds_get_concentration_df_zslice_non_meshcenter(self, mcds=mcds):
-        df_conc = mcds.get_concentration_df(z_slice=-3.333, halt=False, states=1, drop=set(), keep=set())
+        df_conc = mcds.get_concentration_df(z_slice=-3.333, halt=False, values=1, drop=set(), keep=set())
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_conc.shape == (121, 10))
 
-    def test_mcds_get_concentration_df_states(self, mcds=mcds):
-        df_conc = mcds.get_concentration_df(z_slice=None, halt=False, states=2, drop=set(), keep=set())
+    def test_mcds_get_concentration_df_features(self, mcds=mcds):
+        df_conc = mcds.get_concentration_df(z_slice=None, halt=False, values=2, drop=set(), keep=set())
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_conc.shape == (1331, 10))
 
     def test_mcds_get_concentration_df_keep(self, mcds=mcds):
-        df_conc = mcds.get_concentration_df(z_slice=None, halt=False, states=0, drop=set(), keep={'oxygen'})
+        df_conc = mcds.get_concentration_df(z_slice=None, halt=False, values=0, drop=set(), keep={'oxygen'})
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_conc.shape == (1331, 9))
 
-    def test_mcds_get_contour(self, mcds=mcds):
-        fig = mcds.get_contour(
+    def test_mcds_plot_contour(self, mcds=mcds):
+        fig = mcds.plot_contour(
             'oxygen',
             z_slice = -3.333,  # test if
             vmin = None,  # test if
@@ -270,7 +270,7 @@ class TestPyMcds3D(object):
             #alpha = 1,  # matplotlib
             fill = False,  # contour case
             #cmap = 'viridis',  # matplotlib
-            title = 'test_mcds_get_contour',
+            title = 'test_mcds_plot_contour',
             #grid = False,  # matplotlib
             xlim = None,  # test if
             ylim = None,  # test if
@@ -280,8 +280,8 @@ class TestPyMcds3D(object):
         )
         assert(str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
 
-    def test_mcds_get_contourf(self, mcds=mcds):
-        fig = mcds.get_contour(
+    def test_mcds_plot_contourf(self, mcds=mcds):
+        fig = mcds.plot_contour(
             'oxygen',
             z_slice = 0,  # jum over if
             vmin = None,  # test if
@@ -289,7 +289,7 @@ class TestPyMcds3D(object):
             #alpha = 1,  # matplotlib
             fill = True,  # contourf case
             #cmap = 'viridis',  # matplotlib
-            title = 'test_mcds_get_contourf',  # test if
+            title = 'test_mcds_plot_contourf',  # test if
             #grid = True,  # matplotlib
             xlim = None,  # test if
             ylim = None,  # test if
@@ -312,27 +312,27 @@ class TestPyMcds3D(object):
                (len(ds_celltype) == 2)
 
     def test_mcds_get_cell_df(self, mcds=mcds):
-        df_cell = mcds.get_cell_df(states=0, drop=set(), keep=set())
+        df_cell = mcds.get_cell_df(values=0, drop=set(), keep=set())
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_cell.shape == (20460, 117))
 
-    def test_mcds_get_cell_df_states(self, mcds=mcds):
-        df_cell = mcds.get_cell_df(states=2, drop=set(), keep=set())
+    def test_mcds_get_cell_df_features(self, mcds=mcds):
+        df_cell = mcds.get_cell_df(values=2, drop=set(), keep=set())
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_cell.shape == (20460, 32))
 
     def test_mcds_get_cell_df_keep(self, mcds=mcds):
-        df_cell = mcds.get_cell_df(states=0, drop=set(), keep={'oxygen'})
+        df_cell = mcds.get_cell_df(values=0, drop=set(), keep={'oxygen'})
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_cell.shape == (20460, 12))
 
     def test_mcds_get_cell_df_at(self, mcds=mcds):
-        df_cell = mcds.get_cell_df_at(x=0, y=0, z=0, states=1, drop=set(), keep=set())
+        df_cell = mcds.get_cell_df_at(x=0, y=0, z=0, values=1, drop=set(), keep=set())
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_cell.shape == (5, 117))
 
-    def test_mcds_get_scatter_cat(self, mcds=mcds):
-        fig = mcds.get_scatter(
+    def test_mcds_plot_scatter_cat(self, mcds=mcds):
+        fig = mcds.plot_scatter(
             focus='cell_type',  # case categorical
             z_slice = -3.333,   # test if
             z_axis = None,  # test if categorical
@@ -349,9 +349,9 @@ class TestPyMcds3D(object):
         )
         assert (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
 
-    def test_mcds_get_scatter_cat_cmap(self, mcds=mcds):
+    def test_mcds_plot_scatter_cat_cmap(self, mcds=mcds):
         fig, ax = plt.subplots()
-        mcds.get_scatter(
+        mcds.plot_scatter(
             focus='cell_type',  # case categorical
             z_slice = 0,  # jump over if
             z_axis = None,  # test if categorical
@@ -368,8 +368,8 @@ class TestPyMcds3D(object):
         )
         assert (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
 
-    def test_mcds_get_scatter_num(self, mcds=mcds):
-        fig = mcds.get_scatter(
+    def test_mcds_plot_scatter_num(self, mcds=mcds):
+        fig = mcds.plot_scatter(
             focus='pressure',  # case numeric
             z_slice = -3.333,   # test if
             z_axis = None,  # test if numeric

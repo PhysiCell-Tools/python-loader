@@ -196,27 +196,27 @@ class TestyMcdsMicroenvFalse3D(object):
                (len(ds_celltype) == 0)  # settingxml=False
 
     def test_mcds_get_cell_df(self, mcds=mcds):
-        df_cell = mcds.get_cell_df(states=0, drop=set(), keep=set())
+        df_cell = mcds.get_cell_df(values=0, drop=set(), keep=set())
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_cell.shape == (20460, 111))
 
-    def test_mcds_get_cell_df_states(self, mcds=mcds):
-        df_cell = mcds.get_cell_df(states=2, drop=set(), keep=set())
+    def test_mcds_get_cell_df_features(self, mcds=mcds):
+        df_cell = mcds.get_cell_df(values=2, drop=set(), keep=set())
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_cell.shape == (20460, 30))
 
     def test_mcds_get_cell_df_keep(self, mcds=mcds):
-        df_cell = mcds.get_cell_df(states=0, drop=set(), keep={'total_volume'})
+        df_cell = mcds.get_cell_df(values=0, drop=set(), keep={'total_volume'})
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_cell.shape == (20460, 12))
 
     def test_mcds_get_cell_df_at(self, mcds=mcds):
-        df_cell = mcds.get_cell_df_at(x=0, y=0, z=0, states=1, drop=set(), keep=set())
+        df_cell = mcds.get_cell_df_at(x=0, y=0, z=0, values=1, drop=set(), keep=set())
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
                (df_cell.shape == (5, 111))
 
-    def test_mcds_get_scatter_cat(self, mcds=mcds):
-        fig = mcds.get_scatter(
+    def test_mcds_plot_scatter_cat(self, mcds=mcds):
+        fig = mcds.plot_scatter(
             focus='cell_type',  # case categorical
             z_slice = -3.333,   # test if
             z_axis = None,  # test if categorical
@@ -233,9 +233,9 @@ class TestyMcdsMicroenvFalse3D(object):
         )
         assert (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
 
-    def test_mcds_get_scatter_cat_cmap(self, mcds=mcds):
+    def test_mcds_plot_scatter_cat_cmap(self, mcds=mcds):
         fig, ax = plt.subplots()
-        mcds.get_scatter(
+        mcds.plot_scatter(
             focus='cell_type',  # case categorical
             z_slice = 0,  # jump over if
             z_axis = None,  # test if categorical
@@ -252,8 +252,8 @@ class TestyMcdsMicroenvFalse3D(object):
         )
         assert (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
 
-    def test_mcds_get_scatter_num(self, mcds=mcds):
-        fig = mcds.get_scatter(
+    def test_mcds_plot_scatter_num(self, mcds=mcds):
+        fig = mcds.plot_scatter(
             focus='pressure',  # case numeric
             z_slice = -3.333,   # test if
             z_axis = None,  # test if numeric

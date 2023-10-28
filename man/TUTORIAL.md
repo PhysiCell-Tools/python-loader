@@ -297,8 +297,8 @@ oxygen_3d.shape  # (11, 11, 1)
 oxygen_2d.shape  # (11, 11)
 
 # contour plot
-fig = mcds.get_contour('oxygen')
-fig = mcds.get_contour('oxygen', z_slice=3.333)
+fig = mcds.plot_contour('oxygen')
+fig = mcds.plot_contour('oxygen', z_slice=3.333)
 fig.show()
 
 # dataframe with complete voxel coordinate (ijk), mesh coordinate (mnp), and substrate concentration mapping
@@ -306,7 +306,7 @@ df = mcds.get_concentration_df()
 df.head()
 
 # detect substrates that not over whole domain have the same concentration
-df = mcds.get_concentration_df(states=2)
+df = mcds.get_concentration_df(values=2)
 df.head()  # oxygen concentration varies over the domain
 ```
 
@@ -335,9 +335,9 @@ df.info()
 df.head()
 
 # data variables that are in all agents the same carry no information
-# let's filter for variables that carry at least 2 states
-df = mcds.get_cell_df(states=2)
-df.shape # (992, 38) this means: 992 agents in the whole domain, 38 tracked variables have more than 2 states
+# let's filter for variables that carry at least 2 values
+df = mcds.get_cell_df(values=2)
+df.shape # (992, 38) this means: 992 agents in the whole domain, 38 tracked variables have more than 2 values
 
 # data from all agents in the xyz specified voxel
 df = mcds.get_cell_df_at(x=0,y=0,z=0)
@@ -352,10 +352,10 @@ df = mcds.get_cell_df_at(x=111,y=22,z=-5.1)  # None and Warning @ pyMCDS.is_in_m
 Additionally, there is a scatter plot function available, shaped for df\_cell dataframe content.
 ```
 # scatter plot
-fig = mcds.get_scatter()  # default focus is cell_type and z_slice=0
+fig = mcds.plot_scatter()  # default focus is cell_type and z_slice=0
 fig.show()
 
-fig = mcds.get_scatter('oxygen', z_slice=3.333)
+fig = mcds.plot_scatter('oxygen', z_slice=3.333)
 fig.show()
 ```
 
@@ -410,7 +410,7 @@ z_slice = 0
 fig, ax = plt.subplots(figsize=(7,4))
 
 # plot microenvironment
-mcds.get_contour('oxygen', z_slice=z_slice, ax=ax)
+mcds.plot_contour('oxygen', z_slice=z_slice, ax=ax)
 
 # plot cells
 df = mcds.get_cell_df()
@@ -471,7 +471,7 @@ import scanpy as sc
 
 # loads only feature that have not the same value in all cells.
 # max absolute scales the features into a range between -1 and 1.
-ann = mcds.get_anndata(states=2, scale='maxabs')
+ann = mcds.get_anndata(values=2, scale='maxabs')
 
 # principal component analysis
 sc.tl.pca(ann)  # process anndata object with the pca tool.
@@ -642,17 +642,17 @@ Translate physicell output data into static raster graphic images:
 
 ```python
 # cell images colored by cell_type
-mcdsts.make_imgcell()  # jpeg images colored by cell_type
-mcdsts.make_imgcell(ext='png')  # png images colored by cell_type
-mcdsts.make_imgcell(ext='tiff')  # tiff images colored by cell_type
+mcdsts.plot_scatter()  # jpeg images colored by cell_type
+mcdsts.plot_scatter(ext='png')  # png images colored by cell_type
+mcdsts.plot_scatter(ext='tiff')  # tiff images colored by cell_type
 
 # cell images can be colored by any cell dataframe column, like, for example, by pressure
 # there are parameters to adjust cell size and more
-mcdsts.make_imgcell(focus='pressure')  # jpeg images colored by pressure values
+mcdsts.plot_scatter(focus='pressure')  # jpeg images colored by pressure values
 
 # substrate data owns an equivalent function,
 # being able to display any substrate dataframe column
-mcdsts.make_imgconc(focus='oxygen')  # jpeg images colored by oxygen values
+mcdsts.plot_contour(focus='oxygen')  # jpeg images colored by oxygen values
 ```
 
 Translate raster graphic images into a dynamic gif image:\
@@ -662,14 +662,14 @@ If png or tiff files should be used as source, then this has to be explicitly st
 
 ```python
 # using jpeg images for input
-s_path = mcdsts.make_imgcell()
+s_path = mcdsts.plot_scatter()
 mcdsts.make_gif(s_path)
 
 # using jpeg images one-liner
-mcdsts.make_gif(mcdsts.make_imgcell())
+mcdsts.make_gif(mcdsts.plot_scatter())
 
 # using tiff images for input
-s_path = mcdsts.make_imgcell(ext='tiff')
+s_path = mcdsts.plot_scatter(ext='tiff')
 mcdsts.make_gif(s_path, interface='tiff')
 ```
 
@@ -678,14 +678,14 @@ Movies can only be generated for already existing jpeg, png, or tiff images!
 
 ```python
 # using jpeg images for input
-s_path = mcdsts.make_imgcell()
+s_path = mcdsts.plot_scatter()
 mcdsts.make_movie(s_path)
 
 # using jpeg images one-liner
-mcdsts.make_movie(mcdsts.make_imgcell())
+mcdsts.make_movie(mcdsts.plot_scatter())
 
 # using tiff images for input
-s_path = mcdsts.make_imgcell(ext='tiff')
+s_path = mcdsts.plot_scatter(ext='tiff')
 mcdsts.make_movie(s_path, interface='tiff')
 ```
 
@@ -703,18 +703,18 @@ mcdsts = pcdl.TimeSeries(s_path)
 There are functions to help triage over the entier time series for features that more likely might carry information, by checking for variables with variation.
 ```
 # cell data min max values
-dl_cell = mcdsts.get_cell_df_states()  # returns a dictionary with all features, listing all accessed states
+dl_cell = mcdsts.get_cell_df_features()  # returns a dictionary with all features, listing all accessed values
 len(dl_cell)  # 84 features
 dl_cell.keys()  # list feature names
 dl_cell['oxygen']  # list min and max oxygen values found, surrounding a cell, over the whole series
 
-# cell data number of states
+# cell data number of values
 di_state = {}
-[di_state.update({s_feature: len(li_state)}) for s_feature, li_state in mcdsts.get_cell_df_states(allvalues=True).items()]
-di_state['oxygen']  # cell surrounding oxygen was found occupying 2388 different states (values) over the whole time series
+[di_state.update({s_feature: len(li_state)}) for s_feature, li_state in mcdsts.get_cell_df_features(allvalues=True).items()]
+di_state['oxygen']  # cell surrounding oxygen was found occupying 2388 different values (states) over the whole time series
 
 # substrate data
-dl_conc = mcdsts.get_conc_df_states()
+dl_conc = mcdsts.get_conc_df_features()
 dl_conc.keys()  # list feature names
 dl_conc['oxygen']  # list min and max oxygen values found in the domain over the whole series
 ```
@@ -729,7 +729,7 @@ mcdsts = pcdl.TimeSeries(s_path)
 
 A mcds time series can be translated into one single anndata (default).
 ```python
-ann = mcdsts.get_anndata(states=2, scale='maxabs', collapse=True)
+ann = mcdsts.get_anndata(values=2, scale='maxabs', collapse=True)
 print(ann)  # AnnData object with n_obs × n_vars = 889 × 26
             #     obs: 'z_layer', 'time', 'current_phase', 'cycle_model'
             #     obsm: 'spatial'
@@ -740,7 +740,7 @@ And that we have spatial coordinate annotation (position\_x, position\_y, positi
 A mcds time series can be translated into a chronological list of anndata objects, where each entry is a single time step.
 After running get\_anndata, you can access the objects by the get\_annmcds\_list function.
 ```python
-l_ann = mcdsts.get_anndata(states=2, scale='maxabs', collapse=False)
+l_ann = mcdsts.get_anndata(values=2, scale='maxabs', collapse=False)
 len(l_ann)  # 25
 l_ann[24]  # AnnData object with n_obs × n_vars = 1099 × 79
            #     obs: 'z_layer', 'time', 'cell_type', 'current_death_model', 'current_phase', 'cycle_model'

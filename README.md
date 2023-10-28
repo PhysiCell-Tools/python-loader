@@ -35,6 +35,7 @@ The pcdl python3 library maintains three branches branches:
 + Check out: [man/jupyter/pcdl\_repl\_programming.ipynb](https://github.com/elmbeech/physicelldataloader/tree/master/man/jupyter/pcdl_repl_programming.ipynb)
 + Check out: [man/lecture](https://github.com/elmbeech/physicelldataloader/tree/master/man/lecture)
 
+
 ## Reference Manual:
 + Check out: [man/REFERENCE.md](https://github.com/elmbeech/physicelldataloader/tree/master/man/REFERENCE.md)!
 
@@ -50,13 +51,17 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 ## Contributions:
 + original PhysiCell-Tools python-loader implementation: Patrick Wall, Randy Heiland, Paul Macklin
 + fork pcdl implementation: Elmar Bucher
-+ fork pcdl co-programmer and tester: Heber Rocha, Marshal Gress
++ fork pcdl co-programmer and tester: Heber Rocha
++ student prj on pcdl:
+  Benjamin Jacobs (make\_gml),
+  Marshal Gress (plot\_scatter),
+  Thierry-Pascal Fleurant (plot\_timeseries)
 
 
 ## Cite:
 ```bibtex
 @Misc{bucher2023,
-  author    = {Bucher, Elmar and Wall, Patrick and Gress, Marshal and Rocha, Heber and Heiland, Randy and Macklin, Paul},
+  author    = {Bucher, Elmar and Wall, Patrick and Rocha, Heber and Heiland, Randy and Macklin, Paul},
   title     = {elmbeech/physicelldataloader: pcdl platform-independent, pip-installable interface to load PhysiCell agent-based modeling framework output into python3.},
   year      = {2023},
   copyright = {Open Access},
@@ -72,6 +77,14 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 
 
 ## Release Notes:
++ version 3.2.14 (2023-??-??): elmbeech/physicelldatalodader
+    + rename pyMCDS get\_scatter to **plot_scatter** for conciseness.
+    + rename pyMCDS get\_contour to **plot_contour** for conciseness.
+    + rename pyMCDSts make\_imgcell to **plot_scatter** for conciseness.
+    + rename pyMCDSts make\_imgconc to **plot_contour** for conciseness.
+    + rename pyMCDSts get\_cell\_df\_states to **get_cell_df_features** for conciseness.
+    + rename pyMCDSts get\_conc\_df\_states to **get_conc_df_features** for conciseness.
+
 + version 3.2.13 (2023-09-18): elmbeech/physicelldatalodader
     + rename pyMCDSts make\_imgsubs to **make_imgconc** for consistency.
     + add **man/lecture/20230917_pcdl_repl_programming_analysis_plots.pdf** slide deck.

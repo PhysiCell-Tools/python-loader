@@ -41,12 +41,12 @@ def scaler(df_x, scale='maxabs'):
             maxabs: maximum absolute value distance scaler will linearly map
                 all values into a [-1, 1] interval. if the original data
                 has no negative values, the result will be the same as with
-                the minmax scaler (except with features with only one state).
+                the minmax scaler (except with features with only one value).
                 if the feature has only zeros, the value will be set to 0.
 
             minmax: minimum maximum distance scaler will map all values
                 linearly into a [0, 1] interval.
-                if the feature has only one state, the value will be set to 0.
+                if the feature has only one value, the value will be set to 0.
 
             std: standard deviation scaler will result in sigmas.
                 each feature will be mean centered around 0.
@@ -54,7 +54,7 @@ def scaler(df_x, scale='maxabs'):
                 that the values are samples out of the population
                 and not the entire population. it is incomprehensible to me
                 that the equivalent sklearn method has ddof set to 0.
-                if the feature has only one state, the value will be set to 0.
+                if the feature has only one value, the value will be set to 0.
 
     output:
         df_x: pandas dataframe
@@ -225,11 +225,11 @@ class TimeStep(pyMCDS):
     def __init__(self, xmlfile, output_path='.', custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True):
         pyMCDS.__init__(self, xmlfile=xmlfile, output_path=output_path, custom_type=custom_type, microenv=microenv, graph=graph, settingxml=settingxml, verbose=verbose)
 
-    def get_anndata(self, states=1, drop=set(), keep=set(), scale='maxabs'):
+    def get_anndata(self, values=1, drop=set(), keep=set(), scale='maxabs'):
         """
         input:
-            states: integer; default is 1
-                minimal number of states a variable has to have to be outputted.
+            values: integer; default is 1
+                minimal number of values a variable has to have to be outputted.
                 variables that have only 1 state carry no information.
                 None is a state too.
 
@@ -242,7 +242,7 @@ class TimeStep(pyMCDS):
 
             keep: set of strings; default is an empty set
                 set of column labels to be kept in the dataframe.
-                set states=1 to be sure that all variables are kept.
+                set values=1 to be sure that all variables are kept.
                 don't worry: essential columns like ID, coordinates
                 and time will always be kept.
 
@@ -261,7 +261,7 @@ class TimeStep(pyMCDS):
         """
         # processing
         print(f'processing: 1/1 {round(self.get_time(),9)}[min] mcds into anndata obj.')
-        df_cell = self.get_cell_df(states=states, drop=drop, keep=keep)
+        df_cell = self.get_cell_df(values=values, drop=drop, keep=keep)
         df_count, df_obs, df_spatial = _anndextract(df_cell=df_cell, scale=scale)
         annmcds = ad.AnnData(X=df_count, obs=df_obs, obsm={"spatial": df_spatial.values})
 
@@ -317,11 +317,11 @@ class TimeSeries(pyMCDSts):
         pyMCDSts.__init__(self, output_path=output_path, custom_type=custom_type, load=load, microenv=microenv, graph=graph, settingxml=settingxml, verbose=verbose)
         self.l_annmcds = None
 
-    def get_anndata(self, states=1, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=True):
+    def get_anndata(self, values=1, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=True):
         """
         input:
-            states: integer; default is 1
-                minimal number of states a variable has to have to be outputted.
+            values: integer; default is 1
+                minimal number of values a variable has to have to be outputted.
                 variables that have only 1 state carry no information.
                 None is a state too.
 
@@ -365,11 +365,11 @@ class TimeSeries(pyMCDSts):
         df_annspatial = None
 
         # variable triage
-        if (states < 2):
+        if (values < 2):
             ls_column = list(self.l_mcds[0].get_cell_df().columns)
         else:
             ls_column = sorted(es_coor_cell.difference({'ID'}))
-            ls_column.extend(sorted(self.get_cell_df_states(states=states, drop=drop, keep=keep, allvalues=False).keys()))
+            ls_column.extend(sorted(self.get_cell_df_features(values=values, drop=drop, keep=keep, allvalues=False).keys()))
 
         # processing
         i_mcds = len(self.l_mcds)

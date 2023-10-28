@@ -65,23 +65,23 @@ class TestPyMcdsTs(object):
         assert l_mcds == mcdsts.l_mcds
 
     ## data triage command ##
-    def test_mcdsts_get_cell_df_states(self, mcdsts=mcdsts):
-        dl_cell = mcdsts.get_cell_df_states(states=2, drop=set(), keep=set(), allvalues=False)
+    def test_mcdsts_get_cell_df_features(self, mcdsts=mcdsts):
+        dl_cell = mcdsts.get_cell_df_features(values=2, drop=set(), keep=set(), allvalues=False)
         assert len(dl_cell.keys()) == 28 and \
                len(dl_cell['oxygen']) == 2
 
-    def test_mcdsts_get_cell_df_states_allvalues(self, mcdsts=mcdsts):
-        dl_cell = mcdsts.get_cell_df_states(states=2, drop=set(), keep=set(), allvalues=True)
+    def test_mcdsts_get_cell_df_features_allvalues(self, mcdsts=mcdsts):
+        dl_cell = mcdsts.get_cell_df_features(values=2, drop=set(), keep=set(), allvalues=True)
         assert len(dl_cell.keys()) == 28 and \
                len(dl_cell['oxygen']) > 2
 
-    def test_mcdsts_get_conc_df_states(self, mcdsts=mcdsts):
-        dl_conc = mcdsts.get_conc_df_states(states=2, drop=set(), keep=set(), allvalues=False)
+    def test_mcdsts_get_conc_df_features(self, mcdsts=mcdsts):
+        dl_conc = mcdsts.get_conc_df_features(values=2, drop=set(), keep=set(), allvalues=False)
         assert len(dl_conc.keys()) == 1 and \
                len(dl_conc['oxygen']) == 2
 
-    def test_mcdsts_get_conc_df_states_allvalues(self, mcdsts=mcdsts):
-        dl_conc = mcdsts.get_conc_df_states(states=2, drop=set(), keep=set(), allvalues=True)
+    def test_mcdsts_get_conc_df_features_allvalues(self, mcdsts=mcdsts):
+        dl_conc = mcdsts.get_conc_df_features(values=2, drop=set(), keep=set(), allvalues=True)
         assert len(dl_conc.keys()) == 1 and \
                len(dl_conc['oxygen']) > 2
 
@@ -93,9 +93,9 @@ class TestPyMcdsTs(object):
             print('Error @ pyMCDSts._handle_magick : image magick installation version >= 7.0 missing!')
         assert s_magick in {'', 'magick '}
 
-    ## make_imgcell command ##
-    def test_mcdsts_make_imgcell_cat(self, mcdsts=mcdsts):
-        s_path = mcdsts.make_imgcell(
+    ## plot_scatter command ##
+    def test_mcdsts_plot_scatter_cat(self, mcdsts=mcdsts):
+        s_path = mcdsts.plot_scatter(
             focus='cell_type',  # case categorical
             z_slice = -3.333,   # test if
             z_axis = None,  # test if categorical
@@ -114,8 +114,8 @@ class TestPyMcdsTs(object):
                os.path.exists(s_path + 'cell_type_000001440.0.jpeg')
         shutil.rmtree(s_path)
 
-    def test_mcdsts_make_imgcell_cat_cmap(self, mcdsts=mcdsts):
-        s_path = mcdsts.make_imgcell(
+    def test_mcdsts_plot_scatter_cat_cmap(self, mcdsts=mcdsts):
+        s_path = mcdsts.plot_scatter(
             focus='cell_type',  # case categorical
             z_slice = -3.333,   # test if
             z_axis = None,  # test if categorical
@@ -134,8 +134,8 @@ class TestPyMcdsTs(object):
                os.path.exists(s_path + 'cell_type_000001440.0.jpeg')
         shutil.rmtree(s_path)
 
-    def test_mcdsts_make_imgcell_num(self, mcdsts=mcdsts):
-        s_path = mcdsts.make_imgcell(
+    def test_mcdsts_plot_scatter_num(self, mcdsts=mcdsts):
+        s_path = mcdsts.plot_scatter(
             focus='pressure',  # case numeric
             z_slice = -3.333,   # test if
             z_axis = None,  # test if numeric
@@ -154,14 +154,14 @@ class TestPyMcdsTs(object):
                os.path.exists(s_path + 'pressure_000001440.0.jpeg')
         shutil.rmtree(s_path)
 
-    ## make_imgconc command ##
-    def test_mcdsts_make_imgconc(self, mcdsts=mcdsts):
-        s_path = mcdsts.make_imgconc(
+    ## plot_contour command ##
+    def test_mcdsts_plot_contour(self, mcdsts=mcdsts):
+        s_path = mcdsts.plot_contour(
             focus = 'oxygen',
             z_slice = -3.333,  # test if
             extrema = None,  # test if
             #alpha = 1,  # matplotlib
-            #fill = True,  # mcds.get_contour
+            #fill = True,  # mcds.plot_contour
             #cmap = 'viridis',  # matplotlib
             #grid = True,  # matplotlib
             xlim = None,  # test if
@@ -177,7 +177,7 @@ class TestPyMcdsTs(object):
 
     ## make_gif command ##
     def test_mcdsts_make_gif(self, mcdsts=mcdsts):
-        s_path = mcdsts.make_imgcell()
+        s_path = mcdsts.plot_scatter()
         s_opathfile = mcdsts.make_gif(
             path = s_path,
             #interface = 'jpeg',
@@ -188,7 +188,7 @@ class TestPyMcdsTs(object):
 
     ## make_movie command ##
     def test_mcdsts_make_movie(self, mcdsts=mcdsts):
-        s_path = mcdsts.make_imgcell()
+        s_path = mcdsts.plot_scatter()
         s_opathfile = mcdsts.make_movie(
             path = s_path,
             #interface = 'jpeg',
