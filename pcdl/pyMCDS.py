@@ -24,6 +24,7 @@ from pcdl import pdplt
 from scipy import io
 import sys
 import xml.etree.ElementTree as ET
+from pcdl.VERSION import __version__
 
 
 # const physicell codec
@@ -1498,7 +1499,6 @@ class pyMCDS:
 
     ## GRAPH RELATED FUNCTIONS ##
 
-    # BUE 20221028: repelaced or kept?
     def get_attached_graph_dict(self):
         """
         input:
@@ -1513,7 +1513,7 @@ class pyMCDS:
         """
         return self.data['discrete_cells']['graph']['attached_cells'].copy()
 
-    # BUE 20221028: repelaced or kept?
+
     def get_neighbor_graph_dict(self):
         """
         input:
@@ -1528,9 +1528,67 @@ class pyMCDS:
         """
         return self.data['discrete_cells']['graph']['neighbor_cells'].copy()
 
-    def make_gml(self):
-        # BUE 20221028: code goes here.
-        pass
+
+    def make_graph_gml(self, graph_type, node_attr=['cell_type'], edge_attr=True):
+        """
+        """
+        # handle input
+        i_simtime = self.get_time()
+        s_ofile = f'{graph_type}_graph_{round(i_simtime)}min.gml'
+
+        # load dataframe for celltype information
+        df_cell = self.get_cell_df()
+        se_unit = self.get_unit_se()
+        if (graph_type == 'attached'):
+            dei_graph = self.get_attached_graph_dict()
+        elif (graph_type == 'neighbor'):
+            dei_graph = self.get_neighbor_graph_dict()
+        else:
+            sys.exit(f'Erro @ make_graph_gml : unknowen graph_type {graph_type}. knowen are attached and neighbor.')
+
+        # open result gml file
+        f = open(s_ofile, 'w')
+        f.write(f'Creator "pcdl_v{__version__}"\ngraph [\n')
+        f.write(f'  id {int(self.get_time())}\n  comment "simtime_{se_unit["time"]}"\n  label "{graph_type}_graph"\n  directed 0\n')
+        for i_src, ei_dst in dei_graph.items():
+            print(f'{i_src} {sorted(ei_dst)}')
+            # node
+            f.write(f'  node [\n    id {i_src}\n    label "node_{i_src}"\n')
+            # node attributes
+            for s_attr in node_attr:
+                df_cell.loc[i_src, s_attr]
+            f.write(f'  ]\n')
+            # edge
+            for i_dst in ei_dst:
+                if (i_src < i_dst):
+                    f.write(f'  edge [\n    source {i_src}\n    target {i_dst}\n    label "edge_{i_src}_{i_dst}"\n')
+                    if (edge_attr):
+                        # edge distance attribute
+                        x = df_cell.loc[i_src, 'position_x'] - df_cell.loc[i_dst, 'position_x']
+                        y = df_cell.loc[i_src, 'position_y'] - df_cell.loc[i_dst, 'position_y']
+                        z = df_cell.loc[i_src, 'position_z'] - df_cell.loc[i_dst, 'position_z']
+                        r_distance = (x**2 + y**2 + z**2)**(1/2)
+                        f.write(f'    distance_{se_unit["position_y"]} {round(r_distance)}\n')
+                    f.write(f'  ]\n')
+            # development
+            #if (i_src > 16):
+            #    break
+
+        # close result gml file
+        f.write(']\n')
+        f.close()
+
+
+    def make_attached_graph_gml(self, node_attr=['cell_type'], edge_attr=True):
+        """
+        """
+        self.make_graph_gml(graph_type='attached', node_attr=node_attr, edge_attr=edge_attr)
+
+
+    def make_neighbor_graph_gml(self, node_attr=['cell_type'], edge_attr=True):
+        """
+        """
+        self.make_graph_gml(graph_type='neighbor', node_attr=node_attr, edge_attr=edge_attr)
 
 
     ## UNIT RELATED FUNCTIONS ##
