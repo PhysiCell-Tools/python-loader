@@ -1610,25 +1610,25 @@ class pyMCDS:
         # extract data
         ds_unit = {}
         # units for metadata parameters
-        ds_unit.update({'time': [self.data['metadata']['time_units']]})
-        ds_unit.update({'runtime': [self.data['metadata']['runtime_units']]})
-        ds_unit.update({'spatial_unit': [self.data['metadata']['spatial_units']]})
+        ds_unit.update({'time': self.data['metadata']['time_units']})
+        ds_unit.update({'runtime': self.data['metadata']['runtime_units']})
+        ds_unit.update({'spatial_unit': self.data['metadata']['spatial_units']})
 
         # microenvironment
         if self.microenv:
             for s_substrate in self.get_substrate_names():
                 # unit from substrate parameters
                 s_unit = self.data['continuum_variables'][s_substrate]['units']
-                ds_unit.update({s_substrate: [s_unit]})
+                ds_unit.update({s_substrate: s_unit})
 
                 # units from microenvironment parameters
                 s_diffusion_key = f'{s_substrate}_diffusion_coefficient'
                 s_diffusion_unit = self.data['continuum_variables'][s_substrate]['diffusion_coefficient']['units']
-                ds_unit.update({s_diffusion_key: [s_diffusion_unit]})
+                ds_unit.update({s_diffusion_key: s_diffusion_unit})
 
                 s_decay_key = f'{s_substrate}_decay_rate'
                 s_decay_unit = self.data['continuum_variables'][s_substrate]['decay_rate']['units']
-                ds_unit.update({s_decay_key: [s_decay_unit]})
+                ds_unit.update({s_decay_key: s_decay_unit})
 
         # units from cell parameters
         ds_unit.update(self.data['discrete_cells']['units'])
