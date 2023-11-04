@@ -24,6 +24,7 @@ import matplotlib.pyplot as plt
 from glob import glob
 import numpy as np
 import os
+import pandas as pd
 import pathlib
 from pcdl.pyMCDS import pyMCDS, es_coor_cell, es_coor_conc
 import platform
@@ -668,10 +669,169 @@ class pyMCDSts:
         return s_path
 
 
-    def plot_timeseries():
-        # BUE 20221028: code goes here.
-        # df_cell_df is default input, maybe df_conce can be used alternatively?
-        pass
+    # BUE 20221028: code goes here.
+    # maybe def plot_timeseries_cell() ?
+    # maybe def plot_timeseries_conc() ?
+    def plot_timeseries(self,
+            focus_cat = None,  # None (total)  cathegorical and boolean
+            focus_num = None,  # None (non copy focus1) only val??  cat when total!!!
+            aggregate_num = np.mean,  # function to agregate numeric values np.mean, np.median, np.std, min, max, ...
+            frame = 'cell_df',  #'conc_df' 'conc_df'
+            z_slice = None,
+            logy = False,
+            ylim = None,  # [0.0, 1.0]
+            secondary_y = None,
+            subplots = False,
+            sharey = False,
+            linestyle = '-',
+            linewidth = None,
+            cmap = None,
+            color = None,
+            grid = True,
+            legend = True,
+            unit = None,  # only used for yaxis label
+            title = None,
+            ax = None,
+            figsizepx = [640, 480],
+            ext = 'jpeg',  # only if ax None
+            figbgcolor = None,  # only if ax None\
+        ):
+        """
+        https://matplotlib.org/stable/api/_as_gen/matplotlib.lines.Line2D.html#matplotlib.lines.Line2D.set_linestyle
+        """
+        # handle focus
+        if focus_cat is None:
+            focus_cat  = 'total'
+        if focus_num is None:
+            focus_num = 'count'
+            aggregate_num = len
+
+        # handle z_slice
+        if not (z_slice is None):
+            _, _, ar_p_axis = self.get_mesh_mnp_axis()
+            if not (z_slice in ar_p_axis):
+                z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
+                print(f'z_slice set to {z_slice}.')
+
+        # handle figure size
+        # bue 20231103: not really needed, as timeseries are not used for mp4 movies, but why not.
+        figsizepx[0] = figsizepx[0] - (figsizepx[0] % 2)  # enforce even pixel number
+        figsizepx[1] = figsizepx[1] - (figsizepx[1] % 2)
+        r_px = 1 / plt.rcParams['figure.dpi']  # translate px to inch
+        figsize = [None, None]
+        figsize[0] = figsizepx[0] * r_px
+        figsize[1] = figsizepx[1] * r_px
+        if self.verbose:
+            print(f'px figure size set to {figsizepx}.')
+
+        # generate series dataframe
+        df_series = None
+        for mcds in self.get_mcds_list():
+            # fetch cell timestep dataframe
+            if frame in {'cell', 'df_cell', 'cell_df', 'get_cell_df'}:
+                if (focus_cat == 'total') and (focus_num == 'count'):
+                    df_frame = mcds.get_cell_df(values=1, keep={'time'})
+                    df_frame['total'] = 'total'
+                    df_frame['count'] = 1
+                elif (focus_cat == 'total'):
+                    df_frame = mcds.get_cell_df(values=1, keep={focus_num})
+                    df_frame['total'] = 'total'
+                elif (focus_num == 'count'):
+                    df_frame = mcds.get_cell_df(values=1, keep={focus_cat})
+                    df_frame['count'] = 1
+                else:
+                    df_frame = mcds.get_cell_df(values=1, keep={focus_cat,focus_num})
+            # fetch conc timestep dataframe
+            elif frame in {'conc', 'df_conc', 'conc_df', 'get_conc_df'}:
+                if (focus_cat == 'total') and (focus_num == 'count'):
+                    df_frame = mcds.get_conc_df(values=1, keep={'time'})
+                    df_frame['total'] = 'total'
+                    df_frame['count'] = 1
+                elif (focus_cat == 'total'):
+                    df_frame = mcds.get_conc_df(values=1, keep={focus_num})
+                    df_frame['total'] = 'total'
+                elif (focus_num == 'count'):
+                    df_frame = mcds.get_conc_df(values=1, keep={focus_cat})
+                    df_frame['count'] = 1
+                else:
+                    df_frame = mcds.get_conc_df(values=1, keep={focus_cat,focus_num})
+            # error
+            else:
+                sys.exit(f"Error @ pyMCDSts.plot_timeseries : unknowen frame {frame}. knowen are cell_df and conc_df.")
+            # handle z_slize
+            if not (z_slice is None):
+                df_frame = df_frame.loc[(df_frame.mesh_center_p == z_slice),:]
+            # calculate focus_num aggregate per focus_cat
+            r_time = mcds.get_time()
+            df_frame = df_frame.loc[:,[focus_cat, focus_num]]
+            o_aggregate = df_frame.groupby(focus_cat).apply(aggregate_num)
+            if (type(o_aggregate) is pd.Series):
+                o_aggregate.name = r_time
+                df_aggregate = o_aggregate.to_frame()
+            elif (type(o_aggregate) is pd.DataFrame):
+                df_aggregate = o_aggregate.loc[:,[focus_num]]
+                df_aggregate.columns = [r_time]
+            else:
+                sys.exit(f'Error @ pyMCDSts.plot_timeseries : {aggregate_num} calculation returns unexpected variable type {type(o_aggregate)}.\nthe expected type is a pandas Series or DataFrame.')
+            # store result
+            if (df_series is None):
+                df_series = df_aggregate
+            else:
+                df_series = pd.merge(
+                    df_series,
+                    df_aggregate,
+                    left_index=True,
+                    right_index=True,
+                    how='outer'
+                )
+        # transpose dataframe
+        df_series = df_series.T
+
+        # handle ylabel
+        if (focus_num == 'count') and (unit is None):
+            ylabel = focus_num
+        elif (focus_num == 'count'):
+            ylabel = f'focus_num [{unit}]'
+        elif (unit is None):
+            ylabel = f'{aggregate_num.__name__} {focus_num}'
+        else:
+            ylabel = f'{aggregate_num.__name__} {focus_num} [{unit}]'
+        # generate series line plot
+        if (ax is None):
+            fig, ax = plt.subplots(figsize=figsize)
+        else:
+            fig = plt.gcf()
+        df_series.plot(
+            kind = 'line',
+            logy = logy,
+            ylim = ylim,
+            secondary_y = secondary_y,
+            subplots = subplots,
+            sharey = sharey,
+            linestyle = linestyle,
+            linewidth = linewidth,
+            cmap = cmap,
+            color = color,
+            grid = grid,
+            legend = legend,
+            ylabel = ylabel,
+            xlabel = f"time [{mcds.get_unit_se()['time']}]",
+            title = title,
+            ax = ax
+        )
+        # output
+        if (ext is None):
+            return fig
+        else:
+            if (focus_num == 'count'):
+                s_pathfile = f'{self.output_path}timeseries_{frame}_{focus_cat}_{focus_num}.{ext}'
+            else:
+                s_pathfile = f'{self.output_path}timeseries_{frame}_{focus_cat}_{focus_num}_{aggregate_num.__name__}.{ext}'
+            if figbgcolor is None:
+                figbgcolor = 'auto'
+            fig.savefig(s_pathfile, facecolor=figbgcolor)
+            plt.close(fig)
+            return s_pathfile
 
 
     def make_gif(self, path, interface='jpeg'):
