@@ -222,6 +222,7 @@ class pyMCDS:
         for a particular time step and the therein referenced files.
     """
     def __init__(self, xmlfile, output_path='.', custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True):
+        self.path = None
         self.custom_type = custom_type
         self.microenv = microenv
         self.graph = graph
@@ -1529,16 +1530,15 @@ class pyMCDS:
         return self.data['discrete_cells']['graph']['neighbor_cells'].copy()
 
 
-    def make_graph_gml(self, graph_type, node_attr=['cell_type'], edge_attr=True):
+    def make_graph_gml(self, graph_type, node_attr=['cell_type'], edge_attr=True, verbose=True):
         """
         """
-        # handle input
-        i_simtime = self.get_time()
-        s_ofile = f'{graph_type}_graph_{round(i_simtime)}min.gml'
 
         # load dataframe for celltype information
         df_cell = self.get_cell_df()
         se_unit = self.get_unit_se()
+        s_unit_simtime = se_unit["time"]
+        r_simtime = self.get_time()
         if (graph_type == 'attached'):
             dei_graph = self.get_attached_graph_dict()
         elif (graph_type == 'neighbor'):
@@ -1546,12 +1546,17 @@ class pyMCDS:
         else:
             sys.exit(f'Erro @ make_graph_gml : unknowen graph_type {graph_type}. knowen are attached and neighbor.')
 
+        # generate filename
+        s_file = f'{graph_type}_graph_{round(r_simtime):08}{s_unit_simtime}.gml'
+        s_pathfile = self.path + '/' + s_file
+
         # open result gml file
-        f = open(s_ofile, 'w')
+        f = open(s_pathfile, 'w')
         f.write(f'Creator "pcdl_v{__version__}"\ngraph [\n')
-        f.write(f'  id {int(self.get_time())}\n  comment "simtime_{se_unit["time"]}"\n  label "{graph_type}_graph"\n  directed 0\n')
+        f.write(f'  id {int(r_simtime)}\n  comment "simtime_{s_unit_simtime}"\n  label "{graph_type}_graph"\n  directed 0\n')
         for i_src, ei_dst in dei_graph.items():
-            print(f'{i_src} {sorted(ei_dst)}')
+            if verbose:
+                print(f'{i_src} {sorted(ei_dst)}')
             # node
             f.write(f'  node [\n    id {i_src}\n    label "node_{i_src}"\n')
             # node attributes
@@ -1674,7 +1679,7 @@ class pyMCDS:
             ls_xmlfile = xmlfile.split('/')
             s_xmlfile = ls_xmlfile.pop(-1)
             output_path = '/'.join(ls_xmlfile)
-        s_outputpath = output_path
+        self.path = output_path
 
         # generate output dictionary
         d_mcds = {}
@@ -1692,7 +1697,7 @@ class pyMCDS:
 
         if not ((self.settingxml is None) or (self.settingxml is False)):
             # load Physicell_settings xml file
-            s_xmlpathfile_setting = s_outputpath + '/' + self.settingxml
+            s_xmlpathfile_setting = self.path + '/' + self.settingxml
             x_tree = ET.parse(s_xmlpathfile_setting)
             if self.verbose:
                 print(f'reading: {s_xmlpathfile_setting}')
@@ -1741,7 +1746,7 @@ class pyMCDS:
         # read physicell output xml path/file #
         #######################################
 
-        s_xmlpathfile_output= s_outputpath + '/' + s_xmlfile
+        s_xmlpathfile_output = self.path + '/' + s_xmlfile
         x_tree = ET.parse(s_xmlpathfile_output)
         if self.verbose:
             print(f'reading: {s_xmlpathfile_output}')
@@ -1852,7 +1857,7 @@ class pyMCDS:
         ]
 
         # voxel data must be loaded from .mat file
-        s_voxelpathfile = s_outputpath + '/' + x_mesh.find('voxels').find('filename').text
+        s_voxelpathfile = self.path + '/' + x_mesh.find('voxels').find('filename').text
         ar_mesh_initial = io.loadmat(s_voxelpathfile)['mesh']
         if self.verbose:
             print(f'reading: {s_voxelpathfile}')
@@ -1875,7 +1880,7 @@ class pyMCDS:
             # of species being tracked. the first 3 rows represent (x, y, z) of voxel
             # centers. The fourth row contains the voxel volume. The 5th row and up will
             # contain values for that species in that voxel.
-            s_microenvpathfile = s_outputpath + '/' +  x_microenv.find('data').find('filename').text
+            s_microenvpathfile = self.path + '/' +  x_microenv.find('data').find('filename').text
             ar_microenv = io.loadmat(s_microenvpathfile)['multiscale_microenvironment']
             if self.verbose:
                 print(f'reading: {s_microenvpathfile}')
@@ -1999,7 +2004,7 @@ class pyMCDS:
         d_mcds['discrete_cells']['units'] = ds_unit
 
         # load the file
-        s_cellpathfile = s_outputpath + '/' + x_celldata.find('filename').text
+        s_cellpathfile = self.path + '/' + x_celldata.find('filename').text
         try:
             ar_cell = io.loadmat(s_cellpathfile)['cells']
             if self.verbose:
@@ -2027,7 +2032,7 @@ class pyMCDS:
             d_mcds['discrete_cells']['graph'] = {}
 
             # neighborhood cell graph
-            s_cellpathfile = s_outputpath + '/' + x_cell.find('neighbor_graph').find('filename').text
+            s_cellpathfile = self.path + '/' + x_cell.find('neighbor_graph').find('filename').text
             dei_graph = graphfile_parser(s_pathfile=s_cellpathfile)
             if self.verbose:
                 print(f'reading: {s_cellpathfile}')
@@ -2036,7 +2041,7 @@ class pyMCDS:
             d_mcds['discrete_cells']['graph'].update({'neighbor_cells': dei_graph})
 
             # attached cell graph
-            s_cellpathfile = s_outputpath + '/' + x_cell.find('attached_cells_graph').find('filename').text
+            s_cellpathfile = self.path + '/' + x_cell.find('attached_cells_graph').find('filename').text
             dei_graph = graphfile_parser(s_pathfile=s_cellpathfile)
             if self.verbose:
                 print(f'reading: {s_cellpathfile}')

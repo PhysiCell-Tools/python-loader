@@ -931,3 +931,28 @@ class pyMCDSts:
         # output
         os.chdir(s_pwd)
         return s_opathfile
+
+
+    # GENERATE GML GRAPH FILES ###
+
+    def make_graph_gml(self, graph_type, node_attr=['cell_type'], edge_attr=True, verbose=False):
+        """
+        input:
+            graph_type: string
+                attached or neighbor.
+
+            node_attr: list of string
+                list of df_cell colum names.
+
+            edge_attr: boolean
+                should the edges be weightet by euclidian distance?
+        """
+        s_unit_simtime = self.l_mcds[0].get_unit_se()['time']
+        for mcds in self.get_mcds_list():
+            print(f'processing timestep: {round(mcds.get_time())} [{s_unit_simtime}]')
+            mcds.make_graph_gml(
+                graph_type = graph_type,
+                node_attr = node_attr,
+                edge_attr = edge_attr,
+                verbose = verbose,
+            )
