@@ -682,6 +682,7 @@ class pyMCDSts:
             ylim = None,  # [0.0, 1.0]
             secondary_y = None,
             subplots = False,
+            sharex = False,
             sharey = False,
             linestyle = '-',
             linewidth = None,
@@ -807,6 +808,7 @@ class pyMCDSts:
             ylim = ylim,
             secondary_y = secondary_y,
             subplots = subplots,
+            sharex = sharex,
             sharey = sharey,
             linestyle = linestyle,
             linewidth = linewidth,
