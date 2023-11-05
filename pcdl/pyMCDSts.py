@@ -330,10 +330,9 @@ class pyMCDSts:
                 column name within cell dataframe.
 
             z_slice: floating point number; default is 0
-                z-axis position to slice a 2D xy-plain out of the
-                3D substrate concentration mesh. if z_slice position
-                is not an exact mesh center coordinate, then z_slice
-                will be adjusted to the nearest mesh center value,
+                z-axis position to slice a 2D xy-plain out of the 3D mesh.
+                if z_slice position is not an exact mesh center coordinate,
+                then z_slice will be adjusted to the nearest mesh center value,
                 the smaller one, if the coordinate lies on a saddle point.
 
             z_axis: for a categorical focus: set of labels;
@@ -346,7 +345,7 @@ class pyMCDSts:
                 matplotlib colormap string.
                 https://matplotlib.org/stable/tutorials/colors/colormaps.html
 
-            grid: boolean default True.
+            grid: boolean; default True.
                 plot axis grid lines.
 
             legend_loc: string; default is 'lower left'.
@@ -375,14 +374,14 @@ class pyMCDSts:
                 None tries to take the value from the initial.svg file.
                 fall back setting is 36.
 
-            figsizepx: list of two integers, default is None
+            figsizepx: list of two integers; default is None
                 size of the figure in pixels, (x, y).
                 the given x and y will be rounded to the nearest even number,
                 to be able to generate movies from the images.
                 None tries to take the values from the initial.svg file.
                 fall back setting is [640, 480].
 
-            ext: string
+            ext: string; default is jpeg
                 output image format. possible formats are jpeg, png, and tiff.
 
             figbgcolor: string; default is None which is transparent (png)
@@ -395,6 +394,7 @@ class pyMCDSts:
         description:
             this function generates image time series
             based on the physicell data output.
+
             jpeg is by definition a lossy compressed image format.
             png is by definition a lossless compressed image format.
             tiff can by definition be a lossy or lossless compressed format.
@@ -535,7 +535,7 @@ class pyMCDSts:
                 alpha channel transparency value
                 between 1 (not transparent at all) and 0 (totally transparent).
 
-            fill: boolean
+            fill: boolean; default True
                 True generates a matplotlib contourf plot.
                 False generates a matplotlib contour plot.
 
@@ -543,7 +543,7 @@ class pyMCDSts:
                 matplotlib colormap.
                 https://matplotlib.org/stable/tutorials/colors/colormaps.html
 
-            grid: boolean default True.
+            grid: boolean; default True.
                 plot axis grid lines.
 
             xlim: tuple of two floats; default is None
@@ -557,14 +557,14 @@ class pyMCDSts:
             xyequal: boolean; default True
                 to specify equal axis spacing for x and y axis.
 
-            figsizepx: list of two integers, default is None
+            figsizepx: list of two integers; default is None
                 size of the figure in pixels, (x, y).
                 the given x and y will be rounded to the nearest even number,
                 to be able to generate movies from the images.
                 None tries to take the values from the initial.svg file.
                 fall back setting is [640, 480].
 
-            ext: string
+            ext: string; default is jpeg
                 output image format. possible formats are jpeg, png, and tiff.
 
             figbgcolor: string; default is None which is transparent (png)
@@ -577,6 +577,7 @@ class pyMCDSts:
         description:
             this function generates image time series
             based on the physicell data output.
+
             jpeg is by definition a lossy compressed image format.
             png is by definition a lossless compressed image format.
             tiff can by definition be a lossy or lossless compressed format.
@@ -669,36 +670,119 @@ class pyMCDSts:
         return s_path
 
 
-    # BUE 20221028: code goes here.
-    # maybe def plot_timeseries_cell() ?
-    # maybe def plot_timeseries_conc() ?
-    def plot_timeseries(self,
-            focus_cat = None,  # None (total)  cathegorical and boolean
-            focus_num = None,  # None (non copy focus1) only val??  cat when total!!!
-            aggregate_num = np.mean,  # function to agregate numeric values np.mean, np.median, np.std, min, max, ...
-            frame = 'cell_df',  #'conc_df' 'conc_df'
-            z_slice = None,
-            logy = False,
-            ylim = None,  # [0.0, 1.0]
-            secondary_y = None,
-            subplots = False,
-            sharex = False,
-            sharey = False,
-            linestyle = '-',
-            linewidth = None,
-            cmap = None,
-            color = None,
-            grid = True,
-            legend = True,
-            unit = None,  # only used for yaxis label
-            title = None,
-            ax = None,
-            figsizepx = [640, 480],
-            ext = 'jpeg',  # only if ax None
-            figbgcolor = None,  # only if ax None\
-        ):
+    def plot_timeseries(self, focus_cat=None, focus_num=None, aggregate_num=np.mean, frame='cell_df', z_slice=None, logy=False, ylim=None, secondary_y=None, subplots=False, sharex=False, sharey=False, linestyle='-', linewidth=None, cmap=None, color=None, grid=True, legend=True, yunit=None, title=None, ax=None, figsizepx=[640, 480], ext='jpeg', figbgcolor=None):
         """
-        https://matplotlib.org/stable/api/_as_gen/matplotlib.lines.Line2D.html#matplotlib.lines.Line2D.set_linestyle
+        input:
+            self: pyMCDSts class instance
+
+            focus_cat: string; default is None
+                categorical or boolean data column within dataframe specified under frame.
+                default is None, which is total, which is all agents or voxels, no categories.
+
+            focus_num: string; default is None
+                numerical data column within dataframe specified under frame.
+                default is None, which is count, agent or voxel count.
+
+            aggregate_num: function; default np.mean
+                aggregation function for focus_num data.
+
+            frame: string; default is cell_df
+                to specifies the data dataframe.
+                cell_df: dataframe will be retrieved through the mcds.get_cell_df function.
+                conc_df: dataframe will be retrieved through the mcds.get_conc_df function.
+
+            z_slice: floating point number; default is None
+                z-axis position to slice a 2D xy-plain out of the 3D mesh.
+                if z_slice position numeric but not an exact mesh center coordinate,
+                then z_slice will be adjusted to the nearest mesh center value,
+                the smaller one, if the coordinate lies on a saddle point.
+                if set to None, the whole domain is taken.
+
+            logy: bool; default False
+                if True, then y axis is natural log scaled.
+
+            ylim: tuple of two floats; default is None
+                y axis min and max value.
+                default is None, which automatically detects min and max value.
+
+            secondary_y: bool or list of strings; default False
+                whether to plot on the secondary y-axis.
+                if a list, which columns to plot on the secondary y-axis.
+
+            subplots: bool or sequence of iterable, default False
+                whether to group columns into subplots.
+                a sequence of iterable of column labels
+                will create a subplot for each group of columns.
+
+            sharex: bool, default False
+                in case subplots is True, share x-axis by
+                setting some x-axis labels to invisible.
+
+            sharey: bool, default False
+                in case subplots is True, share y-axis range and possibly
+                setting some y-axis labels to invisible.
+
+            linestyle: string or list of strings, default '-'
+                matplotlib line style {'-', '--', '-.', ':', ''},
+                over all or per column.
+
+            linewidth: float or list of float, default None
+                line width in points.
+
+            cmap: string; default None
+                matplotlib colormap string.
+                https://matplotlib.org/stable/tutorials/colors/colormaps.html
+
+            color: string or list of string or dictionary; default None
+                color string referred to by name, RGB or RGBA code.
+
+            grid: boolean; default True
+                plot axis grid lines.
+
+            legend: bool or 'reverse'; default True
+                if True or reverse, place legend on axis subplots.
+
+            yunit: string; default None
+                string to specify y-axis unit.
+                None will not print a unit on the y-axis.
+
+            title: string or list; default None
+                title to use for the plot or subplots.
+                None will print no title.
+
+            ax: matplotlib axis object; default setting is None
+                the ax object, which will be used as a canvas for plotting.
+                None will generate a figure and ax object from scratch.
+
+            figsizepx: list of two integers, default is [640, 480]
+                size of the figure in pixels, (x, y).
+                the given x and y will be rounded to the nearest even number,
+                to be able to generate movies from the images.
+
+            ext: string; default is jpeg
+                output image format. possible formats are None, jpeg, png, and tiff.
+                if None then the matplotlib figure is returned by the function
+                and not writen to file.
+
+            figbgcolor: string; default is None which is transparent (png)
+                or white (jpeg, tiff).
+                figure background color.
+                only relevant if ext is None.
+
+        output:
+            if ext is None: a fig matplotlib figure, containing the ax axis object, is returned.
+            else: an image file is generated under the returned path.
+
+        description:
+            this function generates timeseries plot and either returns a
+            matplotlib figure or an image file (jpeg, png, tiff).
+
+            jpeg is by definition a lossy compressed image format.
+            png is by definition a lossless compressed image format.
+            tiff can by definition be a lossy or lossless compressed format.
+            https://en.wikipedia.org/wiki/JPEG
+            https://en.wikipedia.org/wiki/Portable_Network_Graphics
+            https://en.wikipedia.org/wiki/TIFF
         """
         # handle focus
         if focus_cat is None:
@@ -789,14 +873,15 @@ class pyMCDSts:
         df_series = df_series.T
 
         # handle ylabel
-        if (focus_num == 'count') and (unit is None):
+        if (focus_num == 'count') and (yunit is None):
             ylabel = focus_num
         elif (focus_num == 'count'):
-            ylabel = f'focus_num [{unit}]'
-        elif (unit is None):
+            ylabel = f'focus_num [{yunit}]'
+        elif (yunit is None):
             ylabel = f'{aggregate_num.__name__} {focus_num}'
         else:
-            ylabel = f'{aggregate_num.__name__} {focus_num} [{unit}]'
+            ylabel = f'{aggregate_num.__name__} {focus_num} [{yunit}]'
+
         # generate series line plot
         if (ax is None):
             fig, ax = plt.subplots(figsize=figsize)
@@ -821,6 +906,7 @@ class pyMCDSts:
             title = title,
             ax = ax
         )
+
         # output
         if (ext is None):
             return fig
