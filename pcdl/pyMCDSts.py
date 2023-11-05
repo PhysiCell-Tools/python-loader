@@ -774,7 +774,7 @@ class pyMCDSts:
             else: an image file is generated under the returned path.
 
         description:
-            this function generates timeseries plot and either returns a
+            this function to generate a timeseries plot and either returns a
             matplotlib figure or an image file (jpeg, png, tiff).
 
             jpeg is by definition a lossy compressed image format.
@@ -1023,24 +1023,48 @@ class pyMCDSts:
 
     # GENERATE GML GRAPH FILES ###
 
-    def make_graph_gml(self, graph_type, node_attr=['cell_type'], edge_attr=True, verbose=False):
+    def make_graph_gml(self, graph_type, node_attr=['cell_type'], edge_attr=True):
         """
         input:
-            graph_type: string
-                attached or neighbor.
+            self: pyMCDS class instance.
 
-            node_attr: list of string
-                list of df_cell colum names.
+            graph_type: string; default 'neighbor'
+                to specify which physicell output data should be processed.
+                attached: processes mcds.get_attached_graph_dict dictionary.
+                neighbor: processes mcds.get_neighbor_graph_dict dictionary.
 
-            edge_attr: boolean
-                should the edges be weightet by euclidian distance?
+            node_attr: list of strings; default ['cell_type']
+                list of mcds.get_cell_df dataframe columns, used for
+                node attributes.
+
+            edge_attr: boolean; default True
+                specifies if the spatial Euclidean distance is used for
+                edge attribute, to generate a weighted graph.
+
+        output:
+            gml file for each time step.
+                path and filenames are printed to the standard output.
+
+        description:
+            function to generate graph files in the gml graph modelling language
+            standard format.
+
+            gml was the outcome of an initiative that started at
+            the international symposium on graph drawing 1995 in Passau
+            and ended at Graph Drawing 1996 in Berkeley. the networkx python
+            and igraph C and python libraries for graph analysis are
+            gml compatible and can as such read and write this file format.
+
+            https://en.wikipedia.org/wiki/Graph_Modelling_Language
+            https://networkx.org/
+            https://igraph.org/
         """
-        s_unit_simtime = self.l_mcds[0].get_unit_se()['time']
         for mcds in self.get_mcds_list():
-            print(f'processing timestep: {round(mcds.get_time())} [{s_unit_simtime}]')
-            mcds.make_graph_gml(
+            s_pathfile = mcds.make_graph_gml(
                 graph_type = graph_type,
                 node_attr = node_attr,
                 edge_attr = edge_attr,
                 verbose = verbose,
             )
+            print(s_pathfile)
+

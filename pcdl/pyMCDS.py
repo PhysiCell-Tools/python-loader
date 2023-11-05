@@ -1530,18 +1530,49 @@ class pyMCDS:
         return self.data['discrete_cells']['graph']['neighbor_cells'].copy()
 
 
-    def make_graph_gml(self, graph_type, node_attr=['cell_type'], edge_attr=True, verbose=True):
+    def make_graph_gml(self, graph_type, node_attr=['cell_type'], edge_attr=True):
         """
-        """
+        input:
+            self: pyMCDS class instance.
 
+            graph_type: string; default 'neighbor'
+                to specify which physicell output data should be processed.
+                attached: processes mcds.get_attached_graph_dict dictionary.
+                neighbor: processes mcds.get_neighbor_graph_dict dictionary.
+
+            node_attr: list of strings; default ['cell_type']
+                list of mcds.get_cell_df dataframe columns, used for
+                node attributes.
+
+            edge_attr: boolean; default True
+                specifies if the spatial Euclidean distance is used for
+                edge attribute, to generate a weighted graph.
+
+        output:
+            gml file, generated under the returned path.
+
+        description:
+            function to generate graph files in the gml graph modelling language
+            standard format. 
+
+            gml was the outcome of an initiative that started at
+            the international symposium on graph drawing 1995 in Passau
+            and ended at Graph Drawing 1996 in Berkeley. the networkx python
+            and igraph C and python libraries for graph analysis are
+            gml compatible and can as such read and write this file format.
+
+            https://en.wikipedia.org/wiki/Graph_Modelling_Language
+            https://networkx.org/
+            https://igraph.org/
+        """
         # load dataframe for celltype information
         df_cell = self.get_cell_df()
         se_unit = self.get_unit_se()
         s_unit_simtime = se_unit["time"]
         r_simtime = self.get_time()
-        if (graph_type == 'attached'):
+        if (graph_type in {'attached'}):
             dei_graph = self.get_attached_graph_dict()
-        elif (graph_type == 'neighbor'):
+        elif (graph_type in {'neighbor'}):
             dei_graph = self.get_neighbor_graph_dict()
         else:
             sys.exit(f'Erro @ make_graph_gml : unknowen graph_type {graph_type}. knowen are attached and neighbor.')
@@ -1555,8 +1586,7 @@ class pyMCDS:
         f.write(f'Creator "pcdl_v{__version__}"\ngraph [\n')
         f.write(f'  id {int(r_simtime)}\n  comment "simtime_{s_unit_simtime}"\n  label "{graph_type}_graph"\n  directed 0\n')
         for i_src, ei_dst in dei_graph.items():
-            if verbose:
-                print(f'{i_src} {sorted(ei_dst)}')
+            #print(f'{i_src} {sorted(ei_dst)}')
             # node
             f.write(f'  node [\n    id {i_src}\n    label "node_{i_src}"\n')
             # node attributes
@@ -1578,20 +1608,76 @@ class pyMCDS:
             # development
             #if (i_src > 16):
             #    break
-
         # close result gml file
         f.write(']\n')
         f.close()
 
+        # output
+        return s_pathfile
+
 
     def make_attached_graph_gml(self, node_attr=['cell_type'], edge_attr=True):
         """
+        input:
+            self: pyMCDS class instance.
+
+            node_attr: list of strings; default ['cell_type']
+                list of mcds.get_cell_df dataframe columns, used for
+                node attributes.
+
+            edge_attr: boolean; default True
+                specifies if the spatial Euclidean distance is used for
+                edge attribute, to generate a weighted graph.
+
+        output:
+            gml file, generated under the returned path.
+
+        description:
+            function to generate graph files in the gml graph modelling language
+            standard format from phyicell attached cells graph output.
+
+            gml was the outcome of an initiative that started at
+            the international symposium on graph drawing 1995 in Passau
+            and ended at Graph Drawing 1996 in Berkeley. the networkx python
+            and igraph C and python libraries for graph analysis are
+            gml compatible and can as such read and write this file format.
+
+            https://en.wikipedia.org/wiki/Graph_Modelling_Language
+            https://networkx.org/
+            https://igraph.org/
         """
         self.make_graph_gml(graph_type='attached', node_attr=node_attr, edge_attr=edge_attr)
 
 
     def make_neighbor_graph_gml(self, node_attr=['cell_type'], edge_attr=True):
         """
+        input:
+            self: pyMCDS class instance.
+
+            node_attr: list of strings; default ['cell_type']
+                list of mcds.get_cell_df dataframe columns, used for
+                node attributes.
+
+            edge_attr: boolean; default True
+                specifies if the spatial Euclidean distance is used for
+                edge attribute, to generate a weighted graph.
+
+        output:
+            gml file, generated under the returned path.
+
+        description:
+            function to generate graph files in the gml graph modelling language
+            standard format from phyicell cell neighbor graph output.
+
+            gml was the outcome of an initiative that started at
+            the international symposium on graph drawing 1995 in Passau
+            and ended at Graph Drawing 1996 in Berkeley. the networkx python
+            and igraph C and python libraries for graph analysis are
+            gml compatible and can as such read and write this file format.
+
+            https://en.wikipedia.org/wiki/Graph_Modelling_Language
+            https://networkx.org/
+            https://igraph.org/
         """
         self.make_graph_gml(graph_type='neighbor', node_attr=node_attr, edge_attr=edge_attr)
 
