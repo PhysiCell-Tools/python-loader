@@ -27,17 +27,17 @@ The pcdl python3 library maintains three branches branches:
 
 
 ## HowTo Guide:
-+ Check out: [man/HOWTO.md](https://github.com/elmbeech/physicelldataloader/tree/master/man/HOWTO.md)!
++ [man/HOWTO.md](https://github.com/elmbeech/physicelldataloader/tree/master/man/HOWTO.md)!
 
 
 ## Tutorial:
-+ Check out: [man/TUTORIAL.md](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL.md)!
-+ Check out: [man/jupyter/pcdl\_repl\_programming.ipynb](https://github.com/elmbeech/physicelldataloader/tree/master/man/jupyter/pcdl_repl_programming.ipynb)
-+ Check out: [man/lecture](https://github.com/elmbeech/physicelldataloader/tree/master/man/lecture)
++ [man/TUTORIAL.md](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL.md)!
++ [man/jupyter/pcdl\_repl\_programming.ipynb](https://github.com/elmbeech/physicelldataloader/tree/master/man/jupyter/pcdl_repl_programming.ipynb)
++ [man/lecture](https://github.com/elmbeech/physicelldataloader/tree/master/man/lecture)
 
 
 ## Reference Manual:
-+ Check out: [man/REFERENCE.md](https://github.com/elmbeech/physicelldataloader/tree/master/man/REFERENCE.md)!
++ [man/REFERENCE.md](https://github.com/elmbeech/physicelldataloader/tree/master/man/REFERENCE.md)!
 
 
 ## Discussion:
@@ -73,17 +73,23 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 
 ## Road Map:
 + [vtk file format](https://docs.vtk.org/en/latest/design_documents/VTKFileFormats.html) output, maybe [stl](https://en.wikipedia.org/wiki/STL_(file_format)) and [wavefront obj](https://en.wikipedia.org/wiki/Wavefront_.obj_file) output.
-+ [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) ([networkx](https://networkx.org/) and [igraph](https://igraph.org/) compatible) output.
 
 
 ## Release Notes:
-+ version 3.2.14 (2023-??-??): elmbeech/physicelldatalodader
++ version 3.2.14 (2024-??-??): elmbeech/physicelldatalodader
     + rename pyMCDS get\_scatter to **plot_scatter** for conciseness.
     + rename pyMCDS get\_contour to **plot_contour** for conciseness.
     + rename pyMCDSts make\_imgcell to **plot_scatter** for conciseness.
     + rename pyMCDSts make\_imgconc to **plot_contour** for conciseness.
     + rename pyMCDSts get\_cell\_df\_states to **get_cell_df_features** for conciseness.
     + rename pyMCDSts get\_conc\_df\_states to **get_conc_df_features** for conciseness.
+    + new pyMCDS **make_cell_vtk** function.
+    + new pyMCDS **make_conc_vtk** function.
+    + new pyMCDS **make_graph_gml** function to save graphs in a networkx and igraph compatible files fromat.
+    + new pyMCDSts **make_cell_vtk** function.
+    + new pyMCDSts **make_conc_vtk** function.
+    + new pyMCDSts **make_graph_gml** function to save graphs in a networkx and igraph compatible files format.
+    + new pyMCDSts **plot_timeseries** frunction to plot time series.
 
 + version 3.2.13 (2023-09-18): elmbeech/physicelldatalodader
     + rename pyMCDSts make\_imgsubs to **make_imgconc** for consistency.

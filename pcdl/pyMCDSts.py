@@ -793,7 +793,7 @@ class pyMCDSts:
 
         # handle z_slice
         if not (z_slice is None):
-            _, _, ar_p_axis = self.get_mesh_mnp_axis()
+            _, _, ar_p_axis = self.l_mcds[0].get_mesh_mnp_axis()
             if not (z_slice in ar_p_axis):
                 z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
                 print(f'z_slice set to {z_slice}.')
@@ -849,7 +849,7 @@ class pyMCDSts:
             # calculate focus_num aggregate per focus_cat
             r_time = mcds.get_time()
             df_frame = df_frame.loc[:,[focus_cat, focus_num]]
-            o_aggregate = df_frame.groupby(focus_cat).apply(aggregate_num)
+            o_aggregate = df_frame.groupby(focus_cat).apply(aggregate_num, include_groups=False)
             if (type(o_aggregate) is pd.Series):
                 o_aggregate.name = r_time
                 df_aggregate = o_aggregate.to_frame()
@@ -1023,7 +1023,7 @@ class pyMCDSts:
 
     # GENERATE GML GRAPH FILES ###
 
-    def make_graph_gml(self, graph_type, node_attr=['cell_type'], edge_attr=True):
+    def make_graph_gml(self, graph_type='neighbor', node_attr=['cell_type'], edge_attr=True):
         """
         input:
             self: pyMCDS class instance.
@@ -1064,7 +1064,7 @@ class pyMCDSts:
                 graph_type = graph_type,
                 node_attr = node_attr,
                 edge_attr = edge_attr,
-                verbose = verbose,
             )
-            print(s_pathfile)
+            if (self.verbose):
+                print(s_pathfile)
 

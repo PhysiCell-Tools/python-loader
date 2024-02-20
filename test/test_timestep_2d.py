@@ -378,6 +378,18 @@ class TestPyMcdsMicroenvTrue2D(object):
                (len(dei_graph) == 1099) and \
                (len(dei_graph[1098]) == 7)
 
+    def test_mcds_get_graph_gml_attached(self, mcds=mcds):
+        s_pathfile = mcds.make_graph_gml(graph_type='attached', node_attr=['cell_type'], edge_attr=True)
+        assert(s_pathfile.endswith('pcdl/data_timeseries_2d/graph_attached_00001440min.gml')) and \
+              (os.path.exists(s_pathfile))
+        os.remove(s_pathfile)
+
+    def test_mcds_get_graph_gml_neighbor(self, mcds=mcds):
+        s_pathfile = mcds.make_graph_gml(graph_type='neighbor', node_attr=['cell_type'], edge_attr=True)
+        assert(s_pathfile.endswith('pcdl/data_timeseries_2d/graph_neighbor_00001440min.gml')) and \
+              (os.path.exists(s_pathfile))
+        os.remove(s_pathfile)
+
     ## unit related functions
     def test_mcds_get_unit_se(self, mcds=mcds):
         se_unit = mcds.get_unit_se()

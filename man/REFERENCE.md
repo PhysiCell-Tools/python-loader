@@ -58,8 +58,9 @@ help(pcdl.TimeStep.get_cell_df_at)
 help(pcdl.TimeStep.plot_scatter)  # ! workhorse function
 
 # TimeStep graphs
-help(pcdl.TimeStep.get_attached_graph_dict)  # !
-help(pcdl.TimeStep.get_neighbor_graph_dict)  # !
+help(pcdl.TimeStep.get_attached_graph_dict)
+help(pcdl.TimeStep.get_neighbor_graph_dict)
+help(pcdl.TimeStep.get_graph_gml)  # ! workhose function
 
 # TimeStep unit
 help(pcdl.TimeStep.get_unit_se)  # ! workhorse function
@@ -91,10 +92,14 @@ help(pcdl.TimeSeries.get_cell_df_features)  # ! workhorse function
 help(pcdl.TimeSeries.get_conc_df_features)  # ! workhorse function
 
 # TimeSeries images and movies
+help(pcdl.TimeSeries.plot_timeseries)  # ! workhorse function
 help(pcdl.TimeSeries.plot_scatter)  # ! workhorse function
 help(pcdl.TimeSeries.plot_contour)  # ! workhorse function
 help(pcdl.TimeSeries.make_gif)  # ! workhorse function
 help(pcdl.TimeSeries.make_movie)  # ! workhorse function
+
+# TimeSeries graphs
+help(pcdl.TimeSeries.get_graph_gml)  # ! workhose function
 
 # TimeSeries anndata
 help(pcdl.TimeSeries.get_anndata)  # ! workhorse function

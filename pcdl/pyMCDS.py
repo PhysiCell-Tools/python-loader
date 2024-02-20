@@ -141,7 +141,6 @@ es_coor_cell = {
 
 
 # functions
-# BUE 20221028: repelaced or kept?
 def graphfile_parser(s_pathfile):
     """
     input:
@@ -1216,12 +1215,12 @@ class pyMCDS:
         df_cell = df_cell.astype(do_type)
 
         # categorical translation
-        df_cell.loc[:,'current_death_model'].replace(ds_death_model, inplace=True)  # bue 20230614: this column looks like an artefact to me
-        df_cell.loc[:,'cycle_model'].replace(ds_cycle_model, inplace=True)
-        df_cell.loc[:,'cycle_model'].replace(ds_death_model, inplace=True)
-        df_cell.loc[:,'current_phase'].replace(ds_cycle_phase, inplace=True)
-        df_cell.loc[:,'current_phase'].replace(ds_death_phase, inplace=True)
-        df_cell.loc[:,'cell_type'].replace(self.data['metadata']['cell_type'], inplace=True)
+        df_cell.loc[:,'current_death_model'] = df_cell.loc[:,'current_death_model'].replace(ds_death_model)  # bue 20230614: this column looks like an artefact to me
+        df_cell.loc[:,'cycle_model'] = df_cell.loc[:,'cycle_model'].replace(ds_cycle_model)
+        df_cell.loc[:,'cycle_model'] = df_cell.loc[:,'cycle_model'].replace(ds_death_model)
+        df_cell.loc[:,'current_phase'] = df_cell.loc[:,'current_phase'].replace(ds_cycle_phase)
+        df_cell.loc[:,'current_phase'] = df_cell.loc[:,'current_phase'].replace(ds_death_phase)
+        df_cell.loc[:,'cell_type'] = df_cell.loc[:,'cell_type'].replace(self.data['metadata']['cell_type'])
 
         # filter
         es_feature = set(df_cell.columns).difference(es_coor_cell)
@@ -1530,7 +1529,7 @@ class pyMCDS:
         return self.data['discrete_cells']['graph']['neighbor_cells'].copy()
 
 
-    def make_graph_gml(self, graph_type, node_attr=['cell_type'], edge_attr=True):
+    def make_graph_gml(self, graph_type='neighbor', node_attr=['cell_type'], edge_attr=True):
         """
         input:
             self: pyMCDS class instance.
@@ -1553,7 +1552,7 @@ class pyMCDS:
 
         description:
             function to generate graph files in the gml graph modelling language
-            standard format. 
+            standard format.
 
             gml was the outcome of an initiative that started at
             the international symposium on graph drawing 1995 in Passau
@@ -1578,7 +1577,7 @@ class pyMCDS:
             sys.exit(f'Erro @ make_graph_gml : unknowen graph_type {graph_type}. knowen are attached and neighbor.')
 
         # generate filename
-        s_file = f'{graph_type}_graph_{round(r_simtime):08}{s_unit_simtime}.gml'
+        s_file = f'graph_{graph_type}_{str(round(r_simtime)).zfill(8)}{s_unit_simtime}.gml'
         s_pathfile = self.path + '/' + s_file
 
         # open result gml file
@@ -1614,72 +1613,6 @@ class pyMCDS:
 
         # output
         return s_pathfile
-
-
-    def make_attached_graph_gml(self, node_attr=['cell_type'], edge_attr=True):
-        """
-        input:
-            self: pyMCDS class instance.
-
-            node_attr: list of strings; default ['cell_type']
-                list of mcds.get_cell_df dataframe columns, used for
-                node attributes.
-
-            edge_attr: boolean; default True
-                specifies if the spatial Euclidean distance is used for
-                edge attribute, to generate a weighted graph.
-
-        output:
-            gml file, generated under the returned path.
-
-        description:
-            function to generate graph files in the gml graph modelling language
-            standard format from phyicell attached cells graph output.
-
-            gml was the outcome of an initiative that started at
-            the international symposium on graph drawing 1995 in Passau
-            and ended at Graph Drawing 1996 in Berkeley. the networkx python
-            and igraph C and python libraries for graph analysis are
-            gml compatible and can as such read and write this file format.
-
-            https://en.wikipedia.org/wiki/Graph_Modelling_Language
-            https://networkx.org/
-            https://igraph.org/
-        """
-        self.make_graph_gml(graph_type='attached', node_attr=node_attr, edge_attr=edge_attr)
-
-
-    def make_neighbor_graph_gml(self, node_attr=['cell_type'], edge_attr=True):
-        """
-        input:
-            self: pyMCDS class instance.
-
-            node_attr: list of strings; default ['cell_type']
-                list of mcds.get_cell_df dataframe columns, used for
-                node attributes.
-
-            edge_attr: boolean; default True
-                specifies if the spatial Euclidean distance is used for
-                edge attribute, to generate a weighted graph.
-
-        output:
-            gml file, generated under the returned path.
-
-        description:
-            function to generate graph files in the gml graph modelling language
-            standard format from phyicell cell neighbor graph output.
-
-            gml was the outcome of an initiative that started at
-            the international symposium on graph drawing 1995 in Passau
-            and ended at Graph Drawing 1996 in Berkeley. the networkx python
-            and igraph C and python libraries for graph analysis are
-            gml compatible and can as such read and write this file format.
-
-            https://en.wikipedia.org/wiki/Graph_Modelling_Language
-            https://networkx.org/
-            https://igraph.org/
-        """
-        self.make_graph_gml(graph_type='neighbor', node_attr=node_attr, edge_attr=edge_attr)
 
 
     ## UNIT RELATED FUNCTIONS ##

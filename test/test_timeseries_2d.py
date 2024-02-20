@@ -19,6 +19,8 @@
 
 
 # load library
+import glob
+import matplotlib.pyplot as plt
 import os
 import pathlib
 import pcdl
@@ -175,6 +177,180 @@ class TestPyMcdsTs(object):
                os.path.exists(s_path + 'oxygen_000001440.0.jpeg')
         shutil.rmtree(s_path)
 
+    ## plot_timeseries command ##
+    def test_mcdsts_plot_timeseries_none_none_none_cell_ax_jpeg(self, mcdsts=mcdsts):
+        fig, ax = plt.subplots()
+        s_pathfile = mcdsts.plot_timeseries(
+            focus_cat = None,  # test if {None/total, 'cell_type'}
+            focus_num = None,  # test if {None/count, 'oxygen'}
+            #aggregate_num = np.mean,  # pandas
+            frame = 'cell_df',  # test if else {'df_cell', 'df_conc'}
+            z_slice = -0.3,  # test if if
+            #logy = False,  # pandas
+            #ylim = None,  # pandas
+            #secondary_y = None,  # pandas
+            #subplots = False,  # pandas
+            #sharex = False,  # pandas
+            #sharey = False,  # pandas
+            #linestyle = '-',  # pandas
+            #linewidth = None,  # pandas
+            #cmap = None,  # pandas
+            #color = None,  # pandas
+            #grid = True,  # pandas
+            #legend = True,
+            yunit = None,  # test if {None, 'mmHg'}
+            #title = None, pandas
+            ax = ax,  # test if else {None, ax}
+            figsizepx = [641, 481],  # test non even pixel number
+            ext = 'jpeg',  # test if else {'jpeg', None}
+            figbgcolor = None  # test if
+        )
+        assert os.path.exists(s_pathfile)
+        os.remove(s_pathfile)
+
+    def test_mcdsts_plot_timeseries_cat_none_yunit_cell(self, mcdsts=mcdsts):
+        fig = mcdsts.plot_timeseries(
+            focus_cat = 'cell_type',  # test if {None/total, 'cell_type'}
+            focus_num = None,  # test if {None/count, 'oxygen'}
+            #aggregate_num = np.mean,  # pandas
+            frame = 'df_cell',  # test if else {'df_cell', 'df_conc'}
+            z_slice = -0.3,  # test if if
+            #logy = False,  # pandas
+            #ylim = None,  # pandas
+            #secondary_y = None,  # pandas
+            #subplots = False,  # pandas
+            #sharex = False,  # pandas
+            #sharey = False,  # pandas
+            #linestyle = '-',  # pandas
+            #linewidth = None,  # pandas
+            #cmap = None,  # pandas
+            #color = None,  # pandas
+            #grid = True,  # pandas
+            #legend = True,
+            yunit = 'mmHg',  # test if {None, 'mmHg'}
+            #title = None, pandas
+            ax = None,  # test if else {None, ax}
+            figsizepx = [641, 481],  # test non even pixel number
+            ext = None,  # test if else {'jpeg', None}
+            figbgcolor = None  # test if
+        )
+        assert(str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+
+    def test_mcdsts_plot_timeseries_none_num_yunit_cell(self, mcdsts=mcdsts):
+        fig = mcdsts.plot_timeseries(
+            focus_cat = None,  # test if {None/total, 'cell_type'}
+            focus_num = 'oxygen',  # test if {None/count, 'oxygen'}
+            #aggregate_num = np.mean,  # pandas
+            frame = 'df_cell',  # test if else {'df_cell', 'df_conc'}
+            z_slice = -0.3,  # test if if
+            #logy = False,  # pandas
+            #ylim = None,  # pandas
+            #secondary_y = None,  # pandas
+            #subplots = False,  # pandas
+            #sharex = False,  # pandas
+            #sharey = False,  # pandas
+            #linestyle = '-',  # pandas
+            #linewidth = None,  # pandas
+            #cmap = None,  # pandas
+            #color = None,  # pandas
+            #grid = True,  # pandas
+            #legend = True,
+            yunit = 'mmHg',  # test if {None, 'mmHg'}
+            #title = None, pandas
+            ax = None,  # test if else {None, ax}
+            figsizepx = [641, 481],  # test non even pixel number
+            ext = None,  # test if else {'jpeg', None}
+            figbgcolor = None  # test if
+        )
+        assert(str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+
+    def test_mcdsts_plot_timeseries_cat_num_none_cell(self, mcdsts=mcdsts):
+        fig = mcdsts.plot_timeseries(
+            focus_cat = 'cell_type',  # test if {None/total, 'cell_type'}
+            focus_num = 'oxygen',  # test if {None/count, 'oxygen'}
+            #aggregate_num = np.mean,  # pandas
+            frame = 'cell',  # test if else {'df_cell', 'df_conc'}
+            z_slice = -0.3,  # test if if
+            #logy = False,  # pandas
+            #ylim = None,  # pandas
+            #secondary_y = None,  # pandas
+            #subplots = False,  # pandas
+            #sharex = False,  # pandas
+            #sharey = False,  # pandas
+            #linestyle = '-',  # pandas
+            #linewidth = None,  # pandas
+            #cmap = None,  # pandas
+            #color = None,  # pandas
+            #grid = True,  # pandas
+            #legend = True,
+            yunit = None,  # test if {None, 'mmHg'}
+            #title = None, pandas
+            ax = None,  # test if else {None, ax}
+            figsizepx = [641, 481],  # test non even pixel number
+            ext = None,  # test if else {'jpeg', None}
+            figbgcolor = None  # test if
+        )
+        assert(str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+
+    def test_mcdsts_plot_timeseries_none_none_none_conc_ax_jpeg(self, mcdsts=mcdsts):
+        fig, ax = plt.subplots()
+        s_pathfile = mcdsts.plot_timeseries(
+            focus_cat = None,  # test if {None/total, 'cell_type'}
+            focus_num = None,  # test if {None/count, 'oxygen'}
+            #aggregate_num = np.mean,  # pandas
+            frame = 'conc_df',  # test if else {'df_cell', 'df_conc'}
+            z_slice = -0.3,  # test if if
+            #logy = False,  # pandas
+            #ylim = None,  # pandas
+            #secondary_y = None,  # pandas
+            #subplots = False,  # pandas
+            #sharex = False,  # pandas
+            #sharey = False,  # pandas
+            #linestyle = '-',  # pandas
+            #linewidth = None,  # pandas
+            #cmap = None,  # pandas
+            #color = None,  # pandas
+            #grid = True,  # pandas
+            #legend = True,
+            yunit = None,  # test if {None, 'mmHg'}
+            #title = None, pandas
+            ax = ax,  # test if else {None, ax}
+            figsizepx = [641, 481],  # test non even pixel number
+            ext = 'jpeg',  # test if else {'jpeg', None}
+            figbgcolor = None  # test if
+        )
+        assert os.path.exists(s_pathfile)
+        os.remove(s_pathfile)
+
+    def test_mcdsts_plot_timeseries_none_num_yunit_conc(self, mcdsts=mcdsts):
+        fig = mcdsts.plot_timeseries(
+            focus_cat = None,  # test if {None/total, 'cell_type'}
+            focus_num = 'oxygen',  # test if {None/count, 'oxygen'}
+            #aggregate_num = np.mean,  # pandas
+            frame = 'df_conc',  # test if else {'df_cell', 'df_conc'}
+            z_slice = -0.3,  # test if if
+            #logy = False,  # pandas
+            #ylim = None,  # pandas
+            #secondary_y = None,  # pandas
+            #subplots = False,  # pandas
+            #sharex = False,  # pandas
+            #sharey = False,  # pandas
+            #linestyle = '-',  # pandas
+            #linewidth = None,  # pandas
+            #cmap = None,  # pandas
+            #color = None,  # pandas
+            #grid = True,  # pandas
+            #legend = True,
+            yunit = 'mmHg',  # test if {None, 'mmHg'}
+            #title = None, pandas
+            ax = None,  # test if else {None, ax}
+            figsizepx = [641, 481],  # test non even pixel number
+            ext = None,  # test if else {'jpeg', None}
+            figbgcolor = None  # test if
+        )
+        assert(str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+
+
     ## make_gif command ##
     def test_mcdsts_make_gif(self, mcdsts=mcdsts):
         s_path = mcdsts.plot_scatter()
@@ -198,3 +374,19 @@ class TestPyMcdsTs(object):
             (s_opathfile == s_path+'cell_cell_type_z0.0_jpeg12.mp4')
         shutil.rmtree(s_path)
 
+    ## graph related functions ##
+    def test_mcds_get_graph_gml_attached(self, mcdsts=mcdsts):
+        s_pathfile_glob = s_path_2d + '/graph_attached_*min.gml'
+        s_pathfile = s_path_2d + '/graph_attached_00000720min.gml'
+        mcdsts.make_graph_gml(graph_type='attached', node_attr=['cell_type'], edge_attr=True)
+        assert os.path.exists(s_pathfile)
+        for s_file in glob.glob(s_pathfile_glob):
+            os.remove(s_file)
+
+    def test_mcds_get_graph_gml_neighbor(self, mcdsts=mcdsts):
+        s_pathfile_glob = s_path_2d + '/graph_neighbor_*min.gml'
+        s_pathfile = s_path_2d + '/graph_neighbor_00000720min.gml'
+        mcdsts.make_graph_gml(graph_type='neighbor', node_attr=['cell_type'], edge_attr=True)
+        assert os.path.exists(s_pathfile)
+        for s_file in glob.glob(s_pathfile_glob):
+            os.remove(s_file)
