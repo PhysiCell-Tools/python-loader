@@ -295,7 +295,7 @@ class TestPyMcdsTs(object):
     def test_mcdsts_plot_timeseries_none_none_none_conc_ax_jpeg(self, mcdsts=mcdsts):
         fig, ax = plt.subplots()
         s_pathfile = mcdsts.plot_timeseries(
-            focus_cat = None,  # test if {None/total, 'cell_type'}
+            focus_cat = None,  # test if {None/total, 'voxel_i'}
             focus_num = None,  # test if {None/count, 'oxygen'}
             #aggregate_num = np.mean,  # pandas
             frame = 'conc_df',  # test if else {'df_cell', 'df_conc'}
@@ -322,9 +322,36 @@ class TestPyMcdsTs(object):
         assert os.path.exists(s_pathfile)
         os.remove(s_pathfile)
 
+    def test_mcdsts_plot_timeseries_cat_none_yunit_conc(self, mcdsts=mcdsts):
+        fig = mcdsts.plot_timeseries(
+            focus_cat = 'voxel_i',  # test if {None/total, 'voxel_i'}
+            focus_num = None,  # test if {None/count, 'oxygen'}
+            #aggregate_num = np.mean,  # pandas
+            frame = 'df_conc',  # test if else {'df_cell', 'df_conc'}
+            z_slice = -0.3,  # test if if
+            #logy = False,  # pandas
+            #ylim = None,  # pandas
+            #secondary_y = None,  # pandas
+            #subplots = False,  # pandas
+            #sharex = False,  # pandas
+            #sharey = False,  # pandas
+            #linestyle = '-',  # pandas
+            #linewidth = None,  # pandas
+            #cmap = None,  # pandas
+            #color = None,  # pandas
+            #grid = True,  # pandas
+            #legend = True,
+            yunit = 'mmHg',  # test if {None, 'mmHg'}
+            #title = None, pandas
+            ax = None,  # test if else {None, ax}
+            figsizepx = [641, 481],  # test non even pixel number
+            ext = None,  # test if else {'jpeg', None}
+            figbgcolor = None  # test if
+        )
+        assert(str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
     def test_mcdsts_plot_timeseries_none_num_yunit_conc(self, mcdsts=mcdsts):
         fig = mcdsts.plot_timeseries(
-            focus_cat = None,  # test if {None/total, 'cell_type'}
+            focus_cat = None,  # test if {None/total, 'voxel_i'}
             focus_num = 'oxygen',  # test if {None/count, 'oxygen'}
             #aggregate_num = np.mean,  # pandas
             frame = 'df_conc',  # test if else {'df_cell', 'df_conc'}
@@ -350,6 +377,33 @@ class TestPyMcdsTs(object):
         )
         assert(str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
 
+    def test_mcdsts_plot_timeseries_cat_num_none_conc(self, mcdsts=mcdsts):
+        fig = mcdsts.plot_timeseries(
+            focus_cat = 'voxel_i',  # test if {None/total, 'voxel_i'}
+            focus_num = 'oxygen',  # test if {None/count, 'oxygen'}
+            #aggregate_num = np.mean,  # pandas
+            frame = 'conc',  # test if else {'df_cell', 'df_conc'}
+            z_slice = -0.3,  # test if if
+            #logy = False,  # pandas
+            #ylim = None,  # pandas
+            #secondary_y = None,  # pandas
+            #subplots = False,  # pandas
+            #sharex = False,  # pandas
+            #sharey = False,  # pandas
+            #linestyle = '-',  # pandas
+            #linewidth = None,  # pandas
+            #cmap = None,  # pandas
+            #color = None,  # pandas
+            #grid = True,  # pandas
+            #legend = True,
+            yunit = None,  # test if {None, 'mmHg'}
+            #title = None, pandas
+            ax = None,  # test if else {None, ax}
+            figsizepx = [641, 481],  # test non even pixel number
+            ext = None,  # test if else {'jpeg', None}
+            figbgcolor = None  # test if
+        )
+        assert(str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
 
     ## make_gif command ##
     def test_mcdsts_make_gif(self, mcdsts=mcdsts):
