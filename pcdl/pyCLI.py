@@ -145,7 +145,112 @@ def get_cell_df_features():
 
 
 def get_conc_df():
-    pass
+    # argv
+    parser = argparse.ArgumentParser(
+        prog = 'pcdl_get_conc_df',
+        description = 'this function extracts dataframes with a cell centric view of the simulation and saves them as csv files.',
+        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
+    )
+
+    # TimeSeries path
+    parser.add_argument(
+        'path',
+        nargs = '?',
+        default = '.',
+        help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .'
+    )
+    # TimeSeries output_path '.'
+    # TimeSeries microenv
+    #parser.add_argument(
+    #    '--microenv',
+    #    nargs = '?',
+    #    default = 'true',
+    #    help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.'
+    #)
+    # TimeSeries graph False
+    # TimeSeries settingxml
+    parser.add_argument(
+        '--settingxml',
+        nargs = '?',
+        default = 'PhysiCell_settings.xml',
+        help = 'from which settings.xml should the substrate and cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+    )
+    # TimeSeries verbose
+    parser.add_argument(
+        '-v', '--verbose',
+        nargs = '?',
+        default = 'true',
+        help = 'setting verbose to False for less text output, while processing. default is True.'
+    )
+
+    # get_conc_df values
+    parser.add_argument(
+        'values',
+        nargs = '?',
+        default = 1,
+        type = int,
+        help = 'minimal number of values a variable has to have in any of the mcds time steps to be outputted. variables that have only 1 state carry no information. None is a state too. default is 1.'
+    )
+    # get_conc_df drop
+    parser.add_argument(
+        '--drop',
+        nargs = '?',
+        default = '',
+        help = "set of column labels to be dropped for the dataframe. don't worry: essential columns like ID, coordinates and time will never be dropped. Attention: when the keep parameter is given, then the drop parameter has to be an empty string! default is an empty string."
+    )
+    # get_conc_df keep
+    parser.add_argument(
+        '--keep',
+        nargs = '?',
+        default = '',
+        help = "set of column labels to be kept in the dataframe. set values=1 to be sure that all variables are kept. don't worry: essential columns like ID, coordinates and time will always be kept. default is an empty string."
+    )
+
+    # parse arguments
+    args = parser.parse_args()
+    print(args)
+
+    # process arguments
+    s_pathfile = args.path
+    if not s_pathfile.endswith('.xml'):
+        s_pathfile = s_pathfile + '/initial.xml'
+    if not os.path.exists(s_pathfile):
+        sys.exit(f"Error @ pcdl_plot_timeseries : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
+    if os.path.isfile(args.path):
+        mcds = pcdl.pyMCDS(
+            xmlfile = args.path,
+            output_path = '.',
+            microenv = True,
+            graph = False,
+            settingxml = args.settingxml,
+            verbose = False if args.verbose.lower().startswith('f') else True
+        )
+        l_mcds = [mcds]
+        ls_opathfile = [args.path.replace('.xml','_conc.csv')]
+    else:
+        mcdsts = pcdl.pyMCDSts(
+            output_path = args.path,
+            #custom_type,
+            load = True,
+            microenv = True,
+            graph = False,
+            settingxml = args.settingxml,
+            verbose = False if args.verbose.lower().startswith('f') else True,
+        )
+        l_mcds = mcdsts.l_mcds
+        ls_opathfile = [s_xmlfile.replace('.xml','_conc.csv') for s_xmlfile in mcdsts.get_xmlfile_list()]
+
+    # run
+    for i, mcds in enumerate(l_mcds):
+        df_conc = mcds.get_conc_df(
+            values = args.values,
+            drop = set(args.drop.split()),
+            keep = set(args.keep.split()),
+        )
+        df_conc.to_csv(ls_opathfile[i], index=False)
+
+    # going home
+    return ls_opathfile
 
 
 def get_conc_df_features():
