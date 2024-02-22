@@ -148,7 +148,7 @@ def get_conc_df():
     # argv
     parser = argparse.ArgumentParser(
         prog = 'pcdl_get_conc_df',
-        description = 'this function extracts dataframes with a cell centric view of the simulation and saves them as csv files.',
+        description = 'this function extracts dataframes with concentration values for all chemical species in all voxels and saves them as csv files. additionally, this dataframe lists voxel and mesh center coordinates.'
         epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
     )
 
@@ -160,13 +160,7 @@ def get_conc_df():
         help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .'
     )
     # TimeSeries output_path '.'
-    # TimeSeries microenv
-    #parser.add_argument(
-    #    '--microenv',
-    #    nargs = '?',
-    #    default = 'true',
-    #    help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.'
-    #)
+    # TimeSeries microenv True
     # TimeSeries graph False
     # TimeSeries settingxml
     parser.add_argument(
@@ -258,6 +252,12 @@ def get_conc_df_features():
 
 
 def get_graph_gml():
+    #parser.add_argument(
+    #    'graph',
+    #    nargs = '?',
+    #    default = 'true',
+    #    help = 'should the graphs be extracted? setting graph to False will use less memory and speed up processing.'
+    #)
     pass
 
 
@@ -594,14 +594,3 @@ def plot_timeseries():
 
     # going home
     return s_pathfile
-
-
-
-
-    #parser.add_argument(
-    #    'graph',
-    #    nargs = '?',
-    #    default = 'true',
-    #    help = 'should the graphs be extracted? setting graph to False will use less memory and speed up processing.'
-    #)
-
