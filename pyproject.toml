@@ -71,6 +71,9 @@ dependencies = [
     "scipy",
 ]
 
+[project.scripts]
+pcdl_plot_timeseries = "pcdl.pyCLI:plot_timeseries"
+
 [project.optional-dependencies]
 data = [
     "requests",

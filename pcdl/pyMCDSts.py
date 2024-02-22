@@ -670,7 +670,7 @@ class pyMCDSts:
         return s_path
 
 
-    def plot_timeseries(self, focus_cat=None, focus_num=None, aggregate_num=np.mean, frame='cell_df', z_slice=None, logy=False, ylim=None, secondary_y=None, subplots=False, sharex=False, sharey=False, linestyle='-', linewidth=None, cmap=None, color=None, grid=True, legend=True, yunit=None, title=None, ax=None, figsizepx=[640, 480], ext='jpeg', figbgcolor=None):
+    def plot_timeseries(self, focus_cat=None, focus_num=None, aggregate_num=np.nanmean, frame='cell_df', z_slice=None, logy=False, ylim=None, secondary_y=None, subplots=False, sharex=False, sharey=False, linestyle='-', linewidth=None, cmap=None, color=None, grid=True, legend=True, yunit=None, title=None, ax=None, figsizepx=[640, 480], ext='jpeg', figbgcolor=None):
         """
         input:
             self: pyMCDSts class instance
@@ -683,7 +683,7 @@ class pyMCDSts:
                 numerical data column within dataframe specified under frame.
                 default is None, which is count, agent or voxel count.
 
-            aggregate_num: function; default np.mean
+            aggregate_num: function; default np.nanmean
                 aggregation function for focus_num data.
 
             frame: string; default is cell_df
@@ -767,7 +767,7 @@ class pyMCDSts:
             figbgcolor: string; default is None which is transparent (png)
                 or white (jpeg, tiff).
                 figure background color.
-                only relevant if ext is None.
+                only relevant if ext not is None.
 
         output:
             if ext is None: a fig matplotlib figure, containing the ax axis object, is returned.
