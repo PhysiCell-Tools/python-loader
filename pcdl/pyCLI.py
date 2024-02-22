@@ -29,7 +29,133 @@ import sys
 def entropy(pk):
     return stats.entropy(pk=pk, qk=None, base=2, nan_policy='omit', axis=0)[0]
 
+
 # command line functions aplphabetically ordered.
+def get_cell_df():
+    # argv
+    parser = argparse.ArgumentParser(
+        prog = 'pcdl_get_cell_df',
+        description = 'this function extracts dataframes with a cell centric view of the simulation and saves them as csv files.',
+        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
+    )
+
+    # TimeSeries path
+    parser.add_argument(
+        'path',
+        nargs = '?',
+        default = '.',
+        help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .'
+    )
+    # TimeSeries output_path '.'
+    # TimeSeries microenv
+    parser.add_argument(
+        '--microenv',
+        nargs = '?',
+        default = 'true',
+        help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.'
+    )
+    # TimeSeries graph False
+    # TimeSeries settingxml
+    parser.add_argument(
+        '--settingxml',
+        nargs = '?',
+        default = 'PhysiCell_settings.xml',
+        help = 'from which settings.xml should the substrate and cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+    )
+    # TimeSeries verbose
+    parser.add_argument(
+        '-v', '--verbose',
+        nargs = '?',
+        default = 'true',
+        help = 'setting verbose to False for less text output, while processing. default is True.'
+    )
+
+    # get_cell_df values
+    parser.add_argument(
+        'values',
+        nargs = '?',
+        default = 1,
+        type = int,
+        help = 'minimal number of values a variable has to have in any of the mcds time steps to be outputted. variables that have only 1 state carry no information. None is a state too. default is 1.'
+    )
+    # get_cell_df drop
+    parser.add_argument(
+        '--drop',
+        nargs = '?',
+        default = '',
+        help = "set of column labels to be dropped for the dataframe. don't worry: essential columns like ID, coordinates and time will never be dropped. Attention: when the keep parameter is given, then the drop parameter has to be an empty string! default is an empty string."
+    )
+    # get_cell_df keep
+    parser.add_argument(
+        '--keep',
+        nargs = '?',
+        default = '',
+        help = "set of column labels to be kept in the dataframe. set values=1 to be sure that all variables are kept. don't worry: essential columns like ID, coordinates and time will always be kept. default is an empty string."
+    )
+
+    # parse arguments
+    args = parser.parse_args()
+    print(args)
+
+    # process arguments
+    s_pathfile = args.path
+    if not s_pathfile.endswith('.xml'):
+        s_pathfile = s_pathfile + '/initial.xml'
+    if not os.path.exists(s_pathfile):
+        sys.exit(f"Error @ pcdl_plot_timeseries : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
+    if os.path.isfile(args.path):
+        mcds = pcdl.pyMCDS(
+            xmlfile = args.path,
+            output_path = '.',
+            microenv = False if args.microenv.lower().startswith('f') else True,
+            graph = False,
+            settingxml = args.settingxml,
+            verbose = False if args.verbose.lower().startswith('f') else True
+        )
+        l_mcds = [mcds]
+        ls_opathfile = [args.path.replace('.xml','_cell.csv')]
+    else:
+        mcdsts = pcdl.pyMCDSts(
+            output_path = args.path,
+            #custom_type,
+            load = True,
+            microenv = False if args.microenv.lower().startswith('f') else True,
+            graph = False,
+            settingxml = args.settingxml,
+            verbose = False if args.verbose.lower().startswith('f') else True,
+        )
+        l_mcds = mcdsts.l_mcds
+        ls_opathfile = [s_xmlfile.replace('.xml','_cell.csv') for s_xmlfile in mcdsts.get_xmlfile_list()]
+
+    # run
+    for i, mcds in enumerate(l_mcds):
+        df_cell = mcds.get_cell_df(
+            values = args.values,
+            drop = set(args.drop.split()),
+            keep = set(args.keep.split()),
+        )
+        df_cell.to_csv(ls_opathfile[i])
+
+    # going home
+    return ls_opathfile
+
+
+def get_cell_df_features():
+    pass
+
+
+def get_conc_df():
+    pass
+
+
+def get_conc_df_features():
+    pass
+
+
+def get_graph_gml():
+    pass
+
+
 def get_version():
     # argv
     parser = argparse.ArgumentParser(
@@ -42,8 +168,12 @@ def get_version():
         'path',
         nargs = '?',
         default = '.',
-        help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file.'
+        help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .'
     )
+    # TimeSeries output_path '.'
+    # TimeSeries microenv False
+    # TimeSeries graph False
+    # TimeSeries settingxml None
     # TimeSeries verbose
     parser.add_argument(
         '-v', '--verbose',
@@ -63,7 +193,7 @@ def get_version():
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
     if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ pcdl_plot_timeseries : {args.path} path does not look like a physicell output directory or a outputnnnnnnnn.xml file.")
+        sys.exit(f"Error @ pcdl_plot_timeseries : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
     mcds = pcdl.pyMCDS(
         xmlfile = s_pathfile,
         output_path = '.',
@@ -76,6 +206,22 @@ def get_version():
 
     # going home
     return s_version
+
+
+def make_gif():
+    pass
+
+
+def make_movie():
+    pass
+
+
+def plot_contour():
+    pass
+
+
+def plot_scatter():
+    pass
 
 
 def plot_timeseries():
@@ -91,7 +237,7 @@ def plot_timeseries():
         'path',
         nargs = '?',
         default = '.',
-        help = 'path to the PhysiCell output directory.'
+        help = 'path to the PhysiCell output directory. default is . .'
     )
     # TimeSeries custom_type
     # nop
@@ -308,7 +454,7 @@ def plot_timeseries():
     mcdsts = pcdl.pyMCDSts(
         output_path = args.path,
         #custom_type,
-        #load,
+        load = True,
         microenv = False if args.microenv.lower().startswith('f') else True,
         graph = False,
         settingxml = args.settingxml,
