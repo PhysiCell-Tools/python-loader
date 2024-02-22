@@ -173,7 +173,7 @@ class pyMCDSts:
     def get_cell_df_features(self, values=1, drop=set(), keep=set(), allvalues=False):
         """
         input:
-            : integer; default is 1
+            values: integer; default is 1
                 minimal number of values a variable has to have
                 in any of the mcds time steps to be outputted.
                 variables that have only 1 state carry no information.
