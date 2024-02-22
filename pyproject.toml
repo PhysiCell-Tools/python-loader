@@ -73,6 +73,7 @@ dependencies = [
 
 [project.scripts]
 pcdl_plot_timeseries = "pcdl.pyCLI:plot_timeseries"
+pcdl_get_version = "pcdl.pyCLI:get_version"
 
 [project.optional-dependencies]
 data = [

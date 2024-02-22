@@ -30,6 +30,54 @@ def entropy(pk):
     return stats.entropy(pk=pk, qk=None, base=2, nan_policy='omit', axis=0)[0]
 
 # command line functions aplphabetically ordered.
+def get_version():
+    # argv
+    parser = argparse.ArgumentParser(
+        prog = 'pcdl_get_version',
+        description = 'this function is extracting PhysiCell and MultiCellDS version from the dataset and the installed pcdl module version.',
+        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
+    )
+    # TimeSeries path
+    parser.add_argument(
+        'path',
+        nargs = '?',
+        default = '.',
+        help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file.'
+    )
+    # TimeSeries verbose
+    parser.add_argument(
+        '-v', '--verbose',
+        nargs = '?',
+        default = 'false',
+        help = 'setting verbose to True for more text output, while processing. default is False.'
+    )
+
+    # parse arguments
+    args = parser.parse_args()
+    print(args)
+
+    # process arguments
+
+    # run
+    s_pathfile = args.path
+    if not s_pathfile.endswith('.xml'):
+        s_pathfile = s_pathfile + '/initial.xml'
+    if not os.path.exists(s_pathfile):
+        sys.exit(f"Error @ pcdl_plot_timeseries : {args.path} path does not look like a physicell output directory or a outputnnnnnnnn.xml file.")
+    mcds = pcdl.pyMCDS(
+        xmlfile = s_pathfile,
+        output_path = '.',
+        microenv = False,
+        graph = False,
+        settingxml = None,
+        verbose = True if args.verbose.lower().startswith('t') else False
+    )
+    s_version = f'version:\n{mcds.get_physicell_version()}\n{mcds.get_multicellds_version()}\npcdl_{pcdl.__version__}'
+
+    # going home
+    return s_version
+
+
 def plot_timeseries():
     # argv
     parser = argparse.ArgumentParser(
@@ -253,8 +301,6 @@ def plot_timeseries():
     if (args.legend.lower() == 'reverse'): b_legend = 'reverse'
     elif args.legend.lower().startswith('f'): b_legend = False
     else: b_legend = True
-
-    li_linewidth = None if (args.linewidth.lower() == 'none') else [int(i) for i in args.linewidth.split()]
 
     # run
     if not os.path.exists(args.path + '/initial.xml'):
