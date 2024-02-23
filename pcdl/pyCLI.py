@@ -103,7 +103,7 @@ def get_cell_df():
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
     if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ pcdl_plot_timeseries : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
+        sys.exit(f"Error @ pcdl_get_cell_df : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
     if os.path.isfile(args.path):
         mcds = pcdl.pyMCDS(
             xmlfile = args.path,
@@ -214,7 +214,7 @@ def get_cell_df_features():
 
     # process arguments
     if not os.path.exists(args.path + '/initial.xml'):
-        sys.exit(f"Error @ pcdl_plot_timeseries : {args.path} path does not look like a physicell output directory ({args.path}/initial.xml is missing).")
+        sys.exit(f"Error @ pcdl_get_cell_df_features : {args.path} path does not look like a physicell output directory ({args.path}/initial.xml is missing).")
     mcdsts = pcdl.pyMCDSts(
         output_path = args.path,
         #custom_type,
@@ -306,7 +306,7 @@ def get_conc_df():
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
     if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ pcdl_plot_timeseries : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
+        sys.exit(f"Error @ pcdl_get_conc_df : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
     if os.path.isfile(args.path):
         mcds = pcdl.pyMCDS(
             xmlfile = args.path,
@@ -411,7 +411,7 @@ def get_conc_df_features():
 
     # process arguments
     if not os.path.exists(args.path + '/initial.xml'):
-        sys.exit(f"Error @ pcdl_plot_timeseries : {args.path} path does not look like a physicell output directory ({args.path}/initial.xml is missing).")
+        sys.exit(f"Error @ pcdl_get_conc_df_features : {args.path} path does not look like a physicell output directory ({args.path}/initial.xml is missing).")
     mcdsts = pcdl.pyMCDSts(
         output_path = args.path,
         #custom_type,
@@ -441,7 +441,7 @@ def get_conc_df_features():
 def get_graph_gml():
     # argv
     parser = argparse.ArgumentParser(
-        prog = 'pcdl_graph_gml',
+        prog = 'pcdl_get_graph_gml',
         description = 'function to generate graph files in the gml graph modelling language standard format. gml was the outcome of an initiative that started at the international symposium on graph drawing 1995 in Passau and ended at Graph Drawing 1996 in Berkeley. the networkx python and igraph C and python libraries for graph analysis are gml compatible and can as such read and write this file format.',
         epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
     )
@@ -502,7 +502,7 @@ def get_graph_gml():
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
     if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ pcdl_plot_timeseries : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
+        sys.exit(f"Error @ pcdl_make_graph_gml : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
     if os.path.isfile(args.path):
         mcds = pcdl.pyMCDS(
             xmlfile = args.path,
@@ -573,7 +573,7 @@ def get_version():
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
     if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ pcdl_plot_timeseries : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
+        sys.exit(f"Error @ pcdl_get_version : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
     mcds = pcdl.pyMCDS(
         xmlfile = s_pathfile,
         output_path = '.',
@@ -598,7 +598,7 @@ def make_movie():
 def plot_contour():
     # argv
     parser = argparse.ArgumentParser(
-        prog = 'pcdl_graph_gml',
+        prog = 'pcdl_plot_contour',
         description = 'function generates matplotlib contour (or contourf) plots, inclusive color bar, for the substrate specified, under the returned path.',
         epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
     )
@@ -733,7 +733,9 @@ def plot_contour():
     else:
         s_pathfile = s_pathfile + '/initial.xml'
     if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ pcdl_plot_timeseries : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
+        sys.exit(f"Error @ pcdl_plot_contour : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
+    if (args.focus == None):
+        sys.exit(f"Error @ pcdl_plot_contour : input for positional argument focus is missung! this has to be a column name from the conc dataframe.")
     # run
     mcdsts = pcdl.pyMCDSts(
         output_path = args.path,
@@ -769,7 +771,183 @@ def plot_contour():
 
 
 def plot_scatter():
-    pass
+    # argv
+    parser = argparse.ArgumentParser(
+        prog = 'pcdl_plot_scatter',
+        description = 'function generates pandas scatter plots, under the returned path.',
+        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
+    )
+
+    # TimeSeries path
+    parser.add_argument(
+        'path',
+        nargs = '?',
+        default = '.',
+        help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .',
+    )
+    # TimeSeries output_path '.'
+    # TimeSeries microenv
+    parser.add_argument(
+        '--microenv',
+        nargs = '?',
+        default = 'true',
+        help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.',
+    )
+    # TimeSeries graph False
+    # TimeSeries settingxml
+    parser.add_argument(
+        '--settingxml',
+        nargs = '?',
+        default = 'PhysiCell_settings.xml',
+        help = 'from which settings.xml should the substrate and cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+    )
+    # TimeSeries verbose
+    parser.add_argument(
+        '-v', '--verbose',
+        nargs = '?',
+        default = 'true',
+        help = 'setting verbose to False for less text output, while processing. default is True.',
+    )
+
+    # plot_scatter focus
+    parser.add_argument(
+        'focus',
+        nargs = '?',
+        default = 'cell_type',
+        help = 'column name within conc dataframe.',
+    )
+    # plot_scatter z_slice
+    parser.add_argument(
+        '--z_slice',
+        nargs = '?',
+        default = 0.0,
+        type = float,
+        help = 'z-axis position to slice a 2D xy-plain out of the 3D mesh. if z_slice position numeric but not an exact mesh center coordinate, then z_slice will be adjusted to the nearest mesh center value, the smaller one, if the coordinate lies on a saddle point. default is 0.0.',
+    )
+    # plot_scatter z_axis
+    parser.add_argument(
+        '--z_axis',
+        nargs = '?',
+        default = 'none',
+        help = 'for a categorical focus: set of labels; for a numeric focus: tuple of two floats; default is None depending on the focus column variable dtype, default extracts labels or min and max values from data.',
+    )
+    # plot_scatter cmap
+    # nop partly
+    parser.add_argument(
+        '--cmap',
+        nargs = '?',
+        default = 'viridis',
+        help = 'matplotlib colormap string from https://matplotlib.org/stable/tutorials/colors/colormaps.html . default is viridis.',
+    )
+    # plot_scatter grid
+    parser.add_argument(
+        '--grid',
+        nargs = '?',
+        default = 'true',
+        help = 'plot axis grid lines. default is True.',
+    )
+    # plot_scatter legend_loc
+    parser.add_argument(
+        '--legend_loc',
+        nargs = '?',
+        default = 'lower left',
+        help = 'the location of the categorical legend, if applicable. possible strings are: best, upper right, upper center, upper left, center left, lower left, lower center, lower right, center right, center. default is lower left',
+    )
+    # plot_scatter xlim
+    parser.add_argument(
+        '--xlim',
+        nargs = '?',
+        default = 'none',
+        help = 'two floats. x axis min and max value. None takes min and max from mesh x axis range. default is None.',
+    )
+    # plot_scatter ylim
+    parser.add_argument(
+        '--ylim',
+        nargs = '?',
+        default = 'none',
+        help = 'two floats. y axis min and max value. None takes min and max from mesh y axis range. default is None.',
+    )
+    # plot_scatter xyequal
+    parser.add_argument(
+        '--xyequal',
+        nargs = '?',
+        default = 'true',
+        help = 'to specify equal axis spacing for x and y axis. default is true.',
+    )
+    # plot_scatter s
+    parser.add_argument(
+        '--s',
+        nargs = '?',
+        default = 'none',
+        help = "scatter plot dot size in pixel. typographic points are 1/72 inch. the marker size s is specified in points**2. plt.rcParams['lines.markersize']**2 is in my case 36. None tries to take the value from the initial.svg file. fall back setting is 36.",
+    )
+    # plot_scatter figsizepx
+    parser.add_argument(
+        '--figsizepx',
+        nargs = '?',
+        default = 'none',
+        help = 'size of the figure in pixels [integer], x y. the given x and y will be rounded to the nearest even number, to be able to generate movies from the images. None tries to take the values from the initial.svg file. fall back setting is [640, 480]. default is None.',
+    )
+    # plot_scatter ext
+    parser.add_argument(
+        '--ext',
+        nargs = '?',
+        default = 'jpeg',
+        help = 'output image format. possible formats are jpeg, png, and tiff. default is jpeg.',
+    )
+    # plot_scatter figbgcolor
+    parser.add_argument(
+        '--figbgcolor',
+        nargs = '?',
+        default = 'none',
+        help = 'figure background color. None is transparent (png) or white (jpeg, tiff). default is None.',
+    )
+
+    # parse arguments
+    args = parser.parse_args()
+    print(args)
+
+    # process arguments
+    args.path = args.path.replace('\\','/')
+    s_pathfile = args.path
+    if s_pathfile.endswith('.xml'):
+        args.path = '/'.join(s_pathfile.split('/')[:-1])
+    else:
+        s_pathfile = s_pathfile + '/initial.xml'
+    if not os.path.exists(s_pathfile):
+        sys.exit(f"Error @ plot_scatter : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
+    # run
+    mcdsts = pcdl.pyMCDSts(
+        output_path = args.path,
+        #custom_type,
+        load = False,
+        microenv = False if args.microenv.lower().startswith('f') else True,
+        graph = False,
+        settingxml = args.settingxml,
+        verbose = False if args.verbose.lower().startswith('f') else True,
+    )
+    if s_pathfile.endswith('/initial.xml'):
+        ls_xmlfile = mcdsts.get_xmlfile_list()
+    else:
+        ls_xmlfile = [s_pathfile.split('/')[-1]]
+    mcdsts.read_mcds(xmlfile_list=ls_xmlfile)
+    s_opath = mcdsts.plot_scatter(
+        focus = args.focus,
+        z_slice = args.z_slice,
+        z_axis = None if (args.z_axis.lower() == 'none') else args.z_axis.split(),
+        cmap = args.cmap,
+        grid = False if args.grid.lower().startswith('f') else True,
+        legend_loc = args.legend_loc,
+        xlim = None if (args.xlim.lower() == 'none') else args.xlim.split(),
+        ylim = None if (args.ylim.lower() == 'none') else args.ylim.split(),
+        xyequal = False if args.xyequal.lower().startswith('f') else True,
+        s = None if (args.s.lower() == 'none') else int(args.s),
+        figsizepx = None if (args.figsizepx.lower() == 'none') else [int(i) for i in args.figsizepx.split()],
+        ext = args.ext,
+        figbgcolor = None if (args.figbgcolor.lower() == 'none') else args.figbgcolor,
+    )
+    # going home
+    return s_opath
 
 
 def plot_timeseries():
@@ -870,7 +1048,7 @@ def plot_timeseries():
         help = 'whether to plot on the secondary y-axis. if a listing of string, which columns to plot on the secondary y-axis. default is False.',
     )
     # plot_timeseries subplots
-    # partly nop
+    # nop partly
     parser.add_argument(
         '--subplots',
         nargs = '?',

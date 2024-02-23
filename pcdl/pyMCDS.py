@@ -728,7 +728,8 @@ class pyMCDS:
                     sys.exit('Processing stopped!')
                 else:
                     z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
-                    print(f'z_slice set to {z_slice}.')
+                    if self.verbose:
+                        print(f'z_slice set to {z_slice}.')
 
             # filter by z_slice
             _, _, ar_p_grid = self.get_mesh()
@@ -841,7 +842,8 @@ class pyMCDS:
                     sys.exit('Processing stopped!')
                 else:
                     z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
-                    print(f'z_slice set to {z_slice}.')
+                    if self.verbose:
+                        print(f'z_slice set to {z_slice}.')
 
         # flatten mesh coordnates
         ar_m, ar_n, ar_p = self.get_mesh()
@@ -893,7 +895,8 @@ class pyMCDS:
             for s_column in set(df_conc.columns).difference(es_coor_conc):
                 if len(set(df_conc.loc[:,s_column])) < values:
                     es_delete.add(s_column)
-                    print('es_delete:', es_delete)
+                    if self.verbose:
+                        print('es_delete:', es_delete)
         df_conc.drop(es_delete, axis=1, inplace=True)
 
         # output
@@ -974,7 +977,8 @@ class pyMCDS:
         _, _, ar_p_axis = self.get_mesh_mnp_axis()
         if not (z_slice in ar_p_axis):
             z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
-            print(f'z_slice set to {z_slice}.')
+            if self.verbose:
+                print(f'z_slice set to {z_slice}.')
 
         # get data z slice
         df_conc = self.get_concentration_df(values=1, drop=set(), keep=set())
@@ -1389,7 +1393,8 @@ class pyMCDS:
         _, _, ar_p_axis = self.get_mesh_mnp_axis()
         if not (z_slice in ar_p_axis):
             z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
-            print(f'z_slice set to {z_slice}.')
+            if self.verbose:
+                print(f'z_slice set to {z_slice}.')
 
         # get data z slice
         df_cell = self.get_cell_df(values=1, drop=set(), keep=set())
@@ -1416,16 +1421,19 @@ class pyMCDS:
                 lr_extrema = z_axis
 
         # handle z_axis summary
-        print(f'categories found: {es_category}.')
-        print(f'min max extrema set to: {lr_extrema}.')
+        if self.verbose:
+            print(f'categories found: {es_category}.')
+            print(f'min max extrema set to: {lr_extrema}.')
 
         # handle xlim and ylim
         if (xlim is None):
             xlim = self.get_xyz_range()[0]
-            print(f'xlim set to: {xlim}.')
+            if self.verbose:
+                print(f'xlim set to: {xlim}.')
         if (ylim is None):
             ylim = self.get_xyz_range()[1]
-            print(f'ylim set to: {ylim}.')
+            if self.verbose:
+                print(f'ylim set to: {ylim}.')
 
         # get figure and axis orbject
         if (ax is None):

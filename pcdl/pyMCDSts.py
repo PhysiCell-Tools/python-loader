@@ -434,7 +434,8 @@ class pyMCDSts:
         _, _, ar_p_axis = self.get_mcds_list()[0].get_mesh_mnp_axis()
         if not (z_slice in ar_p_axis):
             z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
-            print(f'z_slice set to {z_slice}.')
+            if self.verbose:
+                print(f'z_slice set to {z_slice}.')
 
         # handle z_axis categorical cases
         df_cell = self.get_mcds_list()[0].get_cell_df()
@@ -461,15 +462,18 @@ class pyMCDSts:
                         z_axis[1] = np.ceil(r_max)
 
         # handle z_axis summary
-        print(f'z_axis detected: {z_axis}.')
+        if self.verbose:
+            print(f'z_axis detected: {z_axis}.')
 
         # handle xlim and ylim
         if (xlim is None):
             xlim = self.get_mcds_list()[0].get_xyz_range()[0]
-            print(f'xlim set to: {xlim}.')
+            if self.verbose:
+                print(f'xlim set to: {xlim}.')
         if (ylim is None):
             ylim = self.get_mcds_list()[0].get_xyz_range()[1]
-            print(f'ylim set to: {ylim}.')
+            if self.verbose:
+                print(f'ylim set to: {ylim}.')
 
         # handle figure size
         figsizepx[0] = figsizepx[0] - (figsizepx[0] % 2)  # enforce even pixel number
@@ -606,7 +610,8 @@ class pyMCDSts:
         _, _, ar_p_axis = self.get_mcds_list()[0].get_mesh_mnp_axis()
         if not (z_slice in ar_p_axis):
             z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
-            print(f'z_slice set to {z_slice}.')
+            if self.verbose:
+                print(f'z_slice set to {z_slice}.')
 
         # handle extrema
         if extrema == None:
@@ -619,15 +624,18 @@ class pyMCDSts:
                     extrema[0] = np.floor(r_min)
                 if (extrema[1] is None) or (extrema[1] < r_max):
                     extrema[1] = np.ceil(r_max)
-            print(f'min max extrema set to {extrema}.')
+            if self.verbose:
+                print(f'min max extrema set to {extrema}.')
 
         # handle xlim and ylim
         if (xlim is None):
             xlim = self.get_mcds_list()[0].get_xyz_range()[0]
-            print(f'xlim set to {xlim}.')
+            if self.verbose:
+                print(f'xlim set to {xlim}.')
         if (ylim is None):
             ylim = self.get_mcds_list()[0].get_xyz_range()[1]
-            print(f'ylim set to {ylim}.')
+            if self.verbose:
+                print(f'ylim set to {ylim}.')
 
         # handle figure size
         figsizepx[0] = figsizepx[0] - (figsizepx[0] % 2)  # enforce even pixel number
@@ -800,7 +808,8 @@ class pyMCDSts:
             _, _, ar_p_axis = self.get_mcds_list()[0].get_mesh_mnp_axis()
             if not (z_slice in ar_p_axis):
                 z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
-                print(f'z_slice set to {z_slice}.')
+                if self.verbose:
+                    print(f'z_slice set to {z_slice}.')
 
         # handle figure size
         # bue 20231103: not really needed, as timeseries are not used for mp4 movies, but why not.
