@@ -266,9 +266,9 @@ class pyMCDSts:
                 dictionary with an entry of all non-coordinate column names
                 that at least in one of the time steps or in between time
                 steps, reach the given minimal state count.
-                key is the column name, and the value is a list with the
-                minimum and maximum values if allvalues is set to False,
-                or a list of all values if allvalues is set to True.
+                key is the column name, mapped is a list of all values
+                (bool, str, and, if allvalues is True, int and float)
+                or a list with minimum and maximum values (int, float).
 
         description:
             function to detect informative substrate concentration variables

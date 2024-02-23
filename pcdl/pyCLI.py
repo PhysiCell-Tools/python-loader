@@ -343,7 +343,99 @@ def get_conc_df():
 
 
 def get_conc_df_features():
-    pass
+    # argv
+    parser = argparse.ArgumentParser(
+        prog = 'pcdl_get_conc_df_features',
+        description = 'function to detect informative substrate concentration variables in a time series. this function detects even variables which have less than the minimal state count in each time step, but different values from time step to time step. the output is a json file with an entry of all non-coordinate column names that at least in one of the time steps or in between time steps, reach the given minimal value count. key is the column name, mapped is a list of all values (bool, str, and, if allvalues is True, int and float) or a list with minimum and maximum values (int, float).',
+        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
+    )
+
+    # TimeSeries path
+    parser.add_argument(
+        'path',
+        nargs = '?',
+        default = '.',
+        help = 'path to the PhysiCell output directory. default is . .',
+    )
+    # TimeSeries output_path '.'
+    # TimeSeries microenv True
+    # TimeSeries graph False
+    # TimeSeries settingxml
+    parser.add_argument(
+        '--settingxml',
+        nargs = '?',
+        default = 'PhysiCell_settings.xml',
+        help = 'from which settings.xml should the substrate and cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+    )
+    # TimeSeries verbose
+    parser.add_argument(
+        '-v', '--verbose',
+        nargs = '?',
+        default = 'true',
+        help = 'setting verbose to False for less text output, while processing. default is True.',
+    )
+
+    # get_conc_df_features values
+    parser.add_argument(
+        'values',
+        nargs = '?',
+        default = 1,
+        type = int,
+        help = 'minimal number of values a variable has to have in any of the mcds time steps to be outputted. variables that have only 1 state carry no information. None is a state too. default is 1.',
+    )
+    # get_conc_df_features drop
+    parser.add_argument(
+        '--drop',
+        nargs = '?',
+        default = '',
+        help = "set of column labels to be dropped for the dataframe. don't worry: essential columns like ID, coordinates and time will never be dropped. Attention: when the keep parameter is given, then the drop parameter has to be an empty string! default is an empty string.",
+    )
+    # get_conc_df_features keep
+    parser.add_argument(
+        '--keep',
+        nargs = '?',
+        default = '',
+        help = "set of column labels to be kept in the dataframe. set values=1 to be sure that all variables are kept. don't worry: essential columns like ID, coordinates and time will always be kept. default is an empty string.",
+    )
+    # get_conc_df_features allvalues
+    parser.add_argument(
+        'allvalues',
+        nargs = '?',
+        default = 'false',
+        help = 'for numeric data, should only the min and max values or all values be returned? default is false.',
+    )
+
+    # parse arguments
+    args = parser.parse_args()
+    print(args)
+
+    # process arguments
+    if not os.path.exists(args.path + '/initial.xml'):
+        sys.exit(f"Error @ pcdl_plot_timeseries : {args.path} path does not look like a physicell output directory ({args.path}/initial.xml is missing).")
+    mcdsts = pcdl.pyMCDSts(
+        output_path = args.path,
+        #custom_type,
+        load = True,
+        microenv = True,
+        graph = False,
+        settingxml = args.settingxml,
+        verbose = False if args.verbose.lower().startswith('f') else True,
+    )
+    # run
+    s_values = 'minmax'
+    b_allvalues = True if args.allvalues.lower().startswith('t') else False
+    if b_allvalues:
+        s_values = 'all'
+    dl_variable = mcdsts.get_conc_df_features(
+        values = args.values,
+        drop = set(args.drop.split()),
+        keep = set(args.keep.split()),
+        allvalues = b_allvalues,
+    )
+    s_opathfile = f'{args.path}/conc_feature_{s_values}.json'
+    json.dump(dl_variable, open(s_opathfile, 'w'), sort_keys=True)
+    # going home
+    return s_opathfile
 
 
 def get_graph_gml():
