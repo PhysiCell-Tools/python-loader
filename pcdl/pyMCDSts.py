@@ -21,7 +21,7 @@
 
 # load libraries
 import matplotlib.pyplot as plt
-from glob import glob
+import glob
 import numpy as np
 import os
 import pandas as pd
@@ -82,6 +82,7 @@ class pyMCDSts:
         if not os.path.isdir(output_path):
             print(f'Error @ pyMCDSts.__init__ : this is not a path! could not load {output_path}.')
         self.output_path = output_path
+        self.l_xmlfile = [s_pathfile.split('/')[-1] for s_pathfile in glob.glob(f'{self.output_path}output*.xml')]  # bue 2022-10-22: is output*.xml always the correct pattern?
         self.custom_type = custom_type
         self.microenv = microenv
         self.graph = graph
@@ -109,9 +110,7 @@ class pyMCDSts:
             list can be manipulated and used as input for the
             mcdsts.read_mcds function.
         """
-        # bue 2022-10-22: is output*.xml always the correct pattern?
-        ls_pathfile = [o_pathfile.as_posix() for o_pathfile in sorted(pathlib.Path(self.output_path).glob('output*.xml'))]
-        return ls_pathfile
+        return [f'{self.output_path}{s_file}' for s_file in self.l_xmlfile]
 
 
     def read_mcds(self, xmlfile_list=None):
@@ -505,6 +504,7 @@ class pyMCDSts:
             )
             # finalize
             os.makedirs(s_path, exist_ok=True)
+            # BUE 20240223 change!!!
             s_pathfile = f'{s_path}{focus}_{str(round(mcds.get_time(),9)).zfill(11)}.{ext}'
             fig.savefig(s_pathfile, facecolor=figbgcolor)
             plt.close(fig)
@@ -662,6 +662,7 @@ class pyMCDSts:
                 ax = None,
             )
             os.makedirs(s_path, exist_ok=True)
+            # BUE 20240223 change!!!
             s_pathfile = f'{s_path}{focus}_{str(round(mcds.get_time(),9)).zfill(11)}.{ext}'
             fig.savefig(s_pathfile, facecolor=figbgcolor)
             plt.close(fig)
@@ -1005,7 +1006,7 @@ class pyMCDSts:
 
         # generate input file list
         os.chdir(s_path)
-        ls_ifile = sorted(glob(f'*.{interface}'))
+        ls_ifile = sorted(glob.glob(f'*.{interface}'))
         f = open('ffmpeginput.txt', 'w')
         for s_ifile in ls_ifile:
             f.write(f"file '{s_ifile}'\n")
@@ -1023,7 +1024,7 @@ class pyMCDSts:
 
     # GENERATE GML GRAPH FILES ###
 
-    def make_graph_gml(self, graph_type='neighbor', node_attr=['cell_type'], edge_attr=True):
+    def make_graph_gml(self, graph_type='neighbor', edge_attr=True, node_attr=['cell_type']):
         """
         input:
             self: pyMCDS class instance.
@@ -1033,13 +1034,13 @@ class pyMCDSts:
                 attached: processes mcds.get_attached_graph_dict dictionary.
                 neighbor: processes mcds.get_neighbor_graph_dict dictionary.
 
-            node_attr: list of strings; default ['cell_type']
-                list of mcds.get_cell_df dataframe columns, used for
-                node attributes.
-
             edge_attr: boolean; default True
                 specifies if the spatial Euclidean distance is used for
                 edge attribute, to generate a weighted graph.
+
+            node_attr: list of strings; default ['cell_type']
+                list of mcds.get_cell_df dataframe columns, used for
+                node attributes.
 
         output:
             gml file for each time step.
@@ -1062,8 +1063,8 @@ class pyMCDSts:
         for mcds in self.get_mcds_list():
             s_pathfile = mcds.make_graph_gml(
                 graph_type = graph_type,
-                node_attr = node_attr,
                 edge_attr = edge_attr,
+                node_attr = node_attr,
             )
             if (self.verbose):
                 print(s_pathfile)

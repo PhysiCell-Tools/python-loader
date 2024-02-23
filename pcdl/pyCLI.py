@@ -439,13 +439,102 @@ def get_conc_df_features():
 
 
 def get_graph_gml():
-    #parser.add_argument(
-    #    'graph',
-    #    nargs = '?',
-    #    default = 'true',
-    #    help = 'should the graphs be extracted? setting graph to False will use less memory and speed up processing.'
-    #)
-    pass
+    # argv
+    parser = argparse.ArgumentParser(
+        prog = 'pcdl_graph_gml',
+        description = 'function to generate graph files in the gml graph modelling language standard format. gml was the outcome of an initiative that started at the international symposium on graph drawing 1995 in Passau and ended at Graph Drawing 1996 in Berkeley. the networkx python and igraph C and python libraries for graph analysis are gml compatible and can as such read and write this file format.',
+        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
+    )
+
+    # TimeSeries path
+    parser.add_argument(
+        'path',
+        nargs = '?',
+        default = '.',
+        help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .',
+    )
+    # TimeSeries output_path '.'
+    # TimeSeries microenv False
+    # TimeSeries graph True
+    # TimeSeries settingxml
+    parser.add_argument(
+        '--settingxml',
+        nargs = '?',
+        default = 'PhysiCell_settings.xml',
+        help = 'from which settings.xml should the substrate and cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+    )
+    # TimeSeries verbose
+    parser.add_argument(
+        '-v', '--verbose',
+        nargs = '?',
+        default = 'true',
+        help = 'setting verbose to False for less text output, while processing. default is True.',
+    )
+
+    # make_graph_gml graph_type
+    parser.add_argument(
+        'graph_type',
+        nargs = '?',
+        default = 'neighbor',
+        help = 'to specify which physicell output data should be processed. attached: processes mcds.get_attached_graph_dict dictionary. neighbor: processes mcds.get_neighbor_graph_dict dictionary. default is neighbor.',
+    )
+    # make_graph_gml edge_attr
+    parser.add_argument(
+        'edge_attr',
+        nargs = '?',
+        default = 'true',
+        help = 'specifies if the spatial Euclidean distance is used for edge attribute, to generate a weighted graph.',
+    )
+    # make_graph_gml node_attr
+    parser.add_argument(
+        'node_attr',
+        nargs = '*',
+        default = 'cell_type',
+        help = 'listing of mcds.get_cell_df dataframe columns, used for node attributes. default is cell_type.',
+    )
+
+    # parse arguments
+    args = parser.parse_args()
+    print(args)
+
+    # process arguments
+    s_pathfile = args.path
+    if not s_pathfile.endswith('.xml'):
+        s_pathfile = s_pathfile + '/initial.xml'
+    if not os.path.exists(s_pathfile):
+        sys.exit(f"Error @ pcdl_plot_timeseries : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
+    if os.path.isfile(args.path):
+        mcds = pcdl.pyMCDS(
+            xmlfile = args.path,
+            output_path = '.',
+            microenv = False,
+            graph = True,
+            settingxml = args.settingxml,
+            verbose = False if args.verbose.lower().startswith('f') else True
+        )
+        l_mcds = [mcds]
+    else:
+        mcdsts = pcdl.pyMCDSts(
+            output_path = args.path,
+            #custom_type,
+            load = True,
+            microenv = False,
+            graph = True,
+            settingxml = args.settingxml,
+            verbose = False if args.verbose.lower().startswith('f') else True,
+        )
+        l_mcds = mcdsts.l_mcds
+    # run
+    ls_opathfile = []
+    for mcds in l_mcds:
+        s_opathfile = df_conc = mcds.make_graph_gml(
+            graph_type = args.graph_type,
+            edge_attr = False if args.edge_attr.lower().startswith('f') else True,
+            node_attr = args.node_attr.split(),
+        )
+        ls_opathfile.append(s_opathfile)
+    # going home
+    return ls_opathfile
 
 
 def get_version():

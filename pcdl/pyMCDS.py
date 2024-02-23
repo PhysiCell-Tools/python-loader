@@ -222,6 +222,7 @@ class pyMCDS:
     """
     def __init__(self, xmlfile, output_path='.', custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True):
         self.path = None
+        self.xmlfile = xmlfile.replace('\\','/').split('/')[-1]
         self.custom_type = custom_type
         self.microenv = microenv
         self.graph = graph
@@ -1529,7 +1530,7 @@ class pyMCDS:
         return self.data['discrete_cells']['graph']['neighbor_cells'].copy()
 
 
-    def make_graph_gml(self, graph_type='neighbor', node_attr=['cell_type'], edge_attr=True):
+    def make_graph_gml(self, graph_type='neighbor', edge_attr=True, node_attr=['cell_type']):
         """
         input:
             self: pyMCDS class instance.
@@ -1539,13 +1540,13 @@ class pyMCDS:
                 attached: processes mcds.get_attached_graph_dict dictionary.
                 neighbor: processes mcds.get_neighbor_graph_dict dictionary.
 
-            node_attr: list of strings; default ['cell_type']
-                list of mcds.get_cell_df dataframe columns, used for
-                node attributes.
-
             edge_attr: boolean; default True
                 specifies if the spatial Euclidean distance is used for
                 edge attribute, to generate a weighted graph.
+
+            node_attr: list of strings; default ['cell_type']
+                list of mcds.get_cell_df dataframe columns, used for
+                node attributes.
 
         output:
             gml file, generated under the returned path.
@@ -1577,8 +1578,7 @@ class pyMCDS:
             sys.exit(f'Erro @ make_graph_gml : unknowen graph_type {graph_type}. knowen are attached and neighbor.')
 
         # generate filename
-        s_file = f'graph_{graph_type}_{str(round(r_simtime)).zfill(8)}{s_unit_simtime}.gml'
-        s_pathfile = self.path + '/' + s_file
+        s_pathfile = self.get_xmlfile().replace('.xml',f'_{graph_type}.gml')
 
         # open result gml file
         f = open(s_pathfile, 'w')
@@ -1667,6 +1667,20 @@ class pyMCDS:
 
 
     ## LOAD DATA  ##
+    def get_xmlfile(self):
+        """
+        input:
+            self: pyMCDSts class instance.
+
+        output:
+            xmlfile: strings
+                /path/to/output*.xml strings.
+
+        description:
+            function returns a physicell xml path and output file name.
+        """
+        return f'{self.path}/{self.xmlfile}'
+
 
     def _read_xml(self, xmlfile, output_path='.'):
         """

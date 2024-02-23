@@ -83,9 +83,12 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
     + rename pyMCDSts make\_imgconc to **plot_contour** for conciseness.
     + rename pyMCDSts get\_cell\_df\_states to **get_cell_df_features** for conciseness.
     + rename pyMCDSts get\_conc\_df\_states to **get_conc_df_features** for conciseness.
+    + new pyMCDS **get_xmlfile** function for conciseness with pyMCDSts get_xmlfile_list.
     + new pyMCDS **make_cell_vtk** function.
     + new pyMCDS **make_conc_vtk** function.
     + new pyMCDS **make_graph_gml** function to save graphs in a networkx and igraph compatible files fromat.
+    + new pyMCDSts **get_cell_df** function. BUE 20240223: one big frame timeseries; collapsed parameter for cli.
+    + new pyMCDSts **get_conc_df** function. BUE 20240223: one big frame timeseries; collapsed parameter for cli.
     + new pyMCDSts **make_cell_vtk** function.
     + new pyMCDSts **make_conc_vtk** function.
     + new pyMCDSts **make_graph_gml** function to save graphs in a networkx and igraph compatible files format.
