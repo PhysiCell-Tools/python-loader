@@ -40,6 +40,7 @@ if not os.path.exists(s_path_2d):
 # load physicell data time series
 class TestPyMcdsTs(object):
     ''' test for pcdl.pyMCDSts data loader. '''
+
     mcdsts = pcdl.pyMCDSts(s_path_2d, verbose=False)
 
     ## get_xmlfile and read_mcds command and get_mcds_list ##
@@ -47,14 +48,9 @@ class TestPyMcdsTs(object):
         ls_xmlfile = mcdsts.get_xmlfile_list()
         assert len(ls_xmlfile) == 25
 
-    def test_mcdsts_get_xmlfile_list_read_mcds(self, mcdsts=mcdsts):
-        ls_xmlfile = mcdsts.get_xmlfile_list()
-        ls_xmlfile = ls_xmlfile[-3:]
-        l_mcds = mcdsts.read_mcds(ls_xmlfile)
-        assert len(ls_xmlfile) == 3 and \
-               len(l_mcds) == 3 and \
-               len(mcdsts.l_mcds) == 3 and \
-               mcdsts.l_mcds[2].get_time() == 1440
+    def test_mcdsts_get_mcds_list(self, mcdsts=mcdsts):
+        l_mcds = mcdsts.get_mcds_list()
+        assert l_mcds == mcdsts.l_mcds
 
     def test_mcdsts_read_mcds(self, mcdsts=mcdsts):
         l_mcds = mcdsts.read_mcds()
@@ -62,9 +58,15 @@ class TestPyMcdsTs(object):
                len(mcdsts.l_mcds) == 25 and \
                mcdsts.l_mcds[-1].get_time() == 1440
 
-    def test_mcdsts_get_mcds_list(self, mcdsts=mcdsts):
-        l_mcds = mcdsts.get_mcds_list()
-        assert l_mcds == mcdsts.l_mcds
+    def test_mcdsts_get_xmlfile_list_read_mcds(self):
+        mcdsts = pcdl.pyMCDSts(s_path_2d, load=False, verbose=False)
+        ls_xmlfile = mcdsts.get_xmlfile_list()
+        ls_xmlfile = ls_xmlfile[-3:]
+        l_mcds = mcdsts.read_mcds(ls_xmlfile)
+        assert len(ls_xmlfile) == 3 and \
+               len(l_mcds) == 3 and \
+               len(mcdsts.l_mcds) == 3 and \
+               mcdsts.l_mcds[2].get_time() == 1440
 
     ## data triage command ##
     def test_mcdsts_get_cell_df_features(self, mcdsts=mcdsts):
@@ -112,8 +114,8 @@ class TestPyMcdsTs(object):
             ext = 'jpeg', # test if
             figbgcolor = None,  # test if
         )
-        assert os.path.exists(s_path + 'cell_type_000000000.0.jpeg') and \
-               os.path.exists(s_path + 'cell_type_000001440.0.jpeg')
+        assert os.path.exists(s_path + 'output00000000_cell_type.jpeg') and \
+               os.path.exists(s_path + 'output00000000_cell_type.jpeg')
         shutil.rmtree(s_path)
 
     def test_mcdsts_plot_scatter_cat_cmap(self, mcdsts=mcdsts):
@@ -132,8 +134,8 @@ class TestPyMcdsTs(object):
             ext = 'jpeg', # test if
             figbgcolor = None,  # test if
         )
-        assert os.path.exists(s_path + 'cell_type_000000000.0.jpeg') and \
-               os.path.exists(s_path + 'cell_type_000001440.0.jpeg')
+        assert os.path.exists(s_path + 'output00000000_cell_type.jpeg') and \
+               os.path.exists(s_path + 'output00000024_cell_type.jpeg')
         shutil.rmtree(s_path)
 
     def test_mcdsts_plot_scatter_num(self, mcdsts=mcdsts):
@@ -152,8 +154,8 @@ class TestPyMcdsTs(object):
             ext = 'jpeg', # test if
             figbgcolor = None,  # test if
         )
-        assert os.path.exists(s_path + 'pressure_000000000.0.jpeg') and \
-               os.path.exists(s_path + 'pressure_000001440.0.jpeg')
+        assert os.path.exists(s_path + 'output00000000_pressure.jpeg') and \
+               os.path.exists(s_path + 'output00000024_pressure.jpeg')
         shutil.rmtree(s_path)
 
     ## plot_contour command ##
@@ -173,8 +175,8 @@ class TestPyMcdsTs(object):
             ext = 'jpeg',
             figbgcolor = None,  # test if
         )
-        assert os.path.exists(s_path + 'oxygen_000000000.0.jpeg') and \
-               os.path.exists(s_path + 'oxygen_000001440.0.jpeg')
+        assert os.path.exists(s_path + 'output00000000_oxygen.jpeg') and \
+               os.path.exists(s_path + 'output00000024_oxygen.jpeg')
         shutil.rmtree(s_path)
 
     ## plot_timeseries command ##
@@ -430,17 +432,17 @@ class TestPyMcdsTs(object):
 
     ## graph related functions ##
     def test_mcds_get_graph_gml_attached(self, mcdsts=mcdsts):
-        s_pathfile_glob = s_path_2d + '/graph_attached_*min.gml'
-        s_pathfile = s_path_2d + '/graph_attached_00000720min.gml'
-        mcdsts.make_graph_gml(graph_type='attached', node_attr=['cell_type'], edge_attr=True)
+        s_pathfile_glob = mcdsts.output_path + 'output*_attached.gml'
+        s_pathfile = mcdsts.output_path + 'output00000012_attached.gml'
+        mcdsts.make_graph_gml(graph_type='attached', edge_attr=True, node_attr=['cell_type'])
         assert os.path.exists(s_pathfile)
         for s_file in glob.glob(s_pathfile_glob):
             os.remove(s_file)
 
     def test_mcds_get_graph_gml_neighbor(self, mcdsts=mcdsts):
-        s_pathfile_glob = s_path_2d + '/graph_neighbor_*min.gml'
-        s_pathfile = s_path_2d + '/graph_neighbor_00000720min.gml'
-        mcdsts.make_graph_gml(graph_type='neighbor', node_attr=['cell_type'], edge_attr=True)
+        s_pathfile_glob = mcdsts.output_path + 'output*_neighbor.gml'
+        s_pathfile = mcdsts.output_path + 'output00000012_neighbor.gml'
+        mcdsts.make_graph_gml(graph_type='neighbor', edge_attr=True, node_attr=['cell_type'])
         assert os.path.exists(s_pathfile)
         for s_file in glob.glob(s_pathfile_glob):
             os.remove(s_file)

@@ -82,7 +82,7 @@ class pyMCDSts:
         if not os.path.isdir(output_path):
             print(f'Error @ pyMCDSts.__init__ : this is not a path! could not load {output_path}.')
         self.output_path = output_path
-        self.l_xmlfile = [s_pathfile.split('/')[-1] for s_pathfile in glob.glob(f'{self.output_path}output*.xml')]  # bue 2022-10-22: is output*.xml always the correct pattern?
+        self.ls_xmlfile = [s_pathfile.split('/')[-1] for s_pathfile in sorted(glob.glob(f'{self.output_path}output*.xml'))]  # bue 2022-10-22: is output*.xml always the correct pattern?
         self.custom_type = custom_type
         self.microenv = microenv
         self.graph = graph
@@ -102,7 +102,7 @@ class pyMCDSts:
 
         output:
             xmlfile_list: list of strings
-                alphanumerical sorted list of /path/to/output*.xml strings.
+                alphanumerical sorted list of output*.xml strings.
 
         description:
             function returns an alphanumerical (and as such chronological)
@@ -110,46 +110,7 @@ class pyMCDSts:
             list can be manipulated and used as input for the
             mcdsts.read_mcds function.
         """
-        return [f'{self.output_path}{s_file}' for s_file in self.l_xmlfile]
-
-
-    def read_mcds(self, xmlfile_list=None):
-        """
-        input:
-            self: pyMCDSts class instance.
-
-            xmlfile_list: list of strings; default None
-                list of physicell output /path/to/output*.xml strings.
-
-        output:
-            self.l_mcds: list of mcds objects
-
-        description:
-            the function returns a list of mcds objects loaded by
-            pyMCDS calls.
-        """
-        # handle input
-        if (xmlfile_list is None):
-            xmlfile_list = self.get_xmlfile_list()
-
-        # load mcds objects into list
-        l_mcds = []
-        for s_pathfile in xmlfile_list:
-            mcds = pyMCDS(
-                xmlfile = s_pathfile,
-                custom_type = self.custom_type,
-                microenv = self.microenv,
-                graph = self.graph,
-                settingxml = self.settingxml,
-                verbose = self.verbose
-            )
-            l_mcds.append(mcds)
-            if self.verbose:
-                print() # carriage return
-
-        # output
-        self.l_mcds = l_mcds
-        return l_mcds
+        return self.ls_xmlfile
 
 
     def get_mcds_list(self):
@@ -166,6 +127,48 @@ class pyMCDSts:
             function returns a binding to the self.l_mcds list of mcds objects.
         """
         return self.l_mcds
+
+
+    def read_mcds(self, xmlfile_list=None):
+        """
+        input:
+            self: pyMCDSts class instance.
+
+            xmlfile_list: list of strings; default None
+                list of physicell output output*.xml strings.
+
+        output:
+            self.l_mcds: list of mcds objects
+
+        description:
+            the function returns a list of mcds objects loaded by
+            pyMCDS calls.
+        """
+        # handle input
+        if (xmlfile_list is None):
+            xmlfile_list = self.get_xmlfile_list()
+        ls_xmlfile = sorted([s_xmlfile.replace('\\','/').split('/')[-1]  for s_xmlfile in xmlfile_list])
+        ls_xmlpathfile = [f'{self.output_path}{s_xmlfile}' for s_xmlfile in ls_xmlfile]
+
+        # load mcds objects into list
+        l_mcds = []
+        for s_xmlpathfile in ls_xmlpathfile:
+            mcds = pyMCDS(
+                xmlfile = s_xmlpathfile,
+                custom_type = self.custom_type,
+                microenv = self.microenv,
+                graph = self.graph,
+                settingxml = self.settingxml,
+                verbose = self.verbose
+            )
+            l_mcds.append(mcds)
+            if self.verbose:
+                print() # carriage return
+
+        # output
+        self.l_mcds = l_mcds
+        self.ls_xmlfile = ls_xmlfile
+        return l_mcds
 
 
     ## TRIAGE DATA
@@ -212,7 +215,7 @@ class pyMCDSts:
         """
         # gather data
         de_variable_state = {}
-        for mcds in self.l_mcds:
+        for mcds in self.get_mcds_list():
             df_cell = mcds.get_cell_df(drop=drop, keep=keep)
             for s_column in df_cell.columns:
                 if not (s_column in es_coor_cell):
@@ -277,7 +280,7 @@ class pyMCDSts:
         """
         # gather data
         der_variable_state = {}
-        for mcds in self.l_mcds:
+        for mcds in self.get_mcds_list():
             df_conc = mcds.get_concentration_df(drop=drop, keep=keep)
             for s_column in df_conc.columns:
                 if not (s_column in es_coor_conc):
@@ -428,18 +431,18 @@ class pyMCDSts:
 
         # handle z_slice
         z_slice = float(z_slice)
-        _, _, ar_p_axis = self.l_mcds[0].get_mesh_mnp_axis()
+        _, _, ar_p_axis = self.get_mcds_list()[0].get_mesh_mnp_axis()
         if not (z_slice in ar_p_axis):
             z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
             print(f'z_slice set to {z_slice}.')
 
         # handle z_axis categorical cases
-        df_cell = self.l_mcds[0].get_cell_df()
+        df_cell = self.get_mcds_list()[0].get_cell_df()
         if (str(df_cell.loc[:,focus].dtype) in {'bool', 'object'}):
             if (z_axis is None):
                 # extract set of labels from data
                 z_axis = set()
-                for mcds in self.l_mcds:
+                for mcds in self.get_mcds_list():
                     df_cell = mcds.get_cell_df()
                     z_axis = z_axis.union(set(df_cell.loc[:,focus]))
 
@@ -448,7 +451,7 @@ class pyMCDSts:
             if (z_axis is None):
                 # extract min and max values from data
                 z_axis = [None, None]
-                for mcds in self.l_mcds:
+                for mcds in self.get_mcds_list():
                     df_cell = mcds.get_cell_df()
                     r_min = df_cell.loc[:,focus].min()
                     r_max = df_cell.loc[:,focus].max()
@@ -462,10 +465,10 @@ class pyMCDSts:
 
         # handle xlim and ylim
         if (xlim is None):
-            xlim = self.l_mcds[0].get_xyz_range()[0]
+            xlim = self.get_mcds_list()[0].get_xyz_range()[0]
             print(f'xlim set to: {xlim}.')
         if (ylim is None):
-            ylim = self.l_mcds[0].get_xyz_range()[1]
+            ylim = self.get_mcds_list()[0].get_xyz_range()[1]
             print(f'ylim set to: {ylim}.')
 
         # handle figure size
@@ -486,7 +489,7 @@ class pyMCDSts:
         s_path = f'{self.output_path}cell_{focus}_z{round(z_slice,9)}/'
 
         # plotting
-        for mcds in self.l_mcds:
+        for i, mcds in enumerate(self.get_mcds_list()):
             fig = mcds.plot_scatter(
                 focus = focus,
                 z_slice = z_slice,
@@ -504,8 +507,8 @@ class pyMCDSts:
             )
             # finalize
             os.makedirs(s_path, exist_ok=True)
-            # BUE 20240223 change!!!
-            s_pathfile = f'{s_path}{focus}_{str(round(mcds.get_time(),9)).zfill(11)}.{ext}'
+            s_file = self.get_xmlfile_list()[i].replace('.xml', f'_{focus}.{ext}')
+            s_pathfile = f'{s_path}{s_file}'
             fig.savefig(s_pathfile, facecolor=figbgcolor)
             plt.close(fig)
 
@@ -518,8 +521,8 @@ class pyMCDSts:
         input:
             self: pyMCDSts class instance
 
-            focus: string; default is 'cell_type'
-                column name within cell dataframe.
+            focus: string
+                column name within conc dataframe.
 
             z_slice: floating point number; default is 0
                 z-axis position to slice a 2D xy-plain out of the
@@ -575,8 +578,8 @@ class pyMCDSts:
             image files under the returned path.
 
         description:
-            this function generates image time series
-            based on the physicell data output.
+            this function generates a matplotlib contour (or contourf) plot
+            time series.
 
             jpeg is by definition a lossy compressed image format.
             png is by definition a lossless compressed image format.
@@ -600,7 +603,7 @@ class pyMCDSts:
 
         # handle z_slice
         z_slice = float(z_slice)
-        _, _, ar_p_axis = self.l_mcds[0].get_mesh_mnp_axis()
+        _, _, ar_p_axis = self.get_mcds_list()[0].get_mesh_mnp_axis()
         if not (z_slice in ar_p_axis):
             z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
             print(f'z_slice set to {z_slice}.')
@@ -608,7 +611,7 @@ class pyMCDSts:
         # handle extrema
         if extrema == None:
             extrema = [None, None]
-            for mcds in self.l_mcds:
+            for mcds in self.get_mcds_list():
                 df_conc = mcds.get_concentration_df()
                 r_min = df_conc.loc[:,focus].min()
                 r_max = df_conc.loc[:,focus].max()
@@ -620,10 +623,10 @@ class pyMCDSts:
 
         # handle xlim and ylim
         if (xlim is None):
-            xlim = self.l_mcds[0].get_xyz_range()[0]
+            xlim = self.get_mcds_list()[0].get_xyz_range()[0]
             print(f'xlim set to {xlim}.')
         if (ylim is None):
-            ylim = self.l_mcds[0].get_xyz_range()[1]
+            ylim = self.get_mcds_list()[0].get_xyz_range()[1]
             print(f'ylim set to {ylim}.')
 
         # handle figure size
@@ -644,7 +647,7 @@ class pyMCDSts:
         s_path = f'{self.output_path}substrate_{focus}_z{round(z_slice,9)}/'
 
         # plotting
-        for mcds in self.l_mcds:
+        for i, mcds in enumerate(self.get_mcds_list()):
             fig = mcds.plot_contour(
                 substrate = focus,
                 z_slice = z_slice,
@@ -662,8 +665,8 @@ class pyMCDSts:
                 ax = None,
             )
             os.makedirs(s_path, exist_ok=True)
-            # BUE 20240223 change!!!
-            s_pathfile = f'{s_path}{focus}_{str(round(mcds.get_time(),9)).zfill(11)}.{ext}'
+            s_file = self.get_xmlfile_list()[i].replace('.xml', f'_{focus}.{ext}')
+            s_pathfile = f'{s_path}{s_file}'
             fig.savefig(s_pathfile, facecolor=figbgcolor)
             plt.close(fig)
 
@@ -794,7 +797,7 @@ class pyMCDSts:
 
         # handle z_slice
         if not (z_slice is None):
-            _, _, ar_p_axis = self.l_mcds[0].get_mesh_mnp_axis()
+            _, _, ar_p_axis = self.get_mcds_list()[0].get_mesh_mnp_axis()
             if not (z_slice in ar_p_axis):
                 z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
                 print(f'z_slice set to {z_slice}.')
@@ -1060,12 +1063,15 @@ class pyMCDSts:
             https://networkx.org/
             https://igraph.org/
         """
+        # processing
+        ls_pathfile = []
         for mcds in self.get_mcds_list():
             s_pathfile = mcds.make_graph_gml(
                 graph_type = graph_type,
                 edge_attr = edge_attr,
                 node_attr = node_attr,
             )
-            if (self.verbose):
-                print(s_pathfile)
+            ls_pathfile.append(s_pathfile)
 
+        # outout
+        return ls_pathfile

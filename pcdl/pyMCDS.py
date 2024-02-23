@@ -222,7 +222,7 @@ class pyMCDS:
     """
     def __init__(self, xmlfile, output_path='.', custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True):
         self.path = None
-        self.xmlfile = xmlfile.replace('\\','/').split('/')[-1]
+        self.xmlfile = None
         self.custom_type = custom_type
         self.microenv = microenv
         self.graph = graph
@@ -1578,10 +1578,10 @@ class pyMCDS:
             sys.exit(f'Erro @ make_graph_gml : unknowen graph_type {graph_type}. knowen are attached and neighbor.')
 
         # generate filename
-        s_pathfile = self.get_xmlfile().replace('.xml',f'_{graph_type}.gml')
+        s_gmlpathfile = self.path + '/' + self.xmlfile.replace('.xml',f'_{graph_type}.gml')
 
         # open result gml file
-        f = open(s_pathfile, 'w')
+        f = open(s_gmlpathfile, 'w')
         f.write(f'Creator "pcdl_v{__version__}"\ngraph [\n')
         f.write(f'  id {int(r_simtime)}\n  comment "simtime_{s_unit_simtime}"\n  label "{graph_type}_graph"\n  directed 0\n')
         for i_src, ei_dst in dei_graph.items():
@@ -1612,7 +1612,7 @@ class pyMCDS:
         f.close()
 
         # output
-        return s_pathfile
+        return s_gmlpathfile
 
 
     ## UNIT RELATED FUNCTIONS ##
@@ -1667,21 +1667,6 @@ class pyMCDS:
 
 
     ## LOAD DATA  ##
-    def get_xmlfile(self):
-        """
-        input:
-            self: pyMCDSts class instance.
-
-        output:
-            xmlfile: strings
-                /path/to/output*.xml strings.
-
-        description:
-            function returns a physicell xml path and output file name.
-        """
-        return f'{self.path}/{self.xmlfile}'
-
-
     def _read_xml(self, xmlfile, output_path='.'):
         """
         input:
@@ -1713,6 +1698,7 @@ class pyMCDS:
             s_xmlfile = ls_xmlfile.pop(-1)
             output_path = '/'.join(ls_xmlfile)
         self.path = output_path
+        self.xmlfile = s_xmlfile
 
         # generate output dictionary
         d_mcds = {}
@@ -1779,10 +1765,10 @@ class pyMCDS:
         # read physicell output xml path/file #
         #######################################
 
-        s_xmlpathfile_output = self.path + '/' + s_xmlfile
-        x_tree = ET.parse(s_xmlpathfile_output)
+        s_xmlpathfile = self.path + '/' + self.xmlfile
+        x_tree = ET.parse(s_xmlpathfile)
         if self.verbose:
-            print(f'reading: {s_xmlpathfile_output}')
+            print(f'reading: {s_xmlpathfile}')
         x_root = x_tree.getroot()
 
 
@@ -2061,7 +2047,6 @@ class pyMCDS:
             if self.verbose:
                 print('working on graph data ...')
 
-            # BUE 20221028: repelaced or kept?
             d_mcds['discrete_cells']['graph'] = {}
 
             # neighborhood cell graph

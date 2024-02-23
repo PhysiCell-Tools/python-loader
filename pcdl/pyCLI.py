@@ -596,7 +596,176 @@ def make_movie():
 
 
 def plot_contour():
-    pass
+    # argv
+    parser = argparse.ArgumentParser(
+        prog = 'pcdl_graph_gml',
+        description = 'function generates matplotlib contour (or contourf) plots, inclusive color bar, for the substrate specified, under the returned path.',
+        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
+    )
+
+    # TimeSeries path
+    parser.add_argument(
+        'path',
+        nargs = '?',
+        default = '.',
+        help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .',
+    )
+    # TimeSeries output_path '.'
+    # TimeSeries microenv True
+    # TimeSeries graph False
+    # TimeSeries settingxml
+    parser.add_argument(
+        '--settingxml',
+        nargs = '?',
+        default = 'PhysiCell_settings.xml',
+        help = 'from which settings.xml should the substrate and cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+    )
+    # TimeSeries verbose
+    parser.add_argument(
+        '-v', '--verbose',
+        nargs = '?',
+        default = 'true',
+        help = 'setting verbose to False for less text output, while processing. default is True.',
+    )
+
+    # plot_contour focus
+    parser.add_argument(
+        'focus',
+        nargs = '?',
+        help = 'column name within conc dataframe.',
+    )
+    # plot_contour z_slice
+    parser.add_argument(
+        '--z_slice',
+        nargs = '?',
+        default = 0.0,
+        type = float,
+        help = 'z-axis position to slice a 2D xy-plain out of the 3D mesh. if z_slice position numeric but not an exact mesh center coordinate, then z_slice will be adjusted to the nearest mesh center value, the smaller one, if the coordinate lies on a saddle point. default is 0.0.',
+    )
+    # plot_contour extrema
+    parser.add_argument(
+        '--extrema',
+        nargs = '?',
+        default = 'none',
+        help = 'listing of two floats. None takes min and max from data. default is None.',
+    )
+    # plot_contour alpha
+    parser.add_argument(
+        '--alpha',
+        nargs = '?',
+        default = 1.0,
+        type = float,
+        help = 'alpha channel transparency value between 1 (not transparent at all) and 0 (totally transparent).',
+    )
+    # plot_contour fill
+    parser.add_argument(
+        '--fill',
+        nargs = '?',
+        default = 'true',
+        help = 'True generates a matplotlib contourf plot. False generates a matplotlib contour plot.',
+    )
+    # plot_contour cmap
+    parser.add_argument(
+        '--cmap',
+        nargs = '?',
+        default = 'viridis',
+        help = 'matplotlib colormap string from https://matplotlib.org/stable/tutorials/colors/colormaps.html . default is viridis.',
+    )
+    # plot_contour grid
+    parser.add_argument(
+        '--grid',
+        nargs = '?',
+        default = 'true',
+        help = 'plot axis grid lines. default is True.',
+    )
+    # plot_contour xlim
+    parser.add_argument(
+        '--xlim',
+        nargs = '?',
+        default = 'none',
+        help = 'two floats. x axis min and max value. None takes min and max from mesh x axis range. default is None.',
+    )
+    # plot_contour ylim
+    parser.add_argument(
+        '--ylim',
+        nargs = '?',
+        default = 'none',
+        help = 'two floats. y axis min and max value. None takes min and max from mesh y axis range. default is None.',
+    )
+    # plot_contour xyequal
+    parser.add_argument(
+        '--xyequal',
+        nargs = '?',
+        default = 'true',
+        help = 'to specify equal axis spacing for x and y axis. default is true.',
+    )
+    # plot_contour figsizepx
+    parser.add_argument(
+        '--figsizepx',
+        nargs = '?',
+        default = 'none',
+        help = 'size of the figure in pixels [integer], x y. the given x and y will be rounded to the nearest even number, to be able to generate movies from the images. None tries to take the values from the initial.svg file. fall back setting is [640, 480]. default is None.',
+    )
+    # plot_contour ext
+    parser.add_argument(
+        '--ext',
+        nargs = '?',
+        default = 'jpeg',
+        help = 'output image format. possible formats are jpeg, png, and tiff. default is jpeg.',
+    )
+    # plot_contour figbgcolor
+    parser.add_argument(
+        '--figbgcolor',
+        nargs = '?',
+        default = 'none',
+        help = 'figure background color. None is transparent (png) or white (jpeg, tiff). default is None.',
+    )
+
+    # parse arguments
+    args = parser.parse_args()
+    print(args)
+
+    # process arguments
+    args.path = args.path.replace('\\','/')
+    s_pathfile = args.path
+    if s_pathfile.endswith('.xml'):
+        args.path = '/'.join(s_pathfile.split('/')[:-1])
+    else:
+        s_pathfile = s_pathfile + '/initial.xml'
+    if not os.path.exists(s_pathfile):
+        sys.exit(f"Error @ pcdl_plot_timeseries : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
+    # run
+    mcdsts = pcdl.pyMCDSts(
+        output_path = args.path,
+        #custom_type,
+        load = False,
+        microenv = True,
+        graph = False,
+        settingxml = args.settingxml,
+        verbose = False if args.verbose.lower().startswith('f') else True,
+    )
+    if s_pathfile.endswith('/initial.xml'):
+        ls_xmlfile = mcdsts.get_xmlfile_list()
+    else:
+        ls_xmlfile = [s_pathfile.split('/')[-1]]
+    mcdsts.read_mcds(xmlfile_list=ls_xmlfile)
+    s_opath = mcdsts.plot_contour(
+        focus = args.focus,
+        z_slice = args.z_slice,
+        extrema = None if (args.extrema.lower() == 'none') else args.extrema.split(),
+        alpha = args.alpha,
+        fill = True if args.fill.lower().startswith('t') else False,
+        cmap = args.cmap,
+        grid = False if args.grid.lower().startswith('f') else True,
+        xlim = None if (args.xlim.lower() == 'none') else args.xlim.split(),
+        ylim = None if (args.ylim.lower() == 'none') else args.ylim.split(),
+        xyequal = False if args.xyequal.lower().startswith('f') else True,
+        figsizepx = None if (args.figsizepx.lower() == 'none') else [int(i) for i in args.figsizepx.split()],
+        ext = args.ext,
+        figbgcolor = None if (args.figbgcolor.lower() == 'none') else args.figbgcolor,
+    )
+    # going home
+    return s_opath
 
 
 def plot_scatter():
@@ -786,7 +955,7 @@ def plot_timeseries():
         '--figsizepx',
         nargs = '?',
         default = '640 480',
-        help = 'size of the figure in pixels, x y. the given x and y will be rounded to the nearest even number, to be able to generate movies from the images. default is 640 480.',
+        help = 'size of the figure in pixels [integer], x y. the given x and y will be rounded to the nearest even number, to be able to generate movies from the images. default is 640 480.',
     )
     # plot_timeseries ext
     # nop partly
@@ -828,7 +997,7 @@ def plot_timeseries():
     else: b_legend = True
     # run
     if not os.path.exists(args.path + '/initial.xml'):
-        sys.exit(f"Error @ pcdl_plot_timeseries : path does not look like a physicell output directory. {args.path}/initial.xml is missing.")
+        sys.exit(f"Error @ pcdl_plot_timeseries : path does not look like a physicell output directory ({args.path}/initial.xml is missing).")
     mcdsts = pcdl.pyMCDSts(
         output_path = args.path,
         #custom_type,
