@@ -323,7 +323,7 @@ class pyMCDSts:
         return s_magick
 
 
-    def plot_scatter(self, focus='cell_type', z_slice=0, z_axis=None, cmap='viridis', grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=None, figsizepx=None, ext='jpeg', figbgcolor=None):
+    def plot_scatter(self, focus='cell_type', z_slice=0, z_axis=None, alpha=1, cmap='viridis', grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=None, figsizepx=None, ext='jpeg', figbgcolor=None):
         """
         input:
             self: pyMCDSts class instance
@@ -341,6 +341,10 @@ class pyMCDSts:
                for a numeric focus: tuple of two floats; default is None
                depending on the focus column variable dtype, default extracts
                labels or min and max values from data.
+
+            alpha: floating point number; default is 1
+                alpha channel transparency value
+                between 1 (not transparent at all) and 0 (totally transparent).
 
             cmap: dictionary of strings or string; default viridis.
                 dictionary that maps labels to colors strings.
@@ -498,6 +502,7 @@ class pyMCDSts:
                 focus = focus,
                 z_slice = z_slice,
                 z_axis = z_axis,
+                alpha = alpha,
                 cmap = cmap,
                 title = f'{focus}\n{df_cell.shape[0]}[agent] {round(mcds.get_time(),9)}[min]',
                 grid = grid,

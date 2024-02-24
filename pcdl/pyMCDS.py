@@ -1319,7 +1319,7 @@ class pyMCDS:
         return df_voxel
 
 
-    def plot_scatter(self, focus='cell_type', z_slice=0, z_axis=None, cmap='viridis', title=None, grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=None, figsize=None, ax=None):
+    def plot_scatter(self, focus='cell_type', z_slice=0, z_axis=None, alpha=1, cmap='viridis', title=None, grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=None, figsize=None, ax=None):
         """
         input:
             self: pyMCDSts class instance
@@ -1338,6 +1338,10 @@ class pyMCDS:
                for a numeric focus: tuple of two floats; default is None
                depending on the focus column variable dtype, default extracts
                labels or min and max values from data.
+
+            alpha: floating point number; default is 1
+                alpha channel transparency value
+                between 1 (not transparent at all) and 0 (totally transparent).
 
             cmap: dictionary of strings or string; default viridis.
                 dictionary that maps labels to colors strings.
@@ -1484,6 +1488,7 @@ class pyMCDS:
             c = c,
             vmin = lr_extrema[0],
             vmax = lr_extrema[1],
+            alpha = alpha,
             cmap = s_cmap,
             xlim = xlim,
             ylim = ylim,

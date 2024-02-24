@@ -537,6 +537,10 @@ def get_graph_gml():
     return ls_opathfile
 
 
+def get_unit_se():
+    pass
+
+
 def get_version():
     # argv
     parser = argparse.ArgumentParser(
@@ -655,14 +659,14 @@ def plot_contour():
         nargs = '?',
         default = 1.0,
         type = float,
-        help = 'alpha channel transparency value between 1 (not transparent at all) and 0 (totally transparent).',
+        help = 'alpha channel transparency value between 1 (not transparent at all) and 0 (totally transparent). default is 1.0.',
     )
     # plot_contour fill
     parser.add_argument(
         '--fill',
         nargs = '?',
         default = 'true',
-        help = 'True generates a matplotlib contourf plot. False generates a matplotlib contour plot.',
+        help = 'True generates a matplotlib contourf plot. False generates a matplotlib contour plot. default is True.',
     )
     # plot_contour cmap
     parser.add_argument(
@@ -814,7 +818,7 @@ def plot_scatter():
         'focus',
         nargs = '?',
         default = 'cell_type',
-        help = 'column name within conc dataframe.',
+        help = 'column name within conc dataframe. default is cell_type.',
     )
     # plot_scatter z_slice
     parser.add_argument(
@@ -830,6 +834,14 @@ def plot_scatter():
         nargs = '?',
         default = 'none',
         help = 'for a categorical focus: set of labels; for a numeric focus: tuple of two floats; default is None depending on the focus column variable dtype, default extracts labels or min and max values from data.',
+    )
+    # plot_contour alpha
+    parser.add_argument(
+        '--alpha',
+        nargs = '?',
+        default = 1.0,
+        type = float,
+        help = 'alpha channel transparency value between 1 (not transparent at all) and 0 (totally transparent). default is 1.0.',
     )
     # plot_scatter cmap
     # nop partly
@@ -935,6 +947,7 @@ def plot_scatter():
         focus = args.focus,
         z_slice = args.z_slice,
         z_axis = None if (args.z_axis.lower() == 'none') else args.z_axis.split(),
+        alpha = args.alpha,
         cmap = args.cmap,
         grid = False if args.grid.lower().startswith('f') else True,
         legend_loc = args.legend_loc,

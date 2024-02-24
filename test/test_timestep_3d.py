@@ -336,6 +336,7 @@ class TestPyMcds3D(object):
             focus='cell_type',  # case categorical
             z_slice = -3.333,   # test if
             z_axis = None,  # test if categorical
+            #alpha = 1,  # matplotlib
             #cmap = 'viridis',  # matplotlib
             #title = None, # matplotlib
             #grid = True,  # matplotlib
@@ -355,6 +356,7 @@ class TestPyMcds3D(object):
             focus='cell_type',  # case categorical
             z_slice = 0,  # jump over if
             z_axis = None,  # test if categorical
+            #alpha = 1,  # matplotlib
             cmap = {'cancer_cell': 'maroon'},  # matplotlib
             title ='scatter cat',  # matplotlib
             #grid = True,  # matplotlib
@@ -373,6 +375,7 @@ class TestPyMcds3D(object):
             focus='pressure',  # case numeric
             z_slice = -3.333,   # test if
             z_axis = None,  # test if numeric
+            #alpha = 1,  # matplotlib
             #cmap = 'viridis',  # matplotlib
             #title = None, # matplotlib
             #grid = True,  # matplotlib

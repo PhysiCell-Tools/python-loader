@@ -103,6 +103,7 @@ class TestPyMcdsTs(object):
             focus='cell_type',  # case categorical
             z_slice = -3.333,   # test if
             z_axis = None,  # test if categorical
+            #alpha = 1,  # matplotlib
             #cmap = 'viridis',  # matplotlib
             #grid = True,  # matplotlib
             #legend_loc='lower left',  # matplotlib
@@ -123,6 +124,7 @@ class TestPyMcdsTs(object):
             focus='cell_type',  # case categorical
             z_slice = -3.333,   # test if
             z_axis = None,  # test if categorical
+            #alpha = 1,  # matplotlib
             cmap = {'cancer_cell': 'maroon'},  # matplotlib
             #grid = True,  # matplotlib
             #legend_loc='lower left',  # matplotlib
@@ -143,6 +145,7 @@ class TestPyMcdsTs(object):
             focus='pressure',  # case numeric
             z_slice = -3.333,   # test if
             z_axis = None,  # test if numeric
+            #alpha = 1,  # matplotlib
             #cmap = 'viridis',  # matplotlib
             #grid = True,  # matplotlib
             #legend_loc='lower left',  # matplotlib
