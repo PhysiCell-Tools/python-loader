@@ -49,7 +49,7 @@ class TestTimeStep(object):
         ann = mcds.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs')
         assert (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
                (ann.X.shape == (20460, 102)) and \
-               (ann.obs.shape == (20460, 6)) and \
+               (ann.obs.shape == (20460, 7)) and \
                (ann.obsm['spatial'].shape == (20460, 3)) and \
                (ann.var.shape == (102, 0)) and \
                (len(ann.uns) == 0)
@@ -67,7 +67,7 @@ class TestTimeSeries(object):
         assert (len(mcdsts.l_mcds) == 25) and \
                (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
                (ann.X.shape == (481651, 102)) and \
-               (ann.obs.shape == (481651, 7)) and \
+               (ann.obs.shape == (481651, 8)) and \
                (ann.obsm['spatial'].shape == (481651, 3)) and \
                (ann.var.shape == (102, 0)) and \
                (len(ann.uns) == 0)
@@ -80,7 +80,7 @@ class TestTimeSeries(object):
                (len(l_ann) == 25) and \
                (all([str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>" for ann in l_ann])) and \
                (l_ann[24].X.shape == (20460, 102)) and \
-               (l_ann[24].obs.shape == (20460, 6)) and \
+               (l_ann[24].obs.shape == (20460, 7)) and \
                (l_ann[24].obsm['spatial'].shape == (20460, 3)) and \
                (l_ann[24].var.shape == (102, 0)) and \
                (len(l_ann[24].uns) == 0)

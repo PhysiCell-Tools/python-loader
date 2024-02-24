@@ -43,6 +43,14 @@ class TestPyMcdsTs(object):
 
     mcdsts = pcdl.pyMCDSts(s_path_2d, verbose=False)
 
+    def test_mcds_set_verbose_true(self, mcdsts=mcdsts):
+        mcdsts.set_verbose_true()
+        assert mcdsts.verbose
+
+    def test_mcds_set_verbose_false(self, mcdsts=mcdsts):
+        mcdsts.set_verbose_false()
+        assert not mcdsts.verbose
+
     ## get_xmlfile and read_mcds command and get_mcds_list ##
     def test_mcdsts_get_xmlfile_list(self, mcdsts=mcdsts):
         ls_xmlfile = mcdsts.get_xmlfile_list()
@@ -69,6 +77,16 @@ class TestPyMcdsTs(object):
                mcdsts.l_mcds[2].get_time() == 1440
 
     ## data triage command ##
+    def test_mcdsts_get_cell_df(self, mcdsts=mcdsts):
+        ldf_cell = mcdsts.get_cell_df(values=2, drop=set(), keep=set(), collapse=False)
+        assert len(ldf_cell) == 25 and \
+               ldf_cell[0].shape == (889, 95) and \
+               ldf_cell[-1].shape == (1099, 95)
+
+    def test_mcdsts_get_cell_df_collapse(self, mcdsts=mcdsts):
+        df_cell = mcdsts.get_cell_df(values=2, drop=set(), keep=set(), collapse=True)
+        assert df_cell.shape == (24758, 95)
+
     def test_mcdsts_get_cell_df_features(self, mcdsts=mcdsts):
         dl_cell = mcdsts.get_cell_df_features(values=2, drop=set(), keep=set(), allvalues=False)
         assert len(dl_cell.keys()) == 28 and \

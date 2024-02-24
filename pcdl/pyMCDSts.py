@@ -93,6 +93,12 @@ class pyMCDSts:
         else:
             self.l_mcds = None
 
+    def set_verbose_true(self):
+        self.verbose = True
+
+    def set_verbose_false(self):
+        self.verbose = False
+
 
     ## LOAD DATA
     def get_xmlfile_list(self):
@@ -172,9 +178,76 @@ class pyMCDSts:
 
 
     ## TRIAGE DATA
+    def get_cell_df(self, values=1, drop=set(), keep=set(), collapse=True):
+        """
+        input:
+            self: pyMCDSts class instance.
+
+            values: integer; default is 1
+                minimal number of values a variable has to have to be outputted.
+                variables that have only 1 state carry no information.
+                None is a state too.
+
+            drop: set of strings; default is an empty set
+                set of column labels to be dropped for the dataframe.
+                don't worry: essential columns like ID, coordinates
+                and time will never be dropped.
+                Attention: when the keep parameter is given, then
+                the drop parameter has to be an empty set!
+
+            keep: set of strings; default is an empty set
+                set of column labels to be kept in the dataframe.
+                set values=1 to be sure that all variables are kept.
+                don't worry: essential columns like ID, coordinates,
+                time and runtime (wall time) will always be kept.
+
+            collapse: boole; default True
+                should all mcds time steps from the time series be collapsed
+                into one pandas datafarme object, or a list of datafarme objects
+                for each time step?
+
+        output:
+            df_cell or ldf_cell: pandas dataframe or list of dataframe
+            dataframe stores one cell per row, all tracked variables
+            values related to this cell. the variables are cell_position,
+            mesh_center, and voxel coordinates, all cell_variables,
+            all substrate rates and concentrations, and additional
+            the surrounding cell density.
+
+        description:
+            function returns for the whole time series one or many dataframes
+            with a cell centric view of the simulation.
+        """
+        # set output variables
+        ldf_cellts = []
+        df_cellts = None
+
+        # load data
+        for i, mcds in enumerate(self.get_mcds_list()):
+            df_cell = mcds.get_cell_df()
+            # pack collapsed
+            if collapse:
+                if df_cellts is None:
+                    df_cellts = df_cell
+                else:
+                    df_cellts = pd.concat([df_cellts, df_cell], axis=0)
+            # pack not collapsed
+            else:
+                ldf_cellts.append(df_cell)
+
+        # output
+        if collapse:
+            o_cellts = df_cellts
+        else:
+            o_cellts = ldf_cellts
+        return o_cellts
+
+
     def get_cell_df_features(self, values=1, drop=set(), keep=set(), allvalues=False):
         """
         input:
+            self: pyMCDSts class instance.
+
             values: integer; default is 1
                 minimal number of values a variable has to have
                 in any of the mcds time steps to be outputted.
@@ -238,9 +311,73 @@ class pyMCDSts:
         return dl_variable_range
 
 
+    def get_conc_df(self, values=1, drop=set(), keep=set(), collapse=True):
+        """
+        input:
+            self: pyMCDSts class instance.
+
+            values: integer; default is 1
+                minimal number of values a variable has to have to be outputted.
+                variables that have only 1 state carry no information.
+                None is a state too.
+
+            drop: set of strings; default is an empty set
+                set of column labels to be dropped for the dataframe.
+                don't worry: essential columns like ID, coordinates
+                and time will never be dropped.
+                Attention: when the keep parameter is given, then
+                the drop parameter has to be an empty set!
+
+            keep: set of strings; default is an empty set
+                set of column labels to be kept in the dataframe.
+                set values=1 to be sure that all variables are kept.
+                don't worry: essential columns like ID, coordinates,
+                time and runtime (wall time) will always be kept.
+
+            collapse: boole; default True
+                should all mcds time steps from the time series be collapsed
+                into one pandas datafarme object, or a list of datafarme objects
+                for each time step?
+
+        output:
+            df_conc or ldf_conc: pandas dataframe or list of dataframe
+            dataframe stores all substrate concentrations in each voxel.
+
+        description:
+            function returns for the whole time series in one or many dataframes
+            with concentration values for all chemical species in all voxels.
+            additionally, this dataframe lists voxel and mesh center coordinates.
+        """
+        # set output variables
+        ldf_concts = []
+        df_concts = None
+
+        # load data
+        for i, mcds in enumerate(self.get_mcds_list()):
+            df_conc = mcds.get_conc_df()
+            # pack collapsed
+            if collapse:
+                if df_concts is None:
+                    df_concts = df_conc
+                else:
+                    df_concts = pd.concat([df_concts, df_conc], axis=0)
+            # pack not collapsed
+            else:
+                ldf_concts.append(df_conc)
+
+        # output
+        if collapse:
+            o_concts = df_concts
+        else:
+            o_concts = ldf_concts
+        return o_concts
+
+
     def get_conc_df_features(self, values=1, drop=set(), keep=set(), allvalues=False):
         """
         input:
+            self: pyMCDSts class instance.
+
             values: integer; default is 1
                 minimal number of values a variable has to have
                 in any of the mcds time steps to be outputted.

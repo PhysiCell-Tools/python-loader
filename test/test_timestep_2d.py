@@ -46,6 +46,14 @@ class TestPyMcdsMicroenvTrue2D(object):
         print(f"process: pcdl.pyMCDS(xmlfile={s_file_2d}, output_path={s_path_2d}, custom_type={{}}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True) ...")
         assert str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>"
 
+    def test_mcds_set_verbose_false(self, mcds=mcds):
+        mcds.set_verbose_false()
+        assert not mcds.verbose
+
+    def test_mcds_set_verbose_true(self, mcds=mcds):
+        mcds.set_verbose_true()
+        assert mcds.verbose
+
     ## metadata related functions
     def test_mcds_get_multicellds_version(self, mcds=mcds):
         s_mcdsversion = mcds.get_multicellds_version()
@@ -228,17 +236,22 @@ class TestPyMcdsMicroenvTrue2D(object):
     def test_mcds_get_concentration_df(self, mcds=mcds):
         df_conc = mcds.get_concentration_df(z_slice=None, halt=False, values=0, drop=set(), keep=set())
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_conc.shape == (121, 9))
+               (df_conc.shape == (121, 10))
 
-    def test_mcds_get_concentration_df_zslice(self, mcds=mcds):
-        df_conc = mcds.get_concentration_df(z_slice=0, halt=False, values=1, drop=set(), keep=set())
+    def test_mcds_get_conc_df(self, mcds=mcds):
+        df_conc = mcds.get_conc_df(z_slice=None, halt=False, values=0, drop=set(), keep=set())
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_conc.shape == (121, 9))
+               (df_conc.shape == (121, 10))
 
-    def test_mcds_get_concentration_df_features(self, mcds=mcds):
-        df_conc = mcds.get_concentration_df(z_slice=None, halt=False, values=2, drop=set(), keep={'oxygen'})
+    def test_mcds_get_conc_df_zslice(self, mcds=mcds):
+        df_conc = mcds.get_conc_df(z_slice=0, halt=False, values=1, drop=set(), keep=set())
         assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_conc.shape == (121, 9))
+               (df_conc.shape == (121, 10))
+
+    def test_mcds_get_conc_df_features(self, mcds=mcds):
+        df_conc = mcds.get_conc_df(z_slice=None, halt=False, values=2, drop=set(), keep={'oxygen'})
+        assert (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
+               (df_conc.shape == (121, 10))
 
     def test_mcds_plot_contour(self, mcds=mcds):
         fig = mcds.plot_contour(
@@ -293,22 +306,22 @@ class TestPyMcdsMicroenvTrue2D(object):
     def test_mcds_get_cell_df(self, mcds=mcds):
         df_cell = mcds.get_cell_df(values=0, drop=set(), keep=set())
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (1099, 94))
+               (df_cell.shape == (1099, 95))
 
     def test_mcds_get_cell_df_features(self, mcds=mcds):
         df_cell = mcds.get_cell_df(values=2, drop=set(), keep=set())
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (1099, 39))
+               (df_cell.shape == (1099, 40))
 
     def test_mcds_get_cell_df_keep(self, mcds=mcds):
         df_cell = mcds.get_cell_df(values=0, drop=set(), keep={'oxygen'})
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (1099, 12))
+               (df_cell.shape == (1099, 13))
 
     def test_mcds_get_cell_df_at(self, mcds=mcds):
         df_cell = mcds.get_cell_df_at(x=0, y=0, z=0, values=1, drop=set(), keep=set())
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (5, 94))
+               (df_cell.shape == (5, 95))
 
     def test_mcds_plot_scatter_cat(self, mcds=mcds):
         fig = mcds.plot_scatter(

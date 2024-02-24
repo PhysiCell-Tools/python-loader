@@ -198,22 +198,22 @@ class TestyMcdsMicroenvFalse3D(object):
     def test_mcds_get_cell_df(self, mcds=mcds):
         df_cell = mcds.get_cell_df(values=0, drop=set(), keep=set())
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (20460, 111))
+               (df_cell.shape == (20460, 112))
 
     def test_mcds_get_cell_df_features(self, mcds=mcds):
         df_cell = mcds.get_cell_df(values=2, drop=set(), keep=set())
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (20460, 30))
+               (df_cell.shape == (20460, 31))
 
     def test_mcds_get_cell_df_keep(self, mcds=mcds):
         df_cell = mcds.get_cell_df(values=0, drop=set(), keep={'total_volume'})
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (20460, 12))
+               (df_cell.shape == (20460, 13))
 
     def test_mcds_get_cell_df_at(self, mcds=mcds):
         df_cell = mcds.get_cell_df_at(x=0, y=0, z=0, values=1, drop=set(), keep=set())
         assert (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-               (df_cell.shape == (5, 111))
+               (df_cell.shape == (5, 112))
 
     def test_mcds_plot_scatter_cat(self, mcds=mcds):
         fig = mcds.plot_scatter(

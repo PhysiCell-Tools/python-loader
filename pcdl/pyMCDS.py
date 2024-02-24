@@ -130,6 +130,7 @@ es_coor_conc = {
     'voxel_i','voxel_j','voxel_k',
     'mesh_center_m','mesh_center_n','mesh_center_p',
     'time', 'runtime',
+    'xmlfile',
 }
 es_coor_cell = {
     'ID',
@@ -137,6 +138,7 @@ es_coor_cell = {
     'mesh_center_m', 'mesh_center_n', 'mesh_center_p',
     'position_x', 'position_y', 'position_z',
     'time', 'runtime',
+    'xmlfile',
 }
 
 
@@ -231,7 +233,13 @@ class pyMCDS:
         self.settingxml = settingxml
         self.verbose = verbose
         self.data = self._read_xml(xmlfile, output_path)
-        self.get_conc_df = self.get_concentration_df
+        self.get_concentration_df = self.get_conc_df
+
+    def set_verbose_true(self):
+        self.verbose = True
+
+    def set_verbose_false(self):
+        self.verbose = False
 
 
     ## METADATA RELATED FUNCTIONS ##
@@ -728,8 +736,7 @@ class pyMCDS:
                     sys.exit('Processing stopped!')
                 else:
                     z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
-                    if self.verbose:
-                        print(f'z_slice set to {z_slice}.')
+                    print(f'z_slice set to {z_slice}.')
 
             # filter by z_slice
             _, _, ar_p_grid = self.get_mesh()
@@ -785,7 +792,7 @@ class pyMCDS:
         return ar_concs
 
 
-    def get_concentration_df(self, z_slice=None, halt=False, values=1, drop=set(), keep=set()):
+    def get_conc_df(self, z_slice=None, halt=False, values=1, drop=set(), keep=set()):
         """
         input:
             self: pyMCDS class instance.
@@ -822,7 +829,7 @@ class pyMCDS:
 
         output:
             df_conc : pandas dataframe
-                dataframe with all substrate concentrations in each voxel.
+                dataframe stores all substrate concentrations in each voxel.
 
         description:
             function returns a dataframe with concentration values
@@ -831,19 +838,18 @@ class pyMCDS:
         """
         # check keep and drop
         if (len(keep) > 0) and (len(drop) > 0):
-            sys.exit(f"Error @ pyMCDS.get_concentration_df : when keep is given {keep}, then drop has to be an empty set {drop}!")
+            sys.exit(f"Error @ pyMCDS.get_conc_df : when keep is given {keep}, then drop has to be an empty set {drop}!")
 
         # check if z_slice is a mesh center or None
         if not (z_slice is None):
             _, _, ar_p_axis = self.get_mesh_mnp_axis()
             if not (z_slice in ar_p_axis):
-                print(f'Warning @ pyMCDS.get_concentration_df : specified z_slice {z_slice} is not an element of the z-axis mesh centers set {ar_p_axis}.')
+                print(f'Warning @ pyMCDS.get_conc_df : specified z_slice {z_slice} is not an element of the z-axis mesh centers set {ar_p_axis}.')
                 if halt:
                     sys.exit('Processing stopped!')
                 else:
                     z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
-                    if self.verbose:
-                        print(f'z_slice set to {z_slice}.')
+                    print(f'z_slice set to {z_slice}.')
 
         # flatten mesh coordnates
         ar_m, ar_n, ar_p = self.get_mesh()
@@ -877,6 +883,7 @@ class pyMCDS:
         df_conc = pd.DataFrame(aa_data.T, columns=ls_column)
         df_conc['time'] = self.get_time()
         df_conc['runtime'] = self.get_runtime() / 60  # in min
+        df_conc['xmlfile'] = self.xmlfile
         d_dtype = {'voxel_i': int, 'voxel_j': int, 'voxel_k': int}
         df_conc = df_conc.astype(d_dtype)
 
@@ -981,7 +988,7 @@ class pyMCDS:
                 print(f'z_slice set to {z_slice}.')
 
         # get data z slice
-        df_conc = self.get_concentration_df(values=1, drop=set(), keep=set())
+        df_conc = self.get_conc_df(values=1, drop=set(), keep=set())
         df_conc = df_conc.loc[(df_conc.mesh_center_p == z_slice),:]
         # extend to x y domain border
         df_mmin = df_conc.loc[(df_conc.mesh_center_m == df_conc.mesh_center_m.min()), :].copy()
@@ -1130,6 +1137,7 @@ class pyMCDS:
         df_cell = pd.DataFrame(self.data['discrete_cells']['data'])
         df_cell['time'] = self.get_time()
         df_cell['runtime'] = self.get_runtime() / 60  # in min
+        df_cell['xmlfile'] = self.xmlfile
         df_voxel = df_cell.loc[:,['position_x','position_y','position_z']].copy()
 
         # get mesh spacing
@@ -1199,8 +1207,8 @@ class pyMCDS:
                      df_cell[s_var] = df_sub.loc[s_sub,s_rate]
 
         # merge concentration (left join)
-        df_conc = self.get_concentration_df(z_slice=None, values=1, drop=set(), keep=set())
-        df_conc.drop({'time', 'runtime'}, axis=1, inplace=True)
+        df_conc = self.get_conc_df(z_slice=None, values=1, drop=set(), keep=set())
+        df_conc.drop({'time', 'runtime','xmlfile'}, axis=1, inplace=True)
         df_cell = pd.merge(
             df_cell,
             df_conc,

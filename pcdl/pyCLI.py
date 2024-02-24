@@ -93,7 +93,13 @@ def get_cell_df():
         default = '',
         help = "set of column labels to be kept in the dataframe. set values=1 to be sure that all variables are kept. don't worry: essential columns like ID, coordinates and time will always be kept. default is an empty string."
     )
-
+    # get_cell_df collapse
+    parser.add_argument(
+        '--collapse',
+        nargs = '?',
+        default = 'true',
+        help = 'should all mcds time steps from the time series be collapsed into one big csv, or a many csv, one csv for each time step?, default is True.'
+    )
     # parse arguments
     args = parser.parse_args()
     print(args)
@@ -104,6 +110,7 @@ def get_cell_df():
         s_pathfile = s_pathfile + '/initial.xml'
     if not os.path.exists(s_pathfile):
         sys.exit(f"Error @ pcdl_get_cell_df : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
+    # run
     if os.path.isfile(args.path):
         mcds = pcdl.pyMCDS(
             xmlfile = args.path,
@@ -113,8 +120,13 @@ def get_cell_df():
             settingxml = args.settingxml,
             verbose = False if args.verbose.lower().startswith('f') else True
         )
-        l_mcds = [mcds]
-        ls_opathfile = [args.path.replace('.xml','_cell.csv')]
+        df_cell = mcds.get_cell_df(
+            values = args.values,
+            drop = set(args.drop.split()),
+            keep = set(args.keep.split()),
+        )
+        s_opathfile = args.path.replace('.xml','_cell.csv')
+        df_cell.to_csv(s_opathfile)
     else:
         mcdsts = pcdl.pyMCDSts(
             output_path = args.path,
@@ -125,18 +137,23 @@ def get_cell_df():
             settingxml = args.settingxml,
             verbose = False if args.verbose.lower().startswith('f') else True,
         )
-        l_mcds = mcdsts.l_mcds
-        ls_opathfile = [s_xmlfile.replace('.xml','_cell.csv') for s_xmlfile in mcdsts.get_xmlfile_list()]
-    # run
-    for i, mcds in enumerate(l_mcds):
-        df_cell = mcds.get_cell_df(
+        df_cell = mcdsts.get_cell_df(
             values = args.values,
             drop = set(args.drop.split()),
             keep = set(args.keep.split()),
+            collapse = False if args.collapse.lower().startswith('f') else True,
         )
-        df_cell.to_csv(ls_opathfile[i])
+        if type(df_cell) is list:
+            ls_opathfile = [f"{args.path}/{s_xmlfile.replace('.xml','_cell.csv')}" for s_xmlfile in mcdsts.get_xmlfile_list()]
+            for i, mcds in enumerate(l_mcds):
+                df_cell.to_csv(ls_opathfile[i])
+            # going home
+            return ls_opathfile
+        else:
+            s_opathfile = f'{args.path}/timeseries_cell.csv'
+            df_cell.to_csv(s_opathfile)
     # going home
-    return ls_opathfile
+    return s_opathfile
 
 
 def get_cell_df_features():
@@ -296,6 +313,13 @@ def get_conc_df():
         default = '',
         help = "set of column labels to be kept in the dataframe. set values=1 to be sure that all variables are kept. don't worry: essential columns like ID, coordinates and time will always be kept. default is an empty string.",
     )
+    # get_cell_df collapse
+    parser.add_argument(
+        '--collapse',
+        nargs = '?',
+        default = 'true',
+        help = 'should all mcds time steps from the time series be collapsed into one big csv, or a many csv, one for each time step?, default is True.'
+    )
 
     # parse arguments
     args = parser.parse_args()
@@ -307,6 +331,7 @@ def get_conc_df():
         s_pathfile = s_pathfile + '/initial.xml'
     if not os.path.exists(s_pathfile):
         sys.exit(f"Error @ pcdl_get_conc_df : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
+    # run
     if os.path.isfile(args.path):
         mcds = pcdl.pyMCDS(
             xmlfile = args.path,
@@ -316,8 +341,13 @@ def get_conc_df():
             settingxml = args.settingxml,
             verbose = False if args.verbose.lower().startswith('f') else True
         )
-        l_mcds = [mcds]
-        ls_opathfile = [args.path.replace('.xml','_conc.csv')]
+        df_conc = mcds.get_conc_df(
+            values = args.values,
+            drop = set(args.drop.split()),
+            keep = set(args.keep.split()),
+        )
+        s_opathfile = args.path.replace('.xml','_conc.csv')
+        df_conc.to_csv(s_opathfile, index=False)
     else:
         mcdsts = pcdl.pyMCDSts(
             output_path = args.path,
@@ -328,18 +358,23 @@ def get_conc_df():
             settingxml = args.settingxml,
             verbose = False if args.verbose.lower().startswith('f') else True,
         )
-        l_mcds = mcdsts.l_mcds
-        ls_opathfile = [s_xmlfile.replace('.xml','_conc.csv') for s_xmlfile in mcdsts.get_xmlfile_list()]
-    # run
-    for i, mcds in enumerate(l_mcds):
-        df_conc = mcds.get_conc_df(
+        df_conc = mcdsts.get_conc_df(
             values = args.values,
             drop = set(args.drop.split()),
             keep = set(args.keep.split()),
+            collapse = False if args.collapse.lower().startswith('f') else True,
         )
-        df_conc.to_csv(ls_opathfile[i], index=False)
+        if type(df_conc) is list:
+            ls_opathfile = [f"{args.path}/{s_xmlfile.replace('.xml','_conc.csv')}" for s_xmlfile in mcdsts.get_xmlfile_list()]
+            for i, mcds in enumerate(l_mcds):
+                df_conc.to_csv(ls_opathfile[i], index=False)
+            # going home
+            return ls_opathfile
+        else:
+            s_opathfile = f'{args.path}/timeseries_conc.csv'
+            df_conc.to_csv(s_opathfile, index=False)
     # going home
-    return ls_opathfile
+    return s_opathfile
 
 
 def get_conc_df_features():

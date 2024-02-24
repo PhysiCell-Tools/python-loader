@@ -73,26 +73,44 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 
 ## Road Map:
 + [vtk file format](https://docs.vtk.org/en/latest/design_documents/VTKFileFormats.html) output, maybe [stl](https://en.wikipedia.org/wiki/STL_(file_format)) and [wavefront obj](https://en.wikipedia.org/wiki/Wavefront_.obj_file) output.
-
++ numpy, scipy like refrence manual documentation.
++ BUE 20240224: plot_scatter alpha
 
 ## Release Notes:
-+ version 3.2.14 (2024-??-??): elmbeech/physicelldatalodader
++ version 3.2.14 (2024-0?-??): elmbeech/physicelldatalodader
     + rename pyMCDS get\_scatter to **plot_scatter** for conciseness.
     + rename pyMCDS get\_contour to **plot_contour** for conciseness.
     + rename pyMCDSts make\_imgcell to **plot_scatter** for conciseness.
     + rename pyMCDSts make\_imgconc to **plot_contour** for conciseness.
     + rename pyMCDSts get\_cell\_df\_states to **get_cell_df_features** for conciseness.
     + rename pyMCDSts get\_conc\_df\_states to **get_conc_df_features** for conciseness.
-    + new pyMCDS **get_xmlfile** function for conciseness with pyMCDSts get_xmlfile_list.
+    + new pyCLI **pcdl_get_cell_df** commandline interface function.
+    + new pyCLI **pcdl_get_cell_df_features** commandline interface fucntion.
+    + new pyCLI **pcdl_get_conc_df** commandline interface function.
+    + new pyCLI **pcdl_get_conc_df_features** commandline interface function.
+    + new pyCLI **pcdl_get_graph_gml** commandline interface function.
+    + new pyCLI **pcdl_get_unit_se** commandline interface function.
+    + new pyCLI **pcdl_get_version** commandline interface function.
+    + new pyCLI **pcdl_make_cell_vtk** commandline interface function.
+    + new pyCLI **pcdl_make_conc_vtk** commandline interface function.
+    + new pyCLI **pcdl_make_gif** commandline interface function.
+    + new pyCLI **pcdl_make_movie** commandline interface function.
+    + new pyCLI **pcdl_plot_contour** commandline interface function.
+    + new pyCLI **pcdl_plot_scatter** commandline interface function.
+    + new pyCLI **pcdl_plot_timeseries** commandline interface function.
     + new pyMCDS **make_cell_vtk** function.
     + new pyMCDS **make_conc_vtk** function.
     + new pyMCDS **make_graph_gml** function to save graphs in a networkx and igraph compatible files fromat.
-    + new pyMCDSts **get_cell_df** function. BUE 20240223: one big frame timeseries; collapsed parameter for cli.
-    + new pyMCDSts **get_conc_df** function. BUE 20240223: one big frame timeseries; collapsed parameter for cli.
+    + new pyMCDS **set_verbosity_true** function to complete pcdl.TimeStep(verbosity=True/False) experiance.
+    + new pyMCDS **set_verbosity_false** function to complete pcdl.TimeStep(verbosity=True/False) experiance.
+    + new pyMCDSts **get_cell_df** function to extract one big or a list of dataframes from the whole time series.
+    + new pyMCDSts **get_conc_df** function to extract one big or a list of dataframes from the whole time series.
     + new pyMCDSts **make_cell_vtk** function.
     + new pyMCDSts **make_conc_vtk** function.
     + new pyMCDSts **make_graph_gml** function to save graphs in a networkx and igraph compatible files format.
     + new pyMCDSts **plot_timeseries** frunction to plot time series.
+    + new pyMCDSts **set_verbosity_true** function to complete pcdl.TimeSeries(verbosity=True/False) experiance.
+    + new pyMCDSts **set_verbosity_false** function to complete pcdl.TimeSeries(verbosity=True/False) experiance.
 
 + version 3.2.13 (2023-09-18): elmbeech/physicelldatalodader
     + rename pyMCDSts make\_imgsubs to **make_imgconc** for consistency.
