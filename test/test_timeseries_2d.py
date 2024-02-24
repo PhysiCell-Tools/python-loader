@@ -51,6 +51,29 @@ class TestPyMcdsTs(object):
         mcdsts.set_verbose_false()
         assert not mcdsts.verbose
 
+    ## make_gif and magick ommand ##
+    def test_mcdsts_make_gif(self, mcdsts=mcdsts):
+        s_path = mcdsts.plot_scatter()
+        s_opathfile = mcdsts.make_gif(
+            path = s_path,
+            #interface = 'jpeg',
+        )
+        assert os.path.exists(s_opathfile) and \
+            (s_opathfile == s_path+'cell_cell_type_z0.0_jpeg.gif')
+        shutil.rmtree(s_path)
+
+    ## make_movie and magick command ##
+    def test_mcdsts_make_movie(self, mcdsts=mcdsts):
+        s_path = mcdsts.plot_scatter()
+        s_opathfile = mcdsts.make_movie(
+            path = s_path,
+            #interface = 'jpeg',
+            #framerate = 12,
+        )
+        assert os.path.exists(s_opathfile) and \
+            (s_opathfile == s_path+'cell_cell_type_z0.0_jpeg12.mp4')
+        shutil.rmtree(s_path)
+
     ## get_xmlfile and read_mcds command and get_mcds_list ##
     def test_mcdsts_get_xmlfile_list(self, mcdsts=mcdsts):
         ls_xmlfile = mcdsts.get_xmlfile_list()
@@ -106,14 +129,6 @@ class TestPyMcdsTs(object):
         dl_conc = mcdsts.get_conc_df_features(values=2, drop=set(), keep=set(), allvalues=True)
         assert len(dl_conc.keys()) == 1 and \
                len(dl_conc['oxygen']) > 2
-
-    ## magick command ##
-    def test_mcdsts_handle_magick(self, mcdsts=mcdsts):
-        s_magick = mcdsts._handle_magick()
-        if not((os.system('magick --version') == 0) or ((platform.system() in {'Linux'}) and (os.system('convert --version') == 0))):
-            s_magick = None
-            print('Error @ pyMCDSts._handle_magick : image magick installation version >= 7.0 missing!')
-        assert s_magick in {'', 'magick '}
 
     ## plot_scatter command ##
     def test_mcdsts_plot_scatter_cat(self, mcdsts=mcdsts):
@@ -427,29 +442,6 @@ class TestPyMcdsTs(object):
             figbgcolor = None  # test if
         )
         assert(str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
-
-    ## make_gif command ##
-    def test_mcdsts_make_gif(self, mcdsts=mcdsts):
-        s_path = mcdsts.plot_scatter()
-        s_opathfile = mcdsts.make_gif(
-            path = s_path,
-            #interface = 'jpeg',
-        )
-        assert os.path.exists(s_opathfile) and \
-            (s_opathfile == s_path+'cell_cell_type_z0.0_jpeg.gif')
-        shutil.rmtree(s_path)
-
-    ## make_movie command ##
-    def test_mcdsts_make_movie(self, mcdsts=mcdsts):
-        s_path = mcdsts.plot_scatter()
-        s_opathfile = mcdsts.make_movie(
-            path = s_path,
-            #interface = 'jpeg',
-            #framerate = 12,
-        )
-        assert os.path.exists(s_opathfile) and \
-            (s_opathfile == s_path+'cell_cell_type_z0.0_jpeg12.mp4')
-        shutil.rmtree(s_path)
 
     ## graph related functions ##
     def test_mcds_get_graph_gml_attached(self, mcdsts=mcdsts):

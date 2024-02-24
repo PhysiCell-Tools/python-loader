@@ -28,7 +28,126 @@ import pandas as pd
 import pathlib
 from pcdl.pyMCDS import pyMCDS, es_coor_cell, es_coor_conc
 import platform
+import sys
 import xml.etree.ElementTree as ET
+
+
+# function
+def _handle_magick():
+    """
+    output:
+        s_magick: string
+            image magick command line command call.
+
+    description:
+        internal function manipulates the command line command call,
+        so that the call as well works on linux systems, which all
+        too often run image magick < 7.0.
+    """
+    s_magick = 'magick '
+    if (platform.system() in {'Linux'}) and (os.system('magick --version') != 0) and (os.system('convert --version') == 0):
+        s_magick = ''
+    return s_magick
+
+
+def make_gif(path, interface='jpeg'):
+    """
+    input:
+        path: string
+            relative or absolute path to where the images are
+            from which the gif will be generated.
+
+        interface: string; default jpeg
+            this images, from which the gif will be generated
+            have to exist under the given path.
+            they can be generated with the plot_scatter or plot_contour
+            function.
+
+    output:
+        gif file in the path directory.
+            additionally, the function will return the gif's path and filename.
+
+    description:
+        this function generates a gif image from all interface image files
+        found in the path directory.
+        https://en.wikipedia.org/wiki/GIF
+    """
+    s_magick = _handle_magick()
+    # handle path and file name
+    path = path.replace('\\','/')
+    if path.endswith('/'): path = path[:-1]
+    if not os.path.isdir(path):
+        sys.exit(f'Error @ make_gif : {path} path does not exist.')
+    s_file = path.split('/')[-1]
+    if s_file.startswith('.'): s_file = s_file[1:]
+    if (len(s_file) == 0): s_file = 'movie'
+    s_file += f'_{interface}.gif'
+    s_opathfile = f'{path}/{s_file}'
+    s_ipathfiles = f'{path}/*.{interface}'
+    # genaerate gif
+    s_cmd = f'{s_magick}convert {s_ipathfiles} {s_opathfile}'
+    if (os.system(s_cmd) != 0):
+        sys.exit("Error @ make_gif : imagemagick could not generatet the gif.")
+
+    # output
+    return s_opathfile
+
+
+def make_movie(path, interface='jpeg', framerate=12):
+    """
+    input:
+        path: string
+            relative or absolute path to where the images are
+            from which the movie will be generated.
+
+        interface: string; default jpeg
+            this images, from which the mp4 movie will be generated
+            have to exist under the given path.
+            they can be generated with the plot_scatter or plot_contour
+            function.
+
+        framerate: integer; default 12
+            specifies how many images per second will be used.
+
+    output:
+        mp4 move file in the path directory.
+`           additionally, the function will return the mp4's path and filename.
+
+    description:
+        this function generates a movie from all interface image files
+        found in the path directory.
+        https://en.wikipedia.org/wiki/MP4_file_format
+        https://en.wikipedia.org/wiki/Making_Movies
+    """
+    # handle path
+    s_pwd = os.getcwd()
+    s_path = path.replace('\\','/')
+    if s_path.endswith('/'): s_path = s_path[:-1]
+
+    # handle output filename
+    s_ofile = s_path.split('/')[-1]
+    if s_ofile.startswith('.'): s_ofile = s_ofile[1:]
+    if (len(s_ofile) == 0): s_ofile = 'movie'
+    s_ofile += f'_{interface}{framerate}.mp4'
+    s_opathfile = f'{s_path}/{s_ofile}'
+
+    # generate input file list
+    os.chdir(s_path)
+    ls_ifile = sorted(glob.glob(f'*.{interface}'))
+    f = open('ffmpeginput.txt', 'w')
+    for s_ifile in ls_ifile:
+        f.write(f"file '{s_ifile}'\n")
+    f.close()
+
+    # genearete movie
+    s_cmd = f'ffmpeg -y -r {framerate} -f concat -i ffmpeginput.txt -vcodec libx264 -pix_fmt yuv420p -strict -2 -tune animation -crf 15 -acodec none {s_ofile}'  # -safe 0
+    if (os.system(s_cmd) != 0):
+        sys.exit("Error @ make_movie : ffmpeg could not generatet the movie.")
+    os.remove('ffmpeginput.txt')
+
+    # output
+    os.chdir(s_pwd)
+    return s_opathfile
 
 
 # classes
@@ -98,6 +217,20 @@ class pyMCDSts:
 
     def set_verbose_false(self):
         self.verbose = False
+
+    def make_gif(self, path, interface='jpeg'):
+        """
+        help(pcdl.make_gif)
+        """
+        s_opathfile = make_gif(path=path, interface=interface)
+        return s_opathfile
+
+    def make_movie(self, path, interface='jpeg', framerate=12):
+        """
+        help(pcdl.make_movie)
+        """
+        s_opathfile = make_movie(path=path, interface=interface, framerate=framerate)
+        return s_opathfile
 
 
     ## LOAD DATA
@@ -440,25 +573,6 @@ class pyMCDSts:
 
 
     ## GENERATE AND TRANSFORM IMAGES
-    def _handle_magick(self):
-        """
-        input:
-            self: pyMCDSts class instance.
-
-        output:
-            s_magick: string
-                image magick command line command call.
-
-        description:
-            internal function manipulates the command line command call,
-            so that the call as well works on linux systems, which all
-            too often run image magick < 7.0.
-        """
-        s_magick = 'magick '
-        if (platform.system() in {'Linux'}) and (os.system('magick --version') != 0) and (os.system('convert --version') == 0):
-            s_magick = ''
-        return s_magick
-
 
     def plot_scatter(self, focus='cell_type', z_slice=0, z_axis=None, alpha=1, cmap='viridis', grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=None, figsizepx=None, ext='jpeg', figbgcolor=None):
         """
@@ -1075,105 +1189,6 @@ class pyMCDSts:
             fig.savefig(s_pathfile, facecolor=figbgcolor)
             plt.close(fig)
             return s_pathfile
-
-
-    def make_gif(self, path, interface='jpeg'):
-        """
-        input:
-            self: pyMCDSts class instance.
-
-            path: string
-                relative or absolute path to where the images are
-                from which the gif will be generated.
-
-            interface: string; default jpeg
-                this images, from which the gif will be generated
-                have to exist under the given path.
-                they can be generated with the plot_scatter or plot_contour
-                function.
-
-        output:
-            gif file in the path directory.
-`               additionally, the function will return the gif's path and filename.
-
-        description:
-            this function generates a gif image from all interface image files
-            found in the path directory.
-            https://en.wikipedia.org/wiki/GIF
-        """
-        s_magick = self._handle_magick()
-        # handle path and file name
-        path = path.replace('\\','/')
-        if path.endswith('/'): path = path[:-1]
-        s_file = path.split('/')[-1]
-        if s_file.startswith('.'): s_file = s_file[1:]
-        if (len(s_file) == 0): s_file = 'movie'
-        s_file += f'_{interface}.gif'
-        s_opathfile = f'{path}/{s_file}'
-        s_ipathfiles = f'{path}/*.{interface}'
-        # genaerate gif
-        os.system(f'{s_magick}convert {s_ipathfiles} {s_opathfile}')
-
-        # output
-        return s_opathfile
-
-
-    def make_movie(self, path, interface='jpeg', framerate=12):
-        """
-        input:
-            self: pyMCDSts class instance.
-
-            path: string
-                relative or absolute path to where the images are
-                from which the movie will be generated.
-
-            interface: string; default jpeg
-                this images, from which the mp4 movie will be generated
-                have to exist under the given path.
-                they can be generated with the plot_scatter or plot_contour
-                function.
-
-            framerate: integer; default 24
-                specifies how many images per second will be used.
-
-        output:
-            mp4 move file in the path directory.
-`               additionally, the function will return the mp4's path and filename.
-
-        description:
-            this function generates a movie from all interface image files
-            found in the path directory.
-            https://en.wikipedia.org/wiki/MP4_file_format
-            https://en.wikipedia.org/wiki/Making_Movies
-        """
-        # handle path
-        s_pwd = os.getcwd()
-        s_path = path.replace('\\','/')
-        if s_path.endswith('/'): s_path = s_path[:-1]
-
-        # handle output filename
-        s_ofile = s_path.split('/')[-1]
-        if s_ofile.startswith('.'): s_ofile = s_ofile[1:]
-        if (len(s_ofile) == 0): s_ofile = 'movie'
-        s_ofile += f'_{interface}{framerate}.mp4'
-        s_opathfile = f'{s_path}/{s_ofile}'
-
-        # generate input file list
-        os.chdir(s_path)
-        ls_ifile = sorted(glob.glob(f'*.{interface}'))
-        f = open('ffmpeginput.txt', 'w')
-        for s_ifile in ls_ifile:
-            f.write(f"file '{s_ifile}'\n")
-        f.close()
-
-        # genearete movie
-        s_cmd = f'ffmpeg -y -r {framerate} -f concat -i ffmpeginput.txt -vcodec libx264 -pix_fmt yuv420p -strict -2 -tune animation -crf 15 -acodec none {s_ofile}'  # -safe 0
-        os.system(s_cmd)
-        os.remove('ffmpeginput.txt')
-
-        # output
-        os.chdir(s_pwd)
-        return s_opathfile
 
 
     # GENERATE GML GRAPH FILES ###

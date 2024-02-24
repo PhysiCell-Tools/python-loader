@@ -26,6 +26,7 @@ import pcdl
 from scipy import stats
 import sys
 
+
 # functions
 def entropy(pk):
     return stats.entropy(pk=pk, qk=None, base=2, nan_policy='omit', axis=0)[0]
@@ -688,11 +689,84 @@ def get_version():
 
 
 def make_gif():
-    pass
+    # argv
+    parser = argparse.ArgumentParser(
+        prog = 'pcdl_make_gif',
+        description = 'this function generates a gif movie from all image files found in the path directory in the specified interface file format.',
+        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
+    )
+    # make_movie path
+    parser.add_argument(
+        'path',
+        nargs = '?',
+        default = '.',
+        help = 'relative or absolute path to where the images are from which the gif will be generated. default is . .',
+    )
+    # make_movie interface
+    parser.add_argument(
+        'interface',
+        nargs = '?',
+        default = 'jpeg',
+        help = 'specify the image format from which the gif will be generated. these images have to exist under the given path. they can be generated with the plot_scatter or plot_contour function. default is jpeg.',
+    )
+
+    # parse arguments
+    args = parser.parse_args()
+    print(args)
+
+    # process arguments
+    # run
+    s_opathfile = pcdl.make_gif(
+        path = args.path,
+        interface = args.interface,
+    )
+    # going home
+    return s_opathfile
 
 
 def make_movie():
-    pass
+    # argv
+    parser = argparse.ArgumentParser(
+        prog = 'pcdl_make_movie',
+        description = 'this function generates an mp4 movie file from all image files found in the path directory in the specified interface file format.',
+        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
+    )
+    # make_movie path
+    parser.add_argument(
+        'path',
+        nargs = '?',
+        default = '.',
+        help = 'relative or absolute path to where the images are from which the mp4 movie will be generated. default is . .',
+    )
+    # make_movie interface
+    parser.add_argument(
+        'interface',
+        nargs = '?',
+        default = 'jpeg',
+        help = 'specify the image format from which the mp4 movie will be generated. these images have to exist under the given path. they can be generated with the plot_scatter or plot_contour function. default is jpeg.',
+    )
+    # make_movie framerate
+    parser.add_argument(
+        'framerate',
+        nargs = '?',
+        default = 12,
+        type = int,
+        help = 'specifies how many images per second will be used. default is 12.',
+    )
+
+    # parse arguments
+    args = parser.parse_args()
+    print(args)
+
+    # process arguments
+    # run
+    s_opathfile = pcdl.make_movie(
+        path = args.path,
+        interface = args.interface,
+        framerate = args.framerate,
+    )
+    # going home
+    return s_opathfile
 
 
 def plot_contour():
