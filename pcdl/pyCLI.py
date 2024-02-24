@@ -117,7 +117,7 @@ def get_cell_df():
             output_path = '.',
             microenv = False if args.microenv.lower().startswith('f') else True,
             graph = False,
-            settingxml = args.settingxml,
+            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
             verbose = False if args.verbose.lower().startswith('f') else True
         )
         df_cell = mcds.get_cell_df(
@@ -134,7 +134,7 @@ def get_cell_df():
             load = True,
             microenv = False if args.microenv.lower().startswith('f') else True,
             graph = False,
-            settingxml = args.settingxml,
+            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
             verbose = False if args.verbose.lower().startswith('f') else True,
         )
         df_cell = mcdsts.get_cell_df(
@@ -238,7 +238,7 @@ def get_cell_df_features():
         load = True,
         microenv = False if args.microenv.lower().startswith('f') else True,
         graph = False,
-        settingxml = args.settingxml,
+        settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
         verbose = False if args.verbose.lower().startswith('f') else True,
     )
     # run
@@ -338,7 +338,7 @@ def get_conc_df():
             output_path = '.',
             microenv = True,
             graph = False,
-            settingxml = args.settingxml,
+            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
             verbose = False if args.verbose.lower().startswith('f') else True
         )
         df_conc = mcds.get_conc_df(
@@ -355,7 +355,7 @@ def get_conc_df():
             load = True,
             microenv = True,
             graph = False,
-            settingxml = args.settingxml,
+            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
             verbose = False if args.verbose.lower().startswith('f') else True,
         )
         df_conc = mcdsts.get_conc_df(
@@ -453,7 +453,7 @@ def get_conc_df_features():
         load = True,
         microenv = True,
         graph = False,
-        settingxml = args.settingxml,
+        settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
         verbose = False if args.verbose.lower().startswith('f') else True,
     )
     # run
@@ -544,7 +544,7 @@ def get_graph_gml():
             output_path = '.',
             microenv = False,
             graph = True,
-            settingxml = args.settingxml,
+            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
             verbose = False if args.verbose.lower().startswith('f') else True
         )
         l_mcds = [mcds]
@@ -555,7 +555,7 @@ def get_graph_gml():
             load = True,
             microenv = False,
             graph = True,
-            settingxml = args.settingxml,
+            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
             verbose = False if args.verbose.lower().startswith('f') else True,
         )
         l_mcds = mcdsts.l_mcds
@@ -573,7 +573,68 @@ def get_graph_gml():
 
 
 def get_unit_se():
-    pass
+    # argv
+    parser = argparse.ArgumentParser(
+        prog = 'pcdl_get_unit_se',
+        description = 'function returns a csv that lists all tracked variables from metadata, cell, and microenvironment and maps them to their unit.',
+        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
+    )
+
+    # TimeSeries path
+    parser.add_argument(
+        'path',
+        nargs = '?',
+        default = '.',
+        help = 'path to the PhysiCell output directory. default is . .',
+    )
+    # TimeSeries output_path '.'
+    # TimeSeries microenv
+    parser.add_argument(
+        '--microenv',
+        nargs = '?',
+        default = 'true',
+        help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.',
+    )
+    # TimeSeries graph False
+    # TimeSeries settingxml
+    parser.add_argument(
+        '--settingxml',
+        nargs = '?',
+        default = 'PhysiCell_settings.xml',
+        help = 'from which settings.xml should the substrate and cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+    )
+    # TimeSeries verbose
+    parser.add_argument(
+        '-v', '--verbose',
+        nargs = '?',
+        default = 'true',
+        help = 'setting verbose to False for less text output, while processing. default is True.',
+    )
+
+    # parse arguments
+    args = parser.parse_args()
+    print(args)
+
+    # process arguments
+    s_pathfile = args.path
+    if not s_pathfile.endswith('.xml'):
+        s_pathfile = s_pathfile + '/initial.xml'
+    if not os.path.exists(s_pathfile):
+        sys.exit(f"Error @ pcdl_get_conc_df : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
+    # run
+    mcds = pcdl.pyMCDS(
+        xmlfile = s_pathfile,
+        output_path = '.',
+        microenv = False if args.microenv.lower().startswith('f') else True,
+        graph = False,
+        settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
+        verbose = True if args.verbose.lower().startswith('t') else False
+    )
+    se_unit = mcds.get_unit_se()
+    s_opathfile = f'{args.path}/timeseries_unit.csv'
+    se_unit.to_csv(s_opathfile)
+    # going home
+    return s_opathfile
 
 
 def get_version():
@@ -782,7 +843,7 @@ def plot_contour():
         load = False,
         microenv = True,
         graph = False,
-        settingxml = args.settingxml,
+        settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
         verbose = False if args.verbose.lower().startswith('f') else True,
     )
     if s_pathfile.endswith('/initial.xml'):
@@ -970,7 +1031,7 @@ def plot_scatter():
         load = False,
         microenv = False if args.microenv.lower().startswith('f') else True,
         graph = False,
-        settingxml = args.settingxml,
+        settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
         verbose = False if args.verbose.lower().startswith('f') else True,
     )
     if s_pathfile.endswith('/initial.xml'):
@@ -1230,7 +1291,7 @@ def plot_timeseries():
         load = True,
         microenv = False if args.microenv.lower().startswith('f') else True,
         graph = False,
-        settingxml = args.settingxml,
+        settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
         verbose = False if args.verbose.lower().startswith('f') else True,
     )
     s_pathfile = mcdsts.plot_timeseries(
