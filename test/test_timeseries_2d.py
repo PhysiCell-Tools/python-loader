@@ -120,6 +120,16 @@ class TestPyMcdsTs(object):
         assert len(dl_cell.keys()) == 28 and \
                len(dl_cell['oxygen']) > 2
 
+    def test_mcdsts_get_conc_df(self, mcdsts=mcdsts):
+        ldf_conc = mcdsts.get_conc_df(values=2, drop=set(), keep=set(), collapse=False)
+        assert len(ldf_conc) == 25 and \
+               ldf_conc[0].shape == (889, 95) and \
+               ldf_conc[-1].shape == (1099, 95)
+
+    def test_mcdsts_get_conc_df_collapse(self, mcdsts=mcdsts):
+        df_conc = mcdsts.get_conc_df(values=2, drop=set(), keep=set(), collapse=True)
+        assert df_conc.shape == (24758, 95)
+
     def test_mcdsts_get_conc_df_features(self, mcdsts=mcdsts):
         dl_conc = mcdsts.get_conc_df_features(values=2, drop=set(), keep=set(), allvalues=False)
         assert len(dl_conc.keys()) == 1 and \

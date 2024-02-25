@@ -202,8 +202,8 @@ class TimeStep(pyMCDS):
             setting graph to False will use less memory and speed up processing.
 
         settingxml: string; default PhysiCell_settings.xml
-            from which settings.xml should the substrate and cell type
-            ID label mapping be extracted?
+            from which settings.xml should the cell type ID label mapping
+            be extracted?
             set to None or False if the xml file is missing!
 
         verbose: boole; default True

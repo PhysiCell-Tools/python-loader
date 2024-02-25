@@ -178,8 +178,8 @@ class pyMCDSts:
             setting graph to False will use less memory and speed up processing.
 
         settingxml: string; default PhysiCell_settings.xml
-            from which settings.xml should the substrate and cell type
-            ID label mapping be extracted?
+            from which settings.xml should the cell type ID label mapping
+            be extracted?
             set to None or False if the xml file is missing!
 
         verbose: boole; default True
@@ -357,13 +357,17 @@ class pyMCDSts:
 
         # load data
         for i, mcds in enumerate(self.get_mcds_list()):
-            df_cell = mcds.get_cell_df()
+            df_cell = mcds.get_cell_df(
+                values = values,
+                drop = drop,
+                keep = keep,
+            )
             # pack collapsed
             if collapse:
                 if df_cellts is None:
                     df_cellts = df_cell
                 else:
-                    df_cellts = pd.concat([df_cellts, df_cell], axis=0)
+                    df_cellts = pd.concat([df_cellts, df_cell], axis=0, join='outer')
             # pack not collapsed
             else:
                 ldf_cellts.append(df_cell)
@@ -487,13 +491,17 @@ class pyMCDSts:
 
         # load data
         for i, mcds in enumerate(self.get_mcds_list()):
-            df_conc = mcds.get_conc_df()
+            df_conc = mcds.get_conc_df(
+                values = values,
+                drop = drop,
+                keep = keep,
+            )
             # pack collapsed
             if collapse:
                 if df_concts is None:
                     df_concts = df_conc
                 else:
-                    df_concts = pd.concat([df_concts, df_conc], axis=0)
+                    df_concts = pd.concat([df_concts, df_conc], axis=0, join='outer')
             # pack not collapsed
             else:
                 ldf_concts.append(df_conc)

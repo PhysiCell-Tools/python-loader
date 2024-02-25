@@ -44,7 +44,7 @@ def get_cell_df():
     # TimeSeries path
     parser.add_argument(
         'path',
-        nargs = '?',
+        #nargs = '?',
         default = '.',
         help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .'
     )
@@ -60,14 +60,14 @@ def get_cell_df():
     # TimeSeries settingxml
     parser.add_argument(
         '--settingxml',
-        nargs = '?',
+        #nargs = '?',
         default = 'PhysiCell_settings.xml',
-        help = 'from which settings.xml should the substrate and cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+        help = 'from which settings.xml should the cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
     )
     # TimeSeries verbose
     parser.add_argument(
         '-v', '--verbose',
-        nargs = '?',
+        #nargs = '?',
         default = 'true',
         help = 'setting verbose to False for less text output, while processing. default is True.'
     )
@@ -83,21 +83,21 @@ def get_cell_df():
     # get_cell_df drop
     parser.add_argument(
         '--drop',
-        nargs = '?',
+        nargs = '*',
         default = '',
         help = "set of column labels to be dropped for the dataframe. don't worry: essential columns like ID, coordinates and time will never be dropped. Attention: when the keep parameter is given, then the drop parameter has to be an empty string! default is an empty string."
     )
     # get_cell_df keep
     parser.add_argument(
         '--keep',
-        nargs = '?',
+        nargs = '*',
         default = '',
         help = "set of column labels to be kept in the dataframe. set values=1 to be sure that all variables are kept. don't worry: essential columns like ID, coordinates and time will always be kept. default is an empty string."
     )
     # get_cell_df collapse
     parser.add_argument(
         '--collapse',
-        nargs = '?',
+        #nargs = '?',
         default = 'true',
         help = 'should all mcds time steps from the time series be collapsed into one big csv, or a many csv, one csv for each time step?, default is True.'
     )
@@ -123,8 +123,8 @@ def get_cell_df():
         )
         df_cell = mcds.get_cell_df(
             values = args.values,
-            drop = set(args.drop.split()),
-            keep = set(args.keep.split()),
+            drop = set(args.drop),
+            keep = set(args.keep),
         )
         s_opathfile = args.path.replace('.xml','_cell.csv')
         df_cell.to_csv(s_opathfile)
@@ -138,21 +138,21 @@ def get_cell_df():
             settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
             verbose = False if args.verbose.lower().startswith('f') else True,
         )
-        df_cell = mcdsts.get_cell_df(
+        ldf_cell = mcdsts.get_cell_df(
             values = args.values,
-            drop = set(args.drop.split()),
-            keep = set(args.keep.split()),
+            drop = set(args.drop),
+            keep = set(args.keep),
             collapse = False if args.collapse.lower().startswith('f') else True,
         )
-        if type(df_cell) is list:
+        if type(ldf_cell) is list:
             ls_opathfile = [f"{args.path}/{s_xmlfile.replace('.xml','_cell.csv')}" for s_xmlfile in mcdsts.get_xmlfile_list()]
-            for i, mcds in enumerate(l_mcds):
+            for i, df_cell in enumerate(ldf_cell):
                 df_cell.to_csv(ls_opathfile[i])
             # going home
             return ls_opathfile
         else:
             s_opathfile = f'{args.path}/timeseries_cell.csv'
-            df_cell.to_csv(s_opathfile)
+            ldf_cell.to_csv(s_opathfile)
     # going home
     return s_opathfile
 
@@ -168,7 +168,7 @@ def get_cell_df_features():
     # TimeSeries path
     parser.add_argument(
         'path',
-        nargs = '?',
+        #nargs = '?',
         default = '.',
         help = 'path to the PhysiCell output directory. default is . .',
     )
@@ -184,14 +184,14 @@ def get_cell_df_features():
     # TimeSeries settingxml
     parser.add_argument(
         '--settingxml',
-        nargs = '?',
+        #nargs = '?',
         default = 'PhysiCell_settings.xml',
-        help = 'from which settings.xml should the substrate and cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+        help = 'from which settings.xml should the cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
     )
     # TimeSeries verbose
     parser.add_argument(
         '-v', '--verbose',
-        nargs = '?',
+        #nargs = '?',
         default = 'true',
         help = 'setting verbose to False for less text output, while processing. default is True.',
     )
@@ -207,21 +207,21 @@ def get_cell_df_features():
     # get_cell_df_features drop
     parser.add_argument(
         '--drop',
-        nargs = '?',
+        nargs = '*',
         default = '',
         help = "set of column labels to be dropped for the dataframe. don't worry: essential columns like ID, coordinates and time will never be dropped. Attention: when the keep parameter is given, then the drop parameter has to be an empty string! default is an empty string.",
     )
     # get_cell_df_features keep
     parser.add_argument(
         '--keep',
-        nargs = '?',
+        nargs = '*',
         default = '',
         help = "set of column labels to be kept in the dataframe. set values=1 to be sure that all variables are kept. don't worry: essential columns like ID, coordinates and time will always be kept. default is an empty string.",
     )
     # get_cell_df_features allvalues
     parser.add_argument(
         'allvalues',
-        nargs = '?',
+        #nargs = '?',
         default = 'false',
         help = 'for numeric data, should only the min and max values or all values be returned? default is false.',
     )
@@ -249,8 +249,8 @@ def get_cell_df_features():
         s_values = 'all'
     dl_variable = mcdsts.get_cell_df_features(
         values = args.values,
-        drop = set(args.drop.split()),
-        keep = set(args.keep.split()),
+        drop = set(args.drop),
+        keep = set(args.keep),
         allvalues = b_allvalues,
     )
     s_opathfile = f'{args.path}/cell_feature_{s_values}.json'
@@ -270,24 +270,18 @@ def get_conc_df():
     # TimeSeries path
     parser.add_argument(
         'path',
-        nargs = '?',
+        #nargs = '?',
         default = '.',
         help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .',
     )
     # TimeSeries output_path '.'
     # TimeSeries microenv True
     # TimeSeries graph False
-    # TimeSeries settingxml
-    parser.add_argument(
-        '--settingxml',
-        nargs = '?',
-        default = 'PhysiCell_settings.xml',
-        help = 'from which settings.xml should the substrate and cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
-    )
+    # TimeSeries settingxml None
     # TimeSeries verbose
     parser.add_argument(
         '-v', '--verbose',
-        nargs = '?',
+        #nargs = '?',
         default = 'true',
         help = 'setting verbose to False for less text output, while processing. default is True.',
     )
@@ -303,21 +297,21 @@ def get_conc_df():
     # get_conc_df drop
     parser.add_argument(
         '--drop',
-        nargs = '?',
+        nargs = '*',
         default = '',
         help = "set of column labels to be dropped for the dataframe. don't worry: essential columns like ID, coordinates and time will never be dropped. Attention: when the keep parameter is given, then the drop parameter has to be an empty string! default is an empty string.",
     )
     # get_conc_df keep
     parser.add_argument(
         '--keep',
-        nargs = '?',
+        nargs = '*',
         default = '',
         help = "set of column labels to be kept in the dataframe. set values=1 to be sure that all variables are kept. don't worry: essential columns like ID, coordinates and time will always be kept. default is an empty string.",
     )
-    # get_cell_df collapse
+    # get_conc_df collapse
     parser.add_argument(
         '--collapse',
-        nargs = '?',
+        #nargs = '?',
         default = 'true',
         help = 'should all mcds time steps from the time series be collapsed into one big csv, or a many csv, one for each time step?, default is True.'
     )
@@ -339,13 +333,13 @@ def get_conc_df():
             output_path = '.',
             microenv = True,
             graph = False,
-            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
+            settingxml = None,
             verbose = False if args.verbose.lower().startswith('f') else True
         )
         df_conc = mcds.get_conc_df(
             values = args.values,
-            drop = set(args.drop.split()),
-            keep = set(args.keep.split()),
+            drop = set(args.drop),
+            keep = set(args.keep),
         )
         s_opathfile = args.path.replace('.xml','_conc.csv')
         df_conc.to_csv(s_opathfile, index=False)
@@ -356,24 +350,24 @@ def get_conc_df():
             load = True,
             microenv = True,
             graph = False,
-            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
+            settingxml = None,
             verbose = False if args.verbose.lower().startswith('f') else True,
         )
-        df_conc = mcdsts.get_conc_df(
+        ldf_conc = mcdsts.get_conc_df(
             values = args.values,
-            drop = set(args.drop.split()),
-            keep = set(args.keep.split()),
+            drop = set(args.drop),
+            keep = set(args.keep),
             collapse = False if args.collapse.lower().startswith('f') else True,
         )
-        if type(df_conc) is list:
+        if type(ldf_conc) is list:
             ls_opathfile = [f"{args.path}/{s_xmlfile.replace('.xml','_conc.csv')}" for s_xmlfile in mcdsts.get_xmlfile_list()]
-            for i, mcds in enumerate(l_mcds):
+            for i, df_conc in enumerate(ldf_conc):
                 df_conc.to_csv(ls_opathfile[i], index=False)
             # going home
             return ls_opathfile
         else:
             s_opathfile = f'{args.path}/timeseries_conc.csv'
-            df_conc.to_csv(s_opathfile, index=False)
+            ldf_conc.to_csv(s_opathfile, index=False)
     # going home
     return s_opathfile
 
@@ -389,24 +383,18 @@ def get_conc_df_features():
     # TimeSeries path
     parser.add_argument(
         'path',
-        nargs = '?',
+        #nargs = '?',
         default = '.',
         help = 'path to the PhysiCell output directory. default is . .',
     )
     # TimeSeries output_path '.'
     # TimeSeries microenv True
     # TimeSeries graph False
-    # TimeSeries settingxml
-    parser.add_argument(
-        '--settingxml',
-        nargs = '?',
-        default = 'PhysiCell_settings.xml',
-        help = 'from which settings.xml should the substrate and cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
-    )
+    # TimeSeries settingxml None
     # TimeSeries verbose
     parser.add_argument(
         '-v', '--verbose',
-        nargs = '?',
+        #nargs = '?',
         default = 'true',
         help = 'setting verbose to False for less text output, while processing. default is True.',
     )
@@ -422,21 +410,21 @@ def get_conc_df_features():
     # get_conc_df_features drop
     parser.add_argument(
         '--drop',
-        nargs = '?',
+        nargs = '*',
         default = '',
         help = "set of column labels to be dropped for the dataframe. don't worry: essential columns like ID, coordinates and time will never be dropped. Attention: when the keep parameter is given, then the drop parameter has to be an empty string! default is an empty string.",
     )
     # get_conc_df_features keep
     parser.add_argument(
         '--keep',
-        nargs = '?',
+        nargs = '*',
         default = '',
         help = "set of column labels to be kept in the dataframe. set values=1 to be sure that all variables are kept. don't worry: essential columns like ID, coordinates and time will always be kept. default is an empty string.",
     )
     # get_conc_df_features allvalues
     parser.add_argument(
         'allvalues',
-        nargs = '?',
+        #nargs = '?',
         default = 'false',
         help = 'for numeric data, should only the min and max values or all values be returned? default is false.',
     )
@@ -454,7 +442,7 @@ def get_conc_df_features():
         load = True,
         microenv = True,
         graph = False,
-        settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
+        settingxml = None,
         verbose = False if args.verbose.lower().startswith('f') else True,
     )
     # run
@@ -464,8 +452,8 @@ def get_conc_df_features():
         s_values = 'all'
     dl_variable = mcdsts.get_conc_df_features(
         values = args.values,
-        drop = set(args.drop.split()),
-        keep = set(args.keep.split()),
+        drop = set(args.drop),
+        keep = set(args.keep),
         allvalues = b_allvalues,
     )
     s_opathfile = f'{args.path}/conc_feature_{s_values}.json'
@@ -497,7 +485,7 @@ def get_graph_gml():
         '--settingxml',
         nargs = '?',
         default = 'PhysiCell_settings.xml',
-        help = 'from which settings.xml should the substrate and cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+        help = 'from which settings.xml should the cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
     )
     # TimeSeries verbose
     parser.add_argument(
@@ -566,7 +554,7 @@ def get_graph_gml():
         s_opathfile = df_conc = mcds.make_graph_gml(
             graph_type = args.graph_type,
             edge_attr = False if args.edge_attr.lower().startswith('f') else True,
-            node_attr = args.node_attr.split(),
+            node_attr = args.node_attr,
         )
         ls_opathfile.append(s_opathfile)
     # going home
@@ -602,7 +590,7 @@ def get_unit_se():
         '--settingxml',
         nargs = '?',
         default = 'PhysiCell_settings.xml',
-        help = 'from which settings.xml should the substrate and cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+        help = 'from which settings.xml should the cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
     )
     # TimeSeries verbose
     parser.add_argument(
@@ -787,13 +775,7 @@ def plot_contour():
     # TimeSeries output_path '.'
     # TimeSeries microenv True
     # TimeSeries graph False
-    # TimeSeries settingxml
-    parser.add_argument(
-        '--settingxml',
-        nargs = '?',
-        default = 'PhysiCell_settings.xml',
-        help = 'from which settings.xml should the substrate and cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
-    )
+    # TimeSeries settingxml None
     # TimeSeries verbose
     parser.add_argument(
         '-v', '--verbose',
@@ -917,7 +899,7 @@ def plot_contour():
         load = False,
         microenv = True,
         graph = False,
-        settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
+        settingxml = None,
         verbose = False if args.verbose.lower().startswith('f') else True,
     )
     if s_pathfile.endswith('/initial.xml'):
@@ -928,15 +910,15 @@ def plot_contour():
     s_opath = mcdsts.plot_contour(
         focus = args.focus,
         z_slice = args.z_slice,
-        extrema = None if (args.extrema.lower() == 'none') else args.extrema.split(),
+        extrema = None if (args.extrema.lower() == 'none') else args.extrema,
         alpha = args.alpha,
         fill = True if args.fill.lower().startswith('t') else False,
         cmap = args.cmap,
         grid = False if args.grid.lower().startswith('f') else True,
-        xlim = None if (args.xlim.lower() == 'none') else args.xlim.split(),
-        ylim = None if (args.ylim.lower() == 'none') else args.ylim.split(),
+        xlim = None if (args.xlim.lower() == 'none') else args.xlim,
+        ylim = None if (args.ylim.lower() == 'none') else args.ylim,
         xyequal = False if args.xyequal.lower().startswith('f') else True,
-        figsizepx = None if (args.figsizepx.lower() == 'none') else [int(i) for i in args.figsizepx.split()],
+        figsizepx = None if (args.figsizepx.lower() == 'none') else [int(i) for i in args.figsizepx],
         ext = args.ext,
         figbgcolor = None if (args.figbgcolor.lower() == 'none') else args.figbgcolor,
     )
@@ -973,7 +955,7 @@ def plot_scatter():
         '--settingxml',
         nargs = '?',
         default = 'PhysiCell_settings.xml',
-        help = 'from which settings.xml should the substrate and cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+        help = 'from which settings.xml should the cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
     )
     # TimeSeries verbose
     parser.add_argument(
@@ -1116,16 +1098,16 @@ def plot_scatter():
     s_opath = mcdsts.plot_scatter(
         focus = args.focus,
         z_slice = args.z_slice,
-        z_axis = None if (args.z_axis.lower() == 'none') else args.z_axis.split(),
+        z_axis = None if (args.z_axis.lower() == 'none') else args.z_axis,
         alpha = args.alpha,
         cmap = args.cmap,
         grid = False if args.grid.lower().startswith('f') else True,
         legend_loc = args.legend_loc,
-        xlim = None if (args.xlim.lower() == 'none') else args.xlim.split(),
-        ylim = None if (args.ylim.lower() == 'none') else args.ylim.split(),
+        xlim = None if (args.xlim.lower() == 'none') else args.xlim,
+        ylim = None if (args.ylim.lower() == 'none') else args.ylim,
         xyequal = False if args.xyequal.lower().startswith('f') else True,
         s = None if (args.s.lower() == 'none') else int(args.s),
-        figsizepx = None if (args.figsizepx.lower() == 'none') else [int(i) for i in args.figsizepx.split()],
+        figsizepx = None if (args.figsizepx.lower() == 'none') else [int(i) for i in args.figsizepx],
         ext = args.ext,
         figbgcolor = None if (args.figbgcolor.lower() == 'none') else args.figbgcolor,
     )
@@ -1164,7 +1146,7 @@ def plot_timeseries():
         '--settingxml',
         nargs = '?',
         default = 'PhysiCell_settings.xml',
-        help = 'from which settings.xml should the substrate and cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+        help = 'from which settings.xml should the cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
     )
     # TimeSeries verbose
     parser.add_argument(
@@ -1351,7 +1333,7 @@ def plot_timeseries():
     # secondary_y
     if (args.secondary_y.lower() == 'false'): ls_secondary_y = False
     elif (args.secondary_y.lower() == 'true'): ls_secondary_y = True
-    else: ls_secondary_y = args.secondary_y.split()
+    else: ls_secondary_y = args.secondary_y
     # legend
     if (args.legend.lower() == 'reverse'): b_legend = 'reverse'
     elif args.legend.lower().startswith('f'): b_legend = False
@@ -1375,7 +1357,7 @@ def plot_timeseries():
         frame = args.frame,
         z_slice = None if (args.z_slice.lower() == 'none') else float(args.z_slice),
         logy = True if args.logy.lower().startswith('t') else False,
-        ylim = None if (args.ylim.lower() == 'none') else args.ylim.split(),
+        ylim = None if (args.ylim.lower() == 'none') else args.ylim,
         secondary_y = ls_secondary_y,
         subplots = True if args.subplots.lower().startswith('t') else False,
         sharex = True if args.sharex.lower().startswith('t') else False,
@@ -1390,7 +1372,7 @@ def plot_timeseries():
         yunit = None if (args.yunit.lower() == 'none') else args.yunit,
         title = None if (args.title.lower() == 'none') else args.title,
         ax = None,
-        figsizepx = [int(i) for i in args.figsizepx.split()],
+        figsizepx = [int(i) for i in args.figsizepx],
         ext = args.ext,
         figbgcolor = None if (args.figbgcolor.lower() == 'none') else args.figbgcolor,
     )

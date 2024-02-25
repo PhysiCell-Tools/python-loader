@@ -201,8 +201,8 @@ class pyMCDS:
             setting graph to False will use less memory and speed up processing.
 
         settingxml: string; default PhysiCell_settings.xml
-            from which settings.xml should the substrate and cell type
-            ID label mapping be extracted?
+            from which settings.xml should the cell type ID label mapping
+            be extracted?
             set to None or False if the xml file is missing!
 
         verbose: boole; default True
@@ -1743,16 +1743,6 @@ class pyMCDS:
                 print(f'reading: {s_xmlpathfile_setting}')
             x_root = x_tree.getroot()
 
-            # find the microenvironment node
-            x_microenvironment = x_root.find('microenvironment_setup')
-            # substrate loop
-            ds_substrate = {}
-            for x_variable in x_microenvironment.findall('variable'):
-                # basics
-                i_id = int(x_variable.get('ID'))
-                s_substrate = x_variable.get('name').replace(' ', '_')
-                ds_substrate.update({str(i_id) : s_substrate})
-
             # find the cell definition node
             # cell loop
             es_customdata = set()
@@ -1778,7 +1768,6 @@ class pyMCDS:
                 print(f'Warning @ pyMCDS._read_xml : cell_definition custom_data without variable type setting detected. {sorted(es_customdata)}')
 
             # output
-            d_mcds['metadata']['substrate'] = ds_substrate
             d_mcds['metadata']['cell_type'] = ds_celltype
 
 
@@ -1940,6 +1929,9 @@ class pyMCDS:
 
                 if self.verbose:
                     print(f'parsing: {s_substrate} data')
+
+                # update metadata substrate ID label dictionary
+                d_mcds['metadata']['substrate'].update({str(i_s) : s_substrate})
 
                 # initialize meshgrid shaped array for concentration data
                 d_mcds['continuum_variables'][s_substrate]['data'] = np.zeros(d_mcds['mesh']['mnp_grid'][0].shape)
