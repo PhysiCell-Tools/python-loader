@@ -26,7 +26,7 @@ import numpy as np
 import pandas as pd
 from pcdl.pyMCDS import pyMCDS, es_coor_cell
 from pcdl.pyMCDSts import pyMCDSts
-
+from scipy import sparse
 
 def scaler(df_x, scale='maxabs'):
     """
@@ -170,8 +170,100 @@ def _anndextract(df_cell, scale='maxabs'):
         df_count[s_col] = df_count[s_col].astype(int)
     df_count = scaler(df_count, scale=scale)
 
+    # handle graph data
+    # acknowledgement:
+    # this code is inspired from the tysserand add_to_AnnData impelmentation
+    # from Alexis Coullomb form the Pancaldi Lab.
+    # https://github.com/VeraPancaldiLab/tysserand/blob/main/tysserand/tysserand.py#L1546
+
+    """
+    Convert tysserand network representation to sparse matrices
+    and add them to an AnnData (Scanpy) object.
+
+    Parameters
+    ----------
+    coords : nodes : ndarray
+        Coordinates of points with columns corresponding to axes ('x', 'y', ...)
+    pairs : edges : ndarray
+        The pairs of nodes given by their indices.
+    adata : AnnData object
+        An object dedicated to single-cell data analysis.
+
+    # convert arrays to sparse matrices
+    n_cells = adata.shape[0]
+    connect = np.ones(pairs.shape[0], dtype=np.int8)
+    sparse_connect = csr_matrix((connect, (pairs[:,0], pairs[:,1])), shape=(n_cells, n_cells), dtype=np.int8)
+    distances = distance_neighbors(coords, pairs)
+    sparse_dist = csr_matrix((distances, (pairs[:,0], pairs[:,1])), shape=(n_cells, n_cells), dtype=np.float)
+
+    # add to AnnData object
+    adata.obsp['connectivities'] = sparse_connect
+    adata.obsp['distances'] = sparse_dist
+    adata.uns['neighbors'] = {'connectivities_key': 'connectivities',
+                              'distances_key': 'distances',
+                              'params': {'method': 'delaunay',
+                                         'metric': 'euclidean',
+                                         'edge_trimming': 'percentile 99'}}
+    """
+    # coords/nodes are in df_spatial /ndarray (id is cell)
+    # pairs/edges are in mcds.get_neighbor_graph_dict and self.get_attached_graph_dict()
+    # connect / sparse_connect i shoul be able to build
+
+    # extract cell_id to index mapping (i always loved perl)
+    d_ididx = df_cell.reset_index().loc[:,'ID'].reset_index().set_index('ID').squeeze().to_dict()
+
+    # transform cell id graph dict to index matrix and pack for anndata
+    d_obsp ={}
+    d_uns = {}
+    #dei_graph = self.get_neighbor_graph_dict()
+    for s_graph, dei_graph in {
+            'neighbor' : self.get_neighbor_graph_dict(),
+            'attached': self.get_attached_graph_dict().
+        }:
+        dei_graph = mcds.get_neighbor_graph_dict()
+        lli_edge = []
+        lr_distance = []
+        for i_src, ei_dst in dei_graph.items():
+            for i_dst in ei_dst:
+                # edge
+                lli_edge.append([d_ididx[i_src], d_ididx[i_dst]])
+                # distance
+                r_distance = ((df_cell.loc[i_src, ['position_x','position_y','position_z']] - df_cell.loc[i_dst, ['position_x','position_y','position_z']])**2).sum()**(1/2)
+                lr_distance.append(r_distance)
+        # edge
+        ai_edge = np.array(lli_edge, dtype=np.uint)
+        # connection
+        ai_connect = np.ones(ai_edge.shape[0], dtype=np.uint16)
+        ai_connect_sparse = sparse.csr_matrix(
+            (ai_connect, (ai_edge[:,0], ai_edge[:,1])),
+            shape = (df_cell.shape[0], df_cell.shape[0]),
+            dtype = np.uint
+        )
+        # distance
+        ar_distance = np.array(lr_distance, dtype=np.float64)
+        ar_distance_sparse = sparse.csr_matrix(
+            (ar_distance, (ai_edge[:,0], ai_edge[:,1])),
+            shape = (df_cell.shape[0], df_cell.shape[0]),
+            dtype = np.float64
+        )
+        # pack outout
+        d_obsp.update({
+            f'{s_graph}_connection': ar_distance,
+            f'{s_graph}_distance': ar_distance_sparse,
+        })
+        d_uns.update({
+            s_graph : {
+                'connection_key': f'{s_graph}_connection',
+                'distance_key': f'{s_graph}_distance',
+                'params': {
+                    'method': 'physicell',
+                    'metric': 'euclidean',
+                }
+            }
+        })
+
     # output
-    return(df_count, df_obs, df_spatial)
+    return(df_count, df_obs, df_spatial, d_obsp, d_uns)
 
 
 # class definition

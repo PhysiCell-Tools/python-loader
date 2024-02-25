@@ -106,7 +106,7 @@ class TestPyCliCellDf(object):
         #print(f'result: {result}\n')
         #print(f'result.stderr: {result.stderr}\n')
         s_opathfile = result.stderr.decode('UTF8').replace('\n','')
-        df_cell = pd.read_csv(s_opathfile, index_col=0, low_memory=False)
+        df_cell = pd.read_csv(s_opathfile, index_col=0)
         assert  df_cell.shape == (24758, 40)
         os.remove(s_opathfile)
 
@@ -231,7 +231,7 @@ class TestPyCliConcDf(object):
         #print(f'result: {result}\n')
         #print(f'result.stderr: {result.stderr}\n')
         s_opathfile = result.stderr.decode('UTF8').replace('\n','')
-        df_conc = pd.read_csv(s_opathfile, index_col=0, low_memory=False)
+        df_conc = pd.read_csv(s_opathfile, index_col=0)
         assert  df_conc.shape == (3025, 9)
         os.remove(s_opathfile)
 

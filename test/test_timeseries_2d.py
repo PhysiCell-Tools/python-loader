@@ -103,12 +103,12 @@ class TestPyMcdsTs(object):
     def test_mcdsts_get_cell_df(self, mcdsts=mcdsts):
         ldf_cell = mcdsts.get_cell_df(values=2, drop=set(), keep=set(), collapse=False)
         assert len(ldf_cell) == 25 and \
-               ldf_cell[0].shape == (889, 95) and \
-               ldf_cell[-1].shape == (1099, 95)
+               ldf_cell[0].shape == (889, 19) and \
+               ldf_cell[-1].shape == (1099, 40)
 
     def test_mcdsts_get_cell_df_collapse(self, mcdsts=mcdsts):
         df_cell = mcdsts.get_cell_df(values=2, drop=set(), keep=set(), collapse=True)
-        assert df_cell.shape == (24758, 95)
+        assert df_cell.shape == (24758, 40)
 
     def test_mcdsts_get_cell_df_features(self, mcdsts=mcdsts):
         dl_cell = mcdsts.get_cell_df_features(values=2, drop=set(), keep=set(), allvalues=False)
@@ -123,12 +123,12 @@ class TestPyMcdsTs(object):
     def test_mcdsts_get_conc_df(self, mcdsts=mcdsts):
         ldf_conc = mcdsts.get_conc_df(values=2, drop=set(), keep=set(), collapse=False)
         assert len(ldf_conc) == 25 and \
-               ldf_conc[0].shape == (889, 95) and \
-               ldf_conc[-1].shape == (1099, 95)
+               ldf_conc[0].shape == (121, 9) and \
+               ldf_conc[-1].shape == (121, 10)
 
     def test_mcdsts_get_conc_df_collapse(self, mcdsts=mcdsts):
         df_conc = mcdsts.get_conc_df(values=2, drop=set(), keep=set(), collapse=True)
-        assert df_conc.shape == (24758, 95)
+        assert df_conc.shape == (3025, 10)
 
     def test_mcdsts_get_conc_df_features(self, mcdsts=mcdsts):
         dl_conc = mcdsts.get_conc_df_features(values=2, drop=set(), keep=set(), allvalues=False)
