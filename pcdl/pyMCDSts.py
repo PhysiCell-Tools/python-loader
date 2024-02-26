@@ -357,27 +357,46 @@ class pyMCDSts:
 
         # load data
         for i, mcds in enumerate(self.get_mcds_list()):
-            df_cell = mcds.get_cell_df(
-                values = values,
-                drop = drop,
-                keep = keep,
-            )
             # pack collapsed
             if collapse:
+                df_cell = mcds.get_cell_df(
+                    values = 1,
+                    drop = drop,
+                    keep = keep,
+                )
                 if df_cellts is None:
                     df_cellts = df_cell
                 else:
-                    df_cellts = pd.concat([df_cellts, df_cell], axis=0, join='outer')
+                    df_cellts = pd.concat([df_cellts, df_cell], axis=0, ignore_index=False, join='outer')
             # pack not collapsed
             else:
+                df_cell = mcds.get_cell_df(
+                    values = values,
+                    drop = drop,
+                    keep = keep,
+                )
                 ldf_cellts.append(df_cell)
 
-        # output
+        # output collapsed
         if collapse:
-            o_cellts = df_cellts
+            # filter
+            es_feature = set(df_cellts.columns).difference(es_coor_cell)
+            if (len(keep) > 0):
+                es_delete = es_feature.difference(keep)
+            else:
+                es_delete = es_feature.intersection(drop)
+
+            if (values > 1):  # by minimal number of states
+                for s_column in set(df_cellts.columns).difference(es_coor_cell):
+                    if len(set(df_cellts.loc[:,s_column])) < values:
+                        es_delete.add(s_column)
+            df_cellts.drop(es_delete, axis=1, inplace=True)
+            df_cellts.reset_index(inplace=True)
+            df_cellts.index.name = 'index'
+            return df_cellts
+        # output not collapsed
         else:
-            o_cellts = ldf_cellts
-        return o_cellts
+            return ldf_cellts
 
 
     def get_cell_df_features(self, values=1, drop=set(), keep=set(), allvalues=False):
@@ -491,27 +510,46 @@ class pyMCDSts:
 
         # load data
         for i, mcds in enumerate(self.get_mcds_list()):
-            df_conc = mcds.get_conc_df(
-                values = values,
-                drop = drop,
-                keep = keep,
-            )
             # pack collapsed
             if collapse:
+                df_conc = mcds.get_conc_df(
+                    values = 1,
+                    drop = drop,
+                    keep = keep,
+                )
                 if df_concts is None:
                     df_concts = df_conc
                 else:
-                    df_concts = pd.concat([df_concts, df_conc], axis=0, join='outer')
+                    df_concts = pd.concat([df_concts, df_conc], axis=0, ignore_index=True, join='outer')
             # pack not collapsed
             else:
+                df_conc = mcds.get_conc_df(
+                    values = values,
+                    drop = drop,
+                    keep = keep,
+                )
                 ldf_concts.append(df_conc)
 
         # output
         if collapse:
-            o_concts = df_concts
+            # filter
+            es_feature = set(df_concts.columns).difference(es_coor_conc)
+            if (len(keep) > 0):
+                es_delete = es_feature.difference(keep)
+            else:
+                es_delete = es_feature.intersection(drop)
+
+            if (values > 1):  # by minimal number of states
+                for s_column in set(df_concts.columns).difference(es_coor_conc):
+                    if len(set(df_concts.loc[:,s_column])) < values:
+                        es_delete.add(s_column)
+            df_concts.drop(es_delete, axis=1, inplace=True)
+            df_concts.index.name = 'index'
+            return df_concts
+
         else:
-            o_concts = ldf_concts
-        return o_concts
+            # output not collapsed
+            return ldf_concts
 
 
     def get_conc_df_features(self, values=1, drop=set(), keep=set(), allvalues=False):
