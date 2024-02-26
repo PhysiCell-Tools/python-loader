@@ -902,8 +902,8 @@ class pyMCDS:
             for s_column in set(df_conc.columns).difference(es_coor_conc):
                 if len(set(df_conc.loc[:,s_column])) < values:
                     es_delete.add(s_column)
-                    if self.verbose:
-                        print('es_delete:', es_delete)
+        if self.verbose:
+            print('es_delete:', es_delete)
         df_conc.drop(es_delete, axis=1, inplace=True)
 
         # output
@@ -1246,6 +1246,8 @@ class pyMCDS:
             for s_column in set(df_cell.columns).difference(es_coor_cell):
                 if len(set(df_cell.loc[:,s_column])) < values:
                     es_delete.add(s_column)
+        if self.verbose:
+            print('es_delete:', es_delete)
         df_cell.drop(es_delete, axis=1, inplace=True)
 
         # output
