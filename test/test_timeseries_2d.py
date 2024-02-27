@@ -108,7 +108,7 @@ class TestPyMcdsTs(object):
 
     def test_mcdsts_get_cell_df_collapse(self, mcdsts=mcdsts):
         df_cell = mcdsts.get_cell_df(values=2, drop=set(), keep=set(), collapse=True)
-        assert df_cell.shape == (24758, 40)
+        assert df_cell.shape == (24758, 41)
 
     def test_mcdsts_get_cell_df_features(self, mcdsts=mcdsts):
         dl_cell = mcdsts.get_cell_df_features(values=2, drop=set(), keep=set(), allvalues=False)

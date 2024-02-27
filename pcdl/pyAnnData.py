@@ -28,6 +28,7 @@ from pcdl.pyMCDS import pyMCDS, es_coor_cell
 from pcdl.pyMCDSts import pyMCDSts
 from scipy import sparse
 
+
 def scaler(df_x, scale='maxabs'):
     """
     input:
@@ -107,43 +108,116 @@ def scaler(df_x, scale='maxabs'):
     return df_x
 
 
-def _anndextract(df_cell, scale='maxabs'):
+def _anndextract(df_cell, scale='maxabs', graph_attached={}, graph_neighbor={}, graph_method='PhysiCell'):
     """
     input:
         df_cell:  pandas dataframe
             data frame retrieved with the mcds.get_cell_df function.
 
-        scale: string; default 'maxabs'
+        scale: string; default maxabs
             specify how the data should be scaled.
             possible values are None, maxabs, minmax, std.
             for more input, check out: help(pcdl.scaler).
 
+        graph_attached: dict; default {}
+            graph dictionary that, if loaded, can be
+            fetched with mcds.get_attched_graph().
+
+        graph_neighbor: dict; default {}
+            graph dictionary that, if loaded, can be
+            fetched with mcds.get_neighbor_graph().
+
+        graph_method: string; default PhysiCell
+            method how the graph was generated.
+
     output:
-        df_count, df_obs, df_spatial pandas dataframes
+        df_count, df_obs, d_obsm, d_obsp, d_uns dataframes and dictionaries,
         ready to be backed into an anndata object.
 
     description:
         this function takes a pcdl df_cell pandas dataframe and re-formats
-        it into a set of three dataframes (df_count, df_obs, and df_spatial),
+        it into a set of two dataframes (df_count, df_obs),
+        two dictionary of numpy array (d_obsm, d_obsp),
+        and one dictionary of string (d_uns),
         which downstream might be transformed into an anndata object.
     """
     # transform index to string
+    df_coor = df_cell.loc[:,['position_x','position_y','position_z']].copy()
     df_cell.index = df_cell.index.astype(str)
 
-    # build on spatial and obs anndata object
-    if (len(set(df_cell.position_z)) == 1):
-        df_spatial = df_cell.loc[:,['position_x', 'position_y']].copy()
-    else:
-        df_spatial = df_cell.loc[:,['position_x', 'position_y','position_z']].copy()
-    df_obs = df_cell.loc[:,['mesh_center_p', 'time']].copy()
+    # build obs anndata object (annotation of observations)
+    df_obs = df_cell.loc[:,['mesh_center_p','time']].copy()
     df_obs.columns = ['z_layer', 'time']
+
+    # buil obsm anndata object spatial (multi-dimensional annotation of observations)
+    if (len(set(df_cell.position_z)) == 1):
+        df_obsm = df_cell.loc[:,['position_x','position_y']].copy()
+    else:
+        df_obsm = df_cell.loc[:,['position_x','position_y','position_z']].copy()
+    d_obsm = {"spatial": df_obsm.values}
+
+    # build obsp and uns anndata object graph (pairwise annotation of obeservation) and (unstructured data)
+    ####
+    # acknowledgement:
+    #   this code is inspired from the tysserand add_to_AnnData impelmentation
+    #   from Alexis Coullomb form the Pancaldi Lab.
+    #   https://github.com/VeraPancaldiLab/tysserand/blob/main/tysserand/tysserand.py#L1546
+    ####
+    # extract cell_id to index mapping (i always loved perl)
+    di_ididx = df_cell.reset_index().loc[:,'ID'].reset_index().astype(int).set_index('ID').squeeze().to_dict()
+    # transform cell id graph dict to index matrix and pack for anndata
+    d_obsp = {}  # pairwise annotation of obeservation
+    d_uns = {}  # unstructured data
+    for s_graph, dei_graph in [('neighbor', graph_neighbor), ('attached', graph_attached)]:
+        lli_edge = []
+        lr_distance = []
+        for i_src, ei_dst in dei_graph.items():
+            for i_dst in ei_dst:
+                # extract edge
+                lli_edge.append([di_ididx[i_src], di_ididx[i_dst]])
+                r_distance = ((df_coor.loc[i_src,:].values -  df_coor.loc[i_dst,:].values)**2).sum()**(1/2)
+                lr_distance.append(r_distance)
+        # if there is a graph
+        if (len(lli_edge) > 0):
+            # handle edge data
+            ai_edge = np.array(lli_edge, dtype=np.uint)
+            # handle connection data
+            ai_conectivity = np.ones(ai_edge.shape[0], dtype=np.uint16)
+            ai_conectivity_sparse = sparse.csr_matrix(
+                (ai_conectivity, (ai_edge[:,0], ai_edge[:,1])),
+                shape = (df_cell.shape[0], df_cell.shape[0]),
+                dtype = np.uint
+            )
+            # handle distance data
+            ar_distance  = np.array(lr_distance, dtype=np.float64)
+            ar_distance_sparse = sparse.csr_matrix(
+                (ar_distance, (ai_edge[:,0], ai_edge[:,1])),
+                shape = (df_cell.shape[0], df_cell.shape[0]),
+                dtype = np.float64
+            )
+            # pack obsp
+            d_obsp.update({
+                f'physicell_{s_graph}_conectivities': ai_conectivity_sparse,
+                f'physicell_{s_graph}_distances': ar_distance_sparse,
+            })
+            # pack uns
+            d_uns.update({
+                s_graph : {
+                    'connectivities_key': f'physicell_{s_graph}_conectivities',
+                    'distances_key': f'physicell_{s_graph}_distances',
+                    'params': {
+                        'metric': 'euclidean',
+                        'method': graph_method,
+                    }
+                }
+            })
 
     # extract discrete cell data
     es_drop = set(df_cell.columns).intersection({
         'voxel_i', 'voxel_j', 'voxel_k',
         'mesh_center_m', 'mesh_center_n', 'mesh_center_p',
         'position_x', 'position_y','position_z',
-        'time', 'runtime',
+        'time', 'runtime', 'xmlfile',
     })
     df_cell.drop(es_drop, axis=1, inplace=True)  # maybe obs?
 
@@ -170,100 +244,8 @@ def _anndextract(df_cell, scale='maxabs'):
         df_count[s_col] = df_count[s_col].astype(int)
     df_count = scaler(df_count, scale=scale)
 
-    # handle graph data
-    # acknowledgement:
-    # this code is inspired from the tysserand add_to_AnnData impelmentation
-    # from Alexis Coullomb form the Pancaldi Lab.
-    # https://github.com/VeraPancaldiLab/tysserand/blob/main/tysserand/tysserand.py#L1546
-
-    """
-    Convert tysserand network representation to sparse matrices
-    and add them to an AnnData (Scanpy) object.
-
-    Parameters
-    ----------
-    coords : nodes : ndarray
-        Coordinates of points with columns corresponding to axes ('x', 'y', ...)
-    pairs : edges : ndarray
-        The pairs of nodes given by their indices.
-    adata : AnnData object
-        An object dedicated to single-cell data analysis.
-
-    # convert arrays to sparse matrices
-    n_cells = adata.shape[0]
-    connect = np.ones(pairs.shape[0], dtype=np.int8)
-    sparse_connect = csr_matrix((connect, (pairs[:,0], pairs[:,1])), shape=(n_cells, n_cells), dtype=np.int8)
-    distances = distance_neighbors(coords, pairs)
-    sparse_dist = csr_matrix((distances, (pairs[:,0], pairs[:,1])), shape=(n_cells, n_cells), dtype=np.float)
-
-    # add to AnnData object
-    adata.obsp['connectivities'] = sparse_connect
-    adata.obsp['distances'] = sparse_dist
-    adata.uns['neighbors'] = {'connectivities_key': 'connectivities',
-                              'distances_key': 'distances',
-                              'params': {'method': 'delaunay',
-                                         'metric': 'euclidean',
-                                         'edge_trimming': 'percentile 99'}}
-    """
-    # coords/nodes are in df_spatial /ndarray (id is cell)
-    # pairs/edges are in mcds.get_neighbor_graph_dict and self.get_attached_graph_dict()
-    # connect / sparse_connect i shoul be able to build
-
-    # extract cell_id to index mapping (i always loved perl)
-    d_ididx = df_cell.reset_index().loc[:,'ID'].reset_index().set_index('ID').squeeze().to_dict()
-
-    # transform cell id graph dict to index matrix and pack for anndata
-    d_obsp ={}
-    d_uns = {}
-    #dei_graph = self.get_neighbor_graph_dict()
-    for s_graph, dei_graph in {
-            'neighbor' : self.get_neighbor_graph_dict(),
-            'attached': self.get_attached_graph_dict().
-        }:
-        dei_graph = mcds.get_neighbor_graph_dict()
-        lli_edge = []
-        lr_distance = []
-        for i_src, ei_dst in dei_graph.items():
-            for i_dst in ei_dst:
-                # edge
-                lli_edge.append([d_ididx[i_src], d_ididx[i_dst]])
-                # distance
-                r_distance = ((df_cell.loc[i_src, ['position_x','position_y','position_z']] - df_cell.loc[i_dst, ['position_x','position_y','position_z']])**2).sum()**(1/2)
-                lr_distance.append(r_distance)
-        # edge
-        ai_edge = np.array(lli_edge, dtype=np.uint)
-        # connection
-        ai_connect = np.ones(ai_edge.shape[0], dtype=np.uint16)
-        ai_connect_sparse = sparse.csr_matrix(
-            (ai_connect, (ai_edge[:,0], ai_edge[:,1])),
-            shape = (df_cell.shape[0], df_cell.shape[0]),
-            dtype = np.uint
-        )
-        # distance
-        ar_distance = np.array(lr_distance, dtype=np.float64)
-        ar_distance_sparse = sparse.csr_matrix(
-            (ar_distance, (ai_edge[:,0], ai_edge[:,1])),
-            shape = (df_cell.shape[0], df_cell.shape[0]),
-            dtype = np.float64
-        )
-        # pack outout
-        d_obsp.update({
-            f'{s_graph}_connection': ar_distance,
-            f'{s_graph}_distance': ar_distance_sparse,
-        })
-        d_uns.update({
-            s_graph : {
-                'connection_key': f'{s_graph}_connection',
-                'distance_key': f'{s_graph}_distance',
-                'params': {
-                    'method': 'physicell',
-                    'metric': 'euclidean',
-                }
-            }
-        })
-
-    # output
-    return(df_count, df_obs, df_spatial, d_obsp, d_uns)
+    # return
+    return(df_count, df_obs, d_obsm, d_obsp, d_uns)
 
 
 # class definition
@@ -317,6 +299,7 @@ class TimeStep(pyMCDS):
     def __init__(self, xmlfile, output_path='.', custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True):
         pyMCDS.__init__(self, xmlfile=xmlfile, output_path=output_path, custom_type=custom_type, microenv=microenv, graph=graph, settingxml=settingxml, verbose=verbose)
 
+
     def get_anndata(self, values=1, drop=set(), keep=set(), scale='maxabs'):
         """
         input:
@@ -352,11 +335,23 @@ class TimeStep(pyMCDS):
             for downstream analysis.
         """
         # processing
-        print(f'processing: 1/1 {round(self.get_time(),9)}[min] mcds into anndata obj.')
+        if self.verbose:
+            print(f'processing: 1/1 {round(self.get_time(),9)}[min] mcds into anndata obj.')
         df_cell = self.get_cell_df(values=values, drop=drop, keep=keep)
-        df_count, df_obs, df_spatial = _anndextract(df_cell=df_cell, scale=scale)
-        annmcds = ad.AnnData(X=df_count, obs=df_obs, obsm={"spatial": df_spatial.values})
-
+        df_count, df_obs, d_obsm, d_obsp, d_uns = _anndextract(
+            df_cell = df_cell,
+            scale = scale,
+            graph_attached = self.get_attached_graph_dict(),
+            graph_neighbor = self.get_neighbor_graph_dict(),
+            graph_method = self.get_physicell_version(),
+        )
+        annmcds = ad.AnnData(
+            X = df_count,
+            obs = df_obs,
+            obsm = d_obsm,
+            obsp = d_obsp,
+            uns = d_uns
+        )
         # output
         return annmcds
 
@@ -409,6 +404,7 @@ class TimeSeries(pyMCDSts):
         pyMCDSts.__init__(self, output_path=output_path, custom_type=custom_type, load=load, microenv=microenv, graph=graph, settingxml=settingxml, verbose=verbose)
         self.l_annmcds = None
 
+
     def get_anndata(self, values=1, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=True):
         """
         input:
@@ -451,10 +447,11 @@ class TimeSeries(pyMCDSts):
             function to transform mcds time steps into one or many
             anndata objects for downstream analysis.
         """
+        # initialize vaiable
         l_annmcds = []
         df_anncount = None
         df_annobs = None
-        df_annspatial = None
+        ar_annobsm = None
 
         # variable triage
         if (values < 2):
@@ -462,6 +459,10 @@ class TimeSeries(pyMCDSts):
         else:
             ls_column = sorted(es_coor_cell.difference({'ID'}))
             ls_column.extend(sorted(self.get_cell_df_features(values=values, drop=drop, keep=keep, allvalues=False).keys()))
+
+        # collapse warning
+        if collapse:
+            print('Warning @ mcdsts.get_anndata : only df_cell, but not graph data, can be collapsed.')
 
         # processing
         i_mcds = len(self.l_mcds)
@@ -471,14 +472,25 @@ class TimeSeries(pyMCDSts):
                 mcds = self.l_mcds[i]
             else:
                 mcds = self.l_mcds.pop(0)
+            # extract physicell version
+            s_physicellv = mcds.get_physicell_version(),
             # extract time and dataframes
             r_time = round(mcds.get_time(),9)
-            print(f'processing: {i+1}/{i_mcds} {r_time}[min] mcds into anndata obj.')
+            if self.verbose:
+                print(f'processing: {i+1}/{i_mcds} {r_time}[min] mcds into anndata obj.')
             df_cell = mcds.get_cell_df()
             df_cell = df_cell.loc[:,ls_column]
-            df_count, df_obs, df_spatial = _anndextract(df_cell=df_cell, scale=scale)
+
             # pack collapsed
             if collapse:
+                # extract
+                df_count, df_obs, d_obsm, d_obsp, d_uns = _anndextract(
+                    df_cell=df_cell,
+                    scale = scale,
+                    #graph_attached = {},
+                    #graph_neighbor = {},
+                    #graph_method = s_physicellv,
+                )
                 # count
                 df_count.reset_index(inplace=True)
                 df_count.index = df_count.ID + f'id_{r_time}min'
@@ -496,23 +508,43 @@ class TimeSeries(pyMCDSts):
                     df_annobs = df_obs
                 else:
                     df_annobs = pd.concat([df_annobs, df_obs], axis=0)
-                # spatial
-                df_spatial.reset_index(inplace=True)
-                df_spatial.index = df_spatial.ID + f'id_{r_time}min'
-                df_spatial.index.name = 'id_time'
-                df_spatial.drop('ID', axis=1, inplace=True)
-                if df_annspatial is None:
-                    df_annspatial = df_spatial
+                # obsm (spatial)
+                if ar_annobsm is None:
+                    ar_annobsm = d_obsm['spatial']
                 else:
-                    df_annspatial = pd.concat([df_annspatial, df_spatial], axis=0)
+                    ar_annobsm = np.vstack([ar_annobsm, d_obsm['spatial']])
+                # obsp: nop (graph)
+                # uns: nop (graph)
+
             # pack not collapsed
             else:
-                annmcds = ad.AnnData(X=df_count, obs=df_obs, obsm={"spatial": df_spatial.values})
+                # extract
+                df_count, df_obs, d_obsm, d_obsp, d_uns = _anndextract(
+                    df_cell=df_cell,
+                    scale = scale,
+                    graph_attached = mcds.get_attached_graph_dict(),
+                    graph_neighbor = mcds.get_neighbor_graph_dict(),
+                    graph_method = s_physicellv,
+                )
+                # annmcds
+                annmcds = ad.AnnData(
+                    X = df_count,
+                    obs = df_obs,
+                    obsm = d_obsm,
+                    obsp = d_obsp,
+                    uns = d_uns,
+                )
                 l_annmcds.append(annmcds)
 
         # output
         if collapse:
-            annmcdsts = ad.AnnData(X=df_anncount, obs=df_annobs, obsm={"spatial": df_annspatial.values})
+            annmcdsts = ad.AnnData(
+                X = df_anncount,
+                obs = df_annobs,
+                obsm = {'spatial': ar_annobsm},
+                #obsp = d_obsp,
+                #uns = d_uns
+            )
         else:
             self.l_annmcds = l_annmcds
             annmcdsts = l_annmcds

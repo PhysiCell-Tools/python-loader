@@ -81,10 +81,11 @@ class TestTimeStep(object):
         ann = mcds.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs')
         assert (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
                (ann.X.shape == (1099, 79)) and \
-               (ann.obs.shape == (1099, 7)) and \
+               (ann.obs.shape == (1099, 6)) and \
                (ann.obsm['spatial'].shape == (1099, 2)) and \
+               (len(ann.obsp) == 2) and \
                (ann.var.shape == (79, 0)) and \
-               (len(ann.uns) == 0)
+               (len(ann.uns) == 1)
 
 
 # load physicell data time series
@@ -99,8 +100,9 @@ class TestTimeSeries(object):
         assert (len(mcdsts.l_mcds) == 25) and \
                (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
                (ann.X.shape == (24758, 79)) and \
-               (ann.obs.shape == (24758, 8)) and \
+               (ann.obs.shape == (24758, 7)) and \
                (ann.obsm['spatial'].shape == (24758, 2)) and \
+               (len(ann.obsp) == 0) and \
                (ann.var.shape == (79, 0)) and \
                (len(ann.uns) == 0)
 
@@ -112,10 +114,11 @@ class TestTimeSeries(object):
                (len(l_ann) == 25) and \
                (all([str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>" for ann in l_ann])) and \
                (l_ann[24].X.shape == (1099, 79)) and \
-               (l_ann[24].obs.shape == (1099, 7)) and \
+               (l_ann[24].obs.shape == (1099, 6)) and \
                (l_ann[24].obsm['spatial'].shape == (1099, 2)) and \
+               (len(l_ann[24].obsp) == 2) and \
                (l_ann[24].var.shape == (79, 0)) and \
-               (len(l_ann[24].uns) == 0)
+               (len(l_ann[24].uns) == 1)
 
     ## get_annmcds_list command ##
     def test_mcdsts_get_annmcds_list(self, mcdsts=mcdsts):

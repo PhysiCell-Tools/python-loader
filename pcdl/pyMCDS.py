@@ -902,7 +902,7 @@ class pyMCDS:
             for s_column in set(df_conc.columns).difference(es_coor_conc):
                 if len(set(df_conc.loc[:,s_column])) < values:
                     es_delete.add(s_column)
-        if self.verbose:
+        if self.verbose and (len(es_delete) > 0):
             print('es_delete:', es_delete)
         df_conc.drop(es_delete, axis=1, inplace=True)
 
@@ -1246,7 +1246,7 @@ class pyMCDS:
             for s_column in set(df_cell.columns).difference(es_coor_cell):
                 if len(set(df_cell.loc[:,s_column])) < values:
                     es_delete.add(s_column)
-        if self.verbose:
+        if self.verbose and (len(es_delete) > 0):
             print('es_delete:', es_delete)
         df_cell.drop(es_delete, axis=1, inplace=True)
 
@@ -2057,12 +2057,13 @@ class pyMCDS:
         # handle graph data #
         #####################
 
-        if self.graph:
+        d_mcds['discrete_cells']['graph'] = {}
+        d_mcds['discrete_cells']['graph'].update({'neighbor_cells': {}})
+        d_mcds['discrete_cells']['graph'].update({'attached_cells': {}})
 
+        if self.graph:
             if self.verbose:
                 print('working on graph data ...')
-
-            d_mcds['discrete_cells']['graph'] = {}
 
             # neighborhood cell graph
             s_cellpathfile = self.path + '/' + x_cell.find('neighbor_graph').find('filename').text

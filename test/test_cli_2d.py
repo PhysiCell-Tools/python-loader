@@ -107,7 +107,7 @@ class TestPyCliCellDf(object):
         #print(f'result.stderr: {result.stderr}\n')
         s_opathfile = result.stderr.decode('UTF8').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
-        assert  df_cell.shape == (24758, 40)
+        assert  df_cell.shape == (24758, 41)
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_df_timeseries_drop(self):
@@ -126,7 +126,7 @@ class TestPyCliCellDf(object):
         s_opathfile = result.stderr.decode('UTF8').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
         assert set(df_cell.columns).issuperset({'cell_type', 'oxygen'}) and \
-               df_cell.shape == (24758, 14)
+               df_cell.shape == (24758, 15)
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_df_timestep(self):
