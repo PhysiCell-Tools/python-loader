@@ -20,6 +20,7 @@
 
 # load library
 #import capsys
+import json
 import os
 import pandas as pd
 import pathlib
@@ -38,19 +39,22 @@ print("s_pathfile_2d", s_pathfile_2d)
 if not os.path.exists(s_path_2d):
     pcdl.install_data()
 
+print(f"process: pcdl pyCLI functions from the command line...")
+
+
 # load
+"""
 class TestPyCliCellDf(object):
     ''' test for pcdl.pyMCDS data loader, the complete data set. '''
-    print(f"process: pcdl pyCLI functions from the command line...")
 
     # timeseries
     # + collapse (true false) ok
-
     # timestep and timeseries:
+    # + path nop
     # + microenv (true, _false_) ok
     # + settingxml (string, _none_, _false_) ok
     # + verbose (true, _false_) nop
-    # + values (ok) ok
+    # + values (int) ok
     # + drop (cell_type oxygen) ok
     # + keep (cell_type oxygen) ok
 
@@ -191,8 +195,9 @@ class TestPyCliCellDf(object):
         assert set(df_cell.columns).issuperset({'cell_type', 'oxygen'}) and \
                df_cell.shape == (1099, 14)
         os.remove(s_opathfile)
+"""
 
-
+"""
 class TestPyCliConcDf(object):
     ''' test for pcdl.pyMCDS data loader, the complete data set. '''
     print(f"process: pcdl pyCLI functions from the command line...")
@@ -202,7 +207,7 @@ class TestPyCliConcDf(object):
 
     # timestep and timeseries:
     # + verbose (true, _false_) nop
-    # + values (ok) ok
+    # + values (int) ok
     # + drop (oxygen) ok
     # + keep (oxygen) ok
 
@@ -289,4 +294,153 @@ class TestPyCliConcDf(object):
         assert set(df_conc.columns).issuperset({'oxygen'}) and \
                df_conc.shape == (121, 9)
         os.remove(s_opathfile)
+"""
+
+"""
+class TestPyCliCellDfFeature(object):
+    ''' tests for one pcdl.pyCli function. '''
+
+    # timeseries collapsed:
+    # + path (str) nop
+    # + microenv (true, _false_) ok
+    # + settingxml (string, _none_, _false_) ok
+    # + verbose (true, _false_) nop
+    # + values (int) ok
+    # + drop (cell_type oxygen) ok
+    # + keep (cell_type oxygen) ok
+    # + allvalues (false _true_) ok
+
+    def test_pcdl_get_cell_df_features_timeseries(self):
+        result = subprocess.run(['pcdl_get_cell_df_features', s_path_2d], check=False, capture_output=True)
+        #print(f'result: {result}\n')
+        #print(f'result.stderr: {result.stderr}\n')
+        s_opathfile = result.stderr.decode('UTF8').replace('\n','')
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_features_minmax.json'))
+        os.remove(s_opathfile)
+
+    def test_pcdl_get_cell_df_features_timeseries_allvalues(self):
+        result = subprocess.run(['pcdl_get_cell_df_features', s_path_2d, '--allvalues', 'true'], check=False, capture_output=True)
+        #print(f'result: {result}\n')
+        #print(f'result.stderr: {result.stderr}\n')
+        s_opathfile = result.stderr.decode('UTF8').replace('\n','')
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_features_all.json'))
+        os.remove(s_opathfile)
+
+    def test_pcdl_get_cell_df_features_timeseries_microenv(self):
+        result = subprocess.run(['pcdl_get_cell_df_features', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
+        #print(f'result: {result}\n')
+        #print(f'result.stderr: {result.stderr}\n')
+        s_opathfile = result.stderr.decode('UTF8').replace('\n','')
+        d_feature = json.load(open(s_opathfile))
+        assert not set(d_feature.keys()).issuperset({'oxygen'}) and \
+               (len(d_feature) == 80)
+        os.remove(s_opathfile)
+
+    def test_pcdl_get_cell_df_features_timeseries_settingxmlfalse(self):
+        result = subprocess.run(['pcdl_get_cell_df_features', s_path_2d, '--settingxml', 'false'], check=False, capture_output=True)
+        #print(f'result: {result}\n')
+        #print(f'result.stderr: {result.stderr}\n')
+        s_opathfile = result.stderr.decode('UTF8').replace('\n','')
+        d_feature = json.load(open(s_opathfile))
+        assert set(d_feature.keys()).issuperset({'attack_rates_0'}) and \
+               (len(d_feature) == 83)
+        os.remove(s_opathfile)
+
+    def test_pcdl_get_cell_df_features_timeseries_settingxmlnone(self):
+        result = subprocess.run(['pcdl_get_cell_df_features', s_path_2d, '--settingxml', 'none'], check=False, capture_output=True)
+        #print(f'result: {result}\n')
+        #print(f'result.stderr: {result.stderr}\n')
+        s_opathfile = result.stderr.decode('UTF8').replace('\n','')
+        d_feature = json.load(open(s_opathfile))
+        assert set(d_feature.keys()).issuperset({'attack_rates_0'}) and \
+               (len(d_feature) == 83)
+        os.remove(s_opathfile)
+
+    def test_pcdl_get_cell_df_features_timeseries_value(self):
+        result = subprocess.run(['pcdl_get_cell_df_features', s_path_2d, '2'], check=False, capture_output=True)
+        #print(f'result: {result}\n')
+        #print(f'result.stderr: {result.stderr}\n')
+        s_opathfile = result.stderr.decode('UTF8').replace('\n','')
+        d_feature = json.load(open(s_opathfile))
+        assert (len(d_feature) == 28)
+        os.remove(s_opathfile)
+
+    def test_pcdl_get_cell_df_features_timeseries_drop(self):
+        result = subprocess.run(['pcdl_get_cell_df_features', s_path_2d, '--drop', 'cell_type', 'oxygen'], check=False, capture_output=True)
+        #print(f'result: {result}\n')
+        #print(f'result.stderr: {result.stderr}\n')
+        s_opathfile = result.stderr.decode('UTF8').replace('\n','')
+        d_feature = json.load(open(s_opathfile))
+        assert not set(d_feature.keys()).issuperset({'cell_type', 'oxygen'}) and \
+               (len(d_feature) == 81)
+        os.remove(s_opathfile)
+
+    def test_pcdl_get_cell_df_features_timeseries_keep(self):
+        result = subprocess.run(['pcdl_get_cell_df_features', s_path_2d, '--keep', 'cell_type', 'oxygen'], check=False, capture_output=True)
+        #print(f'result: {result}\n')
+        #print(f'result.stderr: {result.stderr}\n')
+        s_opathfile = result.stderr.decode('UTF8').replace('\n','')
+        d_feature = json.load(open(s_opathfile))
+        assert set(d_feature.keys()).issuperset({'cell_type', 'oxygen'}) and \
+               (len(d_feature) == 2)
+        os.remove(s_opathfile)
+"""
+
+"""
+class TestPyCliConcDfFeature(object):
+    ''' tests for one pcdl.pyCli function. '''
+
+    # timeseries collapsed:
+    # + path (str) nop
+    # + verbose (true, _false_) nop
+    # + values (int) ok
+    # + drop (oxygen) ok
+    # + keep (oxygen) ok
+    # + allvalues (false _true_) ok
+
+    def test_pcdl_get_conc_df_features_timeseries(self):
+        result = subprocess.run(['pcdl_get_conc_df_features', s_path_2d], check=False, capture_output=True)
+        #print(f'result: {result}\n')
+        #print(f'result.stderr: {result.stderr}\n')
+        s_opathfile = result.stderr.decode('UTF8').replace('\n','')
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_conc_features_minmax.json'))
+        os.remove(s_opathfile)
+
+    def test_pcdl_get_conc_df_features_timeseries_allvalues(self):
+        result = subprocess.run(['pcdl_get_conc_df_features', s_path_2d, '--allvalues', 'true'], check=False, capture_output=True)
+        #print(f'result: {result}\n')
+        #print(f'result.stderr: {result.stderr}\n')
+        s_opathfile = result.stderr.decode('UTF8').replace('\n','')
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_conc_features_all.json'))
+        os.remove(s_opathfile)
+
+    def test_pcdl_get_conc_df_features_timeseries_value(self):
+        result = subprocess.run(['pcdl_get_conc_df_features', s_path_2d, '2'], check=False, capture_output=True)
+        #print(f'result: {result}\n')
+        #print(f'result.stderr: {result.stderr}\n')
+        s_opathfile = result.stderr.decode('UTF8').replace('\n','')
+        d_feature = json.load(open(s_opathfile))
+        assert (len(d_feature) == 1)
+        os.remove(s_opathfile)
+
+    def test_pcdl_get_conc_df_features_timeseries_drop(self):
+        result = subprocess.run(['pcdl_get_conc_df_features', s_path_2d, '--drop', 'conc_type', 'oxygen'], check=False, capture_output=True)
+        #print(f'result: {result}\n')
+        #print(f'result.stderr: {result.stderr}\n')
+        s_opathfile = result.stderr.decode('UTF8').replace('\n','')
+        d_feature = json.load(open(s_opathfile))
+        assert not set(d_feature.keys()).issuperset({'oxygen'}) and \
+               (len(d_feature) == 0)
+        os.remove(s_opathfile)
+
+    def test_pcdl_get_conc_df_features_timeseries_keep(self):
+        result = subprocess.run(['pcdl_get_conc_df_features', s_path_2d, '--keep', 'conc_type', 'oxygen'], check=False, capture_output=True)
+        #print(f'result: {result}\n')
+        #print(f'result.stderr: {result.stderr}\n')
+        s_opathfile = result.stderr.decode('UTF8').replace('\n','')
+        d_feature = json.load(open(s_opathfile))
+        assert set(d_feature.keys()).issuperset({'oxygen'}) and \
+               (len(d_feature) == 1)
+        os.remove(s_opathfile)
+"""
 

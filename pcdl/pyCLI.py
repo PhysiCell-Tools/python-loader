@@ -44,7 +44,7 @@ def get_cell_df():
     # TimeSeries path
     parser.add_argument(
         'path',
-        #nargs = '?',
+        nargs = '?',
         default = '.',
         help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .'
     )
@@ -168,7 +168,7 @@ def get_cell_df_features():
     # TimeSeries path
     parser.add_argument(
         'path',
-        #nargs = '?',
+        nargs = '?',
         default = '.',
         help = 'path to the PhysiCell output directory. default is . .',
     )
@@ -176,7 +176,7 @@ def get_cell_df_features():
     # TimeSeries microenv
     parser.add_argument(
         '--microenv',
-        nargs = '?',
+        #nargs = '?',
         default = 'true',
         help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.',
     )
@@ -220,7 +220,7 @@ def get_cell_df_features():
     )
     # get_cell_df_features allvalues
     parser.add_argument(
-        'allvalues',
+        '--allvalues',
         #nargs = '?',
         default = 'false',
         help = 'for numeric data, should only the min and max values or all values be returned? default is false.',
@@ -253,7 +253,7 @@ def get_cell_df_features():
         keep = set(args.keep),
         allvalues = b_allvalues,
     )
-    s_opathfile = f'{args.path}/cell_feature_{s_values}.json'
+    s_opathfile = f'{args.path}/timeseries_cell_features_{s_values}.json'
     json.dump(dl_variable, open(s_opathfile, 'w'), sort_keys=True)
     # going home
     return s_opathfile
@@ -270,7 +270,7 @@ def get_conc_df():
     # TimeSeries path
     parser.add_argument(
         'path',
-        #nargs = '?',
+        nargs = '?',
         default = '.',
         help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .',
     )
@@ -383,7 +383,7 @@ def get_conc_df_features():
     # TimeSeries path
     parser.add_argument(
         'path',
-        #nargs = '?',
+        nargs = '?',
         default = '.',
         help = 'path to the PhysiCell output directory. default is . .',
     )
@@ -423,7 +423,7 @@ def get_conc_df_features():
     )
     # get_conc_df_features allvalues
     parser.add_argument(
-        'allvalues',
+        '--allvalues',
         #nargs = '?',
         default = 'false',
         help = 'for numeric data, should only the min and max values or all values be returned? default is false.',
@@ -456,7 +456,7 @@ def get_conc_df_features():
         keep = set(args.keep),
         allvalues = b_allvalues,
     )
-    s_opathfile = f'{args.path}/conc_feature_{s_values}.json'
+    s_opathfile = f'{args.path}/timeseries_conc_features_{s_values}.json'
     json.dump(dl_variable, open(s_opathfile, 'w'), sort_keys=True)
     # going home
     return s_opathfile
