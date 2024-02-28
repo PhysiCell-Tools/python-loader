@@ -478,19 +478,25 @@ def get_graph_gml():
         help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .',
     )
     # TimeSeries output_path '.'
-    # TimeSeries microenv False
+    # TimeSeries microenv
+    parser.add_argument(
+        '--microenv',
+        nargs = '?',
+        default = 'true',
+        help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.'
+    )
     # TimeSeries graph True
     # TimeSeries settingxml
     parser.add_argument(
         '--settingxml',
-        nargs = '?',
+        #nargs = '?',
         default = 'PhysiCell_settings.xml',
         help = 'from which settings.xml should the cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
     )
     # TimeSeries verbose
     parser.add_argument(
         '-v', '--verbose',
-        nargs = '?',
+        #nargs = '?',
         default = 'true',
         help = 'setting verbose to False for less text output, while processing. default is True.',
     )
@@ -504,16 +510,16 @@ def get_graph_gml():
     )
     # make_graph_gml edge_attr
     parser.add_argument(
-        'edge_attr',
-        nargs = '?',
+        '--edge_attr',
+        #nargs = '?',
         default = 'true',
         help = 'specifies if the spatial Euclidean distance is used for edge attribute, to generate a weighted graph.',
     )
     # make_graph_gml node_attr
     parser.add_argument(
-        'node_attr',
+        '--node_attr',
         nargs = '*',
-        default = 'cell_type',
+        default = [],
         help = 'listing of mcds.get_cell_df dataframe columns, used for node attributes. default is cell_type.',
     )
 
@@ -528,37 +534,43 @@ def get_graph_gml():
     if not os.path.exists(s_pathfile):
         sys.exit(f"Error @ pcdl_make_graph_gml : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
     if os.path.isfile(args.path):
+        # run
         mcds = pcdl.pyMCDS(
             xmlfile = args.path,
             output_path = '.',
-            microenv = False,
+            microenv = False if args.microenv.lower().startswith('f') else True,
             graph = True,
             settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
             verbose = False if args.verbose.lower().startswith('f') else True
         )
-        l_mcds = [mcds]
-    else:
-        mcdsts = pcdl.pyMCDSts(
-            output_path = args.path,
-            #custom_type,
-            load = True,
-            microenv = False,
-            graph = True,
-            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
-            verbose = False if args.verbose.lower().startswith('f') else True,
-        )
-        l_mcds = mcdsts.l_mcds
-    # run
-    ls_opathfile = []
-    for mcds in l_mcds:
         s_opathfile = df_conc = mcds.make_graph_gml(
             graph_type = args.graph_type,
             edge_attr = False if args.edge_attr.lower().startswith('f') else True,
             node_attr = args.node_attr,
         )
-        ls_opathfile.append(s_opathfile)
-    # going home
-    return ls_opathfile
+        # going home
+        return s_opathfile
+    else:
+        # run
+        mcdsts = pcdl.pyMCDSts(
+            output_path = args.path,
+            #custom_type,
+            load = True,
+            microenv = False if args.microenv.lower().startswith('f') else True,
+            graph = True,
+            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
+            verbose = False if args.verbose.lower().startswith('f') else True,
+        )
+        ls_opathfile = []
+        for mcds in mcdsts.get_mcds_list():
+            s_opathfile = df_conc = mcds.make_graph_gml(
+                graph_type = args.graph_type,
+                edge_attr = False if args.edge_attr.lower().startswith('f') else True,
+                node_attr = args.node_attr,
+            )
+            ls_opathfile.append(s_opathfile)
+        # going home
+        return ls_opathfile
 
 
 def get_unit_se():
@@ -605,8 +617,11 @@ def get_unit_se():
     print(args)
 
     # process arguments
+    s_path = args.path
     s_pathfile = args.path
-    if not s_pathfile.endswith('.xml'):
+    if s_pathfile.endswith('.xml'):
+        s_path = '/'.join(args.path.replace('\\','/').split('/')[:-1])
+    else:
         s_pathfile = s_pathfile + '/initial.xml'
     if not os.path.exists(s_pathfile):
         sys.exit(f"Error @ pcdl_get_conc_df : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
@@ -620,7 +635,7 @@ def get_unit_se():
         verbose = True if args.verbose.lower().startswith('t') else False
     )
     se_unit = mcds.get_unit_se()
-    s_opathfile = f'{args.path}/timeseries_unit.csv'
+    s_opathfile = f'{s_path}/timeseries_unit.csv'
     se_unit.to_csv(s_opathfile)
     # going home
     return s_opathfile
@@ -735,7 +750,7 @@ def make_movie():
     )
     # make_movie framerate
     parser.add_argument(
-        'framerate',
+        '--framerate',
         nargs = '?',
         default = 12,
         type = int,

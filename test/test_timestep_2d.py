@@ -394,14 +394,20 @@ class TestPyMcdsMicroenvTrue2D(object):
                (len(dei_graph) == 1099) and \
                (len(dei_graph[1098]) == 7)
 
-    def test_mcds_get_graph_gml_attached(self, mcds=mcds):
+    def test_mcds_get_graph_gml_attached_defaultattr(self, mcds=mcds):
         s_pathfile = mcds.make_graph_gml(graph_type='attached', edge_attr=True, node_attr=['cell_type'])
         assert(s_pathfile.endswith('pcdl/data_timeseries_2d/output00000024_attached.gml')) and \
               (os.path.exists(s_pathfile))
         os.remove(s_pathfile)
 
-    def test_mcds_get_graph_gml_neighbor(self, mcds=mcds):
-        s_pathfile = mcds.make_graph_gml(graph_type='neighbor', edge_attr=True, node_attr=['cell_type'])
+    def test_mcds_get_graph_gml_neighbor_noneattr(self, mcds=mcds):
+        s_pathfile = mcds.make_graph_gml(graph_type='neighbor', edge_attr=False, node_attr=[])
+        assert(s_pathfile.endswith('pcdl/data_timeseries_2d/output00000024_neighbor.gml')) and \
+              (os.path.exists(s_pathfile))
+        os.remove(s_pathfile)
+
+    def test_mcds_get_graph_gml_neighbor_allattr(self, mcds=mcds):
+        s_pathfile = mcds.make_graph_gml(graph_type='neighbor', edge_attr=True, node_attr=['cell_type','dead','cell_count_voxel','cell_density_micron3'])
         assert(s_pathfile.endswith('pcdl/data_timeseries_2d/output00000024_neighbor.gml')) and \
               (os.path.exists(s_pathfile))
         os.remove(s_pathfile)

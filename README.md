@@ -77,13 +77,14 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 + BUE 20240224: plot_scatter alpha
 
 ## Release Notes:
-+ version 3.2.14 (2024-0?-??): elmbeech/physicelldatalodader
++ version 3.2.14 (2024-03-??): elmbeech/physicelldatalodader
     + rename pyMCDS get\_scatter to **plot_scatter** for conciseness.
     + rename pyMCDS get\_contour to **plot_contour** for conciseness.
     + rename pyMCDSts make\_imgcell to **plot_scatter** for conciseness.
     + rename pyMCDSts make\_imgconc to **plot_contour** for conciseness.
     + rename pyMCDSts get\_cell\_df\_states to **get_cell_df_features** for conciseness.
     + rename pyMCDSts get\_conc\_df\_states to **get_conc_df_features** for conciseness.
+    + new pyCLI **pcdl_get_anndata** commandline interface function.
     + new pyCLI **pcdl_get_cell_df** commandline interface function.
     + new pyCLI **pcdl_get_cell_df_features** commandline interface fucntion.
     + new pyCLI **pcdl_get_conc_df** commandline interface function.

@@ -19,7 +19,6 @@
 
 
 # load library
-import glob
 import matplotlib.pyplot as plt
 import os
 import pathlib
@@ -43,11 +42,11 @@ class TestPyMcdsTs(object):
 
     mcdsts = pcdl.pyMCDSts(s_path_2d, verbose=False)
 
-    def test_mcds_set_verbose_true(self, mcdsts=mcdsts):
+    def test_mcdsts_set_verbose_true(self, mcdsts=mcdsts):
         mcdsts.set_verbose_true()
         assert mcdsts.verbose
 
-    def test_mcds_set_verbose_false(self, mcdsts=mcdsts):
+    def test_mcdsts_set_verbose_false(self, mcdsts=mcdsts):
         mcdsts.set_verbose_false()
         assert not mcdsts.verbose
 
@@ -454,18 +453,26 @@ class TestPyMcdsTs(object):
         assert(str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
 
     ## graph related functions ##
-    def test_mcds_get_graph_gml_attached(self, mcdsts=mcdsts):
-        s_pathfile_glob = mcdsts.output_path + 'output*_attached.gml'
+    def test_mcdsts_get_graph_gml_attached_defaultattr(self, mcdsts=mcdsts):
+        ls_pathfile = mcdsts.make_graph_gml(graph_type='attached', edge_attr=True, node_attr=['cell_type'])
         s_pathfile = mcdsts.output_path + 'output00000012_attached.gml'
-        mcdsts.make_graph_gml(graph_type='attached', edge_attr=True, node_attr=['cell_type'])
-        assert os.path.exists(s_pathfile)
-        for s_file in glob.glob(s_pathfile_glob):
-            os.remove(s_file)
+        assert (len(ls_pathfile) == 25) and \
+               (os.path.exists(s_pathfile))
+        for s_pathfile in ls_pathfile:
+            os.remove(s_pathfile)
 
-    def test_mcds_get_graph_gml_neighbor(self, mcdsts=mcdsts):
-        s_pathfile_glob = mcdsts.output_path + 'output*_neighbor.gml'
+    def test_mcdsts_get_graph_gml_neighbor_noneattr(self, mcdsts=mcdsts):
+        ls_pathfile = mcdsts.make_graph_gml(graph_type='neighbor', edge_attr=False, node_attr=[])
         s_pathfile = mcdsts.output_path + 'output00000012_neighbor.gml'
-        mcdsts.make_graph_gml(graph_type='neighbor', edge_attr=True, node_attr=['cell_type'])
-        assert os.path.exists(s_pathfile)
-        for s_file in glob.glob(s_pathfile_glob):
-            os.remove(s_file)
+        assert (len(ls_pathfile) == 25) and \
+               (os.path.exists(s_pathfile))
+        for s_pathfile in ls_pathfile:
+            os.remove(s_pathfile)
+
+    def test_mcdsts_get_graph_gml_neighbor_allattr(self, mcdsts=mcdsts):
+        ls_pathfile = mcdsts.make_graph_gml(graph_type='neighbor', edge_attr=True, node_attr=['cell_type','dead','cell_count_voxel','cell_density_micron3'])
+        s_pathfile = mcdsts.output_path + 'output00000012_neighbor.gml'
+        assert (len(ls_pathfile) == 25) and \
+               (os.path.exists(s_pathfile))
+        for s_pathfile in ls_pathfile:
+            os.remove(s_pathfile)

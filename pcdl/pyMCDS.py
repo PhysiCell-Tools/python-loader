@@ -1553,12 +1553,12 @@ class pyMCDS:
         return self.data['discrete_cells']['graph']['neighbor_cells'].copy()
 
 
-    def make_graph_gml(self, graph_type='neighbor', edge_attr=True, node_attr=['cell_type']):
+    def make_graph_gml(self, graph_type='neighbor', edge_attr=True, node_attr=[]):
         """
         input:
             self: pyMCDS class instance.
 
-            graph_type: string; default 'neighbor'
+            graph_type: string; default is neighbor
                 to specify which physicell output data should be processed.
                 attached: processes mcds.get_attached_graph_dict dictionary.
                 neighbor: processes mcds.get_neighbor_graph_dict dictionary.
@@ -1567,7 +1567,7 @@ class pyMCDS:
                 specifies if the spatial Euclidean distance is used for
                 edge attribute, to generate a weighted graph.
 
-            node_attr: list of strings; default ['cell_type']
+            node_attr: list of strings; default is empty list
                 list of mcds.get_cell_df dataframe columns, used for
                 node attributes.
 
@@ -1613,7 +1613,15 @@ class pyMCDS:
             f.write(f'  node [\n    id {i_src}\n    label "node_{i_src}"\n')
             # node attributes
             for s_attr in node_attr:
-                df_cell.loc[i_src, s_attr]
+                o_attr = df_cell.loc[i_src, s_attr]
+                if (type(o_attr) in {bool, np.bool_, int, np.int_, np.int8, np.int16, np.int32, np.int64}):
+                    f.write(f'    {s_attr} {int(o_attr)}\n')
+                elif (type(o_attr) in {float, np.float_, np.float16, np.float32, np.float64, np.float128}):
+                    f.write(f'    {s_attr} {o_attr}\n')
+                elif (type(o_attr) in {str, np.str_}):
+                    f.write(f'    {s_attr} "{o_attr}"\n')
+                else:
+                    sys.exit(f'Error @ make_graph_gml : attr {o_attr}; type {type (o_attr)}; type seems not to be bool, int, float, or string.')
             f.write(f'  ]\n')
             # edge
             for i_dst in ei_dst:

@@ -1239,12 +1239,12 @@ class pyMCDSts:
 
     # GENERATE GML GRAPH FILES ###
 
-    def make_graph_gml(self, graph_type='neighbor', edge_attr=True, node_attr=['cell_type']):
+    def make_graph_gml(self, graph_type='neighbor', edge_attr=True, node_attr=[]):
         """
         input:
             self: pyMCDS class instance.
 
-            graph_type: string; default 'neighbor'
+            graph_type: string; default is neighbor
                 to specify which physicell output data should be processed.
                 attached: processes mcds.get_attached_graph_dict dictionary.
                 neighbor: processes mcds.get_neighbor_graph_dict dictionary.
@@ -1253,7 +1253,7 @@ class pyMCDSts:
                 specifies if the spatial Euclidean distance is used for
                 edge attribute, to generate a weighted graph.
 
-            node_attr: list of strings; default ['cell_type']
+            node_attr: list of strings; default is empty list
                 list of mcds.get_cell_df dataframe columns, used for
                 node attributes.
 
