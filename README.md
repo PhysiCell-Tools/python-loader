@@ -51,7 +51,7 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 ## Contributions:
 + original PhysiCell-Tools python-loader implementation: Patrick Wall, Randy Heiland, Paul Macklin
 + fork pcdl implementation: Elmar Bucher
-+ fork pcdl co-programmer and tester: Heber Rocha
++ fork pcdl co-programmer and tester: Furkan Kurtoglu, Heber Rocha
 + student prj on pcdl:
   Benjamin Jacobs (make\_gml),
   Marshal Gress (plot\_scatter),
@@ -61,7 +61,7 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 ## Cite:
 ```bibtex
 @Misc{bucher2023,
-  author    = {Bucher, Elmar and Wall, Patrick and Rocha, Heber and Heiland, Randy and Macklin, Paul},
+  author    = {Bucher, Elmar and Wall, Patrick and Rocha, Heber and Kurtoglu, Furkan and Heiland, Randy and Macklin, Paul},
   title     = {elmbeech/physicelldataloader: pcdl platform-independent, pip-installable interface to load PhysiCell agent-based modeling framework output into python3.},
   year      = {2023},
   copyright = {Open Access},
@@ -74,9 +74,16 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 ## Road Map:
 + [vtk file format](https://docs.vtk.org/en/latest/design_documents/VTKFileFormats.html) output, maybe [stl](https://en.wikipedia.org/wiki/STL_(file_format)) and [wavefront obj](https://en.wikipedia.org/wiki/Wavefront_.obj_file) output.
 + numpy, scipy like refrence manual documentation.
-+ BUE 20240224: plot_scatter alpha
 
 ## Release Notes:
++ version 3.2.15 (2024-03-??): elmbeech/physicelldatalodader
+    + new pyCLI **pcdl_make_cell_vtk** commandline interface function.
+    + new pyCLI **pcdl_make_conc_vtk** commandline interface function.
+    + new pyMCDS **make_conc_vtk** function.
+    + new pyMCDS **make_cell_vtk** function.
+    + new pyMCDSts **make_cell_vtk** function.
+    + new pyMCDSts **make_conc_vtk** function.
+
 + version 3.2.14 (2024-03-??): elmbeech/physicelldatalodader
     + rename pyMCDS get\_scatter to **plot_scatter** for conciseness.
     + rename pyMCDS get\_contour to **plot_contour** for conciseness.
@@ -92,22 +99,16 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
     + new pyCLI **pcdl_get_graph_gml** commandline interface function.
     + new pyCLI **pcdl_get_unit_se** commandline interface function.
     + new pyCLI **pcdl_get_version** commandline interface function.
-    + new pyCLI **pcdl_make_cell_vtk** commandline interface function.
-    + new pyCLI **pcdl_make_conc_vtk** commandline interface function.
     + new pyCLI **pcdl_make_gif** commandline interface function.
     + new pyCLI **pcdl_make_movie** commandline interface function.
     + new pyCLI **pcdl_plot_contour** commandline interface function.
     + new pyCLI **pcdl_plot_scatter** commandline interface function.
     + new pyCLI **pcdl_plot_timeseries** commandline interface function.
-    + new pyMCDS **make_cell_vtk** function.
-    + new pyMCDS **make_conc_vtk** function.
     + new pyMCDS **make_graph_gml** function to save graphs in a networkx and igraph compatible files fromat.
     + new pyMCDS **set_verbosity_true** function to complete pcdl.TimeStep(verbosity=True/False) experiance.
     + new pyMCDS **set_verbosity_false** function to complete pcdl.TimeStep(verbosity=True/False) experiance.
     + new pyMCDSts **get_cell_df** function to extract one big or a list of dataframes from the whole time series.
     + new pyMCDSts **get_conc_df** function to extract one big or a list of dataframes from the whole time series.
-    + new pyMCDSts **make_cell_vtk** function.
-    + new pyMCDSts **make_conc_vtk** function.
     + new pyMCDSts **make_graph_gml** function to save graphs in a networkx and igraph compatible files format.
     + new pyMCDSts **plot_timeseries** frunction to plot time series.
     + new pyMCDSts **set_verbosity_true** function to complete pcdl.TimeSeries(verbosity=True/False) experiance.
