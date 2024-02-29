@@ -954,7 +954,7 @@ class pyMCDSts:
             figbgcolor = 'auto'
 
         # handle output path
-        s_path = f'{self.output_path}substrate_{focus}_z{round(z_slice,9)}/'
+        s_path = f'{self.output_path}conc_{focus}_z{round(z_slice,9)}/'
 
         # plotting
         for i, mcds in enumerate(self.get_mcds_list()):

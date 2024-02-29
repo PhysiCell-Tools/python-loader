@@ -48,21 +48,18 @@ class TestScaler(object):
         df_scaled = pcdl.pyAnnData.scaler(df_x=df_x, scale=None)
         assert all(df_scaled == df_x)
 
-    @pytest.mark.filterwarnings("ignore:invalid value encountered in divide")
     def test_scaler_minabs(self, df_x=df_x):
         df_scaled = pcdl.pyAnnData.scaler(df_x=df_x, scale='maxabs')
         assert (df_scaled.values.sum().round(3) == 2.0) and \
                (df_scaled.values.min().round(3) == -1.0) and \
                (df_scaled.values.max().round(3) == 1.0)
 
-    @pytest.mark.filterwarnings("ignore:invalid value encountered in divide")
     def test_scaler_minmax(self, df_x=df_x):
         df_scaled = pcdl.pyAnnData.scaler(df_x=df_x, scale='minmax')
         assert (df_scaled.values.sum().round(3) == 4.333) and \
                (df_scaled.values.min().round(3) == 0.0) and \
                (df_scaled.values.max().round(3) == 1.0)
 
-    @pytest.mark.filterwarnings("ignore:invalid value encountered in divide")
     def test_scaler_std(self, df_x=df_x):
         df_scaled = pcdl.pyAnnData.scaler(df_x=df_x, scale='std')
         assert (df_scaled.values.sum().round(3) == 0.0) and \
@@ -76,7 +73,6 @@ class TestTimeStep(object):
     mcds = pcdl.TimeStep(s_pathfile_2d, verbose=False)
 
     ## get_anndata command ##
-    @pytest.mark.filterwarnings("ignore:invalid value encountered in divide")
     def test_mcds_get_anndata(self, mcds=mcds):
         ann = mcds.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs')
         assert (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
@@ -94,7 +90,6 @@ class TestTimeSeries(object):
     mcdsts = pcdl.TimeSeries(s_path_2d, verbose=False)
 
     ## get_anndata command ##
-    @pytest.mark.filterwarnings("ignore:invalid value encountered in divide")
     def test_mcdsts_get_anndata_collapse_mcds(self, mcdsts=mcdsts):
         ann = mcdsts.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=True)
         assert (len(mcdsts.l_mcds) == 25) and \
@@ -106,7 +101,6 @@ class TestTimeSeries(object):
                (ann.var.shape == (79, 0)) and \
                (len(ann.uns) == 0)
 
-    @pytest.mark.filterwarnings("ignore:invalid value encountered in divide")
     def test_mcdsts_get_anndata_noncollapse_nonmcds(self, mcdsts=mcdsts):
         l_ann = mcdsts.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs', collapse=False, keep_mcds=False)
         assert (len(mcdsts.l_mcds) == 0) and \

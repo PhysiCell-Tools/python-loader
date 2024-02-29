@@ -27,7 +27,7 @@ import pandas as pd
 from pcdl.pyMCDS import pyMCDS, es_coor_cell
 from pcdl.pyMCDSts import pyMCDSts
 from scipy import sparse
-
+import warnings
 
 def scaler(df_x, scale='maxabs'):
     """
@@ -88,23 +88,31 @@ def scaler(df_x, scale='maxabs'):
     # -1,1
     elif scale == 'maxabs':
         a_x = df_x.values
+        warnings.filterwarnings('ignore', category=RuntimeWarning)
         a_maxabs = a_x / abs(a_x).max(axis=0)
+        warnings.simplefilter('default')
         a_maxabs[np.isnan(a_maxabs)] = 0  # fix if entier column is 0
         df_x = pd.DataFrame(a_maxabs, columns=df_x.columns, index=df_x.index)
     # 0,1
     elif scale == 'minmax':
         a_x = df_x.values
+        warnings.simplefilter("ignore")
+        warnings.filterwarnings('ignore', category=RuntimeWarning)
         a_minmax = (a_x - a_x.min(axis=0)) / (a_x.max(axis=0) - a_x.min(axis=0))
+        warnings.simplefilter('default')
         a_minmax[np.isnan(a_minmax)] = 0  # fix if entier column has same value
         df_x = pd.DataFrame(a_minmax, columns=df_x.columns, index=df_x.index)
     # sigma
     elif scale == 'std':
         a_x = df_x.values
+        warnings.filterwarnings('ignore', category=RuntimeWarning)
         a_std = (a_x - a_x.mean(axis=0)) / a_x.std(axis=0, ddof=1)
+        warnings.simplefilter('default')
         a_std[np.isnan(a_std)] = 0  # fix if entier column has same value
         df_x = pd.DataFrame(a_std, columns=df_x.columns, index=df_x.index)
     else:
         raise ValueError(f"Error @ scaler : unknown scale algorithm {scale} detected. known are [None, 'maxabs', 'minmax', 'std'].")
+
     return df_x
 
 
@@ -454,7 +462,7 @@ class TimeSeries(pyMCDSts):
         ar_annobsm = None
 
         # variable triage
-        if (values < 2):
+        if (values < 2) and (len(drop) == 0) and (len(keep) == 0):
             ls_column = list(self.l_mcds[0].get_cell_df().columns)
         else:
             ls_column = sorted(es_coor_cell.difference({'ID'}))
@@ -465,6 +473,7 @@ class TimeSeries(pyMCDSts):
             print('Warning @ mcdsts.get_anndata : only df_cell, but not graph data, can be collapsed.')
 
         # processing
+        lann_mcds = []
         i_mcds = len(self.l_mcds)
         for i in range(i_mcds):
             # fetch mcds
@@ -527,28 +536,28 @@ class TimeSeries(pyMCDSts):
                     graph_method = s_physicellv,
                 )
                 # annmcds
-                annmcds = ad.AnnData(
+                ann_mcds = ad.AnnData(
                     X = df_count,
                     obs = df_obs,
                     obsm = d_obsm,
                     obsp = d_obsp,
                     uns = d_uns,
                 )
-                l_annmcds.append(annmcds)
+                lann_mcds.append(ann_mcds)
 
         # output
         if collapse:
-            annmcdsts = ad.AnnData(
+            ann_mcdsts = ad.AnnData(
                 X = df_anncount,
                 obs = df_annobs,
                 obsm = {'spatial': ar_annobsm},
                 #obsp = d_obsp,
                 #uns = d_uns
             )
+            return ann_mcdsts
         else:
-            self.l_annmcds = l_annmcds
-            annmcdsts = l_annmcds
-        return annmcdsts
+            self.l_annmcds = lann_mcds
+            return self.l_annmcds
 
 
     def get_annmcds_list(self):
