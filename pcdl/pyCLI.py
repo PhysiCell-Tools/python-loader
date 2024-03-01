@@ -52,7 +52,6 @@ def get_anndata():
     # TimeSeries microenv
     parser.add_argument(
         '--microenv',
-        nargs = '?',
         default = 'true',
         help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.'
     )
@@ -60,18 +59,15 @@ def get_anndata():
     # TimeSeries settingxml
     parser.add_argument(
         '--settingxml',
-        #nargs = '?',
         default = 'PhysiCell_settings.xml',
         help = 'from which settings.xml should the cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
     )
     # TimeSeries verbose
     parser.add_argument(
         '-v', '--verbose',
-        #nargs = '?',
         default = 'true',
         help = 'setting verbose to False for less text output, while processing. default is True.'
     )
-
     # get_anndata values
     parser.add_argument(
         'values',
@@ -97,16 +93,15 @@ def get_anndata():
     # get_anndata scale
     parser.add_argument(
         '--scale',
-        nargs = '?',
         default = 'maxabs',
         help = "specify how the data should be scaled. possible values are None, maxabs, minmax, std. None: no scaling. set scale to None if you would like to have raw data or entirely scale, transform, and normalize the data later. maxabs: maximum absolute value distance scaler will linearly map all values into a [-1, 1] interval. if the original data has no negative values, the result will be the same as with the minmax scaler (except with features with only one value). if the feature has only zeros, the value will be set to 0. minmax: minimum maximum distance scaler will map all values linearly into a [0, 1] interval. if the feature has only one value, the value will be set to 0. std: standard deviation scaler will result in sigmas. each feature will be mean centered around 0. ddof delta degree of freedom is set to 1 because it is assumed that the values are samples out of the population and not the entire population. it is incomprehensible to me that the equivalent sklearn method has ddof set to 0. if the feature has only one value, the value will be set to 0. default is maxabs")
     # get_anndata collapse
     parser.add_argument(
         '--collapse',
-        #nargs = '?',
         default = 'true',
         help = 'should all mcds time steps from the time series be collapsed into one big anndata h5ad file, or a many h5ad, one h5ad for each time step?, default is True.'
     )
+
     # parse arguments
     args = parser.parse_args()
     print(args)
@@ -186,7 +181,6 @@ def get_cell_df():
     # TimeSeries microenv
     parser.add_argument(
         '--microenv',
-        nargs = '?',
         default = 'true',
         help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.'
     )
@@ -194,18 +188,15 @@ def get_cell_df():
     # TimeSeries settingxml
     parser.add_argument(
         '--settingxml',
-        #nargs = '?',
         default = 'PhysiCell_settings.xml',
         help = 'from which settings.xml should the cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
     )
     # TimeSeries verbose
     parser.add_argument(
         '-v', '--verbose',
-        #nargs = '?',
         default = 'true',
         help = 'setting verbose to False for less text output, while processing. default is True.'
     )
-
     # get_cell_df values
     parser.add_argument(
         'values',
@@ -231,10 +222,10 @@ def get_cell_df():
     # get_cell_df collapse
     parser.add_argument(
         '--collapse',
-        #nargs = '?',
         default = 'true',
         help = 'should all mcds time steps from the time series be collapsed into one big csv, or a many csv, one csv for each time step?, default is True.'
     )
+
     # parse arguments
     args = parser.parse_args()
     print(args)
@@ -312,7 +303,6 @@ def get_cell_df_features():
     # TimeSeries microenv
     parser.add_argument(
         '--microenv',
-        #nargs = '?',
         default = 'true',
         help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.',
     )
@@ -320,18 +310,15 @@ def get_cell_df_features():
     # TimeSeries settingxml
     parser.add_argument(
         '--settingxml',
-        #nargs = '?',
         default = 'PhysiCell_settings.xml',
         help = 'from which settings.xml should the cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
     )
     # TimeSeries verbose
     parser.add_argument(
         '-v', '--verbose',
-        #nargs = '?',
         default = 'true',
         help = 'setting verbose to False for less text output, while processing. default is True.',
     )
-
     # get_cell_df_features values
     parser.add_argument(
         'values',
@@ -357,7 +344,6 @@ def get_cell_df_features():
     # get_cell_df_features allvalues
     parser.add_argument(
         '--allvalues',
-        #nargs = '?',
         default = 'false',
         help = 'for numeric data, should only the min and max values or all values be returned? default is false.',
     )
@@ -417,11 +403,9 @@ def get_conc_df():
     # TimeSeries verbose
     parser.add_argument(
         '-v', '--verbose',
-        #nargs = '?',
         default = 'true',
         help = 'setting verbose to False for less text output, while processing. default is True.',
     )
-
     # get_conc_df values
     parser.add_argument(
         'values',
@@ -447,7 +431,6 @@ def get_conc_df():
     # get_conc_df collapse
     parser.add_argument(
         '--collapse',
-        #nargs = '?',
         default = 'true',
         help = 'should all mcds time steps from the time series be collapsed into one big csv, or a many csv, one for each time step?, default is True.'
     )
@@ -532,11 +515,9 @@ def get_conc_df_features():
     # TimeSeries verbose
     parser.add_argument(
         '-v', '--verbose',
-        #nargs = '?',
         default = 'true',
         help = 'setting verbose to False for less text output, while processing. default is True.',
     )
-
     # get_conc_df_features values
     parser.add_argument(
         'values',
@@ -562,7 +543,6 @@ def get_conc_df_features():
     # get_conc_df_features allvalues
     parser.add_argument(
         '--allvalues',
-        #nargs = '?',
         default = 'false',
         help = 'for numeric data, should only the min and max values or all values be returned? default is false.',
     )
@@ -600,10 +580,125 @@ def get_conc_df_features():
     return s_opathfile
 
 
-def get_graph_gml():
+def get_unit_se():
     # argv
     parser = argparse.ArgumentParser(
-        prog = 'pcdl_get_graph_gml',
+        prog = 'pcdl_get_unit_se',
+        description = 'function returns a csv that lists all tracked variables from metadata, cell, and microenvironment and maps them to their unit.',
+        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
+    )
+
+    # TimeSeries path
+    parser.add_argument(
+        'path',
+        nargs = '?',
+        default = '.',
+        help = 'path to the PhysiCell output directory. default is . .',
+    )
+    # TimeSeries output_path '.'
+    # TimeSeries microenv
+    parser.add_argument(
+        '--microenv',
+        default = 'true',
+        help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.',
+    )
+    # TimeSeries graph False
+    # TimeSeries settingxml
+    parser.add_argument(
+        '--settingxml',
+        default = 'PhysiCell_settings.xml',
+        help = 'from which settings.xml should the cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+    )
+    # TimeSeries verbose
+    parser.add_argument(
+        '-v', '--verbose',
+        default = 'true',
+        help = 'setting verbose to False for less text output, while processing. default is True.',
+    )
+
+    # parse arguments
+    args = parser.parse_args()
+    print(args)
+
+    # process arguments
+    s_path = args.path
+    s_pathfile = args.path
+    if s_pathfile.endswith('.xml'):
+        s_path = '/'.join(args.path.replace('\\','/').split('/')[:-1])
+    else:
+        s_pathfile = s_pathfile + '/initial.xml'
+    if not os.path.exists(s_pathfile):
+        sys.exit(f"Error @ pcdl_get_conc_df : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
+    # run
+    mcds = pcdl.pyMCDS(
+        xmlfile = s_pathfile,
+        output_path = '.',
+        microenv = False if args.microenv.lower().startswith('f') else True,
+        graph = False,
+        settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
+        verbose = True if args.verbose.lower().startswith('t') else False
+    )
+    se_unit = mcds.get_unit_se()
+    s_opathfile = f'{s_path}/timeseries_unit.csv'
+    se_unit.to_csv(s_opathfile)
+    # going home
+    return s_opathfile
+
+
+def get_version():
+    # argv
+    parser = argparse.ArgumentParser(
+        prog = 'pcdl_get_version',
+        description = 'this function is extracting PhysiCell and MultiCellDS version from the dataset and the installed pcdl module version.',
+        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
+    )
+
+    # TimeSeries path
+    parser.add_argument(
+        'path',
+        nargs = '?',
+        default = '.',
+        help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .',
+    )
+    # TimeSeries output_path '.'
+    # TimeSeries microenv False
+    # TimeSeries graph False
+    # TimeSeries settingxml None
+    # TimeSeries verbose
+    parser.add_argument(
+        '-v', '--verbose',
+        default = 'false',
+        help = 'setting verbose to True for more text output, while processing. default is False.',
+    )
+
+    # parse arguments
+    args = parser.parse_args()
+    print(args)
+
+    # process arguments
+    # run
+    s_pathfile = args.path
+    if not s_pathfile.endswith('.xml'):
+        s_pathfile = s_pathfile + '/initial.xml'
+    if not os.path.exists(s_pathfile):
+        sys.exit(f"Error @ pcdl_get_version : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
+    mcds = pcdl.pyMCDS(
+        xmlfile = s_pathfile,
+        output_path = '.',
+        microenv = False,
+        graph = False,
+        settingxml = None,
+        verbose = True if args.verbose.lower().startswith('t') else False
+    )
+    s_version = f'version:\n{mcds.get_physicell_version()}\n{mcds.get_multicellds_version()}\npcdl_{pcdl.__version__}'
+    # going home
+    return s_version
+
+
+def make_graph_gml():
+    # argv
+    parser = argparse.ArgumentParser(
+        prog = 'pcdl_make_graph_gml',
         description = 'function to generate graph files in the gml graph modelling language standard format. gml was the outcome of an initiative that started at the international symposium on graph drawing 1995 in Passau and ended at Graph Drawing 1996 in Berkeley. the networkx python and igraph C and python libraries for graph analysis are gml compatible and can as such read and write this file format.',
         epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
     )
@@ -619,7 +714,6 @@ def get_graph_gml():
     # TimeSeries microenv
     parser.add_argument(
         '--microenv',
-        nargs = '?',
         default = 'true',
         help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.'
     )
@@ -627,18 +721,15 @@ def get_graph_gml():
     # TimeSeries settingxml
     parser.add_argument(
         '--settingxml',
-        #nargs = '?',
         default = 'PhysiCell_settings.xml',
         help = 'from which settings.xml should the cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
     )
     # TimeSeries verbose
     parser.add_argument(
         '-v', '--verbose',
-        #nargs = '?',
         default = 'true',
         help = 'setting verbose to False for less text output, while processing. default is True.',
     )
-
     # make_graph_gml graph_type
     parser.add_argument(
         'graph_type',
@@ -649,16 +740,15 @@ def get_graph_gml():
     # make_graph_gml edge_attr
     parser.add_argument(
         '--edge_attr',
-        #nargs = '?',
         default = 'true',
-        help = 'specifies if the spatial Euclidean distance is used for edge attribute, to generate a weighted graph.',
+        help = 'specifies if the spatial Euclidean distance is used for edge attribute, to generate a weighted graph. default is True.',
     )
     # make_graph_gml node_attr
     parser.add_argument(
         '--node_attr',
         nargs = '*',
         default = [],
-        help = 'listing of mcds.get_cell_df dataframe columns, used for node attributes. default is cell_type.',
+        help = 'listing of mcds.get_cell_df dataframe columns, used for node attributes. default is and empty list.',
     )
 
     # parse arguments
@@ -711,124 +801,6 @@ def get_graph_gml():
         return ls_opathfile
 
 
-def get_unit_se():
-    # argv
-    parser = argparse.ArgumentParser(
-        prog = 'pcdl_get_unit_se',
-        description = 'function returns a csv that lists all tracked variables from metadata, cell, and microenvironment and maps them to their unit.',
-        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
-    )
-
-    # TimeSeries path
-    parser.add_argument(
-        'path',
-        nargs = '?',
-        default = '.',
-        help = 'path to the PhysiCell output directory. default is . .',
-    )
-    # TimeSeries output_path '.'
-    # TimeSeries microenv
-    parser.add_argument(
-        '--microenv',
-        nargs = '?',
-        default = 'true',
-        help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.',
-    )
-    # TimeSeries graph False
-    # TimeSeries settingxml
-    parser.add_argument(
-        '--settingxml',
-        nargs = '?',
-        default = 'PhysiCell_settings.xml',
-        help = 'from which settings.xml should the cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
-    )
-    # TimeSeries verbose
-    parser.add_argument(
-        '-v', '--verbose',
-        nargs = '?',
-        default = 'true',
-        help = 'setting verbose to False for less text output, while processing. default is True.',
-    )
-
-    # parse arguments
-    args = parser.parse_args()
-    print(args)
-
-    # process arguments
-    s_path = args.path
-    s_pathfile = args.path
-    if s_pathfile.endswith('.xml'):
-        s_path = '/'.join(args.path.replace('\\','/').split('/')[:-1])
-    else:
-        s_pathfile = s_pathfile + '/initial.xml'
-    if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ pcdl_get_conc_df : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
-    # run
-    mcds = pcdl.pyMCDS(
-        xmlfile = s_pathfile,
-        output_path = '.',
-        microenv = False if args.microenv.lower().startswith('f') else True,
-        graph = False,
-        settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
-        verbose = True if args.verbose.lower().startswith('t') else False
-    )
-    se_unit = mcds.get_unit_se()
-    s_opathfile = f'{s_path}/timeseries_unit.csv'
-    se_unit.to_csv(s_opathfile)
-    # going home
-    return s_opathfile
-
-
-def get_version():
-    # argv
-    parser = argparse.ArgumentParser(
-        prog = 'pcdl_get_version',
-        description = 'this function is extracting PhysiCell and MultiCellDS version from the dataset and the installed pcdl module version.',
-        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
-    )
-    # TimeSeries path
-    parser.add_argument(
-        'path',
-        nargs = '?',
-        default = '.',
-        help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .',
-    )
-    # TimeSeries output_path '.'
-    # TimeSeries microenv False
-    # TimeSeries graph False
-    # TimeSeries settingxml None
-    # TimeSeries verbose
-    parser.add_argument(
-        '-v', '--verbose',
-        nargs = '?',
-        default = 'false',
-        help = 'setting verbose to True for more text output, while processing. default is False.',
-    )
-
-    # parse arguments
-    args = parser.parse_args()
-    print(args)
-
-    # process arguments
-    # run
-    s_pathfile = args.path
-    if not s_pathfile.endswith('.xml'):
-        s_pathfile = s_pathfile + '/initial.xml'
-    if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ pcdl_get_version : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
-    mcds = pcdl.pyMCDS(
-        xmlfile = s_pathfile,
-        output_path = '.',
-        microenv = False,
-        graph = False,
-        settingxml = None,
-        verbose = True if args.verbose.lower().startswith('t') else False
-    )
-    s_version = f'version:\n{mcds.get_physicell_version()}\n{mcds.get_multicellds_version()}\npcdl_{pcdl.__version__}'
-    # going home
-    return s_version
-
-
 def make_gif():
     # argv
     parser = argparse.ArgumentParser(
@@ -836,7 +808,8 @@ def make_gif():
         description = 'this function generates a gif movie from all image files found in the path directory in the specified interface file format.',
         epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
     )
-    # make_movie path
+
+    # TimeSeries path
     parser.add_argument(
         'path',
         nargs = '?',
@@ -872,7 +845,8 @@ def make_movie():
         description = 'this function generates an mp4 movie file from all image files found in the path directory in the specified interface file format.',
         epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
     )
-    # make_movie path
+
+    # TimeSeries path
     parser.add_argument(
         'path',
         nargs = '?',
@@ -889,10 +863,9 @@ def make_movie():
     # make_movie framerate
     parser.add_argument(
         '--framerate',
-        nargs = '?',
         default = 12,
         type = int,
-        help = 'specifies how many images per second will be used. default is 12.',
+        help = 'specifies how many images per second will be used. humans are capable of processing 12 images per second and seeing them individually. higher rates are seen as motion. default is 12.',
     )
 
     # parse arguments
@@ -932,11 +905,9 @@ def plot_contour():
     # TimeSeries verbose
     parser.add_argument(
         '-v', '--verbose',
-        #nargs = '?',
         default = 'true',
         help = 'setting verbose to False for less text output, while processing. default is True.',
     )
-
     # plot_contour focus
     parser.add_argument(
         'focus',
@@ -946,7 +917,6 @@ def plot_contour():
     # plot_contour z_slice
     parser.add_argument(
         '--z_slice',
-        #nargs = '?',
         default = 0.0,
         type = float,
         help = 'z-axis position to slice a 2D xy-plain out of the 3D mesh. if z_slice position numeric but not an exact mesh center coordinate, then z_slice will be adjusted to the nearest mesh center value, the smaller one, if the coordinate lies on a saddle point. default is 0.0.',
@@ -954,14 +924,13 @@ def plot_contour():
     # plot_contour extrema
     parser.add_argument(
         '--extrema',
-        nargs = '*',
+        nargs = '+',
         default = ['none'],
         help = 'listing of two floats. None takes min and max from data. default is None.',
     )
     # plot_contour alpha
     parser.add_argument(
         '--alpha',
-        #nargs = '?',
         default = 1.0,
         type = float,
         help = 'alpha channel transparency value between 1 (not transparent at all) and 0 (totally transparent). default is 1.0.',
@@ -969,63 +938,57 @@ def plot_contour():
     # plot_contour fill
     parser.add_argument(
         '--fill',
-        #nargs = '?',
         default = 'true',
         help = 'True generates a matplotlib contourf plot. False generates a matplotlib contour plot. default is True.',
     )
     # plot_contour cmap
     parser.add_argument(
         '--cmap',
-        #nargs = '?',
         default = 'viridis',
         help = 'matplotlib colormap string from https://matplotlib.org/stable/tutorials/colors/colormaps.html . default is viridis.',
     )
     # plot_contour grid
     parser.add_argument(
         '--grid',
-        #nargs = '?',
         default = 'true',
         help = 'plot axis grid lines. default is True.',
     )
     # plot_contour xlim
     parser.add_argument(
         '--xlim',
-        nargs = '*',
+        nargs = '+',
         default = ['none'],
         help = 'two floats. x axis min and max value. None takes min and max from mesh x axis range. default is None.',
     )
     # plot_contour ylim
     parser.add_argument(
         '--ylim',
-        nargs = '*',
+        nargs = '+',
         default = ['none'],
         help = 'two floats. y axis min and max value. None takes min and max from mesh y axis range. default is None.',
     )
     # plot_contour xyequal
     parser.add_argument(
         '--xyequal',
-        #nargs = '?',
         default = 'true',
         help = 'to specify equal axis spacing for x and y axis. default is true.',
     )
     # plot_contour figsizepx
     parser.add_argument(
         '--figsizepx',
-        nargs = '*',
+        nargs = '+',
         default = ['none'],
-        help = 'size of the figure in pixels [integer], x y. the given x and y will be rounded to the nearest even number, to be able to generate movies from the images. None tries to take the values from the initial.svg file. fall back setting is [640, 480]. default is None.',
+        help = 'size of the figure in pixels (integer), x y. the given x and y will be rounded to the nearest even number, to be able to generate movies from the images. None tries to take the values from the initial.svg file. fall back setting is 640 480. default is None.',
     )
     # plot_contour ext
     parser.add_argument(
         '--ext',
-        #nargs = '?',
         default = 'jpeg',
         help = 'output image format. possible formats are jpeg, png, and tiff. default is jpeg.',
     )
     # plot_contour figbgcolor
     parser.add_argument(
         '--figbgcolor',
-        #nargs = '?',
         default = 'none',
         help = 'figure background color. None is transparent (png) or white (jpeg, tiff). default is None.',
     )
@@ -1098,7 +1061,6 @@ def plot_scatter():
     # TimeSeries microenv
     parser.add_argument(
         '--microenv',
-        #nargs = '?',
         default = 'true',
         help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.',
     )
@@ -1106,18 +1068,15 @@ def plot_scatter():
     # TimeSeries settingxml
     parser.add_argument(
         '--settingxml',
-        #nargs = '?',
         default = 'PhysiCell_settings.xml',
         help = 'from which settings.xml should the cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
     )
     # TimeSeries verbose
     parser.add_argument(
         '-v', '--verbose',
-        #nargs = '?',
         default = 'true',
         help = 'setting verbose to False for less text output, while processing. default is True.',
     )
-
     # plot_scatter focus
     parser.add_argument(
         'focus',
@@ -1128,7 +1087,6 @@ def plot_scatter():
     # plot_scatter z_slice
     parser.add_argument(
         '--z_slice',
-        #nargs = '?',
         default = 0.0,
         type = float,
         help = 'z-axis position to slice a 2D xy-plain out of the 3D mesh. if z_slice position numeric but not an exact mesh center coordinate, then z_slice will be adjusted to the nearest mesh center value, the smaller one, if the coordinate lies on a saddle point. default is 0.0.',
@@ -1136,14 +1094,13 @@ def plot_scatter():
     # plot_scatter z_axis
     parser.add_argument(
         '--z_axis',
-        nargs = '*',
+        nargs = '+',
         default = ['none'],
-        help = 'for a categorical focus: set of labels; for a numeric focus: tuple of two floats; default is None depending on the focus column variable dtype, default extracts labels or min and max values from data.',
+        help = 'for a categorical focus: list of labels; for a numeric focus: list of two floats; None, depending on the focus column variable dtype, extracts labels or min and max values from data. default is None',
     )
     # plot_contour alpha
     parser.add_argument(
         '--alpha',
-        #nargs = '?',
         default = 1.0,
         type = float,
         help = 'alpha channel transparency value between 1 (not transparent at all) and 0 (totally transparent). default is 1.0.',
@@ -1152,70 +1109,63 @@ def plot_scatter():
     # nop partly
     parser.add_argument(
         '--cmap',
-        #nargs = '?',
         default = 'viridis',
         help = 'matplotlib colormap string from https://matplotlib.org/stable/tutorials/colors/colormaps.html . default is viridis.',
     )
     # plot_scatter grid
     parser.add_argument(
         '--grid',
-        #nargs = '?',
         default = 'true',
         help = 'plot axis grid lines. default is True.',
     )
     # plot_scatter legend_loc
     parser.add_argument(
         '--legend_loc',
-        #nargs = '?',
         default = 'lower left',
         help = "the location of the categorical legend, if applicable. possible strings are: best, 'upper right', 'upper center', 'upper left', 'center left', 'lower left', 'lower center', 'lower right', 'center right', center. default is 'lower left'",
     )
     # plot_scatter xlim
     parser.add_argument(
         '--xlim',
-        nargs = '*',
+        nargs = '+',
         default = ['none'],
         help = 'two floats. x axis min and max value. None takes min and max from mesh x axis range. default is None.',
     )
     # plot_scatter ylim
     parser.add_argument(
         '--ylim',
-        nargs = '*',
+        nargs = '+',
         default = ['none'],
         help = 'two floats. y axis min and max value. None takes min and max from mesh y axis range. default is None.',
     )
     # plot_scatter xyequal
     parser.add_argument(
         '--xyequal',
-        #nargs = '?',
         default = 'true',
-        help = 'to specify equal axis spacing for x and y axis. default is true.',
+        help = 'to specify equal axis spacing for x and y axis. default is True.',
     )
     # plot_scatter s
     parser.add_argument(
         '--s',
-        #nargs = '?',
         default = 'none',
-        help = "scatter plot dot size in pixel. typographic points are 1/72 inch. the marker size s is specified in points**2. plt.rcParams['lines.markersize']**2 is in my case 36. None tries to take the value from the initial.svg file. fall back setting is 36.",
+        help = "scatter plot dot size in pixel. typographic points are 1/72 inch. the marker size s is specified in points**2. plt.rcParams['lines.markersize']**2 is in my case 36. None tries to take the value from the initial.svg file. fall back setting is 36. default is None.",
     )
     # plot_scatter figsizepx
     parser.add_argument(
         '--figsizepx',
-        nargs = '*',
+        nargs = '+',
         default = ['none'],
-        help = 'size of the figure in pixels [integer], x y. the given x and y will be rounded to the nearest even number, to be able to generate movies from the images. None tries to take the values from the initial.svg file. fall back setting is [640, 480]. default is None.',
+        help = 'size of the figure in pixels (integer), x y. the given x and y will be rounded to the nearest even number, to be able to generate movies from the images. None tries to take the values from the initial.svg file. fall back setting is 640 480. default is None.',
     )
     # plot_scatter ext
     parser.add_argument(
         '--ext',
-        #nargs = '?',
         default = 'jpeg',
         help = 'output image format. possible formats are jpeg, png, and tiff. default is jpeg.',
     )
     # plot_scatter figbgcolor
     parser.add_argument(
         '--figbgcolor',
-        #nargs = '?',
         default = 'none',
         help = 'figure background color. None is transparent (png) or white (jpeg, tiff). default is None.',
     )
@@ -1288,7 +1238,6 @@ def plot_timeseries():
     # TimeSeries microenv
     parser.add_argument(
         '--microenv',
-        #nargs = '?',
         default = 'true',
         help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.',
     )
@@ -1297,18 +1246,15 @@ def plot_timeseries():
     # TimeSeries settingxml
     parser.add_argument(
         '--settingxml',
-        #nargs = '?',
         default = 'PhysiCell_settings.xml',
         help = 'from which settings.xml should the cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
     )
     # TimeSeries verbose
     parser.add_argument(
         '-v', '--verbose',
-        #nargs = '?',
         default = 'true',
         help = 'setting verbose to False for less text output, while processing. default is True.',
     )
-
     # plot_timeseries focus_cat
     parser.add_argument(
         'focus_cat',
@@ -1333,28 +1279,25 @@ def plot_timeseries():
     # plot_timeseries frame
     parser.add_argument(
         '--frame',
-        #nargs = '?',
         default = 'cell',
         help = 'to specifies the data dataframe. cell: dataframe will be retrieved through the mcds.get_cell_df function. conc: dataframe will be retrieved through the mcds.get_conc_df function. default is cell.',
     )
     # plot_timeseries z_slice
     parser.add_argument(
         '--z_slice',
-        #nargs = '?',
         default = 'none',
         help = 'z-axis position to slice a 2D xy-plain out of the 3D mesh. if z_slice position numeric but not an exact mesh center coordinate, then z_slice will be adjusted to the nearest mesh center value, the smaller one, if the coordinate lies on a saddle point. if set to None, the whole domain is taken. default is None.',
     )
     # plot_timeseries logy
     parser.add_argument(
         '--logy',
-        #nargs = '?',
         default = 'false',
         help = 'if True, then y axis is natural log scaled. default is False.',
     )
     # plot_timeseries ylim
     parser.add_argument(
         '--ylim',
-        nargs = '*',
+        nargs = '+',
         default = ['none'],
         help = 'two floats. y axis min and max value. default is None, which automatically detects min and max value. default is None.',
     )
@@ -1369,42 +1312,36 @@ def plot_timeseries():
     # nop partly
     parser.add_argument(
         '--subplots',
-        #nargs = '?',
         default = 'false',
         help = 'whether to split the plot into subplots, one per column. default is False.',
     )
     # plot_timeseries sharex
     parser.add_argument(
         '--sharex',
-        #nargs = '?',
         default = 'false',
         help = 'in case subplots is True, share x-axis by setting some x-axis labels to invisible. default is False.',
     )
     # plot_timeseries sharey
     parser.add_argument(
         '--sharey',
-        #nargs = '?',
         default = 'false',
         help = 'in case subplots is True, share y-axis range and possibly setting some y-axis labels to invisible. default is False.',
     )
     # plot_timeseries linestyle
     parser.add_argument(
         '--linestyle',
-        #nargs = '?',
         default = '-',
         help = 'matplotlib line style {-, --, .-, :} string. default is - .',
     )
     # plot_timeseries linewidth
     parser.add_argument(
         '--linewidth',
-        #nargs = '?',
         default = 'none',
         help = 'line width in points, integer. default is None.',
     )
     # plot_timeseries cmap
     parser.add_argument(
         '--cmap',
-        #nargs = '?',
         default = 'none',
         help = 'matplotlib colormap string from https://matplotlib.org/stable/tutorials/colors/colormaps.html . default is None.',
     )
@@ -1418,21 +1355,18 @@ def plot_timeseries():
     # plot_timeseries grid
     parser.add_argument(
         '--grid',
-        #nargs = '?',
         default = 'true',
         help = 'plot axis grid lines. default is True.',
     )
     # plot_timeseries legend
     parser.add_argument(
         '--legend',
-        #nargs = '?',
         default = 'true',
         help = 'if True or reverse, place legend on axis subplots. default is True.',
     )
     # plot_timeseries yunit
     parser.add_argument(
         '--yunit',
-        #nargs = '?',
         default = 'none',
         help = 'string to specify y-axis unit. None will not print a unit on the y-axis. default is None.',
     )
@@ -1440,7 +1374,6 @@ def plot_timeseries():
     # nop partly
     parser.add_argument(
         '--title',
-        #nargs = '?',
         default = 'none',
         help = 'title to use for the plot. None will print no title. default is None.',
     )
@@ -1449,22 +1382,20 @@ def plot_timeseries():
     # plot_timeseries figsizepx
     parser.add_argument(
         '--figsizepx',
-        nargs = '*',
+        nargs = '+',
         default = ['640', '480'],
-        help = 'size of the figure in pixels [integer], x y. the given x and y will be rounded to the nearest even number, to be able to generate movies from the images. default is 640 480.',
+        help = 'size of the figure in pixels (integer), x y. the given x and y will be rounded to the nearest even number, to be able to generate movies from the images. default is 640 480.',
     )
     # plot_timeseries ext
     # nop partly
     parser.add_argument(
         '--ext',
-        #nargs = '?',
         default = 'jpeg',
         help = 'output image format. possible formats are jpeg, png, and tiff. default is jpeg.',
     )
     # plot_timeseries figbgcolor
     parser.add_argument(
         '--figbgcolor',
-        #nargs = '?',
         default = 'none',
         help = 'figure background color. None is transparent (png) or white (jpeg, tiff). default is None.',
     )

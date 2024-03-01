@@ -108,6 +108,8 @@ def make_movie(path, interface='jpeg', framerate=12):
 
         framerate: integer; default 12
             specifies how many images per second will be used.
+            humans are capable of processing 12 images per second and
+            seeing them individually. higher rates are seen as motion.
 
     output:
         mp4 move file in the path directory.
@@ -1129,6 +1131,7 @@ class pyMCDSts:
         for mcds in self.get_mcds_list():
             # fetch cell timestep dataframe
             if frame in {'cell', 'df_cell', 'cell_df', 'get_cell_df'}:
+                mcds.set_verbose_false()
                 if (focus_cat == 'total') and (focus_num == 'count'):
                     df_frame = mcds.get_cell_df(values=1, keep={'time'})
                     df_frame['total'] = 'total'
@@ -1141,8 +1144,10 @@ class pyMCDSts:
                     df_frame['count'] = 1
                 else:
                     df_frame = mcds.get_cell_df(values=1, keep={focus_cat,focus_num})
+                mcds.set_verbose_true()
             # fetch conc timestep dataframe
             elif frame in {'conc', 'df_conc', 'conc_df', 'get_conc_df'}:
+                mcds.set_verbose_false()
                 if (focus_cat == 'total') and (focus_num == 'count'):
                     df_frame = mcds.get_conc_df(values=1, keep={'time'})
                     df_frame['total'] = 'total'
@@ -1155,6 +1160,7 @@ class pyMCDSts:
                     df_frame['count'] = 1
                 else:
                     df_frame = mcds.get_conc_df(values=1, keep={focus_cat,focus_num})
+                mcds.set_verbose_true()
             # error
             else:
                 sys.exit(f"Error @ pyMCDSts.plot_timeseries : unknowen frame {frame}. knowen are cell_df and conc_df.")
