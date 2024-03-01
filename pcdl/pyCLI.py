@@ -1350,7 +1350,7 @@ def plot_timeseries():
         '--color',
         nargs = '+',
         default = ['none'],
-        help = 'color string or listing of color string referred to by name, RGB or RGBA code. default is None.',
+        help = 'listing of color strings referred to by name, RGB or RGBA code. default is None.',
     )
     # plot_timeseries grid
     parser.add_argument(
@@ -1449,8 +1449,7 @@ def plot_timeseries():
         linestyle = args.linestyle,
         linewidth = None if (args.linewidth.lower() == 'none') else int(args.linewidth),
         cmap = None if (args.cmap.lower() == 'none') else args.cmap,
-        #color = None if (args.color.lower() == 'none') else args.color,
-        color = args.color if type(args.color) is list else None,
+        color = None if (args.color[0].lower() == 'none') else args.color,
         grid = False if args.grid.lower().startswith('f') else True,
         legend = b_legend,
         yunit = None if (args.yunit.lower() == 'none') else args.yunit,

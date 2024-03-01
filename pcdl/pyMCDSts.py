@@ -986,7 +986,7 @@ class pyMCDSts:
         return s_path
 
 
-    def plot_timeseries(self, focus_cat=None, focus_num=None, aggregate_num=np.nanmean, frame='cell_df', z_slice=None, logy=False, ylim=None, secondary_y=None, subplots=False, sharex=False, sharey=False, linestyle='-', linewidth=None, cmap=None, color=None, grid=True, legend=True, yunit=None, title=None, ax=None, figsizepx=[640, 480], ext='jpeg', figbgcolor=None):
+    def plot_timeseries(self, focus_cat=None, focus_num=None, aggregate_num=np.nanmean, frame='cell', z_slice=None, logy=False, ylim=None, secondary_y=None, subplots=False, sharex=False, sharey=False, linestyle='-', linewidth=None, cmap=None, color=None, grid=True, legend=True, yunit=None, title=None, ax=None, figsizepx=[640, 480], ext='jpeg', figbgcolor=None):
         """
         input:
             self: pyMCDSts class instance
@@ -1004,8 +1004,8 @@ class pyMCDSts:
 
             frame: string; default is cell_df
                 to specifies the data dataframe.
-                cell_df: dataframe will be retrieved through the mcds.get_cell_df function.
-                conc_df: dataframe will be retrieved through the mcds.get_conc_df function.
+                cell: dataframe will be retrieved through the mcds.get_cell_df function.
+                conc: dataframe will be retrieved through the mcds.get_conc_df function.
 
             z_slice: floating point number; default is None
                 z-axis position to slice a 2D xy-plain out of the 3D mesh.
