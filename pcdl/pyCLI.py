@@ -198,13 +198,7 @@ def get_cell_df():
         help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .'
     )
     # TimeSeries output_path '.'
-    # TimeSeries custom_type
-    parser.add_argument(
-        '--custom_type',
-        nargs = '*',
-        default = [],
-        help = 'parameter to specify custom_data variable types other than float (namely: int, bool, str) like this var:dtype myint:int mybool:bool mystr:str . downstream float and int will be handled as numeric, bool as Boolean, and str as categorical data. default is an empty string.',
-    )
+    # TimeSeries custom_type nop
     # TimeSeries microenv
     parser.add_argument(
         '--microenv',
@@ -263,23 +257,12 @@ def get_cell_df():
         s_pathfile = s_pathfile + '/initial.xml'
     if not os.path.exists(s_pathfile):
         sys.exit(f"Error @ pcdl_get_cell_df : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
-    # custom_type
-    d_vartype = {}
-    for vartype in args.custom_type:
-        s_var, s_type = vartype.split(':')
-        if s_type in {'bool'}: o_type = bool
-        elif s_type in {'int'}: o_type = int
-        elif s_type in {'float'}: o_type = float
-        elif s_type in {'str'}: o_type = str
-        else:
-            sys.exit(f"Error @ pyCLI.get_anndata : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.")
-        d_vartype.update({s_var : o_type})
+    # custom_type nop
     # run
     if os.path.isfile(args.path):
         mcds = pcdl.pyMCDS(
             xmlfile = args.path,
             output_path = '.',
-            custom_type = d_vartype,
             microenv = False if args.microenv.lower().startswith('f') else True,
             graph = False,
             settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
@@ -297,7 +280,6 @@ def get_cell_df():
     else:
         mcdsts = pcdl.pyMCDSts(
             output_path = args.path,
-            custom_type = d_vartype,
             load = True,
             microenv = False if args.microenv.lower().startswith('f') else True,
             graph = False,

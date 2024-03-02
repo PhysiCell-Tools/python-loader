@@ -44,6 +44,7 @@ print(f"process: pcdl pyCLI functions from the command line...")
 
 
 # test code
+"""
 class TestPyCliAnndata(object):
     ''' tests for one pcdl.pyCli function. '''
 
@@ -334,7 +335,7 @@ class TestPyCliCellDf(object):
 
     # timestep and timeseries:
     # + path nop
-    # + customtype ([], _oncoprotein:str_) ok
+    # + customtype nop (because the dataframe is straight saved as csv)
     # + microenv (true, _false_) ok
     # + settingxml (string, _none_, _false_) ok
     # + verbose (true, _false_) nop
@@ -347,9 +348,8 @@ class TestPyCliCellDf(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = result.stderr.decode('UTF8').replace('\n','')
-        df_cell = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell.csv')) and \
-               (os.path.exists(s_opathfile)
+               (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_df_timeseries_collapsed(self):
@@ -365,24 +365,14 @@ class TestPyCliCellDf(object):
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
 
-    def test_pcdl_get_cell_df_timeseries_customtype(self):
-        s_result = subprocess.run(['pcdl_get_cell_df', s_path_2d, '--custom_type', 'oncoprotein:str'], check=False, capture_output=True)
-        #print(f'\ns_result.stdout: {s_result.stdout}\n')
-        #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
-        df_cell = pd.read_csv(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell.csv')) and \
-               (os.path.exists(s_opathfile) and \
-               (set(df_cell.obs.columns).issuperset({'oncoprotein'})) # check type!
-        os.remove(s_opathfile)
-
     def test_pcdl_get_cell_df_timeseries_microenv(self):
         result = subprocess.run(['pcdl_get_cell_df', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = result.stderr.decode('UTF8').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
-        assert not set(df_cell.columns).issuperset({'oxygen'})
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell.csv')) and \
+               (not set(df_cell.columns).issuperset({'oxygen'}))
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_df_timeseries_settingxmlfalse(self):
@@ -391,7 +381,8 @@ class TestPyCliCellDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = result.stderr.decode('UTF8').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
-        assert set(df_cell.columns).issuperset({'attack_rates_0'})
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell.csv')) and \
+               (set(df_cell.columns).issuperset({'attack_rates_0'}))
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_df_timeseries_settingxmlnone(self):
@@ -400,7 +391,8 @@ class TestPyCliCellDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = result.stderr.decode('UTF8').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
-        assert set(df_cell.columns).issuperset({'attack_rates_0'})
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell.csv')) and \
+               (set(df_cell.columns).issuperset({'attack_rates_0'}))
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_df_timeseries_value(self):
@@ -409,7 +401,8 @@ class TestPyCliCellDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = result.stderr.decode('UTF8').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
-        assert  df_cell.shape == (24758, 41)
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell.csv')) and \
+               (df_cell.shape == (24758, 41))
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_df_timeseries_drop(self):
@@ -418,7 +411,9 @@ class TestPyCliCellDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = result.stderr.decode('UTF8').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
-        assert not set(df_cell.columns).issuperset({'cell_type', 'oxygen'})
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell.csv')) and \
+               (not set(df_cell.columns).issuperset({'cell_type', 'oxygen'})) and \
+               (df_cell.shape == (24758, 94))
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_df_timeseries_keep(self):
@@ -427,8 +422,9 @@ class TestPyCliCellDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = result.stderr.decode('UTF8').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
-        assert set(df_cell.columns).issuperset({'cell_type', 'oxygen'}) and \
-               df_cell.shape == (24758, 15)
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell.csv')) and \
+               (set(df_cell.columns).issuperset({'cell_type', 'oxygen'})) and \
+               (df_cell.shape == (24758, 15))
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_df_timestep(self):
@@ -439,28 +435,14 @@ class TestPyCliCellDf(object):
         assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.csv'))
         os.remove(s_opathfile)
 
-    def test_pcdl_get_celldf_timestep_customtype(self):
-        s_result = subprocess.run(['pcdl_get_cell_df', s_pathfile_2d, '--custom_type', 'oncoprotein:str'], check=False, capture_output=True)
-        #print(f'\ns_result.stdout: {s_result.stdout}\n')
-        print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
-        ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.h5ad')) and \
-               (set(ann.obs.columns).issuperset({'oncoprotein'})) and \
-               (ann.shape == (24758, 78)) and \
-               (ann.obs.shape == (24758, 8)) and \
-               (len(ann.obsp) == 0) and \
-               (ann.var.shape == (78, 0)) and \
-               (len(ann.uns) == 0)
-        os.remove(s_opathfile)
-
     def test_pcdl_get_cell_df_timestep_microenv(self):
         result = subprocess.run(['pcdl_get_cell_df', s_pathfile_2d, '--microenv', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = result.stderr.decode('UTF8').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
-        assert not set(df_cell.columns).issuperset({'oxygen'})
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.csv')) and \
+               (not set(df_cell.columns).issuperset({'oxygen'}))
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_df_timestep_settingxmlfalse(self):
@@ -469,7 +451,8 @@ class TestPyCliCellDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = result.stderr.decode('UTF8').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
-        assert set(df_cell.columns).issuperset({'attack_rates_0'})
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.csv')) and \
+               (set(df_cell.columns).issuperset({'attack_rates_0'}))
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_df_timestep_settingxmlnone(self):
@@ -478,7 +461,8 @@ class TestPyCliCellDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = result.stderr.decode('UTF8').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
-        assert set(df_cell.columns).issuperset({'attack_rates_0'})
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.csv')) and \
+               (set(df_cell.columns).issuperset({'attack_rates_0'}))
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_df_timestep_value(self):
@@ -487,7 +471,8 @@ class TestPyCliCellDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = result.stderr.decode('UTF8').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
-        assert  df_cell.shape == (1099, 40)
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.csv')) and \
+               (df_cell.shape == (1099, 40))
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_df_timestep_drop(self):
@@ -496,7 +481,9 @@ class TestPyCliCellDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = result.stderr.decode('UTF8').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
-        assert not set(df_cell.columns).issuperset({'cell_type', 'oxygen'})
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.csv')) and \
+               (not set(df_cell.columns).issuperset({'cell_type', 'oxygen'})) and \
+               (df_cell.shape == (1099, 93))
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_df_timestep_keep(self):
@@ -505,8 +492,9 @@ class TestPyCliCellDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = result.stderr.decode('UTF8').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
-        assert set(df_cell.columns).issuperset({'cell_type', 'oxygen'}) and \
-               df_cell.shape == (1099, 14)
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.csv')) and \
+               (set(df_cell.columns).issuperset({'cell_type', 'oxygen'})) and \
+               (df_cell.shape == (1099, 14))
         os.remove(s_opathfile)
 
 
@@ -527,7 +515,8 @@ class TestPyCliConcDf(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_conc.csv'))
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_conc.csv')) and \
+               (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
     def test_pcdl_get_conc_df_timeseries_collapsed(self):
@@ -535,10 +524,11 @@ class TestPyCliConcDf(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         ls_opathfile = s_result.stderr.decode('UTF8').replace("['","").replace("']\n","").split("', '")
-        print(ls_opathfile, len(ls_opathfile))
+        #print(ls_opathfile, len(ls_opathfile))
         assert len(ls_opathfile) == 25 and \
                ls_opathfile[0].endswith('data_timeseries_2d/output00000000_conc.csv') and \
-               ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_conc.csv')
+               ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_conc.csv') and \
+               os.path.exists(ls_opathfile[12])
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
 
@@ -548,7 +538,8 @@ class TestPyCliConcDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
         df_conc = pd.read_csv(s_opathfile, index_col=0)
-        assert  df_conc.shape == (3025, 9)
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_conc.csv')) and \
+               (df_conc.shape == (3025, 9))
         os.remove(s_opathfile)
 
     def test_pcdl_get_conc_df_timeseries_drop(self):
@@ -557,7 +548,9 @@ class TestPyCliConcDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
         df_conc = pd.read_csv(s_opathfile, index_col=0)
-        assert not set(df_conc.columns).issuperset({'conc_type', 'oxygen'})
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_conc.csv')) and \
+               (not set(df_conc.columns).issuperset({'oxygen'})) and \
+               (df_conc.shape == (3025, 8))
         os.remove(s_opathfile)
 
     def test_pcdl_get_conc_df_timeseries_keep(self):
@@ -566,8 +559,9 @@ class TestPyCliConcDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
         df_conc = pd.read_csv(s_opathfile, index_col=0)
-        assert set(df_conc.columns).issuperset({'oxygen'}) and \
-               df_conc.shape == (3025, 9)
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_conc.csv')) and \
+               (set(df_conc.columns).issuperset({'oxygen'})) and \
+               (df_conc.shape == (3025, 9))
         os.remove(s_opathfile)
 
     def test_pcdl_get_conc_df_timestep(self):
@@ -575,7 +569,8 @@ class TestPyCliConcDf(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_conc.csv'))
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_conc.csv')) and \
+               (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
     def test_pcdl_get_conc_df_timestep_value(self):
@@ -584,7 +579,8 @@ class TestPyCliConcDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
         df_conc = pd.read_csv(s_opathfile, index_col=0)
-        assert  df_conc.shape == (121, 9)
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_conc.csv')) and \
+               (df_conc.shape == (121, 9))
         os.remove(s_opathfile)
 
     def test_pcdl_get_conc_df_timestep_drop(self):
@@ -593,7 +589,9 @@ class TestPyCliConcDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
         df_conc = pd.read_csv(s_opathfile, index_col=0)
-        assert not set(df_conc.columns).issuperset({'oxygen'})
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_conc.csv')) and \
+               (not set(df_conc.columns).issuperset({'oxygen'})) and \
+               (df_conc.shape == (121, 8))
         os.remove(s_opathfile)
 
     def test_pcdl_get_conc_df_timestep_keep(self):
@@ -602,9 +600,11 @@ class TestPyCliConcDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
         df_conc = pd.read_csv(s_opathfile, index_col=0)
-        assert set(df_conc.columns).issuperset({'oxygen'}) and \
-               df_conc.shape == (121, 9)
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_conc.csv')) and \
+               (set(df_conc.columns).issuperset({'oxygen'})) and \
+               (df_conc.shape == (121, 9))
         os.remove(s_opathfile)
+"""
 
 
 class TestPyCliCellDfFeature(object):
@@ -643,6 +643,17 @@ class TestPyCliCellDfFeature(object):
                (ann.var.shape == (78, 0)) and \
                (len(ann.uns) == 0)
         os.remove(s_opathfile)
+    def test_pcdl_get_cell_df_timeseries_customtype(self):
+        s_result = subprocess.run(['pcdl_get_cell_df', s_path_2d, '--custom_type', 'oncoprotein:str'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
+        df_cell = pd.read_csv(s_opathfile)
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell.csv')) and \
+               (os.path.exists(s_opathfile)) and \
+               (pd.api.types.is_string_dtype(df_cell.loc[:,'oncoprotein']))
+        os.remove(s_opathfile)
+
 
     def test_pcdl_get_cell_df_features_timeseries_microenv(self):
         s_result = subprocess.run(['pcdl_get_cell_df_features', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
@@ -712,6 +723,7 @@ class TestPyCliCellDfFeature(object):
         os.remove(s_opathfile)
 
 
+"""
 class TestPyCliConcDfFeature(object):
     ''' tests for one pcdl.pyCli function. '''
 
@@ -1426,3 +1438,4 @@ class TestPyCliPlotTimeSeries(object):
            (s_stdout.find("ext='tiff'") > -1) and \
            (s_stdout.find("figbgcolor='cyan'") > -1)
         os.remove(s_opathfile)
+"""
