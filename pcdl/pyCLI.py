@@ -1542,7 +1542,7 @@ def plot_timeseries():
         frame = args.frame,
         z_slice = None if (args.z_slice.lower() == 'none') else float(args.z_slice),
         logy = True if args.logy.lower().startswith('t') else False,
-        ylim = None if (args.ylim[0].lower() == 'none') else args.ylim,
+        ylim = None if (args.ylim[0].lower() == 'none') else [float(y) for y in args.ylim],
         secondary_y = ls_secondary_y,
         subplots = True if args.subplots.lower().startswith('t') else False,
         sharex = True if args.sharex.lower().startswith('t') else False,

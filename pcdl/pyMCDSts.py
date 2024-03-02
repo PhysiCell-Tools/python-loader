@@ -817,6 +817,7 @@ class pyMCDSts:
             os.makedirs(s_path, exist_ok=True)
             s_file = self.get_xmlfile_list()[i].replace('.xml', f'_{focus}.{ext}')
             s_pathfile = f'{s_path}{s_file}'
+            plt.tight_layout()
             fig.savefig(s_pathfile, facecolor=figbgcolor)
             plt.close(fig)
 
@@ -979,6 +980,7 @@ class pyMCDSts:
             os.makedirs(s_path, exist_ok=True)
             s_file = self.get_xmlfile_list()[i].replace('.xml', f'_{focus}.{ext}')
             s_pathfile = f'{s_path}{s_file}'
+            plt.tight_layout()
             fig.savefig(s_pathfile, facecolor=figbgcolor)
             plt.close(fig)
 
@@ -1048,9 +1050,11 @@ class pyMCDSts:
             cmap: string; default None
                 matplotlib colormap string.
                 https://matplotlib.org/stable/tutorials/colors/colormaps.html
+                achtung: if cmap is given, color will be disregarded.
 
             color: string or list of string or dictionary; default None
                 color string referred to by name, RGB or RGBA code.
+                achtung: if cmap is given, color will be disregarded.
 
             grid: boolean; default True
                 plot axis grid lines.
@@ -1208,25 +1212,46 @@ class pyMCDSts:
             fig, ax = plt.subplots(figsize=figsize)
         else:
             fig = plt.gcf()
-        df_series.plot(
-            kind = 'line',
-            logy = logy,
-            ylim = ylim,
-            secondary_y = secondary_y,
-            subplots = subplots,
-            sharex = sharex,
-            sharey = sharey,
-            linestyle = linestyle,
-            linewidth = linewidth,
-            cmap = cmap,
-            color = color,
-            grid = grid,
-            legend = legend,
-            ylabel = ylabel,
-            xlabel = f"time [{mcds.get_unit_se()['time']}]",
-            title = title,
-            ax = ax
-        )
+        if not (cmap is None):
+            # if cmap
+            df_series.plot(
+                kind = 'line',
+                logy = logy,
+                ylim = ylim,
+                secondary_y = secondary_y,
+                subplots = subplots,
+                sharex = sharex,
+                sharey = sharey,
+                linestyle = linestyle,
+                linewidth = linewidth,
+                cmap = cmap,
+                grid = grid,
+                legend = legend,
+                ylabel = ylabel,
+                xlabel = f"time [{mcds.get_unit_se()['time']}]",
+                title = title,
+                ax = ax
+            )
+        else:
+            # if color
+            df_series.plot(
+                kind = 'line',
+                logy = logy,
+                ylim = ylim,
+                secondary_y = secondary_y,
+                subplots = subplots,
+                sharex = sharex,
+                sharey = sharey,
+                linestyle = linestyle,
+                linewidth = linewidth,
+                color = color,
+                grid = grid,
+                legend = legend,
+                ylabel = ylabel,
+                xlabel = f"time [{mcds.get_unit_se()['time']}]",
+                title = title,
+                ax = ax
+            )
 
         # output
         if (ext is None):
@@ -1238,6 +1263,7 @@ class pyMCDSts:
                 s_pathfile = f'{self.output_path}timeseries_{frame}_{focus_cat}_{focus_num}_{aggregate_num.__name__}.{ext}'
             if figbgcolor is None:
                 figbgcolor = 'auto'
+            plt.tight_layout()
             fig.savefig(s_pathfile, facecolor=figbgcolor)
             plt.close(fig)
             return s_pathfile
