@@ -198,7 +198,7 @@ def get_cell_df():
         help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .'
     )
     # TimeSeries output_path '.'
-    # TimeSeries custom_type nop
+    # TimeSeries custom_type nop (because datafarme is straightaway saved as csv)
     # TimeSeries microenv
     parser.add_argument(
         '--microenv',
