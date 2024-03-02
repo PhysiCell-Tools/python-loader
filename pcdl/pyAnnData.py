@@ -470,7 +470,7 @@ class TimeSeries(pyMCDSts):
 
         # collapse warning
         if collapse:
-            print('Warning @ mcdsts.get_anndata : only df_cell, but not graph data, can be collapsed.')
+            print('Warning @ mcdsts.get_anndata : only df_cell data, but not graph data, can be collapsed.')
 
         # processing
         lann_mcds = []
