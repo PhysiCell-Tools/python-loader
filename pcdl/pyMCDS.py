@@ -509,7 +509,7 @@ class pyMCDS:
         dm = (tr_m_range[1] - tr_m_range[0]) / (ar_m_axis.shape[0] - 1)
         dn = (tr_n_range[1] - tr_n_range[0]) / (ar_n_axis.shape[0] - 1)
         if (len(set(tr_p_range)) == 1):
-            dp = 1
+            dp = np.float64(1.0)
         else:
             dp = (tr_p_range[1] - tr_p_range[0]) / (ar_p_axis.shape[0] - 1)
         return [dm, dn, dp]

@@ -267,43 +267,28 @@ class TestPyMcdsMesh2D(object):
                (lar_axis[1].shape == (11,)) and \
                (lar_axis[2].shape == (1,))
 
-"""  
-# BUE: test should run each if of the code!
-
-
-    #!!!
     def test_mcds_get_mesh_flat_false(self, mcds=mcds):
         aar_mesh = mcds.get_mesh(flat=False)
-        assert (str(type(aar_mesh)) == "<class 'numpy.ndarray'>") and \
-               (len(aar_mesh) == 3) and \
-               (str(type(aar_mesh[0])) == "<class 'numpy.ndarray'>") and \
-               (str(aar_mesh[0].dtype) == "float64") and \
-               (aar_mesh[0].shape == (11, 11, 1)) and \
-               (str(type(aar_mesh[1])) == "<class 'numpy.ndarray'>") and \
-               (str(aar_mesh[1].dtype) == "float64") and \
-               (aar_mesh[1].shape == (11, 11, 1)) and \
-               (str(type(aar_mesh[2])) == "<class 'numpy.ndarray'>") and \
-               (str(aar_mesh[2].dtype) == "float64") and \
-               (aar_mesh[2].shape == (11, 11, 1))
+        assert (str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+               (str(type(aar_mesh)) == "<class 'numpy.ndarray'>") and \
+               (str(aar_mesh.dtype) == 'float64') and \
+               (aar_mesh.shape == (3, 11, 11, 1))
 
     def test_mcds_get_mesh_flat_true(self, mcds=mcds):
         aar_mesh = mcds.get_mesh(flat=True)
-        assert (str(type(aar_mesh)) == "<class 'numpy.ndarray'>") and \
-               (len(aar_mesh) == 2) and \
-               (str(type(aar_mesh[0])) == "<class 'numpy.ndarray'>") and \
-               (str(aar_mesh[0].dtype) == "float64") and \
-               (aar_mesh[0].shape == (11, 11)) and \
-               (str(type(aar_mesh[1])) == "<class 'numpy.ndarray'>") and \
-               (str(aar_mesh[1].dtype) == "float64") and \
-               (aar_mesh[1].shape == (11, 11))
+        assert (str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+               (str(type(aar_mesh)) == "<class 'numpy.ndarray'>") and \
+               (str(aar_mesh.dtype) == 'float64') and \
+               (aar_mesh.shape == (2, 11, 11))
 
     def test_mcds_get_mesh_2d(self, mcds=mcds):
         aar_mesh_flat = mcds.get_mesh(flat=True)
         aar_mesh_2d = mcds.get_mesh_2D()
-        assert (str(type(aar_mesh_2d)) == "<class 'numpy.ndarray'>") and \
-               (len(aar_mesh_2d) == 2) and \
-               (aar_mesh_2d[0] == aar_mesh_flat[0]).all() and \
-               (aar_mesh_2d[1] == aar_mesh_flat[1]).all()
+        assert (str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+               (str(type(aar_mesh_2d)) == "<class 'numpy.ndarray'>") and \
+               (str(aar_mesh_2d.dtype) == 'float64') and \
+               (aar_mesh_2d.shape == (2, 11, 11))
+
 
     def test_mcds_get_mesh_coordinate(self, mcds=mcds):
         # cube coordinates
@@ -313,49 +298,59 @@ class TestPyMcdsMesh2D(object):
         er_p_cube = set(ar_p_cube.flatten())
         # linear coordinates
         aar_voxel = mcds.get_mesh_coordinate()
-        assert (str(type(aar_voxel)) == "<class 'numpy.ndarray'>") and \
-               (len(aar_voxel) == 3) and \
-               (str(type(aar_voxel[0])) == "<class 'numpy.ndarray'>") and \
-               (str(aar_voxel[0].dtype) == "float64") and \
+        assert (str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+               (str(type(aar_voxel)) == "<class 'numpy.ndarray'>") and \
+               (str(aar_voxel.dtype) == 'float64') and \
+               (aar_voxel.shape == (3, 121)) and \
                (set(aar_voxel[0]) == er_m_cube) and \
-               (aar_voxel[0].shape == (121,)) and \
-               (str(type(aar_voxel[1])) == "<class 'numpy.ndarray'>") and \
-               (str(aar_voxel[1].dtype) == "float64") and \
                (set(aar_voxel[1]) == er_n_cube) and \
-               (aar_voxel[1].shape == (121,)) and \
-               (str(type(aar_voxel[2])) == "<class 'numpy.ndarray'>") and \
-               (str(aar_voxel[2].dtype) == "float64") and \
-               (set(aar_voxel[2]) == er_p_cube) and \
-               (aar_voxel[2].shape == (121,))
+               (set(aar_voxel[2]) == er_p_cube)
 
+    # bue: check else in 3D
     def test_mcds_get_voxel_volume(self, mcds=mcds):
         r_volume = mcds.get_voxel_volume()
-        assert r_volume == 6000.0
+        assert (str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+               (str(type(r_volume)) == "<class 'numpy.float64'>") and \
+               (r_volume == 6000.0)
 
-    # !!!
     def test_mcds_get_mesh_spacing(self, mcds=mcds):
         lr_spacing = mcds.get_mesh_spacing()
-        assert lr_spacing == [30.0, 20.0, 1]
+        assert (str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+               (str(type(lr_spacing)) == "<class 'list'>") and \
+               (str(type(lr_spacing[0])) == "<class 'numpy.float64'>") and \
+               (str(type(lr_spacing[-1])) == "<class 'numpy.float64'>") and \
+               (lr_spacing == [30.0, 20.0, 1.0])
 
     def test_mcds_get_voxel_spacing(self, mcds=mcds):
         lr_spacing = mcds.get_voxel_spacing()
-        assert lr_spacing == [30.0, 20.0, 10.0]
+        assert (str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+               (str(type(lr_spacing)) == "<class 'list'>") and \
+               (str(type(lr_spacing[0])) == "<class 'numpy.float64'>") and \
+               (str(type(lr_spacing[-1])) == "<class 'numpy.float64'>") and \
+               (lr_spacing == [30.0, 20.0, 10.0])
 
-    # !!!
+    # bue: have to check every if
     def test_mcds_is_in_mesh(self, mcds=mcds):
-        assert mcds.is_in_mesh(x=42, y=42, z=3, halt=False) and \
-               not mcds.is_in_mesh(x=-42, y=-42, z=-42, halt=False)
+        assert (str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+               (mcds.is_in_mesh(x=42, y=42, z=3, halt=False)) and \
+               (not mcds.is_in_mesh(x=-42, y=-42, z=-42, halt=False))
 
-    # !!!
     def test_mcds_get_voxel_ijk(self, mcds=mcds):
-        li_voxel_0 = mcds.get_voxel_ijk(x=0, y=0, z=0, is_in_mesh=True)
-        li_voxel_1 = mcds.get_voxel_ijk(x=15, y=10, z=0, is_in_mesh=True)
-        li_voxel_2 = mcds.get_voxel_ijk(x=30, y=20, z=0, is_in_mesh=True)
-        li_voxel_3 = mcds.get_voxel_ijk(x=42, y=42, z=42, is_in_mesh=True)
-        assert (li_voxel_0 == [0, 0, 0]) and \
+        li_voxel_0 = mcds.get_voxel_ijk(x=0, y=0, z=0, is_in_mesh=True) # if b_calc
+        li_voxel_1 = mcds.get_voxel_ijk(x=15, y=10, z=0, is_in_mesh=True) # if b_calc
+        li_voxel_2 = mcds.get_voxel_ijk(x=30, y=20, z=0, is_in_mesh=True) # if b_calc
+        li_voxel_none = mcds.get_voxel_ijk(x=42, y=42, z=42, is_in_mesh=True) # else b_calc
+        assert (str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+               (str(type(li_voxel_0)) == "<class 'list'>") and \
+               (str(type(li_voxel_0[0])) == "<class 'int'>") and \
+               (li_voxel_0 == [0, 0, 0]) and \
                (li_voxel_1 == [1, 1, 0]) and \
                (li_voxel_2 == [2, 2, 0]) and \
-               (li_voxel_3 is None)
+               (li_voxel_none is None)
+
+
+"""
+# BUE: test should run each if of the code!
 
     ## micro environment related functions
     def test_mcds_get_substrate_names(self, mcds=mcds):
@@ -450,6 +445,7 @@ class TestPyMcdsMesh2D(object):
         )
         assert(str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
 
+
     ## cell related functions
     def test_mcds_get_cell_variables(self, mcds=mcds):
         ls_variable = mcds.get_cell_variables()
@@ -540,6 +536,7 @@ class TestPyMcdsMesh2D(object):
         )
         assert (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
 
+
     ## graph related functions
     def test_mcds_get_attached_graph_dict(self, mcds=mcds):
         dei_graph = mcds.data['discrete_cells']['graph']['attached_cells']
@@ -570,6 +567,7 @@ class TestPyMcdsMesh2D(object):
         assert(s_pathfile.endswith('pcdl/data_timeseries_2d/output00000024_neighbor.gml')) and \
               (os.path.exists(s_pathfile))
         os.remove(s_pathfile)
+
 
     ## unit related functions
     def test_mcds_get_unit_se(self, mcds=mcds):
