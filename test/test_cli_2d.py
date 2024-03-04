@@ -25,7 +25,6 @@ import os
 import pandas as pd
 import pathlib
 import pcdl
-import pytest
 import shutil
 import subprocess
 

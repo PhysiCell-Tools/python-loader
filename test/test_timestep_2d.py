@@ -62,7 +62,7 @@ class TestPyMcdsInit(object):
 
 
 class TestPyMcdsInitMicroenvFalse(object):
-    ''' tests for loading a pcdl.pyMCDS data set. '''
+    ''' tests for loading a pcdl.pyMCDS data set with microenv false. '''
     mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=False, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
     df_cell = mcds.get_cell_df()
     def test_mcds_init_microenv(self, mcds=mcds, df_cell=df_cell):
@@ -85,7 +85,7 @@ class TestPyMcdsInitMicroenvFalse(object):
 
 
 class TestPyMcdsInitGraphFalse(object):
-    ''' tests for loading a pcdl.pyMCDS data set. '''
+    ''' tests for loading a pcdl.pyMCDS data set with graph false. '''
     mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=False, settingxml='PhysiCell_settings.xml', verbose=True)
     df_cell = mcds.get_cell_df()
     def test_mcds_init_microenv(self, mcds=mcds, df_cell=df_cell):
@@ -108,7 +108,7 @@ class TestPyMcdsInitGraphFalse(object):
 
 
 class TestPyMcdsInitSettingxmlFalse(object):
-    ''' tests for loading a pcdl.pyMCDS data set. '''
+    ''' tests for loading a pcdl.pyMCDS data set with settingxml false. '''
     mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml=False, verbose=True)
     df_cell = mcds.get_cell_df()
     def test_mcds_init_microenv(self, mcds=mcds, df_cell=df_cell):
@@ -131,7 +131,7 @@ class TestPyMcdsInitSettingxmlFalse(object):
 
 
 class TestPyMcdsInitSettingxmlNone(object):
-    ''' tests for loading a pcdl.pyMCDS data set. '''
+    ''' tests for loading a pcdl.pyMCDS data set with settingxml none. '''
     mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml=None, verbose=True)
     df_cell = mcds.get_cell_df()
     def test_mcds_init_microenv(self, mcds=mcds, df_cell=df_cell):
@@ -183,7 +183,7 @@ class TestPyMcdsInitVerboseFalse(object):
 
 ## metadata related functions ##
 class TestPyMcdsMetadata(object):
-    ''' tests for pcdl.pyMCDS data set metadata functions. '''
+    ''' tests for pcdl.pyMCDS metadata related functions. '''
     mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
     def test_mcds_get_multicellds_version(self, mcds=mcds):
@@ -219,7 +219,7 @@ class TestPyMcdsMetadata(object):
 
 ## mesh related functions ##
 class TestPyMcdsMesh(object):
-    ''' tests for pcdl.pyMCDS data set mesh functions. '''
+    ''' tests for pcdl.pyMCDS mesh related functions. '''
     mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
     def test_mcds_get_voxel_ijk_range(self, mcds=mcds):
@@ -306,18 +306,19 @@ class TestPyMcdsMesh(object):
               (set(aar_voxel[1]) == er_n_cube) and \
               (set(aar_voxel[2]) == er_p_cube)
 
-    # bue: check else in 3D
     def test_mcds_get_voxel_volume(self, mcds=mcds):
         r_volume = mcds.get_voxel_volume()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(r_volume)) == "<class 'numpy.float64'>") and \
               (r_volume == 6000.0)
 
+    # bue: check else in 3D
     def test_mcds_get_mesh_spacing(self, mcds=mcds):
         lr_spacing = mcds.get_mesh_spacing()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(lr_spacing)) == "<class 'list'>") and \
               (str(type(lr_spacing[0])) == "<class 'numpy.float64'>") and \
+              (str(type(lr_spacing[1])) == "<class 'numpy.float64'>") and \
               (str(type(lr_spacing[-1])) == "<class 'numpy.float64'>") and \
               (lr_spacing == [30.0, 20.0, 1.0])
 
@@ -352,7 +353,7 @@ class TestPyMcdsMesh(object):
 
 ## micro environment related functions ##
 class TestPyMcdsMicroenv(object):
-    ''' tests for pcdl.pyMCDS data set mesh functions. '''
+    ''' tests for pcdl.pyMCDS micro environment related functions. '''
     mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
     def test_mcds_get_substrate_name(self, mcds=mcds):
@@ -493,7 +494,7 @@ class TestPyMcdsMicroenv(object):
 
 ## cell related functions ##
 class TestPyMcdsCell(object):
-    ''' tests for pcdl.pyMCDS data set mesh functions. '''
+    ''' tests for pcdl.pyMCDS cell related functions. '''
     mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
     def test_mcds_get_cell_variables(self, mcds=mcds):
@@ -651,7 +652,7 @@ class TestPyMcdsCell(object):
 
 ## graph related functions ##
 class TestPyMcdsGraph(object):
-    ''' tests for pcdl.pyMCDS data set mesh functions. '''
+    ''' tests for pcdl.pyMCDS graph related functions. '''
     mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
     # graph dictionatry
@@ -775,7 +776,7 @@ class TestPyMcdsGraph(object):
 
 ## unit related functions ##
 class TestPyMcdsUnit(object):
-    ''' tests for pcdl.pyMCDS data set mesh functions. '''
+    ''' tests for pcdl.pyMCDS unit related functions. '''
     mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
     def test_mcds_get_unit_se(self, mcds=mcds):
