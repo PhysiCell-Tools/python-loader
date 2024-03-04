@@ -1606,7 +1606,7 @@ class pyMCDS:
         # open result gml file
         f = open(s_gmlpathfile, 'w')
         f.write(f'Creator "pcdl_v{__version__}"\ngraph [\n')
-        f.write(f'  id {int(r_simtime)}\n  comment "simtime_{s_unit_simtime}"\n  label "{graph_type}_graph"\n  directed 0\n')
+        f.write(f'  id {int(r_simtime)}\n  comment "time_{s_unit_simtime}"\n  label "{graph_type}_graph"\n  directed 0\n')
         for i_src, ei_dst in dei_graph.items():
             #print(f'{i_src} {sorted(ei_dst)}')
             # node

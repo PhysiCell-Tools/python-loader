@@ -350,7 +350,7 @@ class TestPyMcdsMesh(object):
               (li_voxel_none is None)
 
 
-## micro environment related functions
+## micro environment related functions ##
 class TestPyMcdsMicroenv(object):
     ''' tests for pcdl.pyMCDS data set mesh functions. '''
     mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
@@ -491,7 +491,7 @@ class TestPyMcdsMicroenv(object):
               (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
 
 
-## cell related functions
+## cell related functions ##
 class TestPyMcdsCell(object):
     ''' tests for pcdl.pyMCDS data set mesh functions. '''
     mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
@@ -649,53 +649,139 @@ class TestPyMcdsCell(object):
               (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
 
 
+## graph related functions ##
 class TestPyMcdsGraph(object):
     ''' tests for pcdl.pyMCDS data set mesh functions. '''
     mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
-    def test_mcds_get_get_attached_graph_dict(self, mcds=mcds)
-        pass
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-
-
-"""
-# BUE: test should run each if of the code!
-
-    ## graph related functions
+    # graph dictionatry
     def test_mcds_get_attached_graph_dict(self, mcds=mcds):
         dei_graph = mcds.data['discrete_cells']['graph']['attached_cells']
-        assert (str(type(dei_graph)) == "<class 'dict'>") and \
-               (len(dei_graph) == 1099) and \
-               (len(dei_graph[1098]) == 0)
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (str(type(dei_graph)) == "<class 'dict'>") and \
+              (str(type(dei_graph[0])) == "<class 'set'>") and \
+              (len(dei_graph[0]) == 0) and \
+              (len(dei_graph) == 1099)
 
-    def test_mcds_get_neighbor_graph_dict(self, mcds=mcds):
+    def test_mcds_get_nighbor_graph_dict(self, mcds=mcds):
         dei_graph = mcds.data['discrete_cells']['graph']['neighbor_cells']
-        assert (str(type(dei_graph)) == "<class 'dict'>") and \
-               (len(dei_graph) == 1099) and \
-               (len(dei_graph[1098]) == 7)
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (str(type(dei_graph)) == "<class 'dict'>") and \
+              (str(type(dei_graph[0])) == "<class 'set'>") and \
+              (len(dei_graph[0]) == 7) and \
+              (str(type(next(iter(dei_graph)))) == "<class 'int'>") and \
+              (len(dei_graph) == 1099)
 
-    def test_mcds_get_graph_gml_attached_defaultattr(self, mcds=mcds):
-        s_pathfile = mcds.make_graph_gml(graph_type='attached', edge_attr=True, node_attr=['cell_type'])
-        assert(s_pathfile.endswith('pcdl/data_timeseries_2d/output00000024_attached.gml')) and \
-              (os.path.exists(s_pathfile))
+    # attached graph gml files
+    def test_mcds_make_graph_gml_attached_defaultattr(self, mcds=mcds):
+        s_pathfile = mcds.make_graph_gml(graph_type='attached', edge_attr=True, node_attr=[])
+        f = open(s_pathfile)
+        s_file = f.read()
+        f.close()
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (s_pathfile.endswith('pcdl/data_timeseries_2d/output00000024_attached.gml')) and \
+              (os.path.exists(s_pathfile)) and \
+              (s_file.find('Creator "pcdl_v') > -1) and \
+              (s_file.find('graph [\n  id 1440\n  comment "time_min"\n  label "attached_graph"\n  directed 0\n') > -1) and \
+              (s_file.find('node [\n    id') > -1) and \
+              (s_file.find('edge [\n    source') == -1) and \
+              (s_file.find('distance_microns') == -1)
         os.remove(s_pathfile)
 
-    def test_mcds_get_graph_gml_neighbor_noneattr(self, mcds=mcds):
+    def test_mcds_make_graph_gml_attached_edgeattrfalse(self, mcds=mcds):
+        s_pathfile = mcds.make_graph_gml(graph_type='attached', edge_attr=False, node_attr=[])
+        f = open(s_pathfile)
+        s_file = f.read()
+        f.close()
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (s_pathfile.endswith('pcdl/data_timeseries_2d/output00000024_attached.gml')) and \
+              (os.path.exists(s_pathfile)) and \
+              (s_file.find('Creator "pcdl_v') > -1) and \
+              (s_file.find('graph [\n  id 1440\n  comment "time_min"\n  label "attached_graph"\n  directed 0\n') > -1) and \
+              (s_file.find('node [\n    id') > -1) and \
+              (s_file.find('edge [\n    source') == -1) and \
+              (s_file.find('distance_microns') == -1)
+        os.remove(s_pathfile)
+
+    def test_mcds_make_graph_gml_neighbor_nodeattrtrue(self, mcds=mcds):
+        s_pathfile = mcds.make_graph_gml(graph_type='neighbor', edge_attr=True, node_attr=['dead','cell_count_voxel','cell_density_micron3','cell_type'])  # bool,int,float,str
+        f = open(s_pathfile)
+        s_file = f.read()
+        f.close()
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (s_pathfile.endswith('pcdl/data_timeseries_2d/output00000024_neighbor.gml')) and \
+              (os.path.exists(s_pathfile)) and \
+              (s_file.find('Creator "pcdl_v') > -1) and \
+              (s_file.find('graph [\n  id 1440\n  comment "time_min"\n  label "neighbor_graph"\n  directed 0\n') > -1) and \
+              (s_file.find('node [\n    id') > -1) and \
+              (s_file.find('dead') == -1) and \
+              (s_file.find('cell_count_voxel') == -1) and \
+              (s_file.find('cell_density_micron3') == -1) and \
+              (s_file.find('cell_type') == -1) and \
+              (s_file.find('edge [\n    source') > -1) and \
+              (s_file.find('distance_microns')> -1)
+        os.remove(s_pathfile)
+
+    # neighbor graph gml file
+    def test_mcds_make_graph_gml_neighbor_defaultattr(self, mcds=mcds):
+        s_pathfile = mcds.make_graph_gml(graph_type='neighbor', edge_attr=True, node_attr=[])
+        f = open(s_pathfile)
+        s_file = f.read()
+        f.close()
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (s_pathfile.endswith('pcdl/data_timeseries_2d/output00000024_neighbor.gml')) and \
+              (os.path.exists(s_pathfile)) and \
+              (s_file.find('Creator "pcdl_v') > -1) and \
+              (s_file.find('graph [\n  id 1440\n  comment "time_min"\n  label "neighbor_graph"\n  directed 0\n') > -1) and \
+              (s_file.find('node [\n    id') > -1) and \
+              (s_file.find('edge [\n    source') > -1) and \
+              (s_file.find('distance_microns') > -1)
+        os.remove(s_pathfile)
+
+    def test_mcds_make_graph_gml_neighbor_edgeattrfalse(self, mcds=mcds):
         s_pathfile = mcds.make_graph_gml(graph_type='neighbor', edge_attr=False, node_attr=[])
-        assert(s_pathfile.endswith('pcdl/data_timeseries_2d/output00000024_neighbor.gml')) and \
-              (os.path.exists(s_pathfile))
+        f = open(s_pathfile)
+        s_file = f.read()
+        f.close()
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (s_pathfile.endswith('pcdl/data_timeseries_2d/output00000024_neighbor.gml')) and \
+              (os.path.exists(s_pathfile)) and \
+              (s_file.find('Creator "pcdl_v') > -1) and \
+              (s_file.find('graph [\n  id 1440\n  comment "time_min"\n  label "neighbor_graph"\n  directed 0\n') > -1) and \
+              (s_file.find('node [\n    id') > -1) and \
+              (s_file.find('edge [\n    source') > -1) and \
+              (s_file.find('distance_microns') == -1)
         os.remove(s_pathfile)
 
-    def test_mcds_get_graph_gml_neighbor_allattr(self, mcds=mcds):
-        s_pathfile = mcds.make_graph_gml(graph_type='neighbor', edge_attr=True, node_attr=['cell_type','dead','cell_count_voxel','cell_density_micron3'])
-        assert(s_pathfile.endswith('pcdl/data_timeseries_2d/output00000024_neighbor.gml')) and \
-              (os.path.exists(s_pathfile))
+    def test_mcds_make_graph_gml_neighbor_nodeattrtrue(self, mcds=mcds):
+        s_pathfile = mcds.make_graph_gml(graph_type='neighbor', edge_attr=True, node_attr=['dead','cell_count_voxel','cell_density_micron3','cell_type'])  # bool,int,float,str
+        f = open(s_pathfile)
+        s_file = f.read()
+        f.close()
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (s_pathfile.endswith('pcdl/data_timeseries_2d/output00000024_neighbor.gml')) and \
+              (os.path.exists(s_pathfile)) and \
+              (s_file.find('Creator "pcdl_v') > -1) and \
+              (s_file.find('graph [\n  id 1440\n  comment "time_min"\n  label "neighbor_graph"\n  directed 0\n') > -1) and \
+              (s_file.find('node [\n    id') > -1) and \
+              (s_file.find('dead') > -1) and \
+              (s_file.find('cell_count_voxel') > -1) and \
+              (s_file.find('cell_density_micron3') > -1) and \
+              (s_file.find('cell_type') > -1) and \
+              (s_file.find('edge [\n    source') > -1) and \
+              (s_file.find('distance_microns') > -1)
         os.remove(s_pathfile)
 
 
-    ## unit related functions
+## unit related functions ##
+class TestPyMcdsUnit(object):
+    ''' tests for pcdl.pyMCDS data set mesh functions. '''
+    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
+
     def test_mcds_get_unit_se(self, mcds=mcds):
         se_unit = mcds.get_unit_se()
-        assert (str(type(se_unit)) == "<class 'pandas.core.series.Series'>") and \
-               (se_unit.shape == (82,))
-"""
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (str(type(se_unit)) == "<class 'pandas.core.series.Series'>") and \
+              (se_unit.shape == (82,)) and \
+              (se_unit.name == 'unit')
+
