@@ -545,50 +545,72 @@ class TestPyMcdsCell(object):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (df_cell is None)
 
-
-# BUE: HERE I AM !
-    def test_mcds_plot_scatter_cat(self, mcds=mcds):
+    # scatter categorical
+    def test_mcds_plot_scatter_cat_if(self, mcds=mcds):
         fig = mcds.plot_scatter(
             focus='cell_type',  # case categorical
             z_slice = -3.333,   # test if
-            z_axis = None,  # test if categorical
+            z_axis = None,  # test if case categorical
             #alpha = 1,  # matplotlib
-            #cmap = 'viridis',  # matplotlib
-            #title = None, # matplotlib
+            cmap = 'viridis',  # else case es_categorical
+            title = 'test_mcds_plot_scatter_cat', # matplotlib
             #grid = True,  # matplotlib
             #legend_loc = 'lower left',  # matplotlib
             xlim = None,  # test if
             ylim = None,  # test if
             xyequal = True,  # test if
-            s = None,  # test if
-            figsize = (6.4, 4.8),  # test if case
+            #s = None,  # matplotlib
+            figsize = None,  # test if case ax none
             ax = None,  # generate matplotlib figure
         )
-        assert (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
 
-    def test_mcds_plot_scatter_cat_cmap(self, mcds=mcds):
+    def test_mcds_plot_scatter_cat_else1(self, mcds=mcds):
+        fig = mcds.plot_scatter(
+            focus='cell_type',  # case categorical
+            z_slice = 0,  # jump over if
+            z_axis = {'cancer_cell'},  # test else case categorical
+            #alpha = 1,  # matplotlib
+            cmap = {'cancer_cell': 'maroon'},  # test if case es_categorical
+            title ='test_mcds_plot_scatter_else',  # matplotlib
+            #grid = True,  # matplotlib
+            #legend_loc = 'lower left',  # matplotlib
+            xlim = [-31, 301],  # jump over if
+            ylim = [-21, 201],  # jump over if
+            xyequal = False,  # jump over if
+            #s = None,  # matplotlib
+            figsize = [7.0, 5.0],  # jump over if case ax none
+            ax = None,  # use axis from existing matplotlib figure
+        )
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+
+    def test_mcds_plot_scatter_cat_else2(self, mcds=mcds):
         fig, ax = plt.subplots()
         mcds.plot_scatter(
             focus='cell_type',  # case categorical
             z_slice = 0,  # jump over if
-            z_axis = None,  # test if categorical
+            z_axis = {'cancer_cell'},  # test else case categorical
             #alpha = 1,  # matplotlib
-            cmap = {'cancer_cell': 'maroon'},  # matplotlib
-            title ='scatter cat',  # matplotlib
+            cmap = 'viridis',  # test else case es_categorical
+            title ='test_mcds_plot_scatter_else2',  # matplotlib
             #grid = True,  # matplotlib
             #legend_loc = 'lower left',  # matplotlib
             xlim = None,  # test if
             ylim = None,  # test if
             xyequal = True,  # test if
-            s = None,  # test if
-            #figsize = None,  # test if ax case
+            #s = None,  # matplotlib
+            #figsize = None,  # test case ax ax
             ax = ax,  # use axis from existing matplotlib figure
         )
-        assert (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
 
-    def test_mcds_plot_scatter_num(self, mcds=mcds):
+    # scatter numerical
+    def test_mcds_plot_scatter_num_if(self, mcds=mcds):
         fig = mcds.plot_scatter(
-            focus='pressure',  # case numeric
+            focus='oxygen',  # case numeric
             z_slice = -3.333,   # test if
             z_axis = None,  # test if numeric
             #alpha = 1,  # matplotlib
@@ -598,12 +620,42 @@ class TestPyMcdsCell(object):
             #legend_loc = 'lower left',  # matplotlib
             xlim = None,  # test if
             ylim = None,  # test if
-            xyequal = True,  # test if
-            s = None,  # test if
-            figsize = None,  # else case
-            ax = None,  # generate matplotlib figure
+            #xyequal = True,  # test if
+            #s = None,  # matplotlib
+            #figsize = None,  # test if case
+            #ax = None,  # generate matplotlib figure
         )
-        assert (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+
+    def test_mcds_plot_scatter_num_else(self, mcds=mcds):
+        fig = mcds.plot_scatter(
+            focus='oxygen',  # case numeric
+            z_slice = 0,   # jump over if
+            z_axis = [0, 38],  # test else numeric
+            #alpha = 1,  # matplotlib
+            #cmap = 'viridis',  # matplotlib
+            #title = None, # matplotlib
+            #grid = True,  # matplotlib
+            #legend_loc = 'lower left',  # matplotlib
+            xlim = None,  # test if
+            ylim = None,  # test if
+            #xyequal = True,  # test if
+            #s = None,  # matplotlib
+            #figsize = None,  # if case
+            #ax = None,  # generate matplotlib figure
+        )
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+
+
+class TestPyMcdsGraph(object):
+    ''' tests for pcdl.pyMCDS data set mesh functions. '''
+    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
+
+    def test_mcds_get_get_attached_graph_dict(self, mcds=mcds)
+        pass
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
 
 
 """
