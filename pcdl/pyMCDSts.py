@@ -32,7 +32,11 @@ import sys
 import xml.etree.ElementTree as ET
 
 
-# function
+############
+# function #
+############
+
+## MAKING MOVIES RELATED FUNCTIONS ##
 def _handle_magick():
     """
     output:
@@ -152,7 +156,10 @@ def make_movie(path, interface='jpeg', framerate=12):
     return s_opathfile
 
 
-# classes
+###########
+# classes #
+###########
+
 class pyMCDSts:
     """
     input:
@@ -235,7 +242,8 @@ class pyMCDSts:
         return s_opathfile
 
 
-    ## LOAD DATA
+    ## LOAD DATA ##
+
     def get_xmlfile_list(self):
         """
         input:
@@ -312,7 +320,324 @@ class pyMCDSts:
         return l_mcds
 
 
-    ## TRIAGE DATA
+    ## MICROENVIRONMENT RELATED FUNCTIONS ##
+
+    def get_conc_df(self, values=1, drop=set(), keep=set(), collapse=True):
+        """
+        input:
+            self: pyMCDSts class instance.
+
+            values: integer; default is 1
+                minimal number of values a variable has to have to be outputted.
+                variables that have only 1 state carry no information.
+                None is a state too.
+
+            drop: set of strings; default is an empty set
+                set of column labels to be dropped for the dataframe.
+                don't worry: essential columns like ID, coordinates
+                and time will never be dropped.
+                Attention: when the keep parameter is given, then
+                the drop parameter has to be an empty set!
+
+            keep: set of strings; default is an empty set
+                set of column labels to be kept in the dataframe.
+                set values=1 to be sure that all variables are kept.
+                don't worry: essential columns like ID, coordinates,
+                time and runtime (wall time) will always be kept.
+
+            collapse: boole; default True
+                should all mcds time steps from the time series be collapsed
+                into one pandas datafarme object, or a list of datafarme objects
+                for each time step?
+
+        output:
+            df_conc or ldf_conc: pandas dataframe or list of dataframe
+            dataframe stores all substrate concentrations in each voxel.
+
+        description:
+            function returns for the whole time series in one or many dataframes
+            with concentration values for all chemical species in all voxels.
+            additionally, this dataframe lists voxel and mesh center coordinates.
+        """
+        # set output variables
+        ldf_concts = []
+        df_concts = None
+
+        # load data
+        for i, mcds in enumerate(self.get_mcds_list()):
+            # pack collapsed
+            if collapse:
+                df_conc = mcds.get_conc_df(
+                    values = 1,
+                    drop = drop,
+                    keep = keep,
+                )
+                if df_concts is None:
+                    df_concts = df_conc
+                else:
+                    df_concts = pd.concat([df_concts, df_conc], axis=0, ignore_index=True, join='outer')
+            # pack not collapsed
+            else:
+                df_conc = mcds.get_conc_df(
+                    values = values,
+                    drop = drop,
+                    keep = keep,
+                )
+                ldf_concts.append(df_conc)
+
+        # output
+        if collapse:
+            # filter
+            es_feature = set(df_concts.columns).difference(es_coor_conc)
+            if (len(keep) > 0):
+                es_delete = es_feature.difference(keep)
+            else:
+                es_delete = es_feature.intersection(drop)
+
+            if (values > 1):  # by minimal number of states
+                for s_column in set(df_concts.columns).difference(es_coor_conc):
+                    if len(set(df_concts.loc[:,s_column])) < values:
+                        es_delete.add(s_column)
+            df_concts.drop(es_delete, axis=1, inplace=True)
+            df_concts.index.name = 'index'
+            return df_concts
+
+        else:
+            # output not collapsed
+            return ldf_concts
+
+
+    def get_conc_df_features(self, values=1, drop=set(), keep=set(), allvalues=False):
+        """
+        input:
+            self: pyMCDSts class instance.
+
+            values: integer; default is 1
+                minimal number of values a variable has to have
+                in any of the mcds time steps to be outputted.
+                variables that have only 1 state carry no information.
+                None is a state too.
+
+            drop: set of strings; default is an empty set
+                set of column labels to be dropped for the dataframe.
+                don't worry: essential columns like ID, coordinates
+                and time will never be dropped.
+                Attention: when the keep parameter is given, then
+                the drop parameter has to be an empty set!
+
+            keep: set of strings; default is an empty set
+                set of column labels to be kept in the dataframe.
+                set values=1 to be sure that all variables are kept.
+                don't worry: essential columns like ID, coordinates
+                and time will always be kept.
+
+            allvalues: boolean; default is False
+                should only the min and max values or all values be returned?
+
+        output:
+            dl_variable: dictionary of list
+                dictionary with an entry of all non-coordinate column names
+                that at least in one of the time steps or in between time
+                steps, reach the given minimal state count.
+                key is the column name, mapped is a list of all values
+                (bool, str, and, if allvalues is True, int and float)
+                or a list with minimum and maximum values (int, float).
+
+        description:
+            function to detect informative substrate concentration variables
+            in a time series. this function detects even variables which have
+            less than the minimal state count in each time step, but
+            different values from time step to time step.
+        """
+        # gather data
+        der_variable_state = {}
+        for mcds in self.get_mcds_list():
+            df_conc = mcds.get_concentration_df(drop=drop, keep=keep)
+            for s_column in df_conc.columns:
+                if not (s_column in es_coor_conc):
+                    er_state = set(df_conc.loc[:,s_column])
+                    try:
+                        der_variable_state[s_column] = der_variable_state[s_column].union(er_state)
+                    except KeyError:
+                        der_variable_state.update({s_column: er_state})
+        # extract
+        dlr_variable_range = dict()
+        for s_column, er_state in der_variable_state.items():
+            if len(er_state) >= values:
+                if allvalues:
+                    lr_range = sorted(er_state)
+                else:
+                    lr_range = [min(er_state), max(er_state)]
+                dlr_variable_range.update({s_column : lr_range})
+        # output
+        return dlr_variable_range
+
+
+    def plot_contour(self, focus, z_slice=0, extrema=None, alpha=1, fill=True, cmap='viridis', grid=True, xlim=None, ylim=None, xyequal=True, figsizepx=None, ext='jpeg', figbgcolor=None):
+        """
+        input:
+            self: pyMCDSts class instance
+
+            focus: string
+                column name within conc dataframe.
+
+            z_slice: floating point number; default is 0
+                z-axis position to slice a 2D xy-plain out of the
+                3D substrate concentration mesh. if z_slice position
+                is not an exact mesh center coordinate, then z_slice
+                will be adjusted to the nearest mesh center value,
+                the smaller one, if the coordinate lies on a saddle point.
+
+            extrema: tuple of two floats; default is None
+                default takes min and max from data.
+
+            alpha: floating point number; default is 1
+                alpha channel transparency value
+                between 1 (not transparent at all) and 0 (totally transparent).
+
+            fill: boolean; default True
+                True generates a matplotlib contourf plot.
+                False generates a matplotlib contour plot.
+
+            cmap: string; default viridis.
+                matplotlib colormap.
+                https://matplotlib.org/stable/tutorials/colors/colormaps.html
+
+            grid: boolean; default True.
+                plot axis grid lines.
+
+            xlim: tuple of two floats; default is None
+                x axis min and max value.
+                default takes min and max from mesh x axis range.
+
+            ylim: tuple of two floats; default is None
+                y axis min and max value.
+                default takes min and max from mesh y axis range.
+
+            xyequal: boolean; default True
+                to specify equal axis spacing for x and y axis.
+
+            figsizepx: list of two integers; default is None
+                size of the figure in pixels, (x, y).
+                the given x and y will be rounded to the nearest even number,
+                to be able to generate movies from the images.
+                None tries to take the values from the initial.svg file.
+                fall back setting is [640, 480].
+
+            ext: string; default is jpeg
+                output image format. possible formats are jpeg, png, and tiff.
+
+            figbgcolor: string; default is None which is transparent (png)
+                or white (jpeg, tiff).
+                figure background color.
+
+        output:
+            image files under the returned path.
+
+        description:
+            this function generates a matplotlib contour (or contourf) plot
+            time series.
+
+            jpeg is by definition a lossy compressed image format.
+            png is by definition a lossless compressed image format.
+            tiff can by definition be a lossy or lossless compressed format.
+            https://en.wikipedia.org/wiki/JPEG
+            https://en.wikipedia.org/wiki/Portable_Network_Graphics
+            https://en.wikipedia.org/wiki/TIFF
+        """
+        # handle initial.svg for s and figsizepx
+        if (figsizepx is None):
+            s_pathfile = self.output_path + 'initial.svg'
+            try:
+                tree = ET.parse(s_pathfile)
+                root = tree.getroot()
+                i_width = int(np.ceil(float(root.get('width')))) # px
+                i_height = int(np.ceil(float(root.get('height'))))  # px
+                figsizepx = [i_width, i_height]
+            except FileNotFoundError:
+                print(f'Warning @ pyMCDSts.plot_contour : could not load {s_pathfile}.')
+                figsizepx = [640, 480]
+
+        # handle z_slice
+        z_slice = float(z_slice)
+        _, _, ar_p_axis = self.get_mcds_list()[0].get_mesh_mnp_axis()
+        if not (z_slice in ar_p_axis):
+            z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
+            if self.verbose:
+                print(f'z_slice set to {z_slice}.')
+
+        # handle extrema
+        if extrema == None:
+            extrema = [None, None]
+            for mcds in self.get_mcds_list():
+                df_conc = mcds.get_concentration_df()
+                r_min = df_conc.loc[:,focus].min()
+                r_max = df_conc.loc[:,focus].max()
+                if (extrema[0] is None) or (extrema[0] > r_min):
+                    extrema[0] = np.floor(r_min)
+                if (extrema[1] is None) or (extrema[1] < r_max):
+                    extrema[1] = np.ceil(r_max)
+            if self.verbose:
+                print(f'min max extrema set to {extrema}.')
+
+        # handle xlim and ylim
+        if (xlim is None):
+            xlim = self.get_mcds_list()[0].get_xyz_range()[0]
+            if self.verbose:
+                print(f'xlim set to {xlim}.')
+        if (ylim is None):
+            ylim = self.get_mcds_list()[0].get_xyz_range()[1]
+            if self.verbose:
+                print(f'ylim set to {ylim}.')
+
+        # handle figure size
+        figsizepx[0] = figsizepx[0] - (figsizepx[0] % 2)  # enforce even pixel number
+        figsizepx[1] = figsizepx[1] - (figsizepx[1] % 2)
+        r_px = 1 / plt.rcParams['figure.dpi']  # translate px to inch
+        figsize = [None, None]
+        figsize[0] = figsizepx[0] * r_px
+        figsize[1] = figsizepx[1] * r_px
+        if self.verbose:
+            print(f'px figure size set to {figsizepx}.')
+
+        # handle figure background color
+        if figbgcolor is None:
+            figbgcolor = 'auto'
+
+        # handle output path
+        s_path = f'{self.output_path}conc_{focus}_z{round(z_slice,9)}/'
+
+        # plotting
+        for i, mcds in enumerate(self.get_mcds_list()):
+            fig = mcds.plot_contour(
+                substrate = focus,
+                z_slice = z_slice,
+                vmin = extrema[0],
+                vmax = extrema[1],
+                alpha = alpha,
+                fill = fill,
+                cmap = cmap,
+                title = f'{focus}\n{round(mcds.get_time(),9)}[min]',
+                grid = grid,
+                xlim = xlim,
+                ylim = ylim,
+                xyequal = xyequal,
+                figsize = figsize,
+                ax = None,
+            )
+            os.makedirs(s_path, exist_ok=True)
+            s_file = self.get_xmlfile_list()[i].replace('.xml', f'_{focus}.{ext}')
+            s_pathfile = f'{s_path}{s_file}'
+            plt.tight_layout()
+            fig.savefig(s_pathfile, facecolor=figbgcolor)
+            plt.close(fig)
+
+        # output
+        return s_path
+
+
+    ## CELL RELATED FUNCTIONS ##
+
     def get_cell_df(self, values=1, drop=set(), keep=set(), collapse=True):
         """
         input:
@@ -468,159 +793,6 @@ class pyMCDSts:
         # output
         return dl_variable_range
 
-
-    def get_conc_df(self, values=1, drop=set(), keep=set(), collapse=True):
-        """
-        input:
-            self: pyMCDSts class instance.
-
-            values: integer; default is 1
-                minimal number of values a variable has to have to be outputted.
-                variables that have only 1 state carry no information.
-                None is a state too.
-
-            drop: set of strings; default is an empty set
-                set of column labels to be dropped for the dataframe.
-                don't worry: essential columns like ID, coordinates
-                and time will never be dropped.
-                Attention: when the keep parameter is given, then
-                the drop parameter has to be an empty set!
-
-            keep: set of strings; default is an empty set
-                set of column labels to be kept in the dataframe.
-                set values=1 to be sure that all variables are kept.
-                don't worry: essential columns like ID, coordinates,
-                time and runtime (wall time) will always be kept.
-
-            collapse: boole; default True
-                should all mcds time steps from the time series be collapsed
-                into one pandas datafarme object, or a list of datafarme objects
-                for each time step?
-
-        output:
-            df_conc or ldf_conc: pandas dataframe or list of dataframe
-            dataframe stores all substrate concentrations in each voxel.
-
-        description:
-            function returns for the whole time series in one or many dataframes
-            with concentration values for all chemical species in all voxels.
-            additionally, this dataframe lists voxel and mesh center coordinates.
-        """
-        # set output variables
-        ldf_concts = []
-        df_concts = None
-
-        # load data
-        for i, mcds in enumerate(self.get_mcds_list()):
-            # pack collapsed
-            if collapse:
-                df_conc = mcds.get_conc_df(
-                    values = 1,
-                    drop = drop,
-                    keep = keep,
-                )
-                if df_concts is None:
-                    df_concts = df_conc
-                else:
-                    df_concts = pd.concat([df_concts, df_conc], axis=0, ignore_index=True, join='outer')
-            # pack not collapsed
-            else:
-                df_conc = mcds.get_conc_df(
-                    values = values,
-                    drop = drop,
-                    keep = keep,
-                )
-                ldf_concts.append(df_conc)
-
-        # output
-        if collapse:
-            # filter
-            es_feature = set(df_concts.columns).difference(es_coor_conc)
-            if (len(keep) > 0):
-                es_delete = es_feature.difference(keep)
-            else:
-                es_delete = es_feature.intersection(drop)
-
-            if (values > 1):  # by minimal number of states
-                for s_column in set(df_concts.columns).difference(es_coor_conc):
-                    if len(set(df_concts.loc[:,s_column])) < values:
-                        es_delete.add(s_column)
-            df_concts.drop(es_delete, axis=1, inplace=True)
-            df_concts.index.name = 'index'
-            return df_concts
-
-        else:
-            # output not collapsed
-            return ldf_concts
-
-
-    def get_conc_df_features(self, values=1, drop=set(), keep=set(), allvalues=False):
-        """
-        input:
-            self: pyMCDSts class instance.
-
-            values: integer; default is 1
-                minimal number of values a variable has to have
-                in any of the mcds time steps to be outputted.
-                variables that have only 1 state carry no information.
-                None is a state too.
-
-            drop: set of strings; default is an empty set
-                set of column labels to be dropped for the dataframe.
-                don't worry: essential columns like ID, coordinates
-                and time will never be dropped.
-                Attention: when the keep parameter is given, then
-                the drop parameter has to be an empty set!
-
-            keep: set of strings; default is an empty set
-                set of column labels to be kept in the dataframe.
-                set values=1 to be sure that all variables are kept.
-                don't worry: essential columns like ID, coordinates
-                and time will always be kept.
-
-            allvalues: boolean; default is False
-                should only the min and max values or all values be returned?
-
-        output:
-            dl_variable: dictionary of list
-                dictionary with an entry of all non-coordinate column names
-                that at least in one of the time steps or in between time
-                steps, reach the given minimal state count.
-                key is the column name, mapped is a list of all values
-                (bool, str, and, if allvalues is True, int and float)
-                or a list with minimum and maximum values (int, float).
-
-        description:
-            function to detect informative substrate concentration variables
-            in a time series. this function detects even variables which have
-            less than the minimal state count in each time step, but
-            different values from time step to time step.
-        """
-        # gather data
-        der_variable_state = {}
-        for mcds in self.get_mcds_list():
-            df_conc = mcds.get_concentration_df(drop=drop, keep=keep)
-            for s_column in df_conc.columns:
-                if not (s_column in es_coor_conc):
-                    er_state = set(df_conc.loc[:,s_column])
-                    try:
-                        der_variable_state[s_column] = der_variable_state[s_column].union(er_state)
-                    except KeyError:
-                        der_variable_state.update({s_column: er_state})
-        # extract
-        dlr_variable_range = dict()
-        for s_column, er_state in der_variable_state.items():
-            if len(er_state) >= values:
-                if allvalues:
-                    lr_range = sorted(er_state)
-                else:
-                    lr_range = [min(er_state), max(er_state)]
-                dlr_variable_range.update({s_column : lr_range})
-        # output
-        return dlr_variable_range
-
-
-    ## GENERATE AND TRANSFORM IMAGES
 
     def plot_scatter(self, focus='cell_type', z_slice=0, z_axis=None, alpha=1, cmap='viridis', grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=None, figsizepx=None, ext='jpeg', figbgcolor=None):
         """
@@ -825,168 +997,59 @@ class pyMCDSts:
         return s_path
 
 
-    def plot_contour(self, focus, z_slice=0, extrema=None, alpha=1, fill=True, cmap='viridis', grid=True, xlim=None, ylim=None, xyequal=True, figsizepx=None, ext='jpeg', figbgcolor=None):
+    ## GRAPH RELATED FUNCTIONS ##
+
+    def make_graph_gml(self, graph_type='neighbor', edge_attr=True, node_attr=[]):
         """
         input:
-            self: pyMCDSts class instance
+            self: pyMCDS class instance.
 
-            focus: string
-                column name within conc dataframe.
+            graph_type: string; default is neighbor
+                to specify which physicell output data should be processed.
+                attached: processes mcds.get_attached_graph_dict dictionary.
+                neighbor: processes mcds.get_neighbor_graph_dict dictionary.
 
-            z_slice: floating point number; default is 0
-                z-axis position to slice a 2D xy-plain out of the
-                3D substrate concentration mesh. if z_slice position
-                is not an exact mesh center coordinate, then z_slice
-                will be adjusted to the nearest mesh center value,
-                the smaller one, if the coordinate lies on a saddle point.
+            edge_attr: boolean; default True
+                specifies if the spatial Euclidean distance is used for
+                edge attribute, to generate a weighted graph.
 
-            extrema: tuple of two floats; default is None
-                default takes min and max from data.
-
-            alpha: floating point number; default is 1
-                alpha channel transparency value
-                between 1 (not transparent at all) and 0 (totally transparent).
-
-            fill: boolean; default True
-                True generates a matplotlib contourf plot.
-                False generates a matplotlib contour plot.
-
-            cmap: string; default viridis.
-                matplotlib colormap.
-                https://matplotlib.org/stable/tutorials/colors/colormaps.html
-
-            grid: boolean; default True.
-                plot axis grid lines.
-
-            xlim: tuple of two floats; default is None
-                x axis min and max value.
-                default takes min and max from mesh x axis range.
-
-            ylim: tuple of two floats; default is None
-                y axis min and max value.
-                default takes min and max from mesh y axis range.
-
-            xyequal: boolean; default True
-                to specify equal axis spacing for x and y axis.
-
-            figsizepx: list of two integers; default is None
-                size of the figure in pixels, (x, y).
-                the given x and y will be rounded to the nearest even number,
-                to be able to generate movies from the images.
-                None tries to take the values from the initial.svg file.
-                fall back setting is [640, 480].
-
-            ext: string; default is jpeg
-                output image format. possible formats are jpeg, png, and tiff.
-
-            figbgcolor: string; default is None which is transparent (png)
-                or white (jpeg, tiff).
-                figure background color.
+            node_attr: list of strings; default is empty list
+                list of mcds.get_cell_df dataframe columns, used for
+                node attributes.
 
         output:
-            image files under the returned path.
+            gml file for each time step.
+                path and filenames are printed to the standard output.
 
         description:
-            this function generates a matplotlib contour (or contourf) plot
-            time series.
+            function to generate graph files in the gml graph modelling language
+            standard format.
 
-            jpeg is by definition a lossy compressed image format.
-            png is by definition a lossless compressed image format.
-            tiff can by definition be a lossy or lossless compressed format.
-            https://en.wikipedia.org/wiki/JPEG
-            https://en.wikipedia.org/wiki/Portable_Network_Graphics
-            https://en.wikipedia.org/wiki/TIFF
+            gml was the outcome of an initiative that started at
+            the international symposium on graph drawing 1995 in Passau
+            and ended at Graph Drawing 1996 in Berkeley. the networkx python
+            and igraph C and python libraries for graph analysis are
+            gml compatible and can as such read and write this file format.
+
+            https://en.wikipedia.org/wiki/Graph_Modelling_Language
+            https://networkx.org/
+            https://igraph.org/
         """
-        # handle initial.svg for s and figsizepx
-        if (figsizepx is None):
-            s_pathfile = self.output_path + 'initial.svg'
-            try:
-                tree = ET.parse(s_pathfile)
-                root = tree.getroot()
-                i_width = int(np.ceil(float(root.get('width')))) # px
-                i_height = int(np.ceil(float(root.get('height'))))  # px
-                figsizepx = [i_width, i_height]
-            except FileNotFoundError:
-                print(f'Warning @ pyMCDSts.plot_contour : could not load {s_pathfile}.')
-                figsizepx = [640, 480]
-
-        # handle z_slice
-        z_slice = float(z_slice)
-        _, _, ar_p_axis = self.get_mcds_list()[0].get_mesh_mnp_axis()
-        if not (z_slice in ar_p_axis):
-            z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
-            if self.verbose:
-                print(f'z_slice set to {z_slice}.')
-
-        # handle extrema
-        if extrema == None:
-            extrema = [None, None]
-            for mcds in self.get_mcds_list():
-                df_conc = mcds.get_concentration_df()
-                r_min = df_conc.loc[:,focus].min()
-                r_max = df_conc.loc[:,focus].max()
-                if (extrema[0] is None) or (extrema[0] > r_min):
-                    extrema[0] = np.floor(r_min)
-                if (extrema[1] is None) or (extrema[1] < r_max):
-                    extrema[1] = np.ceil(r_max)
-            if self.verbose:
-                print(f'min max extrema set to {extrema}.')
-
-        # handle xlim and ylim
-        if (xlim is None):
-            xlim = self.get_mcds_list()[0].get_xyz_range()[0]
-            if self.verbose:
-                print(f'xlim set to {xlim}.')
-        if (ylim is None):
-            ylim = self.get_mcds_list()[0].get_xyz_range()[1]
-            if self.verbose:
-                print(f'ylim set to {ylim}.')
-
-        # handle figure size
-        figsizepx[0] = figsizepx[0] - (figsizepx[0] % 2)  # enforce even pixel number
-        figsizepx[1] = figsizepx[1] - (figsizepx[1] % 2)
-        r_px = 1 / plt.rcParams['figure.dpi']  # translate px to inch
-        figsize = [None, None]
-        figsize[0] = figsizepx[0] * r_px
-        figsize[1] = figsizepx[1] * r_px
-        if self.verbose:
-            print(f'px figure size set to {figsizepx}.')
-
-        # handle figure background color
-        if figbgcolor is None:
-            figbgcolor = 'auto'
-
-        # handle output path
-        s_path = f'{self.output_path}conc_{focus}_z{round(z_slice,9)}/'
-
-        # plotting
-        for i, mcds in enumerate(self.get_mcds_list()):
-            fig = mcds.plot_contour(
-                substrate = focus,
-                z_slice = z_slice,
-                vmin = extrema[0],
-                vmax = extrema[1],
-                alpha = alpha,
-                fill = fill,
-                cmap = cmap,
-                title = f'{focus}\n{round(mcds.get_time(),9)}[min]',
-                grid = grid,
-                xlim = xlim,
-                ylim = ylim,
-                xyequal = xyequal,
-                figsize = figsize,
-                ax = None,
+        # processing
+        ls_pathfile = []
+        for mcds in self.get_mcds_list():
+            s_pathfile = mcds.make_graph_gml(
+                graph_type = graph_type,
+                edge_attr = edge_attr,
+                node_attr = node_attr,
             )
-            os.makedirs(s_path, exist_ok=True)
-            s_file = self.get_xmlfile_list()[i].replace('.xml', f'_{focus}.{ext}')
-            s_pathfile = f'{s_path}{s_file}'
-            plt.tight_layout()
-            fig.savefig(s_pathfile, facecolor=figbgcolor)
-            plt.close(fig)
+            ls_pathfile.append(s_pathfile)
 
-        # output
-        return s_path
+        # outout
+        return ls_pathfile
 
+
+    ## TIME SERIES RELATED FUNCTIONS ##
 
     def plot_timeseries(self, focus_cat=None, focus_num=None, aggregate_num=np.nanmean, frame='cell', z_slice=None, logy=False, ylim=None, secondary_y=None, subplots=False, sharex=False, sharey=False, linestyle='-', linewidth=None, cmap=None, color=None, grid=True, legend=True, yunit=None, title=None, ax=None, figsizepx=[640, 480], ext='jpeg', figbgcolor=None):
         """
@@ -1268,54 +1331,3 @@ class pyMCDSts:
             plt.close(fig)
             return s_pathfile
 
-
-    # GENERATE GML GRAPH FILES ###
-
-    def make_graph_gml(self, graph_type='neighbor', edge_attr=True, node_attr=[]):
-        """
-        input:
-            self: pyMCDS class instance.
-
-            graph_type: string; default is neighbor
-                to specify which physicell output data should be processed.
-                attached: processes mcds.get_attached_graph_dict dictionary.
-                neighbor: processes mcds.get_neighbor_graph_dict dictionary.
-
-            edge_attr: boolean; default True
-                specifies if the spatial Euclidean distance is used for
-                edge attribute, to generate a weighted graph.
-
-            node_attr: list of strings; default is empty list
-                list of mcds.get_cell_df dataframe columns, used for
-                node attributes.
-
-        output:
-            gml file for each time step.
-                path and filenames are printed to the standard output.
-
-        description:
-            function to generate graph files in the gml graph modelling language
-            standard format.
-
-            gml was the outcome of an initiative that started at
-            the international symposium on graph drawing 1995 in Passau
-            and ended at Graph Drawing 1996 in Berkeley. the networkx python
-            and igraph C and python libraries for graph analysis are
-            gml compatible and can as such read and write this file format.
-
-            https://en.wikipedia.org/wiki/Graph_Modelling_Language
-            https://networkx.org/
-            https://igraph.org/
-        """
-        # processing
-        ls_pathfile = []
-        for mcds in self.get_mcds_list():
-            s_pathfile = mcds.make_graph_gml(
-                graph_type = graph_type,
-                edge_attr = edge_attr,
-                node_attr = node_attr,
-            )
-            ls_pathfile.append(s_pathfile)
-
-        # outout
-        return ls_pathfile

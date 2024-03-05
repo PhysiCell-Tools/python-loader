@@ -37,7 +37,8 @@ if not os.path.exists(s_path_2d):
     pcdl.install_data()
 
 
-## data load related functions ##
+## data loading related functions ##
+
 class TestPyMcdsInit(object):
     ''' tests for loading a pcdl.pyMCDS data set. '''
     mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
@@ -182,6 +183,7 @@ class TestPyMcdsInitVerboseFalse(object):
 
 
 ## metadata related functions ##
+
 class TestPyMcdsMetadata(object):
     ''' tests for pcdl.pyMCDS metadata related functions. '''
     mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
@@ -218,6 +220,7 @@ class TestPyMcdsMetadata(object):
 
 
 ## mesh related functions ##
+
 class TestPyMcdsMesh(object):
     ''' tests for pcdl.pyMCDS mesh related functions. '''
     mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
@@ -352,6 +355,7 @@ class TestPyMcdsMesh(object):
 
 
 ## micro environment related functions ##
+
 class TestPyMcdsMicroenv(object):
     ''' tests for pcdl.pyMCDS micro environment related functions. '''
     mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
@@ -493,6 +497,7 @@ class TestPyMcdsMicroenv(object):
 
 
 ## cell related functions ##
+
 class TestPyMcdsCell(object):
     ''' tests for pcdl.pyMCDS cell related functions. '''
     mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
@@ -651,6 +656,7 @@ class TestPyMcdsCell(object):
 
 
 ## graph related functions ##
+
 class TestPyMcdsGraph(object):
     ''' tests for pcdl.pyMCDS graph related functions. '''
     mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
@@ -775,6 +781,7 @@ class TestPyMcdsGraph(object):
 
 
 ## unit related functions ##
+
 class TestPyMcdsUnit(object):
     ''' tests for pcdl.pyMCDS unit related functions. '''
     mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)

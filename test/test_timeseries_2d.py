@@ -35,20 +35,16 @@ s_path_2d = str(pathlib.Path(pcdl.__file__).parent.resolve()/'data_timeseries_2d
 if not os.path.exists(s_path_2d):
     pcdl.install_data()
 
+#    mcdsts = pcdl.pyMCDSts(s_path_2d, verbose=False)
 
 # load physicell data time series
 class TestPyMcdsTs(object):
     ''' test for pcdl.pyMCDSts data loader. '''
 
-    mcdsts = pcdl.pyMCDSts(s_path_2d, verbose=False)
 
-    def test_mcdsts_set_verbose_true(self, mcdsts=mcdsts):
-        mcdsts.set_verbose_true()
-        assert mcdsts.verbose
-
-    def test_mcdsts_set_verbose_false(self, mcdsts=mcdsts):
-        mcdsts.set_verbose_false()
-        assert not mcdsts.verbose
+## making movies related functions ##
+class TestPyMcdsTsMovies(object):
+    ''' tests for loading a pcdl.pyMCDS data set. '''
 
     ## make_gif and magick ommand ##
     def test_mcdsts_make_gif(self, mcdsts=mcdsts):
@@ -72,6 +68,20 @@ class TestPyMcdsTs(object):
         assert os.path.exists(s_opathfile) and \
             (s_opathfile == s_path+'cell_cell_type_z0.0_jpeg12.mp4')
         shutil.rmtree(s_path)
+
+
+## data loading related functions ##
+
+class TestPyMcdsTsInit(object):
+    ''' tests for loading a pcdl.pyMCDS data set. '''
+
+    def test_mcdsts_set_verbose_true(self, mcdsts=mcdsts):
+        mcdsts.set_verbose_true()
+        assert mcdsts.verbose
+
+    def test_mcdsts_set_verbose_false(self, mcdsts=mcdsts):
+        mcdsts.set_verbose_false()
+        assert not mcdsts.verbose
 
     ## get_xmlfile and read_mcds command and get_mcds_list ##
     def test_mcdsts_get_xmlfile_list(self, mcdsts=mcdsts):
@@ -98,26 +108,12 @@ class TestPyMcdsTs(object):
                len(mcdsts.l_mcds) == 3 and \
                mcdsts.l_mcds[2].get_time() == 1440
 
-    ## data triage command ##
-    def test_mcdsts_get_cell_df(self, mcdsts=mcdsts):
-        ldf_cell = mcdsts.get_cell_df(values=2, drop=set(), keep=set(), collapse=False)
-        assert len(ldf_cell) == 25 and \
-               ldf_cell[0].shape == (889, 19) and \
-               ldf_cell[-1].shape == (1099, 40)
 
-    def test_mcdsts_get_cell_df_collapse(self, mcdsts=mcdsts):
-        df_cell = mcdsts.get_cell_df(values=2, drop=set(), keep=set(), collapse=True)
-        assert df_cell.shape == (24758, 41)
+## micro environment related functions ##
 
-    def test_mcdsts_get_cell_df_features(self, mcdsts=mcdsts):
-        dl_cell = mcdsts.get_cell_df_features(values=2, drop=set(), keep=set(), allvalues=False)
-        assert len(dl_cell.keys()) == 28 and \
-               len(dl_cell['oxygen']) == 2
-
-    def test_mcdsts_get_cell_df_features_allvalues(self, mcdsts=mcdsts):
-        dl_cell = mcdsts.get_cell_df_features(values=2, drop=set(), keep=set(), allvalues=True)
-        assert len(dl_cell.keys()) == 28 and \
-               len(dl_cell['oxygen']) > 2
+class TestPyMcdsTsMicroenv(object):
+    ''' tests for pcdl.pyMCDS micro environment related functions. '''
+    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
     def test_mcdsts_get_conc_df(self, mcdsts=mcdsts):
         ldf_conc = mcdsts.get_conc_df(values=2, drop=set(), keep=set(), collapse=False)
@@ -138,6 +134,54 @@ class TestPyMcdsTs(object):
         dl_conc = mcdsts.get_conc_df_features(values=2, drop=set(), keep=set(), allvalues=True)
         assert len(dl_conc.keys()) == 1 and \
                len(dl_conc['oxygen']) > 2
+
+    ## plot_contour command ##
+    def test_mcdsts_plot_contour(self, mcdsts=mcdsts):
+        s_path = mcdsts.plot_contour(
+            focus = 'oxygen',
+            z_slice = -3.333,  # test if
+            extrema = None,  # test if
+            #alpha = 1,  # matplotlib
+            #fill = True,  # mcds.plot_contour
+            #cmap = 'viridis',  # matplotlib
+            #grid = True,  # matplotlib
+            xlim = None,  # test if
+            ylim = None,  # test if
+            xyequal = True,  # test if
+            figsizepx = [641, 481],  # test non even pixel number
+            ext = 'jpeg',
+            figbgcolor = None,  # test if
+        )
+        assert os.path.exists(s_path + 'output00000000_oxygen.jpeg') and \
+               os.path.exists(s_path + 'output00000024_oxygen.jpeg')
+        shutil.rmtree(s_path)
+
+
+## cell related functions ##
+
+class TestPyMcdsCell(object):
+    ''' tests for pcdl.pyMCDS cell related functions. '''
+    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
+
+    def test_mcdsts_get_cell_df(self, mcdsts=mcdsts):
+        ldf_cell = mcdsts.get_cell_df(values=2, drop=set(), keep=set(), collapse=False)
+        assert len(ldf_cell) == 25 and \
+               ldf_cell[0].shape == (889, 19) and \
+               ldf_cell[-1].shape == (1099, 40)
+
+    def test_mcdsts_get_cell_df_collapse(self, mcdsts=mcdsts):
+        df_cell = mcdsts.get_cell_df(values=2, drop=set(), keep=set(), collapse=True)
+        assert df_cell.shape == (24758, 41)
+
+    def test_mcdsts_get_cell_df_features(self, mcdsts=mcdsts):
+        dl_cell = mcdsts.get_cell_df_features(values=2, drop=set(), keep=set(), allvalues=False)
+        assert len(dl_cell.keys()) == 28 and \
+               len(dl_cell['oxygen']) == 2
+
+    def test_mcdsts_get_cell_df_features_allvalues(self, mcdsts=mcdsts):
+        dl_cell = mcdsts.get_cell_df_features(values=2, drop=set(), keep=set(), allvalues=True)
+        assert len(dl_cell.keys()) == 28 and \
+               len(dl_cell['oxygen']) > 2
 
     ## plot_scatter command ##
     def test_mcdsts_plot_scatter_cat(self, mcdsts=mcdsts):
@@ -203,26 +247,44 @@ class TestPyMcdsTs(object):
                os.path.exists(s_path + 'output00000024_pressure.jpeg')
         shutil.rmtree(s_path)
 
-    ## plot_contour command ##
-    def test_mcdsts_plot_contour(self, mcdsts=mcdsts):
-        s_path = mcdsts.plot_contour(
-            focus = 'oxygen',
-            z_slice = -3.333,  # test if
-            extrema = None,  # test if
-            #alpha = 1,  # matplotlib
-            #fill = True,  # mcds.plot_contour
-            #cmap = 'viridis',  # matplotlib
-            #grid = True,  # matplotlib
-            xlim = None,  # test if
-            ylim = None,  # test if
-            xyequal = True,  # test if
-            figsizepx = [641, 481],  # test non even pixel number
-            ext = 'jpeg',
-            figbgcolor = None,  # test if
-        )
-        assert os.path.exists(s_path + 'output00000000_oxygen.jpeg') and \
-               os.path.exists(s_path + 'output00000024_oxygen.jpeg')
-        shutil.rmtree(s_path)
+
+## graph related functions ##
+
+class TestPyMcdsGraph(object):
+    ''' tests for pcdl.pyMCDS graph related functions. '''
+    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
+
+    ## graph related functions ##
+    def test_mcdsts_get_graph_gml_attached_defaultattr(self, mcdsts=mcdsts):
+        ls_pathfile = mcdsts.make_graph_gml(graph_type='attached', edge_attr=True, node_attr=['cell_type'])
+        s_pathfile = mcdsts.output_path + 'output00000012_attached.gml'
+        assert (len(ls_pathfile) == 25) and \
+               (os.path.exists(s_pathfile))
+        for s_pathfile in ls_pathfile:
+            os.remove(s_pathfile)
+
+    def test_mcdsts_get_graph_gml_neighbor_noneattr(self, mcdsts=mcdsts):
+        ls_pathfile = mcdsts.make_graph_gml(graph_type='neighbor', edge_attr=False, node_attr=[])
+        s_pathfile = mcdsts.output_path + 'output00000012_neighbor.gml'
+        assert (len(ls_pathfile) == 25) and \
+               (os.path.exists(s_pathfile))
+        for s_pathfile in ls_pathfile:
+            os.remove(s_pathfile)
+
+    def test_mcdsts_get_graph_gml_neighbor_allattr(self, mcdsts=mcdsts):
+        ls_pathfile = mcdsts.make_graph_gml(graph_type='neighbor', edge_attr=True, node_attr=['cell_type','dead','cell_count_voxel','cell_density_micron3'])
+        s_pathfile = mcdsts.output_path + 'output00000012_neighbor.gml'
+        assert (len(ls_pathfile) == 25) and \
+               (os.path.exists(s_pathfile))
+        for s_pathfile in ls_pathfile:
+            os.remove(s_pathfile)
+
+
+## Timeseries related functions ##
+
+class TestPyMcdsGraph(object):
+    ''' tests for pcdl.pyMCDS graph related functions. '''
+    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
     ## plot_timeseries command ##
     def test_mcdsts_plot_timeseries_none_none_none_cell_ax_jpeg(self, mcdsts=mcdsts):
@@ -396,6 +458,7 @@ class TestPyMcdsTs(object):
             figbgcolor = None  # test if
         )
         assert(str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+
     def test_mcdsts_plot_timeseries_none_num_yunit_conc(self, mcdsts=mcdsts):
         fig = mcdsts.plot_timeseries(
             focus_cat = None,  # test if {None/total, 'voxel_i'}
@@ -452,27 +515,3 @@ class TestPyMcdsTs(object):
         )
         assert(str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
 
-    ## graph related functions ##
-    def test_mcdsts_get_graph_gml_attached_defaultattr(self, mcdsts=mcdsts):
-        ls_pathfile = mcdsts.make_graph_gml(graph_type='attached', edge_attr=True, node_attr=['cell_type'])
-        s_pathfile = mcdsts.output_path + 'output00000012_attached.gml'
-        assert (len(ls_pathfile) == 25) and \
-               (os.path.exists(s_pathfile))
-        for s_pathfile in ls_pathfile:
-            os.remove(s_pathfile)
-
-    def test_mcdsts_get_graph_gml_neighbor_noneattr(self, mcdsts=mcdsts):
-        ls_pathfile = mcdsts.make_graph_gml(graph_type='neighbor', edge_attr=False, node_attr=[])
-        s_pathfile = mcdsts.output_path + 'output00000012_neighbor.gml'
-        assert (len(ls_pathfile) == 25) and \
-               (os.path.exists(s_pathfile))
-        for s_pathfile in ls_pathfile:
-            os.remove(s_pathfile)
-
-    def test_mcdsts_get_graph_gml_neighbor_allattr(self, mcdsts=mcdsts):
-        ls_pathfile = mcdsts.make_graph_gml(graph_type='neighbor', edge_attr=True, node_attr=['cell_type','dead','cell_count_voxel','cell_density_micron3'])
-        s_pathfile = mcdsts.output_path + 'output00000012_neighbor.gml'
-        assert (len(ls_pathfile) == 25) and \
-               (os.path.exists(s_pathfile))
-        for s_pathfile in ls_pathfile:
-            os.remove(s_pathfile)
