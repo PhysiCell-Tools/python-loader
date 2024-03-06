@@ -558,6 +558,16 @@ class pyMCDSts:
                 print(f'Warning @ pyMCDSts.plot_contour : could not load {s_pathfile}.')
                 figsizepx = [640, 480]
 
+        # handle figure size
+        figsizepx[0] = figsizepx[0] - (figsizepx[0] % 2)  # enforce even pixel number
+        figsizepx[1] = figsizepx[1] - (figsizepx[1] % 2)
+        r_px = 1 / plt.rcParams['figure.dpi']  # translate px to inch
+        figsize = [None, None]
+        figsize[0] = figsizepx[0] * r_px
+        figsize[1] = figsizepx[1] * r_px
+        if self.verbose:
+            print(f'px figure size set to {figsizepx}.')
+
         # handle z_slice
         z_slice = float(z_slice)
         _, _, ar_p_axis = self.get_mcds_list()[0].get_mesh_mnp_axis()
@@ -589,16 +599,6 @@ class pyMCDSts:
             ylim = self.get_mcds_list()[0].get_xyz_range()[1]
             if self.verbose:
                 print(f'ylim set to {ylim}.')
-
-        # handle figure size
-        figsizepx[0] = figsizepx[0] - (figsizepx[0] % 2)  # enforce even pixel number
-        figsizepx[1] = figsizepx[1] - (figsizepx[1] % 2)
-        r_px = 1 / plt.rcParams['figure.dpi']  # translate px to inch
-        figsize = [None, None]
-        figsize[0] = figsizepx[0] * r_px
-        figsize[1] = figsizepx[1] * r_px
-        if self.verbose:
-            print(f'px figure size set to {figsizepx}.')
 
         # handle figure background color
         if figbgcolor is None:
@@ -904,6 +904,16 @@ class pyMCDSts:
                 if figsizepx is None:
                     figsizepx = [640, 480]
 
+        # handle figure size
+        figsizepx[0] = figsizepx[0] - (figsizepx[0] % 2)  # enforce even pixel number
+        figsizepx[1] = figsizepx[1] - (figsizepx[1] % 2)
+        r_px = 1 / plt.rcParams['figure.dpi']  # translate px to inch
+        figsize = [None, None]
+        figsize[0] = figsizepx[0] * r_px
+        figsize[1] = figsizepx[1] * r_px
+        if self.verbose:
+            print(f'px figure size set to {figsizepx}.')
+
         # handle z_slice
         z_slice = float(z_slice)
         _, _, ar_p_axis = self.get_mcds_list()[0].get_mesh_mnp_axis()
@@ -949,16 +959,6 @@ class pyMCDSts:
             ylim = self.get_mcds_list()[0].get_xyz_range()[1]
             if self.verbose:
                 print(f'ylim set to: {ylim}.')
-
-        # handle figure size
-        figsizepx[0] = figsizepx[0] - (figsizepx[0] % 2)  # enforce even pixel number
-        figsizepx[1] = figsizepx[1] - (figsizepx[1] % 2)
-        r_px = 1 / plt.rcParams['figure.dpi']  # translate px to inch
-        figsize = [None, None]
-        figsize[0] = figsizepx[0] * r_px
-        figsize[1] = figsizepx[1] * r_px
-        if self.verbose:
-            print(f'px figure size set to {figsizepx}.')
 
         # handle figure background color
         if figbgcolor is None:
@@ -1182,17 +1182,6 @@ class pyMCDSts:
                 if self.verbose:
                     print(f'z_slice set to {z_slice}.')
 
-        # handle figure size
-        # bue 20231103: not really needed, as timeseries are not used for mp4 movies, but why not.
-        figsizepx[0] = figsizepx[0] - (figsizepx[0] % 2)  # enforce even pixel number
-        figsizepx[1] = figsizepx[1] - (figsizepx[1] % 2)
-        r_px = 1 / plt.rcParams['figure.dpi']  # translate px to inch
-        figsize = [None, None]
-        figsize[0] = figsizepx[0] * r_px
-        figsize[1] = figsizepx[1] * r_px
-        if self.verbose:
-            print(f'px figure size set to {figsizepx}.')
-
         # generate series dataframe
         df_series = None
         for mcds in self.get_mcds_list():
@@ -1272,6 +1261,15 @@ class pyMCDSts:
 
         # generate series line plot
         if (ax is None):
+            # handle figure size
+            figsizepx[0] = figsizepx[0] - (figsizepx[0] % 2)  # enforce even pixel number
+            figsizepx[1] = figsizepx[1] - (figsizepx[1] % 2)
+            r_px = 1 / plt.rcParams['figure.dpi']  # translate px to inch
+            figsize = [None, None]
+            figsize[0] = figsizepx[0] * r_px
+            figsize[1] = figsizepx[1] * r_px
+            if self.verbose:
+                print(f'inch figure size set to {figsize}.')
             fig, ax = plt.subplots(figsize=figsize)
         else:
             fig = plt.gcf()
