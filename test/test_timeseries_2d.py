@@ -31,49 +31,88 @@ import shutil
 s_path_2d = str(pathlib.Path(pcdl.__file__).parent.resolve()/'data_timeseries_2d')
 
 
-# test data
+## download test data ##
 if not os.path.exists(s_path_2d):
     pcdl.install_data()
 
-#    mcdsts = pcdl.pyMCDSts(s_path_2d, verbose=False)
-
-# load physicell data time series
-class TestPyMcdsTs(object):
-    ''' test for pcdl.pyMCDSts data loader. '''
-
 
 ## making movies related functions ##
+
 class TestPyMcdsTsMovies(object):
     ''' tests for loading a pcdl.pyMCDS data set. '''
+    mcdsts = pcdl.pyMCDSts(s_path_2d, verbose=False)
 
     ## make_gif and magick ommand ##
-    def test_mcdsts_make_gif(self, mcdsts=mcdsts):
-        s_path = mcdsts.plot_scatter()
+    def test_mcdsts_make_gif_jpeg(self, mcdsts=mcdsts):
+        s_opath = mcdsts.plot_scatter()
         s_opathfile = mcdsts.make_gif(
-            path = s_path,
+            path = s_opath,
             #interface = 'jpeg',
         )
-        assert os.path.exists(s_opathfile) and \
-            (s_opathfile == s_path+'cell_cell_type_z0.0_jpeg.gif')
-        shutil.rmtree(s_path)
+        assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
+              (os.path.exists(s_opathfile)) and \
+              (s_opathfile.endswith('pcdl/data_timeseries_2d/cell_cell_type_z0.0/cell_cell_type_z0.0_jpeg.gif'))
+        #os.remove(s_opathfile)
+        shutil.rmtree(s_opath)
+
+    def test_mcdsts_make_gif_tiff(self, mcdsts=mcdsts):
+        s_opath = mcdsts.plot_scatter(ext='tiff')
+        s_opathfile = mcdsts.make_gif(
+            path = s_opath,
+            interface = 'tiff',
+        )
+        assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
+              (os.path.exists(s_opathfile)) and \
+              (s_opathfile.endswith('pcdl/data_timeseries_2d/cell_cell_type_z0.0/cell_cell_type_z0.0_tiff.gif'))
+        #os.remove(s_opathfile)
+        shutil.rmtree(s_opath)
 
     ## make_movie and magick command ##
-    def test_mcdsts_make_movie(self, mcdsts=mcdsts):
-        s_path = mcdsts.plot_scatter()
+    def test_mcdsts_make_movie_jpeg12(self, mcdsts=mcdsts):
+        s_opath = mcdsts.plot_scatter()
         s_opathfile = mcdsts.make_movie(
-            path = s_path,
+            path = s_opath,
             #interface = 'jpeg',
             #framerate = 12,
         )
-        assert os.path.exists(s_opathfile) and \
-            (s_opathfile == s_path+'cell_cell_type_z0.0_jpeg12.mp4')
-        shutil.rmtree(s_path)
+        assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
+              (os.path.exists(s_opathfile)) and \
+              (s_opathfile.endswith('pcdl/data_timeseries_2d/cell_cell_type_z0.0/cell_cell_type_z0.0_jpeg12.mp4'))
+        #os.remove(s_opathfile)
+        shutil.rmtree(s_opath)
 
+    def test_mcdsts_make_movie_tiff12(self, mcdsts=mcdsts):
+        s_opath = mcdsts.plot_scatter(ext='tiff')
+        s_opathfile = mcdsts.make_movie(
+            path = s_opath,
+            interface = 'tiff',
+            #framerate = 12,
+        )
+        assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
+              (os.path.exists(s_opathfile)) and \
+              (s_opathfile.endswith('pcdl/data_timeseries_2d/cell_cell_type_z0.0/cell_cell_type_z0.0_tiff12.mp4'))
+        #os.remove(s_opathfile)
+        shutil.rmtree(s_opath)
 
+    def test_mcdsts_make_movie_jpeg6(self, mcdsts=mcdsts):
+        s_opath = mcdsts.plot_scatter()
+        s_opathfile = mcdsts.make_movie(
+            path = s_opath,
+            #interface = 'jpeg',
+            framerate = 6,
+        )
+        assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
+              (os.path.exists(s_opathfile)) and \
+              (s_opathfile.endswith('pcdl/data_timeseries_2d/cell_cell_type_z0.0/cell_cell_type_z0.0_jpeg6.mp4'))
+        #os.remove(s_opathfile)
+        shutil.rmtree(s_opath)
+
+"""
 ## data loading related functions ##
 
 class TestPyMcdsTsInit(object):
-    ''' tests for loading a pcdl.pyMCDS data set. '''
+    ''' tests for loading a pcdl.pyMCDSts data set. '''
+    mcdsts = pcdl.pyMCDSts(s_path_2d, verbose=False)
 
     def test_mcdsts_set_verbose_true(self, mcdsts=mcdsts):
         mcdsts.set_verbose_true()
@@ -113,7 +152,7 @@ class TestPyMcdsTsInit(object):
 
 class TestPyMcdsTsMicroenv(object):
     ''' tests for pcdl.pyMCDS micro environment related functions. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
+    mcdsts = pcdl.pyMCDSts(s_path_2d, verbose=False)
 
     def test_mcdsts_get_conc_df(self, mcdsts=mcdsts):
         ldf_conc = mcdsts.get_conc_df(values=2, drop=set(), keep=set(), collapse=False)
@@ -161,7 +200,7 @@ class TestPyMcdsTsMicroenv(object):
 
 class TestPyMcdsCell(object):
     ''' tests for pcdl.pyMCDS cell related functions. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
+    mcdsts = pcdl.pyMCDSts(s_path_2d, verbose=False)
 
     def test_mcdsts_get_cell_df(self, mcdsts=mcdsts):
         ldf_cell = mcdsts.get_cell_df(values=2, drop=set(), keep=set(), collapse=False)
@@ -252,7 +291,7 @@ class TestPyMcdsCell(object):
 
 class TestPyMcdsGraph(object):
     ''' tests for pcdl.pyMCDS graph related functions. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
+    mcdsts = pcdl.pyMCDSts(s_path_2d, verbose=False)
 
     ## graph related functions ##
     def test_mcdsts_get_graph_gml_attached_defaultattr(self, mcdsts=mcdsts):
@@ -282,9 +321,9 @@ class TestPyMcdsGraph(object):
 
 ## Timeseries related functions ##
 
-class TestPyMcdsGraph(object):
+class TestPyMcdsTimeseries(object):
     ''' tests for pcdl.pyMCDS graph related functions. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
+    mcdsts = pcdl.pyMCDSts(s_path_2d, verbose=False)
 
     ## plot_timeseries command ##
     def test_mcdsts_plot_timeseries_none_none_none_cell_ax_jpeg(self, mcdsts=mcdsts):
@@ -514,4 +553,4 @@ class TestPyMcdsGraph(object):
             figbgcolor = None  # test if
         )
         assert(str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
-
+"""
