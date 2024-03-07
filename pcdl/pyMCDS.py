@@ -268,7 +268,7 @@ class pyMCDS:
 
         output:
             s_version : sting
-            MultiCellDS xml version which stored the data.
+                MultiCellDS xml version which stored the data.
 
         description:
             function returns as a string the MultiCellDS xml version
@@ -283,7 +283,7 @@ class pyMCDS:
 
         output:
             s_version : sting
-            PhysiCell version which generated the data.
+                PhysiCell version which generated the data.
 
         description:
             function returns as a string the PhysiCell version
@@ -298,7 +298,7 @@ class pyMCDS:
 
         output:
             s_timestap : sting
-            timestamp from when this data was generated.
+                timestamp from when this data was generated.
 
         description:
             function returns as a string the timestamp from when
@@ -313,7 +313,7 @@ class pyMCDS:
 
         output:
             r_time : floating point number
-            simulation time in [min].
+                simulation time in [min].
 
         description:
             function returns as a real number
@@ -328,7 +328,7 @@ class pyMCDS:
 
         output:
             r_time : floating point number
-            wall time in [sec].
+                wall time in [sec].
 
         description:
             function returns as a real number, the wall time in seconds
@@ -345,7 +345,7 @@ class pyMCDS:
 
         output:
             lti_i : list of tuple of 2 integer numbers
-            i-axis, j-aixs, and k-axis voxel range.
+                i-axis, j-aixs, and k-axis voxel range.
 
         decritpion:
             function returns in a list of tuples the lowest and highest
@@ -360,7 +360,7 @@ class pyMCDS:
 
         output:
             ltr_mnp : list of tuple of 2 floating point numbers
-            m-axis, n-axis, and p-axis  mesh center range.
+                m-axis, n-axis, and p-axis  mesh center range.
 
         decritpion:
             function returns in a list of tuples the lowest and highest
@@ -375,7 +375,7 @@ class pyMCDS:
 
         output:
             ltr_xyz : list of tuple of 2 floating point numbers
-            x-axis, y-axis, and z-axis position range.
+                x-axis, y-axis, and z-axis position range.
 
         decritpion:
             function returns in a list of tuples the lowest and highest
@@ -390,7 +390,7 @@ class pyMCDS:
 
         output:
             lai_ijk : list of 3 numpy arrays of integer numbers
-            i-axis, j-axis, and k-axis voxel coordinates axis.
+                i-axis, j-axis, and k-axis voxel coordinates axis.
 
         description:
             function returns a list of voxel coordinate vectors,
@@ -405,7 +405,7 @@ class pyMCDS:
 
         output:
             lar_mnp : list of 3 numpy arrays of floating point numbers
-            m-axis, n-axis, and p-axis mesh center axis coordinates.
+                m-axis, n-axis, and p-axis mesh center axis coordinates.
 
         description:
             function returns a list of mesh center vectors,
@@ -479,8 +479,8 @@ class pyMCDS:
 
         output:
             r_volume: floating point number
-            voxel volume value related to the spacial unit
-            defined in the PhysiCell_settings.xml file.
+                voxel volume value related to the spacial unit
+                defined in the PhysiCell_settings.xml file.
 
         description:
             function returns the volume value for a single voxel, related
@@ -553,7 +553,7 @@ class pyMCDS:
 
         output:
             b_isinmesh: boolean
-            declares if the given coordinate is inside the mesh.
+                declares if the given coordinate is inside the mesh.
 
         description:
             function evaluates, if the given position coordinate
@@ -634,7 +634,7 @@ class pyMCDS:
 
         output:
             ls_substrate: list of stings
-            alphabetically ordered list of all tracked substrates.
+                alphabetically ordered list of all tracked substrates.
 
         description:
             function returns all chemical species names,
@@ -650,7 +650,7 @@ class pyMCDS:
 
         output:
             ds_substrate: dictionary of stings
-            dictionary that maps substrate IDs to labels.
+                dictionary that maps substrate IDs to labels.
 
         description:
             function returns a dictionary that maps ID and name from all
@@ -666,8 +666,8 @@ class pyMCDS:
 
         output:
             df_substrae: pandas dataframe
-            one substrate per row and decay_rate and difusion_coefficient
-            factors as columns.
+                one substrate per row and decay_rate and difusion_coefficient
+                factors as columns.
 
         description:
             function returns a dataframe with each substrate's
@@ -753,8 +753,8 @@ class pyMCDS:
 
         output:
             ar_concs: numpy array of floating point numbers
-            array of substrate concentrations in the order
-            given by get_substrate_names().
+                array of substrate concentrations in the order
+                given by get_substrate_names().
 
         description:
             function return concentrations of each chemical species
@@ -1053,8 +1053,7 @@ class pyMCDS:
 
         output:
             ls_variables: list of strings
-            alphabetically ordered list of all tracked cell variable names.
-
+                alphabetically ordered list of all tracked cell variable names.
 
         description:
             function returns all modeled cell variable names.
@@ -1069,7 +1068,7 @@ class pyMCDS:
 
         output:
             ds_celltype: dictionary of stings
-            dictionary that maps cell_type IDs to labels.
+                dictionary that maps cell_type IDs to labels.
 
         description:
             function returns a dictionary that maps ID and name from all
@@ -1101,11 +1100,11 @@ class pyMCDS:
 
         output:
             df_cell: pandas dataframe
-            dataframe lists, one cell per row, all tracked variables
-            values related to this cell. the variables are cell_position,
-            mesh_center, and voxel coordinates, all cell_variables,
-            all substrate rates and concentrations, and additional
-            the surrounding cell density.
+                dataframe lists, one cell per row, all tracked variables
+                values related to this cell. the variables are cell_position,
+                mesh_center, and voxel coordinates, all cell_variables,
+                all substrate rates and concentrations, and additional
+                the surrounding cell density.
 
         description:
             function returns a dataframe with a cell centric view
@@ -1271,7 +1270,7 @@ class pyMCDS:
 
         output:
             df_voxel: pandas dataframe
-            x, y, z voxel filtered cell dataframe.
+                x, y, z voxel filtered cell dataframe.
 
         description:
             function returns the cell dataframe for the voxel
@@ -1507,7 +1506,7 @@ class pyMCDS:
 
         output:
             dei_graph: dictionary of sets of integers
-            maps each cell ID to the attached connected cell IDs.
+                maps each cell ID to the attached connected cell IDs.
 
         description:
             function returns the attached cell graph as a dictionary object.
@@ -1521,7 +1520,7 @@ class pyMCDS:
 
         output:
             dei_graph: dictionary of sets of integers
-            maps each cell ID to the connected neighbor cell IDs.
+                maps each cell ID to the connected neighbor cell IDs.
 
         description:
             function returns the cell neighbor graph as a dictionary object.
@@ -1628,8 +1627,8 @@ class pyMCDS:
 
         output:
             se_unit: pandas series
-            series lists all tracked variables from metadata,
-            cell, and microenvironment and maps them to their unit.
+                series lists all tracked variables from metadata,
+                cell, and microenvironment and maps them to their unit.
 
         description:
             function returns a series that lists all tracked variables
@@ -2068,4 +2067,3 @@ class pyMCDS:
         if self.verbose:
             print('done!')
         return d_mcds
-

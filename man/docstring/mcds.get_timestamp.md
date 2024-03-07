@@ -9,7 +9,7 @@
 ## output:
 ```
             s_timestap : sting
-            timestamp from when this data was generated.
+                timestamp from when this data was generated.
 
 ```
 

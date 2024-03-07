@@ -9,7 +9,7 @@
 ## output:
 ```
             r_time : floating point number
-            wall time in [sec].
+                wall time in [sec].
 
 ```
 
