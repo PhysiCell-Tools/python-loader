@@ -22,7 +22,7 @@ mcds = pcdl.TimeStep('path/to/outputnnnnnnnn.xml')
 mcdsts = pcdl.TimeStep('path/to/output')
 ```
 
-The links from the most important functions for data analysis are highlited as **#! workhorse functions**. \
+The links from the most important data analysis functions are highlited as **#! workhorse functions**. \
 Familiarize yourself well with their parameters!
 
 
