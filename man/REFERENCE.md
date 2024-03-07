@@ -13,8 +13,7 @@ For the command line interface functions you can access help by clickin on the c
 or straight from the command line with `command --help` or `command -h` [help](https://en.wikipedia.org/wiki/Help!) parameter.
 
 
-# Load the PhysiCell data loader module
-
+Within python3, you can load the PhysiCell data loader module like this:
 ```python3
 import pcdl
 
