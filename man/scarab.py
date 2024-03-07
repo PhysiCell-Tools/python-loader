@@ -12,8 +12,8 @@ def docstring_md(s_function, ls_doc, s_header=None, s_opath='./docstring/'):
     s_opathfile = s_opath + f'{s_function}.md'
     f = open(s_opathfile, 'w')
     if (s_header is None):
-        s_header = '{s_function}()'
-    f.write('# {s_header}\n\n')
+        s_header = f'{s_function}()'
+    f.write(f'# {s_header}\n\n')
     for s_doc in ls_doc:
         if (len(s_doc.strip()) == 0):
             pass

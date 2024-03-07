@@ -27,7 +27,7 @@ Familiarize yourself with the parameters from those workhorse functions well!
 
 
 # TimeStep Class
-+ help([**pcdl.TimeStep.__init__**](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.__init__.md))
++ **help([pcdl.TimeStep.__init__](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.__init__.md))**
 
 ## TimeStep medata
 + help([mcds.get_multicellds_version](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_multicellds_version.md))

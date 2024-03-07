@@ -1,4 +1,4 @@
-# {s_header}
+# mcds.get_multicellds_version()
 
 ## input:
 ```

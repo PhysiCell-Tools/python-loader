@@ -1,4 +1,4 @@
-# {s_header}
+# mcds = pcdl.TimeStep('path/to/outputnnnnnnnn.xml')
 
 ## input:
 ```

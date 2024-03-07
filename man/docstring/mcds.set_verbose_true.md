@@ -1,4 +1,4 @@
-# {s_header}
+# mcds.set_verbose_true()
 
 ## input:
 ```
