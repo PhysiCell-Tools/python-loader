@@ -10,7 +10,7 @@ or within the python shell with the `help(command)` , \
 or in the ipython shell with the `help(command)` or `command?` .
 
 For the command line interface functions you can access help by clickin on the commands in the listing below, \
-or straight from the command line with `command -h` [help](https://en.wikipedia.org/wiki/Help!) parameter.
+or straight from the command line with `command --help` or `command -h` [help](https://en.wikipedia.org/wiki/Help!) parameter.
 
 
 # Load the PhysiCell data loader module
