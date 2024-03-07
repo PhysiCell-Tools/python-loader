@@ -1,31 +1,42 @@
-# PhysiCell Data Loader Reference Man Page
+# PhysiCell Data Loader Reference Man Pages
 
 This is the technical descriptions of the machinery and how to operate it.\
-References are maintained in each module's [docstring](https://en.wikipedia.org/wiki/Docstring).\
-You can access them through the [source code](https://github.com/elmbeech/physicelldataloader/tree/master/pcdl), or by first load PhysiCell Data Loader.
+References are maintained in straight on the [source code](https://github.com/elmbeech/physicelldataloader/tree/master/pcdl), \
+in each function's [docstring](https://en.wikipedia.org/wiki/Docstring), \
+or in case of the command Line interface functions in the [argparse](https://docs.python.org/3/library/argparse.html) help strings.
+
+Docstings you can access by clicking on the commands in the listing below, \
+or within the python shell with the `help(command)` , \
+or in the ipython shell with the `help(command)` or `command?` .
+
+For the command line interface functions you can access help by clickin on the commands in the listing below, \
+or straight from the command line with `command -h` [help](https://en.wikipedia.org/wiki/Help!) parameter.
+
+
+# Load the PhysiCell data loader module
 
 ```python3
 import pcdl
+
+mcds = pcdl.TimeStep('path/to/outputnnnnnnnn.xml')
+mcdsts = pcdl.TimeStep('path/to/output')
 ```
 
-Then, for each pcdl module, get on the fly reference information with the [help](https://en.wikipedia.org/wiki/Help!) command.\
-The **workhorse functions** are the ones most important for data analysis.
-Familiarize yourself with all of their parameters!
+The links most important functions for data analysis are highlited in **bolt**.
+Familiarize yourself with the parameters from those workhorse functions well!
 
 
 # TimeStep Class
-```python3
-help(pcdl.TimeStep)  # ! make class instance
-help(pcdl.TimeStep.__init__)
++ help([**pcdl.TimeStep.__init__**](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.__init__.md))
 
-# TimeStep medata
-help(pcdl.TimeStep.get_multicellds_version)
-help(pcdl.TimeStep.get_physicell_version)
-help(pcdl.TimeStep.get_timestamp)
-help(pcdl.TimeStep.get_time)
-help(pcdl.TimeStep.get_runtime)
+## TimeStep medata
++ help([mcds.get_multicellds_version](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_multicellds_version.md))
++ help([mcds.get_physicell_version](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_physicell_version.md))
++ help([mcds.get_timestamp](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_timestamp.md))
++ help([mcds.get_time](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_time.md))
++ help([mcds.get_runtime](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_runtime.md))
 
-# TimeStep mesh
+## TimeStep mesh
 help(pcdl.TimeStep.get_voxel_ijk_range)
 help(pcdl.TimeStep.get_mesh_mnp_range)
 help(pcdl.TimeStep.get_xyz_range)
@@ -40,40 +51,39 @@ help(pcdl.TimeStep.get_voxel_volume)
 help(pcdl.TimeStep.get_voxel_ijk)
 help(pcdl.TimeStep.is_in_mesh)
 
-# TimeStep microenvironment
+## TimeStep microenvironment
 help(pcdl.TimeStep.get_substrate_names)
-help(pcdl.TimeStep.get_substrate_dict)
-help(pcdl.TimeStep.get_substrate_df)
-help(pcdl.TimeStep.get_concentration)
+help(pcdl.TimeStep.get_substrate_dict) cli ??? nop.
+help(pcdl.TimeStep.get_substrate_df); cli ??? nop this is input.
+help(pcdl.TimeStep.get_concentration) cli ??? nop this is bs.
 help(pcdl.TimeStep.get_concentration_df)  # ! workhorse function
-help(pcdl.TimeStep.get_conc_df)  # ! shorthand
+help(pcdl.TimeStep.get_conc_df)  # ! shorthand; cli
 help(pcdl.TimeStep.get_concentration_at)
-help(pcdl.TimeStep.plot_contour)  # ! workhorse function
+help(pcdl.TimeStep.plot_contour)  # ! workhorse function; (cli)
 
-# TimeStep cells and other agents
+## TimeStep cells and other agents
 help(pcdl.TimeStep.get_celltype_dict)
 help(pcdl.TimeStep.get_cell_variables)
-help(pcdl.TimeStep.get_cell_df)  # ! workhorse function
+help(pcdl.TimeStep.get_cell_df)  # ! workhorse function; cli
 help(pcdl.TimeStep.get_cell_df_at)
-help(pcdl.TimeStep.plot_scatter)  # ! workhorse function
+help(pcdl.TimeStep.plot_scatter)  # ! workhorse function; (cli)
 
-# TimeStep graphs
+## TimeStep graphs
 help(pcdl.TimeStep.get_attached_graph_dict)
 help(pcdl.TimeStep.get_neighbor_graph_dict)
-help(pcdl.TimeStep.get_graph_gml)  # ! workhose function
+help(pcdl.TimeStep.get_graph_gml)  # ! workhose function; (cli)
 
-# TimeStep unit
-help(pcdl.TimeStep.get_unit_se)  # ! workhorse function
+## TimeStep unit
+help(pcdl.TimeStep.get_unit_se)  # ! workhorse function; cli
 
-# TimeStep anndata
-help(pcdl.TimeStep.get_anndata)  # ! workhorse function
+## TimeStep anndata
+help(pcdl.TimeStep.get_anndata)  # ! workhorse function; nop!
 
-# TimeStep internal functions
+## TimeStep internal functions
 help(pcdl.TimeStep._anndextract)
 help(pcdl.TimeStep._read_xml)
 help(pcdl.TimeStep.graphfile_parser)
 help(pcdl.TimeStep.scaler)
-```
 
 
 # TimeSeries Class
@@ -88,18 +98,18 @@ help(pcdl.TimeSeries.get_mcds_list)  # ! workhorse function
 help(pcdl.TimeSeries.get_annmcds_list)  # ! workhorse function
 
 # TimeSeries triage data
-help(pcdl.TimeSeries.get_cell_df_features)  # ! workhorse function
-help(pcdl.TimeSeries.get_conc_df_features)  # ! workhorse function
+help(pcdl.TimeSeries.get_cell_df_features)  # ! workhorse function; cli
+help(pcdl.TimeSeries.get_conc_df_features)  # ! workhorse function; cli
 
 # TimeSeries images and movies
-help(pcdl.TimeSeries.plot_timeseries)  # ! workhorse function
-help(pcdl.TimeSeries.plot_scatter)  # ! workhorse function
-help(pcdl.TimeSeries.plot_contour)  # ! workhorse function
-help(pcdl.TimeSeries.make_gif)  # ! workhorse function
-help(pcdl.TimeSeries.make_movie)  # ! workhorse function
+help(pcdl.TimeSeries.plot_timeseries)  # ! workhorse function; cli
+help(pcdl.TimeSeries.plot_scatter)  # ! workhorse function; cli
+help(pcdl.TimeSeries.plot_contour)  # ! workhorse function; cli
+help(pcdl.TimeSeries.make_gif)  # ! workhorse function; cli (no-need for mcds?)
+help(pcdl.TimeSeries.make_movie)  # ! workhorse function; cli (no-need for mcds?)
 
 # TimeSeries graphs
-help(pcdl.TimeSeries.get_graph_gml)  # ! workhose function
+help(pcdl.TimeSeries.get_graph_gml)  # ! workhose function; cli
 
 # TimeSeries anndata
 help(pcdl.TimeSeries.get_anndata)  # ! workhorse function

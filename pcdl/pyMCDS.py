@@ -175,54 +175,54 @@ def graphfile_parser(s_pathfile):
 
 # object classes
 class pyMCDS:
-    """
-    input:
-        xmlfile: string
-            name of the xml file with or without path.
-            in the with path case, output_path has to be set to the default!
-
-        output_path: string; default '.'
-            relative or absolute path to the directory where
-            the PhysiCell output files are stored.
-
-        custom_type: dictionary; default is {}
-            variable to specify custom_data variable types
-            other than float (int, bool, str) like this: {var: dtype, ...}.
-            downstream float and int will be handled as numeric,
-            bool as Boolean, and str as categorical data.
-
-        microenv: boole; default True
-            should the microenvironment be extracted?
-            setting microenv to False will use less memory and speed up
-            processing, similar to the original pyMCDS_cells.py script.
-
-        graph: boole; default True
-            should the graphs be extracted?
-            setting graph to False will use less memory and speed up processing.
-
-        settingxml: string; default PhysiCell_settings.xml
-            from which settings.xml should the cell type ID label mapping
-            be extracted?
-            set to None or False if the xml file is missing!
-
-        verbose: boole; default True
-            setting verbose to False for less text output, while processing.
-
-    output:
-        mcds: pyMCDS class instance
-            all fetched content is stored at mcds.data.
-
-    description:
-        pyMCDS.__init__ will generate a class instance with a
-        dictionary of dictionaries data structure that contains all
-        output from a single PhysiCell model time step. furthermore,
-        this class, and as such it's instances, offers functions
-        to access the stored data.
-        the code assumes that all related output files are stored in
-        the same directory. data is loaded by reading the xml file
-        for a particular time step and the therein referenced files.
-    """
     def __init__(self, xmlfile, output_path='.', custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True):
+        """
+        input:
+            xmlfile: string
+                name of the xml file with or without path.
+                in the with path case, output_path has to be set to the default!
+
+            output_path: string; default '.'
+                relative or absolute path to the directory where
+                the PhysiCell output files are stored.
+
+            custom_type: dictionary; default is {}
+                variable to specify custom_data variable types
+                other than float (int, bool, str) like this: {var: dtype, ...}.
+                downstream float and int will be handled as numeric,
+                bool as Boolean, and str as categorical data.
+
+            microenv: boole; default True
+                should the microenvironment be extracted?
+                setting microenv to False will use less memory and speed up
+                processing, similar to the original pyMCDS_cells.py script.
+
+            graph: boole; default True
+                should the graphs be extracted?
+                setting graph to False will use less memory and speed up processing.
+
+            settingxml: string; default PhysiCell_settings.xml
+                from which settings.xml should the cell type ID label mapping
+                be extracted?
+                set to None or False if the xml file is missing!
+
+            verbose: boole; default True
+                setting verbose to False for less text output, while processing.
+
+        output:
+            mcds: pyMCDS class instance
+                all fetched content is stored at mcds.data.
+
+        description:
+            pyMCDS.__init__ will generate a class instance with a
+            dictionary of dictionaries data structure that contains all
+            output from a single PhysiCell model time step. furthermore,
+            this class, and as such it's instances, offers functions
+            to access the stored data.
+            the code assumes that all related output files are stored in
+            the same directory. data is loaded by reading the xml file
+            for a particular time step and the therein referenced files.
+        """
         self.path = None
         self.xmlfile = None
         self.custom_type = custom_type
@@ -235,11 +235,29 @@ class pyMCDS:
         self.data = self._read_xml(xmlfile, output_path)
         self.get_concentration_df = self.get_conc_df
 
-    def set_verbose_true(self):
-        self.verbose = True
-
     def set_verbose_false(self):
+        """
+        input:
+
+        output:
+            set verbose false.
+
+        description:
+            function to set verbosity.
+        """
         self.verbose = False
+
+    def set_verbose_true(self):
+        """
+        input:
+
+        output:
+            set verbose true.
+
+        description:
+            function to set verbosity.
+        """
+        self.verbose = True
 
 
     ## METADATA RELATED FUNCTIONS ##
@@ -247,7 +265,6 @@ class pyMCDS:
     def get_multicellds_version(self):
         """
         input:
-            self: pyMCDS class instance.
 
         output:
             s_version : sting
@@ -263,7 +280,6 @@ class pyMCDS:
     def get_physicell_version(self):
         """
         input:
-            self: pyMCDS class instance.
 
         output:
             s_version : sting
@@ -279,7 +295,6 @@ class pyMCDS:
     def get_timestamp(self):
         """
         input:
-            self: pyMCDS class instance.
 
         output:
             s_timestap : sting
@@ -295,7 +310,6 @@ class pyMCDS:
     def get_time(self):
         """
         input:
-            self: pyMCDS class instance.
 
         output:
             r_time : floating point number
@@ -311,7 +325,6 @@ class pyMCDS:
     def get_runtime(self):
         """
         input:
-            self: pyMCDS class instance.
 
         output:
             r_time : floating point number
@@ -329,7 +342,6 @@ class pyMCDS:
     def get_voxel_ijk_range(self):
         """
         input:
-            self: pyMCDS class instance.
 
         output:
             lti_i : list of tuple of 2 integer numbers
@@ -345,7 +357,6 @@ class pyMCDS:
     def get_mesh_mnp_range(self):
         """
         input:
-            self: pyMCDS class instance.
 
         output:
             ltr_mnp : list of tuple of 2 floating point numbers
@@ -361,7 +372,6 @@ class pyMCDS:
     def get_xyz_range(self):
         """
         input:
-            self: pyMCDS class instance.
 
         output:
             ltr_xyz : list of tuple of 2 floating point numbers
@@ -377,7 +387,6 @@ class pyMCDS:
     def get_voxel_ijk_axis(self):
         """
         input:
-            self: pyMCDS class instance.
 
         output:
             lai_ijk : list of 3 numpy arrays of integer numbers
@@ -393,7 +402,6 @@ class pyMCDS:
     def get_mesh_mnp_axis(self):
         """
         input:
-            self: pyMCDS class instance.
 
         output:
             lar_mnp : list of 3 numpy arrays of floating point numbers
@@ -409,8 +417,6 @@ class pyMCDS:
     def get_mesh(self, flat=False):
         """
         input:
-            self: pyMCDS class instance.
-
             flat : bool; default False
                 if flat is True, only the m-axis mesh center
                 and n-axis mesh center meshgrids will be returned.
@@ -439,7 +445,6 @@ class pyMCDS:
     def get_mesh_2D(self):
         """
         input:
-            self: pyMCDS class instance.
 
         output:
             aar_meshgrid : 3-way numpy arrays tensor of floating point numbers
@@ -456,7 +461,6 @@ class pyMCDS:
     def get_mesh_coordinate(self):
         """
         input:
-            self: pyMCDS class instance.
 
         output:
             aar_meshaxis : numpy array of 3 one dimensional numpy floating point number arrays
@@ -472,7 +476,6 @@ class pyMCDS:
     def get_voxel_volume(self):
         """
         input:
-            self: pyMCDS class instance.
 
         output:
             r_volume: floating point number
@@ -493,7 +496,6 @@ class pyMCDS:
     def get_mesh_spacing(self):
         """
         input:
-            self: pyMCDS class instance.
 
         output:
             lr_mnp_spacing: list of 3 floating point numbers
@@ -518,7 +520,6 @@ class pyMCDS:
     def get_voxel_spacing(self):
         """
         input:
-            self: pyMCDS class instance.
 
         output:
             lr_ijk_spacing: list of 3 floating point numbers
@@ -537,8 +538,6 @@ class pyMCDS:
     def is_in_mesh(self, x, y, z, halt=False):
         """
         input:
-            self: pyMCDS class instance.
-
             x: floating point number
                 position x-coordinate.
 
@@ -586,8 +585,6 @@ class pyMCDS:
     def get_voxel_ijk(self, x, y, z, is_in_mesh=True):
         """
         input:
-            self: pyMCDS class instance.
-
             x: floating point number
                 position x-coordinate.
 
@@ -634,7 +631,6 @@ class pyMCDS:
     def get_substrate_names(self):
         """
         input:
-            self: pyMCDS class instance.
 
         output:
             ls_substrate: list of stings
@@ -651,7 +647,6 @@ class pyMCDS:
     def get_substrate_dict(self):
         """
         input:
-            self: pyMCDS class instance.
 
         output:
             ds_substrate: dictionary of stings
@@ -668,7 +663,6 @@ class pyMCDS:
     def get_substrate_df(self):
         """
         input:
-            self: pyMCDS class instance.
 
         output:
             df_substrae: pandas dataframe
@@ -699,8 +693,6 @@ class pyMCDS:
     def get_concentration(self, substrate, z_slice=None, halt=False):
         """
         input:
-            self: pyMCDS class instance.
-
             substrate: string
                 substrate name.
 
@@ -750,8 +742,6 @@ class pyMCDS:
     def get_concentration_at(self, x, y, z=0):
         """
         input:
-            self: pyMCDS class instance.
-
             x: floating point number
                 position x-coordinate.
 
@@ -795,8 +785,6 @@ class pyMCDS:
     def get_conc_df(self, z_slice=None, halt=False, values=1, drop=set(), keep=set()):
         """
         input:
-            self: pyMCDS class instance.
-
             z_slice: floating point number; default is None
                 z-axis position to slice a 2D xy-plain out of the
                 3D substrate concentration mesh. if None the
@@ -914,8 +902,6 @@ class pyMCDS:
     def plot_contour(self, substrate, z_slice=0, vmin=None, vmax=None, alpha=1, fill=True, cmap='viridis', title=None, grid=True, xlim=None, ylim=None, xyequal=True, figsize=None, ax=None):
         """
         input:
-            self: pyMCDS class instance.
-
             substrate: string
                 substrate name.
 
@@ -1064,7 +1050,6 @@ class pyMCDS:
     def get_cell_variables(self):
         """
         input:
-            self: pyMCDS class instance.
 
         output:
             ls_variables: list of strings
@@ -1081,7 +1066,6 @@ class pyMCDS:
     def get_celltype_dict(self):
         """
         input:
-            self: pyMCDS class instance.
 
         output:
             ds_celltype: dictionary of stings
@@ -1097,8 +1081,6 @@ class pyMCDS:
     def get_cell_df(self, values=1, drop=set(), keep=set()):
         """
         input:
-            self: pyMCDS class instance.
-
             values: integer; default is 1
                 minimal number of values a variable has to have to be outputted.
                 variables that have only 1 state carry no information.
@@ -1260,8 +1242,6 @@ class pyMCDS:
     def get_cell_df_at(self, x, y, z=0, values=1, drop=set(), keep=set()):
         """
         input:
-            self: pyMCDS class instance.
-
             x: floating point number
                 position x-coordinate.
 
@@ -1332,8 +1312,6 @@ class pyMCDS:
     def plot_scatter(self, focus='cell_type', z_slice=0, z_axis=None, alpha=1, cmap='viridis', title=None, grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=None, figsize=None, ax=None):
         """
         input:
-            self: pyMCDSts class instance
-
             focus: string; default is 'cell_type'
                 column name within cell dataframe.
 
@@ -1526,7 +1504,6 @@ class pyMCDS:
     def get_attached_graph_dict(self):
         """
         input:
-            self: pyMCDS class instance.
 
         output:
             dei_graph: dictionary of sets of integers
@@ -1541,7 +1518,6 @@ class pyMCDS:
     def get_neighbor_graph_dict(self):
         """
         input:
-            self: pyMCDS class instance.
 
         output:
             dei_graph: dictionary of sets of integers
@@ -1556,8 +1532,6 @@ class pyMCDS:
     def make_graph_gml(self, graph_type='neighbor', edge_attr=True, node_attr=[]):
         """
         input:
-            self: pyMCDS class instance.
-
             graph_type: string; default is neighbor
                 to specify which physicell output data should be processed.
                 attached: processes mcds.get_attached_graph_dict dictionary.
@@ -1651,7 +1625,6 @@ class pyMCDS:
     def get_unit_se(self):
         """
         input:
-            self: pyMCDS class instance.
 
         output:
             se_unit: pandas series

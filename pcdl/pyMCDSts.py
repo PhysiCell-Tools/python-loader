@@ -161,49 +161,49 @@ def make_movie(path, interface='jpeg', framerate=12):
 ###########
 
 class pyMCDSts:
-    """
-    input:
-        output_path: string, default '.'
-            relative or absolute path to the directory where
-            the PhysiCell output files are stored.
-
-        custom_type: dictionary; default is {}
-            variable to specify custom_data variable types
-            other than float (int, bool, str) like this: {var: dtype, ...}.
-            downstream float and int will be handled as numeric,
-            bool as Boolean, and str as categorical data.
-
-        load: boole; default True
-            should the whole time series data, all time steps, straight at
-            object initialization be read and stored to mcdsts.l_mcds?
-
-        microenv: boole; default True
-            should the microenvironment be extracted?
-            setting microenv to False will use less memory and speed up
-            processing, similar to the original pyMCDS_cells.py script.
-
-        graph: boole; default True
-            should the graphs be extracted?
-            setting graph to False will use less memory and speed up processing.
-
-        settingxml: string; default PhysiCell_settings.xml
-            from which settings.xml should the cell type ID label mapping
-            be extracted?
-            set to None or False if the xml file is missing!
-
-        verbose: boole; default True
-            setting verbose to False for less text output, while processing.
-
-    output:
-        mcdsts: pyMCDSts class instance
-            this instance offers functions to process all stored time steps
-            from a simulation.
-
-    description:
-        pyMCDSts.__init__ generates a class instance the instance offers
-        functions to process all time steps in the output_path directory.
-    """
     def __init__(self, output_path='.', custom_type={}, load=True, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True):
+        """
+        input:
+            output_path: string, default '.'
+                relative or absolute path to the directory where
+                the PhysiCell output files are stored.
+
+            custom_type: dictionary; default is {}
+                variable to specify custom_data variable types
+                other than float (int, bool, str) like this: {var: dtype, ...}.
+                downstream float and int will be handled as numeric,
+                bool as Boolean, and str as categorical data.
+
+            load: boole; default True
+                should the whole time series data, all time steps, straight at
+                object initialization be read and stored to mcdsts.l_mcds?
+
+            microenv: boole; default True
+                should the microenvironment be extracted?
+                setting microenv to False will use less memory and speed up
+                processing, similar to the original pyMCDS_cells.py script.
+
+            graph: boole; default True
+                should the graphs be extracted?
+                setting graph to False will use less memory and speed up processing.
+
+            settingxml: string; default PhysiCell_settings.xml
+                from which settings.xml should the cell type ID label mapping
+                be extracted?
+                set to None or False if the xml file is missing!
+
+            verbose: boole; default True
+                setting verbose to False for less text output, while processing.
+
+        output:
+            mcdsts: pyMCDSts class instance
+                this instance offers functions to process all stored time steps
+                from a simulation.
+
+        description:
+            pyMCDSts.__init__ generates a class instance the instance offers
+            functions to process all time steps in the output_path directory.
+        """
         output_path = output_path.replace('\\','/')
         if (output_path[-1] != '/'):
             output_path = output_path + '/'

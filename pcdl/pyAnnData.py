@@ -258,53 +258,53 @@ def _anndextract(df_cell, scale='maxabs', graph_attached={}, graph_neighbor={}, 
 
 # class definition
 class TimeStep(pyMCDS):
-    """
-    input:
-        xmlfile: string
-            name of the xml file with or without path.
-            in the with path case, output_path has to be set to the default!
-
-        output_path: string; default '.'
-            relative or absolute path to the directory where
-            the PhysiCell output files are stored.
-
-        custom_type: dictionary; default is {}
-            variable to specify custom_data variable types
-            besides float (int, bool, str) like this: {var: dtype, ...}.
-            downstream float and int will be handled as numeric,
-            bool as Boolean, and str as categorical data.
-
-        microenv: boole; default True
-            should the microenvironment be extracted?
-            setting microenv to False will use less memory and speed up
-            processing, similar to the original pyMCDS_cells.py script.
-
-        graph: boole; default True
-            should the graphs be extracted?
-            setting graph to False will use less memory and speed up processing.
-
-        settingxml: string; default PhysiCell_settings.xml
-            from which settings.xml should the cell type ID label mapping
-            be extracted?
-            set to None or False if the xml file is missing!
-
-        verbose: boole; default True
-            setting verbose to False for less text output while processing.
-
-    output:
-        mcds: TimeStep class instance
-            all fetched content is stored at mcds.data.
-
-    description:
-        TimeStep.__init__ will call pyMCDS.__init__ that generates a mcds
-        class instance, a dictionary of dictionaries data structure that
-        contains all output from a single PhysiCell model time step.
-        furthermore, the mcds object offers functions to access the stored data.
-        the code assumes that all related output files are stored
-        in the same directory. data is loaded by reading the xml file for
-        a particular time step and the therein referenced files.
-    """
     def __init__(self, xmlfile, output_path='.', custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True):
+        """
+        input:
+            xmlfile: string
+                name of the xml file with or without path.
+                in the with path case, output_path has to be set to the default!
+
+            output_path: string; default '.'
+                relative or absolute path to the directory where
+                the PhysiCell output files are stored.
+
+            custom_type: dictionary; default is {}
+                variable to specify custom_data variable types
+                besides float (int, bool, str) like this: {var: dtype, ...}.
+                downstream float and int will be handled as numeric,
+                bool as Boolean, and str as categorical data.
+
+            microenv: boole; default True
+                should the microenvironment be extracted?
+                setting microenv to False will use less memory and speed up
+                processing, similar to the original pyMCDS_cells.py script.
+
+            graph: boole; default True
+                should the graphs be extracted?
+                setting graph to False will use less memory and speed up processing.
+
+            settingxml: string; default PhysiCell_settings.xml
+                from which settings.xml should the cell type ID label mapping
+                be extracted?
+                set to None or False if the xml file is missing!
+
+            verbose: boole; default True
+                setting verbose to False for less text output while processing.
+
+        output:
+            mcds: TimeStep class instance
+                all fetched content is stored at mcds.data.
+
+        description:
+            TimeStep.__init__ will call pyMCDS.__init__ that generates a mcds
+            class instance, a dictionary of dictionaries data structure that
+            contains all output from a single PhysiCell model time step.
+            furthermore, the mcds object offers functions to access the stored data.
+            the code assumes that all related output files are stored
+            in the same directory. data is loaded by reading the xml file for
+            a particular time step and the therein referenced files.
+        """
         pyMCDS.__init__(self, xmlfile=xmlfile, output_path=output_path, custom_type=custom_type, microenv=microenv, graph=graph, settingxml=settingxml, verbose=verbose)
 
 
@@ -365,50 +365,50 @@ class TimeStep(pyMCDS):
 
 
 class TimeSeries(pyMCDSts):
-    """
-    input:
-        output_path: string, default '.'
-            relative or absolute path to the directory where
-            the PhysiCell output files are stored.
-
-        custom_type: dictionary; default is {}
-            variable to specify custom_data variable types
-            besides float (int, bool, str) like this: {var: dtype, ...}.
-            downstream float and int will be handled as numeric,
-            bool as Boolean, and str as categorical data.
-
-        load: boole; default True
-            should the whole time series data, all time steps, straight at
-            object initialization be read and stored to mcdsts.l_mcds?
-
-        microenv: boole; default True
-            should the microenvironment be extracted?
-            setting microenv to False will use less memory and speed up
-            processing, similar to the original pyMCDS_cells.py script.
-
-        graph: boole; default True
-            should the graphs be extracted?
-            setting graph to False will use less memory and speed up processing.
-
-        settingxml: string; default PhysiCell_settings.xml
-            from which settings.xml should the substrate and cell type
-            ID label mapping be extracted?
-            set to None or False if the xml file is missing!
-
-        verbose: boole; default True
-            setting verbose to False for less text output while processing.
-
-    output:
-        mcdsts: pyMCDSts class instance
-            this instance offers functions to process all stored time steps
-            from a simulation.
-
-    description:
-        TimeSeries.__init__ will call pyMCDSts.__init__ that generates a mcdsts
-        class instance. this instance offers functions to process all time steps
-        in the output_path directory.
-    """
     def __init__(self, output_path='.', custom_type={}, load=True, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True):
+        """
+        input:
+            output_path: string, default '.'
+                relative or absolute path to the directory where
+                the PhysiCell output files are stored.
+
+            custom_type: dictionary; default is {}
+                variable to specify custom_data variable types
+                besides float (int, bool, str) like this: {var: dtype, ...}.
+                downstream float and int will be handled as numeric,
+                bool as Boolean, and str as categorical data.
+
+            load: boole; default True
+                should the whole time series data, all time steps, straight at
+                object initialization be read and stored to mcdsts.l_mcds?
+
+            microenv: boole; default True
+                should the microenvironment be extracted?
+                setting microenv to False will use less memory and speed up
+                processing, similar to the original pyMCDS_cells.py script.
+
+            graph: boole; default True
+                should the graphs be extracted?
+                setting graph to False will use less memory and speed up processing.
+
+            settingxml: string; default PhysiCell_settings.xml
+                from which settings.xml should the substrate and cell type
+                ID label mapping be extracted?
+                set to None or False if the xml file is missing!
+
+            verbose: boole; default True
+                setting verbose to False for less text output while processing.
+
+        output:
+            mcdsts: pyMCDSts class instance
+                this instance offers functions to process all stored time steps
+                from a simulation.
+
+        description:
+            TimeSeries.__init__ will call pyMCDSts.__init__ that generates a mcdsts
+            class instance. this instance offers functions to process all time steps
+            in the output_path directory.
+        """
         pyMCDSts.__init__(self, output_path=output_path, custom_type=custom_type, load=load, microenv=microenv, graph=graph, settingxml=settingxml, verbose=verbose)
         self.l_annmcds = None
 
