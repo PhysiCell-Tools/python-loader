@@ -15,9 +15,9 @@ def docstring_md(s_function, ls_doc, s_header=None, s_opath='./docstring/'):
         s_header = f'{s_function}()'
     f.write(f'# {s_header}\n\n')
     for s_doc in ls_doc:
-        if (len(s_doc.strip()) == 0):
-            pass
-        elif (s_doc.find('input:') > -1): 
+        #if (len(s_doc.strip()) == 0):
+        #    pass
+        if (s_doc.find('input:') > -1): 
             f.write(f'## {s_doc.strip()}\n```\n')
         elif (s_doc.find('output:') > -1): 
             f.write(f'```\n\n## {s_doc.strip()}\n```\n')
