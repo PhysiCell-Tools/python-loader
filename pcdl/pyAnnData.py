@@ -462,11 +462,11 @@ class TimeSeries(pyMCDSts):
         ar_annobsm = None
 
         # variable triage
-        #if (values < 2) and (len(drop) == 0) and (len(keep) == 0):
-        #    ls_column = list(self.l_mcds[0].get_cell_df().columns)
-        #else:
-        ls_column = sorted(es_coor_cell.difference({'ID'}))
-        ls_column.extend(sorted(self.get_cell_df_features(values=values, drop=drop, keep=keep, allvalues=False).keys()))
+        if (values < 2):
+            ls_column = list(self.l_mcds[0].get_cell_df(drop=drop, keep=keep).columns)
+        else:
+            ls_column = sorted(es_coor_cell.difference({'ID'}))
+            ls_column.extend(sorted(self.get_cell_df_features(values=values, drop=drop, keep=keep, allvalues=False).keys()))
 
         # collapse warning
         if collapse:
