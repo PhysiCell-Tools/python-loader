@@ -23,7 +23,6 @@ import matplotlib.pyplot as plt
 import os
 import pathlib
 import pcdl
-import platform
 import shutil
 
 
@@ -431,7 +430,7 @@ class TestPyMcdsTimeseries(object):
             focus_num = None,  # test if {None/count, 'oxygen'}
             #aggregate_num = np.mean,  # pandas
             frame = 'cell',  # test if else {'df_cell', 'df_conc'}
-            z_slice = -0.3,  # test if if
+            z_slice = None,  # test timeseries
             #logy = False,  # pandas
             #ylim = None,  # pandas
             #secondary_y = None,  # pandas
@@ -550,7 +549,7 @@ class TestPyMcdsTimeseries(object):
             focus_num = None,  # test if {None/count, 'oxygen'}
             #aggregate_num = np.mean,  # pandas
             frame = 'conc',  # test if else {'df_cell', 'df_conc'}
-            z_slice = -0.3,  # test if if
+            z_slice = None,  # test timeseries
             #logy = False,  # pandas
             #ylim = None,  # pandas
             #secondary_y = None,  # pandas

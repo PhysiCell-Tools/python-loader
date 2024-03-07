@@ -60,6 +60,7 @@ class TestPyCliAnndata(object):
     # + keep (cell_type oxygen) ok
     # + scale (maxabs, _std_) ok
 
+    # timeseries
     def test_pcdl_get_anndata_timeseries(self):
         s_result = subprocess.run(['pcdl_get_anndata', s_path_2d], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
@@ -206,6 +207,7 @@ class TestPyCliAnndata(object):
                (len(ann.uns) == 0)
         os.remove(s_opathfile)
 
+    # timestep
     def test_pcdl_get_anndata_timestep(self):
         s_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
@@ -215,9 +217,9 @@ class TestPyCliAnndata(object):
         assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.h5ad')) and \
                (ann.shape == (1099, 79)) and \
                (ann.obs.shape == (1099, 6)) and \
-               (len(ann.obsp) == 0) and \
+               (len(ann.obsp) == 2) and \
                (ann.var.shape == (79, 0)) and \
-               (len(ann.uns) == 0)
+               (len(ann.uns) == 1)
         os.remove(s_opathfile)
 
     def test_pcdl_get_anndata_timestep_microenv(self):
@@ -230,9 +232,9 @@ class TestPyCliAnndata(object):
                (not set(ann.var_names).issuperset({'oxygen'})) and \
                (ann.shape == (1099, 76)) and \
                (ann.obs.shape == (1099, 6)) and \
-               (len(ann.obsp) == 0) and \
+               (len(ann.obsp) == 2) and \
                (ann.var.shape == (76, 0)) and \
-               (len(ann.uns) == 0)
+               (len(ann.uns) == 1)
         os.remove(s_opathfile)
 
     def test_pcdl_get_anndata_timestep_settingxmlfalse(self):
@@ -245,9 +247,9 @@ class TestPyCliAnndata(object):
                (set(ann.var_names).issuperset({'attack_rates_0'})) and \
                (ann.shape == (1099, 79)) and \
                (ann.obs.shape == (1099, 6)) and \
-               (len(ann.obsp) == 0) and \
+               (len(ann.obsp) == 2) and \
                (ann.var.shape == (79, 0)) and \
-               (len(ann.uns) == 0)
+               (len(ann.uns) == 1)
         os.remove(s_opathfile)
 
     def test_pcdl_get_anndata_timestep_settingxmlnone(self):
@@ -260,9 +262,9 @@ class TestPyCliAnndata(object):
                (set(ann.var_names).issuperset({'attack_rates_0'})) and \
                (ann.shape == (1099, 79)) and \
                (ann.obs.shape == (1099, 6)) and \
-               (len(ann.obsp) == 0) and \
+               (len(ann.obsp) == 2) and \
                (ann.var.shape == (79, 0)) and \
-               (len(ann.uns) == 0)
+               (len(ann.uns) == 1)
         os.remove(s_opathfile)
 
     def test_pcdl_get_anndata_timestep_value(self):
@@ -274,9 +276,9 @@ class TestPyCliAnndata(object):
         assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.h5ad')) and \
                (ann.shape == (1099, 26)) and \
                (ann.obs.shape == (1099, 4)) and \
-               (len(ann.obsp) == 0) and \
+               (len(ann.obsp) == 2) and \
                (ann.var.shape == (26, 0)) and \
-               (len(ann.uns) == 0)
+               (len(ann.uns) == 1)
         os.remove(s_opathfile)
 
     def test_pcdl_get_anndata_timestep_drop(self):
@@ -290,9 +292,9 @@ class TestPyCliAnndata(object):
                (not set(ann.obs_keys()).issuperset({'oxygen'})) and \
                (ann.shape == (1099, 78)) and \
                (ann.obs.shape == (1099, 5)) and \
-               (len(ann.obsp) == 0) and \
+               (len(ann.obsp) == 2) and \
                (ann.var.shape == (78, 0)) and \
-               (len(ann.uns) == 0)
+               (len(ann.uns) == 1)
         os.remove(s_opathfile)
 
     def test_pcdl_get_anndata_timestep_keep(self):
@@ -306,12 +308,12 @@ class TestPyCliAnndata(object):
                (set(ann.obs_keys()).issuperset({'cell_type'})) and \
                (ann.shape == (1099, 1)) and \
                (ann.obs.shape == (1099, 3)) and \
-               (len(ann.obsp) == 0) and \
+               (len(ann.obsp) == 2) and \
                (ann.var.shape == (1, 0)) and \
-               (len(ann.uns) == 0)
+               (len(ann.uns) == 1)
         os.remove(s_opathfile)
 
-    def test_pcdl_get_anndata_timeseries_scale(self):
+    def test_pcdl_get_anndata_timestep_scale(self):
         s_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--scale', 'std'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
@@ -320,9 +322,9 @@ class TestPyCliAnndata(object):
         assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.h5ad')) and \
                (ann.shape == (1099, 79)) and \
                (ann.obs.shape == (1099, 6)) and \
-               (len(ann.obsp) == 0) and \
+               (len(ann.obsp) == 2) and \
                (ann.var.shape == (79, 0)) and \
-               (len(ann.uns) == 0)
+               (len(ann.uns) == 1)
         os.remove(s_opathfile)
 
 

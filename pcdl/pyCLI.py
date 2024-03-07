@@ -138,7 +138,7 @@ def get_anndata():
             output_path = '.',
             custom_type = d_vartype,
             microenv = False if args.microenv.lower().startswith('f') else True,
-            graph = False,
+            graph = True,
             settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
             verbose = False if args.verbose.lower().startswith('f') else True
         )
