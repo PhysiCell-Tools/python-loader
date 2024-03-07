@@ -42,7 +42,7 @@ if not os.path.exists(s_path_3d):
 ###########
 
 ## load physicell data time step  ##
-class TestPyAnndataTimeStep(object):
+class TestPyAnndata3DTimeStep(object):
     ''' test for pcdl.TimeStep class. '''
 
     ## get_anndata command ##
@@ -65,7 +65,7 @@ class TestPyAnndataTimeStep(object):
 # BUE: test functions are mirrored test_anndata_2d.py
 
 ## load physicell data time series ##
-class TestPyAnndataTimeSeries(object):
+class TestPyAnndata3DTimeSeries(object):
     ''' test for pcdl.TestSeries class. '''
 
     # get_anndata
