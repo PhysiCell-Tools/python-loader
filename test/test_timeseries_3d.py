@@ -1,5 +1,5 @@
 ####
-# title: test_timeseries_2d.py
+# title: test_timeseries_3d.py
 #
 # language: python3
 # author: Elmar Bucher
@@ -27,106 +27,39 @@ import shutil
 
 
 # const
-s_path_2d = str(pathlib.Path(pcdl.__file__).parent.resolve()/'data_timeseries_2d')
+s_path_3d = str(pathlib.Path(pcdl.__file__).parent.resolve()/'data_timeseries_3d')
 
 
 ## download test data ##
-if not os.path.exists(s_path_2d):
+if not os.path.exists(s_path_3d):
     pcdl.install_data()
 
 
-## making movies related functions ##
-
-class TestPyMcdsTsMovies(object):
-    ''' tests for loading a pcdl.pyMCDS data set. '''
-    mcdsts = pcdl.pyMCDSts(s_path_2d, verbose=True)
-
-    ## make_gif and magick ommand ##
-    def test_mcdsts_make_gif_jpeg(self, mcdsts=mcdsts):
-        s_opath = mcdsts.plot_scatter()
-        s_opathfile = mcdsts.make_gif(
-            path = s_opath,
-            #interface = 'jpeg',
-        )
-        assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
-              (os.path.exists(s_opathfile)) and \
-              (s_opathfile.endswith('pcdl/data_timeseries_2d/cell_cell_type_z0.0/cell_cell_type_z0.0_jpeg.gif'))
-        #os.remove(s_opathfile)
-        shutil.rmtree(s_opath)
-
-    def test_mcdsts_make_gif_tiff(self, mcdsts=mcdsts):
-        s_opath = mcdsts.plot_scatter(ext='tiff')
-        s_opathfile = mcdsts.make_gif(
-            path = s_opath,
-            interface = 'tiff',
-        )
-        assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
-              (os.path.exists(s_opathfile)) and \
-              (s_opathfile.endswith('pcdl/data_timeseries_2d/cell_cell_type_z0.0/cell_cell_type_z0.0_tiff.gif'))
-        #os.remove(s_opathfile)
-        shutil.rmtree(s_opath)
-
-    ## make_movie and magick command ##
-    def test_mcdsts_make_movie_jpeg12(self, mcdsts=mcdsts):
-        s_opath = mcdsts.plot_scatter()
-        s_opathfile = mcdsts.make_movie(
-            path = s_opath,
-            #interface = 'jpeg',
-            #framerate = 12,
-        )
-        assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
-              (os.path.exists(s_opathfile)) and \
-              (s_opathfile.endswith('pcdl/data_timeseries_2d/cell_cell_type_z0.0/cell_cell_type_z0.0_jpeg12.mp4'))
-        #os.remove(s_opathfile)
-        shutil.rmtree(s_opath)
-
-    def test_mcdsts_make_movie_tiff12(self, mcdsts=mcdsts):
-        s_opath = mcdsts.plot_scatter(ext='tiff')
-        s_opathfile = mcdsts.make_movie(
-            path = s_opath,
-            interface = 'tiff',
-            #framerate = 12,
-        )
-        assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
-              (os.path.exists(s_opathfile)) and \
-              (s_opathfile.endswith('pcdl/data_timeseries_2d/cell_cell_type_z0.0/cell_cell_type_z0.0_tiff12.mp4'))
-        #os.remove(s_opathfile)
-        shutil.rmtree(s_opath)
-
-    def test_mcdsts_make_movie_jpeg6(self, mcdsts=mcdsts):
-        s_opath = mcdsts.plot_scatter()
-        s_opathfile = mcdsts.make_movie(
-            path = s_opath,
-            #interface = 'jpeg',
-            framerate = 6,
-        )
-        assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
-              (os.path.exists(s_opathfile)) and \
-              (s_opathfile.endswith('pcdl/data_timeseries_2d/cell_cell_type_z0.0/cell_cell_type_z0.0_jpeg6.mp4'))
-        #os.remove(s_opathfile)
-        shutil.rmtree(s_opath)
-
+##################
+# test for speed #
+##################
+# BUE: test functions are mirrored test_timeseries_2d.py
 
 ## data loading related functions ##
 
-class TestPyMcdsTsInit(object):
+class TestPyMcdsTs3DInit(object):
     ''' tests for loading a pcdl.pyMCDSts data set. '''
 
     def test_mcdsts_set_verbose_true(self):
-        mcdsts = pcdl.pyMCDSts(s_path_2d, load=False, verbose=False)
+        mcdsts = pcdl.pyMCDSts(s_path_3d, load=False, verbose=False)
         mcdsts.set_verbose_true()
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (mcdsts.verbose)
 
     def test_mcdsts_set_verbose_false(self):
-        mcdsts = pcdl.pyMCDSts(s_path_2d, load=False, verbose=True)
+        mcdsts = pcdl.pyMCDSts(s_path_3d, load=False, verbose=True)
         mcdsts.set_verbose_false()
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (not mcdsts.verbose)
 
     ## get_xmlfile and read_mcds command and get_mcds_list ##
     def test_mcdsts_get_xmlfile_list(self):
-        mcdsts = pcdl.pyMCDSts(s_path_2d, load=False, verbose=True)
+        mcdsts = pcdl.pyMCDSts(s_path_3d, load=False, verbose=True)
         ls_xmlfile = mcdsts.get_xmlfile_list()
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (ls_xmlfile[0] == 'output00000000.xml') and \
@@ -134,7 +67,7 @@ class TestPyMcdsTsInit(object):
               (len(ls_xmlfile) == 25)
 
     def test_mcdsts_get_mcds_list(self):
-        mcdsts = pcdl.pyMCDSts(s_path_2d, load=True, verbose=True)
+        mcdsts = pcdl.pyMCDSts(s_path_3d, load=True, verbose=True)
         l_mcds = mcdsts.get_mcds_list()
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (str(type(mcdsts.l_mcds[0])) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
@@ -145,7 +78,7 @@ class TestPyMcdsTsInit(object):
               (mcdsts.l_mcds == l_mcds)
 
     def test_mcdsts_read_mcds(self):
-        mcdsts = pcdl.pyMCDSts(s_path_2d, load=False, verbose=True)
+        mcdsts = pcdl.pyMCDSts(s_path_3d, load=False, verbose=True)
         l_mcds_loadfalse  = mcdsts.get_mcds_list()
         mcdsts.read_mcds()
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
@@ -157,7 +90,7 @@ class TestPyMcdsTsInit(object):
               (l_mcds_loadfalse is None)
 
     def test_mcdsts_read_mcds_xmlfilelist(self):
-        mcdsts = pcdl.pyMCDSts(s_path_2d, load=False, verbose=True)
+        mcdsts = pcdl.pyMCDSts(s_path_3d, load=False, verbose=True)
         ls_xmlfile = mcdsts.get_xmlfile_list()
         ls_xmlfile = ls_xmlfile[-3:]
         l_mcds = mcdsts.read_mcds(ls_xmlfile)
@@ -173,24 +106,24 @@ class TestPyMcdsTsInit(object):
 
 ## micro environment related functions ##
 
-class TestPyMcdsTsMicroenv(object):
+class TestPyMcdsTs3DMicroenv(object):
     ''' tests for pcdl.pyMCDS micro environment related functions. '''
-    mcdsts = pcdl.pyMCDSts(s_path_2d, verbose=True)
+    mcdsts = pcdl.pyMCDSts(s_path_3d, verbose=True)
 
     def test_mcdsts_get_conc_df(self, mcdsts=mcdsts):
         ldf_conc = mcdsts.get_conc_df(values=2, drop=set(), keep=set(), collapse=False)
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (str(type(ldf_conc)) == "<class 'list'>") and \
               (str(type(ldf_conc[0])) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (ldf_conc[0].shape == (121, 9)) and \
-              (ldf_conc[-1].shape == (121, 10)) and \
+              (ldf_conc[0].shape == (1331, 9)) and \
+              (ldf_conc[-1].shape == (1331, 11)) and \
               (len(ldf_conc) == 25)
 
     def test_mcdsts_get_conc_df_collapse(self, mcdsts=mcdsts):
         df_conc = mcdsts.get_conc_df(values=2, drop=set(), keep=set(), collapse=True)
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (df_conc.shape == (3025, 10))
+              (df_conc.shape == (33275, 11))
 
     def test_mcdsts_get_conc_df_features(self, mcdsts=mcdsts):
         dl_conc = mcdsts.get_conc_df_features(values=1, drop=set(), keep=set(), allvalues=False)
@@ -198,7 +131,7 @@ class TestPyMcdsTsMicroenv(object):
               (str(type(dl_conc)) == "<class 'dict'>") and \
               (str(type(dl_conc['oxygen'])) == "<class 'list'>") and \
               (str(type(dl_conc['oxygen'][0])) == "<class 'float'>") and \
-              (len(dl_conc.keys()) == 1) and \
+              (len(dl_conc.keys()) == 2) and \
               (len(dl_conc['oxygen']) == 2)
 
     def test_mcdsts_get_conc_df_features_values(self, mcdsts=mcdsts):
@@ -207,7 +140,7 @@ class TestPyMcdsTsMicroenv(object):
               (str(type(dl_conc)) == "<class 'dict'>") and \
               (str(type(dl_conc['oxygen'])) == "<class 'list'>") and \
               (str(type(dl_conc['oxygen'][0])) == "<class 'float'>") and \
-              (len(dl_conc.keys()) == 1) and \
+              (len(dl_conc.keys()) == 2) and \
               (len(dl_conc['oxygen']) == 2)
 
     def test_mcdsts_get_conc_df_features_allvalues(self, mcdsts=mcdsts):
@@ -216,7 +149,7 @@ class TestPyMcdsTsMicroenv(object):
               (str(type(dl_conc)) == "<class 'dict'>") and \
               (str(type(dl_conc['oxygen'])) == "<class 'list'>") and \
               (str(type(dl_conc['oxygen'][0])) == "<class 'float'>") and \
-              (len(dl_conc.keys()) == 1) and \
+              (len(dl_conc.keys()) == 2) and \
               (len(dl_conc['oxygen']) > 2)
 
     ## plot_contour command ##
@@ -267,24 +200,24 @@ class TestPyMcdsTsMicroenv(object):
 
 ## cell related functions ##
 
-class TestPyMcdsCell(object):
+class TestPyMcds3DCell(object):
     ''' tests for pcdl.pyMCDS cell related functions. '''
-    mcdsts = pcdl.pyMCDSts(s_path_2d, verbose=False)
+    mcdsts = pcdl.pyMCDSts(s_path_3d, verbose=False)
 
     def test_mcdsts_get_cell_df(self, mcdsts=mcdsts):
         ldf_cell = mcdsts.get_cell_df(values=2, drop=set(), keep=set(), collapse=False)
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (str(type(ldf_cell)) == "<class 'list'>") and \
               (str(type(ldf_cell[0])) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (ldf_cell[0].shape == (889, 19)) and \
-              (ldf_cell[-1].shape == (1099, 40)) and \
+              (ldf_cell[0].shape == (18317, 19)) and \
+              (ldf_cell[-1].shape == (20460,33)) and \
               (len(ldf_cell) == 25)
 
     def test_mcdsts_get_cell_df_collapse(self, mcdsts=mcdsts):
         df_cell = mcdsts.get_cell_df(values=2, drop=set(), keep=set(), collapse=True)
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (df_cell.shape == (24758, 41))
+              (df_cell.shape == (481651, 34))
 
     def test_mcdsts_get_cell_df_features(self, mcdsts=mcdsts):
         dl_cell = mcdsts.get_cell_df_features(values=1, drop=set(), keep=set(), allvalues=False)
@@ -298,8 +231,8 @@ class TestPyMcdsCell(object):
               (str(type(dl_cell['cell_density_micron3'][0])) == "<class 'float'>") and \
               (str(type(dl_cell['cell_type'])) == "<class 'list'>") and \
               (str(type(dl_cell['cell_type'][0])) == "<class 'str'>") and \
-              (len(dl_cell.keys()) == 83) and \
-              (len(dl_cell['dead']) == 2) and \
+              (len(dl_cell.keys()) == 106) and \
+              (len(dl_cell['dead']) == 1) and \
               (len(dl_cell['cell_count_voxel']) == 2) and \
               (len(dl_cell['cell_density_micron3']) == 2) and \
               (len(dl_cell['cell_type']) == 1)
@@ -308,7 +241,7 @@ class TestPyMcdsCell(object):
         dl_cell = mcdsts.get_cell_df_features(values=2, drop=set(), keep=set(), allvalues=False)
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (str(type(dl_cell)) == "<class 'dict'>") and \
-              (len(dl_cell.keys()) == 28)
+              (len(dl_cell.keys()) == 21)
 
     def test_mcdsts_get_cell_df_features_allvalues(self, mcdsts=mcdsts):
         dl_cell = mcdsts.get_cell_df_features(values=1, drop=set(), keep=set(), allvalues=True)
@@ -322,8 +255,8 @@ class TestPyMcdsCell(object):
               (str(type(dl_cell['cell_density_micron3'][0])) == "<class 'float'>") and \
               (str(type(dl_cell['cell_type'])) == "<class 'list'>") and \
               (str(type(dl_cell['cell_type'][0])) == "<class 'str'>") and \
-              (len(dl_cell.keys()) == 83) and \
-              (len(dl_cell['dead']) == 2) and \
+              (len(dl_cell.keys()) == 106) and \
+              (len(dl_cell['dead']) == 1) and \
               (len(dl_cell['cell_count_voxel']) > 2) and \
               (len(dl_cell['cell_density_micron3']) > 2) and \
               (len(dl_cell['cell_type']) == 1)
@@ -377,16 +310,16 @@ class TestPyMcdsCell(object):
 
 
 ## graph related functions ##
-class TestPyMcdsGraph(object):
+class TestPyMcds3DGraph(object):
     ''' tests for pcdl.pyMCDS graph related functions. '''
-    mcdsts = pcdl.pyMCDSts(s_path_2d, verbose=False)
+    mcdsts = pcdl.pyMCDSts(s_path_3d, verbose=False)
 
     ## graph related functions ##
     def test_mcdsts_get_graph_gml_attached_defaultattr(self, mcdsts=mcdsts):
         ls_pathfile = mcdsts.make_graph_gml(graph_type='attached', edge_attr=True, node_attr=[])
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
-              (ls_pathfile[0].endswith('/pcdl/data_timeseries_2d/output00000000_attached.gml')) and \
-              (ls_pathfile[-1].endswith('/pcdl/data_timeseries_2d/output00000024_attached.gml')) and \
+              (ls_pathfile[0].endswith('/pcdl/data_timeseries_3d/output00000000_attached.gml')) and \
+              (ls_pathfile[-1].endswith('/pcdl/data_timeseries_3d/output00000024_attached.gml')) and \
               (os.path.exists(ls_pathfile[0])) and \
               (os.path.exists(ls_pathfile[-1])) and \
               (len(ls_pathfile) == 25)
@@ -396,8 +329,8 @@ class TestPyMcdsGraph(object):
     def test_mcdsts_get_graph_gml_neighbor_noneattr(self, mcdsts=mcdsts):
         ls_pathfile = mcdsts.make_graph_gml(graph_type='neighbor', edge_attr=False, node_attr=[])
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
-              (ls_pathfile[0].endswith('/pcdl/data_timeseries_2d/output00000000_neighbor.gml')) and \
-              (ls_pathfile[-1].endswith('/pcdl/data_timeseries_2d/output00000024_neighbor.gml')) and \
+              (ls_pathfile[0].endswith('/pcdl/data_timeseries_3d/output00000000_neighbor.gml')) and \
+              (ls_pathfile[-1].endswith('/pcdl/data_timeseries_3d/output00000024_neighbor.gml')) and \
               (os.path.exists(ls_pathfile[0])) and \
               (os.path.exists(ls_pathfile[-1])) and \
               (len(ls_pathfile) == 25)
@@ -407,8 +340,8 @@ class TestPyMcdsGraph(object):
     def test_mcdsts_get_graph_gml_neighbor_allattr(self, mcdsts=mcdsts):
         ls_pathfile = mcdsts.make_graph_gml(graph_type='neighbor', edge_attr=True, node_attr=['dead','cell_count_voxel','cell_density_micron3','cell_type'])
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
-              (ls_pathfile[0].endswith('/pcdl/data_timeseries_2d/output00000000_neighbor.gml')) and \
-              (ls_pathfile[-1].endswith('/pcdl/data_timeseries_2d/output00000024_neighbor.gml')) and \
+              (ls_pathfile[0].endswith('/pcdl/data_timeseries_3d/output00000000_neighbor.gml')) and \
+              (ls_pathfile[-1].endswith('/pcdl/data_timeseries_3d/output00000024_neighbor.gml')) and \
               (os.path.exists(ls_pathfile[0])) and \
               (os.path.exists(ls_pathfile[-1])) and \
               (len(ls_pathfile) == 25)
@@ -418,9 +351,9 @@ class TestPyMcdsGraph(object):
 
 ## timeseries related functions ##
 
-class TestPyMcdsTimeseries(object):
+class TestPyMcds3DTimeseries(object):
     ''' tests for pcdl.pyMCDS graph related functions. '''
-    mcdsts = pcdl.pyMCDSts(s_path_2d, verbose=False)
+    mcdsts = pcdl.pyMCDSts(s_path_3d, verbose=False)
 
     ## plot_timeseries command ##
     def test_mcdsts_plot_timeseries_none_none_none_cell_ax_jpeg(self, mcdsts=mcdsts):
@@ -451,7 +384,7 @@ class TestPyMcdsTimeseries(object):
             figbgcolor = None  # test if
         )
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
-              (s_pathfile.endswith('/pcdl/data_timeseries_2d/timeseries_cell_total_count.jpeg')) and \
+              (s_pathfile.endswith('/pcdl/data_timeseries_3d/timeseries_cell_total_count.jpeg')) and \
               (os.path.exists(s_pathfile))
         os.remove(s_pathfile)
 
@@ -570,7 +503,7 @@ class TestPyMcdsTimeseries(object):
             figbgcolor = None  # test if
         )
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
-              (s_pathfile.endswith('/pcdl/data_timeseries_2d/timeseries_conc_total_count.jpeg')) and \
+              (s_pathfile.endswith('/pcdl/data_timeseries_3d/timeseries_conc_total_count.jpeg')) and \
               (os.path.exists(s_pathfile))
         os.remove(s_pathfile)
 

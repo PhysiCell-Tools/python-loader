@@ -36,7 +36,10 @@ if not os.path.exists(s_path_3d):
     pcdl.install_data()
 
 
-# 3D only
+###########
+# 3D only #
+###########
+
 class TestPyMcds3dOnly(object):
     ''' test for 3D only conditions in pcdl.pyMCDS functions. '''
     mcds = pcdl.pyMCDS(xmlfile=s_pathfile_3d)  # custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True
@@ -52,7 +55,11 @@ class TestPyMcds3dOnly(object):
               (str(type(lr_spacing[-1])) == "<class 'numpy.float64'>") and \
               (lr_spacing == [30.0, 20.0, 10.0])
 
-# speed
+
+##################
+# test for speed #
+##################
+
 class TestPyMcds3dMicroenvWorkhorse(object):
     ''' tests on 3D data set, for speed, for pcdl.pyMCDS microenvironment related workhorse functions. '''
     mcds = pcdl.pyMCDS(xmlfile=s_pathfile_3d)  # custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True
