@@ -6,10 +6,10 @@
 
 ## output:
 ```
-set verbose true.
+            set verbose true.
 ```
 
 ## description:
 ```
-function to set verbosity.
+            function to set verbosity.
 ```

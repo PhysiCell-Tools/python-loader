@@ -22,12 +22,12 @@ mcds = pcdl.TimeStep('path/to/outputnnnnnnnn.xml')
 mcdsts = pcdl.TimeStep('path/to/output')
 ```
 
-The links most important functions for data analysis are highlited in **bolt**.
-Familiarize yourself with the parameters from those workhorse functions well!
+The links most important functions for data analysis are highlited as **workhorse functions!**.
+Familiarize yourself well with the parameters from those functions!
 
 
 # TimeStep Class
-+ **help([pcdl.TimeStep.__init__](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.__init__.md))**
++ help([pcdl.TimeStep.__init__](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.__init__.md))  **workhorse functions!**
 
 ## TimeStep medata
 + help([mcds.get_multicellds_version](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_multicellds_version.md))

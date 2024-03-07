@@ -24,7 +24,7 @@ def docstring_md(s_function, ls_doc, s_header=None, s_opath='./docstring/'):
         elif (s_doc.find('description:') > -1): 
             f.write(f'```\n\n## {s_doc.strip()}\n```\n')
         else:
-            f.write(f'{s_doc.strip()}\n')
+            f.write(f'{s_doc}\n')
     f.write('```')
     f.close()
 
