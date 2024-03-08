@@ -473,26 +473,6 @@ class pyMCDS:
         return self.data['mesh']['mnp_coordinate'].copy()
 
 
-    def get_voxel_volume(self):
-        """
-        input:
-
-        output:
-            r_volume: floating point number
-                voxel volume value related to the spacial unit
-                defined in the PhysiCell_settings.xml file.
-
-        description:
-            function returns the volume value for a single voxel, related
-            to the spacial unit defined in the PhysiCell_settings.xml file.
-        """
-        ar_volume = np.unique(self.data['mesh']['volumes'])
-        if ar_volume.shape != (1,):
-            sys.exit(f'Error @ pyMCDS.get_voxel_volume : mesh is not built out of a unique voxel volume {ar_volume}.')
-        r_volume = ar_volume[0]
-        return r_volume
-
-
     def get_mesh_spacing(self):
         """
         input:
@@ -514,24 +494,6 @@ class pyMCDS:
             dp = np.float64(1.0)
         else:
             dp = (tr_p_range[1] - tr_p_range[0]) / (ar_p_axis.shape[0] - 1)
-        return [dm, dn, dp]
-
-
-    def get_voxel_spacing(self):
-        """
-        input:
-
-        output:
-            lr_ijk_spacing: list of 3 floating point numbers
-                voxel spacing in i, j, and k direction.
-
-        description:
-            function returns the voxel width, height, depth measurement,
-            in the spacial unit defined in the PhysiCell_settings.xml file.
-        """
-        r_volume = self.get_voxel_volume()
-        dm, dn, _ = self.get_mesh_spacing()
-        dp  = r_volume / (dm * dn)
         return [dm, dn, dp]
 
 
@@ -580,6 +542,44 @@ class pyMCDS:
         if halt and not b_isinmesh:
             sys.exit('Processing stopped!')
         return b_isinmesh
+
+
+    def get_voxel_spacing(self):
+        """
+        input:
+
+        output:
+            lr_ijk_spacing: list of 3 floating point numbers
+                voxel spacing in i, j, and k direction.
+
+        description:
+            function returns the voxel width, height, depth measurement,
+            in the spacial unit defined in the PhysiCell_settings.xml file.
+        """
+        r_volume = self.get_voxel_volume()
+        dm, dn, _ = self.get_mesh_spacing()
+        dp  = r_volume / (dm * dn)
+        return [dm, dn, dp]
+
+
+    def get_voxel_volume(self):
+        """
+        input:
+
+        output:
+            r_volume: floating point number
+                voxel volume value related to the spacial unit
+                defined in the PhysiCell_settings.xml file.
+
+        description:
+            function returns the volume value for a single voxel, related
+            to the spacial unit defined in the PhysiCell_settings.xml file.
+        """
+        ar_volume = np.unique(self.data['mesh']['volumes'])
+        if ar_volume.shape != (1,):
+            sys.exit(f'Error @ pyMCDS.get_voxel_volume : mesh is not built out of a unique voxel volume {ar_volume}.')
+        r_volume = ar_volume[0]
+        return r_volume
 
 
     def get_voxel_ijk(self, x, y, z, is_in_mesh=True):
