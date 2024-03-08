@@ -140,7 +140,7 @@ def _anndextract(df_cell, scale='maxabs', graph_attached={}, graph_neighbor={}, 
 
     output:
         df_count, df_obs, d_obsm, d_obsp, d_uns dataframes and dictionaries,
-        ready to be backed into an anndata object.
+            ready to be backed into an anndata object.
 
     description:
         this function takes a pcdl df_cell pandas dataframe and re-formats
@@ -567,8 +567,8 @@ class TimeSeries(pyMCDSts):
 
         output:
             self.l_annmcds: list of chronologically ordered anndata mcds objects.
-            watch out, this is a dereferenced pointer to the
-            self.l_annmcds list of anndata mcds objects, not a copy of self.l_annmcds!
+                watch out, this is a pointer to the
+                self.l_annmcds list of anndata mcds objects, not a copy of self.l_annmcds!
 
         description:
             function returns a binding to the self.l_annmcds list of anndata mcds objects.

@@ -84,6 +84,7 @@ There are four types of function:
 + help([mcds.get_cell_df_at](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_cell_df_at.md))
 + help([mcds.get_cell_df](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_cell_df.md))  #! workhorse function
 + help([mcds.plot_scatter](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.plot_scatter.md))  #! workhorse function
++ help([mcds.get_anndata](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_anndata.md))  #! workhorse function
 
 ## TimeStep graphs
 + help([mcds.get_attached_graph_dict](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_attached_graph_dict.md))
@@ -93,54 +94,50 @@ There are four types of function:
 ## TimeStep unit
 + help([mcds.get_unit_se](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_unit_se.md))  #! workhorse function
 
-## TimeStep anndata
-+ help([mcds.get_anndata](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_anndata.md))  #! workhorse function
-
-
 ## TimeStep internal functions
 ```python
-help(pcdl.pyMCDS.\_read\_xml)
-help(pcdl.pyMCDS.graphfile\_parser)
-help(pcdl.pyAnnData.\_anndextract)
+help(pcdl.pyMCDS._read_xml)
+help(pcdl.pyMCDS.graphfile_parser)
+help(pcdl.pyAnnData._anndextract)
 help(pcdl.pyAnnData.scaler)
 ```
 
-# TimeSeries Class
-```python3
-help(pcdl.TimeSeries)  # ! make class instance
-help(pcdl.TimeSeries.__init__)
+# TimeSeries initialization
++ help([pcdl.TimeSeries.__init__](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.__init__.md)) #! workhosefunction
++ help([mcdsts.get_xmlfile_list](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_xmlfile_list.md))  #! workhosefunction
++ help([mcdsts.read_mcds](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.read_mcds.md))
++ help([mcdsts.get_mcds_list](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_mcds_list.md))  #! workhose function
++ help([mcdsts.get_annmcds_list](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_annmcds_list.md))  #! workhose function
++ help([mcdsts.set_verbose_false](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.set_verbose_false.md)) #! workhorse function
++ help([mcdsts.set_verbose_true](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.set_verbose_true.md)) #! workhorse function
 
-# TimeSeries load data
-help(pcdl.TimeSeries.get_xmlfile_list)
-help(pcdl.TimeSeries.read_mcds)
-help(pcdl.TimeSeries.get_mcds_list)  # ! workhorse function
-help(pcdl.TimeSeries.get_annmcds_list)  # ! workhorse function
+## TimeSeries microenvironment
++ help([mcdsts.get_conc_df_features](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_conc_df_features.md))  #! workhorse function
++ help([mcdsts.plot_contour](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.plot_contour.md))  # !workhorse function
 
-# TimeSeries triage data
-help(pcdl.TimeSeries.get_cell_df_features)  # ! workhorse function; cli
-help(pcdl.TimeSeries.get_conc_df_features)  # ! workhorse function; cli
-
-# TimeSeries images and movies
-help(pcdl.TimeSeries.plot_timeseries)  # ! workhorse function; cli
-help(pcdl.TimeSeries.plot_scatter)  # ! workhorse function; cli
-help(pcdl.TimeSeries.plot_contour)  # ! workhorse function; cli
-help(pcdl.TimeSeries.make_gif)  # ! workhorse function; cli (no-need for mcds?)
-help(pcdl.TimeSeries.make_movie)  # ! workhorse function; cli (no-need for mcds?)
+## TimeSeries cells and other agents
++ help([mcdsts.get_cell_df_features](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_cell_df.md))  #! workhorse function
++ help([mcdsts.plot_scatter](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.plot_scatter.md))  # !workhorse function
++ help([mcdsts.get_anndata](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_anndata.md))  #! workhorse function
 
 # TimeSeries graphs
-help(pcdl.TimeSeries.get_graph_gml)  # ! workhose function; cli
++ help([mcdsts.get_graph_gml](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.make_graph_gml.md))  #! workhose function
 
-# TimeSeries anndata
-help(pcdl.TimeSeries.get_anndata)  # ! workhorse function
-help(pcdl.TimeSeries.get_annmcds_list)
+# Timeseries timeseries
++ help([mcdsts.plot_timeseries](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.plot_timeseries.md))  #! workhorse function
+
+# TimeSeries making movies
++ help([mcdsts.make_gif](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.make_gif.md))  # ! workhorse function
++ help([mcdsts.make_movie](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.make_movie.md))  # ! workhorse function
 
 # TimeSeries internal functions
+```
 help(pcdl.TimeSeries._handle_magick)
+help(pcdl.pyAnnData._anndextract)
+help(pcdl.pyAnnData.scaler)
 ```
 
+# Test data sets
++ help([pcdl.install_data](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.install_data))
++ help([pcdl.uninstall_data](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.uninstall_data))
 
-# test data sets
-```python3
-help(pcdl.install_data)
-help(pcdl.uninstall_data)
-```

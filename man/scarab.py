@@ -59,7 +59,6 @@ docstring_md(
     ls_doc = pcdl.TimeStep.set_verbose_true.__doc__.split('\n'),
 )
 
-
 # write pyMCDS metadata function makdown files
 docstring_md(
     s_function = 'mcds.get_multicellds_version',
@@ -211,7 +210,6 @@ docstring_md(
     ls_doc = pcdl.TimeStep.get_unit_se.__doc__.split('\n'),
 )
 
-
 # write pyAnnData unit function markdown files
 docstring_md(
     s_function = 'mcds.get_anndata',
@@ -219,44 +217,102 @@ docstring_md(
 )
 
 
-"""
+# write pyMCDSts initialize function makdown files
 docstring_md(
-    s_function = 'mcds.',
-    ls_doc = pcdl.TimeStep..__doc__.split('\n'),
+    s_function = 'mcdsts.__init__',
+    ls_doc = pcdl.TimeSeries.__init__.__doc__.split('\n'),
+    s_header = "mcdsts = pcdl.TimeSeries('path/to/output')"
+)
+docstring_md(
+    s_function = 'mcdsts.set_verbose_false',
+    ls_doc = pcdl.TimeSeries.set_verbose_false.__doc__.split('\n'),
+)
+docstring_md(
+    s_function = 'mcdsts.set_verbose_true',
+    ls_doc = pcdl.TimeSeries.set_verbose_true.__doc__.split('\n'),
+)
+docstring_md(
+    s_function = 'mcdsts.get_xmlfile_list',
+    ls_doc = pcdl.TimeSeries.get_xmlfile_list.__doc__.split('\n'),
+)
+docstring_md(
+    s_function = 'mcdsts.get_mcds_list',
+    ls_doc = pcdl.TimeSeries.get_mcds_list.__doc__.split('\n'),
+)
+docstring_md(
+    s_function = 'mcdsts.read_mcds',
+    ls_doc = pcdl.TimeSeries.read_mcds.__doc__.split('\n'),
 )
 
+# write pyMCDSts microenv function makdown files
 docstring_md(
-    s_function = 'mcds.',
-    ls_doc = pcdl.TimeStep..__doc__.split('\n'),
+    s_function = 'mcdsts.get_conc_df',
+    ls_doc = pcdl.TimeSeries.get_conc_df.__doc__.split('\n'),
+)
+docstring_md(
+    s_function = 'mcdsts.get_conc_df_features',
+    ls_doc = pcdl.TimeSeries.get_conc_df_features.__doc__.split('\n'),
+)
+docstring_md(
+    s_function = 'mcdsts.plot_contour',
+    ls_doc = pcdl.TimeSeries.plot_contour.__doc__.split('\n'),
 )
 
+# write pyMCDSts cell agent function makdown files
 docstring_md(
-    s_function = 'mcds.',
-    ls_doc = pcdl.TimeStep..__doc__.split('\n'),
+    s_function = 'mcdsts.get_cell_df',
+    ls_doc = pcdl.TimeSeries.get_cell_df.__doc__.split('\n'),
+)
+docstring_md(
+    s_function = 'mcdsts.get_cell_df_features',
+    ls_doc = pcdl.TimeSeries.get_cell_df_features.__doc__.split('\n'),
+)
+docstring_md(
+    s_function = 'mcdsts.plot_scatter',
+    ls_doc = pcdl.TimeSeries.plot_scatter.__doc__.split('\n'),
 )
 
+# write pyMCDSts graph function makdown files
 docstring_md(
-    s_function = 'mcds.',
-    ls_doc = pcdl.TimeStep..__doc__.split('\n'),
+    s_function = 'mcdsts.make_graph_gml',
+    ls_doc = pcdl.TimeSeries.make_graph_gml.__doc__.split('\n'),
 )
 
+# write pyMCDSts timeseries function makdown files
 docstring_md(
-    s_function = 'mcds.',
-    ls_doc = pcdl.TimeStep..__doc__.split('\n'),
+    s_function = 'mcdsts.plot_timeseries',
+    ls_doc = pcdl.TimeSeries.plot_timeseries.__doc__.split('\n'),
 )
 
+# write pyMCDSts making movies function markdown files
 docstring_md(
-    s_function = 'mcds.',
-    ls_doc = pcdl.TimeStep..__doc__.split('\n'),
+    s_function = 'pcdl.make_gif',
+    ls_doc = pcdl.make_gif.__doc__.split('\n'),
+    s_header = "mcdsts.make_gif('path/to/plots')"
+)
+docstring_md(
+    s_function = 'pcdl.make_movie',
+    ls_doc = pcdl.make_movie.__doc__.split('\n'),
+    s_header = "mcdsts.make_movie('path/to/plots')"
 )
 
+# write pyAnnData timeseries function makdown files
 docstring_md(
-    s_function = 'mcds.',
-    ls_doc = pcdl.TimeStep..__doc__.split('\n'),
+    s_function = 'mcdsts.get_anndata',
+    ls_doc = pcdl.TimeSeries.get_anndata.__doc__.split('\n'),
+)
+docstring_md(
+    s_function = 'mcdsts.get_annmcds_list',
+    ls_doc = pcdl.TimeSeries.get_annmcds_list.__doc__.split('\n'),
 )
 
+
+# write data_timeseries function makdown files
 docstring_md(
-    s_function = 'mcds.',
-    ls_doc = pcdl.TimeStep..__doc__.split('\n'),
+    s_function = 'pcdl.install_data',
+    ls_doc = pcdl.install_data.__doc__.split('\n'),
 )
-"""
+docstring_md(
+    s_function = 'pcdl.uninstall_data',
+    ls_doc = pcdl.uninstall_data.__doc__.split('\n'),
+)

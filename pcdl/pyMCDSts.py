@@ -221,11 +221,30 @@ class pyMCDSts:
         else:
             self.l_mcds = None
 
+    def set_verbose_false(self):
+        """
+        input:
+
+        output:
+            set verbose false.
+
+        description:
+            function to set verbosity.
+        """
+        self.verbose = False
+
     def set_verbose_true(self):
+        """
+        input:
+
+        output:
+            set verbose true.
+
+        description:
+            function to set verbosity.
+        """
         self.verbose = True
 
-    def set_verbose_false(self):
-        self.verbose = False
 
     def make_gif(self, path, interface='jpeg'):
         """
@@ -259,7 +278,7 @@ class pyMCDSts:
             list can be manipulated and used as input for the
             mcdsts.read_mcds function.
         """
-        return self.ls_xmlfile
+        return self.ls_xmlfile.copy()
 
 
     def get_mcds_list(self):
@@ -269,11 +288,11 @@ class pyMCDSts:
 
         output:
             self.l_mcds: list of chronologically ordered mcds objects.
-            watch out, this is a dereferenced pointer to the
-            self.l_mcds list of mcds objects, not a copy of self.l_mcds!
+                watch out, this is a pointer to the
+                self.l_mcds list of mcds objects, not a copy of self.l_mcds!
 
         description:
-            function returns a binding to the self.l_mcds list of mcds objects.
+            function returns a pointer to the self.l_mcds list of mcds objects.
         """
         return self.l_mcds
 
@@ -352,7 +371,7 @@ class pyMCDSts:
 
         output:
             df_conc or ldf_conc: pandas dataframe or list of dataframe
-            dataframe stores all substrate concentrations in each voxel.
+                dataframe stores all substrate concentrations in each voxel.
 
         description:
             function returns for the whole time series in one or many dataframes
@@ -668,11 +687,11 @@ class pyMCDSts:
 
         output:
             df_cell or ldf_cell: pandas dataframe or list of dataframe
-            dataframe stores one cell per row, all tracked variables
-            values related to this cell. the variables are cell_position,
-            mesh_center, and voxel coordinates, all cell_variables,
-            all substrate rates and concentrations, and additional
-            the surrounding cell density.
+                dataframe stores one cell per row, all tracked variables
+                values related to this cell. the variables are cell_position,
+                mesh_center, and voxel coordinates, all cell_variables,
+                all substrate rates and concentrations, and additional
+                the surrounding cell density.
 
         description:
             function returns for the whole time series one or many dataframes
