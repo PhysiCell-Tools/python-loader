@@ -24,7 +24,7 @@ mcdsts = pcdl.TimeStep('path/to/output')
 The links from the most important data analysis functions are highlited as **#! workhorse function** . \
 Familiarize yourself well with their parameters!
 
-There are four types of function:
+There are basically four types of function:
 + set_ : set a python3 varaiale.
 + get_ : recal a python3 variable.
 + make_ : make functions generates file output.
