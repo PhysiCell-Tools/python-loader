@@ -78,6 +78,7 @@ There are basically four types of function:
 + help([mcds.get_conc_df](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_conc_df.md))  #! workhorse function
 + help([mcds.plot_contour](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.plot_contour.md))  #! workhorse function
 
+
 ## TimeStep cells and other agents
 + help([mcds.get_cell_variables](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_cell_variables.md))
 + help([mcds.get_celltype_dict](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_celltype_dict.md))
@@ -86,23 +87,26 @@ There are basically four types of function:
 + help([mcds.plot_scatter](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.plot_scatter.md))  #! workhorse function
 + help([mcds.get_anndata](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_anndata.md))  #! workhorse function
 
+
 ## TimeStep graphs
 + help([mcds.get_attached_graph_dict](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_attached_graph_dict.md))
 + help([mcds.get_neighbor_graph_dict](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_neighbor_graph_dict.md))
 + help([mcds.make_graph_gml](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.make_graph_gml.md))  #! workhose function
 
+
 ## TimeStep unit
 + help([mcds.get_unit_se](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_unit_se.md))  #! workhorse function
 
+
 ## TimeStep internal functions
++ help([mcds.scaler](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.scaler.md))  # anndata
++ help([mcds.graphfile_parser](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.graphfile_parser.md))  # mcds
 ```python
 help(pcdl.pyMCDS._read_xml)
-help(pcdl.pyMCDS.graphfile_parser)
 help(pcdl.pyAnnData._anndextract)
-help(pcdl.pyAnnData.scaler)
 ```
 
-# TimeSeries initialization
+## TimeSeries initialization
 + help([pcdl.TimeSeries.__init__](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.__init__.md)) #! workhosefunction
 + help([mcdsts.get_xmlfile_list](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_xmlfile_list.md))  #! workhosefunction
 + help([mcdsts.read_mcds](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.read_mcds.md))
@@ -111,33 +115,67 @@ help(pcdl.pyAnnData.scaler)
 + help([mcdsts.set_verbose_false](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.set_verbose_false.md)) #! workhorse function
 + help([mcdsts.set_verbose_true](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.set_verbose_true.md)) #! workhorse function
 
+
 ## TimeSeries microenvironment
 + help([mcdsts.get_conc_df_features](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_conc_df_features.md))  #! workhorse function
 + help([mcdsts.plot_contour](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.plot_contour.md))  # !workhorse function
+
 
 ## TimeSeries cells and other agents
 + help([mcdsts.get_cell_df_features](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_cell_df.md))  #! workhorse function
 + help([mcdsts.plot_scatter](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.plot_scatter.md))  # !workhorse function
 + help([mcdsts.get_anndata](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_anndata.md))  #! workhorse function
 
-# TimeSeries graphs
+
+## TimeSeries graphs
 + help([mcdsts.get_graph_gml](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.make_graph_gml.md))  #! workhose function
 
-# Timeseries timeseries
+
+## Timeseries timeseries
 + help([mcdsts.plot_timeseries](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.plot_timeseries.md))  #! workhorse function
 
-# TimeSeries making movies
+
+## TimeSeries making movies
 + help([mcdsts.make_gif](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.make_gif.md))  # ! workhorse function
 + help([mcdsts.make_movie](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.make_movie.md))  # ! workhorse function
 
-# TimeSeries internal functions
+
+## TimeSeries internal functions
++ help([mcdsts.scaler](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.scaler.md))  # anndata
 ```
 help(pcdl.TimeSeries._handle_magick)
 help(pcdl.pyAnnData._anndextract)
-help(pcdl.pyAnnData.scaler)
 ```
 
 # Test data sets
-+ help([pcdl.install_data](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.install_data))
-+ help([pcdl.uninstall_data](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.uninstall_data))
++ help([pcdl.install_data](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.install_data.md))
++ help([pcdl.uninstall_data](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.uninstall_data.md))
+
+
+## Command line metadata
++ [pcdl_get_version --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_version.md)
+
+## Command line microenvironment
++ [pcdl_get_conc_df_features --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_conc_df_features.md)
++ [pcdl_get_conc_df --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_conc_df.md)
++ [pcdl_plot_contour --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_plot_contour.md)
+
+## Command line cells and other agents
++ [pcdl_get_cell_df_features --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_cell_df_features.md)
++ [pcdl_get_cell_df --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_cell_df.md)
++ [pcdl_plot_scatter --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_plot_scatter.md)
++ [pcdl_get_anndata --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_anndata.md)
+
+## Command line graph
++ [pcdl_make_graph_gml --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_make_graph_gml.md)
+
+## Command line unit
++ [pcdl_get_unit_se --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_unit_se.md)
+
+## Command line timeseries
++ [pcdl_plot_timeseries --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_plot_timeseries.md)
+
+## Command line making movies
++ [pcdl_make_gif --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_make_gif.md)
++ [pcdl_make_movie --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_make_movie.md)
 

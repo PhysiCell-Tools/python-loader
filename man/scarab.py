@@ -7,7 +7,23 @@ import os
 
 
 # function
+def help_md(s_command, s_opath='./docstring/'):
+    """
+    """
+    print(f'processing: {s_command} ...')
+    s_opathfile = f'{s_opath}{s_command}.md'
+    f = open(s_opathfile, 'w')
+    f.write('```\n')
+    f.close()
+    os.system(f'{s_command} -h >> {s_opathfile}')
+    f = open(s_opathfile, 'a')
+    f.write('```\n')
+    f.close()
+
+
 def docstring_md(s_function, ls_doc, s_header=None, s_opath='./docstring/'):
+    """
+    """
     print(f'processing: {s_function} ...')
     os.makedirs(s_opath, exist_ok=True)
     s_opathfile = s_opath + f'{s_function}.md'
@@ -307,6 +323,20 @@ docstring_md(
 )
 
 
+# write pyMCDS internal function makdown files
+docstring_md(
+    s_function = 'pcdl.graphfile_parser',
+    ls_doc = pcdl.graphfile_parser.__doc__.split('\n'),
+)
+
+
+# write pyAnnData internal function makdown files
+docstring_md(
+    s_function = 'pcdl.scaler',
+    ls_doc = pcdl.scaler.__doc__.split('\n'),
+)
+
+
 # write data_timeseries function makdown files
 docstring_md(
     s_function = 'pcdl.install_data',
@@ -316,3 +346,19 @@ docstring_md(
     s_function = 'pcdl.uninstall_data',
     ls_doc = pcdl.uninstall_data.__doc__.split('\n'),
 )
+
+# wite cli function markdown files
+help_md(s_command='pcdl_get_anndata')
+help_md(s_command='pcdl_get_cell_df')
+help_md(s_command='pcdl_get_cell_df_features')
+help_md(s_command='pcdl_get_conc_df')
+help_md(s_command='pcdl_get_conc_df_features')
+help_md(s_command='pcdl_get_unit_se')
+help_md(s_command='pcdl_get_version')
+help_md(s_command='pcdl_make_graph_gml')
+help_md(s_command='pcdl_make_gif')
+help_md(s_command='pcdl_make_movie')
+help_md(s_command='pcdl_plot_contour')
+help_md(s_command='pcdl_plot_scatter')
+help_md(s_command='pcdl_plot_timeseries')
+
