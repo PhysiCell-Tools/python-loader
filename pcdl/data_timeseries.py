@@ -29,6 +29,11 @@ import tarfile
 # object classes
 class install_data:
     """
+    input:
+
+    output:
+        PhysiCell output folder (2D and 3D time series).
+
     description:
         function to install a 2D and 3D PhysiCell output test dataset.
     """
@@ -61,8 +66,13 @@ class install_data:
 
 class uninstall_data:
     """
+    input:
+
+    output:
+        remove PhysiCell test dataset output folders.
+
     description:
-        function to uninstall the 2D and 3D PhysiCell output test dataset,
+        function to uninstall the 2D and 3D PhysiCell output test datasets,
         and all other files stored within its folders.
     """
     def __init__(self):

@@ -1,4 +1,8 @@
-#os.system(f'python3 -c "import pcdl; help(pcdl.TimeStep.get_multicellds_version)" >> {s_opathfile}')
+####
+#
+#
+#
+####
 
 
 # library
@@ -220,13 +224,22 @@ docstring_md(
     ls_doc = pcdl.TimeStep.make_graph_gml.__doc__.split('\n'),
 )
 
-# write pyMCDS unit function markdown files
+# write pyMCDS setting function markdown files
+docstring_md(
+    s_function = 'mcds.get_parameter_dict',
+    ls_doc = pcdl.TimeStep.get_parameter_dict.__doc__.split('\n'),
+)
+docstring_md(
+    s_function = 'mcds.get_rule_df',
+    ls_doc = pcdl.TimeStep.get_rule_df.__doc__.split('\n'),
+)
+
 docstring_md(
     s_function = 'mcds.get_unit_se',
     ls_doc = pcdl.TimeStep.get_unit_se.__doc__.split('\n'),
 )
 
-# write pyAnnData unit function markdown files
+# write pyAnnData function markdown files
 docstring_md(
     s_function = 'mcds.get_anndata',
     ls_doc = pcdl.TimeStep.get_anndata.__doc__.split('\n'),
@@ -353,6 +366,8 @@ help_md(s_command='pcdl_get_cell_df')
 help_md(s_command='pcdl_get_cell_df_features')
 help_md(s_command='pcdl_get_conc_df')
 help_md(s_command='pcdl_get_conc_df_features')
+help_md(s_command='pcdl_get_parameter_dict')
+help_md(s_command='pcdl_get_rule_df')
 help_md(s_command='pcdl_get_unit_se')
 help_md(s_command='pcdl_get_version')
 help_md(s_command='pcdl_make_graph_gml')
@@ -361,4 +376,3 @@ help_md(s_command='pcdl_make_movie')
 help_md(s_command='pcdl_plot_contour')
 help_md(s_command='pcdl_plot_scatter')
 help_md(s_command='pcdl_plot_timeseries')
-
