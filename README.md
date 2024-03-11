@@ -45,7 +45,7 @@ To be developed.
 
 
 ## About Documentation:
-Within the pcdl library, we tried to stick to the documentation policy lined out by Daniele Procida in his "[what nobody tells you about documentation](https://www.youtube.com/watch?v=azf6yzuJt54)" talk at PyCon 2017 in Portland, Oregon.
+Within the pcdl library, we tried to stick to the documentation policy laid out by Daniele Procida in his "[what nobody tells you about documentation](https://www.youtube.com/watch?v=azf6yzuJt54)" talk at PyCon 2017 in Portland, Oregon.
 
 
 ## Contributions:
@@ -73,24 +73,25 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 
 ## Road Map:
 + [vtk file format](https://docs.vtk.org/en/latest/design_documents/VTKFileFormats.html) output, maybe [stl](https://en.wikipedia.org/wiki/STL_(file_format)) and [wavefront obj](https://en.wikipedia.org/wiki/Wavefront_.obj_file) output.
-+ numpy, scipy like refrence manual documentation.
+
 
 ## Release Notes:
-+ version 3.2.15 (2024-03-??): elmbeech/physicelldatalodader
-    + new pyCLI **pcdl_make_cell_vtk** commandline interface function.
-    + new pyCLI **pcdl_make_conc_vtk** commandline interface function.
++ version 3.2.15 (2024-03-??): elmbeech/physicelldataloader
+    + new pyCLI **pcdl_make_cell_vtk** command line interface function.
+    + new pyCLI **pcdl_make_conc_vtk** command line interface function.
     + new pyMCDS **make_conc_vtk** function.
     + new pyMCDS **make_cell_vtk** function.
     + new pyMCDSts **make_cell_vtk** function.
     + new pyMCDSts **make_conc_vtk** function.
 
-+ version 3.2.14 (2024-03-??): elmbeech/physicelldatalodader
++ version 3.2.14 (2024-03-??): elmbeech/physicelldataloader
     + rename pyMCDS get\_scatter to **plot_scatter** for conciseness.
     + rename pyMCDS get\_contour to **plot_contour** for conciseness.
     + rename pyMCDSts make\_imgcell to **plot_scatter** for conciseness.
     + rename pyMCDSts make\_imgconc to **plot_contour** for conciseness.
     + rename pyMCDSts get\_cell\_df\_states to **get_cell_df_features** for conciseness.
     + rename pyMCDSts get\_conc\_df\_states to **get_conc_df_features** for conciseness.
+    + rewrite pyMCDS mcds.get_unit_se into **mcds.get_unit_dict**.
     + new pyCLI **pcdl_get_anndata** command line interface function.
     + new pyCLI **pcdl_get_cell_df** command line interface function.
     + new pyCLI **pcdl_get_cell_df_features** command line interface function.
@@ -99,7 +100,7 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
     + new pyCLI **pcdl_get_graph_gml** command line interface function.
     + new pyCLI **pcdl_get_parameter_dict** command line interface function.
     + new pyCLI **pcdl_get_rule_df** command line interface function.
-    + new pyCLI **pcdl_get_unit_se** command line interface function.
+    + new pyCLI **pcdl_get_unit_dict** command line interface function.
     + new pyCLI **pcdl_get_version** command line interface function.
     + new pyCLI **pcdl_make_gif** command line interface function.
     + new pyCLI **pcdl_make_movie** command line interface function.
@@ -118,16 +119,16 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
     + new pyMCDSts **set_verbosity_true** function to complete pcdl.TimeSeries(verbosity=True/False) experience.
     + new pyMCDSts **set_verbosity_false** function to complete pcdl.TimeSeries(verbosity=True/False) experience.
 
-+ version 3.2.13 (2023-09-18): elmbeech/physicelldatalodader
++ version 3.2.13 (2023-09-18): elmbeech/physicelldataloader
     + rename pyMCDSts make\_imgsubs to **make_imgconc** for consistency.
     + add **man/lecture/20230917_pcdl_repl_programming_analysis_plots.pdf** slide deck.
 
-+ version 3.2.12 (2023-08-12): elmbeech/physicelldatalodader
++ version 3.2.12 (2023-08-12): elmbeech/physicelldataloader
     + add **man/jupyter/pcdl_repl_programming.ipynb** : Jupyter notebook to give an idea about how to work with pcdl in a Python3 REPL.
     + add **man/lecture/20230808_pcws2023_session07_pcdl.pdf** slide deck.
     + add github **continuous integration**, all supported python versions, all supported operating systems.
 
-+ version 3.2.11 (2023-08-08): elmbeech/physicelldatalodader
++ version 3.2.11 (2023-08-08): elmbeech/physicelldataloader
     + **pip install pcdl**: will only install the bare minimum library dependencies.
     + **pip install pcdl[data]**: will install the minimum dependencies plus the dependencies to download the test dataset.
     + **pip install pcdl[scverse]**: will install the minimum dependencies plus the dependencies needed to generate anndata object.

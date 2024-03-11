@@ -1,7 +1,16 @@
 ####
+# title: scarab.py
 #
+# language: python3
+# date: 2024-03-07
+# license: BSD-3-Clause
+# author: Elmar Bucher
 #
-#
+# description:
+#     inspired by sphinx, scarabaeus is a super lightweight script,
+#     that turns input: output: description: docstrings
+#     and argparse command line help into markdown files,
+#     for source code reference api documentation.
 ####
 
 
@@ -13,6 +22,19 @@ import os
 # function
 def help_md(s_command, s_opath='./docstring/'):
     """
+    input:
+        s_command: string
+            command line command name.
+
+        s_opath: string, default ./docstring/
+            output path.
+
+    output:
+        opath/command.md file.
+
+    description:
+        function to generate an markdown file from the
+        argparse help information.
     """
     print(f'processing: {s_command} ...')
     s_opathfile = f'{s_opath}{s_command}.md'
@@ -27,6 +49,27 @@ def help_md(s_command, s_opath='./docstring/'):
 
 def docstring_md(s_function, ls_doc, s_header=None, s_opath='./docstring/'):
     """
+    input:
+        s_function: string
+            function name.
+
+        ls_doc: list of string.
+            module.function.__doc__.split('\n')
+
+        s_header: string, default None
+            default markdown text title is function().
+            with this s_header argument you can set another title 
+            than the default one.
+
+        s_opath: string, default ./docstring/
+            output path.
+
+    output:
+        opath/command.md file.
+
+    description:
+        function to generate a markdown file from
+        docstring information.
     """
     print(f'processing: {s_function} ...')
     os.makedirs(s_opath, exist_ok=True)
@@ -36,8 +79,6 @@ def docstring_md(s_function, ls_doc, s_header=None, s_opath='./docstring/'):
         s_header = f'{s_function}()'
     f.write(f'# {s_header}\n\n')
     for s_doc in ls_doc:
-        #if (len(s_doc.strip()) == 0):
-        #    pass
         if (s_doc.find('input:') > -1):
             f.write(f'## {s_doc.strip()}\n```\n')
         elif (s_doc.find('output:') > -1):
@@ -235,8 +276,8 @@ docstring_md(
 )
 
 docstring_md(
-    s_function = 'mcds.get_unit_se',
-    ls_doc = pcdl.TimeStep.get_unit_se.__doc__.split('\n'),
+    s_function = 'mcds.get_unit_dict',
+    ls_doc = pcdl.TimeStep.get_unit_dict.__doc__.split('\n'),
 )
 
 # write pyAnnData function markdown files
@@ -368,7 +409,7 @@ help_md(s_command='pcdl_get_conc_df')
 help_md(s_command='pcdl_get_conc_df_features')
 help_md(s_command='pcdl_get_parameter_dict')
 help_md(s_command='pcdl_get_rule_df')
-help_md(s_command='pcdl_get_unit_se')
+help_md(s_command='pcdl_get_unit_dict')
 help_md(s_command='pcdl_get_version')
 help_md(s_command='pcdl_make_graph_gml')
 help_md(s_command='pcdl_make_gif')

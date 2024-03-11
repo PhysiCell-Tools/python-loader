@@ -93,7 +93,7 @@ There are basically four types of functions:
 ## TimeStep settings
 + help([mcds.get_parameter_dict](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_parameter_dict.md))  #! workhorse function
 + help([mcds.get_rule_df](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_rule_df.md))  #! workhorse function
-+ help([mcds.get_unit_se](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_unit_se.md))  #! workhorse function
++ help([mcds.get_unit_dict](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_unit_dict.md))  #! workhorse function
 
 ## TimeStep internal functions
 + help([mcds.scaler](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.scaler.md))  # anndata
@@ -172,7 +172,7 @@ The command line interface functions mimic the name and parameter arguments as c
 ## Command line setting
 + [pcdl_get_parameter_dict --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_parameter_dict.md)  # ! workhorse function
 + [pcdl_get_rule_df --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_rule_df.md)  # ! workhorse function
-+ [pcdl_get_unit_se --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_unit_se.md)  # ! workhorse function
++ [pcdl_get_unit_dict --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_unit_dict.md)  # ! workhorse function
 
 ## Command line timeseries
 + [pcdl_plot_timeseries --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_plot_timeseries.md)  # ! workhorse function

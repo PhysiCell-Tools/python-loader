@@ -1308,7 +1308,7 @@ class pyMCDSts:
                 grid = grid,
                 legend = legend,
                 ylabel = ylabel,
-                xlabel = f"time [{mcds.get_unit_se()['time']}]",
+                xlabel = f"time [{mcds.get_unit_dict()['time']}]",
                 title = title,
                 ax = ax
             )
@@ -1328,7 +1328,7 @@ class pyMCDSts:
                 grid = grid,
                 legend = legend,
                 ylabel = ylabel,
-                xlabel = f"time [{mcds.get_unit_se()['time']}]",
+                xlabel = f"time [{mcds.get_unit_dict()['time']}]",
                 title = title,
                 ax = ax
             )
