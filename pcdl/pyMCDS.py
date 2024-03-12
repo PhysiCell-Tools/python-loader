@@ -1906,7 +1906,7 @@ class pyMCDS:
                                 print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><death><phase_durations> node missing.')
                             try:
                                 for x_phase in x_model.findall('rate'):
-                                    s_index = str(x_phase.get('start_index')) + _ + str(x_phase.get('end_index'))
+                                    s_index = str(x_phase.get('start_index')) + '_' + str(x_phase.get('end_index'))
                                     d_mcds['setting']['parameters'].update({f'{s_celltype}_death_{s_model}_phase_{s_index}_fixed': str(x_phase.get('fixed_duration')).lower() == 'true'})
                                     d_mcds['setting']['parameters'].update({f'{s_celltype}_death_{s_model}_phase_{s_index}': float(x_phase.text)})
                             except AttributeError:
