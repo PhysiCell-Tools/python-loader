@@ -254,7 +254,7 @@ class TestPyMcdsMesh(object):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(lai_axis)) == "<class 'list'>") and \
               (str(type(lai_axis[0])) == "<class 'numpy.ndarray'>") and \
-              (str(type(lai_axis[0][0])) == "<class 'numpy.int64'>") and \
+              (str(type(lai_axis[0][0])).startswith("<class 'numpy.int") and \
               (len(lai_axis) == 3) and \
               (lai_axis[0].shape == (11,)) and \
               (lai_axis[1].shape == (11,)) and \
@@ -686,7 +686,7 @@ class TestPyMcdsGraph(object):
         s_file = f.read()
         f.close()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.endswith('pcdl/data_timeseries_2d/output00000024_attached.gml')) and \
+              (s_pathfile.replace('\\','/').endswith('pcdl/data_timeseries_2d/output00000024_attached.gml')) and \
               (os.path.exists(s_pathfile)) and \
               (s_file.find('Creator "pcdl_v') > -1) and \
               (s_file.find('graph [\n  id 1440\n  comment "time_min"\n  label "attached_graph"\n  directed 0\n') > -1) and \
@@ -701,7 +701,7 @@ class TestPyMcdsGraph(object):
         s_file = f.read()
         f.close()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.endswith('pcdl/data_timeseries_2d/output00000024_attached.gml')) and \
+              (s_pathfile.replace('\\','/').endswith('pcdl/data_timeseries_2d/output00000024_attached.gml')) and \
               (os.path.exists(s_pathfile)) and \
               (s_file.find('Creator "pcdl_v') > -1) and \
               (s_file.find('graph [\n  id 1440\n  comment "time_min"\n  label "attached_graph"\n  directed 0\n') > -1) and \
@@ -716,7 +716,7 @@ class TestPyMcdsGraph(object):
         s_file = f.read()
         f.close()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.endswith('pcdl/data_timeseries_2d/output00000024_neighbor.gml')) and \
+              (s_pathfile.replace('\\','/').endswith('pcdl/data_timeseries_2d/output00000024_neighbor.gml')) and \
               (os.path.exists(s_pathfile)) and \
               (s_file.find('Creator "pcdl_v') > -1) and \
               (s_file.find('graph [\n  id 1440\n  comment "time_min"\n  label "neighbor_graph"\n  directed 0\n') > -1) and \
@@ -736,7 +736,7 @@ class TestPyMcdsGraph(object):
         s_file = f.read()
         f.close()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.endswith('pcdl/data_timeseries_2d/output00000024_neighbor.gml')) and \
+              (s_pathfile.replace('\\','/').endswith('pcdl/data_timeseries_2d/output00000024_neighbor.gml')) and \
               (os.path.exists(s_pathfile)) and \
               (s_file.find('Creator "pcdl_v') > -1) and \
               (s_file.find('graph [\n  id 1440\n  comment "time_min"\n  label "neighbor_graph"\n  directed 0\n') > -1) and \
@@ -751,7 +751,7 @@ class TestPyMcdsGraph(object):
         s_file = f.read()
         f.close()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.endswith('pcdl/data_timeseries_2d/output00000024_neighbor.gml')) and \
+              (s_pathfile.replace('\\','/').endswith('pcdl/data_timeseries_2d/output00000024_neighbor.gml')) and \
               (os.path.exists(s_pathfile)) and \
               (s_file.find('Creator "pcdl_v') > -1) and \
               (s_file.find('graph [\n  id 1440\n  comment "time_min"\n  label "neighbor_graph"\n  directed 0\n') > -1) and \
@@ -766,7 +766,7 @@ class TestPyMcdsGraph(object):
         s_file = f.read()
         f.close()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.endswith('pcdl/data_timeseries_2d/output00000024_neighbor.gml')) and \
+              (s_pathfile.replace('\\','/').endswith('pcdl/data_timeseries_2d/output00000024_neighbor.gml')) and \
               (os.path.exists(s_pathfile)) and \
               (s_file.find('Creator "pcdl_v') > -1) and \
               (s_file.find('graph [\n  id 1440\n  comment "time_min"\n  label "neighbor_graph"\n  directed 0\n') > -1) and \

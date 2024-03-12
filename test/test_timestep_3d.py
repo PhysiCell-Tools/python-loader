@@ -144,7 +144,7 @@ class TestPyMcds3dGraphWorkhorse(object):
         s_file = f.read()
         f.close()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.endswith('pcdl/data_timeseries_3d/output00000024_attached.gml')) and \
+              (s_pathfile.replace('\\','/').endswith('pcdl/data_timeseries_3d/output00000024_attached.gml')) and \
               (os.path.exists(s_pathfile)) and \
               (s_file.find('Creator "pcdl_v') > -1) and \
               (s_file.find('graph [\n  id 1440\n  comment "time_min"\n  label "attached_graph"\n  directed 0\n') > -1) and \
@@ -159,7 +159,7 @@ class TestPyMcds3dGraphWorkhorse(object):
         s_file = f.read()
         f.close()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.endswith('pcdl/data_timeseries_3d/output00000024_attached.gml')) and \
+              (s_pathfile.replace('\\','/').endswith('pcdl/data_timeseries_3d/output00000024_attached.gml')) and \
               (os.path.exists(s_pathfile)) and \
               (s_file.find('Creator "pcdl_v') > -1) and \
               (s_file.find('graph [\n  id 1440\n  comment "time_min"\n  label "attached_graph"\n  directed 0\n') > -1) and \
@@ -174,7 +174,7 @@ class TestPyMcds3dGraphWorkhorse(object):
         s_file = f.read()
         f.close()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.endswith('pcdl/data_timeseries_3d/output00000024_neighbor.gml')) and \
+              (s_pathfile.replace('\\','/').endswith('pcdl/data_timeseries_3d/output00000024_neighbor.gml')) and \
               (os.path.exists(s_pathfile)) and \
               (s_file.find('Creator "pcdl_v') > -1) and \
               (s_file.find('graph [\n  id 1440\n  comment "time_min"\n  label "neighbor_graph"\n  directed 0\n') > -1) and \
@@ -194,7 +194,7 @@ class TestPyMcds3dGraphWorkhorse(object):
         s_file = f.read()
         f.close()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.endswith('pcdl/data_timeseries_3d/output00000024_neighbor.gml')) and \
+              (s_pathfile.replace('\\','/').endswith('pcdl/data_timeseries_3d/output00000024_neighbor.gml')) and \
               (os.path.exists(s_pathfile)) and \
               (s_file.find('Creator "pcdl_v') > -1) and \
               (s_file.find('graph [\n  id 1440\n  comment "time_min"\n  label "neighbor_graph"\n  directed 0\n') > -1) and \
@@ -209,7 +209,7 @@ class TestPyMcds3dGraphWorkhorse(object):
         s_file = f.read()
         f.close()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.endswith('pcdl/data_timeseries_3d/output00000024_neighbor.gml')) and \
+              (s_pathfile.replace('\\','/').endswith('pcdl/data_timeseries_3d/output00000024_neighbor.gml')) and \
               (os.path.exists(s_pathfile)) and \
               (s_file.find('Creator "pcdl_v') > -1) and \
               (s_file.find('graph [\n  id 1440\n  comment "time_min"\n  label "neighbor_graph"\n  directed 0\n') > -1) and \
@@ -224,7 +224,7 @@ class TestPyMcds3dGraphWorkhorse(object):
         s_file = f.read()
         f.close()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.endswith('pcdl/data_timeseries_3d/output00000024_neighbor.gml')) and \
+              (s_pathfile.replace('\\','/').endswith('pcdl/data_timeseries_3d/output00000024_neighbor.gml')) and \
               (os.path.exists(s_pathfile)) and \
               (s_file.find('Creator "pcdl_v') > -1) and \
               (s_file.find('graph [\n  id 1440\n  comment "time_min"\n  label "neighbor_graph"\n  directed 0\n') > -1) and \
