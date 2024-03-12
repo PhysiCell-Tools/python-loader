@@ -68,6 +68,7 @@ jobs:
         brew install ffmpeg imagemagick
         python -m pip install --upgrade pip
         python -m pip install flake8 pytest matplotlib numpy pandas scipy requests anndata
+        python -m pip install /Users/runner/work/physicelldataloader/physicelldataloader -v
         #if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Lint with flake8
       run: |
@@ -102,6 +103,7 @@ jobs:
         choco install ffmpeg imagemagick
         python -m pip install --upgrade pip
         python -m pip install flake8 pytest matplotlib numpy pandas scipy requests anndata
+        python -m pip install D:\a\physicelldataloader\physicelldataloader -v
         #echo 'set PYTHONPATH=D:\a\physicelldataloader\physicelldataloader' >> $GITHUB_ENV
         #if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Lint with flake8
