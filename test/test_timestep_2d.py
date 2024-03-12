@@ -254,7 +254,7 @@ class TestPyMcdsMesh(object):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(lai_axis)) == "<class 'list'>") and \
               (str(type(lai_axis[0])) == "<class 'numpy.ndarray'>") and \
-              (str(type(lai_axis[0][0])).startswith("<class 'numpy.int") and \
+              (str(type(lai_axis[0][0])).startswith("<class 'numpy.int")) and \
               (len(lai_axis) == 3) and \
               (lai_axis[0].shape == (11,)) and \
               (lai_axis[1].shape == (11,)) and \
