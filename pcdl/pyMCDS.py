@@ -202,8 +202,8 @@ class pyMCDS:
                 setting graph to False will use less memory and speed up processing.
 
             settingxml: string; default PhysiCell_settings.xml
-                from which settings.xml should the cell type ID label mapping
-                be extracted?
+                from which settings.xml should the cell type ID label mapping,
+                parameters, and units be extracted?
                 set to None or False if the xml file is missing!
 
             verbose: boole; default True
@@ -1667,12 +1667,6 @@ class pyMCDS:
             and their units and all parameters and their units found in the
             settings.xml file.
         """
-        # output
-        #del ds_unit['ID']
-        #se_unit = pd.Series(ds_unit)
-        #se_unit.index.name = 'feature'
-        #se_unit.name = 'unit'
-        #se_unit.sort_index(inplace=True)
         return self.data['setting']['units']
 
 
@@ -2260,11 +2254,11 @@ class pyMCDS:
                             except KeyError:
                                 es_customdata.add(x_element.tag)
                 except AttributeError:
-                    print(f'Warning @ pyMCDS._read_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><custom_data> node missing.')
+                    print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><custom_data> node missing.')
 
             # if <custom data> was found
             if (len(es_customdata) > 0):
-                print(f'Warning @ pyMCDS._read_xml : cell_definition custom_data without variable type setting detected. {sorted(es_customdata)}')
+                print(f'Warning @ pyMCDS._read_setting_xml : cell_definition custom_data without variable type setting detected. {sorted(es_customdata)}')
 
             # find <user_parameters> node
             for x_element in x_root.find('user_parameters').iter():
@@ -2306,9 +2300,11 @@ class pyMCDS:
                             else:
                                 d_mcds['setting']['rules'] = pd.concate([d_mcds['setting']['rules'], df_rule], axis=0)
                         except pd._libs.parsers.EmptyDataError:
-                            print(f'Warning @ pyMCDS._read_xml : {s_pathfile} is empty.')
+                            print(f'Warning @ pyMCDS._read_settings.xml : {s_pathfile} is empty.')
+                if (d_mcds['setting']['rules'] is None):
+                    print(f'Warning @ pyMCDS._read_setting_xml : no enabled cell_rules.csv detetcetd.')
             else:
-                print(f'Warning @ pyMCDS._read_setting.xml : <cell_rules> node missing.')
+                print(f'Warning @ pyMCDS._read_setting_xml : <cell_rules> node missing.')
 
 
         #######################################

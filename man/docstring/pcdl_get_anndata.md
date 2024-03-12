@@ -1,7 +1,8 @@
 ```
 usage: pcdl_get_anndata [-h] [--custom_type [CUSTOM_TYPE ...]]
-                        [--microenv MICROENV] [--settingxml SETTINGXML]
-                        [-v VERBOSE] [--drop [DROP ...]] [--keep [KEEP ...]]
+                        [--microenv MICROENV] [--graph GRAPH]
+                        [--settingxml SETTINGXML] [-v VERBOSE]
+                        [--drop [DROP ...]] [--keep [KEEP ...]]
                         [--scale SCALE] [--collapse COLLAPSE]
                         [path] [values]
 
@@ -25,10 +26,13 @@ options:
                         float and int will be handled as numeric, bool as
                         Boolean, and str as categorical data. default is an
                         empty string.
-  --microenv MICROENV   should the microenvironment be extracted? setting
-                        microenv to False will use less memory and speed up
-                        processing, similar to the original pyMCDS_cells.py
-                        script. default is True.
+  --microenv MICROENV   should the microenvironment be extracted and loaded
+                        into the anndata object? setting microenv to False
+                        will use less memory and speed up processing, similar
+                        to the original pyMCDS_cells.py script. default is
+                        True.
+  --graph GRAPH         should neighbor graph and attach graph be extracted
+                        and loaded into the anndata object? default is True.
   --settingxml SETTINGXML
                         from which settings.xml should the cell type ID label
                         mapping be extracted? set to None or False if the xml

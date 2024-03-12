@@ -238,15 +238,27 @@ class TestPyMcds3dGraphWorkhorse(object):
         os.remove(s_pathfile)
 
 
-## unit related functions ##
+## setting related functions ##
+# BUE: TO BE COPIED FROM 2D
 class TestPyMcds3dUnitWorkhorse(object):
     ''' tests on 3D data set, for speed, for pcdl.pyMCDS unit related workhorse functions. '''
     mcds = pcdl.pyMCDS(xmlfile=s_pathfile_3d)  # custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True
 
-    def test_mcds_get_unit_se(self, mcds=mcds):
-        se_unit = mcds.get_unit_se()
+    def test_mcds_get_parameter_dict(self, mcds=mcds):
+        d_parameter = mcds.get_parameter_dict()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (str(type(se_unit)) == "<class 'pandas.core.series.Series'>") and \
-              (se_unit.shape == (105,)) and \
-              (se_unit.name == 'unit')
+              (str(type(d_parameter)) == "<class 'dict'>") and \
+              (len(d_parameter) == 82) and \
+              (d_parameter['oxygen_initial_condition'] == 38.0)
 
+    def test_mcds_get_rule_df(self, mcds=mcds):
+        df_rule = mcds.get_rule_df()
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (df_rule is None)
+
+    def test_mcds_get_unit_dict(self, mcds=mcds):
+        ds_unit = mcds.get_unit_dict()
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (str(type(ds_unit)) == "<class 'dict'>") and \
+              (len(ds_unit) == 151) and \
+              (ds_unit['oxygen'] == 'mmHg')

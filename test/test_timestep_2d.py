@@ -780,16 +780,28 @@ class TestPyMcdsGraph(object):
         os.remove(s_pathfile)
 
 
-## unit related functions ##
+## model setting related functions ##
 
-class TestPyMcdsUnit(object):
-    ''' tests for pcdl.pyMCDS unit related functions. '''
+class TestPyMcdsSetting(object):
+    ''' tests for pcdl.pyMCDS setting related functions. '''
     mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
-    def test_mcds_get_unit_se(self, mcds=mcds):
-        se_unit = mcds.get_unit_se()
+    def test_mcds_get_parameter_dict(self, mcds=mcds):
+        d_parameter = mcds.get_parameter_dict()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (str(type(se_unit)) == "<class 'pandas.core.series.Series'>") and \
-              (se_unit.shape == (82,)) and \
-              (se_unit.name == 'unit')
+              (str(type(d_parameter)) == "<class 'dict'>") and \
+              (len(d_parameter) == 63) and \
+              (d_parameter['oxygen_initial_condition'] == 38.0)
+
+    def test_mcds_get_rule_df(self, mcds=mcds):
+        df_rule = mcds.get_rule_df()
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (df_rule is None)
+
+    def test_mcds_get_unit_dict(self, mcds=mcds):
+        ds_unit = mcds.get_unit_dict()
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (str(type(ds_unit)) == "<class 'dict'>") and \
+              (len(ds_unit) == 121) and \
+              (ds_unit['oxygen'] == 'mmHg')
 

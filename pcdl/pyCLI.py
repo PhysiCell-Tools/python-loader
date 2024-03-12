@@ -22,6 +22,7 @@ import argparse
 import json
 import numpy as np
 import os
+import pandas as pd
 import pcdl
 from scipy import stats
 import sys
@@ -60,9 +61,14 @@ def get_anndata():
     parser.add_argument(
         '--microenv',
         default = 'true',
-        help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.'
+        help = 'should the microenvironment be extracted and loaded into the anndata object? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.'
     )
-    # TimeSeries graph False
+    # TimeSeries graph 
+    parser.add_argument(
+        '--graph',
+        default = 'true',
+        help = 'should neighbor graph and attach graph be extracted and loaded into the anndata object? default is True.'
+    )
     # TimeSeries settingxml
     parser.add_argument(
         '--settingxml',
@@ -138,7 +144,7 @@ def get_anndata():
             output_path = '.',
             custom_type = d_vartype,
             microenv = False if args.microenv.lower().startswith('f') else True,
-            graph = True,
+            graph = False if args.graph.lower().startswith('f') else True,
             settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
             verbose = False if args.verbose.lower().startswith('f') else True
         )
@@ -148,7 +154,7 @@ def get_anndata():
             keep = set(args.keep),
             scale = args.scale,
         )
-        s_opathfile = args.path.replace('.xml','_cell.h5ad')
+        s_opathfile = args.path.replace('.xml', f'_cell_{args.scale}.h5ad')
         ann_mcds.write(s_opathfile)
         # going home
         return s_opathfile
@@ -170,13 +176,13 @@ def get_anndata():
             collapse = False if args.collapse.lower().startswith('f') else True,
         )
         if (type(ann_mcdsts) is list):
-            ls_opathfile = [f"{args.path}/{s_xmlfile.replace('.xml','_cell.h5ad')}" for s_xmlfile in mcdsts.get_xmlfile_list()]
+            ls_opathfile = [f"{args.path}/{s_xmlfile.replace('.xml', '_cell_{}.h5ad'.format(args.scale))}" for s_xmlfile in mcdsts.get_xmlfile_list()]
             for i, ann_mcds in enumerate(ann_mcdsts):
                 ann_mcds.write(ls_opathfile[i])
             # going home
             return ls_opathfile
         else:
-            s_opathfile = f'{args.path}/timeseries_cell.h5ad'
+            s_opathfile = f'{args.path}/timeseries_cell_{args.scale}.h5ad'
             ann_mcdsts.write(s_opathfile)
             # going home
             return s_opathfile
@@ -622,10 +628,10 @@ def get_conc_df_features():
     return s_opathfile
 
 
-def get_unit_se():
+def get_parameter_dict():
     # argv
     parser = argparse.ArgumentParser(
-        prog = 'pcdl_get_unit_se',
+        prog = 'pcdl_get_parameter_dict',
         description = 'function returns a csv that lists all tracked variables from metadata, cell, and microenvironment and maps them to their unit.',
         epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
     )
@@ -650,7 +656,7 @@ def get_unit_se():
     parser.add_argument(
         '--settingxml',
         default = 'PhysiCell_settings.xml',
-        help = 'from which settings.xml should the cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+        help = 'from which settings.xml should the cell type ID label mapping and parameters be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
     )
     # TimeSeries verbose
     parser.add_argument(
@@ -682,8 +688,144 @@ def get_unit_se():
         settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
         verbose = True if args.verbose.lower().startswith('t') else False
     )
-    se_unit = mcds.get_unit_se()
+    s_opathfile = f'{s_path}/timeseries_parameter.json'
+    f = open(s_opathfile, 'w')
+    json.dump(mcds.get_parameter_dict(), f, sort_keys=True, indent=4)
+    f.close()
+    # going home
+    return s_opathfile
+
+
+def get_rule_df():
+    # argv
+    parser = argparse.ArgumentParser(
+        prog = 'pcdl_get_rule_df',
+        description = 'function returns a csv that lists all tracked variables from metadata, cell, and microenvironment and maps them to their unit.',
+        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
+    )
+
+    # TimeSeries path
+    parser.add_argument(
+        'path',
+        nargs = '?',
+        default = '.',
+        help = 'path to the PhysiCell output directory. default is . .',
+    )
+    # TimeSeries output_path '.'
+    # TimeSeries custom_type nop
+    # TimeSeries microenv
+    # TimeSeries graph False
+    # TimeSeries settingxml
+    parser.add_argument(
+        '--settingxml',
+        default = 'PhysiCell_settings.xml',
+        help = 'from which settings.xml should the rule.csv links be extracted? default is PhysiCell_settings.xml.',
+    )
+    # TimeSeries verbose
+    parser.add_argument(
+        '-v', '--verbose',
+        default = 'true',
+        help = 'setting verbose to False for less text output, while processing. default is True.',
+    )
+
+    # parse arguments
+    args = parser.parse_args()
+    print(args)
+
+    # process arguments
+    s_path = args.path
+    s_pathfile = args.path
+    if s_pathfile.endswith('.xml'):
+        s_path = '/'.join(args.path.replace('\\','/').split('/')[:-1])
+    else:
+        s_pathfile = s_pathfile + '/initial.xml'
+    if not os.path.exists(s_pathfile):
+        sys.exit(f"Error @ pcdl_get_conc_df : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
+    # run
+    mcds = pcdl.pyMCDS(
+        xmlfile = s_pathfile,
+        output_path = '.',
+        #custom_type,
+        microenv = False,
+        graph = False,
+        settingxml = args.settingxml,
+        verbose = True if args.verbose.lower().startswith('t') else False
+    )
+    s_opathfile = f'{s_path}/timeseries_rule.csv'
+    df_rule = mcds.get_rule_df()
+    # going home
+    if (df_rule is None):
+        return 'None'
+    else:
+        df_rule.to_csv(s_opathfile)
+        return s_opathfile
+
+
+def get_unit_dict():
+    # argv
+    parser = argparse.ArgumentParser(
+        prog = 'pcdl_get_unit_dict',
+        description = 'function returns a csv that lists all tracked variables from metadata, cell, and microenvironment and maps them to their unit.',
+        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
+    )
+
+    # TimeSeries path
+    parser.add_argument(
+        'path',
+        nargs = '?',
+        default = '.',
+        help = 'path to the PhysiCell output directory. default is . .',
+    )
+    # TimeSeries output_path '.'
+    # TimeSeries custom_type nop
+    # TimeSeries microenv
+    parser.add_argument(
+        '--microenv',
+        default = 'true',
+        help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.',
+    )
+    # TimeSeries graph False
+    # TimeSeries settingxml
+    parser.add_argument(
+        '--settingxml',
+        default = 'PhysiCell_settings.xml',
+        help = 'from which settings.xml should units and cell type ID label mapping and units be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+    )
+    # TimeSeries verbose
+    parser.add_argument(
+        '-v', '--verbose',
+        default = 'true',
+        help = 'setting verbose to False for less text output, while processing. default is True.',
+    )
+
+    # parse arguments
+    args = parser.parse_args()
+    print(args)
+
+    # process arguments
+    s_path = args.path
+    s_pathfile = args.path
+    if s_pathfile.endswith('.xml'):
+        s_path = '/'.join(args.path.replace('\\','/').split('/')[:-1])
+    else:
+        s_pathfile = s_pathfile + '/initial.xml'
+    if not os.path.exists(s_pathfile):
+        sys.exit(f"Error @ pcdl_get_conc_df : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
+    # run
+    mcds = pcdl.pyMCDS(
+        xmlfile = s_pathfile,
+        output_path = '.',
+        #custom_type,
+        microenv = False if args.microenv.lower().startswith('f') else True,
+        graph = False,
+        settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
+        verbose = True if args.verbose.lower().startswith('t') else False
+    )
     s_opathfile = f'{s_path}/timeseries_unit.csv'
+    se_unit = pd.Series(mcds.get_unit_dict())
+    se_unit.index.name = 'feature'
+    se_unit.name = 'unit'
+    se_unit.sort_index(inplace=True)
     se_unit.to_csv(s_opathfile)
     # going home
     return s_opathfile

@@ -1,7 +1,7 @@
 ```
-usage: pcdl_get_parameter_dict [-h] [--microenv MICROENV]
-                               [--settingxml SETTINGXML] [-v VERBOSE]
-                               [path]
+usage: pcdl_get_unit_dict [-h] [--microenv MICROENV] [--settingxml SETTINGXML]
+                          [-v VERBOSE]
+                          [path]
 
 function returns a csv that lists all tracked variables from metadata, cell,
 and microenvironment and maps them to their unit.
@@ -16,8 +16,8 @@ options:
                         processing, similar to the original pyMCDS_cells.py
                         script. default is True.
   --settingxml SETTINGXML
-                        from which settings.xml should the cell type ID label
-                        mapping and parameters be extracted? set to None or
+                        from which settings.xml should units and cell type ID
+                        label mapping and units be extracted? set to None or
                         False if the xml file is missing! default is
                         PhysiCell_settings.xml.
   -v VERBOSE, --verbose VERBOSE

@@ -67,7 +67,7 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell.h5ad')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_maxabs.h5ad')) and \
                (ann.shape == (24758, 79)) and \
                (ann.obs.shape == (24758, 7)) and \
                (len(ann.obsp) == 0) and \
@@ -81,8 +81,8 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         ls_opathfile = s_result.stderr.decode('UTF8').replace("['","").replace("']\n","").split("', '")
         assert len(ls_opathfile) == 25 and \
-               ls_opathfile[0].endswith('data_timeseries_2d/output00000000_cell.h5ad') and \
-               ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_cell.h5ad') and \
+               ls_opathfile[0].endswith('data_timeseries_2d/output00000000_cell_maxabs.h5ad') and \
+               ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_cell_maxabs.h5ad') and \
                os.path.exists(ls_opathfile[12])
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
@@ -93,7 +93,7 @@ class TestPyCliAnndata(object):
         print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell.h5ad')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_maxabs.h5ad')) and \
                (set(ann.obs.columns).issuperset({'oncoprotein'})) and \
                (ann.shape == (24758, 78)) and \
                (ann.obs.shape == (24758, 8)) and \
@@ -108,12 +108,26 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell.h5ad')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_maxabs.h5ad')) and \
                (not set(ann.var_names).issuperset({'oxygen'})) and \
                (ann.shape == (24758, 76)) and \
                (ann.obs.shape == (24758, 7)) and \
                (len(ann.obsp) == 0) and \
                (ann.var.shape == (76, 0)) and \
+               (len(ann.uns) == 0)
+        os.remove(s_opathfile)
+
+    def test_pcdl_get_anndata_timeseries_graph(self):
+        s_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--graph', 'false'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
+        ann = ad.read_h5ad(s_opathfile)
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_maxabs.h5ad')) and \
+               (ann.shape == (24758, 79)) and \
+               (ann.obs.shape == (24758, 7)) and \
+               (len(ann.obsp) == 0) and \
+               (ann.var.shape == (79, 0)) and \
                (len(ann.uns) == 0)
         os.remove(s_opathfile)
 
@@ -123,7 +137,7 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell.h5ad')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_maxabs.h5ad')) and \
                (set(ann.var_names).issuperset({'attack_rates_0'})) and \
                (ann.shape == (24758, 79)) and \
                (ann.obs.shape == (24758, 7)) and \
@@ -138,7 +152,7 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell.h5ad')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_maxabs.h5ad')) and \
                (set(ann.var_names).issuperset({'attack_rates_0'})) and \
                (ann.shape == (24758, 79)) and \
                (ann.obs.shape == (24758, 7)) and \
@@ -153,7 +167,7 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell.h5ad')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_maxabs.h5ad')) and \
                (ann.shape == (24758, 26)) and \
                (ann.obs.shape == (24758, 5)) and \
                (len(ann.obsp) == 0) and \
@@ -167,7 +181,7 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell.h5ad')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_maxabs.h5ad')) and \
                (not set(ann.var_names).issuperset({'cell_type'})) and \
                (not set(ann.obs_keys()).issuperset({'oxygen'})) and \
                (ann.shape == (24758, 78)) and \
@@ -183,7 +197,7 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell.h5ad')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_maxabs.h5ad')) and \
                (set(ann.var_names).issuperset({'oxygen'})) and \
                (set(ann.obs_keys()).issuperset({'cell_type'})) and \
                (ann.shape == (24758, 1)) and \
@@ -199,7 +213,7 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell.h5ad')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_std.h5ad')) and \
                (ann.shape == (24758, 79)) and \
                (ann.obs.shape == (24758, 7)) and \
                (len(ann.obsp) == 0) and \
@@ -214,7 +228,7 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.h5ad')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell_maxabs.h5ad')) and \
                (ann.shape == (1099, 79)) and \
                (ann.obs.shape == (1099, 6)) and \
                (len(ann.obsp) == 2) and \
@@ -228,7 +242,7 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.h5ad')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell_maxabs.h5ad')) and \
                (not set(ann.var_names).issuperset({'oxygen'})) and \
                (ann.shape == (1099, 76)) and \
                (ann.obs.shape == (1099, 6)) and \
@@ -237,13 +251,27 @@ class TestPyCliAnndata(object):
                (len(ann.uns) == 1)
         os.remove(s_opathfile)
 
+    def test_pcdl_get_anndata_timestep_graph(self):
+        s_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--graph', 'false'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
+        ann = ad.read_h5ad(s_opathfile)
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell_maxabs.h5ad')) and \
+               (ann.shape == (1099, 79)) and \
+               (ann.obs.shape == (1099, 6)) and \
+               (len(ann.obsp) == 0) and \
+               (ann.var.shape == (79, 0)) and \
+               (len(ann.uns) == 0)
+        os.remove(s_opathfile)
+
     def test_pcdl_get_anndata_timestep_settingxmlfalse(self):
         s_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--settingxml', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.h5ad')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell_maxabs.h5ad')) and \
                (set(ann.var_names).issuperset({'attack_rates_0'})) and \
                (ann.shape == (1099, 79)) and \
                (ann.obs.shape == (1099, 6)) and \
@@ -258,7 +286,7 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.h5ad')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell_maxabs.h5ad')) and \
                (set(ann.var_names).issuperset({'attack_rates_0'})) and \
                (ann.shape == (1099, 79)) and \
                (ann.obs.shape == (1099, 6)) and \
@@ -273,7 +301,7 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.h5ad')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell_maxabs.h5ad')) and \
                (ann.shape == (1099, 26)) and \
                (ann.obs.shape == (1099, 4)) and \
                (len(ann.obsp) == 2) and \
@@ -287,7 +315,7 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.h5ad')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell_maxabs.h5ad')) and \
                (not set(ann.var_names).issuperset({'cell_type'})) and \
                (not set(ann.obs_keys()).issuperset({'oxygen'})) and \
                (ann.shape == (1099, 78)) and \
@@ -303,7 +331,7 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.h5ad')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell_maxabs.h5ad')) and \
                (set(ann.var_names).issuperset({'oxygen'})) and \
                (set(ann.obs_keys()).issuperset({'cell_type'})) and \
                (ann.shape == (1099, 1)) and \
@@ -319,7 +347,7 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.h5ad')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell_std.h5ad')) and \
                (ann.shape == (1099, 79)) and \
                (ann.obs.shape == (1099, 6)) and \
                (len(ann.obsp) == 2) and \
@@ -990,7 +1018,68 @@ class TestPyCliGraphGml(object):
         os.remove(s_opathfile)
 
 
-class TestPyCliUnitSe(object):
+class TestPyCliParameterDict(object):
+    ''' tests for one pcdl.pyCli function. '''
+
+    # timestep:
+    # + path (pathfile, path) ok
+    # + microenv (true, _false_) ok
+    # + verbose (true, _false_) nop
+
+    def test_pcdl_get_parameter_dict_timeseries(self):
+        s_result = subprocess.run(['pcdl_get_parameter_dict', s_path_2d], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
+        d_parameter = json.load(open(s_opathfile))
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_parameter.json')) and \
+               (len(d_parameter) == 63)
+        os.remove(s_opathfile)
+
+    def test_pcdl_get_parameter_dict_timestep(self):
+        s_result = subprocess.run(['pcdl_get_parameter_dict', s_pathfile_2d], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
+        d_parameter = json.load(open(s_opathfile))
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_parameter.json')) and \
+               (len(d_parameter) == 63)
+        os.remove(s_opathfile)
+
+    def test_pcdl_get_parameter_dict_timestep_microenv(self):
+        s_result = subprocess.run(['pcdl_get_parameter_dict', s_pathfile_2d, '--microenv', 'false'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
+        d_parameter = json.load(open(s_opathfile))
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_parameter.json')) and \
+               (len(d_parameter) == 63)
+        os.remove(s_opathfile)
+
+
+class TestPyCliRuleDf(object):
+    ''' tests for one pcdl.pyCli function. '''
+
+    # timestep:
+    # + path (pathfile, path) ok
+    # + verbose (true, _false_) nop
+
+    def test_pcdl_get_rule_df_timeseries(self):
+        s_result = subprocess.run(['pcdl_get_rule_df', s_path_2d], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
+        assert (s_opathfile.endswith('None'))
+
+    def test_pcdl_get_rule_df_timestep(self):
+        s_result = subprocess.run(['pcdl_get_rule_df', s_pathfile_2d], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
+        assert (s_opathfile.endswith('None'))
+
+
+class TestPyCliUnitDict(object):
     ''' tests for one pcdl.pyCli function. '''
 
     # timestep:
@@ -999,8 +1088,8 @@ class TestPyCliUnitSe(object):
     # + settingxml (string, _none_, _false_) ok
     # + verbose (true, _false_) nop
 
-    def test_pcdl_get_unit_se_timeseries(self):
-        s_result = subprocess.run(['pcdl_get_unit_se', s_path_2d], check=False, capture_output=True)
+    def test_pcdl_get_unit_dict_timeseries(self):
+        s_result = subprocess.run(['pcdl_get_unit_dict', s_path_2d], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
@@ -1008,8 +1097,8 @@ class TestPyCliUnitSe(object):
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
-    def test_pcdl_get_unit_se_timestep(self):
-        s_result = subprocess.run(['pcdl_get_unit_se', s_pathfile_2d], check=False, capture_output=True)
+    def test_pcdl_get_unit_dict_timestep(self):
+        s_result = subprocess.run(['pcdl_get_unit_dict', s_pathfile_2d], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
@@ -1017,8 +1106,8 @@ class TestPyCliUnitSe(object):
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
-    def test_pcdl_get_unit_se_timestep_microenv(self):
-        s_result = subprocess.run(['pcdl_get_unit_se', s_pathfile_2d, '--microenv', 'false'], check=False, capture_output=True)
+    def test_pcdl_get_unit_dict_timestep_microenv(self):
+        s_result = subprocess.run(['pcdl_get_unit_dict', s_pathfile_2d, '--microenv', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
@@ -1027,8 +1116,8 @@ class TestPyCliUnitSe(object):
                (not set(df_cell.index).issuperset({'oxygen'}))
         os.remove(s_opathfile)
 
-    def test_pcdl_get_unit_se_timestep_settingxmlfalse(self):
-        s_result = subprocess.run(['pcdl_get_unit_se', s_pathfile_2d, '--settingxml', 'false'], check=False, capture_output=True)
+    def test_pcdl_get_unit_dict_timestep_settingxmlfalse(self):
+        s_result = subprocess.run(['pcdl_get_unit_dict', s_pathfile_2d, '--settingxml', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')
@@ -1037,8 +1126,8 @@ class TestPyCliUnitSe(object):
                (set(df_cell.index).issuperset({'attack_rates_0'}))
         os.remove(s_opathfile)
 
-    def test_pcdl_get_unit_se_timestep_settingxmlnone(self):
-        s_result = subprocess.run(['pcdl_get_unit_se', s_pathfile_2d, '--settingxml', 'none'], check=False, capture_output=True)
+    def test_pcdl_get_unit_dict_timestep_settingxmlnone(self):
+        s_result = subprocess.run(['pcdl_get_unit_dict', s_pathfile_2d, '--settingxml', 'none'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\n','')

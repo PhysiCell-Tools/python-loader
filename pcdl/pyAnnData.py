@@ -281,7 +281,7 @@ class TimeStep(pyMCDS):
                 processing, similar to the original pyMCDS_cells.py script.
 
             graph: boole; default True
-                should the graphs be extracted?
+                should neighbor garph and attached graph be extracted?
                 setting graph to False will use less memory and speed up processing.
 
             settingxml: string; default PhysiCell_settings.xml
@@ -388,7 +388,7 @@ class TimeSeries(pyMCDSts):
                 processing, similar to the original pyMCDS_cells.py script.
 
             graph: boole; default True
-                should the graphs be extracted?
+                should neighbor graph and attached graph be extracted?
                 setting graph to False will use less memory and speed up processing.
 
             settingxml: string; default PhysiCell_settings.xml
