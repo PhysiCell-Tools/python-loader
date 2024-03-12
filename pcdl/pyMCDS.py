@@ -1589,7 +1589,7 @@ class pyMCDS:
                 o_attr = df_cell.loc[i_src, s_attr]
                 if (type(o_attr) in {bool, np.bool_, int, np.int_, np.int8, np.int16, np.int32, np.int64}):
                     f.write(f'    {s_attr} {int(o_attr)}\n')
-                elif (type(o_attr) in {float, np.float_, np.float16, np.float32, np.float64, np.float128}):
+                elif (type(o_attr) in {float, np.float_, np.float16, np.float32, np.float64}):  # np.float128
                     f.write(f'    {s_attr} {o_attr}\n')
                 elif (type(o_attr) in {str, np.str_}):
                     f.write(f'    {s_attr} "{o_attr}"\n')
