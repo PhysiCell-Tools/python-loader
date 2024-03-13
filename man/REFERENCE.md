@@ -45,10 +45,12 @@ Basically there are four types of functions:
 **version**
 + [help(mcds.get_multicellds_version)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_multicellds_version.md)
 + [help(mcds.get_physicell_version)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_physicell_version.md)
+
 **time**
 + [help(mcds.get_timestamp)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_timestamp.md)
 + [help(mcds.get_time)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_time.md)
 + [help(mcds.get_runtime)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_runtime.md)
+
 **settings**
 + [help(mcds.get_parameter_dict)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_parameter_dict.md)  #! workhorse function
 + [help(mcds.get_rule_df)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_rule_df.md)  #! workhorse function
@@ -61,12 +63,14 @@ Basically there are four types of functions:
 + [help(mcds.get_xyz_range)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_xyz_range.md)
 + [help(mcds.get_voxel_ijk_axis)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_voxel_ijk_axis.md)
 + [help(mcds.get_mesh_mnp_axis)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_mesh_mnp_axis.md)
+
 **mesh mnp**
 + [help(mcds.get_mesh)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_mesh.md)
 + [help(mcds.get_mesh_2D)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_mesh_2D.md)
 + [help(mcds.get_mesh_coordinate)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_mesh_coordinate.md)
 + [help(mcds.get_mesh_spacing)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_mesh_spacing.md)
 + [help(mcds.is_in_mesh)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.is_in_mesh.md)
+
 **voxel ijk**
 + [help(mcds.get_voxel_spacing)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_voxel_spacing.md)
 + [help(mcds.get_voxel_volume)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_voxel_volume.md)
@@ -154,6 +158,7 @@ The command line interface functions mimic the name and parameter arguments as c
 ### Command line metadata
 **version**
 + [pcdl_get_version --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_version.md)  #! workhorse function
+
 **settings**
 + [pcdl_get_parameter_dict --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_parameter_dict.md)  #! workhorse function
 + [pcdl_get_rule_df --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_rule_df.md)  #! workhorse function
