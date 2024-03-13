@@ -1148,14 +1148,14 @@ class TestPyCliVersion(object):
         s_result = subprocess.run(['pcdl_get_version', s_path_2d], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_version = s_result.stderr.decode('UTF8')
+        s_version = s_result.stderr.decode('UTF8').replace('\r','')
         assert (s_version.startswith('version:\nPhysiCell_'))
 
     def test_pcdl_get_version_timestep(self):
         s_result = subprocess.run(['pcdl_get_version', s_pathfile_2d], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_version = s_result.stderr.decode('UTF8')
+        s_version = s_result.stderr.decode('UTF8').replace('\r','')
         assert (s_version.startswith('version:\nPhysiCell_'))
 
 
@@ -1172,7 +1172,7 @@ class TestPyCliMakeGif(object):
         s_result = subprocess.run(['pcdl_make_gif', s_path], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').split('\n')[-2]
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[-2]
         assert (s_opathfile.endswith('data_timeseries_2d/cell_cell_type_z0.0/cell_cell_type_z0.0_jpeg.gif')) and \
                (os.path.exists(s_opathfile))
         shutil.rmtree(s_path)
@@ -1183,7 +1183,7 @@ class TestPyCliMakeGif(object):
         s_result = subprocess.run(['pcdl_make_gif', s_path, 'tiff'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').split('\n')[-2]
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[-2]
         assert (s_opathfile.endswith('data_timeseries_2d/conc_oxygen_z0.0/conc_oxygen_z0.0_tiff.gif')) and \
                (os.path.exists(s_opathfile))
         shutil.rmtree(s_path)
@@ -1203,7 +1203,7 @@ class TestPyCliMakeMove(object):
         s_result = subprocess.run(['pcdl_make_movie', s_path], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').split('\n')[-2]
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[-2]
         assert (s_opathfile.endswith('data_timeseries_2d/cell_cell_type_z0.0/cell_cell_type_z0.0_jpeg12.mp4')) and \
                (os.path.exists(s_opathfile))
         shutil.rmtree(s_path)
@@ -1214,7 +1214,7 @@ class TestPyCliMakeMove(object):
         s_result = subprocess.run(['pcdl_make_movie', s_path, 'tiff'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').split('\n')[-2]
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[-2]
         assert (s_opathfile.endswith('data_timeseries_2d/conc_oxygen_z0.0/conc_oxygen_z0.0_tiff12.mp4')) and \
                (os.path.exists(s_opathfile))
         shutil.rmtree(s_path)
@@ -1225,7 +1225,7 @@ class TestPyCliMakeMove(object):
         s_result = subprocess.run(['pcdl_make_movie', s_path, '--framerate', '9'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').split('\n')[-2]
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[-2]
         assert (s_opathfile.endswith('data_timeseries_2d/conc_oxygen_z0.0/conc_oxygen_z0.0_jpeg9.mp4')) and \
                (os.path.exists(s_opathfile))
         shutil.rmtree(s_path)
@@ -1258,7 +1258,7 @@ class TestPyCliPlotContour(object):
         #print(f'\ns_result: {s_result}\n')
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_stdout = s_result.stdout.decode('UTF8')
+        s_stdout = s_result.stdout.decode('UTF8').replace('\r','')
         s_opath = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         assert (os.path.exists(s_opath + 'output00000024_oxygen.jpeg')) and \
            (s_opath.endswith('pcdl/data_timeseries_2d/conc_oxygen_z0.0/')) and \
@@ -1296,7 +1296,7 @@ class TestPyCliPlotContour(object):
         #print(f'\ns_result: {s_result}\n')
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_stdout = s_result.stdout.decode('UTF8')
+        s_stdout = s_result.stdout.decode('UTF8').replace('\r','')
         s_opath = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         assert (os.path.exists(s_opath + 'output00000024_oxygen.tiff')) and \
            (s_opath.endswith('pcdl/data_timeseries_2d/conc_oxygen_z0.0/')) and \
@@ -1347,7 +1347,7 @@ class TestPyCliPlotScatter(object):
         #print(f'\ns_result: {s_result}\n')
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_stdout = s_result.stdout.decode('UTF8')
+        s_stdout = s_result.stdout.decode('UTF8').replace('\r','')
         s_opath = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         assert (os.path.exists(s_opath + 'output00000024_cell_type.jpeg')) and \
            (s_opath.endswith('pcdl/data_timeseries_2d/cell_cell_type_z0.0/')) and \
@@ -1393,7 +1393,7 @@ class TestPyCliPlotScatter(object):
         #print(f'\ns_result: {s_result}\n')
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_stdout = s_result.stdout.decode('UTF8')
+        s_stdout = s_result.stdout.decode('UTF8').replace('\r','')
         s_opath = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         assert (os.path.exists(s_opath + 'output00000024_oxygen.tiff')) and \
            (s_opath.endswith('pcdl/data_timeseries_2d/cell_oxygen_z0.0/')) and \
@@ -1456,7 +1456,7 @@ class TestPyCliPlotTimeSeries(object):
         #print(f'\ns_result: {s_result}\n')
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_stdout = s_result.stdout.decode('UTF8')
+        s_stdout = s_result.stdout.decode('UTF8').replace('\r','')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         assert (os.path.exists(s_opathfile)) and \
            (s_opathfile.endswith('pcdl/data_timeseries_2d/timeseries_cell_total_count.jpeg')) and \
@@ -1516,7 +1516,7 @@ class TestPyCliPlotTimeSeries(object):
         #print(f'\ns_result: {s_result}\n')
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_stdout = s_result.stdout.decode('UTF8')
+        s_stdout = s_result.stdout.decode('UTF8').replace('\r','')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         assert (os.path.exists(s_opathfile)) and \
            (s_opathfile.endswith('pcdl/data_timeseries_2d/timeseries_conc_total_oxygen_entropy.tiff')) and \
