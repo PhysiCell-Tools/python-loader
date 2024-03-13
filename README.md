@@ -27,17 +27,17 @@ The pcdl python3 library maintains three branches branches:
 
 
 ## HowTo Guide:
-+ [man/HOWTO.md](https://github.com/elmbeech/physicelldataloader/tree/master/man/HOWTO.md)!
++ [man/HOWTO.md](https://github.com/elmbeech/physicelldataloader/tree/master/man/HOWTO.md) #!
 
 
 ## Tutorial:
-+ [man/TUTORIAL.md](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL.md)!
++ [man/TUTORIAL.md](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL.md) #!
 + [man/jupyter/pcdl\_repl\_programming.ipynb](https://github.com/elmbeech/physicelldataloader/tree/master/man/jupyter/pcdl_repl_programming.ipynb)
 + [man/lecture](https://github.com/elmbeech/physicelldataloader/tree/master/man/lecture)
 
 
 ## Reference Manual:
-+ [man/REFERENCE.md](https://github.com/elmbeech/physicelldataloader/tree/master/man/REFERENCE.md)!
++ [man/REFERENCE.md](https://github.com/elmbeech/physicelldataloader/tree/master/man/REFERENCE.md)  #!
 
 
 ## Discussion:
@@ -151,7 +151,7 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
     + internal pyAnnData **\_anndextract** function.
     + pyMCDS **_\_init__** seetingxml parameter changed from boolean to string to accept other PhysiCell\_settings.xml filenames than the default.
     + pyMCDS **get_cell_df** drop and keep parameters to declare a set of columns to be dropped or kept.
-    + pyMCDS **get_concentration_df** drop and keep parameters to declare a set of columns to be dropped or kept.
+    + pyMCDS **get_conc_df** drop and keep parameters to declare a set of columns to be dropped or kept.
     + new pyMCDS **get_conc_df** shorthand for get\_concentration\_df.
     + pyMCDSts get\_cell\_minstate\_col reimplementation as **get_cell_df_columns_states** function.
     + pyMCDSts get\_concentartion\_minstate\_col reimplementation as **get_conc_df_columns_states** function.

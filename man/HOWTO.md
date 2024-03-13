@@ -52,7 +52,7 @@ pcdl.__version__
 
 ## How to keep using the legacy library name pcDataLoader?
 
-It is still possible to import pcdl with the legacy library name pcDataLoader, the way it was common before version 3.2.0 (June 2023).
+It is still possible to import pcdl with the legacy library name pcDataLoader, the way it was common before version 3.2.0 (until June 2023).
 
 ```python3
 import pcDataLoader as pc
@@ -63,7 +63,7 @@ The pcDataLoader library will thereafter act as a simple gateway to the latest i
 In future, you can just update the pcdl package to go with the latest version.
 
 ```
-pip install -U pcDataLoader pcdl[all]
+pip3 install -U pcDataLoader pcdl[all]
 ```
 
 
@@ -75,7 +75,7 @@ pip install -U pcDataLoader pcdl[all]
 
 ```python3
 from pyMCDS import pyMCDS
-``
+```
 
 Now you're rolling. \
 On the one hand, pyMCDS is very lightweight.
