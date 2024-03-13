@@ -210,7 +210,7 @@ class pyMCDSts:
         if not os.path.isdir(output_path):
             print(f'Error @ pyMCDSts.__init__ : this is not a path! could not load {output_path}.')
         self.output_path = output_path
-        self.ls_xmlfile = [s_pathfile.split('/')[-1] for s_pathfile in sorted(glob.glob(f'{self.output_path}output*.xml'))]  # bue 2022-10-22: is output*.xml always the correct pattern?
+        self.ls_xmlfile = [s_pathfile.replace('\\','/').split('/')[-1] for s_pathfile in sorted(glob.glob(f'{self.output_path}output*.xml'))]  # bue 2022-10-22: is output*.xml always the correct pattern?
         self.custom_type = custom_type
         self.microenv = microenv
         self.graph = graph
