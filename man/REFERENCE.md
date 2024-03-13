@@ -146,7 +146,7 @@ Basically there are four types of functions:
 ### TimeSeries internal functions
 + [help(mcdsts.scaler)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.scaler.md)  # anndata
 ```python3
-help(pcdl.TimeSeries._handle_magick)
+help(pcdl.pyMCDSts._handle_magick)
 help(pcdl.pyAnnData._anndextract)
 ```
 
