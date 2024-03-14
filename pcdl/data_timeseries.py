@@ -61,7 +61,9 @@ class install_data:
             f.close()
             # extract tar.gz file
             f = tarfile.open(s_pathfile, 'r')
-            f.extractall(s_path, filter='data')  # bue 20240314: maybe in future 3.14 'fully_trusted' needed?
+            f.extractall(s_path)
+            # bue 20240314: for the future 3.12 .. 3.14. filter breaks some currently supported python versions.
+            #f.extractall(s_path, filter='data' or 'fully_trusted')  
 
 
 class uninstall_data:
