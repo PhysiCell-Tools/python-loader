@@ -988,6 +988,7 @@ class pyMCDSts:
 
         # plotting
         for i, mcds in enumerate(self.get_mcds_list()):
+            df_cell = mcds.get_cell_df()
             fig = mcds.plot_scatter(
                 focus = focus,
                 z_slice = z_slice,
