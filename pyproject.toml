@@ -69,6 +69,7 @@ dependencies = [
     "numpy",
     "pandas",
     "scipy",
+    "vtk",
 ]
 
 [project.scripts]

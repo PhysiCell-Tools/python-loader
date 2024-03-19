@@ -58,7 +58,7 @@ def docstring_md(s_function, ls_doc, s_header=None, s_opath='./docstring/'):
 
         s_header: string, default None
             default markdown text title is function().
-            with this s_header argument you can set another title 
+            with this s_header argument you can set another title
             than the default one.
 
         s_opath: string, default ./docstring/
@@ -228,6 +228,10 @@ docstring_md(
     s_function = 'mcds.plot_contour',
     ls_doc = pcdl.TimeStep.plot_contour.__doc__.split('\n'),
 )
+docstring_md(
+    s_function = 'mcds.make_conc_vtk',
+    ls_doc = pcdl.TimeStep.make_conc_vtk.__doc__.split('\n'),
+)
 
 # write pyMCDS cell agent function markdown files
 docstring_md(
@@ -249,6 +253,10 @@ docstring_md(
 docstring_md(
     s_function = 'mcds.plot_scatter',
     ls_doc = pcdl.TimeStep.plot_scatter.__doc__.split('\n'),
+)
+docstring_md(
+    s_function = 'mcds.make_cell_vtk',
+    ls_doc = pcdl.TimeStep.make_cell_vtk.__doc__.split('\n'),
 )
 
 # write pyMCDS graph function markdown files
@@ -417,3 +425,4 @@ help_md(s_command='pcdl_make_movie')
 help_md(s_command='pcdl_plot_contour')
 help_md(s_command='pcdl_plot_scatter')
 help_md(s_command='pcdl_plot_timeseries')
+

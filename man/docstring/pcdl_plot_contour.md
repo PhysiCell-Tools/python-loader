@@ -1,9 +1,9 @@
 ```
 usage: pcdl_plot_contour [-h] [-v VERBOSE] [--z_slice Z_SLICE]
                          [--extrema EXTREMA [EXTREMA ...]] [--alpha ALPHA]
-                         [--fill FILL] [--cmap CMAP] [--grid GRID]
-                         [--xlim XLIM [XLIM ...]] [--ylim YLIM [YLIM ...]]
-                         [--xyequal XYEQUAL]
+                         [--fill FILL] [--cmap CMAP] [--title TITLE]
+                         [--grid GRID] [--xlim XLIM [XLIM ...]]
+                         [--ylim YLIM [YLIM ...]] [--xyequal XYEQUAL]
                          [--figsizepx FIGSIZEPX [FIGSIZEPX ...]] [--ext EXT]
                          [--figbgcolor FIGBGCOLOR]
                          [path] [focus]
@@ -37,6 +37,7 @@ options:
   --cmap CMAP           matplotlib colormap string from https://matplotlib.org
                         /stable/tutorials/colors/colormaps.html . default is
                         viridis.
+  --title TITLE         title prefix. default is an empty string.
   --grid GRID           plot axis grid lines. default is True.
   --xlim XLIM [XLIM ...]
                         two floats. x axis min and max value. None takes min

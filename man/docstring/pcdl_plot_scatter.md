@@ -3,9 +3,9 @@ usage: pcdl_plot_scatter [-h] [--custom_type [CUSTOM_TYPE ...]]
                          [--microenv MICROENV] [--settingxml SETTINGXML]
                          [-v VERBOSE] [--z_slice Z_SLICE]
                          [--z_axis Z_AXIS [Z_AXIS ...]] [--alpha ALPHA]
-                         [--cmap CMAP] [--grid GRID] [--legend_loc LEGEND_LOC]
-                         [--xlim XLIM [XLIM ...]] [--ylim YLIM [YLIM ...]]
-                         [--xyequal XYEQUAL] [--s S]
+                         [--cmap CMAP] [--title TITLE] [--grid GRID]
+                         [--legend_loc LEGEND_LOC] [--xlim XLIM [XLIM ...]]
+                         [--ylim YLIM [YLIM ...]] [--xyequal XYEQUAL] [--s S]
                          [--figsizepx FIGSIZEPX [FIGSIZEPX ...]] [--ext EXT]
                          [--figbgcolor FIGBGCOLOR]
                          [path] [focus]
@@ -54,6 +54,7 @@ options:
   --cmap CMAP           matplotlib colormap string from https://matplotlib.org
                         /stable/tutorials/colors/colormaps.html . default is
                         viridis.
+  --title TITLE         title prefix. default is an empty string.
   --grid GRID           plot axis grid lines. default is True.
   --legend_loc LEGEND_LOC
                         the location of the categorical legend, if applicable.

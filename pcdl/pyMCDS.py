@@ -1046,56 +1046,55 @@ class pyMCDS:
         # output
         return fig
 
+
     def make_conc_vtk(self):
         """
         input:
-            self: pyMCDS class instance.
 
         output:
             vtk: vtk file that contains 3D distributions of all substrates
-            over microenvironment with corresponding time stamp.
+                over microenvironment with corresponding time stamp.
 
         description:
             function creates rectilinear grid vtk file contains distribution of
-            substrates over microenvironment. You can post-process this file 
-            in other software like Paraview. 
-        
+            substrates over microenvironment. You can post-process this file
+            in other software like Paraview.
         """
         # Get microenviornment data frame
         df_micenv = self.get_conc_df()
 
         # Create a rectilinear grid
         vr_grid = vtk.vtkRectilinearGrid()
-        
+
         # Define dimensions of the grid
         t_dims = (len(pd.unique(df_micenv['voxel_i'])), len(pd.unique(df_micenv['voxel_j'])), len(pd.unique(df_micenv['voxel_k'])))
-        
+
         # Define coordinates for the grid
         vf_x = vtk.vtkFloatArray()
         vf_y = vtk.vtkFloatArray()
         vf_z = vtk.vtkFloatArray()
-        
+
         # Assign coordinates for the grid
         vf_x.SetNumberOfTuples(t_dims[0])
         vf_y.SetNumberOfTuples(t_dims[1])
         vf_z.SetNumberOfTuples(t_dims[2])
-        
+
         # Populate the coordinates
         for i in range(t_dims[0]):
             vf_x.SetValue(i, pd.unique(df_micenv['mesh_center_m'])[i])
-        
+
         for j in range(t_dims[1]):
             vf_y.SetValue(j, pd.unique(df_micenv['mesh_center_n'])[j])
-        
+
         for k in range(t_dims[2]):
             vf_z.SetValue(k, pd.unique(df_micenv['mesh_center_p'])[k])
-        
+
         # Grid dimensions
         vr_grid.SetDimensions(t_dims)
         vr_grid.SetXCoordinates(vf_x)
         vr_grid.SetYCoordinates(vf_y)
         vr_grid.SetZCoordinates(vf_z)
-        
+
         # Learn substrate names
         l_substrate_names = self.get_substrate_names()
 
@@ -1118,7 +1117,7 @@ class pyMCDS:
                 vr_grid.GetPointData().AddArray(vf_values)
             del vf_values
 
-        
+
         # Save vtk file
         s_vtkpathfile = self.path + '/' + self.xmlfile.replace('.xml','_conc.vtk')
         vw_writer = vtk.vtkXMLRectilinearGridWriter()
@@ -1126,6 +1125,7 @@ class pyMCDS:
         vw_writer.SetInputData(vr_grid)
         vw_writer.Write()
         return s_vtkpathfile
+
 
     ## CELL RELATED FUNCTIONS ##
 
@@ -1579,41 +1579,41 @@ class pyMCDS:
         # output
         return fig
 
+
     def make_cell_vtk(self, l_attributes=['cell_type'], visualize='True'):
         """
-            input: pyMCDS class instance.
-                       
-            
+        input:
+
             attributes: list of strings; default is 'cell_type'
                 column name within cell dataframe.
-                
+
             visualize: boolean; default is True
                 visualize cells using vtk Renderer.
-                
-            output:
-            vtk: 3D Glyph VTK that contains cells
-                
-                
-            description:
-                function that 3D Glyph VTK file for cells. Cells can have 
-                specificed attributes like 'cell_type', 'pressure', 'dead', etc.            
-                You can post-process this file in other software like Paraview.       
+
+        output:
+            vtk: 3D Glyph VTK that contains cells.
+
+
+        description:
+            function that 3D Glyph VTK file for cells. Cells can have
+            specificed attributes like 'cell_type', 'pressure', 'dead', etc.
+            You can post-process this file in other software like Paraview.
         """
         # Get cell data frame
         df_cell = self.get_cell_df(values=1, drop=set(), keep=set())
         df_cell = df_cell.reset_index()
-        
+
         # Get positions and radii
         se_x_pos = df_cell['position_x']
         se_y_pos = df_cell['position_y']
         se_z_pos = df_cell['position_z']
         se_radius =  df_cell['radius']
-                
+
         # Create VTK instances to fill for positions and radii
         vp_points = vtkPoints()
         vf_radii = vtk.vtkFloatArray()
         vf_radii.SetName("radius")
-        
+
         # Fill VTK instance with positions and radii
         for i in range(len(se_x_pos)):
             vp_points.InsertNextPoint(se_x_pos[i], se_y_pos[i], se_z_pos[i])
@@ -1632,7 +1632,7 @@ class pyMCDS:
         vu_grid.SetPoints(vp_points)
         vu_grid.GetPointData().AddArray(vf_data)
         vu_grid.GetPointData().SetActiveScalars("positions_and_radii")
-        
+
         # Fill This grid with given attributes
         for name_index, name in enumerate(l_attributes):
             custom_data_i = df_cell[name]
@@ -1645,7 +1645,7 @@ class pyMCDS:
             elif (type(custom_data_i[0]) in {bool, np.bool_}):
                 custom_data_vtk =vtk.vtkStringArray()
                 custom_data_vtk.SetName(name)
-        
+
             for i in range(len(custom_data_i)):
                 if (type(custom_data_i[0]) in {bool, np.bool_}):
                     if (custom_data_i[i] == True):
@@ -1654,29 +1654,29 @@ class pyMCDS:
                         custom_data_vtk.InsertNextValue('False')
                 else:
                     custom_data_vtk.InsertNextValue(custom_data_i[i])
-                
+
             vu_grid.GetPointData().AddArray(custom_data_vtk)
             del custom_data_vtk
-        
-        
+
+
         # Create sphere source
         vsp_sphere = vtk.vtkSphereSource()
         vsp_sphere.SetRadius(1.0)
         vsp_sphere.SetPhiResolution(16)
         vsp_sphere.SetThetaResolution(32)
-        
+
         # Create Glyph to save
         vg_glyph = vtk.vtkGlyph3D()
         vg_glyph.SetInputData(vu_grid)
         vg_glyph.SetSourceConnection(vsp_sphere.GetOutputPort())
-        
+
         # Define important preferences for VTK
         vg_glyph.ClampingOff()
         vg_glyph.SetScaleModeToScaleByScalar()
         vg_glyph.SetScaleFactor(1.0)
         vg_glyph.SetColorModeToColorByScalar()
         vg_glyph.Update()
-        
+
         # Write VTK
         s_vtkpathfile = self.path + '/' + self.xmlfile.replace('.xml','_cells.vtk')
         vw_writer = vtk.vtkXMLPolyDataWriter()
@@ -1684,7 +1684,7 @@ class pyMCDS:
         vw_writer.SetInputData(vg_glyph.GetOutput())
         vw_writer.Write()
 
-    
+
         # Visualize if needed
         if (visualize):
             # visualization
@@ -1692,14 +1692,14 @@ class pyMCDS:
             mapper = vtk.vtkPolyDataMapper()
             # mapper.SetInput(glyph.GetOutput())
             mapper.SetInputConnection(vg_glyph.GetOutputPort())
-            
+
             mapper.ScalarVisibilityOn()
             mapper.ColorByArrayComponent("data", 1)
-            
+
             # set up the actor
             actor = vtk.vtkActor()
             actor.SetMapper(mapper)
-            
+
             # do renderer setup stuff
             ren = vtk.vtkRenderer()
             renWin = vtk.vtkRenderWindow()
@@ -1707,16 +1707,17 @@ class pyMCDS:
             renWin.SetSize(640, 480)
             iren = vtk.vtkRenderWindowInteractor()
             iren.SetRenderWindow(renWin)
-            
+
             # add the actor to the renderer
             ren.AddActor(actor)
-            
+
             # render
             iren.Initialize()
             renWin.Render()
             iren.Start()
-            
+
         return s_vtkpathfile
+
 
     ## GRAPH RELATED FUNCTIONS ##
 

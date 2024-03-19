@@ -28,7 +28,10 @@
                 matplotlib colormap string.
                 https://matplotlib.org/stable/tutorials/colors/colormaps.html
 
-            grid: boolean; default True.
+            title: string; default is ''
+                title prefix.
+
+            grid: boolean; default is True.
                 plot axis grid lines.
 
             legend_loc: string; default is 'lower left'.

@@ -26,6 +26,9 @@
                 True generates a matplotlib contourf plot.
                 False generates a matplotlib contour plot.
 
+            title: string; default is ''
+                title prefix.
+
             cmap: string; default viridis.
                 matplotlib colormap.
                 https://matplotlib.org/stable/tutorials/colors/colormaps.html
