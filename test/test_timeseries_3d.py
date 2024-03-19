@@ -161,6 +161,7 @@ class TestPyMcdsTs3DMicroenv(object):
             #alpha = 1,  # pyMCD
             #fill = True,  # pyMCD
             #cmap = 'viridis',  # pyMCD
+            #title = '',  # test default
             #grid = True,  # pyMCD
             xlim = None,  # test if
             ylim = None,  # test if
@@ -183,6 +184,7 @@ class TestPyMcdsTs3DMicroenv(object):
             #alpha = 1,  # pyMCDS
             #fill = True,  # pyMCDS
             #cmap = 'viridis',  # pyMCDS
+            title = 'abc',  # test non default
             #grid = True,  # pyMCDS
             xlim = [-31, 301],  # jump over if
             ylim = [-21, 201],  # jump over if
@@ -269,6 +271,7 @@ class TestPyMcds3DCell(object):
             z_axis = None,  # test iff numeric
             #alpha = 1,  # matplotlib
             #cmap = 'viridis',  # matplotlib
+            #title = '',  # test default,
             #grid = True,  # matplotlib
             #legend_loc='lower left',  # matplotlib
             xlim = None,  # test if
@@ -292,6 +295,7 @@ class TestPyMcds3DCell(object):
             z_axis = None,  # test iff  categorical
             #alpha = 1,  # pyMCDS
             #cmap = 'viridis',  # pyMCDS
+            title = 'abc',  # test non default
             #grid = True,  # pyMCDS
             #legend_loc='lower left',  # pyMCDS
             xlim = None,  # test if
@@ -416,6 +420,7 @@ class TestPyMcds3DTimeseries(object):
         )
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+        plt.close()
 
     def test_mcdsts_plot_timeseries_none_num_yunit_cell(self, mcdsts=mcdsts):
         fig = mcdsts.plot_timeseries(
@@ -445,6 +450,7 @@ class TestPyMcds3DTimeseries(object):
         )
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+        plt.close()
 
     def test_mcdsts_plot_timeseries_cat_num_none_cell(self, mcdsts=mcdsts):
         fig = mcdsts.plot_timeseries(
@@ -474,6 +480,7 @@ class TestPyMcds3DTimeseries(object):
         )
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+        plt.close()
 
     def test_mcdsts_plot_timeseries_none_none_none_conc_ax_jpeg(self, mcdsts=mcdsts):
         fig, ax = plt.subplots()
@@ -506,6 +513,7 @@ class TestPyMcds3DTimeseries(object):
               (s_pathfile.endswith('/pcdl/data_timeseries_3d/timeseries_conc_total_count.jpeg')) and \
               (os.path.exists(s_pathfile))
         os.remove(s_pathfile)
+        plt.close()
 
     def test_mcdsts_plot_timeseries_cat_none_yunit_conc(self, mcdsts=mcdsts):
         fig = mcdsts.plot_timeseries(
@@ -535,6 +543,7 @@ class TestPyMcds3DTimeseries(object):
         )
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+        plt.close()
 
     def test_mcdsts_plot_timeseries_none_num_yunit_conc(self, mcdsts=mcdsts):
         fig = mcdsts.plot_timeseries(
@@ -564,6 +573,7 @@ class TestPyMcds3DTimeseries(object):
         )
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+        plt.close()
 
     def test_mcdsts_plot_timeseries_cat_num_none_conc(self, mcdsts=mcdsts):
         fig = mcdsts.plot_timeseries(
@@ -593,3 +603,5 @@ class TestPyMcds3DTimeseries(object):
         )
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+        plt.close()
+

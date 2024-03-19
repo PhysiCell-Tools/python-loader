@@ -492,7 +492,7 @@ class pyMCDSts:
         return dlr_variable_range
 
 
-    def plot_contour(self, focus, z_slice=0, extrema=None, alpha=1, fill=True, cmap='viridis', grid=True, xlim=None, ylim=None, xyequal=True, figsizepx=None, ext='jpeg', figbgcolor=None):
+    def plot_contour(self, focus, z_slice=0, extrema=None, alpha=1, fill=True, cmap='viridis', title='', grid=True, xlim=None, ylim=None, xyequal=True, figsizepx=None, ext='jpeg', figbgcolor=None):
         """
         input:
             self: pyMCDSts class instance
@@ -517,6 +517,9 @@ class pyMCDSts:
             fill: boolean; default True
                 True generates a matplotlib contourf plot.
                 False generates a matplotlib contour plot.
+
+            title: string; default is ''
+                title prefix.
 
             cmap: string; default viridis.
                 matplotlib colormap.
@@ -636,7 +639,7 @@ class pyMCDSts:
                 alpha = alpha,
                 fill = fill,
                 cmap = cmap,
-                title = f'{focus}\n{round(mcds.get_time(),9)}[min]',
+                title = f'{title}{focus} z{round(z_slice,9)}\n{round(mcds.get_time(),9)}[min]',
                 grid = grid,
                 xlim = xlim,
                 ylim = ylim,
@@ -813,7 +816,7 @@ class pyMCDSts:
         return dl_variable_range
 
 
-    def plot_scatter(self, focus='cell_type', z_slice=0, z_axis=None, alpha=1, cmap='viridis', grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=None, figsizepx=None, ext='jpeg', figbgcolor=None):
+    def plot_scatter(self, focus='cell_type', z_slice=0, z_axis=None, alpha=1, cmap='viridis', title='', grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=None, figsizepx=None, ext='jpeg', figbgcolor=None):
         """
         input:
             self: pyMCDSts class instance
@@ -841,7 +844,10 @@ class pyMCDSts:
                 matplotlib colormap string.
                 https://matplotlib.org/stable/tutorials/colors/colormaps.html
 
-            grid: boolean; default True.
+            title: string; default is ''
+                title prefix.
+
+            grid: boolean; default is True.
                 plot axis grid lines.
 
             legend_loc: string; default is 'lower left'.
@@ -995,7 +1001,7 @@ class pyMCDSts:
                 z_axis = z_axis,
                 alpha = alpha,
                 cmap = cmap,
-                title = f'{focus}\n{df_cell.shape[0]}[agent] {round(mcds.get_time(),9)}[min]',
+                title = f'{title}{focus} z{round(z_slice,9)}\n{df_cell.shape[0]}[agent] {round(mcds.get_time(),9)}[min]',
                 grid = grid,
                 legend_loc = legend_loc,
                 xlim = xlim,

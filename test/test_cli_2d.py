@@ -1166,7 +1166,7 @@ class TestPyCliMakeGif(object):
     # + path nop
     # + interface (default, 'tiff')
 
-    def test_pcdl_get_version_timeseries_default(self):
+    def test_pcdl_make_gif_timeseries_default(self):
         s_path = subprocess.run(['pcdl_plot_scatter', s_path_2d], check=False, capture_output=True)
         s_path = s_path.stderr.decode('UTF8').replace('\r','').replace('\n','')
         s_result = subprocess.run(['pcdl_make_gif', s_path], check=False, capture_output=True)
@@ -1177,7 +1177,7 @@ class TestPyCliMakeGif(object):
                (os.path.exists(s_opathfile))
         shutil.rmtree(s_path)
 
-    def test_pcdl_get_version_timeseries_interface(self):
+    def test_pcdl_make_gif_timeseries_interface(self):
         s_path = subprocess.run(['pcdl_plot_contour', s_path_2d, 'oxygen', '--ext', 'tiff'], check=False, capture_output=True)
         s_path = s_path.stderr.decode('UTF8').replace('\r','').replace('\n','')
         s_result = subprocess.run(['pcdl_make_gif', s_path, 'tiff'], check=False, capture_output=True)
@@ -1197,7 +1197,7 @@ class TestPyCliMakeMove(object):
     # + interface (default, 'tiff')
     # + farme (default, 'tiff')
 
-    def test_pcdl_get_version_timeseries_default(self):
+    def test_pcdl_make_movie_timeseries_default(self):
         s_path = subprocess.run(['pcdl_plot_scatter', s_path_2d], check=False, capture_output=True)
         s_path = s_path.stderr.decode('UTF8').replace('\r','').replace('\n','')
         s_result = subprocess.run(['pcdl_make_movie', s_path], check=False, capture_output=True)
@@ -1208,7 +1208,7 @@ class TestPyCliMakeMove(object):
                (os.path.exists(s_opathfile))
         shutil.rmtree(s_path)
 
-    def test_pcdl_get_version_timeseries_interface(self):
+    def test_pcdl_make_movie_timeseries_interface(self):
         s_path = subprocess.run(['pcdl_plot_contour', s_path_2d, 'oxygen', '--ext', 'tiff'], check=False, capture_output=True)
         s_path = s_path.stderr.decode('UTF8').replace('\r','').replace('\n','')
         s_result = subprocess.run(['pcdl_make_movie', s_path, 'tiff'], check=False, capture_output=True)
@@ -1219,7 +1219,7 @@ class TestPyCliMakeMove(object):
                (os.path.exists(s_opathfile))
         shutil.rmtree(s_path)
 
-    def test_pcdl_get_version_timeseries_farme(self):
+    def test_pcdl_make_movie_timeseries_farme(self):
         s_path = subprocess.run(['pcdl_plot_contour', s_path_2d, 'oxygen', '--ext', 'jpeg'], check=False, capture_output=True)
         s_path = s_path.stderr.decode('UTF8').replace('\r','').replace('\n','')
         s_result = subprocess.run(['pcdl_make_movie', s_path, '--framerate', '9'], check=False, capture_output=True)
@@ -1243,6 +1243,7 @@ class TestPyCliPlotContour(object):
     # + alpha (1.0, _0.2_) ok
     # + fill (true, _false_)
     # + cmp (viridis, _magma_)
+    # + title (, _abc_)
     # + grid (true, _false_)
     # + xlim (none, _-40 400.0_)
     # + ylim (none, _-30 300_)
@@ -1268,6 +1269,7 @@ class TestPyCliPlotContour(object):
            (s_stdout.find("alpha=1.0") > -1) and \
            (s_stdout.find("fill='true'") > -1) and \
            (s_stdout.find("cmap='viridis'") > -1) and \
+           (s_stdout.find("title=''") > -1) and \
            (s_stdout.find("grid='true'") > -1) and \
            (s_stdout.find("xlim=['none']") > -1) and \
            (s_stdout.find("ylim=['none']") > -1) and \
@@ -1285,6 +1287,7 @@ class TestPyCliPlotContour(object):
             '--alpha', '0.5',
             '--fill', 'false',
             '--cmap', 'magma',
+            '--title', 'abc',
             '--grid', 'false',
             '--xlim', '-40', '400',
             '--ylim', '-30', '300',
@@ -1306,6 +1309,7 @@ class TestPyCliPlotContour(object):
            (s_stdout.find("alpha=0.5") > -1) and \
            (s_stdout.find("fill='false'") > -1) and \
            (s_stdout.find("cmap='magma'") > -1) and \
+           (s_stdout.find("title='abc'") > -1) and \
            (s_stdout.find("grid='false'") > -1) and \
            (s_stdout.find("xlim=['-40', '400']") > -1) and \
            (s_stdout.find("ylim=['-30', '300']") > -1) and \
@@ -1330,6 +1334,7 @@ class TestPyCliPlotScatter(object):
     # + z_axis (none, _0.0_40.0_) ok
     # + alpha (1.0, _0.5_) ok
     # + cmap (viridis, _magma_)
+    # + title (, _abc_)
     # + grid (true, _false_)
     # + legend_loc ('lower left', _'upper right'_)
     # + xlim (none, _-40_400_)
@@ -1359,6 +1364,7 @@ class TestPyCliPlotScatter(object):
            (s_stdout.find("z_axis=['none']") > -1) and \
            (s_stdout.find("alpha=1.0") > -1) and \
            (s_stdout.find("cmap='viridis'") > -1) and \
+           (s_stdout.find("title=''") > -1) and \
            (s_stdout.find("grid='true'") > -1) and \
            (s_stdout.find("legend_loc='lower left'") > -1) and \
            (s_stdout.find("xlim=['none']") > -1) and \
@@ -1380,6 +1386,7 @@ class TestPyCliPlotScatter(object):
             '--z_axis', '0.0', '40.0',
             '--alpha', '0.5',
             '--cmap', 'magma',
+            '--title', 'abc',
             '--grid', 'false',
             '--legend_loc', 'upper right',
             '--xlim', '-40', '400',
@@ -1405,6 +1412,7 @@ class TestPyCliPlotScatter(object):
            (s_stdout.find("z_axis=['0.0', '40.0']") > -1) and \
            (s_stdout.find("alpha=0.5") > -1) and \
            (s_stdout.find("cmap='magma'") > -1) and \
+           (s_stdout.find("title='abc'") > -1) and \
            (s_stdout.find("grid='false'") > -1) and \
            (s_stdout.find("legend_loc='upper right'") > -1) and \
            (s_stdout.find("xlim=['-40', '400']") > -1) and \

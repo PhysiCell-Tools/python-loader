@@ -63,7 +63,7 @@ def get_anndata():
         default = 'true',
         help = 'should the microenvironment be extracted and loaded into the anndata object? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.'
     )
-    # TimeSeries graph 
+    # TimeSeries graph
     parser.add_argument(
         '--graph',
         default = 'true',
@@ -1156,6 +1156,12 @@ def plot_contour():
         default = 'viridis',
         help = 'matplotlib colormap string from https://matplotlib.org/stable/tutorials/colors/colormaps.html . default is viridis.',
     )
+    # plot_contour title
+    parser.add_argument(
+        '--title',
+        default = '',
+        help = 'title prefix. default is an empty string.',
+    )
     # plot_contour grid
     parser.add_argument(
         '--grid',
@@ -1239,6 +1245,7 @@ def plot_contour():
         alpha = args.alpha,
         fill = False if args.fill.lower().startswith('f') else True,
         cmap = args.cmap,
+        title = args.title,
         grid = False if args.grid.lower().startswith('f') else True,
         xlim = None if (args.xlim[0].lower() == 'none') else args.xlim,
         ylim = None if (args.ylim[0].lower() == 'none') else args.ylim,
@@ -1327,6 +1334,12 @@ def plot_scatter():
         '--cmap',
         default = 'viridis',
         help = 'matplotlib colormap string from https://matplotlib.org/stable/tutorials/colors/colormaps.html . default is viridis.',
+    )
+    # plot_scatter title
+    parser.add_argument(
+        '--title',
+        default = '',
+        help = 'title prefix. default is an empty string.',
     )
     # plot_scatter grid
     parser.add_argument(
@@ -1431,6 +1444,7 @@ def plot_scatter():
         z_axis = None if (args.z_axis[0].lower() == 'none') else args.z_axis,
         alpha = args.alpha,
         cmap = args.cmap,
+        title = args.title,
         grid = False if args.grid.lower().startswith('f') else True,
         legend_loc = args.legend_loc,
         xlim = None if (args.xlim[0].lower() == 'none') else args.xlim,

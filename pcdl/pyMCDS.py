@@ -1477,11 +1477,11 @@ class pyMCDS:
             vmax = lr_extrema[1],
             alpha = alpha,
             cmap = s_cmap,
+            title = title,
             xlim = xlim,
             ylim = ylim,
             s = s,
             grid = grid,
-            title = title,
             ax = ax,
         )
 

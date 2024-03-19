@@ -219,6 +219,32 @@ class TestPyMcdsMetadata(object):
               (r_runtime == 35.033598)
 
 
+## setting related functions ##
+
+class TestPyMcdsSetting(object):
+    ''' tests for pcdl.pyMCDS setting related functions. '''
+    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
+
+    def test_mcds_get_parameter_dict(self, mcds=mcds):
+        d_parameter = mcds.get_parameter_dict()
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (str(type(d_parameter)) == "<class 'dict'>") and \
+              (len(d_parameter) == 63) and \
+              (d_parameter['oxygen_initial_condition'] == 38.0)
+
+    def test_mcds_get_rule_df(self, mcds=mcds):
+        df_rule = mcds.get_rule_df()
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (df_rule is None)
+
+    def test_mcds_get_unit_dict(self, mcds=mcds):
+        ds_unit = mcds.get_unit_dict()
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (str(type(ds_unit)) == "<class 'dict'>") and \
+              (len(ds_unit) == 121) and \
+              (ds_unit['oxygen'] == 'mmHg')
+
+
 ## mesh related functions ##
 
 class TestPyMcdsMesh(object):
@@ -474,6 +500,7 @@ class TestPyMcdsMicroenv(object):
         )
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+        plt.close()
 
     def test_mcds_plot_contourf(self, mcds=mcds):
         fig = mcds.plot_contour(
@@ -494,6 +521,7 @@ class TestPyMcdsMicroenv(object):
         )
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+        plt.close()
 
 
 ## cell related functions ##
@@ -571,6 +599,7 @@ class TestPyMcdsCell(object):
         )
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+        plt.close()
 
     def test_mcds_plot_scatter_cat_else1(self, mcds=mcds):
         fig = mcds.plot_scatter(
@@ -591,6 +620,7 @@ class TestPyMcdsCell(object):
         )
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+        plt.close()
 
     def test_mcds_plot_scatter_cat_else2(self, mcds=mcds):
         fig, ax = plt.subplots()
@@ -612,6 +642,7 @@ class TestPyMcdsCell(object):
         )
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+        plt.close()
 
     # scatter numerical
     def test_mcds_plot_scatter_num_if(self, mcds=mcds):
@@ -633,6 +664,7 @@ class TestPyMcdsCell(object):
         )
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+        plt.close()
 
     def test_mcds_plot_scatter_num_else(self, mcds=mcds):
         fig = mcds.plot_scatter(
@@ -653,6 +685,7 @@ class TestPyMcdsCell(object):
         )
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+        plt.close()
 
 
 ## graph related functions ##
@@ -778,30 +811,4 @@ class TestPyMcdsGraph(object):
               (s_file.find('edge [\n    source') > -1) and \
               (s_file.find('distance_microns') > -1)
         os.remove(s_pathfile)
-
-
-## model setting related functions ##
-
-class TestPyMcdsSetting(object):
-    ''' tests for pcdl.pyMCDS setting related functions. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
-
-    def test_mcds_get_parameter_dict(self, mcds=mcds):
-        d_parameter = mcds.get_parameter_dict()
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (str(type(d_parameter)) == "<class 'dict'>") and \
-              (len(d_parameter) == 63) and \
-              (d_parameter['oxygen_initial_condition'] == 38.0)
-
-    def test_mcds_get_rule_df(self, mcds=mcds):
-        df_rule = mcds.get_rule_df()
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (df_rule is None)
-
-    def test_mcds_get_unit_dict(self, mcds=mcds):
-        ds_unit = mcds.get_unit_dict()
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (str(type(ds_unit)) == "<class 'dict'>") and \
-              (len(ds_unit) == 121) and \
-              (ds_unit['oxygen'] == 'mmHg')
 
