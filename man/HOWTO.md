@@ -71,7 +71,7 @@ pip3 install pip -U --force-reinstall
 pip3 install pcdl[all] --verbose -U --force-reinstall
 ```
 
-**Windows:**
+### Windows:
 
 Somewhere towards the bottom of the output, there should be a warning:
 ```bash
@@ -82,7 +82,7 @@ Installing collected packages: pcdl
 Please follow these instructions to put the path mentioned under your operating system's PATH variable.
 + https://www.computerhope.com/issues/ch000549.htm
 
-**Apple:**
+#### Apple:
 
 Somewhere towards the bottom of the output, there should be a warning:
 ```bash
