@@ -44,8 +44,8 @@ pip3 install -U pcdl[all]
 
 Note: For the pcdl library this is a two-step procedure.
 First, possibly installed test data and tutorial output will be removed.
-Then, the software will be uninstalled.
-Keep in mind that pcdl library dependencies (like anndata, matplotlib, numpy, pandas, scipy) will never be uninstalled automatically.
+Then, the software will be uninstalled.\
+Keep in mind that pcdl library dependencies (like anndata, matplotlib, numpy, pandas, scipyi, vtk) will never be uninstalled automatically.
 
 ```bash
 python3 -c "import pcdl; pcdl.uninstall_data()"
@@ -55,7 +55,7 @@ pip3 uninstall pcdl
 
 ## How to test if the command line interface pcdl functions work?
 
-Type and execute the following command on the command line.
+Type and execute the following command on the command line.\
 Note: depending on your operating system and command line shell, tab completion might or might not work.
 ```bash
 pcdl_get_version path/to/PhysiCell/output
@@ -125,12 +125,12 @@ source ~/.bash_profile
 ```
 
 
-## How to run pcdl like pyMCDS.py in the early days?
+## How to load data with pyMCDS.py like in the early days?
 
 In the very early days, PhysiCell output was with the help of a MATLAB script loaded into MATLAB for analysis.
 
 In 2019, a similar loader script was written for phython3.
-The name of this script filed was pyMCDS.py.
+The name of this script file, defining the pyMCDS class, was pyMCDS.py.
 This pyMCDS.py script is still the core of the pcdl library.
 
 To load data the old school way: 
@@ -145,8 +145,7 @@ from pyMCDS import pyMCDS
 
 Now you're rolling! 
 
-pyMCDS.py is very lightweight.
-Besides the python3 core library, this code has only matplotlib, numpy, pandas, scipy, and vtk library dependencies.
+pyMCDS.py and the pyMCDS class is very lightweight.
+Besides the python3 core library, this code has only matplotlib, numpy, pandas, scipy, and vtk library dependencies.\
 The pyMCDS class evolved into the pcdl.TimeStep class, which has additionally anndata dependency, which makes the library slightly heavier but much more powerful for downstream data analysis.
 Apart from that, pcdl offers the pcdl.TimeSeries class to handle the mcds snapshots from an entire PhysiCell run, and a set of functions that can be run straight from the command line, without even having to fire up a python3 shell.
-
