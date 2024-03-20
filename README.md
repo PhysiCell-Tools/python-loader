@@ -27,8 +27,7 @@ The pcdl python3 library maintains three branches branches:
 
 
 ## HowTo Guide:
-+ [man/HOWTO.md](https://github.com/elmbeech/physicelldataloader/tree/master/man/HOWTO.md) #!
-
++ [installation and troubleshooting](https://github.com/elmbeech/physicelldataloader/tree/master/man/HOWTO.md) #!
 
 ## Tutorial:
 + [pcdl tutorial introduction](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL.md) #!
@@ -42,7 +41,7 @@ The pcdl python3 library maintains three branches branches:
 
 
 ## Reference Manual:
-+ [man/REFERENCE.md](https://github.com/elmbeech/physicelldataloader/tree/master/man/REFERENCE.md)  #!
++ [application interface](https://github.com/elmbeech/physicelldataloader/tree/master/man/REFERENCE.md) #!
 
 
 ## Discussion:
@@ -81,13 +80,13 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
 
 
 ## Release Notes:
-+ version 3.2.15 (2024-03-??): elmbeech/physicelldataloader
++ version 3.2.15 (2024-04-??): elmbeech/physicelldataloader
     + new pyCLI **pcdl_make_cell_vtk** command line interface function.
     + new pyCLI **pcdl_make_conc_vtk** command line interface function.
     + new pyMCDSts **make_cell_vtk** function.
     + new pyMCDSts **make_conc_vtk** function.
 
-+ version 3.2.14 (2024-04-??): elmbeech/physicelldataloader
++ version 3.2.14 (2024-03-??): elmbeech/physicelldataloader
     + rename pyMCDS get\_scatter to **plot_scatter** for conciseness.
     + rename pyMCDS get\_contour to **plot_contour** for conciseness.
     + rename pyMCDSts make\_imgcell to **plot_scatter** for conciseness.
