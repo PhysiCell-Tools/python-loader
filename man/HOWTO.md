@@ -1,5 +1,6 @@
 # PhysiCell Data Loader How To Man Page
 
+
 ## How to install the latest physicelldataloader?
 
 Full-fledged installation, with all library dependencies installed.
@@ -15,10 +16,83 @@ pip3 install pcdl[scverse]  # Installs pcdl core and anndata library dependencie
 pip3 install pcdl[all]  # Installs pcdl core, test data, and anndata library dependencies.
 ```
 
+
 ## How to update to the latest physicelldataloader?
 
 ```bash
 pip3 install -U pcdl[all]
+```
+
+
+## How to test if the command line interface pcdl functions work?
+
+Type and execute the following command on the command line.
+Note: depending on your operating system and command line shell, tab completion might or might not work.
+```bash
+pcdl_get_version path/to/PhysiCell/output
+```
+If you get an error like: `pcdl_get_version: command not found`, please, follow the troubleshooting guide below.
+
+
+## How to troubleshoot the command line interface pcdl functions?
+
+Run the following commands:
+```bash
+pip3 install pip -U --force-reinstall
+pip3 install pcdl[all] --verbose -U --force-reinstall
+```
+
+**Windows:**
+Somewhere towards the bottom of the output, there should be a warning:
+```
+Installing collected packages: pcdl
+  WARNING: The scripts pcdl_*.exe, pcdl_*.exe, pcdl_*.exe are installed in 'C:\path\to\Python\Scripts' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+```
+Please follow these instructions to put the path mentioned under your operating system's PATH variable.
++ https://www.computerhope.com/issues/ch000549.htm
+
+
+**Apple:**
+Somewhere towards the bottom of the output, there should be a warning:
+```
+Installing collected packages: pcdl
+  WARNING: The scripts pcdl_*, pcdl_*, pcdl_* are installed in 'path/to/python/scripts/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+```
+To add the mentioned path to the PATH variable, use a plain text editor to edit `~/.bash_profile` (bash is the default shell in MacOS > 9 and < 10.15 ) or `~/.zprofile` or `~/.zshenv` (zsh is the default shell in MacOS >= 10.15).
+For example, this can be achieved with the following line:
+```bash
+PATH="path/to/python/scripts/bin:$PATH"
+```
+Then, depending on the shell you use:
+```bash
+source ~/.bash_profile
+```
+or
+```zsh
+source ~/.zprofile
+```
+
+**Linux**
+Somewhere towards the bottom of the output, there should be a warning:
+```
+Installing collected packages: pcdl
+  WARNING: The scripts pcdl_*, pcdl_*, pcdl_* are installed in 'path/to/python/scripts/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+```
+To add the mentioned path to the PATH variable, use your favorite text editor to edit your `~/.profile` or `~/.bash_profile` (depending on your distro and how you run linux).
+For example, this can be achieved with the following line:
+```bash
+PATH="path/to/python/scripts/bin:$PATH"
+```
+Then:
+```bash
+source ~/.profile
+```
+or
+```bash
+source ~/.bash_profile
 ```
 
 

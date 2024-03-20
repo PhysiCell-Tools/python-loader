@@ -79,12 +79,10 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
 + version 3.2.15 (2024-03-??): elmbeech/physicelldataloader
     + new pyCLI **pcdl_make_cell_vtk** command line interface function.
     + new pyCLI **pcdl_make_conc_vtk** command line interface function.
-    + new pyMCDS **make_conc_vtk** function.
-    + new pyMCDS **make_cell_vtk** function.
     + new pyMCDSts **make_cell_vtk** function.
     + new pyMCDSts **make_conc_vtk** function.
 
-+ version 3.2.14 (2024-03-??): elmbeech/physicelldataloader
++ version 3.2.14 (2024-04-??): elmbeech/physicelldataloader
     + rename pyMCDS get\_scatter to **plot_scatter** for conciseness.
     + rename pyMCDS get\_contour to **plot_contour** for conciseness.
     + rename pyMCDSts make\_imgcell to **plot_scatter** for conciseness.
@@ -109,6 +107,8 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
     + new pyCLI **pcdl_plot_timeseries** command line interface function.
     + new pyMCDS **get_rule_df** function to retrieve the rule set as a dataframe.
     + new pyMCDS **get_parameter_dict** function to retrieve the model parameter initial settings as a dictionary.
+    + new pyMCDS **make_conc_vtk** function to save substrate data as rectilinear grid vtk file.
+    + new pyMCDS **make_cell_vtk** function to save cell data as glyph vtk file.
     + new pyMCDS **make_graph_gml** function to save graphs in a networkx and igraph compatible files format.
     + new pyMCDS **set_verbosity_true** function to complete pcdl.TimeStep(verbosity=True/False) experience.
     + new pyMCDS **set_verbosity_false** function to complete pcdl.TimeStep(verbosity=True/False) experience.
