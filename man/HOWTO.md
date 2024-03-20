@@ -1,7 +1,9 @@
-# PhysiCell Data Loader How To Man Page
+# PhysiCell Data Loader How To Manual
+
+Below you will find information about how to install, load, update, uninstall, and troubleshooting pcdl.
 
 
-## How to install the latest physicelldataloader?
+## How to install pcdl?
 
 Full-fledged installation, with all library dependencies installed.
 ```bash
@@ -16,11 +18,38 @@ pip3 install pcdl[scverse]  # Installs pcdl core and anndata library dependencie
 pip3 install pcdl[all]  # Installs pcdl core, test data, and anndata library dependencies.
 ```
 
+## How to load the pcdl library?
 
-## How to update to the latest physicelldataloader?
+```python3
+import pcdl
+```
+
+
+## How to check for the current installed pcdl version?
+
+```python3
+import pcdl
+pcdl.__version__
+```
+
+
+## How to update to the latest pcdl version?
 
 ```bash
 pip3 install -U pcdl[all]
+```
+
+
+## How to uninstall pcdl?
+
+Note: For the pcdl library this is a two-step procedure.
+First, possibly installed test data and tutorial output will be removed.
+Then, the software will be uninstalled.
+Keep in mind that pcdl library dependencies (like anndata, matplotlib, numpy, pandas, scipy) will never be uninstalled automatically.
+
+```bash
+python3 -c "import pcdl; pcdl.uninstall_data()"
+pip3 uninstall pcdl
 ```
 
 
@@ -44,7 +73,7 @@ pip3 install pcdl[all] --verbose -U --force-reinstall
 
 **Windows:**
 Somewhere towards the bottom of the output, there should be a warning:
-```
+```bash
 Installing collected packages: pcdl
   WARNING: The scripts pcdl_*.exe, pcdl_*.exe, pcdl_*.exe are installed in 'C:\path\to\Python\Scripts' which is not on PATH.
   Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
@@ -55,7 +84,7 @@ Please follow these instructions to put the path mentioned under your operating 
 
 **Apple:**
 Somewhere towards the bottom of the output, there should be a warning:
-```
+```bash
 Installing collected packages: pcdl
   WARNING: The scripts pcdl_*, pcdl_*, pcdl_* are installed in 'path/to/python/scripts/bin' which is not on PATH.
   Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
@@ -76,7 +105,7 @@ source ~/.zprofile
 
 **Linux**
 Somewhere towards the bottom of the output, there should be a warning:
-```
+```bash
 Installing collected packages: pcdl
   WARNING: The scripts pcdl_*, pcdl_*, pcdl_* are installed in 'path/to/python/scripts/bin' which is not on PATH.
   Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
@@ -96,52 +125,7 @@ source ~/.bash_profile
 ```
 
 
-## How to uninstall physicelldataloader from your python3 environment?
-
-Note: For the pcdl library this is a two-step procedure.
-First, possibly installed test data and tutorial output will be removed.
-Then, the software will be uninstalled.
-Keep in mind that pcdl library dependencies (like anndata, matplotlib, numpy, pandas, scipy) will never be uninstalled automatically.
-
-```bash
-python3 -c "import pcdl; pcdl.uninstall_data()"
-pip3 uninstall pcdl
-```
-
-
-## How to load the physicelldataloader library?
-
-```python3
-import pcdl
-```
-
-
-## How to check for the current installed physicelldataloader version?
-
-```python3
-import pcdl
-pcdl.__version__
-```
-
-
-## How to keep using the legacy library name pcDataLoader?
-
-It is still possible to import pcdl with the legacy library name pcDataLoader, the way it was common before version 3.2.0 (until June 2023).
-
-```python3
-import pcDataLoader as pc
-```
-
-If you need to do so, please update to the latest pcDataLoader package as follows.
-The pcDataLoader library will thereafter act as a simple gateway to the latest installed pcdl library.
-In future, you can just update the pcdl package to go with the latest version.
-
-```
-pip3 install -U pcDataLoader pcdl[all]
-```
-
-
-## How to run physicelldataloader like in the early days (before autumn 2022)?
+## How to run pcdl like pyMCDS.py in the early days?
 
 In the very early days, PhysiCell output was with the help of a MATLAB script loaded into MATLAB for analysis.
 
@@ -165,3 +149,4 @@ pyMCDS.py is very lightweight.
 Besides the python3 core library, this code has only matplotlib, numpy, pandas, scipy, and vtk library dependencies.
 The pyMCDS class evolved into the pcdl.TimeStep class, which has additionally anndata dependency, which makes the library slightly heavier but much more powerful for downstream data analysis.
 Apart from that, pcdl offers the pcdl.TimeSeries class to handle the mcds snapshots from an entire PhysiCell run, and a set of functions that can be run straight from the command line, without even having to fire up a python3 shell.
+
