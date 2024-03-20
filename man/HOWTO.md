@@ -143,6 +143,14 @@ pip3 install -U pcDataLoader pcdl[all]
 
 ## How to run physicelldataloader like in the early days (before autumn 2022)?
 
+In the very early days, PhysiCell output was with the help of a MATLAB script loaded into MATLAB for analysis.
+
+In 2019, a similar loader script was written for phython3.
+The name of this script filed was pyMCDS.py.
+This pyMCDS.py script is still the core of the pcdl library.
+
+To load data the old school way: 
+
 1. Copy the latest [pyMCDS.py](https://raw.githubusercontent.com/elmbeech/physicelldataloader/master/pcdl/pyMCDS.py) file into the PhysiCell or PhysiCell/output folder.
 2. In the same directory, fire up a python3 shell (core [python](https://docs.python.org/3/tutorial/interpreter.html#interactive-mode), [ipython](https://en.wikipedia.org/wiki/IPython), or a [jupyter](https://en.wikipedia.org/wiki/Project_Jupyter) notebook that is running an ipython kernel).
 3. Load the pyMCDS class as follows:
@@ -151,8 +159,9 @@ pip3 install -U pcDataLoader pcdl[all]
 from pyMCDS import pyMCDS
 ```
 
-Now you're rolling. \
-On the one hand, pyMCDS is very lightweight.
-Besides the python3 core library, this code has only matplotlib, numpy, pandas, and scipy library dependencies.
-On the other hand, the `pyMCDS` class lacks functions present in the `pcdl.TimeStep` and `pcdl.TimeSeries` class.
+Now you're rolling! 
 
+pyMCDS.py is very lightweight.
+Besides the python3 core library, this code has only matplotlib, numpy, pandas, scipy, and vtk library dependencies.
+The pyMCDS class evolved into the pcdl.TimeStep class, which has additionally anndata dependency, which makes the library slightly heavier but much more powerful for downstream data analysis.
+Apart from that, pcdl offers the pcdl.TimeSeries class to handle the mcds snapshots from an entire PhysiCell run, and a set of functions that can be run straight from the command line, without even having to fire up a python3 shell.
