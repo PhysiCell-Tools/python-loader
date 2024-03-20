@@ -96,13 +96,13 @@ For example, this can be achieved with the following line:
 ```bash
 PATH="path/to/python/scripts/bin:$PATH"
 ```
-Then, depending on the shell you use:
+Then, depending on what file you have edited, reload:
 ```bash
-source ~/.bash_profile
-```
-or
-```zsh
+source ~/.bash_profilea
+or 
 source ~/.zprofile
+or
+source ~/.zshenv
 ```
 
 ### Linux:
@@ -119,12 +119,10 @@ For example, this can be achieved with the following line:
 ```bash
 PATH="path/to/python/scripts/bin:$PATH"
 ```
-Then:
+Then, depending on what file you have edited, reload:
 ```bash
 source ~/.profile
-```
 or
-```bash
 source ~/.bash_profile
 ```
 
