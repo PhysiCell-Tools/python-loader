@@ -82,7 +82,7 @@ Installing collected packages: pcdl
 Please follow these instructions to put the path mentioned under your operating system's PATH variable.
 + https://www.computerhope.com/issues/ch000549.htm
 
-#### Apple:
+### Apple:
 
 Somewhere towards the bottom of the output, there should be a warning:
 ```bash
@@ -104,7 +104,7 @@ or
 source ~/.zprofile
 ```
 
-**Linux**
+### Linux:
 
 Somewhere towards the bottom of the output, there should be a warning:
 ```bash
