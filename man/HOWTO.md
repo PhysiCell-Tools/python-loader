@@ -91,6 +91,7 @@ Installing collected packages: pcdl
   Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
 ```
 To add the mentioned path to the PATH variable, use a plain text editor to edit `~/.bash_profile` (bash is the default shell in MacOS > 9 and < 10.15 ) or `~/.zprofile` or `~/.zshenv` (zsh is the default shell in MacOS >= 10.15).
+
 For example, this can be achieved with the following line:
 ```bash
 PATH="path/to/python/scripts/bin:$PATH"
@@ -113,6 +114,7 @@ Installing collected packages: pcdl
   Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
 ```
 To add the mentioned path to the PATH variable, use your favorite text editor to edit your `~/.profile` or `~/.bash_profile` (depending on your distro and how you run linux).
+
 For example, this can be achieved with the following line:
 ```bash
 PATH="path/to/python/scripts/bin:$PATH"
