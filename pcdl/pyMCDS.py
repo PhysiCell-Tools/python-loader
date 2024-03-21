@@ -2046,9 +2046,14 @@ class pyMCDS:
                 x_microenvironment_dirichlet = x_variable.find('Dirichlet_options')
                 if not (x_microenvironment_dirichlet is None):
                     for x_dirichlet in x_microenvironment_dirichlet:
-                        s_coor = x_dirichlet.get('ID')
-                        d_mcds['setting']['parameters'].update({f'{s_substrate}_dirichlet_boundary_value_{s_coor}_enabled': str(x_dirichlet.text).lower == 'true'})
-                        d_mcds['setting']['parameters'].update({f'{s_substrate}_dirichlet_boundary_value_{s_coor}': float(x_dirichlet.text)})
+                        try:
+                            s_coor = x_dirichlet.get('ID')
+                            d_mcds['setting']['parameters'].update({f'{s_substrate}_dirichlet_boundary_value_{s_coor}_enabled': str(x_dirichlet.text).lower == 'true'})
+                            d_mcds['setting']['parameters'].update({f'{s_substrate}_dirichlet_boundary_value_{s_coor}': float(x_dirichlet.text)})
+                        except AttributeError:
+                            print(f'Warning @ pyMCDS._read_setting_xml : <variable name="{s_substrate}" ID="{s_id}"><Dirichlet_options></boundary_value> node missing.')
+                        except TypeError:
+                            print(f'Warning @ pyMCDS._read_setting_xml : <variable name="{s_substrate}" ID="{s_id}"><Dirichlet_options></boundary_value> node value missing.')
                 else:
                     print(f'Warning @ pyMCDS._read_setting_xml : <variable name="{s_substrate}" ID="{s_id}"><Dirichlet_options> node missing.')
                 # <options>

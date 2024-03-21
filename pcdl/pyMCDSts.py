@@ -912,8 +912,12 @@ class pyMCDSts:
                 root = tree.getroot()
                 if s is None:
                     circle_element = root.find('.//{*}circle')
-                    r_radius = float(circle_element.get('r')) # px
-                    s = int(round((r_radius)**2))
+                    if not (circle_element is None):
+                        r_radius = float(circle_element.get('r')) # px
+                        s = int(round((r_radius)**2))
+                    else:
+                        print(f'Warning @ pyMCDSts.plot_scatter : these agents are not circles.')
+                        s = plt.rcParams['lines.markersize']**2
                     if self.verbose:
                         print(f's set to {s}.')
                 if figsizepx is None:
