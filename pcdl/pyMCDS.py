@@ -19,6 +19,7 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib import colors
 import numpy as np
+import os
 import pandas as pd
 from pcdl import pdplt
 from scipy import io
@@ -177,7 +178,7 @@ def graphfile_parser(s_pathfile):
 
 # object classes
 class pyMCDS:
-    def __init__(self, xmlfile, output_path='.', custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True):
+    def __init__(self, xmlfile, output_path='.', custom_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True):
         """
         input:
             xmlfile: string
@@ -202,6 +203,10 @@ class pyMCDS:
             graph: boole; default True
                 should the graphs be extracted?
                 setting graph to False will use less memory and speed up processing.
+
+            physiboss: boole; default True
+                should physiboss state data extracted, if found?
+                setting physiboss to False will use less memory and speed up processing.
 
             settingxml: string; default PhysiCell_settings.xml
                 from which settings.xml should the cell type ID label mapping,
@@ -230,6 +235,7 @@ class pyMCDS:
         self.custom_type = custom_type
         self.microenv = microenv
         self.graph = graph
+        self.physiboss = physiboss
         if type(settingxml) is str:
             settingxml = settingxml.replace('\\','/').split('/')[-1]
         self.settingxml = settingxml
@@ -1259,6 +1265,16 @@ class pyMCDS:
                 a_length = a_length**(1/2)
                 # result
                 df_cell[f'{s_var_spatial}_vectorlength'] = a_length
+
+        # physicell
+        if not (self.data['discrete_cells']['physiboss'] is None):
+            df_cell = pd.merge(
+                df_cell,
+                self.data['discrete_cells']['physiboss'],
+                left_index = True,
+                right_index = True,
+                how = 'left',
+            )
 
         # microenvironment
         if self.microenv:
@@ -2852,6 +2868,31 @@ class pyMCDS:
 
             # store data
             d_mcds['discrete_cells']['graph'].update({'attached_cells': dei_graph})
+
+
+        #########################
+        # handle physiboss data #
+        #########################
+
+        d_mcds['discrete_cells']['physiboss'] = None
+
+        if self.physiboss:
+            if self.verbose:
+                print('working on physiboss data ...')
+
+            # intracellular file (hack because this is not yet in output.xml)
+            df_physiboss = None
+            s_intracellpathfile = self.path + '/' + f'states_{self.xmlfile.replace("output","").replace(".xml",".csv")}'
+            if os.path.exists(s_intracellpathfile):
+                df_physiboss = pd.read_csv(s_intracellpathfile, index_col=0)
+                if self.verbose:
+                    print(f'reading: {s_intracellpathfile}')
+            else:
+                print(f'Warning @ pyMCDS._read_xml : physiboss file missing {s_intracellpathfile}.')
+
+            # store data
+            d_mcds['discrete_cells']['physiboss'] = df_physiboss
+
 
         # output
         if self.verbose:

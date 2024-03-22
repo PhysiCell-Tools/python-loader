@@ -41,7 +41,7 @@ if not os.path.exists(s_path_2d):
 
 class TestPyMcdsInit(object):
     ''' tests for loading a pcdl.pyMCDS data set. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
+    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
     df_cell = mcds.get_cell_df()
     def test_mcds_init_microenv(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
@@ -54,6 +54,10 @@ class TestPyMcdsInit(object):
               (str(type(mcds.data['discrete_cells']['graph']['neighbor_cells'])) == "<class 'dict'>") and \
               (len(mcds.data['discrete_cells']['graph']['attached_cells']) == 1099) and \
               (len(mcds.data['discrete_cells']['graph']['neighbor_cells']) == 1099)
+
+    def test_mcds_init_physiboss(self, mcds=mcds):
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (mcds.data['discrete_cells']['physiboss'] == None)
 
     def test_mcds_init_settingxml(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
@@ -64,7 +68,7 @@ class TestPyMcdsInit(object):
 
 class TestPyMcdsInitMicroenvFalse(object):
     ''' tests for loading a pcdl.pyMCDS data set with microenv false. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=False, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
+    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=False, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
     df_cell = mcds.get_cell_df()
     def test_mcds_init_microenv(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
@@ -78,6 +82,10 @@ class TestPyMcdsInitMicroenvFalse(object):
               (len(mcds.data['discrete_cells']['graph']['attached_cells']) == 1099) and \
               (len(mcds.data['discrete_cells']['graph']['neighbor_cells']) == 1099)
 
+    def test_mcds_init_physiboss(self, mcds=mcds):
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (mcds.data['discrete_cells']['physiboss'] == None)
+
     def test_mcds_init_settingxml(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
@@ -87,7 +95,7 @@ class TestPyMcdsInitMicroenvFalse(object):
 
 class TestPyMcdsInitGraphFalse(object):
     ''' tests for loading a pcdl.pyMCDS data set with graph false. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=False, settingxml='PhysiCell_settings.xml', verbose=True)
+    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=False, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
     df_cell = mcds.get_cell_df()
     def test_mcds_init_microenv(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
@@ -101,6 +109,10 @@ class TestPyMcdsInitGraphFalse(object):
               (len(mcds.data['discrete_cells']['graph']['attached_cells']) == 0) and \
               (len(mcds.data['discrete_cells']['graph']['neighbor_cells']) == 0)
 
+    def test_mcds_init_physiboss(self, mcds=mcds):
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (mcds.data['discrete_cells']['physiboss'] == None)
+
     def test_mcds_init_settingxml(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
@@ -108,9 +120,9 @@ class TestPyMcdsInitGraphFalse(object):
               (df_cell.shape == (1099, 95))
 
 
-class TestPyMcdsInitSettingxmlFalse(object):
-    ''' tests for loading a pcdl.pyMCDS data set with settingxml false. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml=False, verbose=True)
+class TestPyMcdsInitPhysibossFalse(object):
+    ''' tests for loading a pcdl.pyMCDS data set with physiboss false. '''
+    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, physiboss=False, settingxml='PhysiCell_settings.xml', verbose=True)
     df_cell = mcds.get_cell_df()
     def test_mcds_init_microenv(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
@@ -123,6 +135,37 @@ class TestPyMcdsInitSettingxmlFalse(object):
               (str(type(mcds.data['discrete_cells']['graph']['neighbor_cells'])) == "<class 'dict'>") and \
               (len(mcds.data['discrete_cells']['graph']['attached_cells']) == 1099) and \
               (len(mcds.data['discrete_cells']['graph']['neighbor_cells']) == 1099)
+
+    def test_mcds_init_physiboss(self, mcds=mcds):
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (mcds.data['discrete_cells']['physiboss'] == None)
+
+    def test_mcds_init_settingxml(self, mcds=mcds, df_cell=df_cell):
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
+              (set(df_cell.columns).issuperset({'cancer_cell_attack_rates'})) and \
+              (df_cell.shape == (1099, 95))
+
+
+class TestPyMcdsInitSettingxmlFalse(object):
+    ''' tests for loading a pcdl.pyMCDS data set with settingxml false. '''
+    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, physiboss=True, settingxml=False, verbose=True)
+    df_cell = mcds.get_cell_df()
+    def test_mcds_init_microenv(self, mcds=mcds, df_cell=df_cell):
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
+              (df_cell.shape == (1099, 95))
+
+    def test_mcds_init_graph(self, mcds=mcds):
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (str(type(mcds.data['discrete_cells']['graph']['attached_cells'])) == "<class 'dict'>") and \
+              (str(type(mcds.data['discrete_cells']['graph']['neighbor_cells'])) == "<class 'dict'>") and \
+              (len(mcds.data['discrete_cells']['graph']['attached_cells']) == 1099) and \
+              (len(mcds.data['discrete_cells']['graph']['neighbor_cells']) == 1099)
+
+    def test_mcds_init_physiboss(self, mcds=mcds):
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (mcds.data['discrete_cells']['physiboss'] == None)
 
     def test_mcds_init_settingxml(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
@@ -133,7 +176,7 @@ class TestPyMcdsInitSettingxmlFalse(object):
 
 class TestPyMcdsInitSettingxmlNone(object):
     ''' tests for loading a pcdl.pyMCDS data set with settingxml none. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml=None, verbose=True)
+    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, physiboss=True, settingxml=None, verbose=True)
     df_cell = mcds.get_cell_df()
     def test_mcds_init_microenv(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
@@ -147,6 +190,10 @@ class TestPyMcdsInitSettingxmlNone(object):
               (len(mcds.data['discrete_cells']['graph']['attached_cells']) == 1099) and \
               (len(mcds.data['discrete_cells']['graph']['neighbor_cells']) == 1099)
 
+    def test_mcds_init_physiboss(self, mcds=mcds):
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (mcds.data['discrete_cells']['physiboss'] == None)
+
     def test_mcds_init_settingxml(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
@@ -156,7 +203,7 @@ class TestPyMcdsInitSettingxmlNone(object):
 
 class TestPyMcdsInitVerboseTrue(object):
     ''' tests for loading a pcdl.pyMCDS data set and set_verbose_false function. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
+    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
     def test_mcds_verbose_true(self, mcds=mcds):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
@@ -170,7 +217,7 @@ class TestPyMcdsInitVerboseTrue(object):
 
 class TestPyMcdsInitVerboseFalse(object):
     ''' tests for loading a pcdl.pyMCDS data set and set_verbose_true function. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=False)
+    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=False)
 
     def test_mcds_verbose_false(self, mcds=mcds):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
@@ -186,7 +233,7 @@ class TestPyMcdsInitVerboseFalse(object):
 
 class TestPyMcdsMetadata(object):
     ''' tests for pcdl.pyMCDS metadata related functions. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
+    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
     def test_mcds_get_multicellds_version(self, mcds=mcds):
         s_mcdsversion = mcds.get_multicellds_version()
@@ -223,7 +270,7 @@ class TestPyMcdsMetadata(object):
 
 class TestPyMcdsSetting(object):
     ''' tests for pcdl.pyMCDS setting related functions. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
+    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
     def test_mcds_get_parameter_dict(self, mcds=mcds):
         d_parameter = mcds.get_parameter_dict()
@@ -249,7 +296,7 @@ class TestPyMcdsSetting(object):
 
 class TestPyMcdsMesh(object):
     ''' tests for pcdl.pyMCDS mesh related functions. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
+    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
     def test_mcds_get_voxel_ijk_range(self, mcds=mcds):
         lti_range = mcds.get_voxel_ijk_range()
@@ -384,7 +431,7 @@ class TestPyMcdsMesh(object):
 
 class TestPyMcdsMicroenv(object):
     ''' tests for pcdl.pyMCDS micro environment related functions. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
+    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
     def test_mcds_get_substrate_name(self, mcds=mcds):
         ls_substrate = mcds.get_substrate_names()
@@ -528,7 +575,7 @@ class TestPyMcdsMicroenv(object):
 
 class TestPyMcdsCell(object):
     ''' tests for pcdl.pyMCDS cell related functions. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
+    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
     def test_mcds_get_cell_variables(self, mcds=mcds):
         ls_variable = mcds.get_cell_variables()
@@ -692,7 +739,7 @@ class TestPyMcdsCell(object):
 
 class TestPyMcdsGraph(object):
     ''' tests for pcdl.pyMCDS graph related functions. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True)
+    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
     # graph dictionatry
     def test_mcds_get_attached_graph_dict(self, mcds=mcds):

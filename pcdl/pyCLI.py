@@ -69,6 +69,12 @@ def get_anndata():
         default = 'true',
         help = 'should neighbor graph and attach graph be extracted and loaded into the anndata object? default is True.'
     )
+    # TimeSeries physiboss
+    parser.add_argument(
+        '--physiboss',
+        default = 'true',
+        help = 'if found, should physiboss state data be extracted and loaded into the anndata object? default is True.'
+    )
     # TimeSeries settingxml
     parser.add_argument(
         '--settingxml',
@@ -145,6 +151,7 @@ def get_anndata():
             custom_type = d_vartype,
             microenv = False if args.microenv.lower().startswith('f') else True,
             graph = False if args.graph.lower().startswith('f') else True,
+            physiboss = False if args.physiboss.lower().startswith('f') else True,
             settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
             verbose = False if args.verbose.lower().startswith('f') else True
         )
@@ -165,6 +172,7 @@ def get_anndata():
             load = True,
             microenv = False if args.microenv.lower().startswith('f') else True,
             graph = False,
+            physiboss = False if args.physiboss.lower().startswith('f') else True,
             settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
             verbose = False if args.verbose.lower().startswith('f') else True,
         )
@@ -212,6 +220,12 @@ def get_cell_df():
         help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.'
     )
     # TimeSeries graph False
+    # TimeSeries physiboss
+    parser.add_argument(
+        '--physiboss',
+        default = 'true',
+        help = 'if found, should physiboss state data be extracted and loaded into the anndata object? default is True.'
+    )
     # TimeSeries settingxml
     parser.add_argument(
         '--settingxml',
@@ -271,6 +285,7 @@ def get_cell_df():
             output_path = '.',
             microenv = False if args.microenv.lower().startswith('f') else True,
             graph = False,
+            physiboss = False if args.physiboss.lower().startswith('f') else True,
             settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
             verbose = False if args.verbose.lower().startswith('f') else True
         )
@@ -289,6 +304,7 @@ def get_cell_df():
             load = True,
             microenv = False if args.microenv.lower().startswith('f') else True,
             graph = False,
+            physiboss = False if args.physiboss.lower().startswith('f') else True,
             settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
             verbose = False if args.verbose.lower().startswith('f') else True,
         )
@@ -341,6 +357,12 @@ def get_cell_df_features():
         help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.',
     )
     # TimeSeries graph False
+    # TimeSeries physiboss
+    parser.add_argument(
+        '--physiboss',
+        default = 'true',
+        help = 'if found, should physiboss state data be extracted and loaded into the anndata object? default is True.'
+    )
     # TimeSeries settingxml
     parser.add_argument(
         '--settingxml',
@@ -407,6 +429,7 @@ def get_cell_df_features():
         load = True,
         microenv = False if args.microenv.lower().startswith('f') else True,
         graph = False,
+        physiboss = False if args.physiboss.lower().startswith('f') else True,
         settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
         verbose = False if args.verbose.lower().startswith('f') else True,
     )
@@ -445,6 +468,7 @@ def get_conc_df():
     # TimeSeries custom_type nop
     # TimeSeries microenv True
     # TimeSeries graph False
+    # TimeSeries physiboss False
     # TimeSeries settingxml None
     # TimeSeries verbose
     parser.add_argument(
@@ -499,6 +523,7 @@ def get_conc_df():
             #custom_type,
             microenv = True,
             graph = False,
+            physiboss = False,
             settingxml = None,
             verbose = False if args.verbose.lower().startswith('f') else True
         )
@@ -518,6 +543,7 @@ def get_conc_df():
             load = True,
             microenv = True,
             graph = False,
+            physiboss = False,
             settingxml = None,
             verbose = False if args.verbose.lower().startswith('f') else True,
         )
@@ -559,6 +585,7 @@ def get_conc_df_features():
     # TimeSeries custom_type nop
     # TimeSeries microenv True
     # TimeSeries graph False
+    # TimeSeries physiboss False
     # TimeSeries settingxml None
     # TimeSeries verbose
     parser.add_argument(
@@ -608,6 +635,7 @@ def get_conc_df_features():
         load = True,
         microenv = True,
         graph = False,
+        physiboss = False,
         settingxml = None,
         verbose = False if args.verbose.lower().startswith('f') else True,
     )
@@ -652,6 +680,7 @@ def get_parameter_dict():
         help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.',
     )
     # TimeSeries graph False
+    # TimeSeries physiboss False
     # TimeSeries settingxml
     parser.add_argument(
         '--settingxml',
@@ -685,6 +714,7 @@ def get_parameter_dict():
         #custom_type,
         microenv = False if args.microenv.lower().startswith('f') else True,
         graph = False,
+        physiboss = False,
         settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
         verbose = True if args.verbose.lower().startswith('t') else False
     )
@@ -715,6 +745,7 @@ def get_rule_df():
     # TimeSeries custom_type nop
     # TimeSeries microenv
     # TimeSeries graph False
+    # TimeSeries physiboss False
     # TimeSeries settingxml
     parser.add_argument(
         '--settingxml',
@@ -748,6 +779,7 @@ def get_rule_df():
         #custom_type,
         microenv = False,
         graph = False,
+        physiboss = False,
         settingxml = args.settingxml,
         verbose = True if args.verbose.lower().startswith('t') else False
     )
@@ -785,6 +817,7 @@ def get_unit_dict():
         help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.',
     )
     # TimeSeries graph False
+    # TimeSeries physiboss False
     # TimeSeries settingxml
     parser.add_argument(
         '--settingxml',
@@ -818,6 +851,7 @@ def get_unit_dict():
         #custom_type,
         microenv = False if args.microenv.lower().startswith('f') else True,
         graph = False,
+        physiboss = False,
         settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
         verbose = True if args.verbose.lower().startswith('t') else False
     )
@@ -850,6 +884,7 @@ def get_version():
     # TimeSeries custom_type nop
     # TimeSeries microenv False
     # TimeSeries graph False
+    # TimeSeries physiboss False
     # TimeSeries settingxml None
     # TimeSeries verbose
     parser.add_argument(
@@ -875,6 +910,7 @@ def get_version():
         #custom_type,
         microenv = False,
         graph = False,
+        physiboss = False,
         settingxml = None,
         verbose = True if args.verbose.lower().startswith('t') else False
     )
@@ -913,6 +949,12 @@ def make_graph_gml():
         help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.'
     )
     # TimeSeries graph True
+    # TimeSeries physiboss
+    parser.add_argument(
+        '--physiboss',
+        default = 'true',
+        help = 'if found, should physiboss state data be extracted and loaded into the anndata object? default is True.'
+    )
     # TimeSeries settingxml
     parser.add_argument(
         '--settingxml',
@@ -975,6 +1017,7 @@ def make_graph_gml():
             custom_type = d_vartype,
             microenv = False if args.microenv.lower().startswith('f') else True,
             graph = True,
+            physiboss = False if args.physiboss.lower().startswith('f') else True,
             settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
             verbose = False if args.verbose.lower().startswith('f') else True
         )
@@ -993,6 +1036,7 @@ def make_graph_gml():
             load = True,
             microenv = False if args.microenv.lower().startswith('f') else True,
             graph = True,
+            physiboss = False if args.physiboss.lower().startswith('f') else True,
             settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
             verbose = False if args.verbose.lower().startswith('f') else True,
         )
@@ -1109,6 +1153,7 @@ def plot_contour():
     # TimeSeries custom_type nop
     # TimeSeries microenv True
     # TimeSeries graph False
+    # TimeSeries physiboss False
     # TimeSeries custom_type
     # TimeSeries settingxml None
     # TimeSeries verbose
@@ -1230,6 +1275,7 @@ def plot_contour():
         load = False,
         microenv = True,
         graph = False,
+        physiboss = False,
         settingxml = None,
         verbose = False if args.verbose.lower().startswith('f') else True,
     )
@@ -1288,6 +1334,12 @@ def plot_scatter():
         help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.',
     )
     # TimeSeries graph False
+    # TimeSeries physiboss
+    parser.add_argument(
+        '--physiboss',
+        default = 'true',
+        help = 'if found, should physiboss state data be extracted and loaded into the anndata object? default is True.'
+    )
     # TimeSeries settingxml
     parser.add_argument(
         '--settingxml',
@@ -1430,6 +1482,7 @@ def plot_scatter():
         load = False,
         microenv = False if args.microenv.lower().startswith('f') else True,
         graph = False,
+        physiboss = False if args.physiboss.lower().startswith('f') else True,
         settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
         verbose = False if args.verbose.lower().startswith('f') else True,
     )
@@ -1489,6 +1542,12 @@ def plot_timeseries():
     )
     # TimeSeries graph
     # nop
+    # TimeSeries physiboss
+    parser.add_argument(
+        '--physiboss',
+        default = 'true',
+        help = 'if found, should physiboss state data be extracted and loaded into the anndata object? default is True.'
+    )
     # TimeSeries settingxml
     parser.add_argument(
         '--settingxml',
@@ -1688,6 +1747,7 @@ def plot_timeseries():
         load = True,
         microenv = False if args.microenv.lower().startswith('f') else True,
         graph = False,
+        physiboss = False if args.physiboss.lower().startswith('f') else True,
         settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
         verbose = False if args.verbose.lower().startswith('f') else True,
     )

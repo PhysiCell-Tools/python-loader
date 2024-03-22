@@ -258,7 +258,7 @@ def _anndextract(df_cell, scale='maxabs', graph_attached={}, graph_neighbor={}, 
 
 # class definition
 class TimeStep(pyMCDS):
-    def __init__(self, xmlfile, output_path='.', custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True):
+    def __init__(self, xmlfile, output_path='.', custom_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True):
         """
         input:
             xmlfile: string
@@ -284,6 +284,10 @@ class TimeStep(pyMCDS):
                 should neighbor garph and attached graph be extracted?
                 setting graph to False will use less memory and speed up processing.
 
+            physiboss: boole; default True
+                should physiboss state data extracted, if found?
+                setting physiboss to False will use less memory and speed up processing.
+
             settingxml: string; default PhysiCell_settings.xml
                 from which settings.xml should the cell type ID label mapping
                 be extracted?
@@ -305,7 +309,17 @@ class TimeStep(pyMCDS):
             in the same directory. data is loaded by reading the xml file for
             a particular time step and the therein referenced files.
         """
-        pyMCDS.__init__(self, xmlfile=xmlfile, output_path=output_path, custom_type=custom_type, microenv=microenv, graph=graph, settingxml=settingxml, verbose=verbose)
+        pyMCDS.__init__(
+            self,
+            xmlfile = xmlfile,
+            output_path = output_path,
+            custom_type = custom_type,
+            microenv = microenv,
+            graph = graph,
+            physiboss = physiboss,
+            settingxml = settingxml,
+            verbose = verbose
+        )
 
 
     def get_anndata(self, values=1, drop=set(), keep=set(), scale='maxabs'):
@@ -365,7 +379,7 @@ class TimeStep(pyMCDS):
 
 
 class TimeSeries(pyMCDSts):
-    def __init__(self, output_path='.', custom_type={}, load=True, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True):
+    def __init__(self, output_path='.', custom_type={}, load=True, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True):
         """
         input:
             output_path: string, default '.'
@@ -391,6 +405,10 @@ class TimeSeries(pyMCDSts):
                 should neighbor graph and attached graph be extracted?
                 setting graph to False will use less memory and speed up processing.
 
+            physiboss: boole; default True
+                should physiboss state data extracted, if found?
+                setting physiboss to False will use less memory and speed up processing.
+
             settingxml: string; default PhysiCell_settings.xml
                 from which settings.xml should the substrate and cell type
                 ID label mapping be extracted?
@@ -409,7 +427,17 @@ class TimeSeries(pyMCDSts):
             class instance. this instance offers functions to process all time steps
             in the output_path directory.
         """
-        pyMCDSts.__init__(self, output_path=output_path, custom_type=custom_type, load=load, microenv=microenv, graph=graph, settingxml=settingxml, verbose=verbose)
+        pyMCDSts.__init__(
+            self,
+            output_path = output_path,
+            custom_type = custom_type,
+            load = load,
+            microenv = microenv,
+            graph = graph,
+            physiboss = physiboss,
+            settingxml = settingxml,
+            verbose = verbose
+        )
         self.l_annmcds = None
 
 

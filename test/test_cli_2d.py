@@ -53,6 +53,8 @@ class TestPyCliAnndata(object):
     # + path nop
     # + customtype ([], _oncoprotein:str_) ok
     # + microenv (true, _false_) ok
+    # + graph (true, _false_) ok
+    # + physiboss (true, _false_) ok
     # + settingxml (string, _none_, _false_) ok
     # + verbose (true, _false_) nop
     # + values (int) ok
@@ -119,6 +121,20 @@ class TestPyCliAnndata(object):
 
     def test_pcdl_get_anndata_timeseries_graph(self):
         s_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--graph', 'false'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        ann = ad.read_h5ad(s_opathfile)
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_maxabs.h5ad')) and \
+               (ann.shape == (24758, 79)) and \
+               (ann.obs.shape == (24758, 7)) and \
+               (len(ann.obsp) == 0) and \
+               (ann.var.shape == (79, 0)) and \
+               (len(ann.uns) == 0)
+        os.remove(s_opathfile)
+
+    def test_pcdl_get_anndata_timeseries_physiboss(self):
+        s_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--physiboss', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
@@ -265,6 +281,20 @@ class TestPyCliAnndata(object):
                (len(ann.uns) == 0)
         os.remove(s_opathfile)
 
+    def test_pcdl_get_anndata_timestep_physiboss(self):
+        s_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--physiboss', 'false'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        ann = ad.read_h5ad(s_opathfile)
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell_maxabs.h5ad')) and \
+               (ann.shape == (1099, 79)) and \
+               (ann.obs.shape == (1099, 6)) and \
+               (len(ann.obsp) == 2) and \
+               (ann.var.shape == (79, 0)) and \
+               (len(ann.uns) == 1)
+        os.remove(s_opathfile)
+
     def test_pcdl_get_anndata_timestep_settingxmlfalse(self):
         s_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--settingxml', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
@@ -366,6 +396,7 @@ class TestPyCliCellDf(object):
     # + path nop
     # + customtype nop (because the dataframe is straightaway saved as csv)
     # + microenv (true, _false_) ok
+    # + physiboss (true, _false_) ok
     # + settingxml (string, _none_, _false_) ok
     # + verbose (true, _false_) nop
     # + values (int) ok
@@ -402,6 +433,15 @@ class TestPyCliCellDf(object):
         df_cell = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell.csv')) and \
                (not set(df_cell.columns).issuperset({'oxygen'}))
+        os.remove(s_opathfile)
+
+    def test_pcdl_get_cell_df_timeseries_physiboss(self):
+        s_result = subprocess.run(['pcdl_get_cell_df', s_path_2d, '--physiboss', 'false'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell.csv')) and \
+               (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_df_timeseries_settingxmlfalse(self):
@@ -472,6 +512,14 @@ class TestPyCliCellDf(object):
         df_cell = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.csv')) and \
                (not set(df_cell.columns).issuperset({'oxygen'}))
+        os.remove(s_opathfile)
+
+    def test_pcdl_get_cell_df_timestep_physiboss(self):
+        s_result = subprocess.run(['pcdl_get_cell_df', s_pathfile_2d, '--physiboss', 'false'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.csv'))
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_df_timestep_settingxmlfalse(self):
@@ -642,6 +690,7 @@ class TestPyCliCellDfFeature(object):
     # + path (str) nop
     # + customtype ([], _oncoprotein:str_) ok
     # + microenv (true, _false_) ok
+    # + physiboss (true, _false_)
     # + settingxml (string, _none_, _false_) ok
     # + verbose (true, _false_) nop
     # + values (int) ok
@@ -668,7 +717,6 @@ class TestPyCliCellDfFeature(object):
                (d_cell['oncoprotein'] == ['0','1','2'])
         os.remove(s_opathfile)
 
-
     def test_pcdl_get_cell_df_features_timeseries_microenv(self):
         s_result = subprocess.run(['pcdl_get_cell_df_features', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
@@ -678,6 +726,15 @@ class TestPyCliCellDfFeature(object):
         assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_features_minmax.json')) and \
                (not set(d_feature.keys()).issuperset({'oxygen'})) and \
                (len(d_feature) == 80)
+        os.remove(s_opathfile)
+
+    def test_pcdl_get_cell_df_features_timeseries_physiboss(self):
+        s_result = subprocess.run(['pcdl_get_cell_df_features', s_path_2d, '--physiboss', 'false'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_features_minmax.json')) and \
+               (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_df_features_timeseries_settingxmlfalse(self):
@@ -813,6 +870,7 @@ class TestPyCliGraphGml(object):
     # + path nop
     # + customtype ([], _oncoprotein:str_) ok
     # + microenv (true, false) ok
+    # + physiboss (true, _false_)
     # + settingxml (string, _none_, _false_) ok
     # + verbose (true, _false_) nop
     # + graph_type (neighbor, _attached_) ok
@@ -847,6 +905,19 @@ class TestPyCliGraphGml(object):
 
     def test_pcdl_make_graph_gml_timeseries_microenv(self):
         s_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
+        #print(ls_opathfile, ls_opathfile)
+        assert (len(ls_opathfile) == 25) and \
+               (ls_opathfile[0].endswith('data_timeseries_2d/output00000000_neighbor.gml')) and \
+               (ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_neighbor.gml')) and \
+               (os.path.exists(ls_opathfile[12]))
+        for s_opathfile in ls_opathfile:
+            os.remove(s_opathfile)
+
+    def test_pcdl_make_graph_gml_timeseries_physiboss(self):
+        s_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, '--physiboss', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
@@ -956,6 +1027,15 @@ class TestPyCliGraphGml(object):
 
     def test_pcdl_make_graph_gml_timestep_microenv(self):
         s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, '--microenv', 'false'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_neighbor.gml')) and \
+               (os.path.exists(s_opathfile))
+        os.remove(s_opathfile)
+
+    def test_pcdl_make_graph_gml_timestep_physiboss(self):
+        s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, '--physiboss', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
@@ -1326,7 +1406,8 @@ class TestPyCliPlotScatter(object):
     # time series and time steps.
     # + path nop
     # + customtype ([], _oncoprotein:str_) ok
-    # + microenv (true, _True_)
+    # + microenv (true, _false_)
+    # + physiboss (true, _false_)
     # + settingxml (PhysiCell_settings.xml, _false_)
     # + verbose (true, _false_) nop
     # + focus (_oxygen_) ok
@@ -1358,6 +1439,7 @@ class TestPyCliPlotScatter(object):
            (s_opath.endswith('pcdl/data_timeseries_2d/cell_cell_type_z0.0/')) and \
            (s_stdout.find("custom_type=[]") > -1) and \
            (s_stdout.find("microenv='true'") > -1) and \
+           (s_stdout.find("physiboss='true'") > -1) and \
            (s_stdout.find("settingxml='PhysiCell_settings.xml'") > -1) and \
            (s_stdout.find("focus='cell_type'") > -1) and \
            (s_stdout.find("z_slice=0.0") > -1) and \
@@ -1381,6 +1463,7 @@ class TestPyCliPlotScatter(object):
             'pcdl_plot_scatter', s_pathfile_2d, 'oxygen',
             '--custom_type', 'oncoprotein:str',
             '--microenv', 'True',
+            '--physiboss', 'false',
             '--settingxml', 'false',
             '--z_slice', '1.1',
             '--z_axis', '0.0', '40.0',
@@ -1406,6 +1489,7 @@ class TestPyCliPlotScatter(object):
            (s_opath.endswith('pcdl/data_timeseries_2d/cell_oxygen_z0.0/')) and \
            (s_stdout.find("custom_type=['oncoprotein:str']") > -1) and \
            (s_stdout.find("microenv='True'") > -1) and \
+           (s_stdout.find("physiboss='false'") > -1) and \
            (s_stdout.find("settingxml='false'") > -1) and \
            (s_stdout.find("focus='oxygen'") > -1) and \
            (s_stdout.find("z_slice=1.1") > -1) and \
@@ -1431,7 +1515,8 @@ class TestPyCliPlotTimeSeries(object):
     # time series.
     # + path nop
     # + customtype ([], _oncoprotein:str_) ok
-    # + microenv (true, _True_)
+    # + microenv (true, _false_)
+    # + physiboss (true, _false_)
     # + settingxml (PhysiCell_settings.xml, _false_)
     # + verbose (true, _false_) nop
     # + focus_cat ('none', _cell_type_) ok
@@ -1470,6 +1555,7 @@ class TestPyCliPlotTimeSeries(object):
            (s_opathfile.endswith('pcdl/data_timeseries_2d/timeseries_cell_total_count.jpeg')) and \
            (s_stdout.find("custom_type=[]") > -1) and \
            (s_stdout.find("microenv='true'") > -1) and \
+           (s_stdout.find("physiboss='true'") > -1) and \
            (s_stdout.find("settingxml='PhysiCell_settings.xml'") > -1) and \
            (s_stdout.find("focus_cat='none'") > -1) and \
            (s_stdout.find("focus_num='none'") > -1) and \
@@ -1500,6 +1586,7 @@ class TestPyCliPlotTimeSeries(object):
             'pcdl_plot_timeseries', s_path_2d, 'None', 'oxygen', 'entropy', '-v', 'false',
             '--custom_type', 'oncoprotein:str',
             '--microenv', 'True',
+            '--physiboss', 'false',
             '--settingxml', 'false',
             '--frame', 'conc',
             '--z_slice', '1.1',
@@ -1530,6 +1617,7 @@ class TestPyCliPlotTimeSeries(object):
            (s_opathfile.endswith('pcdl/data_timeseries_2d/timeseries_conc_total_oxygen_entropy.tiff')) and \
            (s_stdout.find("custom_type=['oncoprotein:str']") > -1) and \
            (s_stdout.find("microenv='True'") > -1) and \
+           (s_stdout.find("physiboss='false'") > -1) and \
            (s_stdout.find("settingxml='false'") > -1) and \
            (s_stdout.find("focus_cat='None'") > -1) and \
            (s_stdout.find("focus_num='oxygen'") > -1) and \

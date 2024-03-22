@@ -161,7 +161,7 @@ def make_movie(path, interface='jpeg', framerate=12):
 ###########
 
 class pyMCDSts:
-    def __init__(self, output_path='.', custom_type={}, load=True, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True):
+    def __init__(self, output_path='.', custom_type={}, load=True, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True):
         """
         input:
             output_path: string, default '.'
@@ -186,6 +186,10 @@ class pyMCDSts:
             graph: boole; default True
                 should the graphs be extracted?
                 setting graph to False will use less memory and speed up processing.
+
+            physiboss: boole; default True
+                should physiboss state data extracted, if found?
+                setting physiboss to False will use less memory and speed up processing.
 
             settingxml: string; default PhysiCell_settings.xml
                 from which settings.xml should the cell type ID label mapping,
@@ -214,6 +218,7 @@ class pyMCDSts:
         self.custom_type = custom_type
         self.microenv = microenv
         self.graph = graph
+        self.physiboss = physiboss
         self.settingxml = settingxml
         self.verbose = verbose
         if load:
@@ -326,6 +331,7 @@ class pyMCDSts:
                 custom_type = self.custom_type,
                 microenv = self.microenv,
                 graph = self.graph,
+                physiboss = self.physiboss,
                 settingxml = self.settingxml,
                 verbose = self.verbose
             )
@@ -1081,7 +1087,7 @@ class pyMCDSts:
 
     ## TIME SERIES RELATED FUNCTIONS ##
 
-    def plot_timeseries(self, focus_cat=None, focus_num=None, aggregate_num=np.nanmean, frame='cell', z_slice=None, logy=False, ylim=None, secondary_y=None, subplots=False, sharex=False, sharey=False, linestyle='-', linewidth=None, cmap=None, color=None, grid=True, legend=True, yunit=None, title=None, ax=None, figsizepx=[640, 480], ext='jpeg', figbgcolor=None):
+    def plot_timeseries(self, focus_cat=None, focus_num=None, aggregate_num=np.nanmean, frame='cell', z_slice=None, logy=False, ylim=None, secondary_y=None, subplots=False, sharex=False, sharey=False, linestyle='-', linewidth=None, cmap=None, color=None, grid=True, legend=True, yunit=None, title=None, ax=None, figsizepx=[640, 480], ext=None, figbgcolor=None):
         """
         input:
             self: pyMCDSts class instance
@@ -1172,7 +1178,7 @@ class pyMCDSts:
                 the given x and y will be rounded to the nearest even number,
                 to be able to generate movies from the images.
 
-            ext: string; default is jpeg
+            ext: string; default is None
                 output image format. possible formats are None, jpeg, png, and tiff.
                 if None then the matplotlib figure is returned by the function
                 and not writen to file.
