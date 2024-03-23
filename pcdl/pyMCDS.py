@@ -2894,11 +2894,13 @@ class pyMCDS:
                 df_physiboss = pd.read_csv(s_intracellpathfile, index_col=0)
 
                 # add nodes
-                df_physiboss[f'node_<nil>'] = df_physiboss.state.str.find('<nil>') > -1
+                df_physiboss[f'node_nil'] = df_physiboss.state.str.find('<nil>') > -1
                 es_node = set()
                 for s_state in df_physiboss.state.unique():
                     es_node = es_node.union(set(s_state.split(' -- ')))
                 es_node.discard('<nil>')
+                if 'nil' in es_node:
+                    sys.exit('Error @ pyMCDS._read_xml : physiboss <nil> conflicts with node nil, you should name your node differently.')
                 for s_node in sorted(es_node):
                     df_physiboss[f'node_{s_node}'] = df_physiboss.state.str.find(s_node) > -1
 
