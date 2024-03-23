@@ -966,6 +966,8 @@ class pyMCDSts:
                 for mcds in self.get_mcds_list():
                     df_cell = mcds.get_cell_df()
                     z_axis = z_axis.union(set(df_cell.loc[:,focus]))
+                if (str(df_cell.loc[:,focus].dtype) in {'bool'}):
+                    z_axis = z_axis.union({True, False})
 
         # handle z_axis numerical cases
         else:  # df_cell.loc[:,focus].dtype is numeric
