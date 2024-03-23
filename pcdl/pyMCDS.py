@@ -1276,6 +1276,7 @@ class pyMCDS:
                 how = 'left',
             )
 
+
         # microenvironment
         if self.microenv:
             # merge substrate (left join)
@@ -1495,6 +1496,8 @@ class pyMCDS:
             if (z_axis is None):
                 # extract set of labels from data
                 es_category = set(df_cell.loc[:,focus])
+                if (str(df_cell.loc[:,focus].dtype) in {'bool'}):
+                    es_category = es_category.union({True, False})
             else:
                 es_category = z_axis
 
@@ -2884,9 +2887,21 @@ class pyMCDS:
             df_physiboss = None
             s_intracellpathfile = self.path + '/' + f'states_{self.xmlfile.replace("output","").replace(".xml",".csv")}'
             if os.path.exists(s_intracellpathfile):
-                df_physiboss = pd.read_csv(s_intracellpathfile, index_col=0)
                 if self.verbose:
                     print(f'reading: {s_intracellpathfile}')
+
+                # load state
+                df_physiboss = pd.read_csv(s_intracellpathfile, index_col=0)
+
+                # add nodes
+                df_physiboss[f'node_<nil>'] = df_physiboss.state.str.find('<nil>') > -1
+                es_node = set()
+                for s_state in df_physiboss.state.unique():
+                    es_node = es_node.union(set(s_state.split(' -- ')))
+                es_node.discard('<nil>')
+                for s_node in sorted(es_node):
+                    df_physiboss[f'node_{s_node}'] = df_physiboss.state.str.find(s_node) > -1
+
             else:
                 print(f'Warning @ pyMCDS._read_xml : physiboss file missing {s_intracellpathfile}.')
 
