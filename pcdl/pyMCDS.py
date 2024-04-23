@@ -1871,7 +1871,7 @@ class pyMCDS:
 
         description:
             function retunes a dictionary that maps the models
-            input parameters and values fund in the settings.xml file.
+            input parameters and values found in the settings.xml file.
             only parameters compatible with the PhysiCell Studio settings.xml
             version are listed. other parameters might be missing!
         """
@@ -2535,7 +2535,6 @@ class pyMCDS:
                             df_rule = pd.read_csv(s_pathfile, sep=',', header=None)
                             if (df_rule.shape[1] == 9):
                                 df_rule.columns = ['cell_type','signal','direction','behavoir','base_value', 'saturation_value','half_max','hill_power','apply_to_dead']
-                                df_rule.drop({'base_value'}, axis=1, inplace=True)
                             else:
                                 df_rule.columns = ['cell_type','signal','direction','behavoir','saturation_value','half_max','hill_power','apply_to_dead']
                             df_rule = df_rule.astype({'apply_to_dead':bool})
@@ -2547,7 +2546,7 @@ class pyMCDS:
                         except pd._libs.parsers.EmptyDataError:
                             print(f'Warning @ pyMCDS._read_settings.xml : {s_pathfile} is empty.')
                 if (d_mcds['setting']['rules'] is None):
-                    print(f'Warning @ pyMCDS._read_setting_xml : no enabled cell_rules.csv detetcetd.')
+                    print(f'Warning @ pyMCDS._read_setting_xml : no cell_rules.csv files detetcetd.')
             else:
                 print(f'Warning @ pyMCDS._read_setting_xml : <cell_rules> node missing.')
 
