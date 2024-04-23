@@ -25,7 +25,7 @@ The pcdl python3 library maintains three branches branches:
 + User manual: this README.md file
 + Source code: [https://github.com/elmbeech/physicelldataloader](https://github.com/elmbeech/physicelldataloader)
 
-
+<!-- 3.2.14
 ## HowTo Guide:
 + [installation and troubleshooting](https://github.com/elmbeech/physicelldataloader/tree/master/man/HOWTO.md) #!
 
@@ -42,6 +42,20 @@ The pcdl python3 library maintains three branches branches:
 
 ## Reference Manual:
 + [application interface](https://github.com/elmbeech/physicelldataloader/tree/master/man/REFERENCE.md) #!
+-->
+
+
+## HowTo Guide:
++ Check out: [man/HOWTO.md](https://github.com/elmbeech/physicelldataloader/tree/master/man/HOWTO.md)!
+
+
+## Tutorial:
++ Check out: [man/TUTORIAL.md](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL.md)!
++ Check out: [man/jupyter/pcdl\_repl\_programming.ipynb](https://github.com/elmbeech/physicelldataloader/tree/master/man/jupyter/pcdl_repl_programming.ipynb)
++ Check out: [man/lecture](https://github.com/elmbeech/physicelldataloader/tree/master/man/lecture)
+
+## Reference Manual:
++ Check out: [man/REFERENCE.md](https://github.com/elmbeech/physicelldataloader/tree/master/man/REFERENCE.md)!
 
 
 ## Discussion:
