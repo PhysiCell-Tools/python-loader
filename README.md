@@ -90,7 +90,6 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
 
 
 ## Road Map:
-+ [vtk file format](https://docs.vtk.org/en/latest/design_documents/VTKFileFormats.html) output, maybe [stl](https://en.wikipedia.org/wiki/STL_(file_format)) and [wavefront obj](https://en.wikipedia.org/wiki/Wavefront_.obj_file) output.
 
 
 ## Release Notes:
