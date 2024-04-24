@@ -65,12 +65,15 @@ classifiers = [
 ]
 
 dependencies = [
+    "anndata",
     "matplotlib",
     "numpy",
     "pandas",
+    "requests",
     "scipy",
     "vtk",
 ]
+
 
 [project.scripts]
 pcdl_get_anndata = "pcdl.pyCLI:get_anndata"
@@ -89,17 +92,6 @@ pcdl_plot_contour = "pcdl.pyCLI:plot_contour"
 pcdl_plot_scatter = "pcdl.pyCLI:plot_scatter"
 pcdl_plot_timeseries = "pcdl.pyCLI:plot_timeseries"
 
-[project.optional-dependencies]
-data = [
-    "requests",
-]
-scverse = [
-    "anndata",
-]
-all = [
-    "pcdl[data]",
-    "pcdl[scverse]",
-]
 
 [project.urls]
 "Homepage lab" = "http://www.mathcancer.org/"
@@ -126,4 +118,3 @@ exclude = [
     "/data_timeseries_3d.tar.gz",
     "/.pytest_cache",
 ]
-

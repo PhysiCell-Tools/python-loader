@@ -17,7 +17,7 @@ The pcdl python3 library maintains three branches branches:
 
 ## Header:
 + Language: python [>= 3.9](https://devguide.python.org/versions/)
-+ Library dependencies: anndata, matplotlib, numpy, pandas, scipy
++ Library dependencies: anndata, matplotlib, numpy, pandas, scipy, (requests), vtk
 + Date of origin original PhysiCell-Tools python-loader: 2019-09-02
 + Date of origin pcdl fork: 2022-08-30
 + Doi: https://doi.org/10.5281/ZENODO.8176399
@@ -53,6 +53,7 @@ The pcdl python3 library maintains three branches branches:
 + Check out: [man/TUTORIAL.md](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL.md)!
 + Check out: [man/jupyter/pcdl\_repl\_programming.ipynb](https://github.com/elmbeech/physicelldataloader/tree/master/man/jupyter/pcdl_repl_programming.ipynb)
 + Check out: [man/lecture](https://github.com/elmbeech/physicelldataloader/tree/master/man/lecture)
+
 
 ## Reference Manual:
 + Check out: [man/REFERENCE.md](https://github.com/elmbeech/physicelldataloader/tree/master/man/REFERENCE.md)!
@@ -94,6 +95,7 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
 
 ## Release Notes:
 + version 3.2.14 (2024-0?-??): elmbeech/physicelldataloader
+    + **pip install pcdl**: will again install all library dependencies, as well anndata and requests.
     + pyMCDS handels now intracellular **physinboss** data too, data is store in cell_df.
     + rename pyMCDS get\_scatter to **plot_scatter** for conciseness.
     + rename pyMCDS get\_contour to **plot_contour** for conciseness.

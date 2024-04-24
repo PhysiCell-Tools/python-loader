@@ -15,7 +15,7 @@
 
 ```python
 # python library installation
-!pip3 install -U pcdl[all]  # full-fledged pcdl library (with anndata dependencies).
+!pip3 install -U pcdl
 !pip3 install -U scanpy[leiden]  # single cell analysis inclusive leiden graph clustering algorithm.
 !pip3 install -U squidpy # single cell spatial analysis.
 ```

@@ -5,18 +5,10 @@ Below you will find information about how to install, load, update, uninstall, a
 
 ## How to install pcdl?
 
-Full-fledged installation, with all library dependencies installed.
 ```bash
-pip3 install pcdl[all]
+pip3 install pcdl
 ```
 
-If necessary, you can tweak your installation to make it more lightweight.
-```bash
-pip3 install pcdl  # The bare minimum. Installs only the pcdl core library dependencies.
-pip3 install pcdl[data]  # Installs pcdl core and test data library dependencies.
-pip3 install pcdl[scverse]  # Installs pcdl core and anndata library dependencies.
-pip3 install pcdl[all]  # Installs pcdl core, test data, and anndata library dependencies.
-```
 
 ## How to load the pcdl library?
 
@@ -36,7 +28,7 @@ pcdl.__version__
 ## How to update to the latest pcdl version?
 
 ```bash
-pip3 install -U pcdl[all]
+pip3 install -U pcdl
 ```
 
 
@@ -45,7 +37,7 @@ pip3 install -U pcdl[all]
 Note: For the pcdl library this is a two-step procedure.
 First, possibly installed test data and tutorial output will be removed.
 Then, the software will be uninstalled.\
-Keep in mind that pcdl library dependencies (like anndata, matplotlib, numpy, pandas, scipyi, vtk) will never be uninstalled automatically.
+Keep in mind that pcdl library dependencies (like anndata, matplotlib, numpy, pandas, scipy, vtk) will never be uninstalled automatically.
 
 ```bash
 python3 -c "import pcdl; pcdl.uninstall_data()"
@@ -68,7 +60,7 @@ If you get an error like: `pcdl_get_version: command not found`, please, follow 
 Run the following commands:
 ```bash
 pip3 install pip -U --force-reinstall
-pip3 install pcdl[all] --verbose -U --force-reinstall
+pip3 install pcdl --verbose -U --force-reinstall
 ```
 
 ### Windows:
