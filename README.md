@@ -70,9 +70,11 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
 ## Contributions:
 + original PhysiCell-Tools python-loader implementation: Patrick Wall, Randy Heiland, Paul Macklin
 + fork pcdl implementation: Elmar Bucher
-+ fork pcdl co-programmer and tester: Furkan Kurtoglu, Heber Rocha
++ fork pcdl co-programmer: Furkan Kurtoglu, Heber Rocha
++ fork pcdl testing: Aneequa Sundus, John Metzcar
 + student prj on pcdl:
   Benjamin Jacobs (make\_gml),
+  Katie Pletz (beta testing),
   Marshal Gress (plot\_scatter),
   Thierry-Pascal Fleurant (plot\_timeseries)
 
@@ -80,7 +82,7 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
 ## Cite:
 ```bibtex
 @Misc{bucher2023,
-  author    = {Bucher, Elmar and Wall, Patrick and Rocha, Heber and Kurtoglu, Furkan and Heiland, Randy and Macklin, Paul},
+  author    = {Bucher, Elmar and Wall, Patrick and Rocha, Heber and Kurtoglu, Furkan and Sundus, Aneequa, and Metzcar, John and Heiland, Randy and Macklin, Paul},
   title     = {elmbeech/physicelldataloader: pcdl platform-independent, pip-installable interface to load PhysiCell agent-based modeling framework output into python3.},
   year      = {2023},
   copyright = {Open Access},
