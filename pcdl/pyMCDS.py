@@ -26,7 +26,7 @@ from scipy import io
 import sys
 import vtk
 from vtkmodules.vtkCommonCore import vtkPoints
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as etree
 from pcdl.VERSION import __version__
 
 
@@ -903,7 +903,7 @@ class pyMCDS:
         df_conc.drop(es_delete, axis=1, inplace=True)
 
         # output
-        df_conc.sort_values(['voxel_i', 'voxel_j', 'voxel_k', 'time'], inplace=True)
+        df_conc.sort_values(['voxel_i', 'voxel_j', 'voxel_k', 'time'], axis=0, inplace=True)
         return df_conc
 
 
@@ -1332,6 +1332,7 @@ class pyMCDS:
 
         # output
         df_cell = df_cell.loc[:,sorted(df_cell.columns)]
+        df_cell.sort_values('ID', axis=0, inplace=True)
         df_cell.set_index('ID', inplace=True)
         df_cell = df_cell.copy()
         return df_cell
@@ -1968,7 +1969,7 @@ class pyMCDS:
         if not ((self.settingxml is None) or (self.settingxml is False)):
             # load Physicell_settings xml file
             s_xmlpathfile_setting = self.path + '/' + self.settingxml
-            x_tree = ET.parse(s_xmlpathfile_setting)
+            x_tree = etree.parse(s_xmlpathfile_setting)
             if self.verbose:
                 print(f'reading: {s_xmlpathfile_setting}')
             x_root = x_tree.getroot()
@@ -2516,10 +2517,9 @@ class pyMCDS:
                     elif s_type in {'str', 'string'}:
                         o_type = str
                     elif s_type in {'bool','boole'}:
-                        print(f'Warning @  pyMCDS._read_setting.xml: user_parameter bool variable type detected. value {x_element.tag} might be ambigiuos. translate into string.')
-                        o_type = str
+                        o_type = bool
                     else:
-                        print(f'Warning @  pyMCDS._read_setting.xml: user_parameter unknown variable type {s_type} detected. will translate into string.')
+                        print(f'Warning @ pyMCDS._read_setting.xml: user_parameter unknown variable type {s_type} detected. will translate into string.')
                     o_type = str
                     d_mcds['setting']['parameters'].update({x_element.tag: o_type(x_element.text)})
 
@@ -2556,7 +2556,7 @@ class pyMCDS:
         #######################################
 
         s_xmlpathfile = self.path + '/' + self.xmlfile
-        x_tree = ET.parse(s_xmlpathfile)
+        x_tree = etree.parse(s_xmlpathfile)
         if self.verbose:
             print(f'reading: {s_xmlpathfile}')
         x_root = x_tree.getroot()
