@@ -178,7 +178,7 @@ def graphfile_parser(s_pathfile):
 
 # object classes
 class pyMCDS:
-    def __init__(self, xmlfile, output_path='.', custom_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True):
+    def __init__(self, xmlfile, output_path='.', custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True):
         """
         input:
             xmlfile: string
@@ -189,9 +189,9 @@ class pyMCDS:
                 relative or absolute path to the directory where
                 the PhysiCell output files are stored.
 
-            custom_type: dictionary; default is {}
-                variable to specify custom_data variable types
-                other than float (int, bool, str) like this: {var: dtype, ...}.
+            custom_dtype: dictionary; default is {}
+                variable to specify custom_data variable types other than
+                floats (namely: int, bool, str) like this: {var: dtype, ...}.
                 downstream float and int will be handled as numeric,
                 bool as Boolean, and str as categorical data.
 
@@ -209,8 +209,8 @@ class pyMCDS:
                 setting physiboss to False will use less memory and speed up processing.
 
             settingxml: string; default PhysiCell_settings.xml
-                from which settings.xml should the cell type ID label mapping,
-                parameters, and units be extracted?
+                the settings.xml that is loaded and, when not found in the
+                output file, the cell type ID label mapping, is extracted.
                 set to None or False if the xml file is missing!
 
             verbose: boole; default True
@@ -232,7 +232,7 @@ class pyMCDS:
         """
         self.path = None
         self.xmlfile = None
-        self.custom_type = custom_type
+        self.custom_data_type = custom_data_type
         self.microenv = microenv
         self.graph = graph
         self.physiboss = physiboss
@@ -1299,7 +1299,7 @@ class pyMCDS:
         # variable typing
         do_type = {}
         [do_type.update({k:v}) for k,v in do_var_type.items() if k in es_column]
-        do_type.update(self.custom_type)
+        do_type.update(self.custom_data_type)
         do_int = do_type.copy()
         [do_int.update({k:int}) for k in do_int.keys()]
         ls_int = sorted(do_int.keys())
@@ -1862,53 +1862,56 @@ class pyMCDS:
 
     ## MODEL PARAMETER SETTING RELATED FUNCTIONS ##
 
-    def get_parameter_dict(self):
-        """
-        input:
-
-        output:
-            d_parameter: dictionary
-            dictionary, mapping parameter and input value.
-
-        description:
-            function retunes a dictionary that maps the models
-            input parameters and values found in the settings.xml file.
-            only parameters compatible with the PhysiCell Studio settings.xml
-            version are listed. other parameters might be missing!
-        """
-        return self.data['setting']['parameters']
-
-
-    def get_rule_df(self):
-        """
-        input:
-
-        output:
-            df_rules: pandas dataframe
-            rules.csv loaded as datafarme.
-
-        description:
-            function returns the rule csv, linked in the settings.xml file,
-            as a datafram.
-        """
-        return self.data['setting']['rules']
+    # BUE 2024-07-31: settings is out!
+    #def get_parameter_dict(self):
+    #    """
+    #    input:
+    #
+    #    output:
+    #        d_parameter: dictionary
+    #        dictionary, mapping parameter and input value.
+    #
+    #    description:
+    #        function retunes a dictionary that maps the models
+    #        input parameters and values found in the settings.xml file.
+    #        only parameters compatible with the PhysiCell Studio settings.xml
+    #        version are listed. other parameters might be missing!
+    #    """
+    #    return self.data['setting']['parameters']
 
 
-    def get_unit_dict(self):
-        """
-        input:
+    # BUE 2024-07-31: settings is out!
+    #def get_rule_df(self):
+    #    """
+    #    input:
+    #
+    #    output:
+    #        df_rules: pandas dataframe
+    #        rules.csv loaded as datafarme.
+    #
+    #    description:
+    #        function returns the rule csv, linked in the settings.xml file,
+    #        as a datafram.
+    #    """
+    #    return self.data['setting']['rules']
 
-        output:
-            ds_unit: dictionary
-                dictionary, which tracks units from cell and microenvironment
-                variables and settings parameters.
 
-        description:
-            function returns a dictionary that stores all tracked variables
-            and their units and all parameters and their units found in the
-            settings.xml file.
-        """
-        return self.data['setting']['units']
+    # BUE 2024-07-31: settings is out!
+    #def get_unit_dict(self):
+    #    """
+    #    input:
+    #
+    #    output:
+    #        ds_unit: dictionary
+    #            dictionary, which tracks units from cell and microenvironment
+    #            variables and settings parameters.
+    #
+    #    description:
+    #        function returns a dictionary that stores all tracked variables
+    #        and their units and all parameters and their units found in the
+    #        settings.xml file.
+    #    """
+    #    return self.data['setting']['units']
 
 
     ## LOAD DATA  ##
@@ -1950,10 +1953,11 @@ class pyMCDS:
         d_mcds['metadata'] = {}
         d_mcds['metadata']['substrate'] = {}
         d_mcds['metadata']['cell_type'] = {}
-        d_mcds['setting'] = {}
-        d_mcds['setting']['parameters'] = {}
-        d_mcds['setting']['units'] = {}
-        d_mcds['setting']['rules'] = None  # df_ruleset
+        # BUE 2024-07-31: settings is out!
+        #d_mcds['setting'] = {}
+        #d_mcds['setting']['parameters'] = {}
+        #d_mcds['setting']['units'] = {}
+        #d_mcds['setting']['rules'] = None  # df_ruleset
         d_mcds['mesh'] = {}
         d_mcds['continuum_variables'] = {}
         d_mcds['discrete_cells'] = {}
@@ -1968,587 +1972,27 @@ class pyMCDS:
 
         if not ((self.settingxml is None) or (self.settingxml is False)):
             # load Physicell_settings xml file
-            s_xmlpathfile_setting = self.path + '/' + self.settingxml
-            x_tree = etree.parse(s_xmlpathfile_setting)
+            s_settingxmlpathfile = self.path + '/' + self.settingxml
+            x_tree = etree.parse(s_settingxmlpathfile)
             if self.verbose:
-                print(f'reading: {s_xmlpathfile_setting}')
-            x_root = x_tree.getroot()
+                print(f'reading: {s_settingxmlpathfile}')
+            self.x_settingxml = x_tree.getroot()
 
-            # skip <domain> node for mesh
-
-            # find <overall> node for dt
-            x_overall = x_root.find('overall')
-            if not (x_overall is None):
-                # dt_diffusion
-                try:
-                    d_mcds['setting']['parameters'].update({'dt_diffusion': float(x_overall.find('dt_diffusion').text)})
-                    d_mcds['setting']['units'].update({'dt_diffusion': x_overall.find('dt_diffusion').get('units')})
-                except AttributeError:
-                    print(f'Warning @ pyMCDS._read_setting_xml : <overall><dt_diffusion> node missing.')
-                # dt_mechanics
-                try:
-                    d_mcds['setting']['parameters'].update({'dt_mechanics': float(x_overall.find('dt_mechanics').text)})
-                    d_mcds['setting']['units'].update({'dt_mechanics': x_overall.find('dt_mechanics').get('units')})
-                except AttributeError:
-                    print(f'Warning @ pyMCDS._read_setting_xml : <overall><dt_mechanics> node missing.')
-
-                # dt_phenotype
-                try:
-                    d_mcds['setting']['parameters'].update({'dt_phenotype': float(x_overall.find('dt_phenotype').text)})
-                    d_mcds['setting']['units'].update({'dt_phenotype': x_overall.find('dt_phenotype').get('units')})
-                except AttributeError:
-                    print(f'Warning @ pyMCDS._read_setting_xml : <overall><dt_phenotype> node missing.')
-            else:
-                print(f'Warning @ pyMCDS._read_setting_xml : <overall> node missing.')
-
-            # skip <parallel> node
-            # skip <save> node
-
-            # find <options> node
-            x_options = x_root.find('options')
-            if not (x_options is None):
-                try:
-                    d_mcds['setting']['parameters'].update({'legacy_random_points_on_sphere_in_divide': str(x_options.find('legacy_random_points_on_sphere_in_divide').text).lower == 'true'})
-                except AttributeError:
-                    print(f'Warning @ pyMCDS._read_setting_xml : <options><legacy_random_points_on_sphere_in_divide> node missing.')
-                try:
-                    d_mcds['setting']['parameters'].update({'virtual_wall_at_domain_edge': str(x_options.find('virtual_wall_at_domain_edge').text).lower == 'true'})
-                except AttributeError:
-                    print(f'Warning @ pyMCDS._read_setting_xml : <options><virtual_wall_at_domain_edge> node missing.')
-                try:
-                    d_mcds['setting']['parameters'].update({'disable_automated_spring_adhesions': str(x_options.find('disable_automated_spring_adhesions').text).lower == 'true'})
-                except AttributeError:
-                    print(f'Warning @ pyMCDS._read_setting_xml : <options><disable_automated_spring_adhesions> node missing.')
-            else:
-                print(f'Warning @ pyMCDS._read_setting_xml : <options> node missing.')
-
-            # find <microenvironment_setup> node
-            x_microenvironment = x_root.find('microenvironment_setup')
+            # bue 2024-07-31: will always be overwritten by handle microenvironment data.
             # substrate loop
-            for x_variable in x_microenvironment.findall('variable'):
+            #for x_variable in self.x_settingxml.find('microenvironment_setup').findall('variable'):
+            #    # <variable>
+            #    s_id = str(x_variable.get('ID'))
+            #    s_substrate = x_variable.get('name').replace(' ', '_')
+            #    d_mcds['metadata']['substrate'].update({s_id : s_substrate})
 
-                # <variable>
-                s_id = str(x_variable.get('ID'))
-                s_substrate = x_variable.get('name').replace(' ', '_')
-                d_mcds['metadata']['substrate'].update({s_id : s_substrate})
-
-                # <physical_parameter_set>
-                x_microenvironment_physical = x_variable.find('physical_parameter_set')
-                if not (x_microenvironment_physical is None):
-                    # <diffusion_coefficient>
-                    try:
-                        d_mcds['setting']['parameters'].update({f'{s_substrate}_diffusion_coefficient': float(x_microenvironment_physical.find('diffusion_coefficient').text)})
-                        d_mcds['setting']['units'].update({f'{s_substrate}_diffusion_coefficient': x_microenvironment_physical.find('diffusion_coefficient').get('units')})
-                    except AttributeError:
-                        print(f'Warning @ pyMCDS._read_setting_xml : <variable name="{s_substrate}" ID="{s_id}"><physical_parameter_set><diffusion_coefficient> node missing.')
-                    # <decay_rate>
-                    try:
-                        d_mcds['setting']['parameters'].update({f'{s_substrate}_decay_rate': float(x_microenvironment_physical.find('decay_rate').text)})
-                        d_mcds['setting']['units'].update({f'{s_substrate}_decay_rate': x_microenvironment_physical.find('decay_rate').get('units')})
-                    except AttributeError:
-                        print(f'Warning @ pyMCDS._read_setting_xml : <variable name="{s_substrate}" ID="{s_id}"><physical_parameter_set><decay_rate> node missing.')
-                else:
-                    print(f'Warning @ pyMCDS._read_setting_xml : <variable name="{s_substrate}" ID="{s_id}"><physical_parameter_set> node missing.')
-                # <initial_condition>
-                try:
-                    d_mcds['setting']['parameters'].update({f'{s_substrate}_initial_condition': float(x_variable.find('initial_condition').text)})
-                    d_mcds['setting']['units'].update({f'{s_substrate}_initial_condition': x_variable.find('initial_condition').get('units')})
-                except AttributeError:
-                    print(f'Warning @ pyMCDS._read_setting_xml : <variable name="{s_substrate}" ID="{s_id}"><initial_condition> node missing.')
-                # <Dirichlet_boundary_condition>
-                try:
-                    d_mcds['setting']['parameters'].update({f'{s_substrate}_dirichlet_boundary_condition_enabled': str(x_variable.find('Dirichlet_boundary_condition').get('enabled')).lower == 'true'})
-                    d_mcds['setting']['parameters'].update({f'{s_substrate}_dirichlet_boundary_condition': float(x_variable.find('Dirichlet_boundary_condition').text)})
-                    d_mcds['setting']['units'].update({f'{s_substrate}_dirichlet_boundary_condition': x_variable.find('Dirichlet_boundary_condition').get('units')})
-                except AttributeError:
-                    print(f'Warning @ pyMCDS._read_setting_xml : <variable name="{s_substrate}" ID="{s_id}"><Dirichlet_boundary_condition> node missing.')
-                # <Dirichlet_options>
-                x_microenvironment_dirichlet = x_variable.find('Dirichlet_options')
-                if not (x_microenvironment_dirichlet is None):
-                    for x_dirichlet in x_microenvironment_dirichlet:
-                        try:
-                            s_coor = x_dirichlet.get('ID')
-                            d_mcds['setting']['parameters'].update({f'{s_substrate}_dirichlet_boundary_value_{s_coor}_enabled': str(x_dirichlet.text).lower == 'true'})
-                            d_mcds['setting']['parameters'].update({f'{s_substrate}_dirichlet_boundary_value_{s_coor}': float(x_dirichlet.text)})
-                        except AttributeError:
-                            print(f'Warning @ pyMCDS._read_setting_xml : <variable name="{s_substrate}" ID="{s_id}"><Dirichlet_options></boundary_value> node missing.')
-                        except TypeError:
-                            print(f'Warning @ pyMCDS._read_setting_xml : <variable name="{s_substrate}" ID="{s_id}"><Dirichlet_options></boundary_value> node value missing.')
-                else:
-                    print(f'Warning @ pyMCDS._read_setting_xml : <variable name="{s_substrate}" ID="{s_id}"><Dirichlet_options> node missing.')
-                # <options>
-                x_microenvironment_options = x_microenvironment.find('options')
-                if not (x_microenvironment_options is None):
-                    # <options><calculate_gradients>
-                    try:
-                        d_mcds['setting']['parameters'].update({f'calculate_gradients': str(x_microenvironment_options.find('calculate_gradients').text).lower == 'true'})
-                    except AttributeError:
-                        print(f'Warning @ pyMCDS._read_setting_xml : <variable name="{s_substrate}" ID="{s_id}"><options><calculate_gradients> node missing.')
-                    # <options><track_internalized_substrates_in_each_agent>
-                    try:
-                        d_mcds['setting']['parameters'].update({f'track_internalized_substrates_in_each_agent': str(x_microenvironment_options.find('track_internalized_substrates_in_each_agent').text).lower == 'true'})
-                    except AttributeError:
-                        print(f'Warning @ pyMCDS._read_setting_xml : <variable name="{s_substrate}" ID="{s_id}"><options><calculate_gradients> node missing.')
-                    # skip <options><initial_condition>
-                    # skip <options><dirichlet_nodes>
-                else:
-                    print(f'Warning @ pyMCDS._read_setting_xml : <variable name="{s_substrate}" ID="{s_id}"><microenvironment_setup><options> node missing.')
-
-            # find <cell_definitions> node
-            es_customdata = set()
+            # bue 2024-07-31: will in future physicell version (>=3.15?) be overwritten by handle cell data.
             # cell loop
             for x_celltype in x_root.find('cell_definitions').findall('cell_definition'):
-
                 # <cell_definition>
                 s_id = str(x_celltype.get('ID'))
                 s_celltype = x_celltype.get('name').replace(' ', '_')
                 d_mcds['metadata']['cell_type'].update({s_id : s_celltype})
-
-                # <cell_definition><phenotype>
-                x_phenotype = x_celltype.find('phenotype')
-                if not (x_phenotype is None):
-
-                    # find <phenotype><cycle> node
-                    x_cycle = x_phenotype.find('cycle')
-                    if not (x_cycle is None):
-                        d_mcds['setting']['parameters'].update({f'{s_celltype}_cycle_model': ds_cycle_model[str(x_cycle.get('code'))]})
-                        # <phase_durations>
-                        try:
-                            for x_phase in x_cycle.find('phase_durations').findall('duration'):
-                                s_index = ds_cycle_phase[str(x_phase.get('index'))]
-                                d_mcds['setting']['parameters'].update({f'{s_celltype}_cycle_phase_duration_{s_index}_fixed': str(x_phase.get('fixed_duration')).lower() == 'true'})
-                                d_mcds['setting']['parameters'].update({f'{s_celltype}_cycle_phase_duration_{s_index}': float(x_phase.text)})
-                                d_mcds['setting']['units'].update({f'{s_celltype}_cycle_phase_duration_{s_index}': x_phase.get('units')})
-                        except AttributeError:
-                            print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><cycle><phase_durations> node missing.')
-                        # <phase_transition_rates>
-                        try:
-                            for x_phase in x_cycle.find('phase_transition_rates').findall('rate'):
-                                s_index = ds_cycle_phase[str(x_phase.get('start_index'))] + '_' + ds_cycle_phase[str(x_phase.get('end_index'))]
-                                d_mcds['setting']['parameters'].update({f'{s_celltype}_cycle_phase_transition_rate_{s_index}_fixed': str(x_phase.get('fixed_duration')).lower() == 'true'})
-                                d_mcds['setting']['parameters'].update({f'{s_celltype}_cycle_phase_transition_rate_{s_index}': float(x_phase.text)})
-                                d_mcds['setting']['units'].update({f'{s_celltype}_cycle_phase_transition_rate_{s_index}': x_phase.get('units')})
-                        except AttributeError:
-                            print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><cycle><phase_transition_rates> node missing.')
-                    else:
-                        print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><cycle> node missing.')
-
-                    # find <phenotype><death> node
-                    x_death = x_phenotype.find('death')
-                    if not (x_death is None):
-                        # <model>
-                        for x_model in x_death.findall('model'):
-                            s_code = str(x_model.get('code'))
-                            s_model = ds_death_model[s_code]  # apoptosis oder necrosis
-                            # <death_rate>
-                            d_mcds['setting']['parameters'].update({f'{s_celltype}_death_{s_model}_rate': float(x_model.find('death_rate').text)})
-                            # <phase_transition_rates>
-                            try:
-                                for x_phase in x_model.findall('duration'):
-                                    s_index = str(x_phase.get('index'))
-                                    d_mcds['setting']['parameters'].update({f'{s_celltype}_death_{s_model}_phase_{s_index}_fixed': str(x_phase.get('fixed_duration')).lower() == 'true'})
-                                    d_mcds['setting']['parameters'].update({f'{s_celltype}_death_{s_model}_phase_{s_index}': float(x_phase.text)})
-                            except AttributeError:
-                                print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><death><phase_durations> node missing.')
-                            try:
-                                for x_phase in x_model.findall('rate'):
-                                    s_index = str(x_phase.get('start_index')) + '_' + str(x_phase.get('end_index'))
-                                    d_mcds['setting']['parameters'].update({f'{s_celltype}_death_{s_model}_phase_{s_index}_fixed': str(x_phase.get('fixed_duration')).lower() == 'true'})
-                                    d_mcds['setting']['parameters'].update({f'{s_celltype}_death_{s_model}_phase_{s_index}': float(x_phase.text)})
-                            except AttributeError:
-                                print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><death><phase_transition_rates> node missing.')
-                            # <parameters>
-                            x_death_model_parameter = x_model.find('parameters')
-                            if not (x_death_model_parameter is None):
-                                # <unlysed_fluid_change_rate>
-                                try:
-                                    d_mcds['setting']['parameters'].update({f'{s_celltype}_death_{s_model}_unlysed_fluid_change_rate': float(x_death_model_parameter.find('unlysed_fluid_change_rate').text)})
-                                    d_mcds['setting']['units'].update({f'{s_celltype}_death_{s_model}_unlysed_fluid_change_rate': x_death_model_parameter.find('unlysed_fluid_change_rate').get('units')})
-                                except AttributeError:
-                                    print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><death><model code={s_code} name={s_model}><parameters><unlysed_fluid_change_rate> node missing.')
-                                # <lysed_fluid_change_rate>
-                                try:
-                                    d_mcds['setting']['parameters'].update({f'{s_celltype}_death_{s_model}_lysed_fluid_change_rate': float(x_death_model_parameter.find('lysed_fluid_change_rate').text)})
-                                    d_mcds['setting']['units'].update({f'{s_celltype}_death_{s_model}_lysed_fluid_change_rate': x_death_model_parameter.find('lysed_fluid_change_rate').get('units')})
-                                except AttributeError:
-                                    print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><death><model code={s_code} name={s_model}><parameters><lysed_fluid_change_rate> node missing.')
-                                # <cytoplasmic_biomass_change_rate>
-                                try:
-                                    d_mcds['setting']['parameters'].update({f'{s_celltype}_death_{s_model}_cytoplasmic_biomass_change_rate': float(x_death_model_parameter.find('cytoplasmic_biomass_change_rate').text)})
-                                    d_mcds['setting']['units'].update({f'{s_celltype}_death_{s_model}_cytoplasmic_biomass_change_rate': x_death_model_parameter.find('cytoplasmic_biomass_change_rate').get('units')})
-                                except AttributeError:
-                                    print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><death><model code={s_code} name={s_model}><parameters><cytoplasmic_biomass_change_rate> node missing.')
-                                # <nuclear_biomass_change_rate>
-                                try:
-                                    d_mcds['setting']['parameters'].update({f'{s_celltype}_death_{s_model}_nuclear_biomass_change_rate': float(x_death_model_parameter.find('nuclear_biomass_change_rate').text)})
-                                    d_mcds['setting']['units'].update({f'{s_celltype}_death_{s_model}_nuclear_biomass_change_rate': x_death_model_parameter.find('nuclear_biomass_change_rate').get('units')})
-                                except AttributeError:
-                                    print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><death><model code={s_code} name={s_model}><parameters><nuclear_biomass_change_rate> node missing.')
-                                # <calcification_rate>
-                                try:
-                                    d_mcds['setting']['parameters'].update({f'{s_celltype}_death_{s_model}_calcification_rate': float(x_death_model_parameter.find('calcification_rate').text)})
-                                    d_mcds['setting']['units'].update({f'{s_celltype}_death_{s_model}_calcification_rate': x_death_model_parameter.find('calcification_rate').get('units')})
-                                except AttributeError:
-                                    print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><death><model code={s_code} name={s_model}><parameters><calcification_rate> node missing.')
-                                # <relative_rupture_volume>
-                                try:
-                                    d_mcds['setting']['parameters'].update({f'{s_celltype}_death_{s_model}_relative_rupture_volume': float(x_death_model_parameter.find('relative_rupture_volume').text)})
-                                    d_mcds['setting']['units'].update({f'{s_celltype}_death_{s_model}_relative_rupture_volume': x_death_model_parameter.find('relative_rupture_volume').get('units')})
-                                except AttributeError:
-                                    print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><death><model code={s_code} name={s_model}><parameters><relative_rupture_volume> node missing.')
-                            else:
-                                print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><death><model code={s_code} name={s_model}><parameters> node missing.')
-                    else:
-                        print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><death> node missing.')
-
-                    # find <phenotype><volume> node
-                    x_volume = x_phenotype.find('volume')
-                    if not (x_volume is None):
-                        # <total>
-                        try:
-                            d_mcds['setting']['parameters'].update({f'{s_celltype}_volume_total': float(x_volume.find('total').text)})
-                            d_mcds['setting']['units'].update({f'{s_celltype}_volume_total': x_volume.find('total').get('units')})
-                        except AttributeError:
-                            print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><volume><total> node missing.')
-                        # <fluid_fraction>
-                        try:
-                            d_mcds['setting']['parameters'].update({f'{s_celltype}_volume_fluid_fraction': float(x_volume.find('fluid_fraction').text)})
-                            d_mcds['setting']['units'].update({f'{s_celltype}_volume_fluid_fraction': x_volume.find('fluid_fraction').get('units')})
-                        except AttributeError:
-                            print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><volume><fluid_fraction> node missing.')
-                        # <nuclear>
-                        try:
-                            d_mcds['setting']['parameters'].update({f'{s_celltype}_volume_nuclear': float(x_volume.find('nuclear').text)})
-                            d_mcds['setting']['units'].update({f'{s_celltype}_volume_nuclear': x_volume.find('nuclear').get('units')})
-                        except AttributeError:
-                            print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><volume><nuclear> node missing.')
-                        # <fluid_change_rate>
-                        try:
-                            d_mcds['setting']['parameters'].update({f'{s_celltype}_volume_fluid_change_rate': float(x_volume.find('fluid_change_rate').text)})
-                            d_mcds['setting']['units'].update({f'{s_celltype}_volume_fluid_change_rate': x_volume.find('fluid_change_rate').get('units')})
-                        except AttributeError:
-                            print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><volume><fluid_change_rate> node missing.')
-                        # <cytoplasmic_biomass_change_rate>
-                        try:
-                            d_mcds['setting']['parameters'].update({f'{s_celltype}_volume_cytoplasmic_biomass_change_rate': float(x_volume.find('cytoplasmic_biomass_change_rate').text)})
-                            d_mcds['setting']['units'].update({f'{s_celltype}_volume_cytoplasmic_biomass_change_rate': x_volume.find('cytoplasmic_biomass_change_rate').get('units')})
-                        except AttributeError:
-                            print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><volume><cytoplasmic_biomass_change_rate> node missing.')
-                        # <nuclear_biomass_change_rate>
-                        try:
-                            d_mcds['setting']['parameters'].update({f'{s_celltype}_volume_nuclear_biomass_change_rate': float(x_volume.find('nuclear_biomass_change_rate').text)})
-                            d_mcds['setting']['units'].update({f'{s_celltype}_volume_nuclear_biomass_change_rate': x_volume.find('nuclear_biomass_change_rate').get('units')})
-                        except AttributeError:
-                            print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><volume><nuclear_biomass_change_rate> node missing.')
-                        # <calcified_fraction>
-                        try:
-                            d_mcds['setting']['parameters'].update({f'{s_celltype}_volume_calcified_fraction': float(x_volume.find('calcified_fraction').text)})
-                            d_mcds['setting']['units'].update({f'{s_celltype}_volume_calcified_fraction': x_volume.find('calcified_fraction').get('units')})
-                        except AttributeError:
-                            print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><volume><calcified_fraction> node missing.')
-                        # <calcification_rate>
-                        try:
-                            d_mcds['setting']['parameters'].update({f'{s_celltype}_volume_calcification_rate': float(x_volume.find('calcification_rate').text)})
-                            d_mcds['setting']['units'].update({f'{s_celltype}_volume_calcification_rate': x_volume.find('calcification_rate').get('units')})
-                        except AttributeError:
-                            print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><volume><calcification_rate> node missing.')
-                        # <relative_rupture_volume>
-                        try:
-                            d_mcds['setting']['parameters'].update({f'{s_celltype}_volume_relative_rupture_volume': float(x_volume.find('relative_rupture_volume').text)})
-                            d_mcds['setting']['units'].update({f'{s_celltype}_volume_relative_rupture_volume': x_volume.find('relative_rupture_volume').get('units')})
-                        except AttributeError:
-                            print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><volume><relative_rupture_volume> node missing.')
-                    else:
-                        print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><volume> node missing.')
-
-                    # find <phenotype><mechanics> node
-                    x_mechanics = x_phenotype.find('mechanics')
-                    if not (x_mechanics is None):
-                        # <cell_cell_adhesion_strength>
-                        try:
-                            d_mcds['setting']['parameters'].update({f'{s_celltype}_mechanics_cell_cell_adhesion_strength': float(x_mechanics.find('cell_cell_adhesion_strength').text)})
-                            d_mcds['setting']['units'].update({f'{s_celltype}_mechanics_cell_cell_adhesion_strength': x_mechanics.find('cell_cell_adhesion_strength').get('units')})
-                        except AttributeError:
-                            print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><mechanics><cell_cell_adhesion_strength> node missing.')
-                        # <cell_cell_repulsion_strength>
-                        try:
-                            d_mcds['setting']['parameters'].update({f'{s_celltype}_mechanics_cell_cell_repulsion_strength': float(x_mechanics.find('cell_cell_repulsion_strength').text)})
-                            d_mcds['setting']['units'].update({f'{s_celltype}_mechanics_cell_cell_repulsion_strength': x_mechanics.find('cell_cell_repulsion_strength').get('units')})
-                        except AttributeError:
-                            print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><mechanics><cell_cell_repulsion_strength> node missing.')
-                        # cell_BM_adhesion_strength
-                        #try:
-                        #    d_mcds['setting']['parameters'].update({f'{s_celltype}_mechanics_cell_BM_adhesion_strength': float(x_mechanics.find('cell_BM_adhesion_strength').text)})
-                        #    d_mcds['setting']['units'].update({f'{s_celltype}_mechanics_cell_BM_adhesion_strength': x_mechanics.find('cell_BM_adhesion_strength').get('units')})
-                        #except AttributeError:
-                        #    print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><mechanics><cell_BM_adhesion_strength> node missing.')
-                        # cell_BM_repulsion_strength
-                        #try:
-                        #    d_mcds['setting']['parameters'].update({f'{s_celltype}_mechanics_cell_BM_repulsion_strength': float(x_mechanics.find('cell_BM_repulsion_strength').text)})
-                        #    d_mcds['setting']['units'].update({f'{s_celltype}_mechanics_cell_BM_repulsion_strength': x_mechanics.find('cell_BM_repulsion_strength').get('units')})
-                        #except AttributeError:
-                        #    print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><mechanics><cell_BM_repulsion_strength> node missing.')
-                        # <relative_maximum_adhesion_distance>
-                        try:
-                            d_mcds['setting']['parameters'].update({f'{s_celltype}_mechanics_relative_maximum_adhesion_distance': float(x_mechanics.find('relative_maximum_adhesion_distance').text)})
-                            d_mcds['setting']['units'].update({f'{s_celltype}_mechanics_relative_maximum_adhesion_distance': x_mechanics.find('relative_maximum_adhesion_distance').get('units')})
-                        except AttributeError:
-                            print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><mechanics><relative_maximum_adhesion_distance> node missing.')
-
-                        # <cell_adhesion_affinities>
-                        x_mechanics_affinities = x_mechanics.find('cell_adhesion_affinities')
-                        if not (x_mechanics_affinities is None):
-                            for x_affinity in x_mechanics_affinities.findall('cell_adhesion_affinity'):
-                                s_name = x_affinity.get('name')
-                                d_mcds['setting']['parameters'].update({f'{s_celltype}_mechanics_relative_cell_adhesion_affinity_{s_name}': float(x_affinity.text)})
-                        else:
-                            print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><mechanics><cell_adhesion_affinities> node missing.')
-                        # <options>
-                        x_mechanics_options = x_mechanics.find('options')
-                        if not (x_mechanics_options is None):
-                            # <options><set_relative_equilibrium_distance>
-                            try:
-                                d_mcds['setting']['parameters'].update({f'{s_celltype}_mechanics_relative_equilibrium_distance_enabled': str(x_mechanics_options.find('set_relative_equilibrium_distance').get('enabled').lower() == 'true')})
-                                d_mcds['setting']['parameters'].update({f'{s_celltype}_mechanics_relative_equilibrium_distance': float(x_mechanics_options.find('set_relative_equilibrium_distance').text)})
-                                d_mcds['setting']['units'].update({f'{s_celltype}_mechanics_relative_equilibrium_distance': x_mechanics_options.find('set_relative_equilibrium_distance').get('units')})
-                            except AttributeError:
-                                print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><mechanics><options><set_relative_equilibrium_distance> node missing.')
-                            # <options><set_absolute_equilibrium_distance>
-                            try:
-                                d_mcds['setting']['parameters'].update({f'{s_celltype}_mechanics_absolute_equilibrium_distance_enabled': str(x_mechanics_options.find('set_absolute_equilibrium_distance').get('enabled').lower() == 'true')})
-                                d_mcds['setting']['parameters'].update({f'{s_celltype}_mechanics_absolute_equilibrium_distance': float(x_mechanics_options.find('set_absolute_equilibrium_distance').text)})
-                                d_mcds['setting']['units'].update({f'{s_celltype}_mechanics_absolute_equilibrium_distance': x_mechanics_options.find('set_absolute_equilibrium_distance').get('units')})
-                            except AttributeError:
-                                print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><mechanics><options><set_absolute_equilibrium_distance> node missing.')
-                        else:
-                            print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><mechanics><options> node missing.')
-
-                        # <attachment_elastic_constant>
-                        try:
-                            d_mcds['setting']['parameters'].update({f'{s_celltype}_mechanics_elastic_constant': float(x_mechanics.find('attachment_elastic_constant').text)})
-                            d_mcds['setting']['units'].update({f'{s_celltype}_mechanics_elastic_constant': x_mechanics.find('attachment_elastic_constant').get('units')})
-                        except AttributeError:
-                            print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><mechanics><attachment_elastic_constant> node missing.')
-                        # <attachment_rate>
-                        try:
-                            d_mcds['setting']['parameters'].update({f'{s_celltype}_mechanics_attachment_rate': float(x_mechanics.find('attachment_rate').text)})
-                            d_mcds['setting']['units'].update({f'{s_celltype}_mechanics_attachment_rate': x_mechanics.find('attachment_rate').get('units')})
-                        except AttributeError:
-                            print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><mechanics><attachment_rate> node missing.')
-                        # <detachment_rate>
-                        try:
-                            d_mcds['setting']['parameters'].update({f'{s_celltype}_mechanics_detachment_rate': float(x_mechanics.find('detachment_rate').text)})
-                            d_mcds['setting']['units'].update({f'{s_celltype}_mechanics_detachment_rate': x_mechanics.find('detachment_rate').get('units')})
-                        except AttributeError:
-                            print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><mechanics><detachment_rate> node missing.')
-
-                    else:
-                        print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><mechanics> node missing.')
-
-                    # find <phenotype><motility> node
-                    x_motility = x_phenotype.find('motility')
-                    if not (x_mechanics is None):
-                        # <speed>
-                        try:
-                            d_mcds['setting']['parameters'].update({f'{s_celltype}_motility_speed': float(x_motility.find('speed').text)})
-                            d_mcds['setting']['units'].update({f'{s_celltype}_motility_speed': x_motility.find('speed').get('units')})
-                        except AttributeError:
-                            print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><motility><speed> node missing.')
-                        # <persistence_time>
-                        try:
-                            d_mcds['setting']['parameters'].update({f'{s_celltype}_motility_persistence_time': float(x_motility.find('persistence_time').text)})
-                            d_mcds['setting']['units'].update({f'{s_celltype}_motility_persistence_time': x_motility.find('persistence_time').get('units')})
-                        except AttributeError:
-                            print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><motility><persistence_time> node missing.')
-                        # <migration_bias>
-                        try:
-                            d_mcds['setting']['parameters'].update({f'{s_celltype}_motility_migration_bias': float(x_motility.find('migration_bias').text)})
-                            d_mcds['setting']['units'].update({f'{s_celltype}_motility_migration_bias': x_motility.find('migration_bias').get('units')})
-                        except AttributeError:
-                            print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><motility><_motility_migration_bias> node missing.')
-                        # <options>
-                        x_motility_options = x_motility.find('options')
-                        if not (x_motility_options is None):
-                            d_mcds['setting']['parameters'].update({f'{s_celltype}_motility_enabled': str(x_motility_options.find('enabled').text).lower() == 'true'})
-                            d_mcds['setting']['parameters'].update({f'{s_celltype}_motility_use_2D': str(x_motility_options.find('use_2D').text).lower() == 'true'})
-                            # <options><chemotaxis>
-                            x_motility_chemotaxis = x_motility_options.find('chemotaxis')
-                            if not (x_motility_chemotaxis is None):
-                                d_mcds['setting']['parameters'].update({f'{s_celltype}_motility_chemotaxis_enabled': str(x_motility_chemotaxis.find('enabled').text).lower() == 'true'})
-                                d_mcds['setting']['parameters'].update({f'{s_celltype}_motility_chemotaxis_substrate': str(x_motility_chemotaxis.find('substrate').text)})
-                                d_mcds['setting']['parameters'].update({f'{s_celltype}_motility_chemotaxis_direction': float(x_motility_chemotaxis.find('direction').text)})
-                            else:
-                                print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><motility><options><chemotaxis> node missing.')
-                            # <options><advanced_chemotaxis>
-                            x_motility_advancedchemotaxis = x_motility_options.find('advanced_chemotaxis')
-                            if not (x_motility_advancedchemotaxis is None):
-                                d_mcds['setting']['parameters'].update({f'{s_celltype}_motility_advanced_chemotaxis_enabled': str(x_motility_advancedchemotaxis.find('enabled').text).lower() == 'true'})
-                                d_mcds['setting']['parameters'].update({f'{s_celltype}_motility_advanced_chemotaxis_normalize_each_gradient': str(x_motility_advancedchemotaxis.find('normalize_each_gradient').text).lower() == 'true'})
-                                for x_chemotactic in x_motility_advancedchemotaxis.find('chemotactic_sensitivities').findall('chemotactic_sensitivity'):
-                                    s_subs = str(x_chemotactic.get('substrate'))
-                                    d_mcds['setting']['parameters'].update({f'{s_celltype}_motility_advanced_chemotaxis_chemotactic_sensitivity_{s_subs}': float(x_chemotactic.text)})
-                            else:
-                                print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><motility><options><advanced_chemotaxis> node missing.')
-                        else:
-                            print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><motility><options> node missing.')
-                    else:
-                        print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><motility> node missing.')
-
-                    # find <phenotype><secretion> node
-                    x_secretion = x_phenotype.find('secretion')
-                    if not (x_secretion is None):
-                        for x_substrate in x_secretion.findall('substrate'):
-                            s_subs = str(x_substrate.get('name'))
-                            # <secretion_rate>
-                            try:
-                                d_mcds['setting']['parameters'].update({f'{s_celltype}_{s_subs}_secretion_rate': float(x_substrate.find('secretion_rate').text)})
-                                d_mcds['setting']['units'].update({f'{s_celltype}_{s_subs}_secretion_rate': x_substrate.find('secretion_rate').get('units')})
-                            except AttributeError:
-                                print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><secretion><substrate><secretion_rate> node missing.')
-                            # <secretion_target>
-                            try:
-                                d_mcds['setting']['parameters'].update({f'{s_celltype}_{s_subs}_secretion_target': float(x_substrate.find('secretion_target').text)})
-                                d_mcds['setting']['units'].update({f'{s_celltype}_{s_subs}_secretion_target': x_substrate.find('secretion_target').get('units')})
-                            except AttributeError:
-                                print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><secretion><substrate><secretion_target> node missing.')
-                            # <uptake_rate>
-                            try:
-                                d_mcds['setting']['parameters'].update({f'{s_celltype}_{s_subs}_uptake_rate': float(x_substrate.find('uptake_rate').text)})
-                                d_mcds['setting']['units'].update({f'{s_celltype}_{s_subs}_uptake_rate': x_substrate.find('uptake_rate').get('units')})
-                            except AttributeError:
-                                print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><secretion><substrate><uptake_rate> node missing.')
-                            # <net_export_rate>
-                            try:
-                                d_mcds['setting']['parameters'].update({f'{s_celltype}_{s_subs}_net_export_rate': float(x_substrate.find('net_export_rate').text)})
-                                d_mcds['setting']['units'].update({f'{s_celltype}_{s_subs}_net_export_rate': x_substrate.find('net_export_rate').get('units')})
-                            except AttributeError:
-                                print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><secretion><substrate><net_export_rate> node missing.')
-                    else:
-                        print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><secretion> node missing.')
-
-                    # find <phenotype><cell_interactions> node
-                    x_interaction = x_phenotype.find('cell_interactions')
-                    if not (x_interaction is None):
-                        # <dead_phagocytosis_rate>
-                        try:
-                            d_mcds['setting']['parameters'].update({f'{s_celltype}_cell_interaction_dead_phagocytosis_rate': float(x_interaction.find('dead_phagocytosis_rate').text)})
-                            d_mcds['setting']['units'].update({f'{s_celltype}_cell_interaction_dead_phagocytosis_rate': x_interaction.find('dead_phagocytosis_rate').get('units')})
-                        except AttributeError:
-                            print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><cell_interactions><dead_phagocytosis_rate> node missing.')
-                        # <live_phagocytosis_rates>
-                        x_interaction_phagocytosis = x_interaction.find('live_phagocytosis_rates')
-                        if not (x_interaction_phagocytosis is None):
-                            for x_rate in x_interaction_phagocytosis:
-                                s_name = x_rate.get('name')
-                                d_mcds['setting']['parameters'].update({f'{s_celltype}_cell_interaction_{s_name}_live_phagocytosis_rate': float(x_rate.text)})
-                                d_mcds['setting']['units'].update({f'{s_celltype}_cell_interaction_{s_name}_live_phagocytosis_rate': x_rate.get('units')})
-                        else:
-                            print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><cell_interactions><live_phagocytosis_rates> node missing.')
-                        # <attack_rates>
-                        x_interaction_attack = x_interaction.find('attack_rates')
-                        if not (x_interaction_attack is None):
-                            for x_rate in x_interaction_attack:
-                                s_name = x_rate.get('name')
-                                d_mcds['setting']['parameters'].update({f'{s_celltype}_cell_interaction_{s_name}_attack_rate': float(x_rate.text)})
-                                d_mcds['setting']['units'].update({f'{s_celltype}_cell_interaction_{s_name}_attack_rate': x_rate.get('units')})
-                        else:
-                            print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><cell_interactions><attack_rates> node missing.')
-
-                        # <damage_rate>
-                        try:
-                            d_mcds['setting']['parameters'].update({f'{s_celltype}_cell_interaction_damage_rate': float(x_interaction.find('damage_rate').text)})
-                            d_mcds['setting']['units'].update({f'{s_celltype}_cell_interaction_damage_rate': x_interaction.find('damage_rate').get('units')})
-                        except AttributeError:
-                            print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><cell_interactions><damage_rate> node missing.')
-                        # <fusion_rates>
-                        x_interaction_fusion =  x_interaction.find('fusion_rates')
-                        if not (x_interaction_fusion is None):
-                            for x_rate in x_interaction_fusion:
-                                s_name = x_rate.get('name')
-                                d_mcds['setting']['parameters'].update({f'{s_celltype}_cell_interaction_{s_name}_fusion_rate': float(x_rate.text)})
-                                d_mcds['setting']['units'].update({f'{s_celltype}_cell_interaction_{s_name}_fusion_rate': x_rate.get('units')})
-                        else:
-                            print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><cell_interactions><fusion_rates> node missing.')
-
-                    else:
-                        print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><cell_interactions> node missing.')
-
-                    # find <phenotype><cell_transformations> node
-                    x_transformation = x_phenotype.find('cell_transformations')
-                    if not (x_transformation is None):
-                        # <transformation_rates>
-                        for x_rate  in x_transformation.find('transformation_rates').findall('transformation_rate'):
-                            s_name = str(x_rate.get('name'))
-                            d_mcds['setting']['parameters'].update({f'{s_celltype}_{s_name}_transformation_rate': float(x_rate.text)})
-                            d_mcds['setting']['units'].update({f'{s_celltype}_{s_name}_transformation_rate': x_rate.get('units')})
-                    else:
-                        print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype><cell_transformations> node missing.')
-
-                    # skip <phenotype><molecular> (extinct version)
-                    # skip <phenotype><intracellular>
-
-                # <cell_definition><phenotype>
-                else:
-                    print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><phenotype> node missing.')
-
-                # <cell_definition><custom_data>
-                try:
-                    for x_element in x_celltype.find('custom_data').iter():
-                        if (x_element.tag != 'custom_data'):
-                            try:
-                                self.custom_type[x_element.tag]
-                            except KeyError:
-                                es_customdata.add(x_element.tag)
-                except AttributeError:
-                    print(f'Warning @ pyMCDS._read_setting_xml : <cell_definition name="{s_celltype}" ID="{s_id}"><custom_data> node missing.')
-
-            # if <custom data> was found
-            if (len(es_customdata) > 0):
-                print(f'Warning @ pyMCDS._read_setting_xml : cell_definition custom_data without variable type setting detected. {sorted(es_customdata)}')
-
-            # find <user_parameters> node
-            for x_element in x_root.find('user_parameters').iter():
-                if (x_element.tag != 'user_parameters'):
-                    s_type = x_element.get('type')
-                    if s_type in {'double', 'real', 'float'}:
-                        o_type = float
-                    elif s_type in {'int', 'integer'}:
-                        o_type = int
-                    elif s_type in {'str', 'string'}:
-                        o_type = str
-                    elif s_type in {'bool','boole'}:
-                        o_type = bool
-                    else:
-                        print(f'Warning @ pyMCDS._read_setting.xml: user_parameter unknown variable type {s_type} detected. will translate into string.')
-                    o_type = str
-                    d_mcds['setting']['parameters'].update({x_element.tag: o_type(x_element.text)})
-
-            # skip <initial_conditions> node
-
-            # find <cell_rules> node (protocol CBHG; version 2.0)
-            x_rule = x_root.find('cell_rules')
-            if not (x_rule is None):
-                for x_ruleset in x_rule.find('rulesets'):
-                    if (str(x_ruleset.get('enabled')).lower() == 'true'):
-                        s_pathfile = self.path + '/' + x_ruleset.find('filename').text
-                        try:
-                            df_rule = pd.read_csv(s_pathfile, sep=',', header=None)
-                            if (df_rule.shape[1] == 9):
-                                df_rule.columns = ['cell_type','signal','direction','behavoir','base_value', 'saturation_value','half_max','hill_power','apply_to_dead']
-                            else:
-                                df_rule.columns = ['cell_type','signal','direction','behavoir','saturation_value','half_max','hill_power','apply_to_dead']
-                            df_rule = df_rule.astype({'apply_to_dead':bool})
-                            df_rule.index.name = 'index'
-                            if (d_mcds['setting']['rules'] is None):
-                                d_mcds['setting']['rules'] = df_rule
-                            else:
-                                d_mcds['setting']['rules'] = pd.concate([d_mcds['setting']['rules'], df_rule], axis=0)
-                        except pd._libs.parsers.EmptyDataError:
-                            print(f'Warning @ pyMCDS._read_settings.xml : {s_pathfile} is empty.')
-                if (d_mcds['setting']['rules'] is None):
-                    print(f'Warning @ pyMCDS._read_setting_xml : no cell_rules.csv files detetcetd.')
-            else:
-                print(f'Warning @ pyMCDS._read_setting_xml : <cell_rules> node missing.')
 
 
         #######################################
@@ -2595,9 +2039,10 @@ class pyMCDS:
         d_mcds['metadata']['current_runtime'] = float(x_time.text)
         d_mcds['metadata']['runtime_units'] = x_time.get('units')
 
+        # BUE 2024-07-31: settings is out!
         # update settings unit with metadata infromation
-        d_mcds['setting']['units'].update({'time': d_mcds['metadata']['time_units']})
-        d_mcds['setting']['units'].update({'runtime': d_mcds['metadata']['runtime_units']})
+        #d_mcds['setting']['units'].update({'time': d_mcds['metadata']['time_units']})
+        #d_mcds['setting']['units'].update({'runtime': d_mcds['metadata']['runtime_units']})
 
 
         ####################
@@ -2678,8 +2123,9 @@ class pyMCDS:
         d_mcds['mesh']['mnp_coordinate'] = ar_mesh_initial[:3, :]
         d_mcds['mesh']['volumes'] = ar_mesh_initial[3, :]
 
+        # BUE 2024-07-31: settings is out!
         # update settings unit with mesh infromation
-        d_mcds['setting']['units'].update({'spatial_unit': d_mcds['metadata']['spatial_units']})
+        #d_mcds['setting']['units'].update({'spatial_unit': d_mcds['metadata']['spatial_units']})
 
         ################################
         # handle microenvironment data #
@@ -2744,11 +2190,12 @@ class pyMCDS:
                     # store value
                     d_mcds['continuum_variables'][s_substrate]['data'][j, i, k] = ar_microenv[4+i_s, vox_idx]
 
+                # BUE 2024-07-31: settings is out!
                 # update settings unit wuth substrate parameters
-                d_mcds['setting']['units'].update({s_substrate: d_mcds['continuum_variables'][s_substrate]['units']})
+                #d_mcds['setting']['units'].update({s_substrate: d_mcds['continuum_variables'][s_substrate]['units']})
                 # update settings unit with microenvironment parameters
-                d_mcds['setting']['units'].update({f'{s_substrate}_diffusion_coefficient': d_mcds['continuum_variables'][s_substrate]['diffusion_coefficient']['units']})
-                d_mcds['setting']['units'].update({f'{s_substrate}_decay_rate': d_mcds['continuum_variables'][s_substrate]['decay_rate']['units']})
+                #d_mcds['setting']['units'].update({f'{s_substrate}_diffusion_coefficient': d_mcds['continuum_variables'][s_substrate]['diffusion_coefficient']['units']})
+                #d_mcds['setting']['units'].update({f'{s_substrate}_decay_rate': d_mcds['continuum_variables'][s_substrate]['decay_rate']['units']})
 
 
         ####################
@@ -2766,6 +2213,12 @@ class pyMCDS:
             if x_simplified_data.get('source') == 'PhysiCell':
                 x_celldata = x_simplified_data
                 break
+
+        # update metadata cell_type ID label dictionary
+        for x_celltype in x_celldata.find('cell_types').findall('type'):
+            s_id = str(x_celltype.get('ID'))
+            s_celltype = (x_celltype.text).replace(' ', '_')
+            d_mcds['metadata']['cell_type'].update({s_id : s_celltype})
 
         # iterate over labels which are children of labels these will be used to label data arrays
         ls_variable = []
@@ -2821,9 +2274,10 @@ class pyMCDS:
                 ls_variable.append(s_variable)
                 d_mcds['discrete_cells']['units'].update({s_variable : s_unit})
 
+        # BUE 2024-07-31: settings is out!
         # update settings units from cell parameters
-        d_mcds['setting']['units'].update(d_mcds['discrete_cells']['units'])
-        del d_mcds['setting']['units']['ID']
+        #d_mcds['setting']['units'].update(d_mcds['discrete_cells']['units'])
+        #del d_mcds['setting']['units']['ID']
 
         # load the file
         s_cellpathfile = self.path + '/' + x_celldata.find('filename').text
