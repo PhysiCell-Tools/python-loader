@@ -1862,56 +1862,48 @@ class pyMCDS:
 
     ## MODEL PARAMETER SETTING RELATED FUNCTIONS ##
 
-    # BUE 2024-07-31: settings is out!
-    #def get_parameter_dict(self):
-    #    """
-    #    input:
-    #
-    #    output:
-    #        d_parameter: dictionary
-    #        dictionary, mapping parameter and input value.
-    #
-    #    description:
-    #        function retunes a dictionary that maps the models
-    #        input parameters and values found in the settings.xml file.
-    #        only parameters compatible with the PhysiCell Studio settings.xml
-    #        version are listed. other parameters might be missing!
-    #    """
-    #    return self.data['setting']['parameters']
+    def get_unit_dict(self):
+        """
+        input:
 
+        output:
+            ds_unit: dictionary
+                dictionary, which tracks units from cell and microenvironment
+                variables.
 
-    # BUE 2024-07-31: settings is out!
-    #def get_rule_df(self):
-    #    """
-    #    input:
-    #
-    #    output:
-    #        df_rules: pandas dataframe
-    #        rules.csv loaded as datafarme.
-    #
-    #    description:
-    #        function returns the rule csv, linked in the settings.xml file,
-    #        as a datafram.
-    #    """
-    #    return self.data['setting']['rules']
+        description:
+            function returns a dictionary that stores all tracked variables
+            and their units.
+        """
+        # extract data
+        ds_unit = {}
+        # units for metadata parameters
+        ds_unit.update({'time': [self.data['metadata']['time_units']]})
+        ds_unit.update({'runtime': [self.data['metadata']['runtime_units']]})
+        ds_unit.update({'spatial_unit': [self.data['metadata']['spatial_units']]})
 
+        # microenvironment
+        if self.microenv:
+            for s_substrate in self.get_substrate_names():
+                # unit from substrate parameters
+                s_unit = self.data['continuum_variables'][s_substrate]['units']
+                ds_unit.update({s_substrate: [s_unit]})
 
-    # BUE 2024-07-31: settings is out!
-    #def get_unit_dict(self):
-    #    """
-    #    input:
-    #
-    #    output:
-    #        ds_unit: dictionary
-    #            dictionary, which tracks units from cell and microenvironment
-    #            variables and settings parameters.
-    #
-    #    description:
-    #        function returns a dictionary that stores all tracked variables
-    #        and their units and all parameters and their units found in the
-    #        settings.xml file.
-    #    """
-    #    return self.data['setting']['units']
+                # units from microenvironment parameters
+                s_diffusion_key = f'{s_substrate}_diffusion_coefficient'
+                s_diffusion_unit = self.data['continuum_variables'][s_substrate]['diffusion_coefficient']['units']
+                ds_unit.update({s_diffusion_key: [s_diffusion_unit]})
+
+                s_decay_key = f'{s_substrate}_decay_rate'
+                s_decay_unit = self.data['continuum_variables'][s_substrate]['decay_rate']['units']
+                ds_unit.update({s_decay_key: [s_decay_unit]})
+
+        # units from cell parameters
+        ds_unit.update(self.data['discrete_cells']['units'])
+
+        # output
+        del ds_unit['ID']
+        return ds_unit
 
 
     ## LOAD DATA  ##
@@ -1988,7 +1980,7 @@ class pyMCDS:
 
             # bue 2024-07-31: will in future physicell version (>=3.15?) be overwritten by handle cell data.
             # cell loop
-            for x_celltype in x_root.find('cell_definitions').findall('cell_definition'):
+            for x_celltype in self.x_settingxml.find('cell_definitions').findall('cell_definition'):
                 # <cell_definition>
                 s_id = str(x_celltype.get('ID'))
                 s_celltype = x_celltype.get('name').replace(' ', '_')
@@ -2214,11 +2206,14 @@ class pyMCDS:
                 x_celldata = x_simplified_data
                 break
 
-        # update metadata cell_type ID label dictionary
-        for x_celltype in x_celldata.find('cell_types').findall('type'):
-            s_id = str(x_celltype.get('ID'))
-            s_celltype = (x_celltype.text).replace(' ', '_')
-            d_mcds['metadata']['cell_type'].update({s_id : s_celltype})
+        # update metadata cell_type ID label dictionar
+        try:
+            for x_celltype in x_celldata.find('cell_types').findall('type'):
+                s_id = str(x_celltype.get('ID'))
+                s_celltype = (x_celltype.text).replace(' ', '_')
+                d_mcds['metadata']['cell_type'].update({s_id : s_celltype})
+        except AttributeError:
+            pass
 
         # iterate over labels which are children of labels these will be used to label data arrays
         ls_variable = []

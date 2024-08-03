@@ -112,8 +112,6 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
     + new pyCLI **pcdl_get_conc_df** command line interface function.
     + new pyCLI **pcdl_get_conc_df_features** command line interface function.
     + new pyCLI **pcdl_get_graph_gml** command line interface function.
-    + new pyCLI **pcdl_get_parameter_dict** command line interface function.
-    + new pyCLI **pcdl_get_rule_df** command line interface function.
     + new pyCLI **pcdl_get_unit_dict** command line interface function.
     + new pyCLI **pcdl_get_version** command line interface function.
     + new pyCLI **pcdl_make_cell_vtk** command line interface function.
@@ -123,8 +121,6 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
     + new pyCLI **pcdl_plot_contour** command line interface function.
     + new pyCLI **pcdl_plot_scatter** command line interface function.
     + new pyCLI **pcdl_plot_timeseries** command line interface function.
-    + new pyMCDS **get_rule_df** function to retrieve the rule set as a dataframe.
-    + new pyMCDS **get_parameter_dict** function to retrieve the model parameter initial settings as a dictionary.
     + new pyMCDS **make_conc_vtk** function to save substrate data as rectilinear grid vtk file.
     + new pyMCDS **make_cell_vtk** function to save cell data as glyph vtk file.
     + new pyMCDS **make_graph_gml** function to save graphs in a networkx and igraph compatible files format.

@@ -52,8 +52,6 @@ Basically there are four types of functions:
 + [help(mcds.get_runtime)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_runtime.md)
 
 *settings*
-+ [help(mcds.get_parameter_dict)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_parameter_dict.md)  #! workhorse function
-+ [help(mcds.get_rule_df)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_rule_df.md)  #! workhorse function
 + [help(mcds.get_unit_dict)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_unit_dict.md)  #! workhorse function
 
 ### TimeStep mesh
@@ -162,8 +160,6 @@ The command line interface functions mimic the name and parameter arguments as c
 + [pcdl_get_version --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_version.md)  #! workhorse function
 
 *settings*
-+ [pcdl_get_parameter_dict --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_parameter_dict.md)  #! workhorse function
-+ [pcdl_get_rule_df --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_rule_df.md)  #! workhorse function
 + [pcdl_get_unit_dict --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_unit_dict.md)  #! workhorse function
 
 ### Command line microenvironment

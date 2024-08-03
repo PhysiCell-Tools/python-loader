@@ -258,7 +258,7 @@ def _anndextract(df_cell, scale='maxabs', graph_attached={}, graph_neighbor={}, 
 
 # class definition
 class TimeStep(pyMCDS):
-    def __init__(self, xmlfile, output_path='.', custom_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True):
+    def __init__(self, xmlfile, output_path='.', custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True):
         """
         input:
             xmlfile: string
@@ -269,7 +269,7 @@ class TimeStep(pyMCDS):
                 relative or absolute path to the directory where
                 the PhysiCell output files are stored.
 
-            custom_type: dictionary; default is {}
+            custom_data_type: dictionary; default is {}
                 variable to specify custom_data variable types
                 besides float (int, bool, str) like this: {var: dtype, ...}.
                 downstream float and int will be handled as numeric,
@@ -313,7 +313,7 @@ class TimeStep(pyMCDS):
             self,
             xmlfile = xmlfile,
             output_path = output_path,
-            custom_type = custom_type,
+            custom_data_type = custom_data_type,
             microenv = microenv,
             graph = graph,
             physiboss = physiboss,
@@ -379,14 +379,14 @@ class TimeStep(pyMCDS):
 
 
 class TimeSeries(pyMCDSts):
-    def __init__(self, output_path='.', custom_type={}, load=True, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True):
+    def __init__(self, output_path='.', custom_data_type={}, load=True, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True):
         """
         input:
             output_path: string, default '.'
                 relative or absolute path to the directory where
                 the PhysiCell output files are stored.
 
-            custom_type: dictionary; default is {}
+            custom_data_type: dictionary; default is {}
                 variable to specify custom_data variable types
                 besides float (int, bool, str) like this: {var: dtype, ...}.
                 downstream float and int will be handled as numeric,
@@ -430,7 +430,7 @@ class TimeSeries(pyMCDSts):
         pyMCDSts.__init__(
             self,
             output_path = output_path,
-            custom_type = custom_type,
+            custom_data_type = custom_data_type,
             load = load,
             microenv = microenv,
             graph = graph,

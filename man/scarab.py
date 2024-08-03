@@ -94,13 +94,13 @@ def docstring_md(s_function, ls_doc, s_header=None, s_opath='./docstring/'):
 # load data
 mcds = pcdl.TimeStep(
     '../pcdl/data_timeseries_2d/output00000000.xml',
-    custom_type={'oncoprotein': str},
+    custom_data_type={'oncoprotein': str},
     verbose=False,
 )
 
 mcdsts = pcdl.TimeSeries(
     '../pcdl/data_timeseries_2d/',
-    custom_type={'oncoprotein': str},
+    custom_data_type={'oncoprotein': str},
     verbose=False,
 )
 
@@ -275,15 +275,6 @@ docstring_md(
 
 # write pyMCDS setting function markdown files
 docstring_md(
-    s_function = 'mcds.get_parameter_dict',
-    ls_doc = pcdl.TimeStep.get_parameter_dict.__doc__.split('\n'),
-)
-docstring_md(
-    s_function = 'mcds.get_rule_df',
-    ls_doc = pcdl.TimeStep.get_rule_df.__doc__.split('\n'),
-)
-
-docstring_md(
     s_function = 'mcds.get_unit_dict',
     ls_doc = pcdl.TimeStep.get_unit_dict.__doc__.split('\n'),
 )
@@ -415,8 +406,6 @@ help_md(s_command='pcdl_get_cell_df')
 help_md(s_command='pcdl_get_cell_df_features')
 help_md(s_command='pcdl_get_conc_df')
 help_md(s_command='pcdl_get_conc_df_features')
-help_md(s_command='pcdl_get_parameter_dict')
-help_md(s_command='pcdl_get_rule_df')
 help_md(s_command='pcdl_get_unit_dict')
 help_md(s_command='pcdl_get_version')
 help_md(s_command='pcdl_make_graph_gml')

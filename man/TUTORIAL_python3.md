@@ -40,7 +40,7 @@ Additionally, it is possible to specify for custom\_data variable types other th
 
 ```python
 # fine tuned way of loading a mcds object
-mcds = pcdl.TimeStep(s_pathfile, custom_type={}, microenv=False, graph=False, settingxml=None)
+mcds = pcdl.TimeStep(s_pathfile, custom_data_type={}, microenv=False, graph=False, settingxml=None)
 ```
 
 
@@ -114,7 +114,7 @@ Additionally, we can exclude to read the PhysiCell\_settings.xml file, if it is 
 
 ```python
 # fine tuned the way mcds objects will be loaded
-mcdsts = pcdl.TimeSeries(s_path, custom_type={}, load=True, microenv=False, graph=False, settingxml=None)
+mcdsts = pcdl.TimeSeries(s_path, custom_data_type={}, load=True, microenv=False, graph=False, settingxml=None)
 ```
 
 

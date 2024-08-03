@@ -50,9 +50,9 @@ def get_anndata():
         help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .'
     )
     # TimeSeries output_path '.'
-    # TimeSeries custom_type
+    # TimeSeries custom_data_type
     parser.add_argument(
-        '--custom_type',
+        '--custom_data_type',
         nargs = '*',
         default = [],
         help = 'parameter to specify custom_data variable types other than float (namely: int, bool, str) like this var:dtype myint:int mybool:bool mystr:str . downstream float and int will be handled as numeric, bool as Boolean, and str as categorical data. default is an empty string.',
@@ -132,9 +132,9 @@ def get_anndata():
         s_pathfile = s_pathfile + '/initial.xml'
     if not os.path.exists(s_pathfile):
         sys.exit(f"Error @ pcdl_get_anndata : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
-    # custom_type
+    # custom_data_type
     d_vartype = {}
-    for vartype in args.custom_type:
+    for vartype in args.custom_data_type:
         s_var, s_type = vartype.split(':')
         if s_type in {'bool'}: o_type = bool
         elif s_type in {'int'}: o_type = int
@@ -148,7 +148,7 @@ def get_anndata():
         mcds = pcdl.TimeStep(
             xmlfile = args.path,
             output_path = '.',
-            custom_type = d_vartype,
+            custom_data_type = d_vartype,
             microenv = False if args.microenv.lower().startswith('f') else True,
             graph = False if args.graph.lower().startswith('f') else True,
             physiboss = False if args.physiboss.lower().startswith('f') else True,
@@ -168,7 +168,7 @@ def get_anndata():
     else:
         mcdsts = pcdl.TimeSeries(
             output_path = args.path,
-            custom_type = d_vartype,
+            custom_data_type = d_vartype,
             load = True,
             microenv = False if args.microenv.lower().startswith('f') else True,
             graph = False,
@@ -212,7 +212,7 @@ def get_cell_df():
         help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .'
     )
     # TimeSeries output_path '.'
-    # TimeSeries custom_type nop (because datafarme is straightaway saved as csv)
+    # TimeSeries custom_data_type nop (because datafarme is straightaway saved as csv)
     # TimeSeries microenv
     parser.add_argument(
         '--microenv',
@@ -277,7 +277,7 @@ def get_cell_df():
         s_pathfile = s_pathfile + '/initial.xml'
     if not os.path.exists(s_pathfile):
         sys.exit(f"Error @ pcdl_get_cell_df : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
-    # custom_type nop
+    # custom_data_type nop
     # run
     if os.path.isfile(args.path):
         mcds = pcdl.pyMCDS(
@@ -343,9 +343,9 @@ def get_cell_df_features():
         help = 'path to the PhysiCell output directory. default is . .',
     )
     # TimeSeries output_path '.'
-    # TimeSeries custom_type
+    # TimeSeries custom_data_type
     parser.add_argument(
-        '--custom_type',
+        '--custom_data_type',
         nargs = '*',
         default = [],
         help = 'parameter to specify custom_data variable types other than float (namely: int, bool, str) like this var:dtype myint:int mybool:bool mystr:str . downstream float and int will be handled as numeric, bool as Boolean, and str as categorical data. default is an empty string.',
@@ -411,9 +411,9 @@ def get_cell_df_features():
     # process arguments
     if not os.path.exists(args.path + '/initial.xml'):
         sys.exit(f"Error @ pcdl_get_cell_df_features : {args.path} path does not look like a physicell output directory ({args.path}/initial.xml is missing).")
-    # custom_type
+    # custom_data_type
     d_vartype = {}
-    for vartype in args.custom_type:
+    for vartype in args.custom_data_type:
         s_var, s_type = vartype.split(':')
         if s_type in {'bool'}: o_type = bool
         elif s_type in {'int'}: o_type = int
@@ -425,7 +425,7 @@ def get_cell_df_features():
     # run
     mcdsts = pcdl.pyMCDSts(
         output_path = args.path,
-        custom_type = d_vartype,
+        custom_data_type = d_vartype,
         load = True,
         microenv = False if args.microenv.lower().startswith('f') else True,
         graph = False,
@@ -465,7 +465,7 @@ def get_conc_df():
         help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .',
     )
     # TimeSeries output_path '.'
-    # TimeSeries custom_type nop
+    # TimeSeries custom_data_type nop
     # TimeSeries microenv True
     # TimeSeries graph False
     # TimeSeries physiboss False
@@ -520,7 +520,7 @@ def get_conc_df():
         mcds = pcdl.pyMCDS(
             xmlfile = args.path,
             output_path = '.',
-            #custom_type,
+            #custom_data_type,
             microenv = True,
             graph = False,
             physiboss = False,
@@ -539,7 +539,7 @@ def get_conc_df():
     else:
         mcdsts = pcdl.pyMCDSts(
             output_path = args.path,
-            #custom_type,
+            #custom_data_type,
             load = True,
             microenv = True,
             graph = False,
@@ -582,7 +582,7 @@ def get_conc_df_features():
         help = 'path to the PhysiCell output directory. default is . .',
     )
     # TimeSeries output_path '.'
-    # TimeSeries custom_type nop
+    # TimeSeries custom_data_type nop
     # TimeSeries microenv True
     # TimeSeries graph False
     # TimeSeries physiboss False
@@ -631,7 +631,7 @@ def get_conc_df_features():
         sys.exit(f"Error @ pcdl_get_conc_df_features : {args.path} path does not look like a physicell output directory ({args.path}/initial.xml is missing).")
     mcdsts = pcdl.pyMCDSts(
         output_path = args.path,
-        #custom_type,
+        #custom_data_type,
         load = True,
         microenv = True,
         graph = False,
@@ -656,143 +656,6 @@ def get_conc_df_features():
     return s_opathfile
 
 
-def get_parameter_dict():
-    # argv
-    parser = argparse.ArgumentParser(
-        prog = 'pcdl_get_parameter_dict',
-        description = 'function returns a csv that lists all tracked variables from metadata, cell, and microenvironment and maps them to their unit.',
-        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
-    )
-
-    # TimeSeries path
-    parser.add_argument(
-        'path',
-        nargs = '?',
-        default = '.',
-        help = 'path to the PhysiCell output directory. default is . .',
-    )
-    # TimeSeries output_path '.'
-    # TimeSeries custom_type nop
-    # TimeSeries microenv
-    parser.add_argument(
-        '--microenv',
-        default = 'true',
-        help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.',
-    )
-    # TimeSeries graph False
-    # TimeSeries physiboss False
-    # TimeSeries settingxml
-    parser.add_argument(
-        '--settingxml',
-        default = 'PhysiCell_settings.xml',
-        help = 'from which settings.xml should the cell type ID label mapping and parameters be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
-    )
-    # TimeSeries verbose
-    parser.add_argument(
-        '-v', '--verbose',
-        default = 'true',
-        help = 'setting verbose to False for less text output, while processing. default is True.',
-    )
-
-    # parse arguments
-    args = parser.parse_args()
-    print(args)
-
-    # process arguments
-    s_path = args.path
-    s_pathfile = args.path
-    if s_pathfile.endswith('.xml'):
-        s_path = '/'.join(args.path.replace('\\','/').split('/')[:-1])
-    else:
-        s_pathfile = s_pathfile + '/initial.xml'
-    if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ pcdl_get_conc_df : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
-    # run
-    mcds = pcdl.pyMCDS(
-        xmlfile = s_pathfile,
-        output_path = '.',
-        #custom_type,
-        microenv = False if args.microenv.lower().startswith('f') else True,
-        graph = False,
-        physiboss = False,
-        settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
-        verbose = True if args.verbose.lower().startswith('t') else False
-    )
-    s_opathfile = f'{s_path}/timeseries_parameter.json'
-    f = open(s_opathfile, 'w')
-    json.dump(mcds.get_parameter_dict(), f, sort_keys=True, indent=4)
-    f.close()
-    # going home
-    return s_opathfile
-
-
-def get_rule_df():
-    # argv
-    parser = argparse.ArgumentParser(
-        prog = 'pcdl_get_rule_df',
-        description = 'function returns a csv that lists all tracked variables from metadata, cell, and microenvironment and maps them to their unit.',
-        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
-    )
-
-    # TimeSeries path
-    parser.add_argument(
-        'path',
-        nargs = '?',
-        default = '.',
-        help = 'path to the PhysiCell output directory. default is . .',
-    )
-    # TimeSeries output_path '.'
-    # TimeSeries custom_type nop
-    # TimeSeries microenv
-    # TimeSeries graph False
-    # TimeSeries physiboss False
-    # TimeSeries settingxml
-    parser.add_argument(
-        '--settingxml',
-        default = 'PhysiCell_settings.xml',
-        help = 'from which settings.xml should the rule.csv links be extracted? default is PhysiCell_settings.xml.',
-    )
-    # TimeSeries verbose
-    parser.add_argument(
-        '-v', '--verbose',
-        default = 'true',
-        help = 'setting verbose to False for less text output, while processing. default is True.',
-    )
-
-    # parse arguments
-    args = parser.parse_args()
-    print(args)
-
-    # process arguments
-    s_path = args.path
-    s_pathfile = args.path
-    if s_pathfile.endswith('.xml'):
-        s_path = '/'.join(args.path.replace('\\','/').split('/')[:-1])
-    else:
-        s_pathfile = s_pathfile + '/initial.xml'
-    if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ pcdl_get_conc_df : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
-    # run
-    mcds = pcdl.pyMCDS(
-        xmlfile = s_pathfile,
-        output_path = '.',
-        #custom_type,
-        microenv = False,
-        graph = False,
-        physiboss = False,
-        settingxml = args.settingxml,
-        verbose = True if args.verbose.lower().startswith('t') else False
-    )
-    s_opathfile = f'{s_path}/timeseries_rule.csv'
-    df_rule = mcds.get_rule_df()
-    # going home
-    if (df_rule is None):
-        return 'None'
-    else:
-        df_rule.to_csv(s_opathfile)
-        return s_opathfile
-
-
 def get_unit_dict():
     # argv
     parser = argparse.ArgumentParser(
@@ -809,7 +672,7 @@ def get_unit_dict():
         help = 'path to the PhysiCell output directory. default is . .',
     )
     # TimeSeries output_path '.'
-    # TimeSeries custom_type nop
+    # TimeSeries custom_data_type nop
     # TimeSeries microenv
     parser.add_argument(
         '--microenv',
@@ -848,7 +711,7 @@ def get_unit_dict():
     mcds = pcdl.pyMCDS(
         xmlfile = s_pathfile,
         output_path = '.',
-        #custom_type,
+        #custom_data_type,
         microenv = False if args.microenv.lower().startswith('f') else True,
         graph = False,
         physiboss = False,
@@ -881,7 +744,7 @@ def get_version():
         help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .',
     )
     # TimeSeries output_path '.'
-    # TimeSeries custom_type nop
+    # TimeSeries custom_data_type nop
     # TimeSeries microenv False
     # TimeSeries graph False
     # TimeSeries physiboss False
@@ -907,7 +770,7 @@ def get_version():
     mcds = pcdl.pyMCDS(
         xmlfile = s_pathfile,
         output_path = '.',
-        #custom_type,
+        #custom_data_type,
         microenv = False,
         graph = False,
         physiboss = False,
@@ -935,9 +798,9 @@ def make_graph_gml():
         help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .',
     )
     # TimeSeries output_path '.'
-    # TimeSeries custom_type
+    # TimeSeries custom_data_type
     parser.add_argument(
-        '--custom_type',
+        '--custom_data_type',
         nargs = '*',
         default = [],
         help = 'parameter to specify custom_data variable types other than float (namely: int, bool, str) like this var:dtype myint:int mybool:bool mystr:str . downstream float and int will be handled as numeric, bool as Boolean, and str as categorical data. default is an empty string.',
@@ -998,9 +861,9 @@ def make_graph_gml():
         s_pathfile = s_pathfile + '/initial.xml'
     if not os.path.exists(s_pathfile):
         sys.exit(f"Error @ pcdl_make_graph_gml : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
-    # custom_type
+    # custom_data_type
     d_vartype = {}
-    for vartype in args.custom_type:
+    for vartype in args.custom_data_type:
         s_var, s_type = vartype.split(':')
         if s_type in {'bool'}: o_type = bool
         elif s_type in {'int'}: o_type = int
@@ -1014,7 +877,7 @@ def make_graph_gml():
         mcds = pcdl.pyMCDS(
             xmlfile = args.path,
             output_path = '.',
-            custom_type = d_vartype,
+            custom_data_type = d_vartype,
             microenv = False if args.microenv.lower().startswith('f') else True,
             graph = True,
             physiboss = False if args.physiboss.lower().startswith('f') else True,
@@ -1032,7 +895,7 @@ def make_graph_gml():
         # run
         mcdsts = pcdl.pyMCDSts(
             output_path = args.path,
-            custom_type = d_vartype,
+            custom_data_type = d_vartype,
             load = True,
             microenv = False if args.microenv.lower().startswith('f') else True,
             graph = True,
@@ -1150,11 +1013,11 @@ def plot_contour():
         help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .',
     )
     # TimeSeries output_path '.'
-    # TimeSeries custom_type nop
+    # TimeSeries custom_data_type nop
     # TimeSeries microenv True
     # TimeSeries graph False
     # TimeSeries physiboss False
-    # TimeSeries custom_type
+    # TimeSeries custom_data_type
     # TimeSeries settingxml None
     # TimeSeries verbose
     parser.add_argument(
@@ -1271,7 +1134,7 @@ def plot_contour():
     # run
     mcdsts = pcdl.pyMCDSts(
         output_path = args.path,
-        #custom_type,
+        #custom_data_type,
         load = False,
         microenv = True,
         graph = False,
@@ -1320,9 +1183,9 @@ def plot_scatter():
         help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .',
     )
     # TimeSeries output_path '.'
-    # TimeSeries custom_type
+    # TimeSeries custom_data_type
     parser.add_argument(
-        '--custom_type',
+        '--custom_data_type',
         nargs = '*',
         default = [],
         help = 'parameter to specify custom_data variable types other than float (namely: int, bool, str) like this var:dtype myint:int mybool:bool mystr:str . downstream float and int will be handled as numeric, bool as Boolean, and str as categorical data. default is an empty string.',
@@ -1464,9 +1327,9 @@ def plot_scatter():
         s_pathfile = s_pathfile + '/initial.xml'
     if not os.path.exists(s_pathfile):
         sys.exit(f"Error @ plot_scatter : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
-    # custom_type
+    # custom_data_type
     d_vartype = {}
-    for vartype in args.custom_type:
+    for vartype in args.custom_data_type:
         s_var, s_type = vartype.split(':')
         if s_type in {'bool'}: o_type = bool
         elif s_type in {'int'}: o_type = int
@@ -1478,7 +1341,7 @@ def plot_scatter():
     # run
     mcdsts = pcdl.pyMCDSts(
         output_path = args.path,
-        custom_type = d_vartype,
+        custom_data_type = d_vartype,
         load = False,
         microenv = False if args.microenv.lower().startswith('f') else True,
         graph = False,
@@ -1527,9 +1390,9 @@ def plot_timeseries():
         default = '.',
         help = 'path to the PhysiCell output directory. default is . .',
     )
-    # TimeSeries custom_type
+    # TimeSeries custom_data_type
     parser.add_argument(
-        '--custom_type',
+        '--custom_data_type',
         nargs = '*',
         default = [],
         help = 'parameter to specify custom_data variable types other than float (namely: int, bool, str) like this var:dtype myint:int mybool:bool mystr:str . downstream float and int will be handled as numeric, bool as Boolean, and str as categorical data. default is an empty string.',
@@ -1719,9 +1582,9 @@ def plot_timeseries():
     elif (args.aggregate_num == 'std'): o_aggregate_num = np.nanstd
     elif (args.aggregate_num == 'var'): o_aggregate_num = np.nanvar
     else: sys.exit(f"Error @ pcdl_plot_timeseries : unknowen aggregate_num {args.aggregate_num}. knowen are entropy, max, mean, median, min, std, var.")
-    # custom_type
+    # custom_data_type
     d_vartype = {}
-    for vartype in args.custom_type:
+    for vartype in args.custom_data_type:
         s_var, s_type = vartype.split(':')
         if s_type in {'bool'}: o_type = bool
         elif s_type in {'int'}: o_type = int
@@ -1743,7 +1606,7 @@ def plot_timeseries():
         sys.exit(f"Error @ pcdl_plot_timeseries : path does not look like a physicell output directory ({args.path}/initial.xml is missing).")
     mcdsts = pcdl.pyMCDSts(
         output_path = args.path,
-        custom_type = d_vartype,
+        custom_data_type = d_vartype,
         load = True,
         microenv = False if args.microenv.lower().startswith('f') else True,
         graph = False,

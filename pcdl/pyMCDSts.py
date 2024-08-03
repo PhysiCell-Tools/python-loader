@@ -161,14 +161,14 @@ def make_movie(path, interface='jpeg', framerate=12):
 ###########
 
 class pyMCDSts:
-    def __init__(self, output_path='.', custom_type={}, load=True, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True):
+    def __init__(self, output_path='.', custom_data_type={}, load=True, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True):
         """
         input:
             output_path: string, default '.'
                 relative or absolute path to the directory where
                 the PhysiCell output files are stored.
 
-            custom_type: dictionary; default is {}
+            custom_data_type: dictionary; default is {}
                 variable to specify custom_data variable types
                 other than float (int, bool, str) like this: {var: dtype, ...}.
                 downstream float and int will be handled as numeric,
@@ -215,7 +215,7 @@ class pyMCDSts:
             print(f'Error @ pyMCDSts.__init__ : this is not a path! could not load {output_path}.')
         self.output_path = output_path
         self.ls_xmlfile = [s_pathfile.replace('\\','/').split('/')[-1] for s_pathfile in sorted(glob.glob(f'{self.output_path}output*.xml'))]  # bue 2022-10-22: is output*.xml always the correct pattern?
-        self.custom_type = custom_type
+        self.custom_data_type = custom_data_type
         self.microenv = microenv
         self.graph = graph
         self.physiboss = physiboss
@@ -328,7 +328,7 @@ class pyMCDSts:
         for s_xmlpathfile in ls_xmlpathfile:
             mcds = pyMCDS(
                 xmlfile = s_xmlpathfile,
-                custom_type = self.custom_type,
+                custom_data_type = self.custom_data_type,
                 microenv = self.microenv,
                 graph = self.graph,
                 physiboss = self.physiboss,

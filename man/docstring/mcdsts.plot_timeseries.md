@@ -91,7 +91,7 @@
                 the given x and y will be rounded to the nearest even number,
                 to be able to generate movies from the images.
 
-            ext: string; default is jpeg
+            ext: string; default is None
                 output image format. possible formats are None, jpeg, png, and tiff.
                 if None then the matplotlib figure is returned by the function
                 and not writen to file.

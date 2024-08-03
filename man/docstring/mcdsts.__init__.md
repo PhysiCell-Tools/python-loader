@@ -7,7 +7,7 @@
                 relative or absolute path to the directory where
                 the PhysiCell output files are stored.
 
-            custom_type: dictionary; default is {}
+            custom_data_type: dictionary; default is {}
                 variable to specify custom_data variable types
                 besides float (int, bool, str) like this: {var: dtype, ...}.
                 downstream float and int will be handled as numeric,
@@ -25,6 +25,10 @@
             graph: boole; default True
                 should neighbor graph and attached graph be extracted?
                 setting graph to False will use less memory and speed up processing.
+
+            physiboss: boole; default True
+                should physiboss state data extracted, if found?
+                setting physiboss to False will use less memory and speed up processing.
 
             settingxml: string; default PhysiCell_settings.xml
                 from which settings.xml should the substrate and cell type
