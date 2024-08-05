@@ -80,51 +80,72 @@ ds_death_phase = {
 }
 
 # const physicell variable names
-es_var_subs = {
+es_var_subs = {  # variable size=1 (check for the s at the end of the label)
+    # cycle NOP
+    # death NOP
+    # volumme NOP
+    # mechanicis NOP
+    # motility
     'chemotactic_sensitivities',
-    'fraction_released_at_death',
-    'fraction_transferred_when_ingested',
-    'internalized_total_substrates',
-    'net_export_rates',
-    'saturation_densities',
+    # secretion
     'secretion_rates',
     'uptake_rates',
+    'saturation_densities',
+    'net_export_rates',  # MCDS version == 2.0
+    'netpersistence_time_export_rates', # MCDS version >= 2.0
+    'internalized_total_substrates',
+    'fraction_released_at_death',
+    'fraction_transferred_when_ingested',
+    # interactions NOP
+    # intracellular NOP
+    # custom data NOP
 }
-es_var_death = {
+es_var_cell = {  # variable size=1 (check for the s at the end of the label)
+    # cycle NOP
+    # death NOP
+    # volumme NOP
+    # mechanics
+    'cell_adhesion_affinities',
+    # motility NOP
+    # secretion NOP
+    # interactions
+    'live_phagocytosis_rates',
+    'attack_rates',
+    'fusion_rates',
+    'transformation_rates',
+    # intracellular NOP
+    # custom data NOP
+}
+es_var_death = {  # variable size=2 (2 clolumns)
     'death_rates',
 }
-es_var_cell = {
-    'attack_rates',
-    'cell_adhesion_affinities',
-    'fusion_rates',
-    'live_phagocytosis_rates',
-    'transformation_rates',
-}
-es_var_spatial = {
-    'migration_bias_direction',
+es_var_spatial = {  # variable size=3 (3 columns)
+    'migration_bias_direction',  # MCDS version == 1.0
+    'motility_bias_direction',  # MCDS version == 0.5
     'motility_vector',
     'orientation',
     'position',
     'velocity',
 }
 
-# const physicell variable types
+# const physicell variable types (non-float)
+# BUE 20240805: what data type is the sample column?
 do_var_type = {
     # integer
-    'ID': int,
-    'cell_count_voxel': int,
-    'chemotaxis_index': int,
-    'maximum_number_of_attachments': int,
+    'cell_count_voxel': int,  # bue 20240805: pcdl generated column.
     'number_of_nuclei': int,
+    'maximum_number_of_attachments': int,
     # boolean
     'contact_with_basement_membrane': bool,
     'dead': bool,
     'is_motile': bool,
     # categorical
+    'ID': str,  # maybe int
     'cell_type': str,  # id mapping
-    'current_death_model': str,  # codec mapping
-    'current_phase': str,  # codec mapping
     'cycle_model': str,  # codec mapping
+    'current_phase': str,  # codec mapping
+    'current_death_model': str,  # codec mapping
+    'chemotaxis_index': str,  # maybe int
 }
 
 # const coordinate variable names
@@ -242,6 +263,7 @@ class pyMCDS:
         self.verbose = verbose
         self.data = self._read_xml(xmlfile, output_path)
         self.get_concentration_df = self.get_conc_df
+
 
     def set_verbose_false(self):
         """
@@ -1308,7 +1330,10 @@ class pyMCDS:
         df_cell = df_cell.astype(do_type)
 
         # categorical translation
-        df_cell.loc[:,'current_death_model'] = df_cell.loc[:,'current_death_model'].replace(ds_death_model)  # bue 20230614: this column looks like an artefact to me
+        try:  # bue 20240805: missing in MCDS version <= 0.5 (November 2021)
+            df_cell.loc[:,'current_death_model'] = df_cell.loc[:,'current_death_model'].replace(ds_death_model)  # bue 20230614: this column looks like an artefact to me
+        except KeyError:
+            pass
         df_cell.loc[:,'cycle_model'] = df_cell.loc[:,'cycle_model'].replace(ds_cycle_model)
         df_cell.loc[:,'cycle_model'] = df_cell.loc[:,'cycle_model'].replace(ds_death_model)
         df_cell.loc[:,'current_phase'] = df_cell.loc[:,'current_phase'].replace(ds_cycle_phase)
@@ -1945,20 +1970,15 @@ class pyMCDS:
         d_mcds['metadata'] = {}
         d_mcds['metadata']['substrate'] = {}
         d_mcds['metadata']['cell_type'] = {}
-        # BUE 2024-07-31: settings is out!
-        #d_mcds['setting'] = {}
-        #d_mcds['setting']['parameters'] = {}
-        #d_mcds['setting']['units'] = {}
-        #d_mcds['setting']['rules'] = None  # df_ruleset
         d_mcds['mesh'] = {}
         d_mcds['continuum_variables'] = {}
         d_mcds['discrete_cells'] = {}
         d_mcds['discrete_cells']['units'] = {}
 
 
-        #####################################
-        # PhysiCell_settings.xml extraction #
-        #####################################
+        ###############################
+        # read PhysiCell_settings.xml #
+        ###############################
         # bue 2024-03-11: this part tries to be compatible with the PhysiCell Studio settings.xml file only,
         # older and other settings.xml versions are disregarded.
 
@@ -2030,11 +2050,6 @@ class pyMCDS:
         x_time = x_metadata.find('current_runtime')
         d_mcds['metadata']['current_runtime'] = float(x_time.text)
         d_mcds['metadata']['runtime_units'] = x_time.get('units')
-
-        # BUE 2024-07-31: settings is out!
-        # update settings unit with metadata infromation
-        #d_mcds['setting']['units'].update({'time': d_mcds['metadata']['time_units']})
-        #d_mcds['setting']['units'].update({'runtime': d_mcds['metadata']['runtime_units']})
 
 
         ####################
@@ -2115,14 +2130,12 @@ class pyMCDS:
         d_mcds['mesh']['mnp_coordinate'] = ar_mesh_initial[:3, :]
         d_mcds['mesh']['volumes'] = ar_mesh_initial[3, :]
 
-        # BUE 2024-07-31: settings is out!
-        # update settings unit with mesh infromation
-        #d_mcds['setting']['units'].update({'spatial_unit': d_mcds['metadata']['spatial_units']})
 
         ################################
         # handle microenvironment data #
         ################################
 
+        # BUE 20240805: compare to PhysiGym
         if self.microenv:
             if self.verbose:
                 print('working on microenvironment data ...')
@@ -2182,13 +2195,6 @@ class pyMCDS:
                     # store value
                     d_mcds['continuum_variables'][s_substrate]['data'][j, i, k] = ar_microenv[4+i_s, vox_idx]
 
-                # BUE 2024-07-31: settings is out!
-                # update settings unit wuth substrate parameters
-                #d_mcds['setting']['units'].update({s_substrate: d_mcds['continuum_variables'][s_substrate]['units']})
-                # update settings unit with microenvironment parameters
-                #d_mcds['setting']['units'].update({f'{s_substrate}_diffusion_coefficient': d_mcds['continuum_variables'][s_substrate]['diffusion_coefficient']['units']})
-                #d_mcds['setting']['units'].update({f'{s_substrate}_decay_rate': d_mcds['continuum_variables'][s_substrate]['decay_rate']['units']})
-
 
         ####################
         # handle cell data #
@@ -2223,10 +2229,11 @@ class pyMCDS:
             i_variable = int(label.get('size'))
             s_unit = label.get('units')
 
+            # variable unique for each celltype substrate combination
             if s_variable in es_var_subs:
                 if (len(d_mcds['metadata']['substrate']) > 0):
-                    # continuum_variable id label sorting
-                    ls_substrate = [s_substrate for _, s_substrate in sorted(d_mcds['metadata']['substrate'].items())]
+                    # continuum_variable id label sorting (becaus this is an id label mapping dict)
+                    ls_substrate = [d_mcds['metadata']['substrate'][o_key] for o_key in sorted(d_mcds['metadata']['substrate'].keys(), key=int)]
                     for s_substrate in ls_substrate:
                         s_variable_subs = s_substrate + '_' + s_variable
                         ls_variable.append(s_variable_subs)
@@ -2238,16 +2245,11 @@ class pyMCDS:
                         ls_variable.append(s_variable_subs)
                         d_mcds['discrete_cells']['units'].update({s_variable_subs : s_unit})
 
-            elif s_variable in es_var_death:
-                for i_deathrate in range(i_variable):
-                    s_variable_deathrate = s_variable + '_' + str(i_deathrate)
-                    ls_variable.append(s_variable_deathrate)
-                    d_mcds['discrete_cells']['units'].update({s_variable_deathrate : s_unit})
-
+            # variable unique for each celltype celltype combination
             elif s_variable in es_var_cell:
                 if (len(d_mcds['metadata']['cell_type']) > 0):
-                    # discrete_cells id label sorting
-                    ls_celltype = [s_celltype for _, s_celltype in sorted(d_mcds['metadata']['cell_type'].items())]
+                    # discrete_cells id label sorting (becaus this is an id label mapping dict)
+                    ls_celltype = [d_mcds['metadata']['cell_type'][o_key] for o_key in sorted(d_mcds['metadata']['cell_type'].keys(), key=int)]
                     for s_celltype in ls_celltype:
                         s_variable_celltype = s_celltype + '_' + s_variable
                         ls_variable.append(s_variable_celltype)
@@ -2259,6 +2261,14 @@ class pyMCDS:
                         ls_variable.append(s_variable_celltype)
                         d_mcds['discrete_cells']['units'].update({s_variable_celltype : s_unit})
 
+            # variable unique for each dead model
+            elif s_variable in es_var_death:
+                for i_deathrate in range(i_variable):
+                    s_variable_deathrate = s_variable + '_' + str(i_deathrate)
+                    ls_variable.append(s_variable_deathrate)
+                    d_mcds['discrete_cells']['units'].update({s_variable_deathrate : s_unit})
+
+            # spatial variable
             elif s_variable in es_var_spatial:
                 for s_axis in ['_x','_y','_z']:
                     s_variable_spatial = s_variable + s_axis
@@ -2268,11 +2278,6 @@ class pyMCDS:
             else:
                 ls_variable.append(s_variable)
                 d_mcds['discrete_cells']['units'].update({s_variable : s_unit})
-
-        # BUE 2024-07-31: settings is out!
-        # update settings units from cell parameters
-        #d_mcds['setting']['units'].update(d_mcds['discrete_cells']['units'])
-        #del d_mcds['setting']['units']['ID']
 
         # load the file
         s_cellpathfile = self.path + '/' + x_celldata.find('filename').text
@@ -2284,10 +2289,14 @@ class pyMCDS:
             print(f'Warning @ pyMCDS._read_xml : corrupt {s_cellpathfile} detected!\nassuming time step with zero cells because of a known bug in PhysiCell MultiCellDS version 0.5 output.')
             ar_cell = np.empty([len(ls_variable),0])
 
+        # check for column label mapping error (as good as it gets)
+        if (ar_cell.shape[0] != len(ls_variable)):
+            sys.exit(f'Error @ pyMCDS._read_xml : extracted column label list leng {len(ls_variable)} and data array shape {ar_cell.shape} are incompatible. please file a bug report. this most likely casued by an error in the pcdl implementation!')
+
         # store data
         d_mcds['discrete_cells']['data'] = {}
-        for col in range(len(ls_variable)):
-            d_mcds['discrete_cells']['data'][ls_variable[col]] = ar_cell[col,:]
+        for i_col in range(len(ls_variable)):
+            d_mcds['discrete_cells']['data'].update({ls_variable[i_col]: ar_cell[i_col,:]})
 
 
         #####################
@@ -2357,7 +2366,10 @@ class pyMCDS:
             d_mcds['discrete_cells']['physiboss'] = df_physiboss
 
 
-        # output
+        ##########
+        # output #
+        ##########
+
         if self.verbose:
             print('done!')
         return d_mcds
