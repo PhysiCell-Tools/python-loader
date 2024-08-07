@@ -91,8 +91,7 @@ es_var_subs = {  # variable size=1 (check for the s at the end of the label)
     'secretion_rates',
     'uptake_rates',
     'saturation_densities',
-    'net_export_rates',  # MCDS version == 2.0
-    'netpersistence_time_export_rates', # MCDS version >= 2.0
+    'net_export_rates',
     'internalized_total_substrates',
     'fraction_released_at_death',
     'fraction_transferred_when_ingested',
@@ -129,9 +128,10 @@ es_var_spatial = {  # variable size=3 (3 columns)
 }
 
 # const physicell variable types (non-float)
-# BUE 20240805: what data type is the sample column?
+# bue 20240805: var sample is just a placeholder; data type stays float.
 do_var_type = {
     # integer
+    'ID': int, # bue 20240805: this index is special!
     'cell_count_voxel': int,  # bue 20240805: pcdl generated column.
     'number_of_nuclei': int,
     'maximum_number_of_attachments': int,
@@ -140,12 +140,11 @@ do_var_type = {
     'dead': bool,
     'is_motile': bool,
     # categorical
-    'ID': str,  # maybe int
-    'cell_type': str,  # id mapping
+    'cell_type': str,  # id mapping cell_type
+    'chemotaxis_index': str,  # id mapping substarte
     'cycle_model': str,  # codec mapping
     'current_phase': str,  # codec mapping
     'current_death_model': str,  # codec mapping
-    'chemotaxis_index': str,  # maybe int
 }
 
 # const coordinate variable names
@@ -1021,16 +1020,19 @@ class pyMCDS:
         df_conc.sort_values(['mesh_center_m', 'mesh_center_n', 'mesh_center_p'], inplace=True)
 
         # meshgrid shape
-        ti_shape = (self.get_voxel_ijk_axis()[0].shape[0]+2, self.get_voxel_ijk_axis()[1].shape[0]+2)
-        x = (df_conc.loc[:,'mesh_center_m'].values).reshape(ti_shape)
-        y = (df_conc.loc[:,'mesh_center_n'].values).reshape(ti_shape)
-        z = (df_conc.loc[:,substrate].values).reshape(ti_shape)
+        #ti_shape = (self.get_voxel_ijk_axis()[0].shape[0]+2, self.get_voxel_ijk_axis()[1].shape[0]+2)
+        #x = (df_conc.loc[:,'mesh_center_m'].values).reshape(ti_shape)
+        #y = (df_conc.loc[:,'mesh_center_n'].values).reshape(ti_shape)
+        #z = (df_conc.loc[:,substrate].values).reshape(ti_shape)
+        df_mesh = df_conc.pivot(index='mesh_center_m', columns='mesh_center_n', values=substrate)
 
         # handle vmin and vmax input
         if (vmin is None):
-            vmin = np.floor(df_conc.loc[:,substrate].min())
+            #vmin = np.floor(df_conc.loc[:,substrate].min())
+            vmin = np.floor(df_mesh.min().min())
         if (vmax is None):
-            vmax = np.ceil(df_conc.loc[:,substrate].max())
+            #vmax = np.ceil(df_conc.loc[:,substrate].max())
+            vmax = np.ceil(df_mesh.max().max())
 
         # get figure and axis orbject
         if (ax is None):
@@ -1047,9 +1049,11 @@ class pyMCDS:
 
         # get contour plot
         if fill:
-            ax.contourf(x,y,z, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
+            #ax.contourf(x,y,z, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
+            ax.contourf(df_mesh.columns, df_mesh.index, df_mesh.values, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
         else:
-            ax.contour(x,y,z, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
+            #ax.contour(x,y,z, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
+            ax.contour(df_mesh.columns, df_mesh.index, df_mesh.values, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
 
         # set title
         if not (title is None):
@@ -1339,6 +1343,7 @@ class pyMCDS:
         df_cell.loc[:,'current_phase'] = df_cell.loc[:,'current_phase'].replace(ds_cycle_phase)
         df_cell.loc[:,'current_phase'] = df_cell.loc[:,'current_phase'].replace(ds_death_phase)
         df_cell.loc[:,'cell_type'] = df_cell.loc[:,'cell_type'].replace(self.data['metadata']['cell_type'])
+        df_cell.loc[:,'chemotaxis_index'] = df_cell.loc[:,'chemotaxis_index'].replace(self.data['metadata']['substrate'])
 
         # filter
         es_feature = set(df_cell.columns).difference(es_coor_cell)
@@ -2135,7 +2140,6 @@ class pyMCDS:
         # handle microenvironment data #
         ################################
 
-        # BUE 20240805: compare to PhysiGym
         if self.microenv:
             if self.verbose:
                 print('working on microenvironment data ...')
@@ -2184,16 +2188,16 @@ class pyMCDS:
                 # store data from microenvironment file as numpy array
                 # iterate over each voxel
                 # bue: i have a hunch this could be faster reimplemented.
-                for vox_idx in range(d_mcds['mesh']['mnp_coordinate'].shape[1]):
+                for i_voxel in range(d_mcds['mesh']['mnp_coordinate'].shape[1]):
 
                     # find the voxel coordinate
-                    ar_center = d_mcds['mesh']['mnp_coordinate'][:, vox_idx]
+                    ar_center = d_mcds['mesh']['mnp_coordinate'][:, i_voxel]
                     i = np.where(np.abs(ar_center[0] - d_mcds['mesh']['mnp_axis'][0]) < 1e-10)[0][0]
                     j = np.where(np.abs(ar_center[1] - d_mcds['mesh']['mnp_axis'][1]) < 1e-10)[0][0]
                     k = np.where(np.abs(ar_center[2] - d_mcds['mesh']['mnp_axis'][2]) < 1e-10)[0][0]
 
                     # store value
-                    d_mcds['continuum_variables'][s_substrate]['data'][j, i, k] = ar_microenv[4+i_s, vox_idx]
+                    d_mcds['continuum_variables'][s_substrate]['data'][j, i, k] = ar_microenv[4+i_s, i_voxel]
 
 
         ####################
