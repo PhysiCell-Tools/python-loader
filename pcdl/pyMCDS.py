@@ -1689,7 +1689,7 @@ class pyMCDS:
             if (type(custom_data_i[0]) in {str, np.str_}):
                 custom_data_vtk = vtk.vtkStringArray()
                 custom_data_vtk.SetName(name)
-            elif(type(custom_data_i[0]) in {float, np.float_, np.float16, np.float32, np.float64, int}):
+            elif(type(custom_data_i[0]) in {float, np.float16, np.float32, np.float64, int}):
                 custom_data_vtk = vtk.vtkFloatArray()
                 custom_data_vtk.SetName(name)
             elif (type(custom_data_i[0]) in {bool, np.bool_}):
@@ -1858,9 +1858,9 @@ class pyMCDS:
             # node attributes
             for s_attr in node_attr:
                 o_attr = df_cell.loc[i_src, s_attr]
-                if (type(o_attr) in {bool, np.bool_, int, np.int_, np.int8, np.int16, np.int32, np.int64}):
+                if (type(o_attr) in {bool, np.bool, np.bool_, int, np.int_, np.int8, np.int16, np.int32, np.int64}):
                     f.write(f'    {s_attr} {int(o_attr)}\n')
-                elif (type(o_attr) in {float, np.float_, np.float16, np.float32, np.float64}):  # np.float128
+                elif (type(o_attr) in {float, np.float16, np.float32, np.float64}):  # np.float128
                     f.write(f'    {s_attr} {o_attr}\n')
                 elif (type(o_attr) in {str, np.str_}):
                     f.write(f'    {s_attr} "{o_attr}"\n')
@@ -1908,25 +1908,25 @@ class pyMCDS:
         # extract data
         ds_unit = {}
         # units for metadata parameters
-        ds_unit.update({'time': [self.data['metadata']['time_units']]})
-        ds_unit.update({'runtime': [self.data['metadata']['runtime_units']]})
-        ds_unit.update({'spatial_unit': [self.data['metadata']['spatial_units']]})
+        ds_unit.update({'time': self.data['metadata']['time_units']})
+        ds_unit.update({'runtime': self.data['metadata']['runtime_units']})
+        ds_unit.update({'spatial_unit': self.data['metadata']['spatial_units']})
 
         # microenvironment
         if self.microenv:
             for s_substrate in self.get_substrate_names():
                 # unit from substrate parameters
                 s_unit = self.data['continuum_variables'][s_substrate]['units']
-                ds_unit.update({s_substrate: [s_unit]})
+                ds_unit.update({s_substrate: s_unit})
 
                 # units from microenvironment parameters
                 s_diffusion_key = f'{s_substrate}_diffusion_coefficient'
                 s_diffusion_unit = self.data['continuum_variables'][s_substrate]['diffusion_coefficient']['units']
-                ds_unit.update({s_diffusion_key: [s_diffusion_unit]})
+                ds_unit.update({s_diffusion_key: s_diffusion_unit})
 
                 s_decay_key = f'{s_substrate}_decay_rate'
                 s_decay_unit = self.data['continuum_variables'][s_substrate]['decay_rate']['units']
-                ds_unit.update({s_decay_key: [s_decay_unit]})
+                ds_unit.update({s_decay_key: s_decay_unit})
 
         # units from cell parameters
         ds_unit.update(self.data['discrete_cells']['units'])

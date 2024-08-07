@@ -276,7 +276,7 @@ class TestPyMcdsSetting(object):
         ds_unit = mcds.get_unit_dict()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(ds_unit)) == "<class 'dict'>") and \
-              (len(ds_unit) == 121) and \
+              (len(ds_unit) == 82) and \
               (ds_unit['oxygen'] == 'mmHg')
 
 
@@ -761,7 +761,8 @@ class TestPyMcdsGraph(object):
               (s_file.find('node [\n    id') > -1) and \
               (s_file.find('edge [\n    source') == -1) and \
               (s_file.find('distance_microns') == -1)
-        os.remove(s_pathfile)
+        #os.remove(s_pathfile)
+        print("BUE here we go:", s_pathfile)
 
     def test_mcds_make_graph_gml_attached_edgeattrfalse(self, mcds=mcds):
         s_pathfile = mcds.make_graph_gml(graph_type='attached', edge_attr=False, node_attr=[])
@@ -776,7 +777,8 @@ class TestPyMcdsGraph(object):
               (s_file.find('node [\n    id') > -1) and \
               (s_file.find('edge [\n    source') == -1) and \
               (s_file.find('distance_microns') == -1)
-        os.remove(s_pathfile)
+        #os.remove(s_pathfile)
+        print("BUE here we go:", s_pathfile)
 
     def test_mcds_make_graph_gml_neighbor_nodeattrtrue(self, mcds=mcds):
         s_pathfile = mcds.make_graph_gml(graph_type='neighbor', edge_attr=True, node_attr=['dead','cell_count_voxel','cell_density_micron3','cell_type'])  # bool,int,float,str
@@ -795,7 +797,8 @@ class TestPyMcdsGraph(object):
               (s_file.find('cell_type') == -1) and \
               (s_file.find('edge [\n    source') > -1) and \
               (s_file.find('distance_microns')> -1)
-        os.remove(s_pathfile)
+        #os.remove(s_pathfile)
+        print("BUE here we go:", s_pathfile)
 
     # neighbor graph gml file
     def test_mcds_make_graph_gml_neighbor_defaultattr(self, mcds=mcds):
@@ -811,7 +814,8 @@ class TestPyMcdsGraph(object):
               (s_file.find('node [\n    id') > -1) and \
               (s_file.find('edge [\n    source') > -1) and \
               (s_file.find('distance_microns') > -1)
-        os.remove(s_pathfile)
+        #os.remove(s_pathfile)
+        print("BUE here we go:", s_pathfile)
 
     def test_mcds_make_graph_gml_neighbor_edgeattrfalse(self, mcds=mcds):
         s_pathfile = mcds.make_graph_gml(graph_type='neighbor', edge_attr=False, node_attr=[])
@@ -826,7 +830,8 @@ class TestPyMcdsGraph(object):
               (s_file.find('node [\n    id') > -1) and \
               (s_file.find('edge [\n    source') > -1) and \
               (s_file.find('distance_microns') == -1)
-        os.remove(s_pathfile)
+        #os.remove(s_pathfile)
+        print("BUE here we go:", s_pathfile)
 
     def test_mcds_make_graph_gml_neighbor_nodeattrtrue(self, mcds=mcds):
         s_pathfile = mcds.make_graph_gml(graph_type='neighbor', edge_attr=True, node_attr=['dead','cell_count_voxel','cell_density_micron3','cell_type'])  # bool,int,float,str
@@ -845,5 +850,6 @@ class TestPyMcdsGraph(object):
               (s_file.find('cell_type') > -1) and \
               (s_file.find('edge [\n    source') > -1) and \
               (s_file.find('distance_microns') > -1)
-        os.remove(s_pathfile)
+        #os.remove(s_pathfile)
+        print("BUE here we go:", s_pathfile)
 

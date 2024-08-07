@@ -70,10 +70,10 @@ class TestPyCliAnndata(object):
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_maxabs.h5ad')) and \
-               (ann.shape == (24758, 79)) and \
-               (ann.obs.shape == (24758, 7)) and \
+               (ann.shape == (24758, 78)) and \
+               (ann.obs.shape == (24758, 8)) and \
                (len(ann.obsp) == 0) and \
-               (ann.var.shape == (79, 0)) and \
+               (ann.var.shape == (78, 0)) and \
                (len(ann.uns) == 0)
         os.remove(s_opathfile)
 
@@ -97,10 +97,10 @@ class TestPyCliAnndata(object):
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_maxabs.h5ad')) and \
                (set(ann.obs.columns).issuperset({'oncoprotein'})) and \
-               (ann.shape == (24758, 78)) and \
-               (ann.obs.shape == (24758, 8)) and \
+               (ann.shape == (24758, 77)) and \
+               (ann.obs.shape == (24758, 9)) and \
                (len(ann.obsp) == 0) and \
-               (ann.var.shape == (78, 0)) and \
+               (ann.var.shape == (77, 0)) and \
                (len(ann.uns) == 0)
         os.remove(s_opathfile)
 
@@ -112,10 +112,10 @@ class TestPyCliAnndata(object):
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_maxabs.h5ad')) and \
                (not set(ann.var_names).issuperset({'oxygen'})) and \
-               (ann.shape == (24758, 76)) and \
-               (ann.obs.shape == (24758, 7)) and \
+               (ann.shape == (24758, 75)) and \
+               (ann.obs.shape == (24758, 8)) and \
                (len(ann.obsp) == 0) and \
-               (ann.var.shape == (76, 0)) and \
+               (ann.var.shape == (75, 0)) and \
                (len(ann.uns) == 0)
         os.remove(s_opathfile)
 
@@ -126,10 +126,10 @@ class TestPyCliAnndata(object):
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_maxabs.h5ad')) and \
-               (ann.shape == (24758, 79)) and \
-               (ann.obs.shape == (24758, 7)) and \
+               (ann.shape == (24758, 78)) and \
+               (ann.obs.shape == (24758, 8)) and \
                (len(ann.obsp) == 0) and \
-               (ann.var.shape == (79, 0)) and \
+               (ann.var.shape == (78, 0)) and \
                (len(ann.uns) == 0)
         os.remove(s_opathfile)
 
@@ -140,10 +140,10 @@ class TestPyCliAnndata(object):
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_maxabs.h5ad')) and \
-               (ann.shape == (24758, 79)) and \
-               (ann.obs.shape == (24758, 7)) and \
+               (ann.shape == (24758, 78)) and \
+               (ann.obs.shape == (24758, 8)) and \
                (len(ann.obsp) == 0) and \
-               (ann.var.shape == (79, 0)) and \
+               (ann.var.shape == (78, 0)) and \
                (len(ann.uns) == 0)
         os.remove(s_opathfile)
 
@@ -155,10 +155,10 @@ class TestPyCliAnndata(object):
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_maxabs.h5ad')) and \
                (set(ann.var_names).issuperset({'attack_rates_0'})) and \
-               (ann.shape == (24758, 79)) and \
-               (ann.obs.shape == (24758, 7)) and \
+               (ann.shape == (24758, 78)) and \
+               (ann.obs.shape == (24758, 8)) and \
                (len(ann.obsp) == 0) and \
-               (ann.var.shape == (79, 0)) and \
+               (ann.var.shape == (78, 0)) and \
                (len(ann.uns) == 0)
         os.remove(s_opathfile)
 
@@ -170,10 +170,10 @@ class TestPyCliAnndata(object):
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_maxabs.h5ad')) and \
                (set(ann.var_names).issuperset({'attack_rates_0'})) and \
-               (ann.shape == (24758, 79)) and \
-               (ann.obs.shape == (24758, 7)) and \
+               (ann.shape == (24758, 78)) and \
+               (ann.obs.shape == (24758, 8)) and \
                (len(ann.obsp) == 0) and \
-               (ann.var.shape == (79, 0)) and \
+               (ann.var.shape == (78, 0)) and \
                (len(ann.uns) == 0)
         os.remove(s_opathfile)
 
@@ -200,10 +200,10 @@ class TestPyCliAnndata(object):
         assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_maxabs.h5ad')) and \
                (not set(ann.var_names).issuperset({'cell_type'})) and \
                (not set(ann.obs_keys()).issuperset({'oxygen'})) and \
-               (ann.shape == (24758, 78)) and \
-               (ann.obs.shape == (24758, 6)) and \
+               (ann.shape == (24758, 77)) and \
+               (ann.obs.shape == (24758, 7)) and \
                (len(ann.obsp) == 0) and \
-               (ann.var.shape == (78, 0)) and \
+               (ann.var.shape == (77, 0)) and \
                (len(ann.uns) == 0)
         os.remove(s_opathfile)
 
@@ -230,10 +230,10 @@ class TestPyCliAnndata(object):
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_std.h5ad')) and \
-               (ann.shape == (24758, 79)) and \
-               (ann.obs.shape == (24758, 7)) and \
+               (ann.shape == (24758, 78)) and \
+               (ann.obs.shape == (24758, 8)) and \
                (len(ann.obsp) == 0) and \
-               (ann.var.shape == (79, 0)) and \
+               (ann.var.shape == (78, 0)) and \
                (len(ann.uns) == 0)
         os.remove(s_opathfile)
 
@@ -245,10 +245,10 @@ class TestPyCliAnndata(object):
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell_maxabs.h5ad')) and \
-               (ann.shape == (1099, 79)) and \
-               (ann.obs.shape == (1099, 6)) and \
+               (ann.shape == (1099, 78)) and \
+               (ann.obs.shape == (1099, 7)) and \
                (len(ann.obsp) == 2) and \
-               (ann.var.shape == (79, 0)) and \
+               (ann.var.shape == (78, 0)) and \
                (len(ann.uns) == 1)
         os.remove(s_opathfile)
 
@@ -260,10 +260,10 @@ class TestPyCliAnndata(object):
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell_maxabs.h5ad')) and \
                (not set(ann.var_names).issuperset({'oxygen'})) and \
-               (ann.shape == (1099, 76)) and \
-               (ann.obs.shape == (1099, 6)) and \
+               (ann.shape == (1099, 75)) and \
+               (ann.obs.shape == (1099, 7)) and \
                (len(ann.obsp) == 2) and \
-               (ann.var.shape == (76, 0)) and \
+               (ann.var.shape == (75, 0)) and \
                (len(ann.uns) == 1)
         os.remove(s_opathfile)
 
@@ -274,10 +274,10 @@ class TestPyCliAnndata(object):
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell_maxabs.h5ad')) and \
-               (ann.shape == (1099, 79)) and \
-               (ann.obs.shape == (1099, 6)) and \
+               (ann.shape == (1099, 78)) and \
+               (ann.obs.shape == (1099, 7)) and \
                (len(ann.obsp) == 0) and \
-               (ann.var.shape == (79, 0)) and \
+               (ann.var.shape == (78, 0)) and \
                (len(ann.uns) == 0)
         os.remove(s_opathfile)
 
@@ -288,10 +288,10 @@ class TestPyCliAnndata(object):
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell_maxabs.h5ad')) and \
-               (ann.shape == (1099, 79)) and \
-               (ann.obs.shape == (1099, 6)) and \
+               (ann.shape == (1099, 78)) and \
+               (ann.obs.shape == (1099, 7)) and \
                (len(ann.obsp) == 2) and \
-               (ann.var.shape == (79, 0)) and \
+               (ann.var.shape == (78, 0)) and \
                (len(ann.uns) == 1)
         os.remove(s_opathfile)
 
@@ -303,10 +303,10 @@ class TestPyCliAnndata(object):
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell_maxabs.h5ad')) and \
                (set(ann.var_names).issuperset({'attack_rates_0'})) and \
-               (ann.shape == (1099, 79)) and \
-               (ann.obs.shape == (1099, 6)) and \
+               (ann.shape == (1099, 78)) and \
+               (ann.obs.shape == (1099, 7)) and \
                (len(ann.obsp) == 2) and \
-               (ann.var.shape == (79, 0)) and \
+               (ann.var.shape == (78, 0)) and \
                (len(ann.uns) == 1)
         os.remove(s_opathfile)
 
@@ -318,10 +318,10 @@ class TestPyCliAnndata(object):
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell_maxabs.h5ad')) and \
                (set(ann.var_names).issuperset({'attack_rates_0'})) and \
-               (ann.shape == (1099, 79)) and \
-               (ann.obs.shape == (1099, 6)) and \
+               (ann.shape == (1099, 78)) and \
+               (ann.obs.shape == (1099, 7)) and \
                (len(ann.obsp) == 2) and \
-               (ann.var.shape == (79, 0)) and \
+               (ann.var.shape == (78, 0)) and \
                (len(ann.uns) == 1)
         os.remove(s_opathfile)
 
@@ -348,10 +348,10 @@ class TestPyCliAnndata(object):
         assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell_maxabs.h5ad')) and \
                (not set(ann.var_names).issuperset({'cell_type'})) and \
                (not set(ann.obs_keys()).issuperset({'oxygen'})) and \
-               (ann.shape == (1099, 78)) and \
-               (ann.obs.shape == (1099, 5)) and \
+               (ann.shape == (1099, 77)) and \
+               (ann.obs.shape == (1099, 6)) and \
                (len(ann.obsp) == 2) and \
-               (ann.var.shape == (78, 0)) and \
+               (ann.var.shape == (77, 0)) and \
                (len(ann.uns) == 1)
         os.remove(s_opathfile)
 
@@ -378,10 +378,10 @@ class TestPyCliAnndata(object):
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell_std.h5ad')) and \
-               (ann.shape == (1099, 79)) and \
-               (ann.obs.shape == (1099, 6)) and \
+               (ann.shape == (1099, 78)) and \
+               (ann.obs.shape == (1099, 7)) and \
                (len(ann.obsp) == 2) and \
-               (ann.var.shape == (79, 0)) and \
+               (ann.var.shape == (78, 0)) and \
                (len(ann.uns) == 1)
         os.remove(s_opathfile)
 

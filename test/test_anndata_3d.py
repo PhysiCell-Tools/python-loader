@@ -51,11 +51,11 @@ class TestPyAnndata3DTimeStep(object):
         ann = mcds.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs')
         assert(str(type(mcds)) == "<class 'pcdl.pyAnnData.TimeStep'>") and \
               (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
-              (ann.X.shape == (20460, 102)) and \
-              (ann.obs.shape == (20460, 6)) and \
+              (ann.X.shape == (20460, 101)) and \
+              (ann.obs.shape == (20460, 7)) and \
               (ann.obsm['spatial'].shape == (20460, 3)) and \
               (len(ann.obsp) == 2) and \
-              (ann.var.shape == (102, 0)) and \
+              (ann.var.shape == (101, 0)) and \
               (len(ann.uns) == 1)
 
 
@@ -84,11 +84,11 @@ class TestPyAnndata3DTimeSeries(object):
               (l_annmcds == mcdsts.l_annmcds) and \
               (mcdsts.l_annmcds is None) and \
               (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
-              (ann.X.shape == (481651, 102)) and \
-              (ann.obs.shape == (481651, 7)) and \
+              (ann.X.shape == (481651, 101)) and \
+              (ann.obs.shape == (481651, 8)) and \
               (ann.obsm['spatial'].shape == (481651, 3)) and \
               (len(ann.obsp) == 0) and \
-              (ann.var.shape == (102, 0)) and \
+              (ann.var.shape == (101, 0)) and \
               (len(ann.uns) == 0)
 
     def test_mcdsts_get_anndata_value(self):
@@ -117,11 +117,11 @@ class TestPyAnndata3DTimeSeries(object):
               (str(type(mcdsts.l_annmcds)) == "<class 'list'>") and \
               (len(mcdsts.l_annmcds) == 25) and \
               (all([str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>" for ann in mcdsts.l_annmcds])) and \
-              (mcdsts.l_annmcds[24].X.shape == (20460, 102)) and \
-              (mcdsts.l_annmcds[24].obs.shape == (20460, 6)) and \
+              (mcdsts.l_annmcds[24].X.shape == (20460, 101)) and \
+              (mcdsts.l_annmcds[24].obs.shape == (20460, 7)) and \
               (mcdsts.l_annmcds[24].obsm['spatial'].shape == (20460, 3)) and \
               (len(mcdsts.l_annmcds[24].obsp) == 2) and \
-              (mcdsts.l_annmcds[24].var.shape == (102, 0)) and \
+              (mcdsts.l_annmcds[24].var.shape == (101, 0)) and \
               (len(mcdsts.l_annmcds[24].uns) == 1)
 
     def test_mcdsts_get_anndata_keepmcdsfalse(self):
@@ -133,10 +133,10 @@ class TestPyAnndata3DTimeSeries(object):
               (l_annmcds == mcdsts.l_annmcds) and \
               (mcdsts.l_annmcds is None) and \
               (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
-              (ann.X.shape == (481651, 102)) and \
-              (ann.obs.shape == (481651, 7)) and \
+              (ann.X.shape == (481651, 101)) and \
+              (ann.obs.shape == (481651, 8)) and \
               (ann.obsm['spatial'].shape == (481651, 3)) and \
               (len(ann.obsp) == 0) and \
-              (ann.var.shape == (102, 0)) and \
+              (ann.var.shape == (101, 0)) and \
               (len(ann.uns) == 0)
 

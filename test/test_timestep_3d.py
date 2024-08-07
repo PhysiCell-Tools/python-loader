@@ -257,7 +257,7 @@ class TestPyMcds3dSettingWorkhorse(object):
         ds_unit = mcds.get_unit_dict()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(ds_unit)) == "<class 'dict'>") and \
-              (len(ds_unit) == 151) and \
+              (len(ds_unit) == 105) and \
               (ds_unit['oxygen'] == 'mmHg')
 
 
