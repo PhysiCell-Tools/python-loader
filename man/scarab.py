@@ -20,13 +20,13 @@ import os
 
 
 # function
-def help_md(s_command, s_opath='./docstring/'):
+def help_md(s_command, s_opath='man/docstring/'):
     """
     input:
         s_command: string
             command line command name.
 
-        s_opath: string, default ./docstring/
+        s_opath: string, default man/docstring/
             output path.
 
     output:
@@ -47,7 +47,7 @@ def help_md(s_command, s_opath='./docstring/'):
     f.close()
 
 
-def docstring_md(s_function, ls_doc, s_header=None, s_opath='./docstring/'):
+def docstring_md(s_function, ls_doc, s_header=None, s_opath='man/docstring/'):
     """
     input:
         s_function: string
@@ -61,7 +61,7 @@ def docstring_md(s_function, ls_doc, s_header=None, s_opath='./docstring/'):
             with this s_header argument you can set another title
             than the default one.
 
-        s_opath: string, default ./docstring/
+        s_opath: string, default man/docstring/
             output path.
 
     output:
@@ -93,13 +93,13 @@ def docstring_md(s_function, ls_doc, s_header=None, s_opath='./docstring/'):
 
 # load data
 mcds = pcdl.TimeStep(
-    '../pcdl/data_timeseries_2d/output00000000.xml',
+    'pcdl/data_timeseries_2d/output00000000.xml',
     custom_data_type={'oncoprotein': str},
     verbose=False,
 )
 
 mcdsts = pcdl.TimeSeries(
-    '../pcdl/data_timeseries_2d/',
+    'pcdl/data_timeseries_2d/',
     custom_data_type={'oncoprotein': str},
     verbose=False,
 )
