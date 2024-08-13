@@ -1,8 +1,9 @@
 ![physicellcdataloader logo & title](man/img/physicelldataloader_title_v3.0.0.png)
 
+
 ## Abstract:
 physicelldataloader (pcdl) provides a platform independent, python3 based, [pip](https://en.wikipedia.org/wiki/Pip_(package_manager)) installable interface
-to load output, generated with the [PhysiCell](https://github.com/MathCancer/PhysiCell) agent based modeling framework,
+to load output, generated with the [PhysiCell](https://github.com/MathCancer/PhysiCell) agent-based modeling and diffusion solver framework,
 into [python3](https://en.wikipedia.org/wiki/Python_(programming_language)).
 
 pcdl was forked from the original [PhysiCell-Tools](https://github.com/PhysiCell-Tools) [python-loader](https://github.com/PhysiCell-Tools/python-loader) implementation.
@@ -17,7 +18,7 @@ The pcdl python3 library maintains three branches branches:
 
 ## Header:
 + Language: python [>= 3.9](https://devguide.python.org/versions/)
-+ Library dependencies: anndata, matplotlib, numpy, pandas, scipy, (requests), vtk
++ Library dependencies: aicsimageio, anndata, matplotlib, numpy, pandas, scipy, (requests), vtk
 + Date of origin original PhysiCell-Tools python-loader: 2019-09-02
 + Date of origin pcdl fork: 2022-08-30
 + Doi: https://doi.org/10.5281/ZENODO.8176399
@@ -25,38 +26,34 @@ The pcdl python3 library maintains three branches branches:
 + User manual: this README.md file
 + Source code: [https://github.com/elmbeech/physicelldataloader](https://github.com/elmbeech/physicelldataloader)
 
-<!-- 3.2.14
+
 ## HowTo Guide:
-+ [installation and troubleshooting](https://github.com/elmbeech/physicelldataloader/tree/master/man/HOWTO.md) #!
++ [installation and troubleshooting](https://github.com/elmbeech/physicelldataloader/tree/master/man/HOWTO.md)
+
 
 ## Tutorial:
-+ [pcdl tutorial introduction](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL.md) #!
-+ [pcdl and python3](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3.md) #!
-+ [pcdl from the command line](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_commandline.md) #!
+
+Basics Tutorial:
+1. [pcdl background](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_introduction.md)
+1. [pcdl processing mcds timesteps in python3](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_timestep.md)
+1. [pcdl processing mcds timeseries in python3](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_timeseries.md)
+1. [pcdl from the command line](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_commandline.md)
+
+Extras Tutorials:
++ [pcdl and python3 matplotlib](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_matplotlib.md)
++ [pcdl and python3 napari](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_napari.md)
++ [pcdl and python3 scipy and scanpy](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_scverse.md)
 + [pcdl and R](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_r.md)
 + [pcdl and julia](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_julia.md)
-+ [pcdl and paraview](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_paraview.md) #!
++ [pcdl and paraview](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_paraview.md)
 + [pcdl and blender](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_belender.md)
+
+Slides:
 + [presentations given](https://github.com/elmbeech/physicelldataloader/tree/master/man/lecture)
 
 
 ## Reference Manual:
-+ [application interface](https://github.com/elmbeech/physicelldataloader/tree/master/man/REFERENCE.md) #!
--->
-
-
-## HowTo Guide:
-+ Check out: [man/HOWTO.md](https://github.com/elmbeech/physicelldataloader/tree/master/man/HOWTO.md)!
-
-
-## Tutorial:
-+ Check out: [man/TUTORIAL.md](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL.md)!
-+ Check out: [man/jupyter/pcdl\_repl\_programming.ipynb](https://github.com/elmbeech/physicelldataloader/tree/master/man/jupyter/pcdl_repl_programming.ipynb)
-+ Check out: [man/lecture](https://github.com/elmbeech/physicelldataloader/tree/master/man/lecture)
-
-
-## Reference Manual:
-+ Check out: [man/REFERENCE.md](https://github.com/elmbeech/physicelldataloader/tree/master/man/REFERENCE.md)!
++ [API application interface](https://github.com/elmbeech/physicelldataloader/tree/master/man/REFERENCE.md) #!
 
 
 ## Discussion:
@@ -71,7 +68,7 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
 + original PhysiCell-Tools python-loader implementation: Patrick Wall, Randy Heiland, Paul Macklin
 + fork pcdl implementation: Elmar Bucher
 + fork pcdl co-programmer: Furkan Kurtoglu, Heber Rocha
-+ fork pcdl testing: Aneequa Sundus, John Metzcar
++ fork pcdl realworld prototype feedback: Aneequa Sundus, John Metzcar
 + student prj on pcdl:
   Benjamin Jacobs (make\_gml),
   Katie Pletz (beta testing),
@@ -93,10 +90,10 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
 
 
 ## Road Map:
-
+~
 
 ## Release Notes:
-+ version 3.2.14 (2024-0?-??): elmbeech/physicelldataloader
++ version 3.3.0 (2024-08-??): elmbeech/physicelldataloader
     + **pip install pcdl**: will again install all library dependencies, as well anndata and requests.
     + pyMCDS handels now intracellular **physinboss** data too, data is store in cell_df.
     + rename pyMCDS get\_scatter to **plot_scatter** for conciseness.
@@ -118,12 +115,14 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
     + new pyCLI **pcdl_make_conc_vtk** command line interface function.
     + new pyCLI **pcdl_make_gif** command line interface function.
     + new pyCLI **pcdl_make_movie** command line interface function.
+    + new pyCLI **pcdl_make_ome_tiff** function to save the output data in ome tiff file format.
     + new pyCLI **pcdl_plot_contour** command line interface function.
     + new pyCLI **pcdl_plot_scatter** command line interface function.
     + new pyCLI **pcdl_plot_timeseries** command line interface function.
     + new pyMCDS **make_conc_vtk** function to save substrate data as rectilinear grid vtk file.
     + new pyMCDS **make_cell_vtk** function to save cell data as glyph vtk file.
     + new pyMCDS **make_graph_gml** function to save graphs in a networkx and igraph compatible files format.
+    + new pyMCDS **make_ome_tiff** function to save the output data in ome tiff file format.
     + new pyMCDS **set_verbosity_true** function to complete pcdl.TimeStep(verbosity=True/False) experience.
     + new pyMCDS **set_verbosity_false** function to complete pcdl.TimeStep(verbosity=True/False) experience.
     + new pyMCDSts **get_cell_df** function to extract one big dataframe or a list of dataframes from the whole time series.
@@ -131,6 +130,7 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
     + new pyMCDSts **make_cell_vtk** function to save substrate data as rectilinear grid vtk files.
     + new pyMCDSts **make_conc_vtk** function to save cell data as glyph vtk files.
     + new pyMCDSts **make_graph_gml** function to save graphs in a networkx and igraph compatible files format.
+    + new pyMCDSts **make_ome_tiff** function to save the output data in ome tiff file format.
     + new pyMCDSts **plot_timeseries** function to plot time series.
     + new pyMCDSts **set_verbosity_true** function to complete pcdl.TimeSeries(verbosity=True/False) experience.
     + new pyMCDSts **set_verbosity_false** function to complete pcdl.TimeSeries(verbosity=True/False) experience.
@@ -140,9 +140,9 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
     + add **man/lecture/20230917_pcdl_repl_programming_analysis_plots.pdf** slide deck.
 
 + version 3.2.12 (2023-08-12): elmbeech/physicelldataloader
-    + add **man/jupyter/pcdl_repl_programming.ipynb** : Jupyter notebook to give an idea about how to work with pcdl in a Python3 REPL.
+    + add **man/jupyter/pcdl_repl_programming.ipynb** : Jupyter notebook to give an idea about how to work with pcdl in a python3 REPL.
     + add **man/lecture/20230808_pcws2023_session07_pcdl.pdf** slide deck.
-    + add github **continuous integration**, all supported python versions, all supported operating systems.
+    + add github **continuous integration**, all supported python3 versions, all supported operating systems.
 
 + version 3.2.11 (2023-08-08): elmbeech/physicelldataloader
     + **pip install pcdl**: will only install the bare minimum library dependencies.
@@ -255,7 +255,7 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
     + new pyMCDSts **make_tiff** function.
     + new pyMCDSts **make_gif** function.
     + new pyMCDSts **make_movie** function.
-    + all **plotting** functions were removed because pcdl only focus on making the raw data in python easy accessible for in-depth analysis.
+    + all **plotting** functions were removed because pcdl only focus on making the raw data in python3 easy accessible for in-depth analysis.
     + cell position coordinates are now constantly labeled as **x,y,z**, mesh center coordinates as **m,n,p**, and voxel coordinates as **i,j,k**.
     + the underling [mcds object data dictionary structure](https://github.com/elmbeech/physicelldataloader/tree/master/man/img/physicelldataloader_data_dictionary_v3.0.0.png) has changed.
     + [pytest](https://en.wikipedia.org/wiki/Pytest) unit tests exist now for all pyMCDS and pyMCDSts functions.

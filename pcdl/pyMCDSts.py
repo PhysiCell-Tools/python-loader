@@ -1035,6 +1035,53 @@ class pyMCDSts:
         return s_path
 
 
+    ## OME TIFF RELATED FUNCTIONS ##
+
+    def make_ome_tiff(self, cell_attr='ID', file=True, collapse=True):
+        """
+        input:
+            cell_attr:
+            file:
+            collapse:
+
+        output:
+            file or numpy array
+
+        description:
+
+        """
+        # each T time step
+        a_tczyx_img = []
+        for i, mcds in enumerate(self.get_mcds_list()):
+            a_czyx_img = mcds.get_ome_tiff(attr=attr, file=False)
+            a_tczyx_img.append(a_czyx_img)
+
+        # output
+        a_tczyx_img = np.array(a_tczyx_img)
+        if self.verbose:
+            print('a_tczyx_img shape:', a_tczyx_img.shape)
+
+        # numpy array
+        if not file:
+            return a_tczyx_img
+
+        # write to file
+        else:
+            s_pathfile = '.ome.tif'
+            OmeTiffWriter.save(
+                a_tczyx_img,
+                s_pathfile,
+                dim_order = 'TCZYX',
+                #ome_xml=x_img,
+                channel_names = [],
+                image_names = '',
+                physical_pixel_sizes = 1, # [um]
+                #channel_colors=,
+                #fs_kwargs={},
+            )
+            return s_pathfile
+
+
     ## GRAPH RELATED FUNCTIONS ##
 
     def make_graph_gml(self, graph_type='neighbor', edge_attr=True, node_attr=[]):

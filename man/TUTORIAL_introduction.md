@@ -11,9 +11,28 @@ The original python-loader tutorial can be found here.
 + http://www.mathcancer.org/blog/python-loader/
 
 
-## Tutorial - branch v3
+## Tutorial - branch v3: Introduction
+
+
+### History
+
+In the very early days, [PhysiCell](https://github.com/MathCancer/PhysiCell) output was with the help of a MATLAB script loaded into MATLAB for analysis.\
+In 2019, a similar loader script was written for python3.
+The name of this script filed was pyMCDS.py basically defined one class named pyMCDS.
+
+In autumn 2022 an endeavor was undertaken to pack the original pyMCDS.py script into a pip installable python3 library and develop it further, but always in such a way that, if necessary, the code could still be run like in the early days.\
+The result is the pcdl physicelldataloader library here.\
+The pyMCDS class evolved into the TimeStep class.
+, which is slightly havyer but much more powerful for downstream data analysis.
+
+If you inspect today's pcdl source code, you will see that the [pyMCDS.py](https://raw.githubusercontent.com/elmbeech/physicelldataloader/master/pcdl/pyMCDS.py) file still exists.
+And if you feel so, it is still possible to [load and process PhysiCell output the ancient way](https://github.com/elmbeech/physicelldataloader/blob/master/man/HOWTO.md#how-to-run-physicelldataloader-like-in-the-early-days-before-autumn-2022)!\
+Naturally, the full-fledged pcdl library is much more powerful than pyMCDS.py only.
+
 
 ### Understanding PhysiCell's Time Step Output: the MultiCellular Data Standard (MCDS) Format
+
+MCDS Time Steps are the input for pcdl.
 
 Each time PhysiCell's internal time tracker passes a time step where data is to be saved, it generates a number of files of various types.\
 Each of these files will have a number at the end that indicates where it belongs in the sequence of outputs.\
@@ -29,25 +48,10 @@ The files we care about most from this set consists of:
     coordinates for the computational domain (mesh),\
     parameters for diffusing substrates in the microenvironment (continuum\_variables),\
     column labels and units for the cell data (cell\_population),\
-    file names for the files that contain microenvironment and cell data at this time step (mat and possibly graph.txt files),
+    file names for the files that contain microenvironment and cell data at this time step (mat and possibly graph.txt files).
 + **output00000012_cells.mat**: This is a MATLAB matrix file that contains tracked information about the individual cells in the model.
-    It tells us things like the cells' position, volume, secretion, cell cycle status, and user defined cell parameters.
+    It tells us things like the cells' position, volume, secretion, cell cycle status, and user-defined cell parameters.
 + **output00000012_microenvironment0.mat**: This is a MATLAB matrix file that contains data about the microenvironment at this time step.
++ **output00000012_attached_cells_graph.txt** and **output00000036_cell_neighbor_graph.txt**: These are files describing the cell neighborhood graph.
 
-
-### The History of the pcdl Library
-
-In the very early days, PhysiCell output was with the help of a MATLAB script loaded into MATLAB for analysis.\
-In 2019, a similar loader script was written for phython3.
-The name of this script filed was pyMCDS.py basically defined one class named pyMCDS.
-
-In autumn 2022 an endeavor was undertaken to pack the original pyMCDS.py script into a pip installable python3 library and develop it further, but always in such a way that, if necessary, the code could still be run like in the early days.\
-The result is the pcdl physicelldataloader library here.\
-The pyMCDS class evolved into the TimeStep class.
-, which is slightly havyer but much more powerful for downstream data analysis.
-
-If you inspect today's pcdl source code, you will see that the [pyMCDS.py](https://raw.githubusercontent.com/elmbeech/physicelldataloader/master/pcdl/pyMCDS.py) file still exists.
-And if you feel so, it is still possible to [load PhysiCell output the ancient way](https://github.com/elmbeech/physicelldataloader/blob/master/man/HOWTO.md#how-to-run-physicelldataloader-like-in-the-early-days-before-autumn-2022)!
-
-
-BUE: links to the separate tutorial sections.
+With pcdl we can load a MCDS time step or a whole MCDS time series for data analysis.

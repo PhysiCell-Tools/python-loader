@@ -21,6 +21,7 @@ from matplotlib import colors
 import numpy as np
 import os
 import pandas as pd
+from pcdl import imagine
 from pcdl import pdplt
 from scipy import io
 import sys
@@ -275,6 +276,7 @@ class pyMCDS:
             function to set verbosity.
         """
         self.verbose = False
+        print(f'pcdl: set mcds.verbose = False.')
 
     def set_verbose_true(self):
         """
@@ -287,6 +289,7 @@ class pyMCDS:
             function to set verbosity.
         """
         self.verbose = True
+        print(f'pcdl: set mcds.verbose = True.')
 
 
     ## METADATA RELATED FUNCTIONS ##
@@ -1631,6 +1634,7 @@ class pyMCDS:
 
 
     def make_cell_vtk(self, l_attributes=['cell_type'], visualize='True'):
+        # BUE 2024: attributes or features?
         """
         input:
 
@@ -1888,6 +1892,165 @@ class pyMCDS:
 
         # output
         return s_gmlpathfile
+
+
+    ## OME TIFF RELATED FUNCTIONS ##
+
+    def make_ome_tiff(self, cell_attr='ID', file=True):
+        '''
+        input:
+            cell_attr:
+            file:
+
+        output:
+            file or numpy array
+
+        description:
+        '''
+
+        # const
+        ls_coor_mnp = ['mesh_center_m', 'mesh_center_n', 'mesh_center_p'] # xyz
+        ls_coor_xyz = ['position_x', 'position_y', 'position_z'] # xyz
+        ls_coor = ['voxel_x', 'voxel_y', 'voxel_z']
+
+        # time step tensor
+        i_min = int(mcds.get_time())
+
+        # get domain range
+        ltr_xyz_range = mcds.get_xyz_range()
+        llr_voxel_xyz_range = [[0, None], [0, None], [0, None]]
+        llr_voxel_xyz_range[0][1] = ltr_xyz_range[0][1] -  ltr_xyz_range[0][0]
+        llr_voxel_xyz_range[1][1] = ltr_xyz_range[1][1] -  ltr_xyz_range[1][0]
+        llr_voxel_xyz_range[2][1] = ltr_xyz_range[2][1] -  ltr_xyz_range[2][0]
+
+        # get xy coordinate dataframe
+        lr_axis_z  = list(mcds.get_mesh_mnp_axis()[2] - mcds.get_voxel_spacing()[2] / 2)
+        lr_axis_z.append(mcds.get_mesh_mnp_axis()[2][-1] + mcds.get_voxel_spacing()[2] / 2)
+        lll_coor = []
+        for i_x in range(int(llr_voxel_xyz_range[0][1])):
+            for i_y in range(int(llr_voxel_xyz_range[1][1])):
+                lll_coor.append([i_x, i_y])
+        df_coor = pd.DataFrame(lll_coor, columns=ls_coor[:2]) #dtype={'voxel_x': int, 'voxel_y': int, 'voxel_z': float}
+        lr_axis_z[-1] += 1
+
+        # get cell type listing
+        ds_celltype = mcds.get_celltype_dict()
+        ls_celltype = [ds_celltype[s_key] for s_key in sorted(ds_celltype, key=int)]
+
+        # get cell type dataframe
+        df_cell = mcds.get_cell_df()
+        i_cell_radius = int(df_cell.radius.mean().round() - 1)
+        df_cell = df_cell.loc[:, ls_coor_xyz + ['cell_type']].reset_index()  # 'time'
+        # reset cell that are out of the xyz domain range (bue 20240811: solved by df_coor left side merge)
+        #df_cell.drop(df_cell.loc[(df_cell.position_x < mcds.get_xyz_range()[0][0]), 'position_x'].index, inplace=True)
+        #df_cell.drop(df_cell.loc[(df_cell.position_y < mcds.get_xyz_range()[1][0]), 'position_y'].index, inplace=True)
+        #df_cell.drop(df_cell.loc[(df_cell.position_z < mcds.get_xyz_range()[2][0]), 'position_z'].index, inplace=True)
+        #df_cell.drop(df_cell.loc[(df_cell.position_x > mcds.get_xyz_range()[0][1]), 'position_x'].index, inplace=True)
+        #df_cell.drop(df_cell.loc[(df_cell.position_y > mcds.get_xyz_range()[1][1]), 'position_y'].index, inplace=True)
+        #df_cell.drop(df_cell.loc[(df_cell.position_z > mcds.get_xyz_range()[2][1]), 'position_z'].index, inplace=True)
+
+        # shift xy data
+        df_cell.loc[:, 'position_x'] = (df_cell.loc[:, 'position_x'] - mcds.get_xyz_range()[0][0]).round()
+        df_cell.loc[:, 'position_y'] = (df_cell.loc[:, 'position_y'] - mcds.get_xyz_range()[1][0]).round()
+
+        # extract from datafarme
+        # BUE: make this an option
+        #df_cell = df_cell.groupby(ls_coor_xyz + ['cell_type']).count().reset_index()
+        #df_cell = df_cell.pivot_table(index=ls_coor_xyz, columns='cell_type', values='time', fill_value=0).reset_index()  # aggfunc='sum'
+        df_cell.ID =  df_cell.ID + 1
+        df_cell = df_cell.pivot_table(index=ls_coor_xyz, columns='cell_type', values='ID', fill_value=0, aggfunc='sum').reset_index()
+        for s_celltype in ls_celltype:
+            if not s_celltype in set(df_cell.columns):
+               df_cell[s_celltype] = 0
+
+        # merge with xy coordiantes
+        df_cell.rename({'position_x':'voxel_x', 'position_y':'voxel_y', 'position_z':'voxel_z'}, axis=1, inplace=True)
+        df_cell = df_cell.astype({'voxel_x': int, 'voxel_y': int, 'voxel_z': float})
+
+        # get substrate listing
+        ds_substrate = mcds.get_substrate_dict()
+        ls_substrate = [ds_substrate[s_key] for s_key in sorted(ds_substrate, key=int)]
+
+        # get substrate dataframe
+        df_conc = mcds.get_conc_df()
+        i_conc_radius = int(np.round(np.mean(mcds.get_voxel_spacing()[:2])) - 1)
+        df_conc = df_conc.loc[:, ls_coor_mnp + ls_substrate]
+
+        # shift xy  data
+        df_conc.loc[:, 'mesh_center_m'] = df_conc.loc[:, 'mesh_center_m'] - mcds.get_xyz_range()[0][0]
+        df_conc.loc[:, 'mesh_center_n'] = df_conc.loc[:, 'mesh_center_n'] - mcds.get_xyz_range()[1][0]
+
+        # merge with xy coordiantes
+        df_conc.rename({'mesh_center_m':'voxel_x', 'mesh_center_n':'voxel_y', 'mesh_center_p':'voxel_z'}, axis=1, inplace=True)
+        df_conc = df_conc.astype({'voxel_x': int, 'voxel_y': int, 'voxel_z': float})
+
+        # each C channel - time step tensors
+        a_czyx_img = []
+        for s_channel in ls_substrate + ls_celltype:
+
+            # get channel dataframe
+            if s_channel in set(ls_substrate):
+                df_channel = df_conc.loc[:, ls_coor + [s_channel]]
+            elif s_channel in set(ls_celltype):
+                df_channel = df_cell.loc[:, ls_coor + [s_channel]]
+            else:
+                sys.exit(f'Error: {s_channel} unknowen channel detected!')
+
+            # each Z axis
+            a_zyx_img = []
+            for i_zaxis in range(len(lr_axis_z)):
+                if (i_zaxis < (len(lr_axis_z) - 1)):
+                    print(f'\nprocessing: {i_min} [min]  {s_channel} [channel]  {i_zaxis} [z_axis] ...')
+                    # extract z layer
+                    df_yxchannel = df_channel.loc[
+                        ((df_channel.loc[:, ls_coor[2]] >= lr_axis_z[i_zaxis]) & (df_channel.loc[:, ls_coor[2]] < lr_axis_z[i_zaxis + 1])),
+                        ls_coor[:2] + [s_channel]
+                    ]
+
+                    # merge with coooridnates and get image
+                    df_yxchannel = pd.merge(df_coor, df_yxchannel, on=ls_coor[:2], how='left').replace({np.nan: 0})
+                    print('df_yxchannel:', df_yxchannel.sum())
+                    df_yxchannel = df_yxchannel.pivot(columns=ls_coor[0], index=ls_coor[1], values=s_channel)
+                    a_yx_img = np.array(df_yxchannel.values)
+
+                    # grow
+                    print('a_yx_img:', a_yx_img.shape)
+                    if s_channel in set(ls_substrate):
+                        a_yx_img = imagine.grow(a_yx_img, i_step=i_conc_radius)
+                    elif s_channel in set(ls_celltype):
+                        a_yx_img = imagine.grow(a_yx_img, i_step=i_cell_radius)
+                    else:
+                        sys.exit(f'Error: {s_channel} unknowen channel detected!')
+
+                    # update output
+                    print('a_yx_img:', a_yx_img.shape)
+                    a_zyx_img.append(a_yx_img)
+            a_czyx_img.append(np.array(a_zyx_img))
+
+        # output
+        a_czyx_img = np.array(a_czyx_img)
+
+        # numpy array
+        if (s_file is None):
+            return a_czyx_img
+
+        # write to file
+        else:
+            s_pathfile = '.ome.tif'
+            if self.verbose:
+                print('a_czyx_img shape:', a_czyx_img.shape)
+            OmeTiffWriter.save(
+                a_czyx_img,
+                s_pathfile,
+                dim_order = 'CZYX',
+                #ome_xml=x_img,
+                channel_names = [],
+                image_names = '',
+                physical_pixel_sizes = 1, # [um]
+                #channel_colors=,
+                #fs_kwargs={},
+            )
+            return s_pathfile
 
 
     ## MODEL PARAMETER SETTING RELATED FUNCTIONS ##
