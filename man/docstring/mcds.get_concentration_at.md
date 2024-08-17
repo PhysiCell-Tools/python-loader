@@ -18,7 +18,7 @@
 ```
             ar_concs: numpy array of floating point numbers
                 array of substrate concentrations in the order
-                given by get_substrate_names().
+                given by get_substrate_list().
 
 ```
 

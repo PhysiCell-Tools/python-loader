@@ -4,7 +4,7 @@
 + data: July 2023
 
 #### description:
-+ this notebook should give you an idea about how to work with pcdl in a Python3 REPL (read eval print loop) to analyse PhysiCell data. 
++ this notebook should give you an idea about how to work with pcdl in a Python3 REPL (read eval print loop) to analyse PhysiCell data.
 
 #### installation instruction:
 1. copy this Jupyter notebook into your PhysiCell folder.
@@ -33,7 +33,7 @@
 #!make
 #!if [ ! -d output ]; then mkdir -p output; fi;
 #!./interaction_demo
-#!mv output output2d 
+#!mv output output2d
 ```
 
 
@@ -96,11 +96,11 @@ pcdl.__version__
 ###################
 
 #mcdsts = pcdl.TimeSeries?
-mcdsts = pcdl.TimeSeries(s_path_2d) 
+mcdsts = pcdl.TimeSeries(s_path_2d)
 
-# note to the Warning: 
-# these custom_data features are all numeric (not categorical), 
-# the default float variable type is ok (if needed, other possible types are: int, bool, str). 
+# note to the Warning:
+# these custom_data attributes are all numeric (not categorical),
+# the default float variable type is ok (if needed, other possible types are: int, bool, str).
 ```
 
 ### 1.1 time series: plot_scatter, plot_contour, make_gif, make_movie
@@ -125,36 +125,36 @@ mcdsts.make_gif(mcdsts.plot_scatter())  # cmap='turbo'
 ```python
 # plot_scatter and plot_contour difference
 
-#mcdsts.get_mcds_list()[0].get_substrate_names?
+#mcdsts.get_mcds_list()[0].get_substrate_list?
 #mcdsts.get_mcds_list()[0].get_conc_df().columns?
 
-#mcdsts.get_mcds_list()[0].get_cell_variables?
+#mcdsts.get_mcds_list()[0].get_celltype_list?
 #mcdsts.get_mcds_list()[0].get_cell_df().columns?
 
-for s_subs in mcdsts.get_mcds_list()[0].get_substrate_names():
+for s_subs in mcdsts.get_mcds_list()[0].get_substrate_list():
     mcdsts.make_gif(mcdsts.plot_scatter(s_subs, cmap='turbo'))
     mcdsts.make_gif(mcdsts.plot_contour(s_subs, cmap='turbo'))
     break
 ```
 
-### 1.2 time series: get_cell_df_features, get_conc_df_features
+### 1.2 time series: get_cell_attributes, get_conc_attributes
 
 
 ```python
-#mcdsts.get_cell_df_features?
+#mcdsts.get_cell_attributes?
 
-dl_list = mcdsts.get_cell_df_features(allvalues=True, values=1)  # values=2
-print('total features df_cell:', len(dl_list))
-json.dump(dl_list, open(f'{s_path_2d}cell_df_features.json', 'w'))
+dl_list = mcdsts.get_cell_attributes(allvalues=True, values=1)  # values=2
+print('total attributes df_cell:', len(dl_list))
+json.dump(dl_list, open(f'{s_path_2d}cell_attributes.json', 'w'))
 ```
 
 
 ```python
-#mcdsts.get_conc_df_features?
+#mcdsts.get_conc_attributes?
 
-dl_list = mcdsts.get_conc_df_features(allvalues=True, values=1)  # values=2
-print('total features df_conc:', len(dl_list))
-json.dump(dl_list, open(f'{s_path_2d}conc_df_features.json', 'w'))
+dl_list = mcdsts.get_conc_attributes(allvalues=True, values=1)  # values=2
+print('total attributes df_conc:', len(dl_list))
+json.dump(dl_list, open(f'{s_path_2d}conc_attributes.json', 'w'))
 ```
 
 ### 1.3 time series: get_anndata
@@ -219,7 +219,7 @@ print()
 ```python
 df_conc = mcds.get_conc_df(values=2)
 df_conc.info()
-mcds.get_substrate_names()
+mcds.get_substrate_list()
 
 # here I break with the rule that pcdl is simply an interface.
 # this implementation based on matplotlib contour and contourf.
@@ -240,8 +240,8 @@ mcds.get_unit_se()
 
 
 ```python
-# loads only feature that have not the same value in all cells.
-# max absolute scales the features into a range between -1 and 1.
+# loads only attribute that have not the same value in all cells.
+# max absolute scales the attributes into a range between -1 and 1.
 ann = mcds.get_anndata(values=2, scale='maxabs')
 ```
 
@@ -277,9 +277,9 @@ ann = ad.read(f'{s_path_2d}interaction_16200min.h5ad')
 
 
 ```python
-# features
-print('x_axis: genes: numerical features:\n', ann.var_names)  # list the numerical features we have at hand (alternative way: ann.var.index).
-print('y_axis: cells: categorical features:\n', ann.obs_keys())  # list the categories features we have at hand (alternative way: ann.obs.columns).
+# attributes
+print('x_axis: genes: numerical attributes:\n', ann.var_names)  # list the numerical attributes we have at hand (alternative way: ann.var.index).
+print('y_axis: cells: categorical attributes:\n', ann.obs_keys())  # list the categories attributes we have at hand (alternative way: ann.obs.columns).
 ```
 
 ## 3 Data Analysis with Pandas
@@ -339,7 +339,7 @@ df_cell.loc[:,['toxin','debris','resource', 'pro-inflammatory']].plot(kind='kde'
 
 ```python
 # box plot
-df_cell.loc[:,mcds.get_substrate_names()].plot(kind='box', title='cell surrounding substrate')
+df_cell.loc[:,mcds.get_substrate_list()].plot(kind='box', title='cell surrounding substrate')
 ```
 
 ### 3.3 time step: pandas and pcdl plot numerical, spatial data
@@ -354,11 +354,11 @@ df_cell.loc[:,mcds.get_substrate_names()].plot(kind='box', title='cell surroundi
 ds_color = {
     'CD8+_T_cell' : 'magenta',
     'macrophage' : 'orange',
-    'neutrophil' : 'yellow',  
-    'bacteria' : 'black', 
-    'blood_vessel' : 'red', 
-    'differentiated' : 'green', 
-    'stem' : 'lime', 
+    'neutrophil' : 'yellow',
+    'bacteria' : 'black',
+    'blood_vessel' : 'red',
+    'differentiated' : 'green',
+    'stem' : 'lime',
 }
 
 df_cell['cell_type_color'] = None
@@ -401,7 +401,7 @@ for timestep in mcdsts.get_mcds_list():
     s_time = str(list(df_celltype.loc[:,'time'])[0])
     df_celltype.columns = ['cell_type', s_time]
     df_count = df_celltype.groupby('cell_type').count()  # pandas dataframe
-    # store result    
+    # store result
     if (df_series is None):
         df_series = df_count
     else:
@@ -477,10 +477,10 @@ sc.tl.pca(ann)  # process anndata object with the pca tool.
 #sc.pl.pca?
 #sc.pl.pca(ann)  # plot pca result.
 #sc.pl.pca(ann, color=list(ann.var_names)+list(ann.obs_keys()))  # gotta catch 'em all! # ncols=3 projection='3d' color_map='turbo' palette='turbo'
-#sc.pl.pca(ann, color=['cell_type','current_phase'])  # plot the pca results colored by some features.
-sc.pl.pca(ann, color='cell_type')  # plot the pca results colored by one feature.
+#sc.pl.pca(ann, color=['cell_type','current_phase'])  # plot the pca results colored by some attributes.
+sc.pl.pca(ann, color='cell_type')  # plot the pca results colored by one attribute.
 #sc.pl.pca_variance_ratio(ann)  # plot how much of the variation each principal component captures.
-#sc.pl.pca_loadings(ann)  # principal component feature loading (derived from sc.pl.ranking).
+#sc.pl.pca_loadings(ann)  # principal component attribute loading (derived from sc.pl.ranking).
 #sc.pl.pca_overview(ann, color=['cell_type','current_phase'])
 #sc.pl.pca(ann, save='interaction_16200min_pca.png')  # plot is saved to figures directory.
 ```
@@ -501,14 +501,14 @@ sc.pl.pca(ann, color=['leiden','cell_type'])  # plot the pca results colored by 
 ```python
 # umap dimensional reduction embedding
 sc.tl.umap(ann)  # process anndata object with the umap tool.
-sc.pl.umap(ann, color=['current_phase','cell_type','leiden'])  # plot the umap result colored by some features.
+sc.pl.umap(ann, color=['current_phase','cell_type','leiden'])  # plot the umap result colored by some attributes.
 ```
 
 
 ```python
 # t-sne dimensional reduction embedding
 sc.tl.tsne(ann)  # process anndata object with the tsne tool.
-sc.pl.tsne(ann, color=['current_phase','cell_type','leiden'])  # plot the tsne result colored by some features.
+sc.pl.tsne(ann, color=['current_phase','cell_type','leiden'])  # plot the tsne result colored by some attributes.
 ```
 
 
@@ -520,14 +520,14 @@ sc.pl.tsne(ann, color=['current_phase','cell_type','leiden'])  # plot the tsne r
 # ‘fa’ (ForceAtlas2) is default.
 # ‘fr’ (Fruchterman Reingold).
 ## ‘grid_fr’ (Grid Fruchterman Reingold, faster than ‘fr’).
-# ‘kk’ (Kamadi Kawai’, slower than ‘fr’). 
+# ‘kk’ (Kamadi Kawai’, slower than ‘fr’).
 # ‘lgl’ (Large Graph, very fast).
 # ‘drl’ (Distributed Recursive Layout, pretty fast).
 # ‘rt’ (Reingold Tilford tree layout).
 # ‘rt_circular’ (Reingold Tilford circular layout).
 
 #sc.tl.draw_graph?
-sc.tl.draw_graph(ann, layout='fa') 
+sc.tl.draw_graph(ann, layout='fa')
 sc.pl.draw_graph(ann, color=['current_phase', 'cell_type', 'leiden'])
 ```
 
@@ -541,7 +541,7 @@ sc.pl.embedding(ann, basis='X_pca', color=['current_phase', 'cell_type', 'leiden
 ```python
 #sc.tl.embedding_density?
 #sc.tl.embedding_density(ann, basis='umap')
-#sc.pl.embedding_density(ann, basis='umap') 
+#sc.pl.embedding_density(ann, basis='umap')
 
 sc.tl.embedding_density(ann, basis='umap', groupby='current_phase')
 sc.tl.embedding_density(ann, basis='umap', groupby='cell_type')
@@ -651,11 +651,11 @@ pd.DataFrame([gc,mi], columns=ann.var_names, index=['gc','mi'])
 
 #### 5.1.3 scanpy gene expression
 
-the basic physicell feature data is quite different from log transformed gene expression data.
+the basic physicell attribute data is quite different from log transformed gene expression data.
 these functions might become interesting for physiboss output analysis.
 
 genes
-+ sc.pl.highest_expr_genes  
++ sc.pl.highest_expr_genes
 + sc.pl.filter_genes_dispersion
 + sc.pp.highly_variable_genes
 + sc.pl.highly_variable_genes
@@ -683,7 +683,7 @@ simulate dynamic gene expression data
 + sc.tl.sim  (sample from a stochastic differential equation model, for example built from literature-curated boolean gene regulatory networks.)
 
 
-#### 5.1.4 scanpy cell differentiation 
+#### 5.1.4 scanpy cell differentiation
 
 in physicell, we do not have this problem because we know the lineage trace.
 nevertheless, it might be interesting to try to apply these functions on adequate physicell output.
@@ -697,7 +697,7 @@ paga - partition based graph abstraction
 + sc.pl.paga
 + sc.pl.paga_compare
 + sc.pl.paga_path
- 
+
 dpt - diffusion pseudo time
 + sc.tl.dpt
 + sc.pl.dpt_groups_pseudotime
@@ -732,13 +732,13 @@ sc.logging.print_versions()
 #l_ann = mcdsts.get_anndata(collapse=False)
 
 # collapsed:
-# one anndata object for the whole time can be processed in the same way as a single time step, using time as a feature.
+# one anndata object for the whole time can be processed in the same way as a single time step, using time as a attribute.
 # this was not so obvious to me!
 annts = mcdsts.get_anndata()
 sc.pp.neighbors(annts, n_neighbors=15)  # compute the neighborhood graph with the neighbors preprocess step.
 sc.tl.leiden(annts, resolution=0.01)  # cluster the neighborhood graph with the leiden tool.
 sc.tl.umap(annts)  # process anndata object with the umap tool.
-sc.pl.umap(annts, color=['time','current_phase','cell_type','leiden'], ncols=2)  # plot the umap result colored by some features.
+sc.pl.umap(annts, color=['time','current_phase','cell_type','leiden'], ncols=2)  # plot the umap result colored by some attributes.
 ```
 
 ### 5.2 Squidpy - spatial single cell data analysis
@@ -759,7 +759,7 @@ print(ann)
 
 
 ```python
-#sq.pl.spatial_scatter?  
+#sq.pl.spatial_scatter?
 sq.pl.spatial_scatter(ann, shape=None, color="cell_type", size=42) #color=ds_color  # H&E image could be put under ann.uns as background,
 print(ann)
 ```
@@ -793,8 +793,8 @@ sq.pl.nhood_enrichment(ann, cluster_key='cell_type')  # plot neighborhood enrich
 sq.gr.co_occurrence(ann, cluster_key='cell_type')  # compute co-occurrence probability of clusters.
 print(ann)
 sq.pl.co_occurrence(
-    ann, 
-    cluster_key='cell_type', 
+    ann,
+    cluster_key='cell_type',
     clusters=['bacteria','differentiated','blood_vessel','stem'],
 )  # plot co-occurrence probability ratio for each cluster.
 ```
@@ -802,7 +802,7 @@ sq.pl.co_occurrence(
 
 ```python
 #sq.gr.centrality_scores?
-#help(sq.pl.centrality_scores) 
+#help(sq.pl.centrality_scores)
 
 sq.gr.centrality_scores(ann, cluster_key='cell_type')  # compute centrality scores per cluster or cell type.
 print(ann)
@@ -863,7 +863,7 @@ functions hardly applicable on physicell output data.
 works only on square or hexagonal lattice data, and because of that, not on PhysiCell output data!
 + sq.gr.sepal(ann, max_neighs[, genes, n_iter, ...]) # max_neighs=4 max_neighs=6
 
-**ligrec** cellphonedb related ligand-receptor analysis. 
+**ligrec** cellphonedb related ligand-receptor analysis.
 + sq.gr.ligrec(ann, cluster_key='cell_type', use_raw=False)  # perform the permutation test as described in doi:10.1038/s41596-020-0292-x.
 + sq.pl.ligrec(ann, cluster_key='cell_type')  # plot the result of a receptor-ligand permutation test.
 
@@ -878,7 +878,7 @@ for H&E and microscopy images
 + sq.im.ImageContainer
 + sq.im.process(img[, layer, library_id, method, ...]) # process an image by applying a transformation.
 + sq.im.segment(img[, layer, library_id, method, ...])  # segment an image.
-+ sq.im.calculate_image_features(adata, img[, ...])  # calculate image features for all observations in adata.
++ sq.im.calculate_image_attributes(adata, img[, ...])  # calculate image attributes for all observations in adata.
 + sq.pl.spatial_segment(adata[, color, groups, ...])  # plot spatial omics data with segmentation masks on top.
 + https://napari.org/stable/  # a fast, interactive viewer for multi-dimensional images in Python
 
@@ -917,4 +917,4 @@ analysis frame works
 + muon  # multi-omics analysis,
 + scvi-tools  # single cell machine learning: https://doi.org/10.1038/s41587-021-01206-w
 + scirpy  # single cell immune receptor sequence analysis: https://doi.org/10.1093/bioinformatics/btaa611
-+ scverse ecosystem: https://scverse.org/packages/#ecosystem 
++ scverse ecosystem: https://scverse.org/packages/#ecosystem

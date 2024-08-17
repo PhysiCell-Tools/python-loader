@@ -4,7 +4,7 @@
 ## input:
 ```
 
-            attributes: list of strings; default is 'cell_type'
+            attribute: list of strings; default is 'cell_type'
                 column name within cell dataframe.
 
             visualize: boolean; default is True

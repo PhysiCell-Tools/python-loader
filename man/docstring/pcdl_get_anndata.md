@@ -60,19 +60,20 @@ options:
                         will linearly map all values into a [-1, 1] interval.
                         if the original data has no negative values, the
                         result will be the same as with the minmax scaler
-                        (except with features with only one value). if the
-                        feature has only zeros, the value will be set to 0.
+                        (except with attributes with only one value). if the
+                        attribute has only zeros, the value will be set to 0.
                         minmax: minimum maximum distance scaler will map all
-                        values linearly into a [0, 1] interval. if the feature
-                        has only one value, the value will be set to 0. std:
-                        standard deviation scaler will result in sigmas. each
-                        feature will be mean centered around 0. ddof delta
-                        degree of freedom is set to 1 because it is assumed
-                        that the values are samples out of the population and
-                        not the entire population. it is incomprehensible to
-                        me that the equivalent sklearn method has ddof set to
-                        0. if the feature has only one value, the value will
-                        be set to 0. default is maxabs
+                        values linearly into a [0, 1] interval. if the
+                        attribute has only one value, the value will be set to
+                        0. std: standard deviation scaler will result in
+                        sigmas. each attribute will be mean centered around 0.
+                        ddof delta degree of freedom is set to 1 because it is
+                        assumed that the values are samples out of the
+                        population and not the entire population. it is
+                        incomprehensible to me that the equivalent sklearn
+                        method has ddof set to 0. if the attribute has only
+                        one value, the value will be set to 0. default is
+                        maxabs
   --collapse COLLAPSE   should all mcds time steps from the time series be
                         collapsed into one big anndata h5ad file, or a many
                         h5ad, one h5ad for each time step?, default is True.

@@ -75,7 +75,7 @@ Basically there are four types of functions:
 + [help(mcds.get_voxel_ijk)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_voxel_ijk.md)
 
 ### TimeStep microenvironment
-+ [help(mcds.get_substrate_names)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_substrate_names.md)
++ [help(mcds.get_substrate_list)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_substrate_list.md)
 + [help(mcds.get_substrate_dict)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_substrate_dict.md)
 + [help(mcds.get_substrate_df)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_substrate_df.md)
 + [help(mcds.get_concentration)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_concentration.md)
@@ -85,7 +85,7 @@ Basically there are four types of functions:
 + [help(mcds.make_conc_vtk)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.make_conc_vtk.md)  #! workhorse function
 
 ### TimeStep cells and other agents
-+ [help(mcds.get_cell_variables)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_cell_variables.md)
++ [help(mcds.get_celltype_list)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_celltype_list.md)
 + [help(mcds.get_celltype_dict)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_celltype_dict.md)
 + [help(mcds.get_cell_df_at)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_cell_df_at.md)
 + [help(mcds.get_cell_df)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_cell_df.md)  #! workhorse function
@@ -126,12 +126,12 @@ Basically there are four types of functions:
 
 ### TimeSeries microenvironment
 + [help(mcdsts.get_conc_df)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_conc_df.md)  #! workhorse function
-+ [help(mcdsts.get_conc_df_features)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_conc_df_features.md)  #! workhorse function
++ [help(mcdsts.get_conc_attributes)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_conc_attributes.md)  #! workhorse function
 + [help(mcdsts.plot_contour)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.plot_contour.md)  # !workhorse function
 
 ### TimeSeries cells and other agents
 + [help(mcdsts.get_cell_df)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_cell_df.md)  #! workhorse function
-+ [help(mcdsts.get_cell_df_features)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_cell_df_features.md)  #! workhorse function
++ [help(mcdsts.get_cell_attributes)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_cell_attributes.md)  #! workhorse function
 + [help(mcdsts.plot_scatter)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.plot_scatter.md)  # !workhorse function
 + [help(mcdsts.get_anndata)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_anndata.md)  #! workhorse function
 
@@ -167,12 +167,12 @@ The command line interface functions mimic the name and parameter arguments as c
 + [pcdl_get_unit_dict --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_unit_dict.md)  #! workhorse function
 
 ### Command line microenvironment
-+ [pcdl_get_conc_df_features --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_conc_df_features.md)  #! workhorse function
++ [pcdl_get_conc_attributes --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_conc_attributes.md)  #! workhorse function
 + [pcdl_get_conc_df --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_conc_df.md)  #! workhorse function
 + [pcdl_plot_contour --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_plot_contour.md)  #! workhorse function
 
 ### Command line cells and other agents
-+ [pcdl_get_cell_df_features --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_cell_df_features.md)  #! workhorse function
++ [pcdl_get_cell_attributes --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_cell_attributes.md)  #! workhorse function
 + [pcdl_get_cell_df --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_cell_df.md)  #! workhorse function
 + [pcdl_plot_scatter --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_plot_scatter.md)  #! workhorse function
 + [pcdl_get_anndata --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_anndata.md)  #! workhorse function

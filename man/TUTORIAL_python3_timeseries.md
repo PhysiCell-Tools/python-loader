@@ -191,7 +191,7 @@ print(ann)  # AnnData object with n_obs × n_vars = 889 × 26
             #     obs: 'z_layer', 'time', 'current_phase', 'cycle_model'
             #     obsm: 'spatial'
 ```
-The output tells us that we have loaded a time series with 24758 cell (agent) snapshots and 27 features.
+The output tells us that we have loaded a time series with 24758 cell (agent) snapshots and 27 attributes.
 And that we have spatial coordinate annotation (position\_x, position\_y, position\_z, time) of the loaded data.
 
 A mcds time series can be translated into a chronological list of anndata objects, where each entry is a single time step.
@@ -285,22 +285,22 @@ Similarly, substrates variables that over the whole domain overall time steps ha
 mcdsts = pcdl.TimeSeries(s_path)
 ```
 
-There are functions to help triage over the entier time series for features that more likely might carry information, by checking for variables with variation.
+There are functions to help triage over the entier time series for attributes that more likely might carry information, by checking for variables with variation.
 ```
 # cell data min max values
-dl_cell = mcdsts.get_cell_df_features()  # returns a dictionary with all features, listing all accessed values
-len(dl_cell)  # 84 features
-dl_cell.keys()  # list feature names
+dl_cell = mcdsts.get_cell_attributes()  # returns a dictionary with all attributes, listing all accessed values
+len(dl_cell)  # 84 attributes
+dl_cell.keys()  # list attribute names
 dl_cell['oxygen']  # list min and max oxygen values found, surrounding a cell, over the whole series
 
 # cell data number of values
 di_state = {}
-[di_state.update({s_feature: len(li_state)}) for s_feature, li_state in mcdsts.get_cell_df_features(allvalues=True).items()]
+[di_state.update({s_attribute: len(li_state)}) for s_attribute, li_state in mcdsts.get_cell_attributes(allvalues=True).items()]
 di_state['oxygen']  # cell surrounding oxygen was found occupying 2388 different values (states) over the whole time series
 
 # substrate data
-dl_conc = mcdsts.get_conc_df_features()
-dl_conc.keys()  # list feature names
+dl_conc = mcdsts.get_conc_attributes()
+dl_conc.keys()  # list attribute names
 dl_conc['oxygen']  # list min and max oxygen values found in the domain over the whole series
 ```
 

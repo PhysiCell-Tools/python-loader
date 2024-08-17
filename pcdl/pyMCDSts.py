@@ -20,16 +20,17 @@
 
 
 # load libraries
-import matplotlib.pyplot as plt
+import aicsimageio
+from aicsimageio.writers import OmeTiffWriter
 import glob
+import matplotlib.pyplot as plt
 import numpy as np
 import os
 import pandas as pd
-import pathlib
 from pcdl.pyMCDS import pyMCDS, es_coor_cell, es_coor_conc
 import platform
 import sys
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as etree
 
 
 ############
@@ -413,11 +414,11 @@ class pyMCDSts:
         # output
         if collapse:
             # filter
-            es_feature = set(df_concts.columns).difference(es_coor_conc)
+            es_attribute = set(df_concts.columns).difference(es_coor_conc)
             if (len(keep) > 0):
-                es_delete = es_feature.difference(keep)
+                es_delete = es_attribute.difference(keep)
             else:
-                es_delete = es_feature.intersection(drop)
+                es_delete = es_attribute.intersection(drop)
 
             if (values > 1):  # by minimal number of states
                 for s_column in set(df_concts.columns).difference(es_coor_conc):
@@ -432,7 +433,7 @@ class pyMCDSts:
             return ldf_concts
 
 
-    def get_conc_df_features(self, values=1, drop=set(), keep=set(), allvalues=False):
+    def get_conc_attributes(self, values=1, drop=set(), keep=set(), allvalues=False):
         """
         input:
             self: pyMCDSts class instance.
@@ -577,10 +578,10 @@ class pyMCDSts:
         if (figsizepx is None):
             s_pathfile = self.output_path + 'initial.svg'
             try:
-                tree = ET.parse(s_pathfile)
-                root = tree.getroot()
-                i_width = int(np.ceil(float(root.get('width')))) # px
-                i_height = int(np.ceil(float(root.get('height'))))  # px
+                x_tree = etree.parse(s_pathfile)
+                x_root = x_tree.getroot()
+                i_width = int(np.ceil(float(x_root.get('width')))) # px
+                i_height = int(np.ceil(float(x_root.get('height'))))  # px
                 figsizepx = [i_width, i_height]
             except FileNotFoundError:
                 print(f'Warning @ pyMCDSts.plot_contour : could not load {s_pathfile}.')
@@ -664,6 +665,20 @@ class pyMCDSts:
         return s_path
 
 
+    def make_conc_vtk(self, ):
+        """
+        input:
+        output:
+        description:
+        """
+        s_path = None
+        # processing
+        for mcds in self.get_list_mcds():
+            mcds.make_conc_vtk(attribute=attribute)
+        # output
+        return s_path
+
+
     ## CELL RELATED FUNCTIONS ##
 
     def get_cell_df(self, values=1, drop=set(), keep=set(), collapse=True):
@@ -735,11 +750,11 @@ class pyMCDSts:
         # output collapsed
         if collapse:
             # filter
-            es_feature = set(df_cellts.columns).difference(es_coor_cell)
+            es_attribute = set(df_cellts.columns).difference(es_coor_cell)
             if (len(keep) > 0):
-                es_delete = es_feature.difference(keep)
+                es_delete = es_attribute.difference(keep)
             else:
-                es_delete = es_feature.intersection(drop)
+                es_delete = es_attribute.intersection(drop)
 
             if (values > 1):  # by minimal number of states
                 for s_column in set(df_cellts.columns).difference(es_coor_cell):
@@ -754,7 +769,7 @@ class pyMCDSts:
             return ldf_cellts
 
 
-    def get_cell_df_features(self, values=1, drop=set(), keep=set(), allvalues=False):
+    def get_cell_attributes(self, values=1, drop=set(), keep=set(), allvalues=False):
         """
         input:
             self: pyMCDSts class instance.
@@ -914,10 +929,10 @@ class pyMCDSts:
         if (s is None) or (figsizepx is None):
             s_pathfile = self.output_path + 'initial.svg'
             try:
-                tree = ET.parse(s_pathfile)
-                root = tree.getroot()
+                x_tree = etree.parse(s_pathfile)
+                x_root = x_tree.getroot()
                 if s is None:
-                    circle_element = root.find('.//{*}circle')
+                    circle_element = x_root.find('.//{*}circle')
                     if not (circle_element is None):
                         r_radius = float(circle_element.get('r')) # px
                         s = int(round((r_radius)**2))
@@ -927,8 +942,8 @@ class pyMCDSts:
                     if self.verbose:
                         print(f's set to {s}.')
                 if figsizepx is None:
-                    i_width = int(np.ceil(float(root.get('width')))) # px
-                    i_height = int(np.ceil(float(root.get('height'))))  # px
+                    i_width = int(np.ceil(float(x_root.get('width')))) # px
+                    i_height = int(np.ceil(float(x_root.get('height'))))  # px
                     figsizepx = [i_width, i_height]
             except FileNotFoundError:
                 print(f'Warning @ pyMCDSts.plot_scatter : could not load {s_pathfile}.')
@@ -1035,12 +1050,26 @@ class pyMCDSts:
         return s_path
 
 
-    ## OME TIFF RELATED FUNCTIONS ##
-
-    def make_ome_tiff(self, cell_attr='ID', file=True, collapse=True):
+    def make_cell_vtk(self, attribute=['cell_type']):
         """
         input:
-            cell_attr:
+        output:
+        description:
+        """
+        s_path = None
+        # processing
+        for mcds in self.get_list_mcds():
+            mcds.make_cell_vtk(attribute=attribute)
+        # output
+        return s_path
+
+
+    ## OME TIFF RELATED FUNCTIONS ##
+
+    def make_ome_tiff(self, cell_attribute='ID', file=True, collapse=True):
+        """
+        input:
+            cell_attribute:
             file:
             collapse:
 
@@ -1051,40 +1080,66 @@ class pyMCDSts:
 
         """
         # each T time step
-        a_tczyx_img = []
+        l_tczyx_img = []
         for i, mcds in enumerate(self.get_mcds_list()):
-            a_czyx_img = mcds.get_ome_tiff(attr=attr, file=False)
-            a_tczyx_img.append(a_czyx_img)
+            if (not file and not collapse) or (not file and collapse) or (file and collapse):  # 00, 01, 11
+                a_czyx_img = mcds.make_ome_tiff(cell_attribute=cell_attribute, file=False)
+                l_tczyx_img.append(a_czyx_img)
 
-        # output
-        a_tczyx_img = np.array(a_tczyx_img)
-        if self.verbose:
-            print('a_tczyx_img shape:', a_tczyx_img.shape)
+            elif (file and not collapse):  # 10
+                s_pathfile = mcds.make_ome_tiff(cell_attribute=cell_attribute, file=True)
+                l_tczyx_img.append(s_pathfile)
 
-        # numpy array
-        if not file:
+            else:
+                sys.exit(f'Error @ make_ome_tiff :.')
+
+        # output 00 list of numpy arrays
+        if (not file and not collapse):
+            if self.verbose:
+                print(f'la_tczyx_img shape: {len(l_tczyx_img)} * {l_tczyx_img[0].shape}')
+            return l_tczyx_img
+
+        # output 01 numpy array
+        elif (not file and collapse):  # 01
+            # numpy array
+            a_tczyx_img = np.array(l_tczyx_img)
+            if self.verbose:
+                print('a_tczyx_img shape:', a_tczyx_img.shape)
             return a_tczyx_img
 
-        # write to file
-        else:
-            s_pathfile = '.ome.tif'
+        # output 10 list of pathfile strings
+        elif (file and not collapse):  # 01
+            return l_tczyx_img
+
+        # output 11 ometiff file
+        elif (file and collapse):  # 11
+            a_tczyx_img = np.array(l_tczyx_img)
+            if self.verbose:
+                print('a_tczyx_img shape:', a_tczyx_img.shape)
+            ls_channel = mcds.get_substrate_list() + mcds.get_celltype_list()
+            s_tiffpathfile = f'{self.output_path}timeseries_{cell_attribute}.ome.tiff'
             OmeTiffWriter.save(
                 a_tczyx_img,
-                s_pathfile,
+                s_tiffpathfile,
                 dim_order = 'TCZYX',
                 #ome_xml=x_img,
-                channel_names = [],
-                image_names = '',
-                physical_pixel_sizes = 1, # [um]
+                channel_names = ls_channel,
+                image_names = [f'timeseries_{cell_attribute}'],
+                physical_pixel_sizes = aicsimageio.types.PhysicalPixelSizes(mcds.get_voxel_spacing()[2], 1.0, 1.0), #z,y,x [um]
                 #channel_colors=,
                 #fs_kwargs={},
             )
-            return s_pathfile
+            return s_tiffpathfile
+
+        # error case
+        else:
+            sys.exit(f'Error @ make_ome_tiff :.')
+
 
 
     ## GRAPH RELATED FUNCTIONS ##
 
-    def make_graph_gml(self, graph_type='neighbor', edge_attr=True, node_attr=[]):
+    def make_graph_gml(self, graph_type='neighbor', edge_attribute=True, node_attribute=[]):
         """
         input:
             self: pyMCDS class instance.
@@ -1094,11 +1149,11 @@ class pyMCDSts:
                 attached: processes mcds.get_attached_graph_dict dictionary.
                 neighbor: processes mcds.get_neighbor_graph_dict dictionary.
 
-            edge_attr: boolean; default True
+            edge_attribute: boolean; default True
                 specifies if the spatial Euclidean distance is used for
                 edge attribute, to generate a weighted graph.
 
-            node_attr: list of strings; default is empty list
+            node_attribute: list of strings; default is empty list
                 list of mcds.get_cell_df dataframe columns, used for
                 node attributes.
 
@@ -1125,8 +1180,8 @@ class pyMCDSts:
         for mcds in self.get_mcds_list():
             s_pathfile = mcds.make_graph_gml(
                 graph_type = graph_type,
-                edge_attr = edge_attr,
-                node_attr = node_attr,
+                edge_attribute = edge_attribute,
+                node_attribute = node_attribute,
             )
             ls_pathfile.append(s_pathfile)
 

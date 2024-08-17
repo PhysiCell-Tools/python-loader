@@ -15,6 +15,8 @@
 
 
 # load library
+import aicsimageio
+from aicsimageio.writers import OmeTiffWriter
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib import colors
@@ -660,19 +662,21 @@ class pyMCDS:
 
     ## MICROENVIRONMENT RELATED FUNCTIONS ##
 
-    def get_substrate_names(self):
+    def get_substrate_list(self):
         """
         input:
 
         output:
             ls_substrate: list of stings
-                alphabetically ordered list of all tracked substrates.
+                by ID ordered list of all tracked substrates.
 
         description:
             function returns all chemical species names,
             modeled in the microenvironment.
         """
-        ls_substrate = sorted(self.data['continuum_variables'].keys())
+        # get substrate listing
+        ds_substrate = self.get_substrate_dict()
+        ls_substrate = [ds_substrate[s_key] for s_key in sorted(ds_substrate, key=int)]
         return ls_substrate
 
 
@@ -708,7 +712,7 @@ class pyMCDS:
         # extract data
         ls_column = ['substrate','decay_rate','diffusion_coefficient']
         ll_sub = []
-        for s_substrate in self.get_substrate_names():
+        for s_substrate in self.get_substrate_list():
             s_decay_value = self.data['continuum_variables'][s_substrate]['decay_rate']['value']
             s_diffusion_value = self.data['continuum_variables'][s_substrate]['diffusion_coefficient']['value']
             ll_sub.append([s_substrate, s_decay_value, s_diffusion_value])
@@ -716,7 +720,7 @@ class pyMCDS:
         # generate dataframe
         df_substrate = pd.DataFrame(ll_sub, columns=ls_column)
         df_substrate.set_index('substrate', inplace=True)
-        df_substrate.columns.name = 'feature'
+        df_substrate.columns.name = 'attribute'
 
         # output
         return df_substrate
@@ -786,7 +790,7 @@ class pyMCDS:
         output:
             ar_concs: numpy array of floating point numbers
                 array of substrate concentrations in the order
-                given by get_substrate_names().
+                given by get_substrate_list().
 
         description:
             function return concentrations of each chemical species
@@ -801,7 +805,7 @@ class pyMCDS:
 
             # get voxel coordinate and substrate names
             i, j, k = self.get_voxel_ijk(x, y, z, is_in_mesh=False)
-            ls_substrate = self.get_substrate_names()
+            ls_substrate = self.get_substrate_list()
             ar_concs = np.zeros(len(ls_substrate))
 
             # get substrate concentrations
@@ -893,7 +897,7 @@ class pyMCDS:
         la_data = [ai_i, ai_j, ai_k, ar_m, ar_n, ar_p]
 
         # handle concentrations
-        for s_substrate in self.get_substrate_names():
+        for s_substrate in self.get_substrate_list():
             ls_column.append(s_substrate)
             ar_conc = self.get_concentration(substrate=s_substrate, z_slice=None)
             la_data.append(ar_conc.flatten(order='C'))
@@ -912,11 +916,11 @@ class pyMCDS:
            df_conc = df_conc.loc[df_conc.mesh_center_p == z_slice, :]
 
         # filter
-        es_feature = set(df_conc.columns).difference(es_coor_conc)
+        es_attribute = set(df_conc.columns).difference(es_coor_conc)
         if (len(keep) > 0):
-            es_delete = es_feature.difference(keep)
+            es_delete = es_attribute.difference(keep)
         else:
-            es_delete = es_feature.intersection(drop)
+            es_delete = es_attribute.intersection(drop)
 
         if (values > 1):
             for s_column in set(df_conc.columns).difference(es_coor_conc):
@@ -1131,10 +1135,10 @@ class pyMCDS:
         vr_grid.SetZCoordinates(vf_z)
 
         # Learn substrate names
-        l_substrate_names = self.get_substrate_names()
+        l_substrate = self.get_substrate_list()
 
         # For loop to fill rectilinear grid
-        for name_index, name in enumerate(l_substrate_names):
+        for name_index, name in enumerate(l_substrate):
             vf_values = vtk.vtkFloatArray()
             vf_values.SetNumberOfComponents(1)
             vf_values.SetNumberOfTuples(t_dims[0] * t_dims[1] * t_dims[2])
@@ -1164,19 +1168,20 @@ class pyMCDS:
 
     ## CELL RELATED FUNCTIONS ##
 
-    def get_cell_variables(self):
+    def get_celltype_list(self):
         """
         input:
 
         output:
-            ls_variables: list of strings
-                alphabetically ordered list of all tracked cell variable names.
+            ls_celltype: list of strings
+                by ID ordered list of all tracked celltype labels.
 
         description:
-            function returns all modeled cell variable names.
+            function returns a list with all celltype labels.
         """
-        ls_variables = sorted(self.data['discrete_cells']['data'].keys())
-        return ls_variables
+        ds_celltype = self.get_celltype_dict()
+        ls_celltype = [ds_celltype[s_key] for s_key in sorted(ds_celltype, key=int)]
+        return ls_celltype
 
 
     def get_celltype_dict(self):
@@ -1349,11 +1354,11 @@ class pyMCDS:
         df_cell.loc[:,'chemotaxis_index'] = df_cell.loc[:,'chemotaxis_index'].replace(self.data['metadata']['substrate'])
 
         # filter
-        es_feature = set(df_cell.columns).difference(es_coor_cell)
+        es_attribute = set(df_cell.columns).difference(es_coor_cell)
         if (len(keep) > 0):
-            es_delete = es_feature.difference(keep)
+            es_delete = es_attribute.difference(keep)
         else:
-            es_delete = es_feature.intersection(drop)
+            es_delete = es_attribute.intersection(drop)
 
         if (values > 1):  # by minimal number of states
             for s_column in set(df_cell.columns).difference(es_coor_cell):
@@ -1633,12 +1638,11 @@ class pyMCDS:
         return fig
 
 
-    def make_cell_vtk(self, l_attributes=['cell_type'], visualize='True'):
-        # BUE 2024: attributes or features?
+    def make_cell_vtk(self, attribute=['cell_type'], visualize=True):
         """
         input:
 
-            attributes: list of strings; default is 'cell_type'
+            attribute: list of strings; default is 'cell_type'
                 column name within cell dataframe.
 
             visualize: boolean; default is True
@@ -1688,7 +1692,7 @@ class pyMCDS:
         vu_grid.GetPointData().SetActiveScalars("positions_and_radii")
 
         # Fill This grid with given attributes
-        for name_index, name in enumerate(l_attributes):
+        for name_index, name in enumerate(attribute):
             custom_data_i = df_cell[name]
             if (type(custom_data_i[0]) in {str, np.str_}):
                 custom_data_vtk = vtk.vtkStringArray()
@@ -1803,7 +1807,7 @@ class pyMCDS:
         return self.data['discrete_cells']['graph']['neighbor_cells']
 
 
-    def make_graph_gml(self, graph_type='neighbor', edge_attr=True, node_attr=[]):
+    def make_graph_gml(self, graph_type='neighbor', edge_attribute=True, node_attribute=[]):
         """
         input:
             graph_type: string; default is neighbor
@@ -1811,11 +1815,11 @@ class pyMCDS:
                 attached: processes mcds.get_attached_graph_dict dictionary.
                 neighbor: processes mcds.get_neighbor_graph_dict dictionary.
 
-            edge_attr: boolean; default True
+            edge_attribute: boolean; default True
                 specifies if the spatial Euclidean distance is used for
                 edge attribute, to generate a weighted graph.
 
-            node_attr: list of strings; default is empty list
+            node_attribute: list of strings; default is empty list
                 list of mcds.get_cell_df dataframe columns, used for
                 node attributes.
 
@@ -1860,22 +1864,22 @@ class pyMCDS:
             # node
             f.write(f'  node [\n    id {i_src}\n    label "node_{i_src}"\n')
             # node attributes
-            for s_attr in node_attr:
-                o_attr = df_cell.loc[i_src, s_attr]
-                if (type(o_attr) in {bool, np.bool, np.bool_, int, np.int_, np.int8, np.int16, np.int32, np.int64}):
-                    f.write(f'    {s_attr} {int(o_attr)}\n')
-                elif (type(o_attr) in {float, np.float16, np.float32, np.float64}):  # np.float128
-                    f.write(f'    {s_attr} {o_attr}\n')
-                elif (type(o_attr) in {str, np.str_}):
-                    f.write(f'    {s_attr} "{o_attr}"\n')
+            for s_attribute in node_attribute:
+                o_attribute = df_cell.loc[i_src, s_attribute]
+                if (type(o_attribute) in {bool, np.bool, np.bool_, int, np.int_, np.int8, np.int16, np.int32, np.int64}):
+                    f.write(f'    {s_attribute} {int(o_attribute)}\n')
+                elif (type(o_attribute) in {float, np.float16, np.float32, np.float64}):  # np.float128
+                    f.write(f'    {s_attribute} {o_attribute}\n')
+                elif (type(o_attribute) in {str, np.str_}):
+                    f.write(f'    {s_attribute} "{o_attribute}"\n')
                 else:
-                    sys.exit(f'Error @ make_graph_gml : attr {o_attr}; type {type (o_attr)}; type seems not to be bool, int, float, or string.')
+                    sys.exit(f'Error @ make_graph_gml : attribute {o_attribute}; type {type (o_attribute)}; type seems not to be bool, int, float, or string.')
             f.write(f'  ]\n')
             # edge
             for i_dst in ei_dst:
                 if (i_src < i_dst):
                     f.write(f'  edge [\n    source {i_src}\n    target {i_dst}\n    label "edge_{i_src}_{i_dst}"\n')
-                    if (edge_attr):
+                    if (edge_attribute):
                         # edge distance attribute
                         x = df_cell.loc[i_src, 'position_x'] - df_cell.loc[i_dst, 'position_x']
                         y = df_cell.loc[i_src, 'position_y'] - df_cell.loc[i_dst, 'position_y']
@@ -1896,97 +1900,95 @@ class pyMCDS:
 
     ## OME TIFF RELATED FUNCTIONS ##
 
-    def make_ome_tiff(self, cell_attr='ID', file=True):
+    def make_ome_tiff(self, cell_attribute='ID', file=True):
         '''
         input:
-            cell_attr:
+            cell_attribute: strings; default is 'ID' wich will result in a segmentation mask.
+                column name within cell dataframe.
+
             file:
 
         output:
             file or numpy array
 
         description:
+            function to transfrom the mcds output into an 1[um] spaced
+            czyx ome tiff file, a substarte or cell_type per channel.
+            a ome tiff file is more or less:
+            a numpy array, containing the image infromation
+            and an xml, containing the microscopy meta data inforamtion,
+            like for example the channel labels.
+            the ome tiff file format can for example be read by the napai
+            software.
         '''
-
         # const
         ls_coor_mnp = ['mesh_center_m', 'mesh_center_n', 'mesh_center_p'] # xyz
         ls_coor_xyz = ['position_x', 'position_y', 'position_z'] # xyz
         ls_coor = ['voxel_x', 'voxel_y', 'voxel_z']
 
         # time step tensor
-        i_min = int(mcds.get_time())
-
-        # get domain range
-        ltr_xyz_range = mcds.get_xyz_range()
-        llr_voxel_xyz_range = [[0, None], [0, None], [0, None]]
-        llr_voxel_xyz_range[0][1] = ltr_xyz_range[0][1] -  ltr_xyz_range[0][0]
-        llr_voxel_xyz_range[1][1] = ltr_xyz_range[1][1] -  ltr_xyz_range[1][0]
-        llr_voxel_xyz_range[2][1] = ltr_xyz_range[2][1] -  ltr_xyz_range[2][0]
+        i_time = int(self.get_time())
 
         # get xy coordinate dataframe
-        lr_axis_z  = list(mcds.get_mesh_mnp_axis()[2] - mcds.get_voxel_spacing()[2] / 2)
-        lr_axis_z.append(mcds.get_mesh_mnp_axis()[2][-1] + mcds.get_voxel_spacing()[2] / 2)
+        lr_axis_z  = list(self.get_mesh_mnp_axis()[2] - self.get_voxel_spacing()[2] / 2)
+        lr_axis_z.append(self.get_mesh_mnp_axis()[2][-1] + self.get_voxel_spacing()[2] / 2)
         lll_coor = []
-        for i_x in range(int(llr_voxel_xyz_range[0][1])):
-            for i_y in range(int(llr_voxel_xyz_range[1][1])):
+        for i_x in range(int(round(self.get_voxel_ijk_range()[0][1] * self.get_voxel_spacing()[0]))):
+            for i_y in range(int(round(self.get_voxel_ijk_range()[1][1] * self.get_voxel_spacing()[1]))):
                 lll_coor.append([i_x, i_y])
         df_coor = pd.DataFrame(lll_coor, columns=ls_coor[:2]) #dtype={'voxel_x': int, 'voxel_y': int, 'voxel_z': float}
         lr_axis_z[-1] += 1
 
-        # get cell type listing
-        ds_celltype = mcds.get_celltype_dict()
-        ls_celltype = [ds_celltype[s_key] for s_key in sorted(ds_celltype, key=int)]
+        # get ordered cell type listing
+        ls_celltype = self.get_celltype_list()
 
-        # get cell type dataframe
-        df_cell = mcds.get_cell_df()
-        i_cell_radius = int(df_cell.radius.mean().round() - 1)
-        df_cell = df_cell.loc[:, ls_coor_xyz + ['cell_type']].reset_index()  # 'time'
-        # reset cell that are out of the xyz domain range (bue 20240811: solved by df_coor left side merge)
-        #df_cell.drop(df_cell.loc[(df_cell.position_x < mcds.get_xyz_range()[0][0]), 'position_x'].index, inplace=True)
-        #df_cell.drop(df_cell.loc[(df_cell.position_y < mcds.get_xyz_range()[1][0]), 'position_y'].index, inplace=True)
-        #df_cell.drop(df_cell.loc[(df_cell.position_z < mcds.get_xyz_range()[2][0]), 'position_z'].index, inplace=True)
-        #df_cell.drop(df_cell.loc[(df_cell.position_x > mcds.get_xyz_range()[0][1]), 'position_x'].index, inplace=True)
-        #df_cell.drop(df_cell.loc[(df_cell.position_y > mcds.get_xyz_range()[1][1]), 'position_y'].index, inplace=True)
-        #df_cell.drop(df_cell.loc[(df_cell.position_z > mcds.get_xyz_range()[2][1]), 'position_z'].index, inplace=True)
-
-        # shift xy data
-        df_cell.loc[:, 'position_x'] = (df_cell.loc[:, 'position_x'] - mcds.get_xyz_range()[0][0]).round()
-        df_cell.loc[:, 'position_y'] = (df_cell.loc[:, 'position_y'] - mcds.get_xyz_range()[1][0]).round()
-
-        # extract from datafarme
-        # BUE: make this an option
-        #df_cell = df_cell.groupby(ls_coor_xyz + ['cell_type']).count().reset_index()
-        #df_cell = df_cell.pivot_table(index=ls_coor_xyz, columns='cell_type', values='time', fill_value=0).reset_index()  # aggfunc='sum'
+        # get and manipulate cell dataframe
+        df_cell = self.get_cell_df().reset_index()
         df_cell.ID =  df_cell.ID + 1
-        df_cell = df_cell.pivot_table(index=ls_coor_xyz, columns='cell_type', values='ID', fill_value=0, aggfunc='sum').reset_index()
+
+        # extract avearge cell radius
+        # bue 20240816: should maybe be done for each cell type separately?
+        i_cell_radius = int(df_cell.radius.mean().round() - 1)
+
+        # extract input from dataframe
+        df_cell = df_cell.loc[:, ls_coor_xyz + ['cell_type', cell_attribute]]
+        df_cell = df_cell.pivot_table(index=ls_coor_xyz, columns='cell_type', values=cell_attribute, fill_value=0, aggfunc='sum').reset_index()
         for s_celltype in ls_celltype:
             if not s_celltype in set(df_cell.columns):
                df_cell[s_celltype] = 0
 
-        # merge with xy coordiantes
+        # shift cell position xy data
+        df_cell.loc[:, 'position_x'] = (df_cell.loc[:, 'position_x'] - self.get_xyz_range()[0][0]).round()
+        df_cell.loc[:, 'position_y'] = (df_cell.loc[:, 'position_y'] - self.get_xyz_range()[1][0]).round()
+
+        # relabel and retype xyz coordiantes
         df_cell.rename({'position_x':'voxel_x', 'position_y':'voxel_y', 'position_z':'voxel_z'}, axis=1, inplace=True)
         df_cell = df_cell.astype({'voxel_x': int, 'voxel_y': int, 'voxel_z': float})
 
-        # get substrate listing
-        ds_substrate = mcds.get_substrate_dict()
-        ls_substrate = [ds_substrate[s_key] for s_key in sorted(ds_substrate, key=int)]
+        # get ordered substrate listing
+        ls_substrate = self.get_substrate_list()
 
         # get substrate dataframe
-        df_conc = mcds.get_conc_df()
-        i_conc_radius = int(np.round(np.mean(mcds.get_voxel_spacing()[:2])) - 1)
+        df_conc = self.get_conc_df()
+
+        # extract voxel radius
+        i_conc_radius = int(np.round(np.mean(self.get_voxel_spacing()[:2])) - 1)
+
+        # extract input from data frame
         df_conc = df_conc.loc[:, ls_coor_mnp + ls_substrate]
 
-        # shift xy  data
-        df_conc.loc[:, 'mesh_center_m'] = df_conc.loc[:, 'mesh_center_m'] - mcds.get_xyz_range()[0][0]
-        df_conc.loc[:, 'mesh_center_n'] = df_conc.loc[:, 'mesh_center_n'] - mcds.get_xyz_range()[1][0]
+        # shift substrate xy data
+        df_conc.loc[:, 'mesh_center_m'] = (df_conc.loc[:, 'mesh_center_m'] - self.get_xyz_range()[0][0]).round()
+        df_conc.loc[:, 'mesh_center_n'] = (df_conc.loc[:, 'mesh_center_n'] - self.get_xyz_range()[1][0]).round()
 
-        # merge with xy coordiantes
+        # relabel and retype xyz coordiantes
         df_conc.rename({'mesh_center_m':'voxel_x', 'mesh_center_n':'voxel_y', 'mesh_center_p':'voxel_z'}, axis=1, inplace=True)
         df_conc = df_conc.astype({'voxel_x': int, 'voxel_y': int, 'voxel_z': float})
 
         # each C channel - time step tensors
-        a_czyx_img = []
-        for s_channel in ls_substrate + ls_celltype:
+        la_czyx_img = []
+        ls_channel = ls_substrate + ls_celltype
+        for s_channel in ls_channel:
 
             # get channel dataframe
             if s_channel in set(ls_substrate):
@@ -1994,13 +1996,13 @@ class pyMCDS:
             elif s_channel in set(ls_celltype):
                 df_channel = df_cell.loc[:, ls_coor + [s_channel]]
             else:
-                sys.exit(f'Error: {s_channel} unknowen channel detected!')
+                sys.exit(f'Error: {s_channel} unknowen channel, not on substrate and not in cell type list, detected!')
 
-            # each Z axis
-            a_zyx_img = []
+            # each z axis
+            la_zyx_img = []
             for i_zaxis in range(len(lr_axis_z)):
                 if (i_zaxis < (len(lr_axis_z) - 1)):
-                    print(f'\nprocessing: {i_min} [min]  {s_channel} [channel]  {i_zaxis} [z_axis] ...')
+                    print(f'processing: {i_time} [min]  {s_channel} [channel]  {i_zaxis} [z_axis] ...')
                     # extract z layer
                     df_yxchannel = df_channel.loc[
                         ((df_channel.loc[:, ls_coor[2]] >= lr_axis_z[i_zaxis]) & (df_channel.loc[:, ls_coor[2]] < lr_axis_z[i_zaxis + 1])),
@@ -2008,49 +2010,50 @@ class pyMCDS:
                     ]
 
                     # merge with coooridnates and get image
+                    # bue 20240811: df_coor left side merge will cut off reset cell that are out of the xyz domain range, which is what we want.
                     df_yxchannel = pd.merge(df_coor, df_yxchannel, on=ls_coor[:2], how='left').replace({np.nan: 0})
-                    print('df_yxchannel:', df_yxchannel.sum())
                     df_yxchannel = df_yxchannel.pivot(columns=ls_coor[0], index=ls_coor[1], values=s_channel)
-                    a_yx_img = np.array(df_yxchannel.values)
+                    a_yx_img = df_yxchannel.values
 
                     # grow
-                    print('a_yx_img:', a_yx_img.shape)
-                    if s_channel in set(ls_substrate):
-                        a_yx_img = imagine.grow(a_yx_img, i_step=i_conc_radius)
-                    elif s_channel in set(ls_celltype):
-                        a_yx_img = imagine.grow(a_yx_img, i_step=i_cell_radius)
-                    else:
-                        sys.exit(f'Error: {s_channel} unknowen channel detected!')
+                    #print('a_yx_img:', a_yx_img.shape)
+                    #if s_channel in set(ls_substrate):
+                    #    a_yx_img = imagine.grow(a_yx_img, i_step=i_conc_radius)
+                    #elif s_channel in set(ls_celltype):
+                    #    a_yx_img = imagine.grow(a_yx_img, i_step=i_cell_radius)
+                    #else:
+                    #    sys.exit(f'Error: {s_channel} unknowen channel detected!')
 
                     # update output
-                    print('a_yx_img:', a_yx_img.shape)
-                    a_zyx_img.append(a_yx_img)
-            a_czyx_img.append(np.array(a_zyx_img))
+                    la_zyx_img.append(a_yx_img)
+            a_zyx_img = np.array(la_zyx_img)
+            la_czyx_img.append(np.array(a_zyx_img))
 
         # output
-        a_czyx_img = np.array(a_czyx_img)
+        a_czyx_img = np.array(la_czyx_img)
 
         # numpy array
-        if (s_file is None):
+        if not file:
             return a_czyx_img
 
         # write to file
         else:
-            s_pathfile = '.ome.tif'
+            s_tifffile = self.xmlfile.replace('.xml', f'_{cell_attribute}.ome.tiff')
+            s_tiffpathfile = self.path + '/' + s_tifffile
             if self.verbose:
                 print('a_czyx_img shape:', a_czyx_img.shape)
             OmeTiffWriter.save(
                 a_czyx_img,
-                s_pathfile,
+                s_tiffpathfile,
                 dim_order = 'CZYX',
                 #ome_xml=x_img,
-                channel_names = [],
-                image_names = '',
-                physical_pixel_sizes = 1, # [um]
+                channel_names = ls_channel,
+                image_names = [s_tifffile.replace('.ome.tiff','')],
+                physical_pixel_sizes = aicsimageio.types.PhysicalPixelSizes(self.get_voxel_spacing()[2], 1.0, 1.0), #z,y,x [um]
                 #channel_colors=,
                 #fs_kwargs={},
             )
-            return s_pathfile
+            return s_tiffpathfile
 
 
     ## MODEL PARAMETER SETTING RELATED FUNCTIONS ##
@@ -2077,7 +2080,7 @@ class pyMCDS:
 
         # microenvironment
         if self.microenv:
-            for s_substrate in self.get_substrate_names():
+            for s_substrate in self.get_substrate_list():
                 # unit from substrate parameters
                 s_unit = self.data['continuum_variables'][s_substrate]['units']
                 ds_unit.update({s_substrate: s_unit})
@@ -2133,6 +2136,9 @@ class pyMCDS:
         self.path = output_path
         self.xmlfile = s_xmlfile
 
+        # set flag
+        b_celltype = False
+
         # generate output dictionary
         d_mcds = {}
         d_mcds['metadata'] = {}
@@ -2173,7 +2179,7 @@ class pyMCDS:
                 s_id = str(x_celltype.get('ID'))
                 s_celltype = x_celltype.get('name').replace(' ', '_')
                 d_mcds['metadata']['cell_type'].update({s_id : s_celltype})
-
+            b_celltype = True
 
         #######################################
         # read physicell output xml path/file #
@@ -2385,16 +2391,23 @@ class pyMCDS:
                 s_id = str(x_celltype.get('ID'))
                 s_celltype = (x_celltype.text).replace(' ', '_')
                 d_mcds['metadata']['cell_type'].update({s_id : s_celltype})
+            b_celltype = True
         except AttributeError:
             pass
 
         # iterate over labels which are children of labels these will be used to label data arrays
         ls_variable = []
-        for label in x_celldata.find('labels').findall('label'):
+        for x_label in x_celldata.find('labels').findall('label'):
             # I don't like spaces in my dictionary keys!
-            s_variable = label.text.replace(' ', '_')
-            i_variable = int(label.get('size'))
-            s_unit = label.get('units')
+            s_variable = x_label.text.replace(' ', '_')
+            i_variable = int(x_label.get('size'))
+            s_unit = x_label.get('units')
+
+            # update metadata cell_type ID label dictionar
+            if (not (b_celltype)) and (s_variable == 'cell_type'):
+                for i_id in range(i_variable):
+                    d_mcds['metadata']['cell_type'].update({str(i_id) : str(i_id)})
+                b_celltype = True
 
             # variable unique for each celltype substrate combination
             if s_variable in es_var_subs:
@@ -2458,7 +2471,7 @@ class pyMCDS:
 
         # check for column label mapping error (as good as it gets)
         if (ar_cell.shape[0] != len(ls_variable)):
-            sys.exit(f'Error @ pyMCDS._read_xml : extracted column label list leng {len(ls_variable)} and data array shape {ar_cell.shape} are incompatible. please file a bug report. this most likely casued by an error in the pcdl implementation!')
+            sys.exit(f'Error @ pyMCDS._read_xml : extracted column label list leng {len(ls_variable)} and data array shape {ar_cell.shape} are incompatible!')
 
         # store data
         d_mcds['discrete_cells']['data'] = {}

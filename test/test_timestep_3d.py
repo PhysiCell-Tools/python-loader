@@ -490,7 +490,7 @@ class TestPyMcds3dGraphWorkhorse(object):
     ## graph related functions ##
     # attached graph gml files
     def test_mcds_make_graph_gml_attached_defaultattr(self, mcds=mcds):
-        s_pathfile = mcds.make_graph_gml(graph_type='attached', edge_attr=True, node_attr=[])
+        s_pathfile = mcds.make_graph_gml(graph_type='attached', edge_attribute=True, node_attribute=[])
         f = open(s_pathfile)
         s_file = f.read()
         f.close()
@@ -505,7 +505,7 @@ class TestPyMcds3dGraphWorkhorse(object):
         os.remove(s_pathfile)
 
     def test_mcds_make_graph_gml_attached_edgeattrfalse(self, mcds=mcds):
-        s_pathfile = mcds.make_graph_gml(graph_type='attached', edge_attr=False, node_attr=[])
+        s_pathfile = mcds.make_graph_gml(graph_type='attached', edge_attribute=False, node_attribute=[])
         f = open(s_pathfile)
         s_file = f.read()
         f.close()
@@ -520,7 +520,7 @@ class TestPyMcds3dGraphWorkhorse(object):
         os.remove(s_pathfile)
 
     def test_mcds_make_graph_gml_neighbor_nodeattrtrue(self, mcds=mcds):
-        s_pathfile = mcds.make_graph_gml(graph_type='neighbor', edge_attr=True, node_attr=['dead','cell_count_voxel','cell_density_micron3','cell_type'])  # bool,int,float,str
+        s_pathfile = mcds.make_graph_gml(graph_type='neighbor', edge_attribute=True, node_attribute=['dead','cell_count_voxel','cell_density_micron3','cell_type'])  # bool,int,float,str
         f = open(s_pathfile)
         s_file = f.read()
         f.close()
@@ -540,7 +540,7 @@ class TestPyMcds3dGraphWorkhorse(object):
 
     # neighbor graph gml file
     def test_mcds_make_graph_gml_neighbor_defaultattr(self, mcds=mcds):
-        s_pathfile = mcds.make_graph_gml(graph_type='neighbor', edge_attr=True, node_attr=[])
+        s_pathfile = mcds.make_graph_gml(graph_type='neighbor', edge_attribute=True, node_attribute=[])
         f = open(s_pathfile)
         s_file = f.read()
         f.close()
@@ -555,7 +555,7 @@ class TestPyMcds3dGraphWorkhorse(object):
         os.remove(s_pathfile)
 
     def test_mcds_make_graph_gml_neighbor_edgeattrfalse(self, mcds=mcds):
-        s_pathfile = mcds.make_graph_gml(graph_type='neighbor', edge_attr=False, node_attr=[])
+        s_pathfile = mcds.make_graph_gml(graph_type='neighbor', edge_attribute=False, node_attribute=[])
         f = open(s_pathfile)
         s_file = f.read()
         f.close()
@@ -570,7 +570,7 @@ class TestPyMcds3dGraphWorkhorse(object):
         os.remove(s_pathfile)
 
     def test_mcds_make_graph_gml_neighbor_nodeattrtrue(self, mcds=mcds):
-        s_pathfile = mcds.make_graph_gml(graph_type='neighbor', edge_attr=True, node_attr=['dead','cell_count_voxel','cell_density_micron3','cell_type'])  # bool,int,float,str
+        s_pathfile = mcds.make_graph_gml(graph_type='neighbor', edge_attribute=True, node_attribute=['dead','cell_count_voxel','cell_density_micron3','cell_type'])  # bool,int,float,str
         f = open(s_pathfile)
         s_file = f.read()
         f.close()

@@ -134,7 +134,7 @@ We can retrieve an alphabetically ordered list of all substrates processed in th
 (This function might become deprected in a future version of pcdl.)
 
 ```python
-mcds.get_substrate_names()  # ['oxygen']
+mcds.get_substrate_list()  # ['oxygen']
 ```
 
 We can retrieve a dictionary that maps substrate indexes to labels.
@@ -229,8 +229,8 @@ It is quite a list.\
 This list is ordered alphabetically, except for the first entry, which always is ID.
 
 ```python
-mcds.get_cell_variables()  # ['ID', 'attachment_elastic_constant', ..., 'velocity_z']
-len(mcds.get_cell_variables())  # 77
+mcds.get_celltype_list()  # ['ID', 'attachment_elastic_constant', ..., 'velocity_z']
+len(mcds.get_celltype_list())  # 77
 ```
 
 
@@ -261,22 +261,22 @@ Similarly, substrates variables that over the whole domain overall time steps ha
 mcdsts = pcdl.TimeSeries(s_path)
 ```
 
-There are functions to help triage over the entier time series for features that more likely might carry information, by checking for variables with variation.
+There are functions to help triage over the entier time series for attributes that more likely might carry information, by checking for variables with variation.
 ```
 # cell data min max values
-dl_cell = mcdsts.get_cell_df_features()  # returns a dictionary with all features, listing all accessed values
-len(dl_cell)  # 84 features
-dl_cell.keys()  # list feature names
+dl_cell = mcdsts.get_cell_attributes()  # returns a dictionary with all attributes, listing all accessed values
+len(dl_cell)  # 84 attributes
+dl_cell.keys()  # list attribute names
 dl_cell['oxygen']  # list min and max oxygen values found, surrounding a cell, over the whole series
 
 # cell data number of values
 di_state = {}
-[di_state.update({s_feature: len(li_state)}) for s_feature, li_state in mcdsts.get_cell_df_features(allvalues=True).items()]
+[di_state.update({s_attribute: len(li_state)}) for s_attribute, li_state in mcdsts.get_cell_attributes(allvalues=True).items()]
 di_state['oxygen']  # cell surrounding oxygen was found occupying 2388 different values (states) over the whole time series
 
 # substrate data
-dl_conc = mcdsts.get_conc_df_features()
-dl_conc.keys()  # list feature names
+dl_conc = mcdsts.get_conc_attributes()
+dl_conc.keys()  # list attribute names
 dl_conc['oxygen']  # list min and max oxygen values found in the domain over the whole series
 ```
 BUE 20240808: Data Triage
@@ -327,12 +327,12 @@ print(ann)  # AnnData object with n_obs × n_vars = 1099 × 80
             #     obsm: 'spatial'
 ```
 
-The output tells us that we have loaded a time step  with 1099 cells (agents) and 80 features.
+The output tells us that we have loaded a time step  with 1099 cells (agents) and 80 attributes.
 And that we have spatial coordinate annotation (position\_x, position\_y, position\_z, time) of the loaded data.
 
 Whatever you d'like to do with your physicell data, it most probably was already done with single cell wet lab data.
 That's being said: PhysiCell data is different scdata than scRNA seq, for example.
-scRNA seq data is higher dimensional (e.g. for the human genome, over 20000 genes each time step) than PhysiCell data (tens, maybe hundreds of features).
+scRNA seq data is higher dimensional (e.g. for the human genome, over 20000 genes each time step) than PhysiCell data (tens, maybe hundreds of attributes).
 scRNA seq data is always single time step data because the measurement consumes the sample.
 PhysiCell data is always time series data, even we look at this moment only at one time step.
 This all means, the wet lab bioinformatics will partially try to solve problems (e.g. trajectory inference), that simply are no problems for us and the other way around.
@@ -343,16 +343,16 @@ For the shake of appearances, let's do a cluster analysis on PhysiCell output us
 ```python
 import scanpy as sc
 
-# loads only feature that have not the same value in all cells.
-# max absolute scales the features into a range between -1 and 1.
+# loads only attribute that have not the same value in all cells.
+# max absolute scales the attributes into a range between -1 and 1.
 ann = mcds.get_anndata(values=2, scale='maxabs')
 
 # principal component analysis
 sc.tl.pca(ann)  # process anndata object with the pca tool.
 sc.pl.pca(ann)  # plot pca result.
-ann.var_names  # list the numerical features we have at hand (alternative way: ann.var.index).
-ann.obs_keys()  # list the categories features we have at hand (alternative way: ann.obs.columns).
-sc.pl.pca(ann, color=['current_phase','oxygen'])  # plot the pca results colored by some features.
+ann.var_names  # list the numerical attributes we have at hand (alternative way: ann.var.index).
+ann.obs_keys()  # list the categories attributes we have at hand (alternative way: ann.obs.columns).
+sc.pl.pca(ann, color=['current_phase','oxygen'])  # plot the pca results colored by some attributes.
 sc.pl.pca(ann, color=list(ann.var_names)+list(ann.obs_keys()))  # gotta catch 'em all!
 sc.pl.pca_variance_ratio(ann)  # plot how much of the variation each principal component captures.
 
@@ -363,7 +363,7 @@ sc.pl.pca(ann, color='leiden')  # plot the pca results colored by leiden cluster
 
 # umap dimensional reduction embedding
 sc.tl.umap(ann)  # process anndata object with the umap tool.
-sc.pl.umap(ann, color=['current_phase','oxygen','leiden'])  # plot the umap result colored by some features.
+sc.pl.umap(ann, color=['current_phase','oxygen','leiden'])  # plot the umap result colored by some attributes.
 ```
 
 ## Graph data Functions

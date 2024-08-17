@@ -113,7 +113,7 @@ def get_anndata():
     parser.add_argument(
         '--scale',
         default = 'maxabs',
-        help = "specify how the data should be scaled. possible values are None, maxabs, minmax, std. None: no scaling. set scale to None if you would like to have raw data or entirely scale, transform, and normalize the data later. maxabs: maximum absolute value distance scaler will linearly map all values into a [-1, 1] interval. if the original data has no negative values, the result will be the same as with the minmax scaler (except with features with only one value). if the feature has only zeros, the value will be set to 0. minmax: minimum maximum distance scaler will map all values linearly into a [0, 1] interval. if the feature has only one value, the value will be set to 0. std: standard deviation scaler will result in sigmas. each feature will be mean centered around 0. ddof delta degree of freedom is set to 1 because it is assumed that the values are samples out of the population and not the entire population. it is incomprehensible to me that the equivalent sklearn method has ddof set to 0. if the feature has only one value, the value will be set to 0. default is maxabs"
+        help = "specify how the data should be scaled. possible values are None, maxabs, minmax, std. None: no scaling. set scale to None if you would like to have raw data or entirely scale, transform, and normalize the data later. maxabs: maximum absolute value distance scaler will linearly map all values into a [-1, 1] interval. if the original data has no negative values, the result will be the same as with the minmax scaler (except with attributes with only one value). if the attribute has only zeros, the value will be set to 0. minmax: minimum maximum distance scaler will map all values linearly into a [0, 1] interval. if the attribute has only one value, the value will be set to 0. std: standard deviation scaler will result in sigmas. each attribute will be mean centered around 0. ddof delta degree of freedom is set to 1 because it is assumed that the values are samples out of the population and not the entire population. it is incomprehensible to me that the equivalent sklearn method has ddof set to 0. if the attribute has only one value, the value will be set to 0. default is maxabs"
     )
     # get_anndata collapse
     parser.add_argument(
@@ -327,10 +327,10 @@ def get_cell_df():
             return s_opathfile
 
 
-def get_cell_df_features():
+def get_cell_attributes():
     # argv
     parser = argparse.ArgumentParser(
-        prog = 'pcdl_get_cell_df_features',
+        prog = 'pcdl_get_cell_attributes',
         description = 'function to detect informative variables in a time series. this function detects even variables which have less than the minimal state count in each time step, but different values from time step to time step. the output is a json file with an entry of all non-coordinate column names that at least in one of the time steps or in between time steps, reach the given minimal value count. key is the column name, mapped is a list of all values (bool, str, and, if allvalues is True, int and float) or a list with minimum and maximum values (int, float).',
         epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
     )
@@ -375,7 +375,7 @@ def get_cell_df_features():
         default = 'true',
         help = 'setting verbose to False for less text output, while processing. default is True.',
     )
-    # get_cell_df_features values
+    # get_cell_attributes values
     parser.add_argument(
         'values',
         nargs = '?',
@@ -383,21 +383,21 @@ def get_cell_df_features():
         type = int,
         help = 'minimal number of values a variable has to have in any of the mcds time steps to be outputted. variables that have only 1 state carry no information. None is a state too. default is 1.',
     )
-    # get_cell_df_features drop
+    # get_cell_attributes drop
     parser.add_argument(
         '--drop',
         nargs = '*',
         default = [],
         help = "set of column labels to be dropped for the dataframe. don't worry: essential columns like ID, coordinates and time will never be dropped. Attention: when the keep parameter is given, then the drop parameter has to be an empty string! default is an empty string.",
     )
-    # get_cell_df_features keep
+    # get_cell_attributes keep
     parser.add_argument(
         '--keep',
         nargs = '*',
         default = [],
         help = "set of column labels to be kept in the dataframe. set values=1 to be sure that all variables are kept. don't worry: essential columns like ID, coordinates and time will always be kept. default is an empty string.",
     )
-    # get_cell_df_features allvalues
+    # get_cell_attributes allvalues
     parser.add_argument(
         '--allvalues',
         default = 'false',
@@ -410,7 +410,7 @@ def get_cell_df_features():
 
     # process arguments
     if not os.path.exists(args.path + '/initial.xml'):
-        sys.exit(f"Error @ pcdl_get_cell_df_features : {args.path} path does not look like a physicell output directory ({args.path}/initial.xml is missing).")
+        sys.exit(f"Error @ pcdl_get_cell_attributes : {args.path} path does not look like a physicell output directory ({args.path}/initial.xml is missing).")
     # custom_data_type
     d_vartype = {}
     for vartype in args.custom_data_type:
@@ -437,13 +437,13 @@ def get_cell_df_features():
     b_allvalues = True if args.allvalues.lower().startswith('t') else False
     if b_allvalues:
         s_values = 'all'
-    dl_variable = mcdsts.get_cell_df_features(
+    dl_variable = mcdsts.get_cell_attributes(
         values = args.values,
         drop = set(args.drop),
         keep = set(args.keep),
         allvalues = b_allvalues,
     )
-    s_opathfile = f'{args.path}/timeseries_cell_features_{s_values}.json'
+    s_opathfile = f'{args.path}/timeseries_cell_attributes_{s_values}.json'
     json.dump(dl_variable, open(s_opathfile, 'w'), sort_keys=True)
     # going home
     return s_opathfile
@@ -566,10 +566,10 @@ def get_conc_df():
             return s_opathfile
 
 
-def get_conc_df_features():
+def get_conc_attributes():
     # argv
     parser = argparse.ArgumentParser(
-        prog = 'pcdl_get_conc_df_features',
+        prog = 'pcdl_get_conc_attributes',
         description = 'function to detect informative substrate concentration variables in a time series. this function detects even variables which have less than the minimal state count in each time step, but different values from time step to time step. the output is a json file with an entry of all non-coordinate column names that at least in one of the time steps or in between time steps, reach the given minimal value count. key is the column name, mapped is a list of all values (bool, str, and, if allvalues is True, int and float) or a list with minimum and maximum values (int, float).',
         epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
     )
@@ -593,7 +593,7 @@ def get_conc_df_features():
         default = 'true',
         help = 'setting verbose to False for less text output, while processing. default is True.',
     )
-    # get_conc_df_features values
+    # get_conc_attributes values
     parser.add_argument(
         'values',
         nargs = '?',
@@ -601,21 +601,21 @@ def get_conc_df_features():
         type = int,
         help = 'minimal number of values a variable has to have in any of the mcds time steps to be outputted. variables that have only 1 state carry no information. None is a state too. default is 1.',
     )
-    # get_conc_df_features drop
+    # get_conc_attributes drop
     parser.add_argument(
         '--drop',
         nargs = '*',
         default = [],
         help = "set of column labels to be dropped for the dataframe. don't worry: essential columns like ID, coordinates and time will never be dropped. Attention: when the keep parameter is given, then the drop parameter has to be an empty string! default is an empty string.",
     )
-    # get_conc_df_features keep
+    # get_conc_attributes keep
     parser.add_argument(
         '--keep',
         nargs = '*',
         default = [],
         help = "set of column labels to be kept in the dataframe. set values=1 to be sure that all variables are kept. don't worry: essential columns like ID, coordinates and time will always be kept. default is an empty string.",
     )
-    # get_conc_df_features allvalues
+    # get_conc_attributes allvalues
     parser.add_argument(
         '--allvalues',
         default = 'false',
@@ -628,7 +628,7 @@ def get_conc_df_features():
 
     # process arguments
     if not os.path.exists(args.path + '/initial.xml'):
-        sys.exit(f"Error @ pcdl_get_conc_df_features : {args.path} path does not look like a physicell output directory ({args.path}/initial.xml is missing).")
+        sys.exit(f"Error @ pcdl_get_conc_attributes : {args.path} path does not look like a physicell output directory ({args.path}/initial.xml is missing).")
     mcdsts = pcdl.pyMCDSts(
         output_path = args.path,
         #custom_data_type,
@@ -644,13 +644,13 @@ def get_conc_df_features():
     b_allvalues = True if args.allvalues.lower().startswith('t') else False
     if b_allvalues:
         s_values = 'all'
-    dl_variable = mcdsts.get_conc_df_features(
+    dl_variable = mcdsts.get_conc_attributes(
         values = args.values,
         drop = set(args.drop),
         keep = set(args.keep),
         allvalues = b_allvalues,
     )
-    s_opathfile = f'{args.path}/timeseries_conc_features_{s_values}.json'
+    s_opathfile = f'{args.path}/timeseries_conc_attributes_{s_values}.json'
     json.dump(dl_variable, open(s_opathfile, 'w'), sort_keys=True)
     # going home
     return s_opathfile
@@ -720,7 +720,7 @@ def get_unit_dict():
     )
     s_opathfile = f'{s_path}/timeseries_unit.csv'
     se_unit = pd.Series(mcds.get_unit_dict())
-    se_unit.index.name = 'feature'
+    se_unit.index.name = 'attribute'
     se_unit.name = 'unit'
     se_unit.sort_index(inplace=True)
     se_unit.to_csv(s_opathfile)
@@ -837,15 +837,15 @@ def make_graph_gml():
         default = 'neighbor',
         help = 'to specify which physicell output data should be processed. attached: processes mcds.get_attached_graph_dict dictionary. neighbor: processes mcds.get_neighbor_graph_dict dictionary. default is neighbor.',
     )
-    # make_graph_gml edge_attr
+    # make_graph_gml edge_attribute
     parser.add_argument(
-        '--edge_attr',
+        '--edge_attribute',
         default = 'true',
         help = 'specifies if the spatial Euclidean distance is used for edge attribute, to generate a weighted graph. default is True.',
     )
-    # make_graph_gml node_attr
+    # make_graph_gml node_attrributes
     parser.add_argument(
-        '--node_attr',
+        '--node_attribute',
         nargs = '*',
         default = [],
         help = 'listing of mcds.get_cell_df dataframe columns, used for node attributes. default is and empty list.',
@@ -886,8 +886,8 @@ def make_graph_gml():
         )
         s_opathfile = df_conc = mcds.make_graph_gml(
             graph_type = args.graph_type,
-            edge_attr = False if args.edge_attr.lower().startswith('f') else True,
-            node_attr = args.node_attr,
+            edge_attribute = False if args.edge_attribute.lower().startswith('f') else True,
+            node_attribute = args.node_attribute,
         )
         # going home
         return s_opathfile
@@ -907,8 +907,8 @@ def make_graph_gml():
         for mcds in mcdsts.get_mcds_list():
             s_opathfile = df_conc = mcds.make_graph_gml(
                 graph_type = args.graph_type,
-                edge_attr = False if args.edge_attr.lower().startswith('f') else True,
-                node_attr = args.node_attr,
+                edge_attribute = False if args.edge_attribute.lower().startswith('f') else True,
+                node_attribute = args.node_attribute,
             )
             ls_opathfile.append(s_opathfile)
         # going home

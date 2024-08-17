@@ -201,8 +201,8 @@ docstring_md(
 
 # write pyMCDS microenv function markdown files
 docstring_md(
-    s_function = 'mcds.get_substrate_names',
-    ls_doc = pcdl.TimeStep.get_substrate_names.__doc__.split('\n'),
+    s_function = 'mcds.get_substrate_list',
+    ls_doc = pcdl.TimeStep.get_substrate_list.__doc__.split('\n'),
 )
 docstring_md(
     s_function = 'mcds.get_substrate_dict',
@@ -235,8 +235,8 @@ docstring_md(
 
 # write pyMCDS cell agent function markdown files
 docstring_md(
-    s_function = 'mcds.get_cell_variables',
-    ls_doc = pcdl.TimeStep.get_cell_variables.__doc__.split('\n'),
+    s_function = 'mcds.get_celltype_list',
+    ls_doc = pcdl.TimeStep.get_celltype_list.__doc__.split('\n'),
 )
 docstring_md(
     s_function = 'mcds.get_celltype_dict',
@@ -319,8 +319,8 @@ docstring_md(
     ls_doc = pcdl.TimeSeries.get_conc_df.__doc__.split('\n'),
 )
 docstring_md(
-    s_function = 'mcdsts.get_conc_df_features',
-    ls_doc = pcdl.TimeSeries.get_conc_df_features.__doc__.split('\n'),
+    s_function = 'mcdsts.get_conc_attributes',
+    ls_doc = pcdl.TimeSeries.get_conc_attributes.__doc__.split('\n'),
 )
 docstring_md(
     s_function = 'mcdsts.plot_contour',
@@ -333,8 +333,8 @@ docstring_md(
     ls_doc = pcdl.TimeSeries.get_cell_df.__doc__.split('\n'),
 )
 docstring_md(
-    s_function = 'mcdsts.get_cell_df_features',
-    ls_doc = pcdl.TimeSeries.get_cell_df_features.__doc__.split('\n'),
+    s_function = 'mcdsts.get_cell_attributes',
+    ls_doc = pcdl.TimeSeries.get_cell_attributes.__doc__.split('\n'),
 )
 docstring_md(
     s_function = 'mcdsts.plot_scatter',
@@ -403,9 +403,9 @@ docstring_md(
 # wite cli function markdown files
 help_md(s_command='pcdl_get_anndata')
 help_md(s_command='pcdl_get_cell_df')
-help_md(s_command='pcdl_get_cell_df_features')
+help_md(s_command='pcdl_get_cell_attributes')
 help_md(s_command='pcdl_get_conc_df')
-help_md(s_command='pcdl_get_conc_df_features')
+help_md(s_command='pcdl_get_conc_attributes')
 help_md(s_command='pcdl_get_unit_dict')
 help_md(s_command='pcdl_get_version')
 help_md(s_command='pcdl_make_graph_gml')

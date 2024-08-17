@@ -1,4 +1,4 @@
-# mcdsts.get_cell_df_features()
+# mcdsts.get_conc_attributes()
 
 
 ## input:
@@ -25,8 +25,7 @@
                 and time will always be kept.
 
             allvalues: boolean; default is False
-                for numeric data, should only the min and max values or
-                all values be returned?
+                should only the min and max values or all values be returned?
 
 ```
 
@@ -34,19 +33,19 @@
 ```
             dl_variable: dictionary of list
                 dictionary with an entry of all non-coordinate column names
-                that at least in one of the time steps or in between
-                time steps, reach the given minimal value count.
+                that at least in one of the time steps or in between time
+                steps, reach the given minimal state count.
                 key is the column name, mapped is a list of all values
-                (bool, str, and, if allvalues is True, int and float) or
-                a list with minimum and maximum values (int, float).
+                (bool, str, and, if allvalues is True, int and float)
+                or a list with minimum and maximum values (int, float).
 
 ```
 
 ## description:
 ```
-            function to detect informative variables in a time series.
-            this function detects even variables which have less than the
-            minimal state count in each time step, but different values
-            from time step to time step.
+            function to detect informative substrate concentration variables
+            in a time series. this function detects even variables which have
+            less than the minimal state count in each time step, but
+            different values from time step to time step.
         
 ```

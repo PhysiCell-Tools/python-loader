@@ -77,11 +77,11 @@ dependencies = [
 
 
 [project.scripts]
+pcdl_get_cell_attributes = "pcdl.pyCLI:get_cell_attributes"
 pcdl_get_anndata = "pcdl.pyCLI:get_anndata"
 pcdl_get_cell_df = "pcdl.pyCLI:get_cell_df"
-pcdl_get_cell_df_features = "pcdl.pyCLI:get_cell_df_features"
+pcdl_get_conc_attributes = "pcdl.pyCLI:get_conc_attributes"
 pcdl_get_conc_df = "pcdl.pyCLI:get_conc_df"
-pcdl_get_conc_df_features = "pcdl.pyCLI:get_conc_df_features"
 pcdl_get_unit_dict = "pcdl.pyCLI:get_unit_dict"
 pcdl_get_version = "pcdl.pyCLI:get_version"
 #pcdl_make_cell_vtk = "pcdl.pyCLI:make_cell_vtk"

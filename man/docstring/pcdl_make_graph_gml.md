@@ -2,8 +2,8 @@
 usage: pcdl_make_graph_gml [-h] [--custom_data_type [CUSTOM_DATA_TYPE ...]]
                            [--microenv MICROENV] [--physiboss PHYSIBOSS]
                            [--settingxml SETTINGXML] [-v VERBOSE]
-                           [--edge_attr EDGE_ATTR]
-                           [--node_attr [NODE_ATTR ...]]
+                           [--edge_attribute EDGE_ATTRIBUTE]
+                           [--node_attribute [NODE_ATTRIBUTE ...]]
                            [path] [graph_type]
 
 function to generate graph files in the gml graph modelling language standard
@@ -44,11 +44,11 @@ options:
   -v VERBOSE, --verbose VERBOSE
                         setting verbose to False for less text output, while
                         processing. default is True.
-  --edge_attr EDGE_ATTR
+  --edge_attribute EDGE_ATTRIBUTE
                         specifies if the spatial Euclidean distance is used
                         for edge attribute, to generate a weighted graph.
                         default is True.
-  --node_attr [NODE_ATTR ...]
+  --node_attribute [NODE_ATTRIBUTE ...]
                         listing of mcds.get_cell_df dataframe columns, used
                         for node attributes. default is and empty list.
 

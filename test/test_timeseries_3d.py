@@ -125,8 +125,8 @@ class TestPyMcdsTs3DMicroenv(object):
               (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
               (df_conc.shape == (33275, 11))
 
-    def test_mcdsts_get_conc_df_features(self, mcdsts=mcdsts):
-        dl_conc = mcdsts.get_conc_df_features(values=1, drop=set(), keep=set(), allvalues=False)
+    def test_mcdsts_get_conc_attributes(self, mcdsts=mcdsts):
+        dl_conc = mcdsts.get_conc_attributes(values=1, drop=set(), keep=set(), allvalues=False)
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (str(type(dl_conc)) == "<class 'dict'>") and \
               (str(type(dl_conc['oxygen'])) == "<class 'list'>") and \
@@ -134,8 +134,8 @@ class TestPyMcdsTs3DMicroenv(object):
               (len(dl_conc.keys()) == 2) and \
               (len(dl_conc['oxygen']) == 2)
 
-    def test_mcdsts_get_conc_df_features_values(self, mcdsts=mcdsts):
-        dl_conc = mcdsts.get_conc_df_features(values=2, drop=set(), keep=set(), allvalues=False)
+    def test_mcdsts_get_conc_attributes_values(self, mcdsts=mcdsts):
+        dl_conc = mcdsts.get_conc_attributes(values=2, drop=set(), keep=set(), allvalues=False)
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (str(type(dl_conc)) == "<class 'dict'>") and \
               (str(type(dl_conc['oxygen'])) == "<class 'list'>") and \
@@ -143,8 +143,8 @@ class TestPyMcdsTs3DMicroenv(object):
               (len(dl_conc.keys()) == 2) and \
               (len(dl_conc['oxygen']) == 2)
 
-    def test_mcdsts_get_conc_df_features_allvalues(self, mcdsts=mcdsts):
-        dl_conc = mcdsts.get_conc_df_features(values=1, drop=set(), keep=set(), allvalues=True)
+    def test_mcdsts_get_conc_attributes_allvalues(self, mcdsts=mcdsts):
+        dl_conc = mcdsts.get_conc_attributes(values=1, drop=set(), keep=set(), allvalues=True)
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (str(type(dl_conc)) == "<class 'dict'>") and \
               (str(type(dl_conc['oxygen'])) == "<class 'list'>") and \
@@ -221,8 +221,8 @@ class TestPyMcds3DCell(object):
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
               (df_cell.shape == (481651, 34))
 
-    def test_mcdsts_get_cell_df_features(self, mcdsts=mcdsts):
-        dl_cell = mcdsts.get_cell_df_features(values=1, drop=set(), keep=set(), allvalues=False)
+    def test_mcdsts_get_cell_attributes(self, mcdsts=mcdsts):
+        dl_cell = mcdsts.get_cell_attributes(values=1, drop=set(), keep=set(), allvalues=False)
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (str(type(dl_cell)) == "<class 'dict'>") and \
               (str(type(dl_cell['dead'])) == "<class 'list'>") and \
@@ -239,14 +239,14 @@ class TestPyMcds3DCell(object):
               (len(dl_cell['cell_density_micron3']) == 2) and \
               (len(dl_cell['cell_type']) == 1)
 
-    def test_mcdsts_get_cell_df_features_values(self, mcdsts=mcdsts):
-        dl_cell = mcdsts.get_cell_df_features(values=2, drop=set(), keep=set(), allvalues=False)
+    def test_mcdsts_get_cell_attributes_values(self, mcdsts=mcdsts):
+        dl_cell = mcdsts.get_cell_attributes(values=2, drop=set(), keep=set(), allvalues=False)
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (str(type(dl_cell)) == "<class 'dict'>") and \
               (len(dl_cell.keys()) == 21)
 
-    def test_mcdsts_get_cell_df_features_allvalues(self, mcdsts=mcdsts):
-        dl_cell = mcdsts.get_cell_df_features(values=1, drop=set(), keep=set(), allvalues=True)
+    def test_mcdsts_get_cell_attributes_allvalues(self, mcdsts=mcdsts):
+        dl_cell = mcdsts.get_cell_attributes(values=1, drop=set(), keep=set(), allvalues=True)
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (str(type(dl_cell)) == "<class 'dict'>") and \
               (str(type(dl_cell['dead'])) == "<class 'list'>") and \
@@ -320,7 +320,7 @@ class TestPyMcds3DGraph(object):
 
     ## graph related functions ##
     def test_mcdsts_get_graph_gml_attached_defaultattr(self, mcdsts=mcdsts):
-        ls_pathfile = mcdsts.make_graph_gml(graph_type='attached', edge_attr=True, node_attr=[])
+        ls_pathfile = mcdsts.make_graph_gml(graph_type='attached', edge_attribute=True, node_attribute=[])
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (ls_pathfile[0].endswith('/pcdl/data_timeseries_3d/output00000000_attached.gml')) and \
               (ls_pathfile[-1].endswith('/pcdl/data_timeseries_3d/output00000024_attached.gml')) and \
@@ -331,7 +331,7 @@ class TestPyMcds3DGraph(object):
             os.remove(s_pathfile)
 
     def test_mcdsts_get_graph_gml_neighbor_noneattr(self, mcdsts=mcdsts):
-        ls_pathfile = mcdsts.make_graph_gml(graph_type='neighbor', edge_attr=False, node_attr=[])
+        ls_pathfile = mcdsts.make_graph_gml(graph_type='neighbor', edge_attribute=False, node_attribute=[])
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (ls_pathfile[0].endswith('/pcdl/data_timeseries_3d/output00000000_neighbor.gml')) and \
               (ls_pathfile[-1].endswith('/pcdl/data_timeseries_3d/output00000024_neighbor.gml')) and \
@@ -342,7 +342,7 @@ class TestPyMcds3DGraph(object):
             os.remove(s_pathfile)
 
     def test_mcdsts_get_graph_gml_neighbor_allattr(self, mcdsts=mcdsts):
-        ls_pathfile = mcdsts.make_graph_gml(graph_type='neighbor', edge_attr=True, node_attr=['dead','cell_count_voxel','cell_density_micron3','cell_type'])
+        ls_pathfile = mcdsts.make_graph_gml(graph_type='neighbor', edge_attribute=True, node_attribute=['dead','cell_count_voxel','cell_density_micron3','cell_type'])
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (ls_pathfile[0].endswith('/pcdl/data_timeseries_3d/output00000000_neighbor.gml')) and \
               (ls_pathfile[-1].endswith('/pcdl/data_timeseries_3d/output00000024_neighbor.gml')) and \

@@ -1,4 +1,4 @@
-# mcds.get_substrate_names()
+# mcds.get_substrate_list()
 
 
 ## input:
@@ -9,7 +9,7 @@
 ## output:
 ```
             ls_substrate: list of stings
-                alphabetically ordered list of all tracked substrates.
+                by ID ordered list of all tracked substrates.
 
 ```
 

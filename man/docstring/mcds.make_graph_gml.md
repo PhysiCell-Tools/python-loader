@@ -8,11 +8,11 @@
                 attached: processes mcds.get_attached_graph_dict dictionary.
                 neighbor: processes mcds.get_neighbor_graph_dict dictionary.
 
-            edge_attr: boolean; default True
+            edge_attribute: boolean; default True
                 specifies if the spatial Euclidean distance is used for
                 edge attribute, to generate a weighted graph.
 
-            node_attr: list of strings; default is empty list
+            node_attribute: list of strings; default is empty list
                 list of mcds.get_cell_df dataframe columns, used for
                 node attributes.
 

@@ -67,7 +67,7 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
 ## Contributions:
 + original PhysiCell-Tools python-loader implementation: Patrick Wall, Randy Heiland, Paul Macklin
 + fork pcdl implementation: Elmar Bucher
-+ fork pcdl co-programmer: Furkan Kurtoglu, Heber Rocha
++ fork pcdl co-programmer: Furkan Kurtoglu, Jennifer Eng, Heber Rocha
 + fork pcdl realworld prototype feedback: Aneequa Sundus, John Metzcar
 + student prj on pcdl:
   Benjamin Jacobs (make\_gml),
@@ -79,7 +79,7 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
 ## Cite:
 ```bibtex
 @Misc{bucher2023,
-  author    = {Bucher, Elmar and Wall, Patrick and Rocha, Heber and Kurtoglu, Furkan and Sundus, Aneequa, and Metzcar, John and Heiland, Randy and Macklin, Paul},
+  author    = {Bucher, Elmar and Wall, Patrick and Rocha, Heber and Kurtoglu, Furkan and Eng, Jennifer and Sundus, Aneequa, and Metzcar, John and Heiland, Randy and Macklin, Paul},
   title     = {elmbeech/physicelldataloader: pcdl platform-independent, pip-installable interface to load PhysiCell agent-based modeling framework output into python3.},
   year      = {2023},
   copyright = {Open Access},
@@ -95,19 +95,21 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
 ## Release Notes:
 + version 3.3.0 (2024-08-??): elmbeech/physicelldataloader
     + **pip install pcdl**: will again install all library dependencies, as well anndata and requests.
-    + pyMCDS handels now intracellular **physinboss** data too, data is store in cell_df.
+    + pyMCDS handels now intracellular **physinboss** data too, data is store in cell\_df.
+    + rename pyMCDS get\_cell\_variables to **get_celltype_list** for concisness and order list by ID.
+    + rename pyMCDS get\_substrate\_names to **get_substrate_list** for concisness and order list by ID.
     + rename pyMCDS get\_scatter to **plot_scatter** for conciseness.
     + rename pyMCDS get\_contour to **plot_contour** for conciseness.
     + rename pyMCDSts make\_imgcell to **plot_scatter** for conciseness.
     + rename pyMCDSts make\_imgconc to **plot_contour** for conciseness.
-    + rename pyMCDSts get\_cell\_df\_states to **get_cell_df_features** for conciseness.
-    + rename pyMCDSts get\_conc\_df\_states to **get_conc_df_features** for conciseness.
-    + rewrite pyMCDS mcds.get_unit_se into **mcds.get_unit_dict**.
+    + rename pyMCDSts get\_cell\_df\_states to **get_cell_attributes** for conciseness.
+    + rename pyMCDSts get\_conc\_df\_states to **get_conc_attributes** for conciseness.
+    + rewrite pyMCDS mcds.get\_unit\_se into **mcds.get_unit_dict**.
     + new pyCLI **pcdl_get_anndata** command line interface function.
+    + new pyCLI **pcdl_get_cell_attributes** command line interface function.
     + new pyCLI **pcdl_get_cell_df** command line interface function.
-    + new pyCLI **pcdl_get_cell_df_features** command line interface function.
+    + new pyCLI **pcdl_get_conc_attributes** command line interface function.
     + new pyCLI **pcdl_get_conc_df** command line interface function.
-    + new pyCLI **pcdl_get_conc_df_features** command line interface function.
     + new pyCLI **pcdl_get_graph_gml** command line interface function.
     + new pyCLI **pcdl_get_unit_dict** command line interface function.
     + new pyCLI **pcdl_get_version** command line interface function.
@@ -177,8 +179,8 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
     + pyMCDS **get_concentration_df** states parameter to filter out non-informative variables.
     + pyMCDS **get_cell_df** states parameter to filter out non-informative variables.
     + pyMCDSts **_\_init__** load parameter to specify if the whole time series data straight at object initialization should be loaded.
-    + new pyMCDSts **get_cell_minstate_col** function to scan the whole time series for informative features.
-    + new pyMCDSts **get_concentartion_minstate_col** function to scan the whole time series for informative features.
+    + new pyMCDSts **get_cell_minstate_col** function to scan the whole time series for informative attributes.
+    + new pyMCDSts **get_concentartion_minstate_col** function to scan the whole time series for informative attributes.
 
 + version 3.2.7 (2023-06-20): elmbeech/physicelldataloader
     + pyMCDS and pyMCDSts **_\_init__** custom\_type parameter to specify other custom\_data variable types (int, bool, str) then the generic float.
