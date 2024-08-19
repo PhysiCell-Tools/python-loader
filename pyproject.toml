@@ -1,7 +1,7 @@
 #####
-# A hatchling based setup module.
+# a hatchling based setup module.
 #
-# See:
+# see:
 # https://packaging.python.org/en/latest/
 # https://packaging.python.org/en/latest/tutorials/packaging-projects/
 # https://hatch.pypa.io/latest/
@@ -89,7 +89,7 @@ pcdl_get_version = "pcdl.pyCLI:get_version"
 pcdl_make_graph_gml = "pcdl.pyCLI:make_graph_gml"
 pcdl_make_gif = "pcdl.pyCLI:make_gif"
 pcdl_make_movie = "pcdl.pyCLI:make_movie"
-#pcdl_make_ome_tiff = "pcdl.pyCLI:make_ome_tiff"
+pcdl_make_ome_tiff = "pcdl.pyCLI:make_ome_tiff"
 pcdl_plot_contour = "pcdl.pyCLI:plot_contour"
 pcdl_plot_scatter = "pcdl.pyCLI:plot_scatter"
 pcdl_plot_timeseries = "pcdl.pyCLI:plot_timeseries"

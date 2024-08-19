@@ -7,7 +7,7 @@
 # date: 2019-01-31
 #
 # run:
-#    form biotransistor import imagine
+#    form pcdl import imagine
 #
 # description:
 #    my image analysis library
@@ -188,7 +188,7 @@ def border(ai_segment):
     return(ai_border)
 
 
-def grow(ai_segment, i_step=1):
+def grow(ai_segment, i_step=1, b_verbose=True):
     """
     input:
       ai_segment: numpy array representing a cells basin file.
@@ -200,11 +200,14 @@ def grow(ai_segment, i_step=1):
         to each direction should grow.
         function can handle shrinking. enter negative steps like -1.
 
+      b_verbose: boolean which specifies if, while processing,
+          text should be outputted.
+
     output:
       ai_grown: numpy array with the grown basins
 
     description:
-      algorithm to grow the basis in a given basin numpy array.
+      algorithm to grow the basins in a given basin numpy array.
       growing happens counterclockwise, starting at noon.
     """
     ai_tree = ai_segment.copy()  # initialize output
@@ -212,7 +215,8 @@ def grow(ai_segment, i_step=1):
         # growing
         for i in range(i_step):
             # next grow cycle
-            print(f'grow {i+1}[px] ring ...')
+            if b_verbose:
+                print(f'grow {i+1}[px] ring ...')
             ai_treering = ai_tree.copy()
             for o_slide in [slide_up, slide_upleft, slide_left, slide_downleft, slide_down, slide_downright, slide_right, slide_upright]:
                 ai_evolve = o_slide(ai_tree)
@@ -226,6 +230,76 @@ def grow(ai_segment, i_step=1):
         ai_membrane = grow(ai_border, i_step=abs(i_step) - 1)
         ai_tree[ai_membrane != 0] = 0
 
+    # output
+    return(ai_tree)
+
+
+def grow_seed(ai_segment, i_step=1, b_verbose=True):
+    """
+    input:
+      ai_segment: numpy array representing a cells center basin file.
+        it is assumed that basin borders are represented by 0 values,
+        and basins are represented with any values different from 0.
+        ai_segment = skimage.io.imread("cells_basins.tif")
+
+      i_step: integer which specifies how many pixels the seed pixel
+          should grow.
+
+      b_verbose: boolean which specifies if, while processing,
+          text should be outputted.
+
+    output:
+      ai_grown: numpy array with the grown basins
+
+    description:
+      algorithm to grow the basins in a given cell center seed numpy array.
+      growing happens counterclockwise, starting at noon.
+    """
+    # initialize output
+    ai_tree = ai_segment.copy()
+
+    # growing
+    for i in range(i_step):
+        # next grow cycle
+        if b_verbose:
+            print(f'grow {i+1}[px] ring ...')
+        ai_treering = ai_tree.copy()
+
+        # calculate pythagoras
+        b_circle = ((i + 1) * 2**(1/2)) < (i_step + 1)
+
+        # up
+        ai_evolve = slide_up(ai_tree)
+        ai_treering[(ai_evolve != ai_tree) & (ai_treering == 0)] = ai_evolve[(ai_evolve != ai_tree) & (ai_treering == 0)]
+        # upleft
+        if b_circle:
+            ai_evolve = slide_upleft(ai_tree)
+            ai_treering[(ai_evolve != ai_tree) & (ai_treering == 0)] = ai_evolve[(ai_evolve != ai_tree) & (ai_treering == 0)]
+        # left
+        ai_evolve = slide_left(ai_tree)
+        ai_treering[(ai_evolve != ai_tree) & (ai_treering == 0)] = ai_evolve[(ai_evolve != ai_tree) & (ai_treering == 0)]
+        # downleft
+        if b_circle:
+            ai_evolve = slide_downleft(ai_tree)
+            ai_treering[(ai_evolve != ai_tree) & (ai_treering == 0)] = ai_evolve[(ai_evolve != ai_tree) & (ai_treering == 0)]
+        # down
+        ai_evolve = slide_down(ai_tree)
+        ai_treering[(ai_evolve != ai_tree) & (ai_treering == 0)] = ai_evolve[(ai_evolve != ai_tree) & (ai_treering == 0)]
+        # downright
+        if b_circle:
+            ai_evolve = slide_downright(ai_tree)
+            ai_treering[(ai_evolve != ai_tree) & (ai_treering == 0)] = ai_evolve[(ai_evolve != ai_tree) & (ai_treering == 0)]
+        # right
+        ai_evolve = slide_right(ai_tree)
+        ai_treering[(ai_evolve != ai_tree) & (ai_treering == 0)] = ai_evolve[(ai_evolve != ai_tree) & (ai_treering == 0)]
+        # upright
+        if b_circle:
+            ai_evolve = slide_upright(ai_tree)
+            ai_treering[(ai_evolve != ai_tree) & (ai_treering == 0)] = ai_evolve[(ai_evolve != ai_tree) & (ai_treering == 0)]
+
+        # update output
+        #print(ai_treering)
+        ai_tree = ai_treering
     # output
     return(ai_tree)
 
@@ -428,7 +502,6 @@ def membrane_px(ai_segment, dai_value, i_step=1, b_approximation=False):
         ], axis=1)
 
         # pack output
-        print('hallo:', ai_membrane_px, ai_membrane_px.shape, type(ai_membrane_px))
         df_membrane_px = pd.DataFrame(
             ai_membrane_px,
             columns = ['cell', 'y_absolute', 'x_absolute'] + ls_sensor,

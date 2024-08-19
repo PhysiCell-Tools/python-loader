@@ -665,18 +665,31 @@ class pyMCDSts:
         return s_path
 
 
-    def make_conc_vtk(self, ):
+    def make_conc_vtk(self):
         """
         input:
+
         output:
+            ls_vtkpathfile: one vtk file per mcds time step that contains
+               3D distributions of all substrates over the microenvironment
+               with corresponding time stamp.
+
         description:
+            function generates rectilinear grid vtk files, one file
+            per mcds time step that contains distribution of substrates
+            over microenvironment.
+            you can post-process this file in other software like paraview.
+
+            + https://www.paraview.org/
         """
-        s_path = None
         # processing
-        for mcds in self.get_list_mcds():
-            mcds.make_conc_vtk(attribute=attribute)
+        ls_vtkpathfile = []
+        for mcds in self.get_mcds_list():
+            s_vtkpathfile = mcds.make_conc_vtk()
+            ls_vtkpathfile.append(s_vtkpathfile)
+
         # output
-        return s_path
+        return ls_vtkpathfile
 
 
     ## CELL RELATED FUNCTIONS ##
@@ -1050,18 +1063,38 @@ class pyMCDSts:
         return s_path
 
 
-    def make_cell_vtk(self, attribute=['cell_type']):
+    def make_cell_vtk(self, attribute=['cell_type'], visualize=False):
         """
         input:
+            attribute: list of strings; default is ['cell_type']
+                column name within cell dataframe.
+
+            visualize: boolean; default is False
+                additionally, visualize cells using vtk renderer.
+
         output:
+            ls_vtkpathfile: one 3D glyph vtk file per mcds time step
+                that contains cells.
+
         description:
+            function that generates 3D glyph vtk files for cells.
+            one file per mcds time step. cells can have specified attributes
+            like 'cell_type', 'pressure', 'dead', etc.
+            you can post-process this file in other software like paraview.
+
+            + https://www.paraview.org/
         """
-        s_path = None
         # processing
-        for mcds in self.get_list_mcds():
-            mcds.make_cell_vtk(attribute=attribute)
+        ls_vtkpathfile = []
+        for mcds in self.get_mcds_list():
+            s_vtkpathfile = mcds.make_cell_vtk(
+                attribute = attribute,
+                visualize = visualize,
+            )
+            ls_vtkpathfile.append(s_vtkpathfile)
+
         # output
-        return s_path
+        return ls_vtkpathfile
 
 
     ## OME TIFF RELATED FUNCTIONS ##
@@ -1069,15 +1102,35 @@ class pyMCDSts:
     def make_ome_tiff(self, cell_attribute='ID', file=True, collapse=True):
         """
         input:
-            cell_attribute:
-            file:
-            collapse:
+            cell_attribute: strings; default is 'ID', with will result in a segmentation mask.
+                column name within cell dataframe.
+                the column data type has to be numeric (bool, int, float) and can't be string.
+
+            file: boolean; default True
+                if True, an ome.tiff file is output.
+                if False, a numpy array with shape tczyx is output.
+
+            collapse: boole; default True
+                should all mcds time steps from the time series be collapsed
+                into one ome tiff file (numpy array),
+                or an ome tiff file (numpy array) for each time step?
 
         output:
-            file or numpy array
+            a_tczyx_img: numpy array or ome.tiff file.
 
         description:
+            function to transform chosen mcdsts output into an 1[um] spaced
+            tczyx (time, channel, z-axis, y-axis, x-axis) ome tiff file or numpy array,
+            one substrate or cell_type per channel.
+            a ome tiff file is more or less:
+            a numpy array, containing the image information
+            and a xml, containing the microscopy metadata information,
+            like the channel labels.
+            the ome tiff file format can for example be read by the napari
+            or fiji (imagej) software.
 
+            + https://napari.org/stable/
+            + https://fiji.sc/
         """
         # each T time step
         l_tczyx_img = []

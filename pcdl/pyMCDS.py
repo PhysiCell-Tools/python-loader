@@ -264,8 +264,14 @@ class pyMCDS:
         self.settingxml = settingxml
         self.verbose = verbose
         self.data = self._read_xml(xmlfile, output_path)
-        self.get_concentration_df = self.get_conc_df
-
+        # backwards compatibility
+        #self.get_2D_mesh = self.get_mesh_2D
+        #self.get_concentrations_at = self.get_concentration_at
+        #self.get_concentrations = self.get_conc_df
+        #self.get_concentration = self.get_conc_df
+        #self.get_concentration_df = self.get_conc_df
+        #self.get_cell_variables = self.get_celltype_list
+        #self.get_substrate_names = self.get_substrate_list
 
     def set_verbose_false(self):
         """
@@ -1091,73 +1097,77 @@ class pyMCDS:
         input:
 
         output:
-            vtk: vtk file that contains 3D distributions of all substrates
-                over microenvironment with corresponding time stamp.
+            s_vtkpathfile: vtk file that contains 3D distributions of all
+            substrates over the microenvironment.
 
         description:
-            function creates rectilinear grid vtk file contains distribution of
-            substrates over microenvironment. You can post-process this file
-            in other software like Paraview.
+            function generates rectilinear grid vtk file contains distribution
+            of substrates over microenvironment.
+            you can post-process this file in other software like paraview.
+
+            + https://www.paraview.org/
         """
-        # Get microenviornment data frame
+        # get microenviornment data frame
         df_micenv = self.get_conc_df()
 
-        # Create a rectilinear grid
+        # generate a rectilinear grid
         vr_grid = vtk.vtkRectilinearGrid()
 
-        # Define dimensions of the grid
-        t_dims = (len(pd.unique(df_micenv['voxel_i'])), len(pd.unique(df_micenv['voxel_j'])), len(pd.unique(df_micenv['voxel_k'])))
+        # define dimensions of the grid
+        ti_dim = (df_micenv.loc[:, 'voxel_i'].unique().shape[0], df_micenv.loc[:, 'voxel_j'].unique().shape[0], df_micenv.loc[:, 'voxel_k'].unique().shape[0])
 
-        # Define coordinates for the grid
+        # define coordinates for the grid
         vf_x = vtk.vtkFloatArray()
         vf_y = vtk.vtkFloatArray()
         vf_z = vtk.vtkFloatArray()
 
-        # Assign coordinates for the grid
-        vf_x.SetNumberOfTuples(t_dims[0])
-        vf_y.SetNumberOfTuples(t_dims[1])
-        vf_z.SetNumberOfTuples(t_dims[2])
+        # assign coordinates for the grid
+        vf_x.SetNumberOfTuples(ti_dim[0])
+        vf_y.SetNumberOfTuples(ti_dim[1])
+        vf_z.SetNumberOfTuples(ti_dim[2])
 
-        # Populate the coordinates
-        for i in range(t_dims[0]):
-            vf_x.SetValue(i, pd.unique(df_micenv['mesh_center_m'])[i])
+        # populate the coordinates
+        for m, x in enumerate(sorted(df_micenv.loc[:, 'mesh_center_m'].unique())):
+            vf_x.SetValue(m, x)
 
-        for j in range(t_dims[1]):
-            vf_y.SetValue(j, pd.unique(df_micenv['mesh_center_n'])[j])
+        for n, y in enumerate(sorted(df_micenv.loc[:, 'mesh_center_n'].unique())):
+            vf_y.SetValue(n, y)
 
-        for k in range(t_dims[2]):
-            vf_z.SetValue(k, pd.unique(df_micenv['mesh_center_p'])[k])
+        for p, z in enumerate(sorted(df_micenv.loc[:, 'mesh_center_p'].unique())):
+            vf_z.SetValue(p, z)
 
-        # Grid dimensions
-        vr_grid.SetDimensions(t_dims)
+        # grid dimensions
+        vr_grid.SetDimensions(ti_dim)
         vr_grid.SetXCoordinates(vf_x)
         vr_grid.SetYCoordinates(vf_y)
         vr_grid.SetZCoordinates(vf_z)
 
-        # Learn substrate names
-        l_substrate = self.get_substrate_list()
-
-        # For loop to fill rectilinear grid
-        for name_index, name in enumerate(l_substrate):
+        # loop over substartes to fill rectilinear grid
+        b_first = True
+        for s_substrate in self.get_substrate_list():
             vf_values = vtk.vtkFloatArray()
             vf_values.SetNumberOfComponents(1)
-            vf_values.SetNumberOfTuples(t_dims[0] * t_dims[1] * t_dims[2])
-            vf_values.SetName(name)  # Set the name of the array
-            # Populate the substrate values
-            for k in range(t_dims[2]):
-                for j in range(t_dims[1]):
-                    for i in range(t_dims[0]):
-                        idx = i + t_dims[0] * (j + t_dims[1] * k)
-                        conc_at_specific_position = df_micenv[name][idx]
-                        vf_values.SetValue(idx, conc_at_specific_position)
-            if name_index == 0:
+            vf_values.SetNumberOfTuples(ti_dim[0] * ti_dim[1] * ti_dim[2])
+            vf_values.SetName(s_substrate)  # set the name of the array
+
+            # populate the substrate values
+            for k in range(ti_dim[2]):
+                for j in range(ti_dim[1]):
+                    for i in range(ti_dim[0]):
+                        i_index = i + ti_dim[0] * (j + ti_dim[1] * k)
+                        r_conc = df_micenv.loc[
+                            (df_micenv.loc[:,'voxel_k'] == k) & (df_micenv.loc[:,'voxel_j'] == j) & (df_micenv.loc[:,'voxel_i'] == i),
+                            s_substrate
+                        ]
+                        vf_values.SetValue(i_index, r_conc)
+            if b_first:
                 vr_grid.GetPointData().SetScalars(vf_values)
+                b_first = False
             else:
                 vr_grid.GetPointData().AddArray(vf_values)
             del vf_values
 
-
-        # Save vtk file
+        # save vtk file
         s_vtkpathfile = self.path + '/' + self.xmlfile.replace('.xml','_conc.vtk')
         vw_writer = vtk.vtkXMLRectilinearGridWriter()
         vw_writer.SetFileName(s_vtkpathfile)
@@ -1641,118 +1651,111 @@ class pyMCDS:
     def make_cell_vtk(self, attribute=['cell_type'], visualize=True):
         """
         input:
-
-            attribute: list of strings; default is 'cell_type'
+            attribute: list of strings; default is ['cell_type']
                 column name within cell dataframe.
 
             visualize: boolean; default is True
-                visualize cells using vtk Renderer.
+                additionally, visualize cells using vtk renderer.
 
         output:
-            vtk: 3D Glyph VTK that contains cells.
-
+            s_vtkpathfile: 3D glyph vtk file that contains cells.
 
         description:
-            function that 3D Glyph VTK file for cells. Cells can have
-            specificed attributes like 'cell_type', 'pressure', 'dead', etc.
-            You can post-process this file in other software like Paraview.
+            function that generates 3D glyph vtk file for cells.
+            cells can have specified attributes like 'cell_type',
+            'pressure', 'dead', etc.
+            you can post-process this file in other software like paraview.
+
+            + https://www.paraview.org/
         """
-        # Get cell data frame
+        # get cell data frame
         df_cell = self.get_cell_df(values=1, drop=set(), keep=set())
         df_cell = df_cell.reset_index()
 
-        # Get positions and radii
-        se_x_pos = df_cell['position_x']
-        se_y_pos = df_cell['position_y']
-        se_z_pos = df_cell['position_z']
-        se_radius =  df_cell['radius']
-
-        # Create VTK instances to fill for positions and radii
+        # generate VTK instances to fill for positions and radii
         vp_points = vtkPoints()
         vf_radii = vtk.vtkFloatArray()
-        vf_radii.SetName("radius")
+        vf_radii.SetName('radius')
 
-        # Fill VTK instance with positions and radii
-        for i in range(len(se_x_pos)):
-            vp_points.InsertNextPoint(se_x_pos[i], se_y_pos[i], se_z_pos[i])
-            vf_radii.InsertNextValue(se_radius[i])
+        # fill VTK instance with positions and radii
+        for i in df_cell.index:
+            vp_points.InsertNextPoint(df_cell.loc[i, 'position_x'], df_cell.loc[i, 'position_y'], df_cell.loc[i, 'position_z'])
+            vf_radii.InsertNextValue(df_cell.loc[i, 'radius'])
 
-
-        # Create Data Instances
+        # generate data instances
         vf_data = vtk.vtkFloatArray()
         vf_data.SetNumberOfComponents(2)
-        vf_data.SetNumberOfTuples(len(se_x_pos))
+        vf_data.SetNumberOfTuples(df_cell.shape[0])
         vf_data.CopyComponent(0, vf_radii, 0)
-        vf_data.SetName("positions_and_radii")
+        vf_data.SetName('positions_and_radii')
 
-        # Create Unstructred Grid for Data
+        # generate unstructred grid for data
         vu_grid = vtk.vtkUnstructuredGrid()
         vu_grid.SetPoints(vp_points)
         vu_grid.GetPointData().AddArray(vf_data)
-        vu_grid.GetPointData().SetActiveScalars("positions_and_radii")
+        vu_grid.GetPointData().SetActiveScalars('positions_and_radii')
 
-        # Fill This grid with given attributes
-        for name_index, name in enumerate(attribute):
-            custom_data_i = df_cell[name]
-            if (type(custom_data_i[0]) in {str, np.str_}):
+        # fill this grid with given attributes
+        for s_attribute in attribute:
+            b_bool = False
+            if (df_cell.loc[:, s_attribute].dtype.type in {bool, np.bool, np.bool_}):
+                b_bool = True
                 custom_data_vtk = vtk.vtkStringArray()
-                custom_data_vtk.SetName(name)
-            elif(type(custom_data_i[0]) in {float, np.float16, np.float32, np.float64, int}):
+                custom_data_vtk.SetName(s_attribute)
+            elif (df_cell.loc[:, s_attribute].dtype.type in {str, np.str_, np.object_}):
+                custom_data_vtk = vtk.vtkStringArray()
+                custom_data_vtk.SetName(s_attribute)
+            elif(df_cell.loc[:, s_attribute].dtype.type in {int, np.int_, np.int8, np.int16, np.int32, np.int64, float, np.float16, np.float32, np.float64, np.float128}):
                 custom_data_vtk = vtk.vtkFloatArray()
-                custom_data_vtk.SetName(name)
-            elif (type(custom_data_i[0]) in {bool, np.bool_}):
-                custom_data_vtk =vtk.vtkStringArray()
-                custom_data_vtk.SetName(name)
+                custom_data_vtk.SetName(s_attribute)
+            else:
+                sys.exit(f'Error @ pyMCDS.make_cell_vtk : {s_attribute} {df_cell.loc[:, s_attribute].dtype.type} unknown df_cell column data type.')
 
-            for i in range(len(custom_data_i)):
-                if (type(custom_data_i[0]) in {bool, np.bool_}):
-                    if (custom_data_i[i] == True):
+            for i in df_cell.index:
+                if b_bool:
+                    if (df_cell.loc[i, s_attribute]):
                         custom_data_vtk.InsertNextValue('True')
                     else:
                         custom_data_vtk.InsertNextValue('False')
                 else:
-                    custom_data_vtk.InsertNextValue(custom_data_i[i])
+                    custom_data_vtk.InsertNextValue(df_cell.loc[i, s_attribute])
 
             vu_grid.GetPointData().AddArray(custom_data_vtk)
             del custom_data_vtk
 
-
-        # Create sphere source
+        # generate sphere source
         vsp_sphere = vtk.vtkSphereSource()
         vsp_sphere.SetRadius(1.0)
         vsp_sphere.SetPhiResolution(16)
         vsp_sphere.SetThetaResolution(32)
 
-        # Create Glyph to save
+        # generate Glyph to save
         vg_glyph = vtk.vtkGlyph3D()
         vg_glyph.SetInputData(vu_grid)
         vg_glyph.SetSourceConnection(vsp_sphere.GetOutputPort())
 
-        # Define important preferences for VTK
+        # define important preferences for VTK
         vg_glyph.ClampingOff()
         vg_glyph.SetScaleModeToScaleByScalar()
         vg_glyph.SetScaleFactor(1.0)
         vg_glyph.SetColorModeToColorByScalar()
         vg_glyph.Update()
 
-        # Write VTK
+        # write VTK
         s_vtkpathfile = self.path + '/' + self.xmlfile.replace('.xml','_cells.vtk')
         vw_writer = vtk.vtkXMLPolyDataWriter()
         vw_writer.SetFileName(s_vtkpathfile)
         vw_writer.SetInputData(vg_glyph.GetOutput())
         vw_writer.Write()
 
-
-        # Visualize if needed
+        # visualize
         if (visualize):
-            # visualization
             # set up the mapper
             mapper = vtk.vtkPolyDataMapper()
-            # mapper.SetInput(glyph.GetOutput())
+            #mapper.SetInput(glyph.GetOutput())
             mapper.SetInputConnection(vg_glyph.GetOutputPort())
-
             mapper.ScalarVisibilityOn()
-            mapper.ColorByArrayComponent("data", 1)
+            mapper.ColorByArrayComponent('data', 1)
 
             # set up the actor
             actor = vtk.vtkActor()
@@ -1873,7 +1876,7 @@ class pyMCDS:
                 elif (type(o_attribute) in {str, np.str_}):
                     f.write(f'    {s_attribute} "{o_attribute}"\n')
                 else:
-                    sys.exit(f'Error @ make_graph_gml : attribute {o_attribute}; type {type (o_attribute)}; type seems not to be bool, int, float, or string.')
+                    sys.exit(f'Error @ pyMCDS.make_graph_gml : attribute {o_attribute}; type {type (o_attribute)}; type seems not to be bool, int, float, or string.')
             f.write(f'  ]\n')
             # edge
             for i_dst in ei_dst:
@@ -1901,26 +1904,33 @@ class pyMCDS:
     ## OME TIFF RELATED FUNCTIONS ##
 
     def make_ome_tiff(self, cell_attribute='ID', file=True):
-        '''
+        """
         input:
-            cell_attribute: strings; default is 'ID' wich will result in a segmentation mask.
+            cell_attribute: strings; default is 'ID', with will result in a segmentation mask.
                 column name within cell dataframe.
+                the column data type has to be numeric (bool, int, float) and can't be string.
 
-            file:
+            file: boolean; default True
+                if True, an ome.tiff file is output.
+                if False, a numpy array with shape czyx is output.
 
         output:
-            file or numpy array
+            a_czyx_img: numpy array or ome.tiff file.
 
         description:
-            function to transfrom the mcds output into an 1[um] spaced
-            czyx ome tiff file, a substarte or cell_type per channel.
+            function to transform chosen mcds output into an 1[um] spaced
+            czyx (channel, z-axis, y-axis, x-axis) ome tiff file or numpy array,
+            one substrate or cell_type per channel.
             a ome tiff file is more or less:
-            a numpy array, containing the image infromation
-            and an xml, containing the microscopy meta data inforamtion,
-            like for example the channel labels.
-            the ome tiff file format can for example be read by the napai
-            software.
-        '''
+            a numpy array, containing the image information
+            and a xml, containing the microscopy metadata information,
+            like the channel labels.
+            the ome tiff file format can for example be read by the napari
+            or fiji (imagej) software.
+
+            + https://napari.org/stable/
+            + https://fiji.sc/
+        """
         # const
         ls_coor_mnp = ['mesh_center_m', 'mesh_center_n', 'mesh_center_p'] # xyz
         ls_coor_xyz = ['position_x', 'position_y', 'position_z'] # xyz
@@ -1936,22 +1946,55 @@ class pyMCDS:
         for i_x in range(int(round(self.get_voxel_ijk_range()[0][1] * self.get_voxel_spacing()[0]))):
             for i_y in range(int(round(self.get_voxel_ijk_range()[1][1] * self.get_voxel_spacing()[1]))):
                 lll_coor.append([i_x, i_y])
-        df_coor = pd.DataFrame(lll_coor, columns=ls_coor[:2]) #dtype={'voxel_x': int, 'voxel_y': int, 'voxel_z': float}
+        df_coor = pd.DataFrame(lll_coor, columns=ls_coor[:2])
         lr_axis_z[-1] += 1
+
+        # get ordered substrate listing
+        ls_substrate = self.get_substrate_list()
+
+        # get substrate dataframe
+        df_conc = self.get_conc_df()
+
+        # extract voxel radius
+        i_conc_grow = int(np.round(np.mean(self.get_voxel_spacing()[:2])) - 1)
+
+        # extract input from data frame
+        df_conc = df_conc.loc[:, ls_coor_mnp + ls_substrate]
+
+        # shift substrate xy data
+        df_conc.loc[:, 'mesh_center_m'] = (df_conc.loc[:, 'mesh_center_m'] - self.get_xyz_range()[0][0]).round()
+        df_conc.loc[:, 'mesh_center_n'] = (df_conc.loc[:, 'mesh_center_n'] - self.get_xyz_range()[1][0]).round()
+
+        # relabel and retype xyz coordiantes
+        df_conc.rename({'mesh_center_m':'voxel_x', 'mesh_center_n':'voxel_y', 'mesh_center_p':'voxel_z'}, axis=1, inplace=True)
+        df_conc = df_conc.astype({'voxel_x': int, 'voxel_y': int, 'voxel_z': float})
 
         # get ordered cell type listing
         ls_celltype = self.get_celltype_list()
 
-        # get and manipulate cell dataframe
+        # get cell dataframe
         df_cell = self.get_cell_df().reset_index()
-        df_cell.ID =  df_cell.ID + 1
 
-        # extract avearge cell radius
-        # bue 20240816: should maybe be done for each cell type separately?
-        i_cell_radius = int(df_cell.radius.mean().round() - 1)
+        # extract cell radius
+        di_cell_grow = {}
+        for s_celltype in ls_celltype:
+            try:
+                i_cell_grow = int(round(df_cell.loc[(df_cell.cell_type == s_celltype), 'radius'].mean()) - 1)
+            except:
+                i_cell_grow = 0
+            di_cell_grow.update({s_celltype: i_cell_grow})
 
-        # extract input from dataframe
+        # extract and manipulate input from dataframe
         df_cell = df_cell.loc[:, ls_coor_xyz + ['cell_type', cell_attribute]]
+        # manipulate cell_attribute value
+        if (cell_attribute == 'cell_type'):
+            sys.exit(f'Error @ pyMCDS.make_ome_tiff : cell_attribute can not be cell_type.')
+        elif (df_cell.loc[:, cell_attribute].dtype.type in {str, np.str_, np.object_}):
+            sys.exit(f'Error @ pyMCDS.make_ome_tiff : {cell_attribute} {df_cell.loc[:, cell_attribute].dtype.type} cell_attribute can not be string or object. cell_attribute has to be boolean, integer, or float.')
+        elif (df_cell.loc[:, cell_attribute].dtype.type in {bool, np.bool, np.bool_}):
+            df_cell = df_cell.astype({cell_attribute: int})
+        df_cell.loc[:, cell_attribute] = df_cell.loc[:, cell_attribute] - df_cell.loc[:, cell_attribute].min() + 1  # positive values starting at 1
+        # pivot cell_type
         df_cell = df_cell.pivot_table(index=ls_coor_xyz, columns='cell_type', values=cell_attribute, fill_value=0, aggfunc='sum').reset_index()
         for s_celltype in ls_celltype:
             if not s_celltype in set(df_cell.columns):
@@ -1965,26 +2008,6 @@ class pyMCDS:
         df_cell.rename({'position_x':'voxel_x', 'position_y':'voxel_y', 'position_z':'voxel_z'}, axis=1, inplace=True)
         df_cell = df_cell.astype({'voxel_x': int, 'voxel_y': int, 'voxel_z': float})
 
-        # get ordered substrate listing
-        ls_substrate = self.get_substrate_list()
-
-        # get substrate dataframe
-        df_conc = self.get_conc_df()
-
-        # extract voxel radius
-        i_conc_radius = int(np.round(np.mean(self.get_voxel_spacing()[:2])) - 1)
-
-        # extract input from data frame
-        df_conc = df_conc.loc[:, ls_coor_mnp + ls_substrate]
-
-        # shift substrate xy data
-        df_conc.loc[:, 'mesh_center_m'] = (df_conc.loc[:, 'mesh_center_m'] - self.get_xyz_range()[0][0]).round()
-        df_conc.loc[:, 'mesh_center_n'] = (df_conc.loc[:, 'mesh_center_n'] - self.get_xyz_range()[1][0]).round()
-
-        # relabel and retype xyz coordiantes
-        df_conc.rename({'mesh_center_m':'voxel_x', 'mesh_center_n':'voxel_y', 'mesh_center_p':'voxel_z'}, axis=1, inplace=True)
-        df_conc = df_conc.astype({'voxel_x': int, 'voxel_y': int, 'voxel_z': float})
-
         # each C channel - time step tensors
         la_czyx_img = []
         ls_channel = ls_substrate + ls_celltype
@@ -1996,7 +2019,7 @@ class pyMCDS:
             elif s_channel in set(ls_celltype):
                 df_channel = df_cell.loc[:, ls_coor + [s_channel]]
             else:
-                sys.exit(f'Error: {s_channel} unknowen channel, not on substrate and not in cell type list, detected!')
+                sys.exit(f'Error @ pyMCDS.make_ome_tiff : {s_channel} unknowen channel detected. not in substrate and cell type list!')
 
             # each z axis
             la_zyx_img = []
@@ -2016,13 +2039,12 @@ class pyMCDS:
                     a_yx_img = df_yxchannel.values
 
                     # grow
-                    #print('a_yx_img:', a_yx_img.shape)
-                    #if s_channel in set(ls_substrate):
-                    #    a_yx_img = imagine.grow(a_yx_img, i_step=i_conc_radius)
-                    #elif s_channel in set(ls_celltype):
-                    #    a_yx_img = imagine.grow(a_yx_img, i_step=i_cell_radius)
-                    #else:
-                    #    sys.exit(f'Error: {s_channel} unknowen channel detected!')
+                    if s_channel in set(ls_substrate):
+                        a_yx_img = imagine.grow(a_yx_img, i_step=i_conc_grow, b_verbose=False)
+                    elif s_channel in set(ls_celltype):
+                        a_yx_img = imagine.grow_seed(a_yx_img, i_step=di_cell_grow[s_channel], b_verbose=False)
+                    else:
+                        sys.exit(f'Error @ pyMCDS.make_ome_tiff : {s_channel} unknowen channel detected. not in substrate and cell type list!')
 
                     # update output
                     la_zyx_img.append(a_yx_img)

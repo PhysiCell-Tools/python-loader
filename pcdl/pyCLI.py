@@ -131,7 +131,7 @@ def get_anndata():
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
     if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ pcdl_get_anndata : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
+        sys.exit(f"Error @ pyCLI.get_anndata : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
     # custom_data_type
     d_vartype = {}
     for vartype in args.custom_data_type:
@@ -224,7 +224,7 @@ def get_cell_df():
     parser.add_argument(
         '--physiboss',
         default = 'true',
-        help = 'if found, should physiboss state data be extracted and loaded into the anndata object? default is True.'
+        help = 'if found, should physiboss state data be extracted and loaded into the df_cell dataframe? default is True.'
     )
     # TimeSeries settingxml
     parser.add_argument(
@@ -276,7 +276,7 @@ def get_cell_df():
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
     if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ pcdl_get_cell_df : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
+        sys.exit(f"Error @ pyCLI.get_cell_df : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
     # custom_data_type nop
     # run
     if os.path.isfile(args.path):
@@ -361,7 +361,7 @@ def get_cell_attributes():
     parser.add_argument(
         '--physiboss',
         default = 'true',
-        help = 'if found, should physiboss state data be extracted and loaded into the anndata object? default is True.'
+        help = 'if found, should physiboss state data be extracted and loaded into df_cell dataframe? default is True.'
     )
     # TimeSeries settingxml
     parser.add_argument(
@@ -410,7 +410,7 @@ def get_cell_attributes():
 
     # process arguments
     if not os.path.exists(args.path + '/initial.xml'):
-        sys.exit(f"Error @ pcdl_get_cell_attributes : {args.path} path does not look like a physicell output directory ({args.path}/initial.xml is missing).")
+        sys.exit(f"Error @ pyCLI.get_cell_attributes : {args.path} path does not look like a physicell output directory ({args.path}/initial.xml is missing).")
     # custom_data_type
     d_vartype = {}
     for vartype in args.custom_data_type:
@@ -420,7 +420,7 @@ def get_cell_attributes():
         elif s_type in {'float'}: o_type = float
         elif s_type in {'str'}: o_type = str
         else:
-            sys.exit(f"Error @ pyCLI.get_anndata : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.")
+            sys.exit(f"Error @ pyCLI.get_cell_attributes : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.")
         d_vartype.update({s_var : o_type})
     # run
     mcdsts = pcdl.pyMCDSts(
@@ -514,7 +514,7 @@ def get_conc_df():
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
     if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ pcdl_get_conc_df : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
+        sys.exit(f"Error @ pyCLI.get_conc_df : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
     # run
     if os.path.isfile(args.path):
         mcds = pcdl.pyMCDS(
@@ -628,7 +628,7 @@ def get_conc_attributes():
 
     # process arguments
     if not os.path.exists(args.path + '/initial.xml'):
-        sys.exit(f"Error @ pcdl_get_conc_attributes : {args.path} path does not look like a physicell output directory ({args.path}/initial.xml is missing).")
+        sys.exit(f"Error @ pyCLI.get_conc_attributes : {args.path} path does not look like a physicell output directory ({args.path}/initial.xml is missing).")
     mcdsts = pcdl.pyMCDSts(
         output_path = args.path,
         #custom_data_type,
@@ -706,7 +706,7 @@ def get_unit_dict():
     else:
         s_pathfile = s_pathfile + '/initial.xml'
     if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ pcdl_get_conc_df : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
+        sys.exit(f"Error @ pyCLI.get_unit_dict : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
     # run
     mcds = pcdl.pyMCDS(
         xmlfile = s_pathfile,
@@ -766,7 +766,7 @@ def get_version():
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
     if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ pcdl_get_version : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
+        sys.exit(f"Error @ pyCLI.get_version : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
     mcds = pcdl.pyMCDS(
         xmlfile = s_pathfile,
         output_path = '.',
@@ -816,7 +816,7 @@ def make_graph_gml():
     parser.add_argument(
         '--physiboss',
         default = 'true',
-        help = 'if found, should physiboss state data be extracted and loaded into the anndata object? default is True.'
+        help = 'if found, should physiboss state data be extracted and loaded into the df_cell dataframe? default is True.'
     )
     # TimeSeries settingxml
     parser.add_argument(
@@ -860,7 +860,7 @@ def make_graph_gml():
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
     if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ pcdl_make_graph_gml : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
+        sys.exit(f"Error @ pyCLI.make_graph_gml : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
     # custom_data_type
     d_vartype = {}
     for vartype in args.custom_data_type:
@@ -870,7 +870,7 @@ def make_graph_gml():
         elif s_type in {'float'}: o_type = float
         elif s_type in {'str'}: o_type = str
         else:
-            sys.exit(f"Error @ pyCLI.get_anndata : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.")
+            sys.exit(f"Error @ pyCLI.make_graph_gml : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.")
         d_vartype.update({s_var : o_type})
     if os.path.isfile(args.path):
         # run
@@ -884,7 +884,7 @@ def make_graph_gml():
             settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
             verbose = False if args.verbose.lower().startswith('f') else True
         )
-        s_opathfile = df_conc = mcds.make_graph_gml(
+        s_opathfile = mcds.make_graph_gml(
             graph_type = args.graph_type,
             edge_attribute = False if args.edge_attribute.lower().startswith('f') else True,
             node_attribute = args.node_attribute,
@@ -995,6 +995,129 @@ def make_movie():
     )
     # going home
     return s_opathfile
+
+
+def make_ome_tiff():
+    # argv
+    parser = argparse.ArgumentParser(
+        prog = 'pcdl_make_ome_tiff',
+        description = 'function generates an ome.tiff file or ome.tiff files, under the returned path.',
+        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
+    )
+
+    # TimeSeries path
+    parser.add_argument(
+        'path',
+        nargs = '?',
+        default = '.',
+        help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .',
+    )
+    # TimeSeries output_path '.'
+    # TimeSeries custom_data_type
+    parser.add_argument(
+        '--custom_data_type',
+        nargs = '*',
+        default = [],
+        help = 'parameter to specify custom_data variable types other than float (namely: int, bool, str) like this var:dtype myint:int mybool:bool mystr:str . downstream float and int will be handled as numeric, bool as Boolean, and str as categorical data. default is an empty string.',
+    )
+    # TimeSeries microenv
+    parser.add_argument(
+        '--microenv',
+        default = 'true',
+        help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.'
+    )
+    # TimeSeries graph False
+    # TimeSeries physiboss
+    parser.add_argument(
+        '--physiboss',
+        default = 'true',
+        help = 'if found, should physiboss state data be extracted and loaded into the df_cell dataframe? default is True.'
+    )
+    # TimeSeries settingxml
+    parser.add_argument(
+        '--settingxml',
+        default = 'PhysiCell_settings.xml',
+        help = 'from which settings.xml should the cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+    )
+    # TimeSeries verbose
+    parser.add_argument(
+        '-v', '--verbose',
+        default = 'true',
+        help = 'setting verbose to False for less text output, while processing. default is True.',
+    )
+    # make_ome_tiff cell_attribute
+    parser.add_argument(
+        '--cell_attribute',
+        default = 'ID',
+        help = 'mcds.get_cell_df dataframe columns, used for cell_attributes. the column data type has to be numeric (bool, int, float) and can not be string. default is ID, with will result in a segmentation mask.',
+    )
+    # make_ome_tiff file True
+    # make_ome_tiff collapse
+    parser.add_argument(
+        '--collapse',
+        default = 'true',
+        help = 'should all mcds time steps from the time series be collapsed into one big ome.tiff, or a many ome.tiff, one ome.tiff for each time step?, default is True.'
+    )
+
+    # parse arguments
+    args = parser.parse_args()
+    print(args)
+
+    # process arguments
+    s_pathfile = args.path
+    if not s_pathfile.endswith('.xml'):
+        s_pathfile = s_pathfile + '/initial.xml'
+    if not os.path.exists(s_pathfile):
+        sys.exit(f"Error @ pyCLI.make_ome_tiff : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
+    # custom_data_type
+    d_vartype = {}
+    for vartype in args.custom_data_type:
+        s_var, s_type = vartype.split(':')
+        if s_type in {'bool'}: o_type = bool
+        elif s_type in {'int'}: o_type = int
+        elif s_type in {'float'}: o_type = float
+        elif s_type in {'str'}: o_type = str
+        else:
+            sys.exit(f"Error @ pyCLI.make_ome_tiff : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.")
+        d_vartype.update({s_var : o_type})
+    if os.path.isfile(args.path):
+        # run
+        mcds = pcdl.pyMCDS(
+            xmlfile = args.path,
+            output_path = '.',
+            custom_data_type = d_vartype,
+            microenv = False if args.microenv.lower().startswith('f') else True,
+            graph = False,
+            physiboss = False if args.physiboss.lower().startswith('f') else True,
+            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
+            verbose = False if args.verbose.lower().startswith('f') else True
+        )
+        s_opathfile = mcds.make_ome_tiff(
+            cell_attribute = args.cell_attribute,
+            file = True,
+            collapse = False if args.collapse.lower().startswith('f') else True,
+        )
+        # going home
+        return s_opathfile
+    else:
+        # run
+        mcdsts = pcdl.pyMCDSts(
+            output_path = args.path,
+            custom_data_type = d_vartype,
+            load = True,
+            microenv = False if args.microenv.lower().startswith('f') else True,
+            graph = False,
+            physiboss = False if args.physiboss.lower().startswith('f') else True,
+            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
+            verbose = False if args.verbose.lower().startswith('f') else True,
+        )
+        o_opathfile = mcdsts.make_ome_tiff(
+            cell_attribute = args.cell_attribute,
+            file = True,
+            collapse = False if args.collapse.lower().startswith('f') else True,
+        )
+        # going home
+        return o_opathfile
 
 
 def plot_contour():
@@ -1128,9 +1251,9 @@ def plot_contour():
     else:
         s_pathfile = s_pathfile + '/initial.xml'
     if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ pcdl_plot_contour : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
+        sys.exit(f"Error @ pyCLI.plot_contour : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
     if (args.focus == None):
-        sys.exit(f"Error @ pcdl_plot_contour : input for positional argument focus is missung! this has to be a column name from the conc dataframe.")
+        sys.exit(f"Error @ pyCLI.plot_contour : input for positional argument focus is missung! this has to be a column name from the conc dataframe.")
     # run
     mcdsts = pcdl.pyMCDSts(
         output_path = args.path,
@@ -1201,7 +1324,7 @@ def plot_scatter():
     parser.add_argument(
         '--physiboss',
         default = 'true',
-        help = 'if found, should physiboss state data be extracted and loaded into the anndata object? default is True.'
+        help = 'if found, should physiboss state data be extracted and loaded into the df_cell dataframe? default is True.'
     )
     # TimeSeries settingxml
     parser.add_argument(
@@ -1326,7 +1449,7 @@ def plot_scatter():
     else:
         s_pathfile = s_pathfile + '/initial.xml'
     if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ plot_scatter : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
+        sys.exit(f"Error @ pyCLI.plot_scatter : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
     # custom_data_type
     d_vartype = {}
     for vartype in args.custom_data_type:
@@ -1336,7 +1459,7 @@ def plot_scatter():
         elif s_type in {'float'}: o_type = float
         elif s_type in {'str'}: o_type = str
         else:
-            sys.exit(f"Error @ pyCLI.get_anndata : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.")
+            sys.exit(f"Error @ pyCLI.plot_scatter : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.")
         d_vartype.update({s_var : o_type})
     # run
     mcdsts = pcdl.pyMCDSts(
@@ -1409,7 +1532,7 @@ def plot_timeseries():
     parser.add_argument(
         '--physiboss',
         default = 'true',
-        help = 'if found, should physiboss state data be extracted and loaded into the anndata object? default is True.'
+        help = 'if found, should physiboss state data be extracted and loaded into the df_cell dataframe? default is True.'
     )
     # TimeSeries settingxml
     parser.add_argument(
@@ -1581,7 +1704,7 @@ def plot_timeseries():
     elif (args.aggregate_num == 'min'): o_aggregate_num = np.nanmin
     elif (args.aggregate_num == 'std'): o_aggregate_num = np.nanstd
     elif (args.aggregate_num == 'var'): o_aggregate_num = np.nanvar
-    else: sys.exit(f"Error @ pcdl_plot_timeseries : unknowen aggregate_num {args.aggregate_num}. knowen are entropy, max, mean, median, min, std, var.")
+    else: sys.exit(f"Error @ pyCLI.plot_timeseries : unknowen aggregate_num {args.aggregate_num}. knowen are entropy, max, mean, median, min, std, var.")
     # custom_data_type
     d_vartype = {}
     for vartype in args.custom_data_type:
@@ -1591,7 +1714,7 @@ def plot_timeseries():
         elif s_type in {'float'}: o_type = float
         elif s_type in {'str'}: o_type = str
         else:
-            sys.exit(f"Error @ pyCLI.get_anndata : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.")
+            sys.exit(f"Error @ pyCLI.plot_timeseries : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.")
         d_vartype.update({s_var : o_type})
     # secondary_y
     if (args.secondary_y[0].lower() == 'false'): ls_secondary_y = False
@@ -1603,7 +1726,7 @@ def plot_timeseries():
     else: b_legend = True
     # run
     if not os.path.exists(args.path + '/initial.xml'):
-        sys.exit(f"Error @ pcdl_plot_timeseries : path does not look like a physicell output directory ({args.path}/initial.xml is missing).")
+        sys.exit(f"Error @ pyCLI.plot_timeseries : path does not look like a physicell output directory ({args.path}/initial.xml is missing).")
     mcdsts = pcdl.pyMCDSts(
         output_path = args.path,
         custom_data_type = d_vartype,
