@@ -154,7 +154,7 @@ class TestPyCliAnndata(object):
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_maxabs.h5ad')) and \
-               (set(ann.var_names).issuperset({'attack_rates_0'})) and \
+               (set(ann.var_names).issuperset({'0_attack_rates'})) and \
                (ann.shape == (24758, 78)) and \
                (ann.obs.shape == (24758, 8)) and \
                (len(ann.obsp) == 0) and \
@@ -169,7 +169,7 @@ class TestPyCliAnndata(object):
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_maxabs.h5ad')) and \
-               (set(ann.var_names).issuperset({'attack_rates_0'})) and \
+               (set(ann.var_names).issuperset({'0_attack_rates'})) and \
                (ann.shape == (24758, 78)) and \
                (ann.obs.shape == (24758, 8)) and \
                (len(ann.obsp) == 0) and \
@@ -302,7 +302,7 @@ class TestPyCliAnndata(object):
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell_maxabs.h5ad')) and \
-               (set(ann.var_names).issuperset({'attack_rates_0'})) and \
+               (set(ann.var_names).issuperset({'0_attack_rates'})) and \
                (ann.shape == (1099, 78)) and \
                (ann.obs.shape == (1099, 7)) and \
                (len(ann.obsp) == 2) and \
@@ -317,7 +317,7 @@ class TestPyCliAnndata(object):
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell_maxabs.h5ad')) and \
-               (set(ann.var_names).issuperset({'attack_rates_0'})) and \
+               (set(ann.var_names).issuperset({'0_attack_rates'})) and \
                (ann.shape == (1099, 78)) and \
                (ann.obs.shape == (1099, 7)) and \
                (len(ann.obsp) == 2) and \
@@ -451,7 +451,7 @@ class TestPyCliCellDf(object):
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell.csv')) and \
-               (set(df_cell.columns).issuperset({'attack_rates_0'}))
+               (set(df_cell.columns).issuperset({'0_attack_rates'}))
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_df_timeseries_settingxmlnone(self):
@@ -461,7 +461,7 @@ class TestPyCliCellDf(object):
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell.csv')) and \
-               (set(df_cell.columns).issuperset({'attack_rates_0'}))
+               (set(df_cell.columns).issuperset({'0_attack_rates'}))
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_df_timeseries_value(self):
@@ -529,7 +529,7 @@ class TestPyCliCellDf(object):
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.csv')) and \
-               (set(df_cell.columns).issuperset({'attack_rates_0'}))
+               (set(df_cell.columns).issuperset({'0_attack_rates'}))
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_df_timestep_settingxmlnone(self):
@@ -539,7 +539,7 @@ class TestPyCliCellDf(object):
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.csv')) and \
-               (set(df_cell.columns).issuperset({'attack_rates_0'}))
+               (set(df_cell.columns).issuperset({'0_attack_rates'}))
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_df_timestep_value(self):
@@ -744,7 +744,7 @@ class TestPyCliCellDfFeature(object):
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         d_attribute = json.load(open(s_opathfile))
         assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_attributes_minmax.json')) and \
-               (set(d_attribute.keys()).issuperset({'attack_rates_0'})) and \
+               (set(d_attribute.keys()).issuperset({'0_attack_rates'})) and \
                (len(d_attribute) == 83)
         os.remove(s_opathfile)
 
@@ -755,7 +755,7 @@ class TestPyCliCellDfFeature(object):
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         d_attribute = json.load(open(s_opathfile))
         assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_attributes_minmax.json')) and \
-               (set(d_attribute.keys()).issuperset({'attack_rates_0'})) and \
+               (set(d_attribute.keys()).issuperset({'0_attack_rates'})) and \
                (len(d_attribute) == 83)
         os.remove(s_opathfile)
 
@@ -930,7 +930,7 @@ class TestPyCliGraphGml(object):
             os.remove(s_opathfile)
 
     def test_pcdl_make_graph_gml_timeseries_settingxmlfalse_nodeattribute_one(self):
-        s_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, '--settingxml', 'false', '--node_attribute', 'attack_rates_0'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, '--settingxml', 'false', '--node_attribute', '0_attack_rates'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
@@ -943,7 +943,7 @@ class TestPyCliGraphGml(object):
             os.remove(s_opathfile)
 
     def test_pcdl_make_graph_gml_timeseries_settingxmlnone_nodeattribute_one(self):
-        s_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, '--settingxml', 'none', '--node_attribute', 'attack_rates_0'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, '--settingxml', 'none', '--node_attribute', '0_attack_rates'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
@@ -1044,7 +1044,7 @@ class TestPyCliGraphGml(object):
         os.remove(s_opathfile)
 
     def test_pcdl_make_graph_gml_timestep_settingxmlfalse_nodeattribute_one(self):
-        s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, '--settingxml', 'false', '--node_attribute', 'attack_rates_0'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, '--settingxml', 'false', '--node_attribute', '0_attack_rates'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
@@ -1053,7 +1053,7 @@ class TestPyCliGraphGml(object):
         os.remove(s_opathfile)
 
     def test_pcdl_make_graph_gml_timestep_settingxmlnone_nodeattribute_one(self):
-        s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, '--settingxml', 'none', '--node_attribute', 'attack_rates_0'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, '--settingxml', 'none', '--node_attribute', '0_attack_rates'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
@@ -1142,7 +1142,7 @@ class TestPyCliUnitDict(object):
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('data_timeseries_2d/timeseries_unit.csv')) and \
-               (set(df_cell.index).issuperset({'attack_rates_0'}))
+               (set(df_cell.index).issuperset({'0_attack_rates'}))
         os.remove(s_opathfile)
 
     def test_pcdl_get_unit_dict_timestep_settingxmlnone(self):
@@ -1152,7 +1152,7 @@ class TestPyCliUnitDict(object):
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('data_timeseries_2d/timeseries_unit.csv')) and \
-               (set(df_cell.index).issuperset({'attack_rates_0'}))
+               (set(df_cell.index).issuperset({'0_attack_rates'}))
         os.remove(s_opathfile)
 
 

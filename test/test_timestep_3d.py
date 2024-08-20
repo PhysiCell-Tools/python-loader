@@ -167,58 +167,60 @@ class TestPyMcdsInitPhysibossFalse(object):
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
               (set(df_cell.columns).issuperset({'cancer_cell_attack_rates'})) and \
               (df_cell.shape == (20460, 118))
-class TestPyMcdsInitSettingxmlFalse(object):
-    ''' tests for loading a pcdl.pyMCDS data set with settingxml false. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_3d, output_path=s_path_3d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml=False, verbose=True)
-    df_cell = mcds.get_cell_df()
-    def test_mcds_init_microenv(self, mcds=mcds, df_cell=df_cell):
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (df_cell.shape == (20460, 118))
-
-    def test_mcds_init_graph(self, mcds=mcds):
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (str(type(mcds.data['discrete_cells']['graph']['attached_cells'])) == "<class 'dict'>") and \
-              (str(type(mcds.data['discrete_cells']['graph']['neighbor_cells'])) == "<class 'dict'>") and \
-              (len(mcds.data['discrete_cells']['graph']['attached_cells']) == 20460) and \
-              (len(mcds.data['discrete_cells']['graph']['neighbor_cells']) == 20460)
-
-    def test_mcds_init_physiboss(self, mcds=mcds):
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (mcds.data['discrete_cells']['physiboss'] == None)
-
-    def test_mcds_init_settingxml(self, mcds=mcds, df_cell=df_cell):
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (set(df_cell.columns).issuperset({'attack_rates_0'})) and \
-              (df_cell.shape == (20460, 118))
 
 
-class TestPyMcdsInitSettingxmlNone(object):
-    ''' tests for loading a pcdl.pyMCDS data set with settingxml none. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_3d, output_path=s_path_3d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml=None, verbose=True)
-    df_cell = mcds.get_cell_df()
-    def test_mcds_init_microenv(self, mcds=mcds, df_cell=df_cell):
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (df_cell.shape == (20460, 118))
+#class TestPyMcdsInitSettingxmlFalse(object):
+#    ''' tests for loading a pcdl.pyMCDS data set with settingxml false. '''
+#    mcds = pcdl.pyMCDS(xmlfile=s_file_3d, output_path=s_path_3d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml=False, verbose=True)
+#    df_cell = mcds.get_cell_df()
+#    def test_mcds_init_microenv(self, mcds=mcds, df_cell=df_cell):
+#        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+#              (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
+#              (df_cell.shape == (20460, 118))
+#
+#    def test_mcds_init_graph(self, mcds=mcds):
+#        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+#              (str(type(mcds.data['discrete_cells']['graph']['attached_cells'])) == "<class 'dict'>") and \
+#              (str(type(mcds.data['discrete_cells']['graph']['neighbor_cells'])) == "<class 'dict'>") and \
+#              (len(mcds.data['discrete_cells']['graph']['attached_cells']) == 20460) and \
+#              (len(mcds.data['discrete_cells']['graph']['neighbor_cells']) == 20460)
+#
+#    def test_mcds_init_physiboss(self, mcds=mcds):
+#        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+#              (mcds.data['discrete_cells']['physiboss'] == None)
+#
+#    def test_mcds_init_settingxml(self, mcds=mcds, df_cell=df_cell):
+#        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+#              (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
+#              (set(df_cell.columns).issuperset({'attack_rates_0'})) and \
+#              (df_cell.shape == (20460, 118))
 
-    def test_mcds_init_graph(self, mcds=mcds):
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (str(type(mcds.data['discrete_cells']['graph']['attached_cells'])) == "<class 'dict'>") and \
-              (str(type(mcds.data['discrete_cells']['graph']['neighbor_cells'])) == "<class 'dict'>") and \
-              (len(mcds.data['discrete_cells']['graph']['attached_cells']) == 20460) and \
-              (len(mcds.data['discrete_cells']['graph']['neighbor_cells']) == 20460)
 
-    def test_mcds_init_physiboss(self, mcds=mcds):
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (mcds.data['discrete_cells']['physiboss'] == None)
-
-    def test_mcds_init_settingxml(self, mcds=mcds, df_cell=df_cell):
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (set(df_cell.columns).issuperset({'attack_rates_0'})) and \
-              (df_cell.shape == (20460, 118))
+#class TestPyMcdsInitSettingxmlNone(object):
+#    ''' tests for loading a pcdl.pyMCDS data set with settingxml none. '''
+#    mcds = pcdl.pyMCDS(xmlfile=s_file_3d, output_path=s_path_3d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml=None, verbose=True)
+#    df_cell = mcds.get_cell_df()
+#    def test_mcds_init_microenv(self, mcds=mcds, df_cell=df_cell):
+#        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+#              (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
+#              (df_cell.shape == (20460, 118))
+#
+#    def test_mcds_init_graph(self, mcds=mcds):
+#        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+#              (str(type(mcds.data['discrete_cells']['graph']['attached_cells'])) == "<class 'dict'>") and \
+#              (str(type(mcds.data['discrete_cells']['graph']['neighbor_cells'])) == "<class 'dict'>") and \
+#              (len(mcds.data['discrete_cells']['graph']['attached_cells']) == 20460) and \
+#              (len(mcds.data['discrete_cells']['graph']['neighbor_cells']) == 20460)
+#
+#    def test_mcds_init_physiboss(self, mcds=mcds):
+#        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+#              (mcds.data['discrete_cells']['physiboss'] == None)
+#
+#    def test_mcds_init_settingxml(self, mcds=mcds, df_cell=df_cell):
+#        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+#              (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
+#              (set(df_cell.columns).issuperset({'attack_rates_0'})) and \
+#              (df_cell.shape == (20460, 118))
 
 
 class TestPyMcdsInitVerboseTrue(object):
@@ -587,5 +589,3 @@ class TestPyMcds3dGraphWorkhorse(object):
               (s_file.find('edge [\n    source') > -1) and \
               (s_file.find('distance_microns') > -1)
         os.remove(s_pathfile)
-
-

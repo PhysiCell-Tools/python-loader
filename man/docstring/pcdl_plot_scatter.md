@@ -34,7 +34,7 @@ options:
                         script. default is True.
   --physiboss PHYSIBOSS
                         if found, should physiboss state data be extracted and
-                        loaded into the anndata object? default is True.
+                        loaded into the df_cell dataframe? default is True.
   --settingxml SETTINGXML
                         from which settings.xml should the cell type ID label
                         mapping be extracted? set to None or False if the xml

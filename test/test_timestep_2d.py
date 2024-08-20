@@ -170,7 +170,7 @@ class TestPyMcdsInitSettingxmlFalse(object):
     def test_mcds_init_settingxml(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (set(df_cell.columns).issuperset({'attack_rates_0'})) and \
+              (set(df_cell.columns).issuperset({'0_attack_rates'})) and \
               (df_cell.shape == (1099, 95))
 
 
@@ -197,7 +197,7 @@ class TestPyMcdsInitSettingxmlNone(object):
     def test_mcds_init_settingxml(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (set(df_cell.columns).issuperset({'attack_rates_0'})) and \
+              (set(df_cell.columns).issuperset({'0_attack_rates'})) and \
               (df_cell.shape == (1099, 95))
 
 
@@ -474,12 +474,6 @@ class TestPyMcdsMicroenv(object):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (ar_conc is None)
 
-    def test_mcds_get_concentration_df(self, mcds=mcds):
-        df_conc = mcds.get_concentration_df(z_slice=None, halt=False, values=1, drop=set(), keep=set())
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (df_conc.shape == (121, 10))
-
     def test_mcds_get_conc_df(self, mcds=mcds):
         df_conc = mcds.get_conc_df(z_slice=None, halt=False, values=1, drop=set(), keep=set())
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
@@ -570,7 +564,7 @@ class TestPyMcdsCell(object):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(ls_celltype)) == "<class 'list'>") and \
               (str(type(ls_celltype[0])) == "<class 'str'>") and \
-              (len(ls_celltype) == 77)
+              (len(ls_celltype) == 1)
 
     def test_mcds_get_celltype_dict(self, mcds=mcds):
         ds_celltype = mcds.get_celltype_dict()

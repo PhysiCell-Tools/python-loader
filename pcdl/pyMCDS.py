@@ -1105,8 +1105,13 @@ class pyMCDS:
             of substrates over microenvironment.
             you can post-process this file in other software like paraview.
 
-            + https://www.paraview.org/
+            https://www.paraview.org/
         """
+        # off we go.
+        s_vtkfile = self.xmlfile.replace('.xml','_conc.vtk')
+        if self.verbose:
+            print(f'processing: {s_vtkfile} ...')
+
         # get microenviornment data frame
         df_micenv = self.get_conc_df()
 
@@ -1168,7 +1173,7 @@ class pyMCDS:
             del vf_values
 
         # save vtk file
-        s_vtkpathfile = self.path + '/' + self.xmlfile.replace('.xml','_conc.vtk')
+        s_vtkpathfile = self.path + '/' + s_vtkfile
         vw_writer = vtk.vtkXMLRectilinearGridWriter()
         vw_writer.SetFileName(s_vtkpathfile)
         vw_writer.SetInputData(vr_grid)
@@ -1662,12 +1667,17 @@ class pyMCDS:
 
         description:
             function that generates 3D glyph vtk file for cells.
-            cells can have specified attributes like 'cell_type',
-            'pressure', 'dead', etc.
+            cells can have specified attributes like cell_type,
+            pressure, dead, etc.
             you can post-process this file in other software like paraview.
 
-            + https://www.paraview.org/
+            https://www.paraview.org/
         """
+        # off we go.
+        s_vtkfile = self.xmlfile.replace('.xml','_cells.vtk')
+        if self.verbose:
+            print(f'processing: {s_vtkfile} ...')
+
         # get cell data frame
         df_cell = self.get_cell_df(values=1, drop=set(), keep=set())
         df_cell = df_cell.reset_index()
@@ -1742,7 +1752,7 @@ class pyMCDS:
         vg_glyph.Update()
 
         # write VTK
-        s_vtkpathfile = self.path + '/' + self.xmlfile.replace('.xml','_cells.vtk')
+        s_vtkpathfile = self.path + '/' + s_vtkfile
         vw_writer = vtk.vtkXMLPolyDataWriter()
         vw_writer.SetFileName(s_vtkpathfile)
         vw_writer.SetInputData(vg_glyph.GetOutput())
@@ -1928,8 +1938,8 @@ class pyMCDS:
             the ome tiff file format can for example be read by the napari
             or fiji (imagej) software.
 
-            + https://napari.org/stable/
-            + https://fiji.sc/
+            https://napari.org/stable/
+            https://fiji.sc/
         """
         # const
         ls_coor_mnp = ['mesh_center_m', 'mesh_center_n', 'mesh_center_p'] # xyz

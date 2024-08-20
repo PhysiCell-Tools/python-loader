@@ -1,26 +1,19 @@
 ```
-usage: pcdl_make_graph_gml [-h] [--custom_data_type [CUSTOM_DATA_TYPE ...]]
-                           [--microenv MICROENV] [--physiboss PHYSIBOSS]
-                           [--settingxml SETTINGXML] [-v VERBOSE]
-                           [--edge_attribute EDGE_ATTRIBUTE]
-                           [--node_attribute [NODE_ATTRIBUTE ...]]
-                           [path] [graph_type]
+usage: pcdl_make_ome_tiff [-h] [--custom_data_type [CUSTOM_DATA_TYPE ...]]
+                          [--microenv MICROENV] [--physiboss PHYSIBOSS]
+                          [--settingxml SETTINGXML] [-v VERBOSE]
+                          [--cell_attribute CELL_ATTRIBUTE]
+                          [--collapse COLLAPSE]
+                          [path]
 
-function to generate graph files in the gml graph modelling language standard
-format. gml was the outcome of an initiative that started at the international
-symposium on graph drawing 1995 in Passau and ended at Graph Drawing 1996 in
-Berkeley. the networkx python library (https://networkx.org/) and igraph C and
-python libraries (https://igraph.org/) for graph analysis are gml compatible
-and can as such read and write this file format.
+function to transform chosen mcds output into an 1[um] spaced czyx (channel,
+z-axis, y-axis, x-axis) ome tiff file, one substrate or cell_type per channel.
+the ome tiff file format can for example be read by the napari
+(https://napari.org/stable/) or fiji imagej (https://fiji.sc/) software.
 
 positional arguments:
   path                  path to the PhysiCell output directory or a
                         outputnnnnnnnn.xml file. default is . .
-  graph_type            to specify which physicell output data should be
-                        processed. attached: processes
-                        mcds.get_attached_graph_dict dictionary. neighbor:
-                        processes mcds.get_neighbor_graph_dict dictionary.
-                        default is neighbor.
 
 options:
   -h, --help            show this help message and exit
@@ -45,13 +38,15 @@ options:
   -v VERBOSE, --verbose VERBOSE
                         setting verbose to False for less text output, while
                         processing. default is True.
-  --edge_attribute EDGE_ATTRIBUTE
-                        specifies if the spatial Euclidean distance is used
-                        for edge attribute, to generate a weighted graph.
-                        default is True.
-  --node_attribute [NODE_ATTRIBUTE ...]
-                        listing of mcds.get_cell_df dataframe columns, used
-                        for node attributes. default is and empty list.
+  --cell_attribute CELL_ATTRIBUTE
+                        mcds.get_cell_df dataframe columns, used for
+                        cell_attributes. the column data type has to be
+                        numeric (bool, int, float) and can not be string.
+                        default is ID, with will result in a segmentation
+                        mask.
+  --collapse COLLAPSE   should all mcds time steps from the time series be
+                        collapsed into one big ome.tiff, or a many ome.tiff,
+                        one ome.tiff for each time step?, default is True.
 
 homepage: https://github.com/elmbeech/physicelldataloader
 ```

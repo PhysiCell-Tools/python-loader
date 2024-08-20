@@ -782,11 +782,229 @@ def get_version():
     return s_version
 
 
+def make_cell_vtk():
+    # argv
+    parser = argparse.ArgumentParser(
+        prog = 'pcdl_make_cell_vtk',
+        description = 'function that generates 3D glyph vtk file for cells. cells can have specified attributes like cell_type, pressure, dead, etc. you can post-process this file in other software like paraview (https://www.paraview.org/).',
+        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
+    )
+
+    # TimeSeries path
+    parser.add_argument(
+        'path',
+        nargs = '?',
+        default = '.',
+        help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .',
+    )
+    # TimeSeries output_path '.'
+    # TimeSeries custom_data_type
+    parser.add_argument(
+        '--custom_data_type',
+        nargs = '*',
+        default = [],
+        help = 'parameter to specify custom_data variable types other than float (namely: int, bool, str) like this var:dtype myint:int mybool:bool mystr:str . downstream float and int will be handled as numeric, bool as Boolean, and str as categorical data. default is an empty string.',
+    )
+    # TimeSeries microenv
+    parser.add_argument(
+        '--microenv',
+        default = 'true',
+        help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.'
+    )
+    # TimeSeries graph True
+    # TimeSeries physiboss
+    parser.add_argument(
+        '--physiboss',
+        default = 'true',
+        help = 'if found, should physiboss state data be extracted and loaded into the df_cell dataframe? default is True.'
+    )
+    # TimeSeries settingxml
+    parser.add_argument(
+        '--settingxml',
+        default = 'PhysiCell_settings.xml',
+        help = 'from which settings.xml should the cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+    )
+    # TimeSeries verbose
+    parser.add_argument(
+        '-v', '--verbose',
+        default = 'true',
+        help = 'setting verbose to False for less text output, while processing. default is True.',
+    )
+    # make_cell_vtk attrribute
+    parser.add_argument(
+        '--attribute',
+        nargs = '*',
+        default = ['cell_type'],
+        help = 'listing of mcds.get_cell_df dataframe column names, used for cell attributes. default is a single term: cell_type.',
+    )
+
+    # parse arguments
+    args = parser.parse_args()
+    print(args)
+
+    # process arguments
+    s_pathfile = args.path
+    if not s_pathfile.endswith('.xml'):
+        s_pathfile = s_pathfile + '/initial.xml'
+    if not os.path.exists(s_pathfile):
+        sys.exit(f"Error @ pyCLI.make_cell_vtk : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
+    # custom_data_type
+    d_vartype = {}
+    for vartype in args.custom_data_type:
+        s_var, s_type = vartype.split(':')
+        if s_type in {'bool'}: o_type = bool
+        elif s_type in {'int'}: o_type = int
+        elif s_type in {'float'}: o_type = float
+        elif s_type in {'str'}: o_type = str
+        else:
+            sys.exit(f"Error @ pyCLI.make_cell_vtk : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.")
+        d_vartype.update({s_var : o_type})
+    if os.path.isfile(args.path):
+        # run
+        mcds = pcdl.pyMCDS(
+            xmlfile = args.path,
+            output_path = '.',
+            custom_data_type = d_vartype,
+            microenv = False if args.microenv.lower().startswith('f') else True,
+            graph = True,
+            physiboss = False if args.physiboss.lower().startswith('f') else True,
+            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
+            verbose = False if args.verbose.lower().startswith('f') else True
+        )
+        s_opathfile = mcds.make_cell_vtk(
+            attribute = args.attribute,
+            visualize = False,
+        )
+        # going home
+        return s_opathfile
+    else:
+        # run
+        mcdsts = pcdl.pyMCDSts(
+            output_path = args.path,
+            custom_data_type = d_vartype,
+            load = True,
+            microenv = False if args.microenv.lower().startswith('f') else True,
+            graph = True,
+            physiboss = False if args.physiboss.lower().startswith('f') else True,
+            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
+            verbose = False if args.verbose.lower().startswith('f') else True,
+        )
+        ls_opathfile = mcdsts.make_cell_vtk(
+            attribute = args.attribute,
+            visualize = False,
+        )
+        # going home
+        return ls_opathfile
+
+
+def make_conc_vtk():
+    # argv
+    parser = argparse.ArgumentParser(
+        prog = 'pcdl_make_conc_vtk',
+        description = 'function generates rectilinear grid vtk files, one per mcds time step, contains distribution of substrates over microenvironment. you can post-process this files in other software like paraview (https://www.paraview.org/).',
+        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
+    )
+
+    # TimeSeries path
+    parser.add_argument(
+        'path',
+        nargs = '?',
+        default = '.',
+        help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .',
+    )
+    # TimeSeries output_path '.'
+    # TimeSeries custom_data_type
+    parser.add_argument(
+        '--custom_data_type',
+        nargs = '*',
+        default = [],
+        help = 'parameter to specify custom_data variable types other than float (namely: int, bool, str) like this var:dtype myint:int mybool:bool mystr:str . downstream float and int will be handled as numeric, bool as Boolean, and str as categorical data. default is an empty string.',
+    )
+    # TimeSeries microenv
+    parser.add_argument(
+        '--microenv',
+        default = 'true',
+        help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.'
+    )
+    # TimeSeries graph True
+    # TimeSeries physiboss
+    parser.add_argument(
+        '--physiboss',
+        default = 'true',
+        help = 'if found, should physiboss state data be extracted and loaded into the df_cell dataframe? default is True.'
+    )
+    # TimeSeries settingxml
+    parser.add_argument(
+        '--settingxml',
+        default = 'PhysiCell_settings.xml',
+        help = 'from which settings.xml should the cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+    )
+    # TimeSeries verbose
+    parser.add_argument(
+        '-v', '--verbose',
+        default = 'true',
+        help = 'setting verbose to False for less text output, while processing. default is True.',
+    )
+
+    # parse arguments
+    args = parser.parse_args()
+    print(args)
+
+    # process arguments
+    s_pathfile = args.path
+    if not s_pathfile.endswith('.xml'):
+        s_pathfile = s_pathfile + '/initial.xml'
+    if not os.path.exists(s_pathfile):
+        sys.exit(f"Error @ pyCLI.make_conc_vtk : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
+    # custom_data_type
+    d_vartype = {}
+    for vartype in args.custom_data_type:
+        s_var, s_type = vartype.split(':')
+        if s_type in {'bool'}: o_type = bool
+        elif s_type in {'int'}: o_type = int
+        elif s_type in {'float'}: o_type = float
+        elif s_type in {'str'}: o_type = str
+        else:
+            sys.exit(f"Error @ pyCLI.make_conc_vtk : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.")
+        d_vartype.update({s_var : o_type})
+    if os.path.isfile(args.path):
+        # run
+        mcds = pcdl.pyMCDS(
+            xmlfile = args.path,
+            output_path = '.',
+            custom_data_type = d_vartype,
+            microenv = False if args.microenv.lower().startswith('f') else True,
+            graph = True,
+            physiboss = False if args.physiboss.lower().startswith('f') else True,
+            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
+            verbose = False if args.verbose.lower().startswith('f') else True
+        )
+        s_opathfile = mcds.make_conc_vtk()
+        # going home
+        return s_opathfile
+    else:
+        # run
+        mcdsts = pcdl.pyMCDSts(
+            output_path = args.path,
+            custom_data_type = d_vartype,
+            load = True,
+            microenv = False if args.microenv.lower().startswith('f') else True,
+            graph = True,
+            physiboss = False if args.physiboss.lower().startswith('f') else True,
+            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
+            verbose = False if args.verbose.lower().startswith('f') else True,
+        )
+        ls_opathfile = mcdsts.make_conc_vtk()
+        # going home
+        return ls_opathfile
+
+    pass
+
 def make_graph_gml():
     # argv
     parser = argparse.ArgumentParser(
         prog = 'pcdl_make_graph_gml',
-        description = 'function to generate graph files in the gml graph modelling language standard format. gml was the outcome of an initiative that started at the international symposium on graph drawing 1995 in Passau and ended at Graph Drawing 1996 in Berkeley. the networkx python and igraph C and python libraries for graph analysis are gml compatible and can as such read and write this file format.',
+        description = 'function to generate graph files in the gml graph modelling language standard format. gml was the outcome of an initiative that started at the international symposium on graph drawing 1995 in Passau and ended at Graph Drawing 1996 in Berkeley. the networkx python library (https://networkx.org/) and igraph C and python libraries (https://igraph.org/) for graph analysis are gml compatible and can as such read and write this file format.',
         epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
     )
 
@@ -903,14 +1121,11 @@ def make_graph_gml():
             settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
             verbose = False if args.verbose.lower().startswith('f') else True,
         )
-        ls_opathfile = []
-        for mcds in mcdsts.get_mcds_list():
-            s_opathfile = df_conc = mcds.make_graph_gml(
-                graph_type = args.graph_type,
-                edge_attribute = False if args.edge_attribute.lower().startswith('f') else True,
-                node_attribute = args.node_attribute,
-            )
-            ls_opathfile.append(s_opathfile)
+        ls_opathfile = mcdsts.make_graph_gml(
+            graph_type = args.graph_type,
+            edge_attribute = False if args.edge_attribute.lower().startswith('f') else True,
+            node_attribute = args.node_attribute,
+        )
         # going home
         return ls_opathfile
 
@@ -1001,7 +1216,7 @@ def make_ome_tiff():
     # argv
     parser = argparse.ArgumentParser(
         prog = 'pcdl_make_ome_tiff',
-        description = 'function generates an ome.tiff file or ome.tiff files, under the returned path.',
+        description = 'function to transform chosen mcds output into an 1[um] spaced czyx (channel, z-axis, y-axis, x-axis) ome tiff file, one substrate or cell_type per channel. the ome tiff file format can for example be read by the napari (https://napari.org/stable/) or fiji imagej (https://fiji.sc/) software.',
         epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
     )
 

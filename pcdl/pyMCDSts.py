@@ -478,7 +478,7 @@ class pyMCDSts:
         # gather data
         der_variable_state = {}
         for mcds in self.get_mcds_list():
-            df_conc = mcds.get_concentration_df(drop=drop, keep=keep)
+            df_conc = mcds.get_conc_df(drop=drop, keep=keep)
             for s_column in df_conc.columns:
                 if not (s_column in es_coor_conc):
                     er_state = set(df_conc.loc[:,s_column])
@@ -609,7 +609,7 @@ class pyMCDSts:
         if extrema == None:
             extrema = [None, None]
             for mcds in self.get_mcds_list():
-                df_conc = mcds.get_concentration_df()
+                df_conc = mcds.get_conc_df()
                 r_min = df_conc.loc[:,focus].min()
                 r_max = df_conc.loc[:,focus].max()
                 if (extrema[0] is None) or (extrema[0] > r_min):
@@ -680,7 +680,7 @@ class pyMCDSts:
             over microenvironment.
             you can post-process this file in other software like paraview.
 
-            + https://www.paraview.org/
+            https://www.paraview.org/
         """
         # processing
         ls_vtkpathfile = []
@@ -1079,10 +1079,10 @@ class pyMCDSts:
         description:
             function that generates 3D glyph vtk files for cells.
             one file per mcds time step. cells can have specified attributes
-            like 'cell_type', 'pressure', 'dead', etc.
+            like cell_type, pressure, dead, etc.
             you can post-process this file in other software like paraview.
 
-            + https://www.paraview.org/
+            https://www.paraview.org/
         """
         # processing
         ls_vtkpathfile = []
@@ -1129,8 +1129,8 @@ class pyMCDSts:
             the ome tiff file format can for example be read by the napari
             or fiji (imagej) software.
 
-            + https://napari.org/stable/
-            + https://fiji.sc/
+            https://napari.org/stable/
+            https://fiji.sc/
         """
         # each T time step
         l_tczyx_img = []

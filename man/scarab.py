@@ -187,12 +187,12 @@ docstring_md(
 )
 # voxel
 docstring_md(
-    s_function = 'mcds.get_voxel_volume',
-    ls_doc = pcdl.TimeStep.get_voxel_volume.__doc__.split('\n'),
-)
-docstring_md(
     s_function = 'mcds.get_voxel_spacing',
     ls_doc = pcdl.TimeStep.get_voxel_spacing.__doc__.split('\n'),
+)
+docstring_md(
+    s_function = 'mcds.get_voxel_volume',
+    ls_doc = pcdl.TimeStep.get_voxel_volume.__doc__.split('\n'),
 )
 docstring_md(
     s_function = 'mcds.get_voxel_ijk',
@@ -273,6 +273,12 @@ docstring_md(
     ls_doc = pcdl.TimeStep.make_graph_gml.__doc__.split('\n'),
 )
 
+# write pyMCDS ome tiff function markdown files
+docstring_md(
+    s_function = 'mcds.make_ome_tiff',
+    ls_doc = pcdl.TimeStep.make_ome_tiff.__doc__.split('\n'),
+)
+
 # write pyMCDS setting function markdown files
 docstring_md(
     s_function = 'mcds.get_unit_dict',
@@ -326,6 +332,10 @@ docstring_md(
     s_function = 'mcdsts.plot_contour',
     ls_doc = pcdl.TimeSeries.plot_contour.__doc__.split('\n'),
 )
+docstring_md(
+    s_function = 'mcdsts.make_conc_vtk',
+    ls_doc = pcdl.TimeSeries.make_conc_vtk.__doc__.split('\n'),
+)
 
 # write pyMCDSts cell agent function makdown files
 docstring_md(
@@ -339,6 +349,16 @@ docstring_md(
 docstring_md(
     s_function = 'mcdsts.plot_scatter',
     ls_doc = pcdl.TimeSeries.plot_scatter.__doc__.split('\n'),
+)
+docstring_md(
+    s_function = 'mcdsts.make_cell_vtk',
+    ls_doc = pcdl.TimeSeries.make_cell_vtk.__doc__.split('\n'),
+)
+
+# write pyMCDSts ome tiff function makdown files
+docstring_md(
+    s_function = 'mcdsts.make_ome_tiff',
+    ls_doc = pcdl.TimeSeries.make_ome_tiff.__doc__.split('\n'),
 )
 
 # write pyMCDSts graph function makdown files
@@ -400,17 +420,21 @@ docstring_md(
     ls_doc = pcdl.uninstall_data.__doc__.split('\n'),
 )
 
+
 # wite cli function markdown files
 help_md(s_command='pcdl_get_anndata')
-help_md(s_command='pcdl_get_cell_df')
 help_md(s_command='pcdl_get_cell_attributes')
-help_md(s_command='pcdl_get_conc_df')
+help_md(s_command='pcdl_get_cell_df')
 help_md(s_command='pcdl_get_conc_attributes')
+help_md(s_command='pcdl_get_conc_df')
 help_md(s_command='pcdl_get_unit_dict')
 help_md(s_command='pcdl_get_version')
+help_md(s_command='pcdl_make_cell_vtk')
+help_md(s_command='pcdl_make_conc_vtk')
 help_md(s_command='pcdl_make_graph_gml')
 help_md(s_command='pcdl_make_gif')
 help_md(s_command='pcdl_make_movie')
+help_md(s_command='pcdl_make_ome_tiff')
 help_md(s_command='pcdl_plot_contour')
 help_md(s_command='pcdl_plot_scatter')
 help_md(s_command='pcdl_plot_timeseries')
