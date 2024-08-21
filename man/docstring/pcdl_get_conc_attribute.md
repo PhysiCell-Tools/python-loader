@@ -1,7 +1,7 @@
 ```
-usage: pcdl_get_conc_attributes [-h] [-v VERBOSE] [--drop [DROP ...]]
-                                [--keep [KEEP ...]] [--allvalues ALLVALUES]
-                                [path] [values]
+usage: pcdl_get_conc_attribute [-h] [-v VERBOSE] [--drop [DROP ...]]
+                               [--keep [KEEP ...]] [--allvalues ALLVALUES]
+                               [path] [values]
 
 function to detect informative substrate concentration variables in a time
 series. this function detects even variables which have less than the minimal

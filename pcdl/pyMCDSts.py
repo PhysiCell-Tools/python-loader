@@ -433,7 +433,7 @@ class pyMCDSts:
             return ldf_concts
 
 
-    def get_conc_attributes(self, values=1, drop=set(), keep=set(), allvalues=False):
+    def get_conc_attribute(self, values=1, drop=set(), keep=set(), allvalues=False):
         """
         input:
             self: pyMCDSts class instance.
@@ -782,7 +782,7 @@ class pyMCDSts:
             return ldf_cellts
 
 
-    def get_cell_attributes(self, values=1, drop=set(), keep=set(), allvalues=False):
+    def get_cell_attribute(self, values=1, drop=set(), keep=set(), allvalues=False):
         """
         input:
             self: pyMCDSts class instance.

@@ -325,8 +325,8 @@ docstring_md(
     ls_doc = pcdl.TimeSeries.get_conc_df.__doc__.split('\n'),
 )
 docstring_md(
-    s_function = 'mcdsts.get_conc_attributes',
-    ls_doc = pcdl.TimeSeries.get_conc_attributes.__doc__.split('\n'),
+    s_function = 'mcdsts.get_conc_attribute',
+    ls_doc = pcdl.TimeSeries.get_conc_attribute.__doc__.split('\n'),
 )
 docstring_md(
     s_function = 'mcdsts.plot_contour',
@@ -343,8 +343,8 @@ docstring_md(
     ls_doc = pcdl.TimeSeries.get_cell_df.__doc__.split('\n'),
 )
 docstring_md(
-    s_function = 'mcdsts.get_cell_attributes',
-    ls_doc = pcdl.TimeSeries.get_cell_attributes.__doc__.split('\n'),
+    s_function = 'mcdsts.get_cell_attribute',
+    ls_doc = pcdl.TimeSeries.get_cell_attribute.__doc__.split('\n'),
 )
 docstring_md(
     s_function = 'mcdsts.plot_scatter',
@@ -423,10 +423,10 @@ docstring_md(
 
 # wite cli function markdown files
 help_md(s_command='pcdl_get_anndata')
-help_md(s_command='pcdl_get_cell_attributes')
 help_md(s_command='pcdl_get_cell_df')
-help_md(s_command='pcdl_get_conc_attributes')
 help_md(s_command='pcdl_get_conc_df')
+help_md(s_command='pcdl_get_cell_attribute')
+help_md(s_command='pcdl_get_conc_attribute')
 help_md(s_command='pcdl_get_unit_dict')
 help_md(s_command='pcdl_get_version')
 help_md(s_command='pcdl_make_cell_vtk')

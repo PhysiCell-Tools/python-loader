@@ -1708,7 +1708,7 @@ class pyMCDS:
         # fill this grid with given attributes
         for s_attribute in attribute:
             b_bool = False
-            if (df_cell.loc[:, s_attribute].dtype.type in {bool, np.bool, np.bool_}):
+            if (df_cell.loc[:, s_attribute].dtype.type in {bool, np.bool_}):  # np.bool
                 b_bool = True
                 custom_data_vtk = vtk.vtkStringArray()
                 custom_data_vtk.SetName(s_attribute)
@@ -1879,7 +1879,7 @@ class pyMCDS:
             # node attributes
             for s_attribute in node_attribute:
                 o_attribute = df_cell.loc[i_src, s_attribute]
-                if (type(o_attribute) in {bool, np.bool, np.bool_, int, np.int_, np.int8, np.int16, np.int32, np.int64}):
+                if (type(o_attribute) in {bool, np.bool_, int, np.int_, np.int8, np.int16, np.int32, np.int64}):  # np.bool
                     f.write(f'    {s_attribute} {int(o_attribute)}\n')
                 elif (type(o_attribute) in {float, np.float16, np.float32, np.float64}):  # np.float128
                     f.write(f'    {s_attribute} {o_attribute}\n')
@@ -2001,7 +2001,7 @@ class pyMCDS:
             sys.exit(f'Error @ pyMCDS.make_ome_tiff : cell_attribute can not be cell_type.')
         elif (df_cell.loc[:, cell_attribute].dtype.type in {str, np.str_, np.object_}):
             sys.exit(f'Error @ pyMCDS.make_ome_tiff : {cell_attribute} {df_cell.loc[:, cell_attribute].dtype.type} cell_attribute can not be string or object. cell_attribute has to be boolean, integer, or float.')
-        elif (df_cell.loc[:, cell_attribute].dtype.type in {bool, np.bool, np.bool_}):
+        elif (df_cell.loc[:, cell_attribute].dtype.type in {bool, np.bool_}):  # np.bool
             df_cell = df_cell.astype({cell_attribute: int})
         df_cell.loc[:, cell_attribute] = df_cell.loc[:, cell_attribute] - df_cell.loc[:, cell_attribute].min() + 1  # positive values starting at 1
         # pivot cell_type

@@ -327,10 +327,10 @@ def get_cell_df():
             return s_opathfile
 
 
-def get_cell_attributes():
+def get_cell_attribute():
     # argv
     parser = argparse.ArgumentParser(
-        prog = 'pcdl_get_cell_attributes',
+        prog = 'pcdl_get_cell_attribute',
         description = 'function to detect informative variables in a time series. this function detects even variables which have less than the minimal state count in each time step, but different values from time step to time step. the output is a json file with an entry of all non-coordinate column names that at least in one of the time steps or in between time steps, reach the given minimal value count. key is the column name, mapped is a list of all values (bool, str, and, if allvalues is True, int and float) or a list with minimum and maximum values (int, float).',
         epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
     )
@@ -375,7 +375,7 @@ def get_cell_attributes():
         default = 'true',
         help = 'setting verbose to False for less text output, while processing. default is True.',
     )
-    # get_cell_attributes values
+    # get_cell_attribute values
     parser.add_argument(
         'values',
         nargs = '?',
@@ -383,21 +383,21 @@ def get_cell_attributes():
         type = int,
         help = 'minimal number of values a variable has to have in any of the mcds time steps to be outputted. variables that have only 1 state carry no information. None is a state too. default is 1.',
     )
-    # get_cell_attributes drop
+    # get_cell_attribute drop
     parser.add_argument(
         '--drop',
         nargs = '*',
         default = [],
         help = "set of column labels to be dropped for the dataframe. don't worry: essential columns like ID, coordinates and time will never be dropped. Attention: when the keep parameter is given, then the drop parameter has to be an empty string! default is an empty string.",
     )
-    # get_cell_attributes keep
+    # get_cell_attribute keep
     parser.add_argument(
         '--keep',
         nargs = '*',
         default = [],
         help = "set of column labels to be kept in the dataframe. set values=1 to be sure that all variables are kept. don't worry: essential columns like ID, coordinates and time will always be kept. default is an empty string.",
     )
-    # get_cell_attributes allvalues
+    # get_cell_attribute allvalues
     parser.add_argument(
         '--allvalues',
         default = 'false',
@@ -410,7 +410,7 @@ def get_cell_attributes():
 
     # process arguments
     if not os.path.exists(args.path + '/initial.xml'):
-        sys.exit(f"Error @ pyCLI.get_cell_attributes : {args.path} path does not look like a physicell output directory ({args.path}/initial.xml is missing).")
+        sys.exit(f"Error @ pyCLI.get_cell_attribute : {args.path} path does not look like a physicell output directory ({args.path}/initial.xml is missing).")
     # custom_data_type
     d_vartype = {}
     for vartype in args.custom_data_type:
@@ -420,7 +420,7 @@ def get_cell_attributes():
         elif s_type in {'float'}: o_type = float
         elif s_type in {'str'}: o_type = str
         else:
-            sys.exit(f"Error @ pyCLI.get_cell_attributes : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.")
+            sys.exit(f"Error @ pyCLI.get_cell_attribute : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.")
         d_vartype.update({s_var : o_type})
     # run
     mcdsts = pcdl.pyMCDSts(
@@ -437,13 +437,13 @@ def get_cell_attributes():
     b_allvalues = True if args.allvalues.lower().startswith('t') else False
     if b_allvalues:
         s_values = 'all'
-    dl_variable = mcdsts.get_cell_attributes(
+    dl_variable = mcdsts.get_cell_attribute(
         values = args.values,
         drop = set(args.drop),
         keep = set(args.keep),
         allvalues = b_allvalues,
     )
-    s_opathfile = f'{args.path}/timeseries_cell_attributes_{s_values}.json'
+    s_opathfile = f'{args.path}/timeseries_cell_attribute_{s_values}.json'
     json.dump(dl_variable, open(s_opathfile, 'w'), sort_keys=True)
     # going home
     return s_opathfile
@@ -566,10 +566,10 @@ def get_conc_df():
             return s_opathfile
 
 
-def get_conc_attributes():
+def get_conc_attribute():
     # argv
     parser = argparse.ArgumentParser(
-        prog = 'pcdl_get_conc_attributes',
+        prog = 'pcdl_get_conc_attribute',
         description = 'function to detect informative substrate concentration variables in a time series. this function detects even variables which have less than the minimal state count in each time step, but different values from time step to time step. the output is a json file with an entry of all non-coordinate column names that at least in one of the time steps or in between time steps, reach the given minimal value count. key is the column name, mapped is a list of all values (bool, str, and, if allvalues is True, int and float) or a list with minimum and maximum values (int, float).',
         epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
     )
@@ -593,7 +593,7 @@ def get_conc_attributes():
         default = 'true',
         help = 'setting verbose to False for less text output, while processing. default is True.',
     )
-    # get_conc_attributes values
+    # get_conc_attribute values
     parser.add_argument(
         'values',
         nargs = '?',
@@ -601,21 +601,21 @@ def get_conc_attributes():
         type = int,
         help = 'minimal number of values a variable has to have in any of the mcds time steps to be outputted. variables that have only 1 state carry no information. None is a state too. default is 1.',
     )
-    # get_conc_attributes drop
+    # get_conc_attribute drop
     parser.add_argument(
         '--drop',
         nargs = '*',
         default = [],
         help = "set of column labels to be dropped for the dataframe. don't worry: essential columns like ID, coordinates and time will never be dropped. Attention: when the keep parameter is given, then the drop parameter has to be an empty string! default is an empty string.",
     )
-    # get_conc_attributes keep
+    # get_conc_attribute keep
     parser.add_argument(
         '--keep',
         nargs = '*',
         default = [],
         help = "set of column labels to be kept in the dataframe. set values=1 to be sure that all variables are kept. don't worry: essential columns like ID, coordinates and time will always be kept. default is an empty string.",
     )
-    # get_conc_attributes allvalues
+    # get_conc_attribute allvalues
     parser.add_argument(
         '--allvalues',
         default = 'false',
@@ -628,7 +628,7 @@ def get_conc_attributes():
 
     # process arguments
     if not os.path.exists(args.path + '/initial.xml'):
-        sys.exit(f"Error @ pyCLI.get_conc_attributes : {args.path} path does not look like a physicell output directory ({args.path}/initial.xml is missing).")
+        sys.exit(f"Error @ pyCLI.get_conc_attribute : {args.path} path does not look like a physicell output directory ({args.path}/initial.xml is missing).")
     mcdsts = pcdl.pyMCDSts(
         output_path = args.path,
         #custom_data_type,
@@ -644,13 +644,13 @@ def get_conc_attributes():
     b_allvalues = True if args.allvalues.lower().startswith('t') else False
     if b_allvalues:
         s_values = 'all'
-    dl_variable = mcdsts.get_conc_attributes(
+    dl_variable = mcdsts.get_conc_attribute(
         values = args.values,
         drop = set(args.drop),
         keep = set(args.keep),
         allvalues = b_allvalues,
     )
-    s_opathfile = f'{args.path}/timeseries_conc_attributes_{s_values}.json'
+    s_opathfile = f'{args.path}/timeseries_conc_attribute_{s_values}.json'
     json.dump(dl_variable, open(s_opathfile, 'w'), sort_keys=True)
     # going home
     return s_opathfile
@@ -805,13 +805,8 @@ def make_cell_vtk():
         default = [],
         help = 'parameter to specify custom_data variable types other than float (namely: int, bool, str) like this var:dtype myint:int mybool:bool mystr:str . downstream float and int will be handled as numeric, bool as Boolean, and str as categorical data. default is an empty string.',
     )
-    # TimeSeries microenv
-    parser.add_argument(
-        '--microenv',
-        default = 'true',
-        help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.'
-    )
-    # TimeSeries graph True
+    # TimeSeries microenv False
+    # TimeSeries graph False
     # TimeSeries physiboss
     parser.add_argument(
         '--physiboss',
@@ -865,8 +860,8 @@ def make_cell_vtk():
             xmlfile = args.path,
             output_path = '.',
             custom_data_type = d_vartype,
-            microenv = False if args.microenv.lower().startswith('f') else True,
-            graph = True,
+            microenv = False,
+            graph = False,
             physiboss = False if args.physiboss.lower().startswith('f') else True,
             settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
             verbose = False if args.verbose.lower().startswith('f') else True
@@ -883,8 +878,8 @@ def make_cell_vtk():
             output_path = args.path,
             custom_data_type = d_vartype,
             load = True,
-            microenv = False if args.microenv.lower().startswith('f') else True,
-            graph = True,
+            microenv = False,
+            graph = False,
             physiboss = False if args.physiboss.lower().startswith('f') else True,
             settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
             verbose = False if args.verbose.lower().startswith('f') else True,
@@ -913,32 +908,11 @@ def make_conc_vtk():
         help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .',
     )
     # TimeSeries output_path '.'
-    # TimeSeries custom_data_type
-    parser.add_argument(
-        '--custom_data_type',
-        nargs = '*',
-        default = [],
-        help = 'parameter to specify custom_data variable types other than float (namely: int, bool, str) like this var:dtype myint:int mybool:bool mystr:str . downstream float and int will be handled as numeric, bool as Boolean, and str as categorical data. default is an empty string.',
-    )
-    # TimeSeries microenv
-    parser.add_argument(
-        '--microenv',
-        default = 'true',
-        help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.'
-    )
-    # TimeSeries graph True
-    # TimeSeries physiboss
-    parser.add_argument(
-        '--physiboss',
-        default = 'true',
-        help = 'if found, should physiboss state data be extracted and loaded into the df_cell dataframe? default is True.'
-    )
-    # TimeSeries settingxml
-    parser.add_argument(
-        '--settingxml',
-        default = 'PhysiCell_settings.xml',
-        help = 'from which settings.xml should the cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
-    )
+    # TimeSeries custom_data_type {}
+    # TimeSeries microenv True
+    # TimeSeries graph False
+    # TimeSeries physiboss False
+    # TimeSeries settingxml None
     # TimeSeries verbose
     parser.add_argument(
         '-v', '--verbose',
@@ -956,27 +930,16 @@ def make_conc_vtk():
         s_pathfile = s_pathfile + '/initial.xml'
     if not os.path.exists(s_pathfile):
         sys.exit(f"Error @ pyCLI.make_conc_vtk : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
-    # custom_data_type
-    d_vartype = {}
-    for vartype in args.custom_data_type:
-        s_var, s_type = vartype.split(':')
-        if s_type in {'bool'}: o_type = bool
-        elif s_type in {'int'}: o_type = int
-        elif s_type in {'float'}: o_type = float
-        elif s_type in {'str'}: o_type = str
-        else:
-            sys.exit(f"Error @ pyCLI.make_conc_vtk : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.")
-        d_vartype.update({s_var : o_type})
     if os.path.isfile(args.path):
         # run
         mcds = pcdl.pyMCDS(
             xmlfile = args.path,
             output_path = '.',
-            custom_data_type = d_vartype,
-            microenv = False if args.microenv.lower().startswith('f') else True,
-            graph = True,
-            physiboss = False if args.physiboss.lower().startswith('f') else True,
-            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
+            custom_data_type = {},
+            microenv = True,
+            graph = False,
+            physiboss = False,
+            settingxml = None,
             verbose = False if args.verbose.lower().startswith('f') else True
         )
         s_opathfile = mcds.make_conc_vtk()
@@ -1228,13 +1191,7 @@ def make_ome_tiff():
         help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .',
     )
     # TimeSeries output_path '.'
-    # TimeSeries custom_data_type
-    parser.add_argument(
-        '--custom_data_type',
-        nargs = '*',
-        default = [],
-        help = 'parameter to specify custom_data variable types other than float (namely: int, bool, str) like this var:dtype myint:int mybool:bool mystr:str . downstream float and int will be handled as numeric, bool as Boolean, and str as categorical data. default is an empty string.',
-    )
+    # TimeSeries custom_data_type {}
     # TimeSeries microenv
     parser.add_argument(
         '--microenv',
@@ -1264,7 +1221,7 @@ def make_ome_tiff():
     parser.add_argument(
         '--cell_attribute',
         default = 'ID',
-        help = 'mcds.get_cell_df dataframe columns, used for cell_attributes. the column data type has to be numeric (bool, int, float) and can not be string. default is ID, with will result in a segmentation mask.',
+        help = 'mcds.get_cell_df dataframe columns, used for cell_attribute. the column data type has to be numeric (bool, int, float) and can not be string. default is ID, with will result in a segmentation mask.',
     )
     # make_ome_tiff file True
     # make_ome_tiff collapse
@@ -1284,23 +1241,12 @@ def make_ome_tiff():
         s_pathfile = s_pathfile + '/initial.xml'
     if not os.path.exists(s_pathfile):
         sys.exit(f"Error @ pyCLI.make_ome_tiff : {args.path} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({args.path}/initial.xml is missing).")
-    # custom_data_type
-    d_vartype = {}
-    for vartype in args.custom_data_type:
-        s_var, s_type = vartype.split(':')
-        if s_type in {'bool'}: o_type = bool
-        elif s_type in {'int'}: o_type = int
-        elif s_type in {'float'}: o_type = float
-        elif s_type in {'str'}: o_type = str
-        else:
-            sys.exit(f"Error @ pyCLI.make_ome_tiff : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.")
-        d_vartype.update({s_var : o_type})
     if os.path.isfile(args.path):
         # run
         mcds = pcdl.pyMCDS(
             xmlfile = args.path,
             output_path = '.',
-            custom_data_type = d_vartype,
+            custom_data_type = {},
             microenv = False if args.microenv.lower().startswith('f') else True,
             graph = False,
             physiboss = False if args.physiboss.lower().startswith('f') else True,
@@ -1318,7 +1264,7 @@ def make_ome_tiff():
         # run
         mcdsts = pcdl.pyMCDSts(
             output_path = args.path,
-            custom_data_type = d_vartype,
+            custom_data_type = {},
             load = True,
             microenv = False if args.microenv.lower().startswith('f') else True,
             graph = False,

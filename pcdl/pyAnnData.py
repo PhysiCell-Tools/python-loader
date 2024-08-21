@@ -494,7 +494,7 @@ class TimeSeries(pyMCDSts):
             ls_column = list(self.l_mcds[0].get_cell_df(drop=drop, keep=keep).columns)
         else:
             ls_column = sorted(es_coor_cell.difference({'ID'}))
-            ls_column.extend(sorted(self.get_cell_attributes(values=values, drop=drop, keep=keep, allvalues=False).keys()))
+            ls_column.extend(sorted(self.get_cell_attribute(values=values, drop=drop, keep=keep, allvalues=False).keys()))
 
         # collapse warning
         if collapse:

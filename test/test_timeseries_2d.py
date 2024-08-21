@@ -192,8 +192,8 @@ class TestPyMcdsTsMicroenv(object):
               (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
               (df_conc.shape == (3025, 10))
 
-    def test_mcdsts_get_conc_attributes(self, mcdsts=mcdsts):
-        dl_conc = mcdsts.get_conc_attributes(values=1, drop=set(), keep=set(), allvalues=False)
+    def test_mcdsts_get_conc_attribute(self, mcdsts=mcdsts):
+        dl_conc = mcdsts.get_conc_attribute(values=1, drop=set(), keep=set(), allvalues=False)
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (str(type(dl_conc)) == "<class 'dict'>") and \
               (str(type(dl_conc['oxygen'])) == "<class 'list'>") and \
@@ -201,8 +201,8 @@ class TestPyMcdsTsMicroenv(object):
               (len(dl_conc.keys()) == 1) and \
               (len(dl_conc['oxygen']) == 2)
 
-    def test_mcdsts_get_conc_attributes_values(self, mcdsts=mcdsts):
-        dl_conc = mcdsts.get_conc_attributes(values=2, drop=set(), keep=set(), allvalues=False)
+    def test_mcdsts_get_conc_attribute_values(self, mcdsts=mcdsts):
+        dl_conc = mcdsts.get_conc_attribute(values=2, drop=set(), keep=set(), allvalues=False)
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (str(type(dl_conc)) == "<class 'dict'>") and \
               (str(type(dl_conc['oxygen'])) == "<class 'list'>") and \
@@ -210,8 +210,8 @@ class TestPyMcdsTsMicroenv(object):
               (len(dl_conc.keys()) == 1) and \
               (len(dl_conc['oxygen']) == 2)
 
-    def test_mcdsts_get_conc_attributes_allvalues(self, mcdsts=mcdsts):
-        dl_conc = mcdsts.get_conc_attributes(values=1, drop=set(), keep=set(), allvalues=True)
+    def test_mcdsts_get_conc_attribute_allvalues(self, mcdsts=mcdsts):
+        dl_conc = mcdsts.get_conc_attribute(values=1, drop=set(), keep=set(), allvalues=True)
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (str(type(dl_conc)) == "<class 'dict'>") and \
               (str(type(dl_conc['oxygen'])) == "<class 'list'>") and \
@@ -266,6 +266,14 @@ class TestPyMcdsTsMicroenv(object):
               (os.path.exists(s_path + 'output00000024_oxygen.tiff'))
         shutil.rmtree(s_path)
 
+    def test_mcdsts_make_conc_vtk(self, mcds=mcds):
+        ls_pathfile = mcdsts.make_conc_vtk()
+        assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
+              (os.path.exists(s_path + 'output00000000_conc.vtk')) and \
+              (os.path.exists(s_path + 'output00000012_conc.vtk')) and \
+              (os.path.exists(s_path + 'output00000024_conc.vtk'))
+        shutil.rmtree(s_path)
+
 
 ## cell related functions ##
 
@@ -288,8 +296,8 @@ class TestPyMcdsCell(object):
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
               (df_cell.shape == (24758, 41))
 
-    def test_mcdsts_get_cell_attributes(self, mcdsts=mcdsts):
-        dl_cell = mcdsts.get_cell_attributes(values=1, drop=set(), keep=set(), allvalues=False)
+    def test_mcdsts_get_cell_attribute(self, mcdsts=mcdsts):
+        dl_cell = mcdsts.get_cell_attribute(values=1, drop=set(), keep=set(), allvalues=False)
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (str(type(dl_cell)) == "<class 'dict'>") and \
               (str(type(dl_cell['dead'])) == "<class 'list'>") and \
@@ -306,14 +314,14 @@ class TestPyMcdsCell(object):
               (len(dl_cell['cell_density_micron3']) == 2) and \
               (len(dl_cell['cell_type']) == 1)
 
-    def test_mcdsts_get_cell_attributes_values(self, mcdsts=mcdsts):
-        dl_cell = mcdsts.get_cell_attributes(values=2, drop=set(), keep=set(), allvalues=False)
+    def test_mcdsts_get_cell_attribute_values(self, mcdsts=mcdsts):
+        dl_cell = mcdsts.get_cell_attribute(values=2, drop=set(), keep=set(), allvalues=False)
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (str(type(dl_cell)) == "<class 'dict'>") and \
               (len(dl_cell.keys()) == 28)
 
-    def test_mcdsts_get_cell_attributes_allvalues(self, mcdsts=mcdsts):
-        dl_cell = mcdsts.get_cell_attributes(values=1, drop=set(), keep=set(), allvalues=True)
+    def test_mcdsts_get_cell_attribute_allvalues(self, mcdsts=mcdsts):
+        dl_cell = mcdsts.get_cell_attribute(values=1, drop=set(), keep=set(), allvalues=True)
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (str(type(dl_cell)) == "<class 'dict'>") and \
               (str(type(dl_cell['dead'])) == "<class 'list'>") and \
@@ -379,6 +387,14 @@ class TestPyMcdsCell(object):
               (os.path.exists(s_path + 'output00000024_cell_type.jpeg'))
         shutil.rmtree(s_path)
 
+    def test_mcdsts_make_cell_vtk(self, mcds=mcds):
+        ls_pathfile = mcdsts.make_cell_vtk(visualize=False)
+        assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
+              (os.path.exists(s_path + 'output00000000_cell.vtk')) and \
+              (os.path.exists(s_path + 'output00000012_cell.vtk')) and \
+              (os.path.exists(s_path + 'output00000024_cell.vtk'))
+        shutil.rmtree(s_path)
+
 
 ## graph related functions ##
 class TestPyMcdsGraph(object):
@@ -418,6 +434,52 @@ class TestPyMcdsGraph(object):
               (len(ls_pathfile) == 25)
         for s_pathfile in ls_pathfile:
             os.remove(s_pathfile)
+
+## ome tiff related functions ##
+class TestPyMcdsOmeTiff(object):
+    ''' tests for pcdl.pyMCDS ome tiff related functions. '''
+    mcdsts = pcdl.pyMCDSts(s_path_2d, verbose=False)
+
+    ## ome tiff related functions ##
+    def test_mcdsts_make_ome_tiff_defaultattr_00(self, mcdsts=mcdsts):
+        la_ometiff = mcdsts.make_ome_tiff(cell_attribute='ID', file=False, collapse=False)
+        assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
+              (type(la_ometiff) is list) and \
+              (type(la_ometiff[0] is np.ndarray) and \
+              (type(la_ometiff[-1] is np.ndarray) and \
+              (type(la_ometiff[0].dtype is float) and \
+              (type(la_ometiff[-1].dtype is float) and \
+              (type(la_ometiff[0].shape == (2, 1, 200, 300)) and \
+              (type(la_ometiff[-1].shape ==  (2, 1, 200, 300)) and \
+              (len(la_ometiff == 25)
+
+    def test_mcdsts_make_ome_tiff_defaultattr_01(self, mcdsts=mcdsts):
+        a_ometiff = mcdsts.make_ome_tiff(cell_attribute='ID', file=False, collapse=True)
+        assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
+              (type(a_ometiff is np.ndarray) and \
+              (type(a_ometiff.dtype is float) and \
+              (type(a_ometiff.shape == (25, 2, 1, 200, 300))
+
+    def test_mcdsts_make_ome_tiff_defaultattr_10(self, mcdsts=mcdsts):
+        ls_pathfile = mcdsts.make_ome_tiff(cell_attribute='ID', file=True, collapse=False)
+        assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
+              (ls_pathfile[0].endswith('/pcdl/data_timeseries_2d/output00000000_ID.ome.tiff')) and \
+              (ls_pathfile[-1].endswith('/pcdl/data_timeseries_2d/output00000024_ID.ome.tiff')) and \
+              (os.path.exists(ls_pathfile[0])) and \
+              (os.path.exists(ls_pathfile[-1])) and \
+              (os.path.getsize(s_pathfile)[0] > 2**10) and\
+              (os.path.getsize(s_pathfile)[-1] > 2**10) and\
+              (len(ls_pathfile) == 25)
+        for s_pathfile in ls_pathfile:
+            os.remove(s_pathfile)
+
+    def test_mcdsts_make_ome_tiff_defaultattr_11(self, mcdsts=mcdsts):
+        s_pathfile = mcdsts.make_ome_tiff(cell_attribute='ID', file=True, collapse=True)
+        assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
+              (s_pathfile.endswith('/pcdl/data_timeseries_2d/timeseries_ID.ome.tiff')) and \
+              (os.path.exists(s_pathfile)) and \
+              (os.path.getsize(s_pathfile) > 2**10 )
+        os.remove(s_pathfile)
 
 
 ## timeseries related functions ##

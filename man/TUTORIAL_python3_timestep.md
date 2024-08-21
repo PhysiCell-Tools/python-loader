@@ -143,7 +143,7 @@ We can retrieve a dictionary that maps substrate indexes to labels.
 mcds.get_substrate_dict()  # {'0': 'oxygen'}
 
 # substrates sorted alpahbetically
-sorted(mcds.get_substrate_dict().values())  # ['oxygen'] 
+sorted(mcds.get_substrate_dict().values())  # ['oxygen']
 
 # substrates sorted by index
 ds_substrate = mcds.get_substrate_dict())
@@ -191,7 +191,7 @@ mcds.get_concentration_at(x=111, y=22, z=-5)  # array([18.80652216])
 mcds.get_concentration_at(x=111, y=22, z=-5.1)  # None and Warning @ pyMCDS.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0)
 ```
 
-For substrate concentration visualization **matplotlib contour and contourf plots**, 
+For substrate concentration visualization **matplotlib contour and contourf plots**,
 for any substrate, through any z\_slice can be retrived.\
 The mcds.plot_contour function has many parameters to fine tune the plot.
 Please have a look at it's docstring in the [REFERENCE.md]()manual to learn more.\
@@ -205,7 +205,7 @@ fig = mcds.plot_contour('oxygen', z_slice=3.333)
 fig.show()
 ```
 
-For substrate concentration visualization **rectilinear grid vtk files** 
+For substrate concentration visualization **rectilinear grid vtk files**
 for any substrate can be retrived.\
 This files can be analysied, for example with the [Paraview](https://en.wikipedia.org/wiki/ParaView) software.
 Please have a look at the [TUTORIAL_paraview.md]() to learn more.
@@ -264,25 +264,25 @@ mcdsts = pcdl.TimeSeries(s_path)
 There are functions to help triage over the entier time series for attributes that more likely might carry information, by checking for variables with variation.
 ```
 # cell data min max values
-dl_cell = mcdsts.get_cell_attributes()  # returns a dictionary with all attributes, listing all accessed values
+dl_cell = mcdsts.get_cell_attribute()  # returns a dictionary with all attributes, listing all accessed values
 len(dl_cell)  # 84 attributes
 dl_cell.keys()  # list attribute names
 dl_cell['oxygen']  # list min and max oxygen values found, surrounding a cell, over the whole series
 
 # cell data number of values
 di_state = {}
-[di_state.update({s_attribute: len(li_state)}) for s_attribute, li_state in mcdsts.get_cell_attributes(allvalues=True).items()]
+[di_state.update({s_attribute: len(li_state)}) for s_attribute, li_state in mcdsts.get_cell_attribute(allvalues=True).items()]
 di_state['oxygen']  # cell surrounding oxygen was found occupying 2388 different values (states) over the whole time series
 
 # substrate data
-dl_conc = mcdsts.get_conc_attributes()
+dl_conc = mcdsts.get_conc_attribute()
 dl_conc.keys()  # list attribute names
 dl_conc['oxygen']  # list min and max oxygen values found in the domain over the whole series
 ```
 BUE 20240808: Data Triage
 
 
-BUE 20240808: HELPER FUNCTIONS 
+BUE 20240808: HELPER FUNCTIONS
 
 ```python
 # data from all agents in the xyz specified voxel
@@ -294,7 +294,7 @@ df.shape  # (3, 94)
 
 df = mcds.get_cell_df_at(x=111,y=22,z=-5.1)  # None and Warning @ pyMCDS.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0)
 ```
-BUE 20240808: HELPER FUNCTIONS 
+BUE 20240808: HELPER FUNCTIONS
 
 
 Additionally, there is a scatter plot function available, shaped for df\_cell dataframe content.

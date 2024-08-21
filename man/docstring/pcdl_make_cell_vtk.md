@@ -1,8 +1,7 @@
 ```
 usage: pcdl_make_cell_vtk [-h] [--custom_data_type [CUSTOM_DATA_TYPE ...]]
-                          [--microenv MICROENV] [--physiboss PHYSIBOSS]
-                          [--settingxml SETTINGXML] [-v VERBOSE]
-                          [--attribute [ATTRIBUTE ...]]
+                          [--physiboss PHYSIBOSS] [--settingxml SETTINGXML]
+                          [-v VERBOSE] [--attribute [ATTRIBUTE ...]]
                           [path]
 
 function that generates 3D glyph vtk file for cells. cells can have specified
@@ -22,10 +21,6 @@ options:
                         float and int will be handled as numeric, bool as
                         Boolean, and str as categorical data. default is an
                         empty string.
-  --microenv MICROENV   should the microenvironment be extracted? setting
-                        microenv to False will use less memory and speed up
-                        processing, similar to the original pyMCDS_cells.py
-                        script. default is True.
   --physiboss PHYSIBOSS
                         if found, should physiboss state data be extracted and
                         loaded into the df_cell dataframe? default is True.

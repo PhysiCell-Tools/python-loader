@@ -1,6 +1,5 @@
 ```
-usage: pcdl_make_ome_tiff [-h] [--custom_data_type [CUSTOM_DATA_TYPE ...]]
-                          [--microenv MICROENV] [--physiboss PHYSIBOSS]
+usage: pcdl_make_ome_tiff [-h] [--microenv MICROENV] [--physiboss PHYSIBOSS]
                           [--settingxml SETTINGXML] [-v VERBOSE]
                           [--cell_attribute CELL_ATTRIBUTE]
                           [--collapse COLLAPSE]
@@ -17,13 +16,6 @@ positional arguments:
 
 options:
   -h, --help            show this help message and exit
-  --custom_data_type [CUSTOM_DATA_TYPE ...]
-                        parameter to specify custom_data variable types other
-                        than float (namely: int, bool, str) like this
-                        var:dtype myint:int mybool:bool mystr:str . downstream
-                        float and int will be handled as numeric, bool as
-                        Boolean, and str as categorical data. default is an
-                        empty string.
   --microenv MICROENV   should the microenvironment be extracted? setting
                         microenv to False will use less memory and speed up
                         processing, similar to the original pyMCDS_cells.py
@@ -40,10 +32,9 @@ options:
                         processing. default is True.
   --cell_attribute CELL_ATTRIBUTE
                         mcds.get_cell_df dataframe columns, used for
-                        cell_attributes. the column data type has to be
-                        numeric (bool, int, float) and can not be string.
-                        default is ID, with will result in a segmentation
-                        mask.
+                        cell_attribute. the column data type has to be numeric
+                        (bool, int, float) and can not be string. default is
+                        ID, with will result in a segmentation mask.
   --collapse COLLAPSE   should all mcds time steps from the time series be
                         collapsed into one big ome.tiff, or a many ome.tiff,
                         one ome.tiff for each time step?, default is True.

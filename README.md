@@ -93,7 +93,7 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
 ~
 
 ## Release Notes:
-+ version 3.3.0 (2024-08-??): elmbeech/physicelldataloader
++ version 3.3.0 (2024-08-22): elmbeech/physicelldataloader
     + **pip install pcdl**: will again install all library dependencies, as well anndata and requests.
     + pyMCDS handels now intracellular **physinboss** data too, data is store in cell\_df.
     + rename pyMCDS get\_cell\_variables to **get_celltype_list** for concisness and order list by ID.
@@ -102,13 +102,13 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
     + rename pyMCDS get\_contour to **plot_contour** for conciseness.
     + rename pyMCDSts make\_imgcell to **plot_scatter** for conciseness.
     + rename pyMCDSts make\_imgconc to **plot_contour** for conciseness.
-    + rename pyMCDSts get\_cell\_df\_states to **get_cell_attributes** for conciseness.
-    + rename pyMCDSts get\_conc\_df\_states to **get_conc_attributes** for conciseness.
+    + rename pyMCDSts get\_cell\_df\_states to **get_cell_attribute** for conciseness.
+    + rename pyMCDSts get\_conc\_df\_states to **get_conc_attribute** for conciseness.
     + rewrite pyMCDS mcds.get\_unit\_se into **mcds.get_unit_dict**.
     + new pyCLI **pcdl_get_anndata** command line interface function.
-    + new pyCLI **pcdl_get_cell_attributes** command line interface function.
+    + new pyCLI **pcdl_get_cell_attribute** command line interface function.
     + new pyCLI **pcdl_get_cell_df** command line interface function.
-    + new pyCLI **pcdl_get_conc_attributes** command line interface function.
+    + new pyCLI **pcdl_get_conc_attribute** command line interface function.
     + new pyCLI **pcdl_get_conc_df** command line interface function.
     + new pyCLI **pcdl_get_graph_gml** command line interface function.
     + new pyCLI **pcdl_get_unit_dict** command line interface function.

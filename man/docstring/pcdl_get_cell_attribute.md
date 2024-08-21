@@ -1,11 +1,11 @@
 ```
-usage: pcdl_get_cell_attributes [-h]
-                                [--custom_data_type [CUSTOM_DATA_TYPE ...]]
-                                [--microenv MICROENV] [--physiboss PHYSIBOSS]
-                                [--settingxml SETTINGXML] [-v VERBOSE]
-                                [--drop [DROP ...]] [--keep [KEEP ...]]
-                                [--allvalues ALLVALUES]
-                                [path] [values]
+usage: pcdl_get_cell_attribute [-h]
+                               [--custom_data_type [CUSTOM_DATA_TYPE ...]]
+                               [--microenv MICROENV] [--physiboss PHYSIBOSS]
+                               [--settingxml SETTINGXML] [-v VERBOSE]
+                               [--drop [DROP ...]] [--keep [KEEP ...]]
+                               [--allvalues ALLVALUES]
+                               [path] [values]
 
 function to detect informative variables in a time series. this function
 detects even variables which have less than the minimal state count in each

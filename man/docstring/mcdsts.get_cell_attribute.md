@@ -1,4 +1,4 @@
-# mcdsts.get_cell_attributes()
+# mcdsts.get_cell_attribute()
 
 
 ## input:

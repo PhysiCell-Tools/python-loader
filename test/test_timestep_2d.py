@@ -552,6 +552,14 @@ class TestPyMcdsMicroenv(object):
               (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
         plt.close()
 
+    def test_mcds_make_conc_vtk(self, mcds=mcds):
+        s_pathfile = mcds.make_conc_vtk()
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (s_pathfile.endswith('/pcdl/data_timeseries_2d/output00000024_conc.vtk'))
+              (os.path.exists(s_pathfile)) and \
+              (os.path.getsize(s_pathfile) > 2**10)
+        os.remove(s_pathfile)
+
 
 ## cell related functions ##
 
@@ -716,6 +724,36 @@ class TestPyMcdsCell(object):
               (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
         plt.close()
 
+    def test_mcds_make_cell_vtk_attribute_default(self, mcds=mcds):
+        s_pathfile = mcds.make_cell_vtk(
+            #attribute=['cell_type'],
+            visualize=False,
+        )
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (s_pathfile.endswith('/pcdl/data_timeseries_2d/output00000024_cell.vtk'))
+              (os.path.exists(s_pathfile)) and \
+              (os.path.getsize(s_pathfile) > 2**10)
+        os.remove(s_pathfile)
+
+    def test_mcds_make_cell_vtk_attribute_zero(self, mcds=mcds):
+        s_pathfile = mcds.make_cell_vtk(attribute=[], visualize=False)
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (s_pathfile.endswith('/pcdl/data_timeseries_2d/output00000024_cell.vtk'))
+              (os.path.exists(s_pathfile)) and \
+              (os.path.getsize(s_pathfile) > 2**10)
+        os.remove(s_pathfile)
+
+    def test_mcds_make_cell_vtk_attribute_many(self, mcds=mcds):
+        s_pathfile = mcds.make_cell_vtk(
+            attribute=['dead', 'cell_count_voxel', 'pressure', 'cell_type']
+            visualize=False,
+        )
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (s_pathfile.endswith('/pcdl/data_timeseries_2d/output00000024_cell.vtk'))
+              (os.path.exists(s_pathfile)) and \
+              (os.path.getsize(s_pathfile) > 2**10)
+        os.remove(s_pathfile)
+
 
 ## graph related functions ##
 
@@ -846,4 +884,42 @@ class TestPyMcdsGraph(object):
               (s_file.find('distance_microns') > -1)
         #os.remove(s_pathfile)
         print("BUE here we go:", s_pathfile)
+
+
+## ome tiff related functions ##
+
+class TestPyMcdsOmeTiff(object):
+    ''' tests for pcdl.pyMCDS graph related functions. '''
+    mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
+
+    ## ome tiff related functions ##
+    def test_mcds_make_ome_tiff_default(self, mcds=mcds):
+        s_pathfile = mcds.make_ome_tiff(cell_attribute='ID', file=True)
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (s_pathfile.endswith('/pcdl/data_timeseries_2d/output00000024_ID.ome.tiff'))
+              (os.path.exists(s_pathfile)) and \
+              (os.path.getsize(s_pathfile) > 2**10)
+        os.remove(s_pathfile)
+
+    def test_mcds_make_ome_tiff_bool_0(self, mcds=mcds):
+        a_ometiff = mcds.make_ome_tiff(cell_attribute='dead', file=False)
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (str(type(a_ometiff)) == "<class 'numpy.ndarray'>") and \
+              (a_ometiff.dtype == float) and \
+              (a_ometiff.shape == (2, 1, 200, 300))
+
+    def test_mcds_make_ome_tiff_int_0(self, mcds=mcds):
+        a_ometiff = mcds.make_ome_tiff(cell_attribute='cell_count_voxel', file=False)
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (str(type(a_ometiff)) == "<class 'numpy.ndarray'>") and \
+              (a_ometiff.dtype == float) and \
+              (a_ometiff.shape == (2, 1, 200, 300))
+
+
+    def test_mcds_make_ome_tiff_float_0(self, mcds=mcds):
+        a_ometiff = mcds.make_ome_tiff(cell_attribute='pressure', file=False)
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (str(type(a_ometiff)) == "<class 'numpy.ndarray'>") and \
+              (a_ometiff.dtype == float) and \
+              (a_ometiff.shape == (2, 1, 200, 300))
 

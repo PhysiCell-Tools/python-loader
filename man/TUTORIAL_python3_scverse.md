@@ -137,24 +137,24 @@ for s_subs in mcdsts.get_mcds_list()[0].get_substrate_list():
     break
 ```
 
-### 1.2 time series: get_cell_attributes, get_conc_attributes
+### 1.2 time series: get_cell_attribute, get_conc_attribute
 
 
 ```python
-#mcdsts.get_cell_attributes?
+#mcdsts.get_cell_attribute?
 
-dl_list = mcdsts.get_cell_attributes(allvalues=True, values=1)  # values=2
+dl_list = mcdsts.get_cell_attribute(allvalues=True, values=1)  # values=2
 print('total attributes df_cell:', len(dl_list))
-json.dump(dl_list, open(f'{s_path_2d}cell_attributes.json', 'w'))
+json.dump(dl_list, open(f'{s_path_2d}cell_attribute.json', 'w'))
 ```
 
 
 ```python
-#mcdsts.get_conc_attributes?
+#mcdsts.get_conc_attribute?
 
-dl_list = mcdsts.get_conc_attributes(allvalues=True, values=1)  # values=2
+dl_list = mcdsts.get_conc_attribute(allvalues=True, values=1)  # values=2
 print('total attributes df_conc:', len(dl_list))
-json.dump(dl_list, open(f'{s_path_2d}conc_attributes.json', 'w'))
+json.dump(dl_list, open(f'{s_path_2d}conc_attribute.json', 'w'))
 ```
 
 ### 1.3 time series: get_anndata
@@ -878,7 +878,7 @@ for H&E and microscopy images
 + sq.im.ImageContainer
 + sq.im.process(img[, layer, library_id, method, ...]) # process an image by applying a transformation.
 + sq.im.segment(img[, layer, library_id, method, ...])  # segment an image.
-+ sq.im.calculate_image_attributes(adata, img[, ...])  # calculate image attributes for all observations in adata.
++ sq.im.calculate_image_attribute(adata, img[, ...])  # calculate image attributes for all observations in adata.
 + sq.pl.spatial_segment(adata[, color, groups, ...])  # plot spatial omics data with segmentation masks on top.
 + https://napari.org/stable/  # a fast, interactive viewer for multi-dimensional images in Python
 

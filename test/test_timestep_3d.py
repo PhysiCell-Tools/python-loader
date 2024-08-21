@@ -346,6 +346,15 @@ class TestPyMcds3dMicroenvWorkhorse(object):
               (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
         plt.close()
 
+    def test_mcds_make_conc_vtk(self, mcds=mcds):
+        s_pathfile = mcds.make_conc_vtk()
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (s_pathfile.endswith('/pcdl/data_timeseries_2d/output00000024_conc.vtk'))
+              (os.path.exists(s_pathfile)) and \
+              (os.path.getsize(s_pathfile) > 2**10)
+        os.remove(s_pathfile)
+
+
 
 class TestPyMcds3dCellWorkhorse(object):
     ''' tests on 3D data set, for speed, for pcdl.pyMCDS cell related workhorse functions. '''
@@ -484,6 +493,36 @@ class TestPyMcds3dCellWorkhorse(object):
               (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
         plt.close()
 
+    def test_mcds_make_cell_vtk_attribute_default(self, mcds=mcds):
+        s_pathfile = mcds.make_cell_vtk(
+            #attribute=['cell_type'],
+            visualize=False,
+        )
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (s_pathfile.endswith('/pcdl/data_timeseries_2d/output00000024_cell.vtk'))
+              (os.path.exists(s_pathfile)) and \
+              (os.path.getsize(s_pathfile) > 2**10)
+        os.remove(s_pathfile)
+
+    def test_mcds_make_cell_vtk_attribute_zero(self, mcds=mcds):
+        s_pathfile = mcds.make_cell_vtk(attribute=[], visualize=False)
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (s_pathfile.endswith('/pcdl/data_timeseries_2d/output00000024_cell.vtk'))
+              (os.path.exists(s_pathfile)) and \
+              (os.path.getsize(s_pathfile) > 2**10)
+        os.remove(s_pathfile)
+
+    def test_mcds_make_cell_vtk_attribute_many(self, mcds=mcds):
+        s_pathfile = mcds.make_cell_vtk(
+            attribute=['dead', 'cell_count_voxel', 'pressure', 'cell_type']
+            visualize=False,
+        )
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (s_pathfile.endswith('/pcdl/data_timeseries_2d/output00000024_cell.vtk'))
+              (os.path.exists(s_pathfile)) and \
+              (os.path.getsize(s_pathfile) > 2**10)
+        os.remove(s_pathfile)
+
 
 class TestPyMcds3dGraphWorkhorse(object):
     ''' tests on 3D data set, for speed, for pcdl.pyMCDS graph related workhorse functions. '''
@@ -588,4 +627,24 @@ class TestPyMcds3dGraphWorkhorse(object):
               (s_file.find('cell_type') > -1) and \
               (s_file.find('edge [\n    source') > -1) and \
               (s_file.find('distance_microns') > -1)
+        os.remove(s_pathfile)
+
+
+class TestPyMcds3dOmeTiffWorkhorse(object):
+    ''' tests on 3D data set, for speed, for pcdl.pyMCDS ome tiff related workhorse functions. '''
+    mcds = pcdl.pyMCDS(xmlfile=s_pathfile_3d)  # custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True
+
+    ## ome tiff related functions ##
+    def test_mcds_make_ome_tiff_default_0(self, mcds=mcds):
+        a_ometiff = mcds.make_ome_tiff(cell_attribute='ID', file=False)
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (str(type(a_ometiff)) == "<class 'numpy.ndarray'>") and \
+              (a_ometiff.dtype == float) and \
+              (a_ometiff.shape == (4, 11, 200, 300))
+
+    def test_mcds_make_ome_tiff_default_1(self, mcds=mcds):
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (s_pathfile.endswith('/pcdl/data_timeseries_3d/output00000024_ID.ome.tiff')) and \
+              (os.path.exists(s_pathfile)) and \
+              (os.path.getsize(s_pathfile) > 2**10)
         os.remove(s_pathfile)

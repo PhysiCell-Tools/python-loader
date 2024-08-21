@@ -1,4 +1,4 @@
-# mcdsts.get_conc_attributes()
+# mcdsts.get_conc_attribute()
 
 
 ## input:
