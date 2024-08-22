@@ -349,7 +349,7 @@ class TestPyMcds3dMicroenvWorkhorse(object):
     def test_mcds_make_conc_vtk(self, mcds=mcds):
         s_pathfile = mcds.make_conc_vtk()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.endswith('/pcdl/data_timeseries_3d/output00000024_conc.vtk')) and \
+              (s_pathfile.replace('\\','/').endswith('/pcdl/data_timeseries_3d/output00000024_conc.vtk')) and \
               (os.path.exists(s_pathfile)) and \
               (os.path.getsize(s_pathfile) > 2**10)
         os.remove(s_pathfile)
@@ -499,7 +499,7 @@ class TestPyMcds3dCellWorkhorse(object):
             visualize=False,
         )
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.endswith('/pcdl/data_timeseries_3d/output00000024_cell.vtk')) and \
+              (s_pathfile.replace('\\','/').endswith('/pcdl/data_timeseries_3d/output00000024_cell.vtk')) and \
               (os.path.exists(s_pathfile)) and \
               (os.path.getsize(s_pathfile) > 2**10)
         os.remove(s_pathfile)
@@ -507,7 +507,7 @@ class TestPyMcds3dCellWorkhorse(object):
     def test_mcds_make_cell_vtk_attribute_zero(self, mcds=mcds):
         s_pathfile = mcds.make_cell_vtk(attribute=[], visualize=False)
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.endswith('/pcdl/data_timeseries_3d/output00000024_cell.vtk')) and \
+              (s_pathfile.replace('\\','/').endswith('/pcdl/data_timeseries_3d/output00000024_cell.vtk')) and \
               (os.path.exists(s_pathfile)) and \
               (os.path.getsize(s_pathfile) > 2**10)
         os.remove(s_pathfile)
@@ -518,7 +518,7 @@ class TestPyMcds3dCellWorkhorse(object):
             visualize=False,
         )
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.endswith('/pcdl/data_timeseries_3d/output00000024_cell.vtk')) and \
+              (s_pathfile.replace('\\','/').endswith('/pcdl/data_timeseries_3d/output00000024_cell.vtk')) and \
               (os.path.exists(s_pathfile)) and \
               (os.path.getsize(s_pathfile) > 2**10)
         os.remove(s_pathfile)
@@ -645,7 +645,7 @@ class TestPyMcds3dOmeTiffWorkhorse(object):
     def test_mcds_make_ome_tiff_default_1(self, mcds=mcds):
         s_pathfile = mcds.make_ome_tiff(cell_attribute='ID', file=True)
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.endswith('/pcdl/data_timeseries_3d/output00000024_ID.ome.tiff')) and \
+              (s_pathfile.replace('\\','/').endswith('/pcdl/data_timeseries_3d/output00000024_ID.ome.tiff')) and \
               (os.path.exists(s_pathfile)) and \
               (os.path.getsize(s_pathfile) > 2**10)
         os.remove(s_pathfile)
