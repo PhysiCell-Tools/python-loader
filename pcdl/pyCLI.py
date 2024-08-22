@@ -805,13 +805,18 @@ def make_cell_vtk():
         default = [],
         help = 'parameter to specify custom_data variable types other than float (namely: int, bool, str) like this var:dtype myint:int mybool:bool mystr:str . downstream float and int will be handled as numeric, bool as Boolean, and str as categorical data. default is an empty string.',
     )
-    # TimeSeries microenv False
+    # TimeSeries microenv
+    parser.add_argument(
+        '--microenv',
+        default = 'true',
+        help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.',
+    )
     # TimeSeries graph False
     # TimeSeries physiboss
     parser.add_argument(
         '--physiboss',
         default = 'true',
-        help = 'if found, should physiboss state data be extracted and loaded into the df_cell dataframe? default is True.'
+        help = 'if found, should physiboss state data be extracted and loaded into the df_cell dataframe? default is True.',
     )
     # TimeSeries settingxml
     parser.add_argument(
@@ -860,7 +865,7 @@ def make_cell_vtk():
             xmlfile = args.path,
             output_path = '.',
             custom_data_type = d_vartype,
-            microenv = False,
+            microenv = False if args.microenv.lower().startswith('f') else True,
             graph = False,
             physiboss = False if args.physiboss.lower().startswith('f') else True,
             settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
@@ -878,7 +883,7 @@ def make_cell_vtk():
             output_path = args.path,
             custom_data_type = d_vartype,
             load = True,
-            microenv = False,
+            microenv = False if args.microenv.lower().startswith('f') else True,
             graph = False,
             physiboss = False if args.physiboss.lower().startswith('f') else True,
             settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
@@ -949,12 +954,12 @@ def make_conc_vtk():
         # run
         mcdsts = pcdl.pyMCDSts(
             output_path = args.path,
-            custom_data_type = d_vartype,
+            custom_data_type = {},
             load = True,
-            microenv = False if args.microenv.lower().startswith('f') else True,
-            graph = True,
-            physiboss = False if args.physiboss.lower().startswith('f') else True,
-            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
+            microenv = True,
+            graph = False,
+            physiboss = False,
+            settingxml = None,
             verbose = False if args.verbose.lower().startswith('f') else True,
         )
         ls_opathfile = mcdsts.make_conc_vtk()
@@ -1256,7 +1261,6 @@ def make_ome_tiff():
         s_opathfile = mcds.make_ome_tiff(
             cell_attribute = args.cell_attribute,
             file = True,
-            collapse = False if args.collapse.lower().startswith('f') else True,
         )
         # going home
         return s_opathfile

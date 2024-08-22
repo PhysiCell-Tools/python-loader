@@ -20,6 +20,7 @@
 
 # load library
 import matplotlib.pyplot as plt
+import numpy  as np
 import os
 import pathlib
 import pcdl
@@ -266,13 +267,18 @@ class TestPyMcdsTsMicroenv(object):
               (os.path.exists(s_path + 'output00000024_oxygen.tiff'))
         shutil.rmtree(s_path)
 
-    def test_mcdsts_make_conc_vtk(self, mcds=mcds):
+    def test_mcdsts_make_conc_vtk(self, mcdsts=mcdsts):
         ls_pathfile = mcdsts.make_conc_vtk()
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
-              (os.path.exists(s_path + 'output00000000_conc.vtk')) and \
-              (os.path.exists(s_path + 'output00000012_conc.vtk')) and \
-              (os.path.exists(s_path + 'output00000024_conc.vtk'))
-        shutil.rmtree(s_path)
+              (ls_pathfile[0].endswith('/pcdl/data_timeseries_2d/output00000000_conc.vtk')) and \
+              (ls_pathfile[-1].endswith('/pcdl/data_timeseries_2d/output00000024_conc.vtk')) and \
+              (os.path.exists(ls_pathfile[0])) and \
+              (os.path.exists(ls_pathfile[-1])) and \
+              (os.path.getsize(ls_pathfile[0]) > 2**10) and\
+              (os.path.getsize(ls_pathfile[-1]) > 2**10) and\
+              (len(ls_pathfile) == 25)
+        for s_pathfile in ls_pathfile:
+            os.remove(s_pathfile)
 
 
 ## cell related functions ##
@@ -387,13 +393,18 @@ class TestPyMcdsCell(object):
               (os.path.exists(s_path + 'output00000024_cell_type.jpeg'))
         shutil.rmtree(s_path)
 
-    def test_mcdsts_make_cell_vtk(self, mcds=mcds):
+    def test_mcdsts_make_cell_vtk(self, mcdsts=mcdsts):
         ls_pathfile = mcdsts.make_cell_vtk(visualize=False)
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
-              (os.path.exists(s_path + 'output00000000_cell.vtk')) and \
-              (os.path.exists(s_path + 'output00000012_cell.vtk')) and \
-              (os.path.exists(s_path + 'output00000024_cell.vtk'))
-        shutil.rmtree(s_path)
+              (ls_pathfile[0].endswith('/pcdl/data_timeseries_2d/output00000000_cell.vtk')) and \
+              (ls_pathfile[-1].endswith('/pcdl/data_timeseries_2d/output00000024_cell.vtk')) and \
+              (os.path.exists(ls_pathfile[0])) and \
+              (os.path.exists(ls_pathfile[-1])) and \
+              (os.path.getsize(ls_pathfile[0]) > 2**10) and\
+              (os.path.getsize(ls_pathfile[-1]) > 2**10) and\
+              (len(ls_pathfile) == 25)
+        for s_pathfile in ls_pathfile:
+            os.remove(s_pathfile)
 
 
 ## graph related functions ##
@@ -445,20 +456,20 @@ class TestPyMcdsOmeTiff(object):
         la_ometiff = mcdsts.make_ome_tiff(cell_attribute='ID', file=False, collapse=False)
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (type(la_ometiff) is list) and \
-              (type(la_ometiff[0] is np.ndarray) and \
-              (type(la_ometiff[-1] is np.ndarray) and \
-              (type(la_ometiff[0].dtype is float) and \
-              (type(la_ometiff[-1].dtype is float) and \
-              (type(la_ometiff[0].shape == (2, 1, 200, 300)) and \
-              (type(la_ometiff[-1].shape ==  (2, 1, 200, 300)) and \
-              (len(la_ometiff == 25)
+              (type(la_ometiff[0]) is np.ndarray) and \
+              (type(la_ometiff[-1]) is np.ndarray) and \
+              (la_ometiff[0].dtype == float) and \
+              (la_ometiff[-1].dtype == float) and \
+              (la_ometiff[0].shape == (2, 1, 200, 300)) and \
+              (la_ometiff[-1].shape ==  (2, 1, 200, 300)) and \
+              (len(la_ometiff) == 25)
 
     def test_mcdsts_make_ome_tiff_defaultattr_01(self, mcdsts=mcdsts):
         a_ometiff = mcdsts.make_ome_tiff(cell_attribute='ID', file=False, collapse=True)
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
-              (type(a_ometiff is np.ndarray) and \
-              (type(a_ometiff.dtype is float) and \
-              (type(a_ometiff.shape == (25, 2, 1, 200, 300))
+              (type(a_ometiff) is np.ndarray) and \
+              (a_ometiff.dtype == float) and \
+              (a_ometiff.shape == (25, 2, 1, 200, 300))
 
     def test_mcdsts_make_ome_tiff_defaultattr_10(self, mcdsts=mcdsts):
         ls_pathfile = mcdsts.make_ome_tiff(cell_attribute='ID', file=True, collapse=False)
@@ -467,8 +478,8 @@ class TestPyMcdsOmeTiff(object):
               (ls_pathfile[-1].endswith('/pcdl/data_timeseries_2d/output00000024_ID.ome.tiff')) and \
               (os.path.exists(ls_pathfile[0])) and \
               (os.path.exists(ls_pathfile[-1])) and \
-              (os.path.getsize(s_pathfile)[0] > 2**10) and\
-              (os.path.getsize(s_pathfile)[-1] > 2**10) and\
+              (os.path.getsize(ls_pathfile[0]) > 2**10) and\
+              (os.path.getsize(ls_pathfile[-1]) > 2**10) and\
               (len(ls_pathfile) == 25)
         for s_pathfile in ls_pathfile:
             os.remove(s_pathfile)

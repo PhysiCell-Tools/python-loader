@@ -1164,7 +1164,7 @@ class pyMCDS:
                             (df_micenv.loc[:,'voxel_k'] == k) & (df_micenv.loc[:,'voxel_j'] == j) & (df_micenv.loc[:,'voxel_i'] == i),
                             s_substrate
                         ]
-                        vf_values.SetValue(i_index, r_conc)
+                        vf_values.SetValue(i_index, r_conc)  # bue 20240821: FutureWarning: Calling float on a single element Series is deprecated and will raise a TypeError in the future. Use float(ser.iloc[0]) instead.
             if b_first:
                 vr_grid.GetPointData().SetScalars(vf_values)
                 b_first = False
@@ -1674,7 +1674,7 @@ class pyMCDS:
             https://www.paraview.org/
         """
         # off we go.
-        s_vtkfile = self.xmlfile.replace('.xml','_cells.vtk')
+        s_vtkfile = self.xmlfile.replace('.xml','_cell.vtk')
         if self.verbose:
             print(f'processing: {s_vtkfile} ...')
 

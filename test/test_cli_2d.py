@@ -949,6 +949,7 @@ class TestPyCliCellVtk(object):
     # timestep and timeseries:
     # + path nop
     # + customtype ([], _oncoprotein:str_) ok
+    # + microenv (true, _false) ok
     # + physiboss (true, _false_)
     # + settingxml (string, _none_, _false_) ok
     # + verbose (true, _false_) nop
@@ -973,6 +974,18 @@ class TestPyCliCellVtk(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
         #print('ls_opathfile:', ls_opathfile)
+        assert (len(ls_opathfile) == 25) and \
+               (ls_opathfile[0].endswith('data_timeseries_2d/output00000000_cell.vtk')) and \
+               (ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_cell.vtk')) and \
+               (os.path.exists(ls_opathfile[12]))
+        for s_opathfile in ls_opathfile:
+            os.remove(s_opathfile)
+
+    def test_pcdl_make_cell_vtk_timeseries_microenv(self):
+        s_result = subprocess.run(['pcdl_make_cell_vtk', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
         assert (len(ls_opathfile) == 25) and \
                (ls_opathfile[0].endswith('data_timeseries_2d/output00000000_cell.vtk')) and \
                (ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_cell.vtk')) and \
@@ -1024,7 +1037,7 @@ class TestPyCliCellVtk(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
-        #print('ls_opathfile:', ls_opathfile)
+        print('ls_opathfile:', ls_opathfile)
         assert (len(ls_opathfile) == 25) and \
                (ls_opathfile[0].endswith('data_timeseries_2d/output00000000_cell.vtk')) and \
                (ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_cell.vtk')) and \
@@ -1045,26 +1058,109 @@ class TestPyCliCellVtk(object):
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
 
+    def test_pcdl_make_cell_vtk_timestep_default(self):
+        s_result = subprocess.run(['pcdl_make_cell_vtk', s_pathfile_2d], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.vtk')) and \
+               (os.path.exists(s_opathfile))
+        os.remove(s_opathfile)
 
-class TestPyCliConcVtk(object):
-    ''' tests for one pcdl.pyCli function. '''
+    def test_pcdl_make_cell_vtk_timestep_customtype_attribute_one(self):
+        s_result = subprocess.run(['pcdl_make_cell_vtk', s_pathfile_2d, '--custom_data_type', 'oncoprotein:str', '--attribute', 'oncoprotein'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.vtk')) and \
+               (os.path.exists(s_opathfile))
+        os.remove(s_opathfile)
+
+    def test_pcdl_make_cell_vtk_timestep_microenv(self):
+        s_result = subprocess.run(['pcdl_make_cell_vtk', s_pathfile_2d, '--microenv', 'false'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.vtk')) and \
+               (os.path.exists(s_opathfile))
+        os.remove(s_opathfile)
+
+    def test_pcdl_make_cell_vtk_timestep_physiboss(self):
+        s_result = subprocess.run(['pcdl_make_cell_vtk', s_pathfile_2d, '--physiboss', 'false'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.vtk')) and \
+               (os.path.exists(s_opathfile))
+        os.remove(s_opathfile)
+
+    def test_pcdl_make_cell_vtk_timestep_settingxmlfalse_attribute_one(self):
+        s_result = subprocess.run(['pcdl_make_cell_vtk', s_pathfile_2d, '--settingxml', 'false', '--attribute', '0_attack_rates'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.vtk')) and \
+               (os.path.exists(s_opathfile))
+        os.remove(s_opathfile)
+
+    def test_pcdl_make_cell_vtk_timestep_settingxmlnone_attribute_one(self):
+        s_result = subprocess.run(['pcdl_make_cell_vtk', s_pathfile_2d, '--settingxml', 'none', '--attribute', '0_attack_rates'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.vtk')) and \
+               (os.path.exists(s_opathfile))
+        os.remove(s_opathfile)
+
+    def test_pcdl_make_cell_vtk_timestep_attribute_many(self):
+        s_result = subprocess.run(['pcdl_make_cell_vtk', s_pathfile_2d, '--attribute', 'cell_type', 'oxygen'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.vtk')) and \
+               (os.path.exists(s_opathfile))
+        os.remove(s_opathfile)
+
+    def test_pcdl_make_cell_vtk_timestep_attribute_none(self):
+        s_result = subprocess.run(['pcdl_make_cell_vtk', s_pathfile_2d, '--attribute'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.vtk')) and \
+               (os.path.exists(s_opathfile))
+        os.remove(s_opathfile)
+
+
+
+
+#class TestPyCliConcVtk(object):
+#    ''' tests for one pcdl.pyCli function. '''
 
     # timestep and timeseries:
     # + path nop
     # + verbose (true, _false_) nop
 
-    def test_pcdl_make_conc_vtk_timeseries_default(self):
-        s_result = subprocess.run(['pcdl_make_conc_vtk', s_path_2d], check=False, capture_output=True)
-        #print(f'\ns_result.stdout: {s_result.stdout}\n')
-        #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
-        #print('ls_opathfile:', ls_opathfile)
-        assert (len(ls_opathfile) == 25) and \
-               (ls_opathfile[0].endswith('data_timeseries_2d/output00000000_conc.vtk')) and \
-               (ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_conc.vtk')) and \
-               (os.path.exists(ls_opathfile[12]))
-        for s_opathfile in ls_opathfile:
-            os.remove(s_opathfile)
+#    def test_pcdl_make_conc_vtk_timeseries_default(self):
+#        s_result = subprocess.run(['pcdl_make_conc_vtk', s_path_2d], check=False, capture_output=True)
+#        print(f'\ns_result.stdout: {s_result.stdout}\n')
+#        print(f'\ns_result.stderr: {s_result.stderr}\n')
+#        ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
+#        #print('ls_opathfile:', ls_opathfile)
+#        assert (len(ls_opathfile) == 25) and \
+#               (ls_opathfile[0].endswith('data_timeseries_2d/output00000000_conc.vtk')) and \
+#               (ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_conc.vtk')) and \
+#               (os.path.exists(ls_opathfile[12]))
+#        for s_opathfile in ls_opathfile:
+#            os.remove(s_opathfile)
+
+#    def test_pcdl_make_conc_vtk_timestep_default(self):
+#        s_result = subprocess.run(['pcdl_make_conc_vtk', s_pathfile_2d], check=False, capture_output=True)
+#        print(f'\ns_result.stdout: {s_result.stdout}\n')
+#        print(f'\ns_result.stderr: {s_result.stderr}\n')
+#        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+#        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_conc.vtk')) and \
+#               (os.path.exists(s_opathfile))
+#        os.remove(s_opathfile)
 
 
 class TestPyCliGraphGml(object):
@@ -1414,8 +1510,8 @@ class TestPyCliOmeTiff(object):
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
-    def test_pcdl_make_ome_tiff_timestep_settingxmlfalse(self):
-        s_result = subprocess.run(['pcdl_make_ome_tiff', s_pathfile_2d, '--settingxml', 'false'], check=False, capture_output=True)
+    def test_pcdl_make_ome_tiff_timeseries_settingxmlfalse(self):
+        s_result = subprocess.run(['pcdl_make_ome_tiff', s_path_2d, '--settingxml', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
@@ -1423,8 +1519,8 @@ class TestPyCliOmeTiff(object):
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
-    def test_pcdl_make_ome_tiff_timestep_settingxmlnone(self):
-        s_result = subprocess.run(['pcdl_make_ome_tiff', s_pathfile_2d, '--settingxml', 'none'], check=False, capture_output=True)
+    def test_pcdl_make_ome_tiff_timeseries_settingxmlnone(self):
+        s_result = subprocess.run(['pcdl_make_ome_tiff', s_path_2d, '--settingxml', 'none'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
@@ -1459,8 +1555,8 @@ class TestPyCliOmeTiff(object):
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
-    def test_pcdl_make_ome_tiff_timeseries_collapsed_false(self):
-        s_result = subprocess.run(['pcdl_make_ome_tiff', s_path_2d, '--collapsed', 'false'], check=False, capture_output=True)
+    def test_pcdl_make_ome_tiff_timeseries_collapse_false(self):
+        s_result = subprocess.run(['pcdl_make_ome_tiff', s_path_2d, '--collapse', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
@@ -1471,6 +1567,78 @@ class TestPyCliOmeTiff(object):
                (os.path.exists(ls_opathfile[12]))
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
+
+    def test_pcdl_make_ome_tiff_timestep_default(self):
+        s_result = subprocess.run(['pcdl_make_ome_tiff', s_pathfile_2d], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_ID.ome.tiff')) and \
+               (os.path.exists(s_opathfile))
+        os.remove(s_opathfile)
+
+    def test_pcdl_make_ome_tiff_timestep_microenv(self):
+        s_result = subprocess.run(['pcdl_make_ome_tiff', s_pathfile_2d, '--microenv', 'false'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_ID.ome.tiff')) and \
+               (os.path.exists(s_opathfile))
+        os.remove(s_opathfile)
+
+    def test_pcdl_make_ome_tiff_timestep_physiboss(self):
+        s_result = subprocess.run(['pcdl_make_ome_tiff', s_pathfile_2d, '--physiboss', 'false'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_ID.ome.tiff')) and \
+               (os.path.exists(s_opathfile))
+        os.remove(s_opathfile)
+
+    def test_pcdl_make_ome_tiff_timestep_settingxmlfalse(self):
+        s_result = subprocess.run(['pcdl_make_ome_tiff', s_pathfile_2d, '--settingxml', 'false'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_ID.ome.tiff')) and \
+               (os.path.exists(s_opathfile))
+        os.remove(s_opathfile)
+
+    def test_pcdl_make_ome_tiff_timestep_settingxmlnone(self):
+        s_result = subprocess.run(['pcdl_make_ome_tiff', s_pathfile_2d, '--settingxml', 'none'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_ID.ome.tiff')) and \
+               (os.path.exists(s_opathfile))
+        os.remove(s_opathfile)
+
+    def test_pcdl_make_ome_tiff_timestep_cellattribute_dead(self):
+        s_result = subprocess.run(['pcdl_make_ome_tiff', s_pathfile_2d, '--cell_attribute', 'dead'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_dead.ome.tiff')) and \
+               (os.path.exists(s_opathfile))
+        os.remove(s_opathfile)
+
+    def test_pcdl_make_ome_tiff_timestep_cellattribute_cellcountvoxel(self):
+        s_result = subprocess.run(['pcdl_make_ome_tiff', s_pathfile_2d, '--cell_attribute', 'cell_count_voxel'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell_count_voxel.ome.tiff')) and \
+               (os.path.exists(s_opathfile))
+        os.remove(s_opathfile)
+
+    def test_pcdl_make_ome_tiff_timestep_cellattribute_pressure(self):
+        s_result = subprocess.run(['pcdl_make_ome_tiff', s_pathfile_2d, '--cell_attribute', 'pressure'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_pressure.ome.tiff')) and \
+               (os.path.exists(s_opathfile))
+        os.remove(s_opathfile)
 
 
 class TestPyCliPlotContour(object):
