@@ -1708,18 +1708,18 @@ class pyMCDS:
         # fill this grid with given attributes
         for s_attribute in attribute:
             b_bool = False
-            if (df_cell.loc[:, s_attribute].dtype.type in {bool, np.bool_}):  # np.bool
+            if (df_cell.loc[:, s_attribute].dtype == bool):  #in {bool, np.bool_, np.bool}):
                 b_bool = True
                 custom_data_vtk = vtk.vtkStringArray()
                 custom_data_vtk.SetName(s_attribute)
-            elif (df_cell.loc[:, s_attribute].dtype.type in {str, np.str_, np.object_}):
+            elif (df_cell.loc[:, s_attribute].dtype == str) or  (df_cell.loc[:, s_attribute].dtype == np.object_):  # in {str, np.str_, np.object_}):
                 custom_data_vtk = vtk.vtkStringArray()
                 custom_data_vtk.SetName(s_attribute)
-            elif(df_cell.loc[:, s_attribute].dtype.type in {int, np.int_, np.int8, np.int16, np.int32, np.int64, float, np.float16, np.float32, np.float64, np.float128}):
+            elif (df_cell.loc[:, s_attribute].dtype == int) or (df_cell.loc[:, s_attribute].dtype == float):  # in {int, np.int_, np.int8, np.int16, np.int32, np.int64, float, np.float16, np.float32, np.float64, np.float128}):
                 custom_data_vtk = vtk.vtkFloatArray()
                 custom_data_vtk.SetName(s_attribute)
             else:
-                sys.exit(f'Error @ pyMCDS.make_cell_vtk : {s_attribute} {df_cell.loc[:, s_attribute].dtype.type} unknown df_cell column data type.')
+                sys.exit(f'Error @ pyMCDS.make_cell_vtk : {s_attribute} {df_cell.loc[:, s_attribute].dtype} unknown df_cell column data type.')
 
             for i in df_cell.index:
                 if b_bool:
@@ -1879,14 +1879,14 @@ class pyMCDS:
             # node attributes
             for s_attribute in node_attribute:
                 o_attribute = df_cell.loc[i_src, s_attribute]
-                if (type(o_attribute) in {bool, np.bool_, int, np.int_, np.int8, np.int16, np.int32, np.int64}):  # np.bool
-                    f.write(f'    {s_attribute} {int(o_attribute)}\n')
-                elif (type(o_attribute) in {float, np.float16, np.float32, np.float64}):  # np.float128
-                    f.write(f'    {s_attribute} {o_attribute}\n')
-                elif (type(o_attribute) in {str, np.str_}):
+                if (type(o_attribute) == str) or (o_attribute.dtype == np.object_):  #in {str, np.str_, np.object_}):
                     f.write(f'    {s_attribute} "{o_attribute}"\n')
+                elif (o_attribute.dtype == bool) or (o_attribute.dtype == int):  #in {bool, np.bool_, np.bool, int, np.int_, np.int8, np.int16, np.int32, np.int64}):
+                    f.write(f'    {s_attribute} {int(o_attribute)}\n')
+                elif (o_attribute.dtype == float):  #in {float, np.float16, np.float32, np.float64, np.float128}):
+                    f.write(f'    {s_attribute} {o_attribute}\n')
                 else:
-                    sys.exit(f'Error @ pyMCDS.make_graph_gml : attribute {o_attribute}; type {type (o_attribute)}; type seems not to be bool, int, float, or string.')
+                    sys.exit(f'Error @ pyMCDS.make_graph_gml : attribute {o_attribute}; type {o_attribute.dtype}; type seems not to be bool, int, float, or string.')
             f.write(f'  ]\n')
             # edge
             for i_dst in ei_dst:
@@ -1999,9 +1999,9 @@ class pyMCDS:
         # manipulate cell_attribute value
         if (cell_attribute == 'cell_type'):
             sys.exit(f'Error @ pyMCDS.make_ome_tiff : cell_attribute can not be cell_type.')
-        elif (df_cell.loc[:, cell_attribute].dtype.type in {str, np.str_, np.object_}):
-            sys.exit(f'Error @ pyMCDS.make_ome_tiff : {cell_attribute} {df_cell.loc[:, cell_attribute].dtype.type} cell_attribute can not be string or object. cell_attribute has to be boolean, integer, or float.')
-        elif (df_cell.loc[:, cell_attribute].dtype.type in {bool, np.bool_}):  # np.bool
+        elif (df_cell.loc[:, cell_attribute].dtype == str) or (df_cell.loc[:, cell_attribute].dtype == np.object_):  # in {str, np.str_, np.object_}):
+            sys.exit(f'Error @ pyMCDS.make_ome_tiff : {cell_attribute} {df_cell.loc[:, cell_attribute].dtype} cell_attribute can not be string or object. cell_attribute has to be boolean, integer, or float.')
+        elif (df_cell.loc[:, cell_attribute].dtype == bool): # in {bool, np.bool_, np.bool}):
             df_cell = df_cell.astype({cell_attribute: int})
         df_cell.loc[:, cell_attribute] = df_cell.loc[:, cell_attribute] - df_cell.loc[:, cell_attribute].min() + 1  # positive values starting at 1
         # pivot cell_type
