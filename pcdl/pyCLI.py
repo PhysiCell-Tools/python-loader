@@ -832,7 +832,7 @@ def make_cell_vtk():
     )
     # make_cell_vtk attrribute
     parser.add_argument(
-        '--attribute',
+        'attribute',
         nargs = '*',
         default = ['cell_type'],
         help = 'listing of mcds.get_cell_df dataframe column names, used for cell attributes. default is a single term: cell_type.',
@@ -1224,7 +1224,8 @@ def make_ome_tiff():
     )
     # make_ome_tiff cell_attribute
     parser.add_argument(
-        '--cell_attribute',
+        'cell_attribute',
+        nargs = '?',
         default = 'ID',
         help = 'mcds.get_cell_df dataframe columns, used for cell_attribute. the column data type has to be numeric (bool, int, float) and can not be string. default is ID, with will result in a segmentation mask.',
     )

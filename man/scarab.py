@@ -355,16 +355,16 @@ docstring_md(
     ls_doc = pcdl.TimeSeries.make_cell_vtk.__doc__.split('\n'),
 )
 
-# write pyMCDSts ome tiff function makdown files
-docstring_md(
-    s_function = 'mcdsts.make_ome_tiff',
-    ls_doc = pcdl.TimeSeries.make_ome_tiff.__doc__.split('\n'),
-)
-
 # write pyMCDSts graph function makdown files
 docstring_md(
     s_function = 'mcdsts.make_graph_gml',
     ls_doc = pcdl.TimeSeries.make_graph_gml.__doc__.split('\n'),
+)
+
+# write pyMCDSts ome tiff function makdown files
+docstring_md(
+    s_function = 'mcdsts.make_ome_tiff',
+    ls_doc = pcdl.TimeSeries.make_ome_tiff.__doc__.split('\n'),
 )
 
 # write pyMCDSts timeseries function makdown files

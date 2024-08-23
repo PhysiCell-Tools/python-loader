@@ -35,11 +35,14 @@ The pcdl python3 library maintains three branches branches:
 
 Basics Tutorial:
 1. [pcdl background](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_introduction.md)
+<!--
 1. [pcdl processing mcds timesteps in python3](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_timestep.md)
 1. [pcdl processing mcds timeseries in python3](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_timeseries.md)
+-->
 1. [pcdl from the command line](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_commandline.md)
 
 Extras Tutorials:
+<!--
 + [pcdl and python3 matplotlib](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_matplotlib.md)
 + [pcdl and python3 napari](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_napari.md)
 + [pcdl and python3 scipy and scanpy](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_scverse.md)
@@ -47,6 +50,8 @@ Extras Tutorials:
 + [pcdl and julia](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_julia.md)
 + [pcdl and paraview](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_paraview.md)
 + [pcdl and blender](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_belender.md)
++ [pcdl and fiji imagej](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_fijiimagej.md)
+-->
 
 Slides:
 + [presentations given](https://github.com/elmbeech/physicelldataloader/tree/master/man/lecture)
@@ -68,7 +73,7 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
 + original PhysiCell-Tools python-loader implementation: Patrick Wall, Randy Heiland, Paul Macklin
 + fork pcdl implementation: Elmar Bucher
 + fork pcdl co-programmer: Furkan Kurtoglu, Jennifer Eng, Heber Rocha
-+ fork pcdl realworld prototype feedback: Aneequa Sundus, John Metzcar
++ fork pcdl continuous testing and feedbacks: Aneequa Sundus, John Metzcar
 + student prj on pcdl:
   Benjamin Jacobs (make\_gml),
   Katie Pletz (beta testing),

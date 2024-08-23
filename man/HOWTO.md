@@ -132,7 +132,7 @@ This pyMCDS.py script is still the core of the pcdl library.
 
 To load data the old school way:
 
-1. Copy the latest [pyMCDS.py](https://raw.githubusercontent.com/elmbeech/physicelldataloader/master/pcdl/pyMCDS.py) file into the PhysiCell or PhysiCell/output folder.
+1. Copy the latest [pyMCDS.py](https://raw.githubusercontent.com/elmbeech/physicelldataloader/v3/pcdl/pyMCDS.py) file into the PhysiCell or PhysiCell/output folder.
 2. In the same directory, fire up a python3 shell (core [python](https://docs.python.org/3/tutorial/interpreter.html#interactive-mode), [ipython](https://en.wikipedia.org/wiki/IPython), or a [jupyter](https://en.wikipedia.org/wiki/Project_Jupyter) notebook that is running an ipython kernel).
 3. Load the pyMCDS class as follows:
 
