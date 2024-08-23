@@ -15,6 +15,7 @@
 
 ## description:
 ```
-            function returns a list with all celltype labels.
+            function returns a list with all celltype labels,
+            ordered by cell_type ID.
         
 ```

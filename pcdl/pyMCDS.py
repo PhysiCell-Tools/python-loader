@@ -677,8 +677,8 @@ class pyMCDS:
                 by ID ordered list of all tracked substrates.
 
         description:
-            function returns all chemical species names,
-            modeled in the microenvironment.
+            function returns all chemical species names, modeled
+            in the microenvironment, ordered by chemical species ID.
         """
         # get substrate listing
         ds_substrate = self.get_substrate_dict()
@@ -941,11 +941,11 @@ class pyMCDS:
         return df_conc
 
 
-    def plot_contour(self, substrate, z_slice=0, vmin=None, vmax=None, alpha=1, fill=True, cmap='viridis', title=None, grid=True, xlim=None, ylim=None, xyequal=True, figsize=None, ax=None):
+    def plot_contour(self, focus, z_slice=0, vmin=None, vmax=None, alpha=1, fill=True, cmap='viridis', title=None, grid=True, xlim=None, ylim=None, xyequal=True, figsizepx=None, figbgcolor=None, ext=None, ax=None):
         """
         input:
-            substrate: string
-                substrate name.
+            focus: string
+                column name within conc dataframe, for example substrate name.
 
             z_slice: floating point number; default is 0
                 z-axis position to slice a 2D xy-plain out of the
@@ -992,22 +992,57 @@ class pyMCDS:
             xyequal: boolean; default True
                 to specify equal axis spacing for x and y axis.
 
-            figsize: tuple of floating point numbers; default is None
-                the specif the figure x and y measurement in inch.
-                None result in the default matplotlib setting, which is [6.4, 4.8].
+            figsizepx: list of two integers; default is None
+                size of the figure in pixels, (x, y).
+                the given x and y will be rounded to the nearest even number,
+                to be able to generate movies from the images.
+                None tries to take the values from the initial.svg file.
+                fall back setting is [640, 480].
+
+            figbgcolor: string; default is None which is transparent (png)
+                or white (jpeg, tiff).
+                figure background color.
+
+            ext: string; default is None
+                output image format. possible formats are jpeg, png, and tiff.
+                None will return the matplotlib fig object.
 
             ax: matplotlib axis object; default setting is None
                 the ax object, which will be used as a canvas for plotting.
                 None will generate a figure and ax object from scratch.
 
         output:
-            fig: matplotlib figure, containing the ax axis object,
-                with contour plot and color bar.
+            fig: matplotlib figure, depending on ext, either as object or as file.
+                the figure containing the contour plot and color bar.
 
         description:
             function returns a matplotlib contour (or contourf) plot,
-            inclusive color bar, for the substrate specified.
+            inclusive color bar, for the focus specified, either
+            as matplotlib fig object or as jpeg, png, or tiff file.
         """
+        # handle initial.svg for s and figsizepx
+        if (figsizepx is None):
+            s_pathfile = self.output_path + 'initial.svg'
+            try:
+                x_tree = etree.parse(s_pathfile)
+                x_root = x_tree.getroot()
+                i_width = int(np.ceil(float(x_root.get('width')))) # px
+                i_height = int(np.ceil(float(x_root.get('height'))))  # px
+                figsizepx = [i_width, i_height]
+            except FileNotFoundError:
+                print(f'Warning @ pyMCDS.plot_contour : could not load {s_pathfile} to auto detect figsizepx. take default.')
+                figsizepx = [640, 480]
+
+        # handle figure size
+        figsizepx[0] = figsizepx[0] - (figsizepx[0] % 2)  # enforce even pixel number
+        figsizepx[1] = figsizepx[1] - (figsizepx[1] % 2)
+        r_px = 1 / plt.rcParams['figure.dpi']  # translate px to inch
+        figsize = [None, None]
+        figsize[0] = figsizepx[0] * r_px
+        figsize[1] = figsizepx[1] * r_px
+        if self.verbose:
+            print(f'px figure size set to {figsizepx}.')
+
         # handle z_slice input
         _, _, ar_p_axis = self.get_mesh_mnp_axis()
         if not (z_slice in ar_p_axis):
@@ -1036,15 +1071,15 @@ class pyMCDS:
         #ti_shape = (self.get_voxel_ijk_axis()[0].shape[0]+2, self.get_voxel_ijk_axis()[1].shape[0]+2)
         #x = (df_conc.loc[:,'mesh_center_m'].values).reshape(ti_shape)
         #y = (df_conc.loc[:,'mesh_center_n'].values).reshape(ti_shape)
-        #z = (df_conc.loc[:,substrate].values).reshape(ti_shape)
-        df_mesh = df_conc.pivot(index='mesh_center_m', columns='mesh_center_n', values=substrate)
+        #z = (df_conc.loc[:,focus].values).reshape(ti_shape)
+        df_mesh = df_conc.pivot(index='mesh_center_m', columns='mesh_center_n', values=focus)
 
         # handle vmin and vmax input
         if (vmin is None):
-            #vmin = np.floor(df_conc.loc[:,substrate].min())
+            #vmin = np.floor(df_conc.loc[:,focus].min())
             vmin = np.floor(df_mesh.min().min())
         if (vmax is None):
-            #vmax = np.ceil(df_conc.loc[:,substrate].max())
+            #vmax = np.ceil(df_conc.loc[:,focus].max())
             vmax = np.ceil(df_mesh.max().max())
 
         # get figure and axis orbject
@@ -1081,15 +1116,33 @@ class pyMCDS:
         if not (ylim is None):
             ax.set_ylim(ylim[0], ylim[1])
 
-        # get colorbar
+        # add colorbar to fig
         fig.colorbar(
             mappable=cm.ScalarMappable(norm=colors.Normalize(vmin=vmin, vmax=vmax), cmap=cmap),
-            label=substrate,
+            label=focus,
             ax=ax
         )
 
-        # output
-        return fig
+        # finalize
+        if (ext is None):
+            # output
+            return fig
+
+        else:
+            # handle output path and filename
+            s_path = f'{self.output_path}conc_{focus}_z{round(z_slice,9)}/'
+            os.makedirs(s_path, exist_ok=True)
+            s_file = self.get_xmlfile_list()[i].replace('.xml', f'_{focus}.{ext}')
+            s_pathfile = f'{s_path}{s_file}'
+            # handle figure background color
+            if figbgcolor is None:
+                figbgcolor = 'auto'
+            # plotting
+            plt.tight_layout()
+            fig.savefig(s_pathfile, facecolor=figbgcolor)
+            plt.close(fig)
+            # output
+            return s_pathfile
 
 
     def make_conc_vtk(self):
@@ -1192,7 +1245,8 @@ class pyMCDS:
                 by ID ordered list of all tracked celltype labels.
 
         description:
-            function returns a list with all celltype labels.
+            function returns a list with all celltype labels,
+            ordered by cell_type ID.
         """
         ds_celltype = self.get_celltype_dict()
         ls_celltype = [ds_celltype[s_key] for s_key in sorted(ds_celltype, key=int)]
@@ -1461,7 +1515,7 @@ class pyMCDS:
         return df_voxel
 
 
-    def plot_scatter(self, focus='cell_type', z_slice=0, z_axis=None, alpha=1, cmap='viridis', title=None, grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=None, figsize=None, ax=None):
+    def plot_scatter(self, focus='cell_type', z_slice=0, z_axis=None, alpha=1, cmap='viridis', title=None, grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=None, figsizepx=None, figbgcolor=None, ext=None, ax=None):
         """
         input:
             focus: string; default is 'cell_type'
@@ -1509,7 +1563,7 @@ class pyMCDS:
                 y axis min and max value.
                 default takes min and max from mesh y axis range.
 
-           xyequal: boolean; default True
+            xyequal: boolean; default True
                 to specify equal axis spacing for x and y axis.
 
             s: integer; default is None
@@ -1520,19 +1574,81 @@ class pyMCDS:
                 None tries to take the value from the initial.svg file.
                 fall back setting is 36.
 
-            figsize: tuple of floating point numbers; default is None
-                the specif the figure x and y measurement in inch.
-                None result in the default matplotlib setting, which is [6.4, 4.8].
+            figsizepx: list of two integers; default is None
+                size of the figure in pixels, (x, y).
+                the given x and y will be rounded to the nearest even number,
+                to be able to generate movies from the images.
+                None tries to take the values from the initial.svg file.
+                fall back setting is [640, 480].
+
+            figbgcolor: string; default is None which is transparent (png)
+                or white (jpeg, tiff).
+                figure background color.
+
+            ext: string; default is None
+                output image format. possible formats are jpeg, png, and tiff.
+                None will return the matplotlib fig object.
+
+            ax: matplotlib axis object; default setting is None
+                the ax object, which will be used as a canvas for plotting.
+                None will generate a figure and ax object from scratch.
 
         output:
-            fig: matplotlib figure, containing the ax axis object,
-                with scatter plot and color bar (numerical data)
+            fig: matplotlib figure, depending on ext, either as object or as file.
+                the figure contains the scatter plot and color bar (numerical data)
                 or color legend (categorical data).
 
         description:
             function returns a (pandas) matplotlib scatter plot,
-            inclusive color bar, for the substrate specified.
+            inclusive color bar or color legend, for the focus specified,
+            either as matplotlib fig object or as jpeg, png, or tiff file.
+
+            jpeg is by definition a lossy compressed image format.
+            png is by definition a lossless compressed image format.
+            tiff can by definition be a lossy or lossless compressed format.
+            https://en.wikipedia.org/wiki/JPEG
+            https://en.wikipedia.org/wiki/Portable_Network_Graphics
+            https://en.wikipedia.org/wiki/TIFF
         """
+        # handle initial.svg for s and figsizepx
+        if (s is None) or (figsizepx is None):
+            s_pathfile = self.output_path + 'initial.svg'
+            try:
+                x_tree = etree.parse(s_pathfile)
+                x_root = x_tree.getroot()
+                if s is None:
+                    circle_element = x_root.find('.//{*}circle')
+                    if not (circle_element is None):
+                        r_radius = float(circle_element.get('r')) # px
+                        s = int(round((r_radius)**2))
+                    else:
+                        print(f'Warning @ pyMCDSts.plot_scatter : these agents are not circles.')
+                        s = plt.rcParams['lines.markersize']**2
+                    if self.verbose:
+                        print(f's set to {s}.')
+                if figsizepx is None:
+                    i_width = int(np.ceil(float(x_root.get('width')))) # px
+                    i_height = int(np.ceil(float(x_root.get('height'))))  # px
+                    figsizepx = [i_width, i_height]
+            except FileNotFoundError:
+                print(f'Warning @ pyMCDSts.plot_scatter : could not load {s_pathfile}.')
+                if s is None:
+                    s = plt.rcParams['lines.markersize']**2
+                    if self.verbose:
+                        print(f's set to {s}.')
+                if figsizepx is None:
+                    figsizepx = [640, 480]
+
+        # handle figure size
+        figsizepx[0] = figsizepx[0] - (figsizepx[0] % 2)  # enforce even pixel number
+        figsizepx[1] = figsizepx[1] - (figsizepx[1] % 2)
+        r_px = 1 / plt.rcParams['figure.dpi']  # translate px to inch
+        figsize = [None, None]
+        figsize[0] = figsizepx[0] * r_px
+        figsize[1] = figsizepx[1] * r_px
+        if self.verbose:
+            print(f'px figure size set to {figsizepx}.')
+
         # handle z_slice
         _, _, ar_p_axis = self.get_mesh_mnp_axis()
         if not (z_slice in ar_p_axis):
@@ -1648,6 +1764,28 @@ class pyMCDS:
                 s_loc = legend_loc,
                 s_fontsize = 'small',
             )
+
+        # finalize
+        if (ext is None):
+            # output
+            return fig
+
+        else:
+            # handle output path and filename
+            s_path = f'{self.output_path}cell_{focus}_z{round(z_slice,9)}/'
+            os.makedirs(s_path, exist_ok=True)
+            s_file = self.get_xmlfile_list()[i].replace('.xml', f'_{focus}.{ext}')
+            s_pathfile = f'{s_path}{s_file}'
+            # handle figure background color
+            if figbgcolor is None:
+                figbgcolor = 'auto'
+            # plotting
+            plt.tight_layout()
+            fig.savefig(s_pathfile, facecolor=figbgcolor)
+            plt.close(fig)
+            # output
+            return s_pathfile
+
 
         # output
         return fig

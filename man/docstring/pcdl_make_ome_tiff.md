@@ -1,9 +1,8 @@
 ```
 usage: pcdl_make_ome_tiff [-h] [--microenv MICROENV] [--physiboss PHYSIBOSS]
                           [--settingxml SETTINGXML] [-v VERBOSE]
-                          [--cell_attribute CELL_ATTRIBUTE]
                           [--collapse COLLAPSE]
-                          [path]
+                          [path] [cell_attribute]
 
 function to transform chosen mcds output into an 1[um] spaced czyx (channel,
 z-axis, y-axis, x-axis) ome tiff file, one substrate or cell_type per channel.
@@ -13,6 +12,10 @@ the ome tiff file format can for example be read by the napari
 positional arguments:
   path                  path to the PhysiCell output directory or a
                         outputnnnnnnnn.xml file. default is . .
+  cell_attribute        mcds.get_cell_df dataframe columns, used for
+                        cell_attribute. the column data type has to be numeric
+                        (bool, int, float) and can not be string. default is
+                        ID, with will result in a segmentation mask.
 
 options:
   -h, --help            show this help message and exit
@@ -30,11 +33,6 @@ options:
   -v VERBOSE, --verbose VERBOSE
                         setting verbose to False for less text output, while
                         processing. default is True.
-  --cell_attribute CELL_ATTRIBUTE
-                        mcds.get_cell_df dataframe columns, used for
-                        cell_attribute. the column data type has to be numeric
-                        (bool, int, float) and can not be string. default is
-                        ID, with will result in a segmentation mask.
   --collapse COLLAPSE   should all mcds time steps from the time series be
                         collapsed into one big ome.tiff, or a many ome.tiff,
                         one ome.tiff for each time step?, default is True.

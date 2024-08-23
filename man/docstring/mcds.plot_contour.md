@@ -3,8 +3,8 @@
 
 ## input:
 ```
-            substrate: string
-                substrate name.
+            focus: string
+                column name within conc dataframe, for example substrate name.
 
             z_slice: floating point number; default is 0
                 z-axis position to slice a 2D xy-plain out of the
@@ -51,9 +51,20 @@
             xyequal: boolean; default True
                 to specify equal axis spacing for x and y axis.
 
-            figsize: tuple of floating point numbers; default is None
-                the specif the figure x and y measurement in inch.
-                None result in the default matplotlib setting, which is [6.4, 4.8].
+            figsizepx: list of two integers; default is None
+                size of the figure in pixels, (x, y).
+                the given x and y will be rounded to the nearest even number,
+                to be able to generate movies from the images.
+                None tries to take the values from the initial.svg file.
+                fall back setting is [640, 480].
+
+            figbgcolor: string; default is None which is transparent (png)
+                or white (jpeg, tiff).
+                figure background color.
+
+            ext: string; default is None
+                output image format. possible formats are jpeg, png, and tiff.
+                None will return the matplotlib fig object.
 
             ax: matplotlib axis object; default setting is None
                 the ax object, which will be used as a canvas for plotting.
@@ -63,14 +74,15 @@
 
 ## output:
 ```
-            fig: matplotlib figure, containing the ax axis object,
-                with contour plot and color bar.
+            fig: matplotlib figure, depending on ext, either as object or as file.
+                the figure containing the contour plot and color bar.
 
 ```
 
 ## description:
 ```
             function returns a matplotlib contour (or contourf) plot,
-            inclusive color bar, for the substrate specified.
+            inclusive color bar, for the focus specified, either
+            as matplotlib fig object or as jpeg, png, or tiff file.
         
 ```

@@ -499,13 +499,13 @@ class pyMCDSts:
         return dlr_variable_range
 
 
-    def plot_contour(self, focus, z_slice=0, extrema=None, alpha=1, fill=True, cmap='viridis', title='', grid=True, xlim=None, ylim=None, xyequal=True, figsizepx=None, ext='jpeg', figbgcolor=None):
+    def plot_contour(self, focus, z_slice=0, extrema=None, alpha=1, fill=True, cmap='viridis', title='', grid=True, xlim=None, ylim=None, xyequal=True, figsizepx=None, figbgcolor=None, ext='jpeg'):
         """
         input:
             self: pyMCDSts class instance
 
             focus: string
-                column name within conc dataframe.
+                column name within conc dataframe, for example.
 
             z_slice: floating point number; default is 0
                 z-axis position to slice a 2D xy-plain out of the
@@ -515,7 +515,7 @@ class pyMCDSts:
                 the smaller one, if the coordinate lies on a saddle point.
 
             extrema: tuple of two floats; default is None
-                default takes min and max from data.
+                default takes min and max from data, from the whole time series.
 
             alpha: floating point number; default is 1
                 alpha channel transparency value
@@ -553,15 +553,17 @@ class pyMCDSts:
                 None tries to take the values from the initial.svg file.
                 fall back setting is [640, 480].
 
-            ext: string; default is jpeg
-                output image format. possible formats are jpeg, png, and tiff.
-
             figbgcolor: string; default is None which is transparent (png)
                 or white (jpeg, tiff).
                 figure background color.
 
+            ext: string; default is jpeg
+                output image format. possible formats are jpeg, png, and tiff.
+                None will return the matplotlib fig object.
+
         output:
-            image files under the returned path.
+            fig: matplotlib figures, depending on ext, either as files or as
+                objects. the figures contains the contour plot and color bar.
 
         description:
             this function generates a matplotlib contour (or contourf) plot
@@ -575,27 +577,27 @@ class pyMCDSts:
             https://en.wikipedia.org/wiki/TIFF
         """
         # handle initial.svg for s and figsizepx
-        if (figsizepx is None):
-            s_pathfile = self.output_path + 'initial.svg'
-            try:
-                x_tree = etree.parse(s_pathfile)
-                x_root = x_tree.getroot()
-                i_width = int(np.ceil(float(x_root.get('width')))) # px
-                i_height = int(np.ceil(float(x_root.get('height'))))  # px
-                figsizepx = [i_width, i_height]
-            except FileNotFoundError:
-                print(f'Warning @ pyMCDSts.plot_contour : could not load {s_pathfile}.')
-                figsizepx = [640, 480]
+        #if (figsizepx is None):
+        #    s_pathfile = self.output_path + 'initial.svg'
+        #    try:
+        #        x_tree = etree.parse(s_pathfile)
+        #        x_root = x_tree.getroot()
+        #        i_width = int(np.ceil(float(x_root.get('width')))) # px
+        #        i_height = int(np.ceil(float(x_root.get('height'))))  # px
+        #        figsizepx = [i_width, i_height]
+        #    except FileNotFoundError:
+        #        print(f'Warning @ pyMCDSts.plot_contour : could not load {s_pathfile}.')
+        #        figsizepx = [640, 480]
 
         # handle figure size
-        figsizepx[0] = figsizepx[0] - (figsizepx[0] % 2)  # enforce even pixel number
-        figsizepx[1] = figsizepx[1] - (figsizepx[1] % 2)
-        r_px = 1 / plt.rcParams['figure.dpi']  # translate px to inch
-        figsize = [None, None]
-        figsize[0] = figsizepx[0] * r_px
-        figsize[1] = figsizepx[1] * r_px
-        if self.verbose:
-            print(f'px figure size set to {figsizepx}.')
+        #figsizepx[0] = figsizepx[0] - (figsizepx[0] % 2)  # enforce even pixel number
+        #figsizepx[1] = figsizepx[1] - (figsizepx[1] % 2)
+        #r_px = 1 / plt.rcParams['figure.dpi']  # translate px to inch
+        #figsize = [None, None]
+        #figsize[0] = fifigsizepxgsizepx[0] * r_px
+        #figsize[1] = figsizepx[1] * r_px
+        #if self.verbose:
+        #    print(f'px figure size set to {figsizepx}.')
 
         # handle z_slice
         z_slice = float(z_slice)
@@ -630,16 +632,17 @@ class pyMCDSts:
                 print(f'ylim set to {ylim}.')
 
         # handle figure background color
-        if figbgcolor is None:
-            figbgcolor = 'auto'
+        #if figbgcolor is None:
+        #    figbgcolor = 'auto'
 
         # handle output path
         s_path = f'{self.output_path}conc_{focus}_z{round(z_slice,9)}/'
 
         # plotting
+        lo_output = []
         for i, mcds in enumerate(self.get_mcds_list()):
-            fig = mcds.plot_contour(
-                substrate = focus,
+            o_output = mcds.plot_contour(
+                focus = focus,
                 z_slice = z_slice,
                 vmin = extrema[0],
                 vmax = extrema[1],
@@ -651,18 +654,21 @@ class pyMCDSts:
                 xlim = xlim,
                 ylim = ylim,
                 xyequal = xyequal,
-                figsize = figsize,
+                figsizepx = figsizepx,
+                figbgcolor = figbgcolor,
+                ext = ext,
                 ax = None,
             )
-            os.makedirs(s_path, exist_ok=True)
-            s_file = self.get_xmlfile_list()[i].replace('.xml', f'_{focus}.{ext}')
-            s_pathfile = f'{s_path}{s_file}'
-            plt.tight_layout()
-            fig.savefig(s_pathfile, facecolor=figbgcolor)
-            plt.close(fig)
+            #os.makedirs(s_path, exist_ok=True)
+            #s_file = self.get_xmlfile_list()[i].replace('.xml', f'_{focus}.{ext}')
+            #s_pathfile = f'{s_path}{s_file}'
+            #plt.tight_layout()
+            #fig.savefig(s_pathfile, facecolor=figbgcolor)
+            #plt.close(fig)
+            lo_output.append(o_output)
 
         # output
-        return s_path
+        return lo_output
 
 
     def make_conc_vtk(self):
@@ -850,7 +856,7 @@ class pyMCDSts:
         return dl_variable_range
 
 
-    def plot_scatter(self, focus='cell_type', z_slice=0, z_axis=None, alpha=1, cmap='viridis', title='', grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=None, figsizepx=None, ext='jpeg', figbgcolor=None):
+    def plot_scatter(self, focus='cell_type', z_slice=0, z_axis=None, alpha=1, cmap='viridis', title='', grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=None, figsizepx=None, figbgcolor=None, ext='jpeg'):
         """
         input:
             self: pyMCDSts class instance
@@ -917,19 +923,24 @@ class pyMCDSts:
                 None tries to take the values from the initial.svg file.
                 fall back setting is [640, 480].
 
-            ext: string; default is jpeg
-                output image format. possible formats are jpeg, png, and tiff.
-
             figbgcolor: string; default is None which is transparent (png)
                 or white (jpeg, tiff).
                 figure background color.
 
+            ext: string; default is jpeg
+                output image format. possible formats are jpeg, png, and tiff.
+                None will return the matplotlib fig object.
+
         output:
-            image files under the returned path.
+            fig: matplotlib figures, depending on ext, either as files or
+                as objects. the figures contains the scatter plot and
+                color bar (numerical data) or color legend (categorical data).
 
         description:
-            this function generates image time series
-            based on the physicell data output.
+            function returns a (pandas) matplotlib scatter plotts,
+            inclusive color bar or color legend, for the whole time series,
+            for the focus specified, either as matplotlib fig object
+            or as jpeg, png, or tiff file.
 
             jpeg is by definition a lossy compressed image format.
             png is by definition a lossless compressed image format.
@@ -939,103 +950,104 @@ class pyMCDSts:
             https://en.wikipedia.org/wiki/TIFF
         """
         # handle initial.svg for s and figsizepx
-        if (s is None) or (figsizepx is None):
-            s_pathfile = self.output_path + 'initial.svg'
-            try:
-                x_tree = etree.parse(s_pathfile)
-                x_root = x_tree.getroot()
-                if s is None:
-                    circle_element = x_root.find('.//{*}circle')
-                    if not (circle_element is None):
-                        r_radius = float(circle_element.get('r')) # px
-                        s = int(round((r_radius)**2))
-                    else:
-                        print(f'Warning @ pyMCDSts.plot_scatter : these agents are not circles.')
-                        s = plt.rcParams['lines.markersize']**2
-                    if self.verbose:
-                        print(f's set to {s}.')
-                if figsizepx is None:
-                    i_width = int(np.ceil(float(x_root.get('width')))) # px
-                    i_height = int(np.ceil(float(x_root.get('height'))))  # px
-                    figsizepx = [i_width, i_height]
-            except FileNotFoundError:
-                print(f'Warning @ pyMCDSts.plot_scatter : could not load {s_pathfile}.')
-                if s is None:
-                    s = plt.rcParams['lines.markersize']**2
-                    if self.verbose:
-                        print(f's set to {s}.')
-                if figsizepx is None:
-                    figsizepx = [640, 480]
+        #if (s is None) or (figsizepx is None):
+        #    s_pathfile = self.output_path + 'initial.svg'
+        #    try:
+        #        x_tree = etree.parse(s_pathfile)
+        #        x_root = x_tree.getroot()
+        #        if s is None:
+        #            circle_element = x_root.find('.//{*}circle')
+        #            if not (circle_element is None):
+        #                r_radius = float(circle_element.get('r')) # px
+        #                s = int(round((r_radius)**2))
+        #            else:
+        #                print(f'Warning @ pyMCDSts.plot_scatter : these agents are not circles.')
+        #                s = plt.rcParams['lines.markersize']**2
+        #            if self.verbose:
+        #                print(f's set to {s}.')
+        #        if figsizepx is None:
+        #            i_width = int(np.ceil(float(x_root.get('width')))) # px
+        #            i_height = int(np.ceil(float(x_root.get('height'))))  # px
+        #            figsizepx = [i_width, i_height]
+        #    except FileNotFoundError:
+        #        print(f'Warning @ pyMCDSts.plot_scatter : could not load {s_pathfile}.')
+        #        if s is None:
+        #            s = plt.rcParams['lines.markersize']**2
+        #            if self.verbose:
+        #                print(f's set to {s}.')
+        #        if figsizepx is None:
+        #            figsizepx = [640, 480]
 
         # handle figure size
-        figsizepx[0] = figsizepx[0] - (figsizepx[0] % 2)  # enforce even pixel number
-        figsizepx[1] = figsizepx[1] - (figsizepx[1] % 2)
-        r_px = 1 / plt.rcParams['figure.dpi']  # translate px to inch
-        figsize = [None, None]
-        figsize[0] = figsizepx[0] * r_px
-        figsize[1] = figsizepx[1] * r_px
-        if self.verbose:
-            print(f'px figure size set to {figsizepx}.')
+        #figsizepx[0] = figsizepx[0] - (figsizepx[0] % 2)  # enforce even pixel number
+        #figsizepx[1] = figsizepx[1] - (figsizepx[1] % 2)
+        #r_px = 1 / plt.rcParams['figure.dpi']  # translate px to inch
+        #figsize = [None, None]
+        #figsize[0] = figsizepx[0] * r_px
+        #figsize[1] = figsizepx[1] * r_px
+        #if self.verbose:
+        #    print(f'px figure size set to {figsizepx}.')
 
         # handle z_slice
-        z_slice = float(z_slice)
-        _, _, ar_p_axis = self.get_mcds_list()[0].get_mesh_mnp_axis()
-        if not (z_slice in ar_p_axis):
-            z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
-            if self.verbose:
-                print(f'z_slice set to {z_slice}.')
+        #z_slice = float(z_slice)
+        #_, _, ar_p_axis = self.get_mcds_list()[0].get_mesh_mnp_axis()
+        #if not (z_slice in ar_p_axis):
+        #    z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
+        #    if self.verbose:
+        #        print(f'z_slice set to {z_slice}.')
 
         # handle z_axis categorical cases
-        df_cell = self.get_mcds_list()[0].get_cell_df()
-        if (str(df_cell.loc[:,focus].dtype) in {'bool', 'object'}):
-            if (z_axis is None):
-                # extract set of labels from data
-                z_axis = set()
-                for mcds in self.get_mcds_list():
-                    df_cell = mcds.get_cell_df()
-                    z_axis = z_axis.union(set(df_cell.loc[:,focus]))
-                if (str(df_cell.loc[:,focus].dtype) in {'bool'}):
-                    z_axis = z_axis.union({True, False})
+        #df_cell = self.get_mcds_list()[0].get_cell_df()
+        #if (str(df_cell.loc[:,focus].dtype) in {'bool', 'object'}):
+        #    if (z_axis is None):
+        #       # extract set of labels from data
+        #        z_axis = set()
+        #        for mcds in self.get_mcds_list():
+        #            df_cell = mcds.get_cell_df()
+        #            z_axis = z_axis.union(set(df_cell.loc[:,focus]))
+        #        if (str(df_cell.loc[:,focus].dtype) in {'bool'}):
+        #            z_axis = z_axis.union({True, False})
 
         # handle z_axis numerical cases
-        else:  # df_cell.loc[:,focus].dtype is numeric
-            if (z_axis is None):
-                # extract min and max values from data
-                z_axis = [None, None]
-                for mcds in self.get_mcds_list():
-                    df_cell = mcds.get_cell_df()
-                    r_min = df_cell.loc[:,focus].min()
-                    r_max = df_cell.loc[:,focus].max()
-                    if (z_axis[0] is None) or (z_axis[0] > r_min):
-                        z_axis[0] = np.floor(r_min)
-                    if (z_axis[1] is None) or (z_axis[1] < r_max):
-                        z_axis[1] = np.ceil(r_max)
+        #else:  # df_cell.loc[:,focus].dtype is numeric
+        #    if (z_axis is None):
+        #        # extract min and max values from data
+        #        z_axis = [None, None]
+        #        for mcds in self.get_mcds_list():
+        #            df_cell = mcds.get_cell_df()
+        #            r_min = df_cell.loc[:,focus].min()
+        #            r_max = df_cell.loc[:,focus].max()
+        #            if (z_axis[0] is None) or (z_axis[0] > r_min):
+        #                z_axis[0] = np.floor(r_min)
+        #            if (z_axis[1] is None) or (z_axis[1] < r_max):
+        #                z_axis[1] = np.ceil(r_max)
 
         # handle z_axis summary
-        if self.verbose:
-            print(f'z_axis detected: {z_axis}.')
+        #if self.verbose:
+        #    print(f'z_axis detected: {z_axis}.')
 
         # handle xlim and ylim
-        if (xlim is None):
-            xlim = self.get_mcds_list()[0].get_xyz_range()[0]
-            if self.verbose:
-                print(f'xlim set to: {xlim}.')
-        if (ylim is None):
-            ylim = self.get_mcds_list()[0].get_xyz_range()[1]
-            if self.verbose:
-                print(f'ylim set to: {ylim}.')
+        #if (xlim is None):
+        #    xlim = self.get_mcds_list()[0].get_xyz_range()[0]
+        #    if self.verbose:
+        #        print(f'xlim set to: {xlim}.')
+        #if (ylim is None):
+        #    ylim = self.get_mcds_list()[0].get_xyz_range()[1]
+        #    if self.verbose:
+        #        print(f'ylim set to: {ylim}.')
 
         # handle figure background color
-        if figbgcolor is None:
-            figbgcolor = 'auto'
+        #if figbgcolor is None:
+        #    figbgcolor = 'auto'
 
         # handle output path
-        s_path = f'{self.output_path}cell_{focus}_z{round(z_slice,9)}/'
+        #s_path = f'{self.output_path}cell_{focus}_z{round(z_slice,9)}/'
 
         # plotting
+        lo_output = []
         for i, mcds in enumerate(self.get_mcds_list()):
             df_cell = mcds.get_cell_df()
-            fig = mcds.plot_scatter(
+            o_output = mcds.plot_scatter(
                 focus = focus,
                 z_slice = z_slice,
                 z_axis = z_axis,
@@ -1052,15 +1064,17 @@ class pyMCDSts:
                 ax = None,
             )
             # finalize
-            os.makedirs(s_path, exist_ok=True)
-            s_file = self.get_xmlfile_list()[i].replace('.xml', f'_{focus}.{ext}')
-            s_pathfile = f'{s_path}{s_file}'
-            plt.tight_layout()
-            fig.savefig(s_pathfile, facecolor=figbgcolor)
-            plt.close(fig)
+            #os.makedirs(s_path, exist_ok=True)
+            #s_file = self.get_xmlfile_list()[i].replace('.xml', f'_{focus}.{ext}')
+            #s_pathfile = f'{s_path}{s_file}'
+            #plt.tight_layout()
+            #fig.savefig(s_pathfile, facecolor=figbgcolor)
+            #plt.close(fig)
+            lo_output.append(o_output)
 
         # output
-        return s_path
+        return lo_output
+
 
 
     def make_cell_vtk(self, attribute=['cell_type'], visualize=False):

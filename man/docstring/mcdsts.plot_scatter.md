@@ -67,25 +67,30 @@
                 None tries to take the values from the initial.svg file.
                 fall back setting is [640, 480].
 
-            ext: string; default is jpeg
-                output image format. possible formats are jpeg, png, and tiff.
-
             figbgcolor: string; default is None which is transparent (png)
                 or white (jpeg, tiff).
                 figure background color.
+
+            ext: string; default is jpeg
+                output image format. possible formats are jpeg, png, and tiff.
+                None will return the matplotlib fig object.
 
 ```
 
 ## output:
 ```
-            image files under the returned path.
+            fig: matplotlib figures, depending on ext, either as files or 
+                as objects. the figures contains the scatter plot and 
+                color bar (numerical data) or color legend (categorical data).
 
 ```
 
 ## description:
 ```
-            this function generates image time series
-            based on the physicell data output.
+            function returns a (pandas) matplotlib scatter plotts,                
+            inclusive color bar or color legend, for the whole time series,
+            for the focus specified, either as matplotlib fig object 
+            or as jpeg, png, or tiff file.
 
             jpeg is by definition a lossy compressed image format.
             png is by definition a lossless compressed image format.

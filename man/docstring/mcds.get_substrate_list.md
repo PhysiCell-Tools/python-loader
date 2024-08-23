@@ -15,7 +15,7 @@
 
 ## description:
 ```
-            function returns all chemical species names,
-            modeled in the microenvironment.
+            function returns all chemical species names, modeled
+            in the microenvironment, ordered by chemical species ID.
         
 ```

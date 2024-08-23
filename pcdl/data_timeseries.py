@@ -16,6 +16,10 @@
 #     and useful to run through the tutorial.
 #########
 
+# bue 20240822: in future (with the next mcds version) in need a better dataset:
+# 2d and 3d, 2 substrates, 2 cell_types
+# mcds time step 60[min], total time 24[h]
+# maybe physiboss output?
 
 # library
 import os
@@ -62,8 +66,9 @@ class install_data:
             # extract tar.gz file
             f = tarfile.open(s_pathfile, 'r')
             f.extractall(s_path)
-            # bue 20240314: for the future 3.12 .. 3.14. filter breaks some currently supported python versions.
-            #f.extractall(s_path, filter='data' or 'fully_trusted')  
+            # bue 20240314: for the future 3.12 .. 3.14.
+            # at this moment filter breaks some currently supported python versions.
+            #f.extractall(s_path, filter='data' or 'fully_trusted')
 
 
 class uninstall_data:

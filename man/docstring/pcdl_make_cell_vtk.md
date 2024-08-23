@@ -2,8 +2,7 @@
 usage: pcdl_make_cell_vtk [-h] [--custom_data_type [CUSTOM_DATA_TYPE ...]]
                           [--microenv MICROENV] [--physiboss PHYSIBOSS]
                           [--settingxml SETTINGXML] [-v VERBOSE]
-                          [--attribute [ATTRIBUTE ...]]
-                          [path]
+                          [path] [attribute ...]
 
 function that generates 3D glyph vtk file for cells. cells can have specified
 attributes like cell_type, pressure, dead, etc. you can post-process this file
@@ -12,6 +11,9 @@ in other software like paraview (https://www.paraview.org/).
 positional arguments:
   path                  path to the PhysiCell output directory or a
                         outputnnnnnnnn.xml file. default is . .
+  attribute             listing of mcds.get_cell_df dataframe column names,
+                        used for cell attributes. default is a single term:
+                        cell_type.
 
 options:
   -h, --help            show this help message and exit
@@ -36,10 +38,6 @@ options:
   -v VERBOSE, --verbose VERBOSE
                         setting verbose to False for less text output, while
                         processing. default is True.
-  --attribute [ATTRIBUTE ...]
-                        listing of mcds.get_cell_df dataframe column names,
-                        used for cell attributes. default is a single term:
-                        cell_type.
 
 homepage: https://github.com/elmbeech/physicelldataloader
 ```

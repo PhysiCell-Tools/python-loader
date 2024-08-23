@@ -6,7 +6,7 @@
             self: pyMCDSts class instance
 
             focus: string
-                column name within conc dataframe.
+                column name within conc dataframe, for example.
 
             z_slice: floating point number; default is 0
                 z-axis position to slice a 2D xy-plain out of the
@@ -16,7 +16,7 @@
                 the smaller one, if the coordinate lies on a saddle point.
 
             extrema: tuple of two floats; default is None
-                default takes min and max from data.
+                default takes min and max from data, from the whole time series.
 
             alpha: floating point number; default is 1
                 alpha channel transparency value
@@ -54,18 +54,20 @@
                 None tries to take the values from the initial.svg file.
                 fall back setting is [640, 480].
 
-            ext: string; default is jpeg
-                output image format. possible formats are jpeg, png, and tiff.
-
             figbgcolor: string; default is None which is transparent (png)
                 or white (jpeg, tiff).
                 figure background color.
+
+            ext: string; default is jpeg
+                output image format. possible formats are jpeg, png, and tiff.
+                None will return the matplotlib fig object.
 
 ```
 
 ## output:
 ```
-            image files under the returned path.
+            fig: matplotlib figures, depending on ext, either as files or as 
+                objects. the figures contains the contour plot and color bar.
 
 ```
 

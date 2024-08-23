@@ -48,7 +48,7 @@
                 y axis min and max value.
                 default takes min and max from mesh y axis range.
 
-           xyequal: boolean; default True
+            xyequal: boolean; default True
                 to specify equal axis spacing for x and y axis.
 
             s: integer; default is None
@@ -59,16 +59,31 @@
                 None tries to take the value from the initial.svg file.
                 fall back setting is 36.
 
-            figsize: tuple of floating point numbers; default is None
-                the specif the figure x and y measurement in inch.
-                None result in the default matplotlib setting, which is [6.4, 4.8].
+            figsizepx: list of two integers; default is None
+                size of the figure in pixels, (x, y).
+                the given x and y will be rounded to the nearest even number,
+                to be able to generate movies from the images.
+                None tries to take the values from the initial.svg file.
+                fall back setting is [640, 480].
+
+            figbgcolor: string; default is None which is transparent (png)
+                or white (jpeg, tiff).
+                figure background color.
+
+            ext: string; default is None
+                output image format. possible formats are jpeg, png, and tiff.
+                None will return the matplotlib fig object.
+
+            ax: matplotlib axis object; default setting is None
+                the ax object, which will be used as a canvas for plotting.
+                None will generate a figure and ax object from scratch.
 
 ```
 
 ## output:
 ```
-            fig: matplotlib figure, containing the ax axis object,
-                with scatter plot and color bar (numerical data)
+            fig: matplotlib figure, depending on ext, either as object or as file.
+                the figure contains the scatter plot and color bar (numerical data)
                 or color legend (categorical data).
 
 ```
@@ -76,6 +91,14 @@
 ## description:
 ```
             function returns a (pandas) matplotlib scatter plot,
-            inclusive color bar, for the substrate specified.
+            inclusive color bar or color legend, for the focus specified,
+            either as matplotlib fig object or as jpeg, png, or tiff file.
+
+            jpeg is by definition a lossy compressed image format.
+            png is by definition a lossless compressed image format.
+            tiff can by definition be a lossy or lossless compressed format.
+            https://en.wikipedia.org/wiki/JPEG
+            https://en.wikipedia.org/wiki/Portable_Network_Graphics
+            https://en.wikipedia.org/wiki/TIFF
         
 ```
