@@ -4,7 +4,7 @@
 
 The most important commands for down stream data analysis,
 available in the pcdl TimeStep and TimeSeries class,
-can be run straight from the command line ([bash](https://en.wikipedia.org/wiki/Bash_(Unix_shell), [csh](https://en.wikipedia.org/wiki/C_shell), [fish](https://en.wikipedia.org/wiki/Fish_(Unix_shell), [ksh](https://en.wikipedia.org/wiki/KornShell), [sh](https://en.wikipedia.org/wiki/Bourne_shell), [tsh](https://en.wikipedia.org/wiki/Tcsh), [zsh](https://en.wikipedia.org/wiki/Z_shell), ...).
+can be run straight from the command line shell like: [bash](https://en.wikipedia.org/wiki/Bash_(Unix_shell)), [csh](https://en.wikipedia.org/wiki/C_shell), [dos](https://en.wikipedia.org/wiki/DOS), [fish](https://en.wikipedia.org/wiki/Fish_(Unix_shell)), [ksh](https://en.wikipedia.org/wiki/KornShell), [powershell](https://en.wikipedia.org/wiki/PowerShell), [sh](https://en.wikipedia.org/wiki/Bourne_shell), [tsh](https://en.wikipedia.org/wiki/Tcsh), or [zsh](https://en.wikipedia.org/wiki/Z_shell).
 
 The command names are drived from the related python3 function.
 
@@ -39,7 +39,7 @@ pcdl_get_unit_dict -h
 ## Microenvironment realted commands
 
 
-#### Substrate concentration attributes
+### Substrate concentration attributes
 
 Generate a [json](https://en.wikipedia.org/wiki/JSON) file, that lists all substrate attributes.
 For each such attribute the min and the max value are listed.
@@ -57,7 +57,7 @@ pcdl_get_conc_attribute -h
 <!-- bue 20240822: link extra tutorials -->
 
 
-#### Substrate concentration dataframe
+### Substrate concentration dataframe
 
 Generate a [csv](https://en.wikipedia.org/wiki/Comma-separated_values) file that lists one voxel per row,
 all substarte concentrations.
@@ -75,7 +75,7 @@ pcdl_get_conc_df -h
 <!-- bue 20240822: link extra tutorials -->
 
 
-#### Substrate concentration visualization
+### Substrate concentration visualization
 
 For oxygen generate a [jpeg](https://en.wikipedia.org/wiki/JPEG) file
 for the the whole time series or for a single time step.
@@ -106,7 +106,7 @@ pcdl_make_conc_vtk -h
 ## Cell agent related commands
 
 
-#### Cell agent attributes
+### Cell agent attributes
 
 Generate a [json](https://en.wikipedia.org/wiki/JSON) file, that lists all cell attributes.
 For each such attribute the min and the max value are listed.
@@ -124,7 +124,7 @@ pcdl_get_cell_attribute -h
 <!-- bue 20240822: link extra tutorials -->
 
 
-#### Cell agent dataframe
+### Cell agent dataframe
 
 Generate a [csv](https://en.wikipedia.org/wiki/Comma-separated_values) file that lists one cell per row,
 all attributes.
@@ -142,7 +142,7 @@ pcdl_get_cell_df -h
 <!-- bue 20240822: link extra tutorials -->
 
 
-#### Cell agent anndata hd5 file
+### Cell agent anndata hd5 file
 
 Frome the whole timeseries or from a single time step generate h5ad [anndata](https://anndata.readthedocs.io/en/latest/) [hd5](https://en.wikipedia.org/wiki/Hierarchical_Data_Format) files.
 
@@ -158,7 +158,7 @@ pcdl_get_anndata -h
 <!-- bue 20240822: link extra tutorials -->
 
 
-#### Cell agent neighborhood graph file
+### Cell agent neighborhood graph file
 
 Generate [gml](https://github.com/elmbeech/physicelldataloader/blob/master/man/publication/himsolt1996gml_a_portable_graph_file_format.pdf) files.
 One gml file per time step.
@@ -174,7 +174,7 @@ pcdl_make_graph_gml -h
 <!-- bue 20240822: link extra tutorials -->
 
 
-#### Cell agent visualization
+### Cell agent visualization
 
 Generate a [jpeg](https://en.wikipedia.org/wiki/JPEG) file that displaying all cells.
 
@@ -209,7 +209,7 @@ pcdl_make_cell_vtk -h
 ## Microenvironment and cell agent related commands
 
 
-#### Microenviroment and cell agent visualization
+### Microenviroment and cell agent visualization
 
 Generate a timeseries plot and save it as a [jpeg](https://en.wikipedia.org/wiki/JPEG) file.
 

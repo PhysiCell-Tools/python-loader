@@ -11,7 +11,7 @@ The original python-loader tutorial can be found here.
 + http://www.mathcancer.org/blog/python-loader/
 
 
-## Tutorial - branch v3 and v4: Introduction
+## Tutorial - branch v3 and v4
 
 
 ### History

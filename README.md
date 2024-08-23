@@ -58,7 +58,7 @@ Slides:
 
 
 ## Reference Manual:
-+ [API application interface](https://github.com/elmbeech/physicelldataloader/tree/master/man/REFERENCE.md) #!
++ [API application interface](https://github.com/elmbeech/physicelldataloader/tree/master/man/REFERENCE.md)
 
 
 ## Discussion:
