@@ -377,6 +377,52 @@ class pyMCDS:
         return self.data['metadata']['current_runtime']
 
 
+    ## MODEL PARAMETER SETTING RELATED FUNCTIONS ##
+
+    def get_unit_dict(self):
+        """
+        input:
+
+        output:
+            ds_unit: dictionary
+                dictionary, which tracks units from cell and microenvironment
+                variables.
+
+        description:
+            function returns a dictionary that stores all tracked variables
+            and their units.
+        """
+        # extract data
+        ds_unit = {}
+        # units for metadata parameters
+        ds_unit.update({'time': self.data['metadata']['time_units']})
+        ds_unit.update({'runtime': self.data['metadata']['runtime_units']})
+        ds_unit.update({'spatial_unit': self.data['metadata']['spatial_units']})
+
+        # microenvironment
+        if self.microenv:
+            for s_substrate in self.get_substrate_list():
+                # unit from substrate parameters
+                s_unit = self.data['continuum_variables'][s_substrate]['units']
+                ds_unit.update({s_substrate: s_unit})
+
+                # units from microenvironment parameters
+                s_diffusion_key = f'{s_substrate}_diffusion_coefficient'
+                s_diffusion_unit = self.data['continuum_variables'][s_substrate]['diffusion_coefficient']['units']
+                ds_unit.update({s_diffusion_key: s_diffusion_unit})
+
+                s_decay_key = f'{s_substrate}_decay_rate'
+                s_decay_unit = self.data['continuum_variables'][s_substrate]['decay_rate']['units']
+                ds_unit.update({s_decay_key: s_decay_unit})
+
+        # units from cell parameters
+        ds_unit.update(self.data['discrete_cells']['units'])
+
+        # output
+        del ds_unit['ID']
+        return ds_unit
+
+
     ## MESH RELATED FUNCTIONS  ##
 
     def get_voxel_ijk_range(self):
@@ -1226,7 +1272,7 @@ class pyMCDS:
         return s_vtkpathfile
 
 
-    ## CELL RELATED FUNCTIONS ##
+    ## CELL AGENT RELATED FUNCTIONS ##
 
     def get_celltype_list(self):
         """
@@ -1919,128 +1965,7 @@ class pyMCDS:
         return s_vtkpathfile
 
 
-    ## GRAPH RELATED FUNCTIONS ##
-
-    def get_attached_graph_dict(self):
-        """
-        input:
-
-        output:
-            dei_graph: dictionary of sets of integers
-                maps each cell ID to the attached connected cell IDs.
-
-        description:
-            function returns the attached cell graph as a dictionary object.
-        """
-        return self.data['discrete_cells']['graph']['attached_cells']
-
-
-    def get_neighbor_graph_dict(self):
-        """
-        input:
-
-        output:
-            dei_graph: dictionary of sets of integers
-                maps each cell ID to the connected neighbor cell IDs.
-
-        description:
-            function returns the cell neighbor graph as a dictionary object.
-        """
-        return self.data['discrete_cells']['graph']['neighbor_cells']
-
-
-    def make_graph_gml(self, graph_type='neighbor', edge_attribute=True, node_attribute=[]):
-        """
-        input:
-            graph_type: string; default is neighbor
-                to specify which physicell output data should be processed.
-                attached: processes mcds.get_attached_graph_dict dictionary.
-                neighbor: processes mcds.get_neighbor_graph_dict dictionary.
-
-            edge_attribute: boolean; default True
-                specifies if the spatial Euclidean distance is used for
-                edge attribute, to generate a weighted graph.
-
-            node_attribute: list of strings; default is empty list
-                list of mcds.get_cell_df dataframe columns, used for
-                node attributes.
-
-        output:
-            gml file, generated under the returned path.
-
-        description:
-            function to generate graph files in the gml graph modelling language
-            standard format.
-
-            gml was the outcome of an initiative that started at
-            the international symposium on graph drawing 1995 in Passau
-            and ended at Graph Drawing 1996 in Berkeley. the networkx python
-            and igraph C and python libraries for graph analysis are
-            gml compatible and can as such read and write this file format.
-
-            https://en.wikipedia.org/wiki/Graph_Modelling_Language
-            https://networkx.org/
-            https://igraph.org/
-        """
-        # load dataframe for celltype information
-        df_cell = self.get_cell_df()
-        ds_unit = self.get_unit_dict()
-        s_unit_simtime = ds_unit["time"]
-        r_simtime = self.get_time()
-        if (graph_type in {'attached'}):
-            dei_graph = self.get_attached_graph_dict()
-        elif (graph_type in {'neighbor'}):
-            dei_graph = self.get_neighbor_graph_dict()
-        else:
-            sys.exit(f'Erro @ make_graph_gml : unknowen graph_type {graph_type}. knowen are attached and neighbor.')
-
-        # generate filename
-        s_gmlpathfile = self.path + '/' + self.xmlfile.replace('.xml',f'_{graph_type}.gml')
-
-        # open result gml file
-        f = open(s_gmlpathfile, 'w')
-        f.write(f'Creator "pcdl_v{__version__}"\ngraph [\n')
-        f.write(f'  id {int(r_simtime)}\n  comment "time_{s_unit_simtime}"\n  label "{graph_type}_graph"\n  directed 0\n')
-        for i_src, ei_dst in dei_graph.items():
-            #print(f'{i_src} {sorted(ei_dst)}')
-            # node
-            f.write(f'  node [\n    id {i_src}\n    label "node_{i_src}"\n')
-            # node attributes
-            for s_attribute in node_attribute:
-                o_attribute = df_cell.loc[i_src, s_attribute]
-                if (type(o_attribute) == str) or (o_attribute.dtype == np.object_):  #in {str, np.str_, np.object_}):
-                    f.write(f'    {s_attribute} "{o_attribute}"\n')
-                elif (o_attribute.dtype == bool) or (o_attribute.dtype == int):  #in {bool, np.bool_, np.bool, int, np.int_, np.int8, np.int16, np.int32, np.int64}):
-                    f.write(f'    {s_attribute} {int(o_attribute)}\n')
-                elif (o_attribute.dtype == float):  #in {float, np.float16, np.float32, np.float64, np.float128}):
-                    f.write(f'    {s_attribute} {o_attribute}\n')
-                else:
-                    sys.exit(f'Error @ pyMCDS.make_graph_gml : attribute {o_attribute}; type {o_attribute.dtype}; type seems not to be bool, int, float, or string.')
-            f.write(f'  ]\n')
-            # edge
-            for i_dst in ei_dst:
-                if (i_src < i_dst):
-                    f.write(f'  edge [\n    source {i_src}\n    target {i_dst}\n    label "edge_{i_src}_{i_dst}"\n')
-                    if (edge_attribute):
-                        # edge distance attribute
-                        x = df_cell.loc[i_src, 'position_x'] - df_cell.loc[i_dst, 'position_x']
-                        y = df_cell.loc[i_src, 'position_y'] - df_cell.loc[i_dst, 'position_y']
-                        z = df_cell.loc[i_src, 'position_z'] - df_cell.loc[i_dst, 'position_z']
-                        r_distance = (x**2 + y**2 + z**2)**(1/2)
-                        f.write(f'    distance_{ds_unit["position_y"]} {round(r_distance)}\n')
-                    f.write(f'  ]\n')
-            # development
-            #if (i_src > 16):
-            #    break
-        # close result gml file
-        f.write(']\n')
-        f.close()
-
-        # output
-        return s_gmlpathfile
-
-
-    ## OME TIFF RELATED FUNCTIONS ##
+    ## MICROENVIRONMENT AND CELL AGENT RELATED FUNCTIONS ##
 
     def make_ome_tiff(self, cell_attribute='ID', file=True):
         """
@@ -2217,53 +2142,129 @@ class pyMCDS:
             return s_tiffpathfile
 
 
-    ## MODEL PARAMETER SETTING RELATED FUNCTIONS ##
+    ## GRAPH RELATED FUNCTIONS ##
 
-    def get_unit_dict(self):
+    def get_attached_graph_dict(self):
         """
         input:
 
         output:
-            ds_unit: dictionary
-                dictionary, which tracks units from cell and microenvironment
-                variables.
+            dei_graph: dictionary of sets of integers
+                maps each cell ID to the attached connected cell IDs.
 
         description:
-            function returns a dictionary that stores all tracked variables
-            and their units.
+            function returns the attached cell graph as a dictionary object.
         """
-        # extract data
-        ds_unit = {}
-        # units for metadata parameters
-        ds_unit.update({'time': self.data['metadata']['time_units']})
-        ds_unit.update({'runtime': self.data['metadata']['runtime_units']})
-        ds_unit.update({'spatial_unit': self.data['metadata']['spatial_units']})
+        return self.data['discrete_cells']['graph']['attached_cells']
 
-        # microenvironment
-        if self.microenv:
-            for s_substrate in self.get_substrate_list():
-                # unit from substrate parameters
-                s_unit = self.data['continuum_variables'][s_substrate]['units']
-                ds_unit.update({s_substrate: s_unit})
 
-                # units from microenvironment parameters
-                s_diffusion_key = f'{s_substrate}_diffusion_coefficient'
-                s_diffusion_unit = self.data['continuum_variables'][s_substrate]['diffusion_coefficient']['units']
-                ds_unit.update({s_diffusion_key: s_diffusion_unit})
+    def get_neighbor_graph_dict(self):
+        """
+        input:
 
-                s_decay_key = f'{s_substrate}_decay_rate'
-                s_decay_unit = self.data['continuum_variables'][s_substrate]['decay_rate']['units']
-                ds_unit.update({s_decay_key: s_decay_unit})
+        output:
+            dei_graph: dictionary of sets of integers
+                maps each cell ID to the connected neighbor cell IDs.
 
-        # units from cell parameters
-        ds_unit.update(self.data['discrete_cells']['units'])
+        description:
+            function returns the cell neighbor graph as a dictionary object.
+        """
+        return self.data['discrete_cells']['graph']['neighbor_cells']
+
+
+    def make_graph_gml(self, graph_type='neighbor', edge_attribute=True, node_attribute=[]):
+        """
+        input:
+            graph_type: string; default is neighbor
+                to specify which physicell output data should be processed.
+                attached: processes mcds.get_attached_graph_dict dictionary.
+                neighbor: processes mcds.get_neighbor_graph_dict dictionary.
+
+            edge_attribute: boolean; default True
+                specifies if the spatial Euclidean distance is used for
+                edge attribute, to generate a weighted graph.
+
+            node_attribute: list of strings; default is empty list
+                list of mcds.get_cell_df dataframe columns, used for
+                node attributes.
+
+        output:
+            gml file, generated under the returned path.
+
+        description:
+            function to generate graph files in the gml graph modelling language
+            standard format.
+
+            gml was the outcome of an initiative that started at
+            the international symposium on graph drawing 1995 in Passau
+            and ended at Graph Drawing 1996 in Berkeley. the networkx python
+            and igraph C and python libraries for graph analysis are
+            gml compatible and can as such read and write this file format.
+
+            https://en.wikipedia.org/wiki/Graph_Modelling_Language
+            https://networkx.org/
+            https://igraph.org/
+        """
+        # load dataframe for celltype information
+        df_cell = self.get_cell_df()
+        ds_unit = self.get_unit_dict()
+        s_unit_simtime = ds_unit["time"]
+        r_simtime = self.get_time()
+        if (graph_type in {'attached'}):
+            dei_graph = self.get_attached_graph_dict()
+        elif (graph_type in {'neighbor'}):
+            dei_graph = self.get_neighbor_graph_dict()
+        else:
+            sys.exit(f'Erro @ make_graph_gml : unknowen graph_type {graph_type}. knowen are attached and neighbor.')
+
+        # generate filename
+        s_gmlpathfile = self.path + '/' + self.xmlfile.replace('.xml',f'_{graph_type}.gml')
+
+        # open result gml file
+        f = open(s_gmlpathfile, 'w')
+        f.write(f'Creator "pcdl_v{__version__}"\ngraph [\n')
+        f.write(f'  id {int(r_simtime)}\n  comment "time_{s_unit_simtime}"\n  label "{graph_type}_graph"\n  directed 0\n')
+        for i_src, ei_dst in dei_graph.items():
+            #print(f'{i_src} {sorted(ei_dst)}')
+            # node
+            f.write(f'  node [\n    id {i_src}\n    label "node_{i_src}"\n')
+            # node attributes
+            for s_attribute in node_attribute:
+                o_attribute = df_cell.loc[i_src, s_attribute]
+                if (type(o_attribute) == str) or (o_attribute.dtype == np.object_):  #in {str, np.str_, np.object_}):
+                    f.write(f'    {s_attribute} "{o_attribute}"\n')
+                elif (o_attribute.dtype == bool) or (o_attribute.dtype == int):  #in {bool, np.bool_, np.bool, int, np.int_, np.int8, np.int16, np.int32, np.int64}):
+                    f.write(f'    {s_attribute} {int(o_attribute)}\n')
+                elif (o_attribute.dtype == float):  #in {float, np.float16, np.float32, np.float64, np.float128}):
+                    f.write(f'    {s_attribute} {o_attribute}\n')
+                else:
+                    sys.exit(f'Error @ pyMCDS.make_graph_gml : attribute {o_attribute}; type {o_attribute.dtype}; type seems not to be bool, int, float, or string.')
+            f.write(f'  ]\n')
+            # edge
+            for i_dst in ei_dst:
+                if (i_src < i_dst):
+                    f.write(f'  edge [\n    source {i_src}\n    target {i_dst}\n    label "edge_{i_src}_{i_dst}"\n')
+                    if (edge_attribute):
+                        # edge distance attribute
+                        x = df_cell.loc[i_src, 'position_x'] - df_cell.loc[i_dst, 'position_x']
+                        y = df_cell.loc[i_src, 'position_y'] - df_cell.loc[i_dst, 'position_y']
+                        z = df_cell.loc[i_src, 'position_z'] - df_cell.loc[i_dst, 'position_z']
+                        r_distance = (x**2 + y**2 + z**2)**(1/2)
+                        f.write(f'    distance_{ds_unit["position_y"]} {round(r_distance)}\n')
+                    f.write(f'  ]\n')
+            # development
+            #if (i_src > 16):
+            #    break
+        # close result gml file
+        f.write(']\n')
+        f.close()
 
         # output
-        del ds_unit['ID']
-        return ds_unit
+        return s_gmlpathfile
 
 
     ## LOAD DATA  ##
+
     def _read_xml(self, xmlfile, output_path='.'):
         """
         input:

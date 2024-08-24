@@ -981,150 +981,6 @@ class pyMCDSts:
         return ls_vtkpathfile
 
 
-    ## GRAPH RELATED FUNCTIONS ##
-
-    def make_graph_gml(self, graph_type='neighbor', edge_attribute=True, node_attribute=[]):
-        """
-        input:
-            self: pyMCDS class instance.
-
-            graph_type: string; default is neighbor
-                to specify which physicell output data should be processed.
-                attached: processes mcds.get_attached_graph_dict dictionary.
-                neighbor: processes mcds.get_neighbor_graph_dict dictionary.
-
-            edge_attribute: boolean; default True
-                specifies if the spatial Euclidean distance is used for
-                edge attribute, to generate a weighted graph.
-
-            node_attribute: list of strings; default is empty list
-                list of mcds.get_cell_df dataframe columns, used for
-                node attributes.
-
-        output:
-            gml file for each time step.
-                path and filenames are printed to the standard output.
-
-        description:
-            function to generate graph files in the gml graph modelling language
-            standard format.
-
-            gml was the outcome of an initiative that started at
-            the international symposium on graph drawing 1995 in Passau
-            and ended at Graph Drawing 1996 in Berkeley. the networkx python
-            and igraph C and python libraries for graph analysis are
-            gml compatible and can as such read and write this file format.
-
-            https://en.wikipedia.org/wiki/Graph_Modelling_Language
-            https://networkx.org/
-            https://igraph.org/
-        """
-        # processing
-        ls_pathfile = []
-        for mcds in self.get_mcds_list():
-            s_pathfile = mcds.make_graph_gml(
-                graph_type = graph_type,
-                edge_attribute = edge_attribute,
-                node_attribute = node_attribute,
-            )
-            ls_pathfile.append(s_pathfile)
-
-        # outout
-        return ls_pathfile
-
-
-    ## OME TIFF RELATED FUNCTIONS ##
-
-    def make_ome_tiff(self, cell_attribute='ID', file=True, collapse=True):
-        """
-        input:
-            cell_attribute: strings; default is 'ID', with will result in a segmentation mask.
-                column name within cell dataframe.
-                the column data type has to be numeric (bool, int, float) and can't be string.
-
-            file: boolean; default True
-                if True, an ome.tiff file is output.
-                if False, a numpy array with shape tczyx is output.
-
-            collapse: boole; default True
-                should all mcds time steps from the time series be collapsed
-                into one ome tiff file (numpy array),
-                or an ome tiff file (numpy array) for each time step?
-
-        output:
-            a_tczyx_img: numpy array or ome.tiff file.
-
-        description:
-            function to transform chosen mcdsts output into an 1[um] spaced
-            tczyx (time, channel, z-axis, y-axis, x-axis) ome tiff file or numpy array,
-            one substrate or cell_type per channel.
-            a ome tiff file is more or less:
-            a numpy array, containing the image information
-            and a xml, containing the microscopy metadata information,
-            like the channel labels.
-            the ome tiff file format can for example be read by the napari
-            or fiji (imagej) software.
-
-            https://napari.org/stable/
-            https://fiji.sc/
-        """
-        # each T time step
-        l_tczyx_img = []
-        for i, mcds in enumerate(self.get_mcds_list()):
-            if (not file and not collapse) or (not file and collapse) or (file and collapse):  # 00, 01, 11
-                a_czyx_img = mcds.make_ome_tiff(cell_attribute=cell_attribute, file=False)
-                l_tczyx_img.append(a_czyx_img)
-
-            elif (file and not collapse):  # 10
-                s_pathfile = mcds.make_ome_tiff(cell_attribute=cell_attribute, file=True)
-                l_tczyx_img.append(s_pathfile)
-
-            else:
-                sys.exit(f'Error @ make_ome_tiff :.')
-
-        # output 00 list of numpy arrays
-        if (not file and not collapse):
-            if self.verbose:
-                print(f'la_tczyx_img shape: {len(l_tczyx_img)} * {l_tczyx_img[0].shape}')
-            return l_tczyx_img
-
-        # output 01 numpy array
-        elif (not file and collapse):  # 01
-            # numpy array
-            a_tczyx_img = np.array(l_tczyx_img)
-            if self.verbose:
-                print('a_tczyx_img shape:', a_tczyx_img.shape)
-            return a_tczyx_img
-
-        # output 10 list of pathfile strings
-        elif (file and not collapse):  # 01
-            return l_tczyx_img
-
-        # output 11 ometiff file
-        elif (file and collapse):  # 11
-            a_tczyx_img = np.array(l_tczyx_img)
-            if self.verbose:
-                print('a_tczyx_img shape:', a_tczyx_img.shape)
-            ls_channel = mcds.get_substrate_list() + mcds.get_celltype_list()
-            s_tiffpathfile = f'{self.path}timeseries_{cell_attribute}.ome.tiff'
-            OmeTiffWriter.save(
-                a_tczyx_img,
-                s_tiffpathfile,
-                dim_order = 'TCZYX',
-                #ome_xml=x_img,
-                channel_names = ls_channel,
-                image_names = [f'timeseries_{cell_attribute}'],
-                physical_pixel_sizes = aicsimageio.types.PhysicalPixelSizes(mcds.get_voxel_spacing()[2], 1.0, 1.0), #z,y,x [um]
-                #channel_colors=,
-                #fs_kwargs={},
-            )
-            return s_tiffpathfile
-
-        # error case
-        else:
-            sys.exit(f'Error @ make_ome_tiff :.')
-
-
     ## TIME SERIES RELATED FUNCTIONS ##
 
     def plot_timeseries(self, focus_cat=None, focus_num=None, aggregate_num=np.nanmean, frame='cell', z_slice=None, logy=False, ylim=None, secondary_y=None, subplots=False, sharex=False, sharey=False, linestyle='-', linewidth=None, cmap=None, color=None, grid=True, legend=True, yunit=None, title=None, ax=None, figsizepx=[640, 480], ext=None, figbgcolor=None):
@@ -1404,4 +1260,149 @@ class pyMCDSts:
             fig.savefig(s_pathfile, facecolor=figbgcolor)
             plt.close(fig)
             return s_pathfile
+
+
+    ## OME TIFF RELATED FUNCTIONS ##
+
+    def make_ome_tiff(self, cell_attribute='ID', file=True, collapse=True):
+        """
+        input:
+            cell_attribute: strings; default is 'ID', with will result in a segmentation mask.
+                column name within cell dataframe.
+                the column data type has to be numeric (bool, int, float) and can't be string.
+
+            file: boolean; default True
+                if True, an ome.tiff file is output.
+                if False, a numpy array with shape tczyx is output.
+
+            collapse: boole; default True
+                should all mcds time steps from the time series be collapsed
+                into one ome tiff file (numpy array),
+                or an ome tiff file (numpy array) for each time step?
+
+        output:
+            a_tczyx_img: numpy array or ome.tiff file.
+
+        description:
+            function to transform chosen mcdsts output into an 1[um] spaced
+            tczyx (time, channel, z-axis, y-axis, x-axis) ome tiff file or numpy array,
+            one substrate or cell_type per channel.
+            a ome tiff file is more or less:
+            a numpy array, containing the image information
+            and a xml, containing the microscopy metadata information,
+            like the channel labels.
+            the ome tiff file format can for example be read by the napari
+            or fiji (imagej) software.
+
+            https://napari.org/stable/
+            https://fiji.sc/
+        """
+        # each T time step
+        l_tczyx_img = []
+        for i, mcds in enumerate(self.get_mcds_list()):
+            if (not file and not collapse) or (not file and collapse) or (file and collapse):  # 00, 01, 11
+                a_czyx_img = mcds.make_ome_tiff(cell_attribute=cell_attribute, file=False)
+                l_tczyx_img.append(a_czyx_img)
+
+            elif (file and not collapse):  # 10
+                s_pathfile = mcds.make_ome_tiff(cell_attribute=cell_attribute, file=True)
+                l_tczyx_img.append(s_pathfile)
+
+            else:
+                sys.exit(f'Error @ make_ome_tiff :.')
+
+        # output 00 list of numpy arrays
+        if (not file and not collapse):
+            if self.verbose:
+                print(f'la_tczyx_img shape: {len(l_tczyx_img)} * {l_tczyx_img[0].shape}')
+            return l_tczyx_img
+
+        # output 01 numpy array
+        elif (not file and collapse):  # 01
+            # numpy array
+            a_tczyx_img = np.array(l_tczyx_img)
+            if self.verbose:
+                print('a_tczyx_img shape:', a_tczyx_img.shape)
+            return a_tczyx_img
+
+        # output 10 list of pathfile strings
+        elif (file and not collapse):  # 01
+            return l_tczyx_img
+
+        # output 11 ometiff file
+        elif (file and collapse):  # 11
+            a_tczyx_img = np.array(l_tczyx_img)
+            if self.verbose:
+                print('a_tczyx_img shape:', a_tczyx_img.shape)
+            ls_channel = mcds.get_substrate_list() + mcds.get_celltype_list()
+            s_tiffpathfile = f'{self.path}timeseries_{cell_attribute}.ome.tiff'
+            OmeTiffWriter.save(
+                a_tczyx_img,
+                s_tiffpathfile,
+                dim_order = 'TCZYX',
+                #ome_xml=x_img,
+                channel_names = ls_channel,
+                image_names = [f'timeseries_{cell_attribute}'],
+                physical_pixel_sizes = aicsimageio.types.PhysicalPixelSizes(mcds.get_voxel_spacing()[2], 1.0, 1.0), #z,y,x [um]
+                #channel_colors=,
+                #fs_kwargs={},
+            )
+            return s_tiffpathfile
+
+        # error case
+        else:
+            sys.exit(f'Error @ make_ome_tiff :.')
+
+
+    ## GRAPH RELATED FUNCTIONS ##
+
+    def make_graph_gml(self, graph_type='neighbor', edge_attribute=True, node_attribute=[]):
+        """
+        input:
+            self: pyMCDS class instance.
+
+            graph_type: string; default is neighbor
+                to specify which physicell output data should be processed.
+                attached: processes mcds.get_attached_graph_dict dictionary.
+                neighbor: processes mcds.get_neighbor_graph_dict dictionary.
+
+            edge_attribute: boolean; default True
+                specifies if the spatial Euclidean distance is used for
+                edge attribute, to generate a weighted graph.
+
+            node_attribute: list of strings; default is empty list
+                list of mcds.get_cell_df dataframe columns, used for
+                node attributes.
+
+        output:
+            gml file for each time step.
+                path and filenames are printed to the standard output.
+
+        description:
+            function to generate graph files in the gml graph modelling language
+            standard format.
+
+            gml was the outcome of an initiative that started at
+            the international symposium on graph drawing 1995 in Passau
+            and ended at Graph Drawing 1996 in Berkeley. the networkx python
+            and igraph C and python libraries for graph analysis are
+            gml compatible and can as such read and write this file format.
+
+            https://en.wikipedia.org/wiki/Graph_Modelling_Language
+            https://networkx.org/
+            https://igraph.org/
+        """
+        # processing
+        ls_pathfile = []
+        for mcds in self.get_mcds_list():
+            s_pathfile = mcds.make_graph_gml(
+                graph_type = graph_type,
+                edge_attribute = edge_attribute,
+                node_attribute = node_attribute,
+            )
+            ls_pathfile.append(s_pathfile)
+
+        # outout
+        return ls_pathfile
+
 

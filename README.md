@@ -111,8 +111,10 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
     + rename pyMCDSts get\_conc\_df\_states to **get_conc_attribute** for conciseness.
     + rewrite pyMCDS mcds.get\_unit\_se into **mcds.get_unit_dict**.
     + new pyCLI **pcdl_get_anndata** command line interface function.
+    + new pyCLI **pcdl_get_celltype_list** command line interface function.
     + new pyCLI **pcdl_get_cell_attribute** command line interface function.
     + new pyCLI **pcdl_get_cell_df** command line interface function.
+    + new pyCLI **pcdl_get_substrate_list** command line interface function.
     + new pyCLI **pcdl_get_conc_attribute** command line interface function.
     + new pyCLI **pcdl_get_conc_df** command line interface function.
     + new pyCLI **pcdl_get_graph_gml** command line interface function.
