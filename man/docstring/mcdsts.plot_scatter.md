@@ -79,17 +79,17 @@
 
 ## output:
 ```
-            fig: matplotlib figures, depending on ext, either as files or 
-                as objects. the figures contains the scatter plot and 
+            fig: matplotlib figures, depending on ext, either as files or
+                as objects. the figures contains the scatter plot and
                 color bar (numerical data) or color legend (categorical data).
 
 ```
 
 ## description:
 ```
-            function returns a (pandas) matplotlib scatter plotts,                
+            function returns a (pandas) matplotlib scatter plotts,
             inclusive color bar or color legend, for the whole time series,
-            for the focus specified, either as matplotlib fig object 
+            for the focus specified, either as matplotlib fig object
             or as jpeg, png, or tiff file.
 
             jpeg is by definition a lossy compressed image format.

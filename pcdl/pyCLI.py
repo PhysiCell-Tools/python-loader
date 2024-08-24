@@ -187,7 +187,12 @@ def get_celltype_list():
     # TimeSeries microenv False
     # TimeSeries graph False
     # TimeSeries physiboss False
-    # TimeSeries settingxml None
+    # TimeSeries settingxml
+    parser.add_argument(
+        '--settingxml',
+        default = 'PhysiCell_settings.xml',
+        help = 'from which settings.xml should units and cell type ID label mapping and units be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+    )
     # TimeSeries verbose
     parser.add_argument(
         '-v', '--verbose',
@@ -213,12 +218,12 @@ def get_celltype_list():
         microenv = False,
         graph = False,
         physiboss = False,
-        settingxml = None,
+        settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
         verbose = True if args.verbose.lower().startswith('t') else False
     )
-    s_listing = str(mcds.get_celltype_list)
+
     # going home
-    return s_listing
+    return mcds.get_celltype_list()
 
 
 def get_cell_attribute():
@@ -1110,7 +1115,7 @@ def get_substrate_list():
     )
     # TimeSeries output_path '.'
     # TimeSeries custom_data_type nop
-    # TimeSeries microenv False
+    # TimeSeries microenv True
     # TimeSeries graph False
     # TimeSeries physiboss False
     # TimeSeries settingxml None
@@ -1136,15 +1141,15 @@ def get_substrate_list():
         xmlfile = s_pathfile,
         output_path = '.',
         #custom_data_type,
-        microenv = False,
+        microenv = True,
         graph = False,
         physiboss = False,
         settingxml = None,
         verbose = True if args.verbose.lower().startswith('t') else False
     )
-    s_listing = str(mcds.get_substrate_list)
+
     # going home
-    return s_listing
+    return mcds.get_substrate_list()
 
 
 def get_conc_attribute():

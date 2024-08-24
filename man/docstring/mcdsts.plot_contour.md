@@ -66,7 +66,7 @@
 
 ## output:
 ```
-            fig: matplotlib figures, depending on ext, either as files or as 
+            fig: matplotlib figures, depending on ext, either as files or as
                 objects. the figures contains the contour plot and color bar.
 
 ```

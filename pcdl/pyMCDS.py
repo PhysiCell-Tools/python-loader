@@ -1022,7 +1022,7 @@ class pyMCDS:
         """
         # handle initial.svg for s and figsizepx
         if (figsizepx is None):
-            s_pathfile = self.output_path + 'initial.svg'
+            s_pathfile = self.path + 'initial.svg'
             try:
                 x_tree = etree.parse(s_pathfile)
                 x_root = x_tree.getroot()
@@ -1068,18 +1068,12 @@ class pyMCDS:
         df_conc.sort_values(['mesh_center_m', 'mesh_center_n', 'mesh_center_p'], inplace=True)
 
         # meshgrid shape
-        #ti_shape = (self.get_voxel_ijk_axis()[0].shape[0]+2, self.get_voxel_ijk_axis()[1].shape[0]+2)
-        #x = (df_conc.loc[:,'mesh_center_m'].values).reshape(ti_shape)
-        #y = (df_conc.loc[:,'mesh_center_n'].values).reshape(ti_shape)
-        #z = (df_conc.loc[:,focus].values).reshape(ti_shape)
         df_mesh = df_conc.pivot(index='mesh_center_m', columns='mesh_center_n', values=focus)
 
         # handle vmin and vmax input
         if (vmin is None):
-            #vmin = np.floor(df_conc.loc[:,focus].min())
             vmin = np.floor(df_mesh.min().min())
         if (vmax is None):
-            #vmax = np.ceil(df_conc.loc[:,focus].max())
             vmax = np.ceil(df_mesh.max().max())
 
         # get figure and axis orbject
@@ -1097,10 +1091,8 @@ class pyMCDS:
 
         # get contour plot
         if fill:
-            #ax.contourf(x,y,z, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
             ax.contourf(df_mesh.columns, df_mesh.index, df_mesh.values, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
         else:
-            #ax.contour(x,y,z, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
             ax.contour(df_mesh.columns, df_mesh.index, df_mesh.values, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
 
         # set title
@@ -1130,9 +1122,9 @@ class pyMCDS:
 
         else:
             # handle output path and filename
-            s_path = f'{self.output_path}conc_{focus}_z{round(z_slice,9)}/'
+            s_path = f'{self.path}conc_{focus}_z{round(z_slice,9)}/'
             os.makedirs(s_path, exist_ok=True)
-            s_file = self.get_xmlfile_list()[i].replace('.xml', f'_{focus}.{ext}')
+            s_file = self.xmlfile.replace('.xml', f'_{focus}.{ext}')
             s_pathfile = f'{s_path}{s_file}'
             # handle figure background color
             if figbgcolor is None:
@@ -1612,7 +1604,7 @@ class pyMCDS:
         """
         # handle initial.svg for s and figsizepx
         if (s is None) or (figsizepx is None):
-            s_pathfile = self.output_path + 'initial.svg'
+            s_pathfile = self.path + 'initial.svg'
             try:
                 x_tree = etree.parse(s_pathfile)
                 x_root = x_tree.getroot()
@@ -1772,9 +1764,9 @@ class pyMCDS:
 
         else:
             # handle output path and filename
-            s_path = f'{self.output_path}cell_{focus}_z{round(z_slice,9)}/'
+            s_path = f'{self.path}cell_{focus}_z{round(z_slice,9)}/'
             os.makedirs(s_path, exist_ok=True)
-            s_file = self.get_xmlfile_list()[i].replace('.xml', f'_{focus}.{ext}')
+            s_file = self.xmlfile.replace('.xml', f'_{focus}.{ext}')
             s_pathfile = f'{s_path}{s_file}'
             # handle figure background color
             if figbgcolor is None:
@@ -1785,7 +1777,6 @@ class pyMCDS:
             plt.close(fig)
             # output
             return s_pathfile
-
 
         # output
         return fig
