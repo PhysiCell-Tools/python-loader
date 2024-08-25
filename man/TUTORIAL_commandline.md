@@ -1,4 +1,4 @@
-# $${\color{red}PhysiCell Data Loader Tutorial: pcdl from the Commandline}$$
+# $${\color{crimson}PhysiCell Data Loader Tutorial: pcdl from the Commandline}$$
 
 <!-- bue 2024-08-22: have to check if this works from dos and power shell. it will work somehow, because i can run the cli unit tests -->
 
@@ -32,7 +32,7 @@ python3 -c"import pathlib, pcdl, shutil; s_ipath=str(pathlib.Path(pcdl.__file__)
 ```
 
 
-## $${\color{maroon}Metadata related commands}$$
+## $${\color{crimson}Metadata related commands}$$
 
 ### pcdl_get_version
 
@@ -48,7 +48,7 @@ pcdl_get_version output/output00000000.xml
 pcdl_get_version -h
 ```
 
-### pcdl_get_unit_dict
+### $${\color{crimson}pcdl_get_unit_dict}$$
 
 Generate a [csv](https://en.wikipedia.org/wiki/Comma-separated_values) file that maps attribute and units, as specified in the settings.xml.
 
@@ -63,7 +63,7 @@ pcdl_get_unit_dict -h
 ```
 
 
-## Microenvironment realted commands
+## <span style="color:blue"> Microenvironment realted commands </span>
 
 
 ### pcdl_get_substrate_list
