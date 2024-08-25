@@ -524,15 +524,18 @@ class TestPyMcdsMicroenv(object):
             xlim = [-31, 301],  # test if
             ylim = [-21, 201],  # test if
             xyequal = True, # test if
-            figsize = None,  # test if
-            ax = None  # generate fig ax case
+            ax = None,  # ok
+            figsizepx = None,  # test if
+            ext = None, # test fig case
+            figbgcolor = None,  # not at file
         )
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
         plt.close()
 
     def test_mcds_plot_contourf(self, mcds=mcds):
-        fig = mcds.plot_contour(
+        fig, ax = plt.subplots()
+        s_pathfile = mcds.plot_contour(
             'oxygen',
             z_slice = 0,  # jum over if
             vmin = None,  # test if
@@ -545,12 +548,16 @@ class TestPyMcdsMicroenv(object):
             xlim = None,  # jump over if
             ylim = None,  # jump over if
             xyequal = True,  # test if
-            figsize = None,  # test if
-            ax = None  # generate fig ax case
+            ax = ax,  # use axis from existing matplotlib figure
+            figsizepx = [641, 481],  # test non even pixel
+            ext = 'tiff',  # test file case
+            figbgcolor = 'yellow',  # jump over if
         )
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
-        plt.close()
+              (s_pathfile.replace('\\','/').endswith('/pcdl/data_timeseries_2d/conc_oxygen_z0/output00000024_oxygen.tiff')) and \
+              (os.path.exists(s_pathfile)) and \
+              (os.path.getsize(s_pathfile) > 2**10)
+        os.remove(s_pathfile)
 
     def test_mcds_make_conc_vtk(self, mcds=mcds):
         s_pathfile = mcds.make_conc_vtk()
@@ -559,7 +566,6 @@ class TestPyMcdsMicroenv(object):
               (os.path.exists(s_pathfile)) and \
               (os.path.getsize(s_pathfile) > 2**10)
         os.remove(s_pathfile)
-
 
 ## cell related functions ##
 
@@ -631,15 +637,17 @@ class TestPyMcdsCell(object):
             ylim = None,  # test if
             xyequal = True,  # test if
             #s = None,  # matplotlib
-            figsize = None,  # test if case ax none
             ax = None,  # generate matplotlib figure
+            figsizepx = None,  # test if case ax none
+            ext = None,  # test fig case
+            figbgcolor = None,  # not a file
         )
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
         plt.close()
 
     def test_mcds_plot_scatter_cat_else1(self, mcds=mcds):
-        fig = mcds.plot_scatter(
+        s_pathfile = mcds.plot_scatter(
             focus='cell_type',  # case categorical
             z_slice = 0,  # jump over if
             z_axis = {'cancer_cell'},  # test else case categorical
@@ -652,12 +660,16 @@ class TestPyMcdsCell(object):
             ylim = [-21, 201],  # jump over if
             xyequal = False,  # jump over if
             #s = None,  # matplotlib
-            figsize = [7.0, 5.0],  # jump over if case ax none
             ax = None,  # use axis from existing matplotlib figure
+            figsizepx = [701, 501],  # jump over if case ax none
+            ext = 'tiff',  # test file case
+            figbgcolor = 'cyan',  # jump over if
         )
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
-        plt.close()
+              (s_pathfile.replace('\\','/').endswith('/pcdl/data_timeseries_2d/cell_cell_type_z0/output00000024_cell_type.tiff')) and \
+              (os.path.exists(s_pathfile)) and \
+              (os.path.getsize(s_pathfile) > 2**10)
+        os.remove(s_pathfile)
 
     def test_mcds_plot_scatter_cat_else2(self, mcds=mcds):
         fig, ax = plt.subplots()
@@ -674,8 +686,10 @@ class TestPyMcdsCell(object):
             ylim = None,  # test if
             xyequal = True,  # test if
             #s = None,  # matplotlib
-            #figsize = None,  # test case ax ax
             ax = ax,  # use axis from existing matplotlib figure
+            #figsizepx = None,  # test case ax ax
+            #ext = None,  # test fig case
+            #figbgcolor = None,  # not a file
         )
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
@@ -696,8 +710,10 @@ class TestPyMcdsCell(object):
             ylim = None,  # test if
             #xyequal = True,  # test if
             #s = None,  # matplotlib
-            #figsize = None,  # test if case
             #ax = None,  # generate matplotlib figure
+            #figsizepx = None,  # test if
+            #ext = None,  # test fig case
+            #figbgcolor = None,  # not a file
         )
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
@@ -717,8 +733,10 @@ class TestPyMcdsCell(object):
             ylim = None,  # test if
             #xyequal = True,  # test if
             #s = None,  # matplotlib
-            #figsize = None,  # if case
             #ax = None,  # generate matplotlib figure
+            #figsizepx = None,  # test if
+            #ext = None,  # test fig case
+            #figbgcolor = None,  # not a file
         )
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")

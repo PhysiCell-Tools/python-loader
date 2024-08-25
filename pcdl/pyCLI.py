@@ -77,7 +77,7 @@ def get_version():
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
     if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ pyCLI.get_version : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).")
+        sys.exit(f'Error @ pyCLI.get_version : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
     # run
     mcds = pcdl.pyMCDS(
@@ -145,7 +145,7 @@ def get_unit_dict():
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
     if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ pyCLI.get_unit_dict : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).")
+        sys.exit(f'Error @ pyCLI.get_unit_dict : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
     # run
     mcds = pcdl.pyMCDS(
@@ -212,10 +212,10 @@ def get_substrate_list():
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
     if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ pyCLI.get_substrate_list : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).")
+        sys.exit(f'Error @ pyCLI.get_substrate_list : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
-     # run
-     mcds = pcdl.pyMCDS(
+    # run
+    mcds = pcdl.pyMCDS(
         xmlfile = s_pathfile,
         output_path = '.',
         #custom_data_type,
@@ -297,7 +297,7 @@ def get_conc_attribute():
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
     if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ pyCLI.pyCLI.get_conc_attribute : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).")
+        sys.exit(f'Error @ pyCLI.pyCLI.get_conc_attribute : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
     # run
     mcdsts = pcdl.pyMCDSts(
@@ -394,7 +394,7 @@ def get_conc_df():
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
     if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ pyCLI.get_conc_df : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).")
+        sys.exit(f'Error @ pyCLI.get_conc_df : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
     # run
     if os.path.isfile(args.path):
@@ -555,17 +555,17 @@ def plot_contour():
         default = ['none'],
         help = 'size of the figure in pixels (integer), x y. the given x and y will be rounded to the nearest even number, to be able to generate movies from the images. None tries to take the values from the initial.svg file. fall back setting is 640 480. default is None.',
     )
-    # plot_contour figbgcolor
-    parser.add_argument(
-        '--figbgcolor',
-        default = 'none',
-        help = 'figure background color. None is transparent (png) or white (jpeg, tiff). default is None.',
-    )
     # plot_contour ext
     parser.add_argument(
         '--ext',
         default = 'jpeg',
         help = 'output image format. possible formats are jpeg, png, and tiff. default is jpeg.',
+    )
+    # plot_contour figbgcolor
+    parser.add_argument(
+        '--figbgcolor',
+        default = 'none',
+        help = 'figure background color. None is transparent (png) or white (jpeg, tiff). default is None.',
     )
 
     # parse arguments
@@ -580,11 +580,11 @@ def plot_contour():
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
     if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ pyCLI.plot_contour : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).")
+        sys.exit(f'Error @ pyCLI.plot_contour : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
     # focus
     if (args.focus == None):
-        sys.exit(f"Error @ pyCLI.plot_contour : input for positional argument focus is missung! this has to be a column name from the conc dataframe.")
+        sys.exit(f'Error @ pyCLI.plot_contour : input for positional argument focus is missung! this has to be a column name from the conc dataframe.')
 
     # run
     if os.path.isfile(args.path):
@@ -601,15 +601,15 @@ def plot_contour():
         # handle extrema
         if (args.extrema[0].lower() == 'none'):
             df_conc = mcds.get_conc_df()
-            r_zmin = df_conc.loc[:,focus].min()
-            r_zmax = df_conc.loc[:,focus].max()
-            if self.verbose:
-                print(f'min max extrema set to {r_min} {r_max}.')
+            r_zmin = df_conc.loc[:, args.focus].min()
+            r_zmax = df_conc.loc[:, args.focus].max()
+            if mcds.verbose:
+                print(f'min max extrema set to {r_zmin} {r_zmax}.')
         else:
             r_zmin = args.extrema[0]
             r_zmax = args.extrema[1]
         # plot
-        s_opath = mcds.plot_contour(
+        s_opathfile = mcds.plot_contour(
             focus = args.focus,
             z_slice = args.z_slice,
             vmin = r_zmin,
@@ -622,13 +622,13 @@ def plot_contour():
             xlim = None if (args.xlim[0].lower() == 'none') else args.xlim,
             ylim = None if (args.ylim[0].lower() == 'none') else args.ylim,
             xyequal = False if args.xyequal.lower().startswith('f') else True,
-            figsizepx = None if (args.figsizepx[0].lower() == 'none') else [int(n) for n in args.figsizepx],
-            figbgcolor = None if (args.figbgcolor.lower() == 'none') else args.figbgcolor,
-            ext = args.ext,
             ax = None,
+            figsizepx = None if (args.figsizepx[0].lower() == 'none') else [int(n) for n in args.figsizepx],
+            ext = args.ext,
+            figbgcolor = None if (args.figbgcolor.lower() == 'none') else args.figbgcolor,
         )
         # going home
-        return s_opath
+        return s_opathfile
 
     else:
         mcdsts = pcdl.pyMCDSts(
@@ -642,7 +642,7 @@ def plot_contour():
             verbose = False if args.verbose.lower().startswith('f') else True,
         )
         # plot
-        ls_opath = mcdsts.plot_contour(
+        ls_opathfile = mcdsts.plot_contour(
             focus = args.focus,
             z_slice = args.z_slice,
             extrema = None if (args.extrema[0].lower() == 'none') else args.extrema,
@@ -655,11 +655,12 @@ def plot_contour():
             ylim = None if (args.ylim[0].lower() == 'none') else args.ylim,
             xyequal = False if args.xyequal.lower().startswith('f') else True,
             figsizepx = None if (args.figsizepx[0].lower() == 'none') else [int(n) for n in args.figsizepx],
-            figbgcolor = None if (args.figbgcolor.lower() == 'none') else args.figbgcolor,
             ext = args.ext,
+            figbgcolor = None if (args.figbgcolor.lower() == 'none') else args.figbgcolor,
         )
         # going home
-        return ls_opath
+        s_opath = '/'.join(ls_opathfile[0].split('/')[:-1])
+        return s_opath
 
 
 def make_conc_vtk():
@@ -702,7 +703,7 @@ def make_conc_vtk():
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
     if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ pyCLI.make_conc_vtk : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).")
+        sys.exit(f'Error @ pyCLI.make_conc_vtk : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
     # run
     if os.path.isfile(args.path):
@@ -785,7 +786,7 @@ def get_celltype_list():
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
     if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ pyCLI.get_celltype_list : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).")
+        sys.exit(f'Error @ pyCLI.get_celltype_list : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
     # run
     mcds = pcdl.pyMCDS(
@@ -891,7 +892,7 @@ def get_cell_attribute():
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
     if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ pyCLI.get_cell_attribute : {s_pathfile} path does not look like a physicell output directory ({s_path}/initial.xml is missing).")
+        sys.exit(f'Error @ pyCLI.get_cell_attribute : {s_pathfile} path does not look like a physicell output directory ({s_path}/initial.xml is missing).')
 
     # custom_data_type
     d_vartype = {}
@@ -902,7 +903,7 @@ def get_cell_attribute():
         elif s_type in {'float'}: o_type = float
         elif s_type in {'str'}: o_type = str
         else:
-            sys.exit(f"Error @ pyCLI.get_cell_attribute : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.")
+            sys.exit(f'Error @ pyCLI.get_cell_attribute : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.')
         d_vartype.update({s_var : o_type})
 
     # run
@@ -922,7 +923,7 @@ def get_cell_attribute():
         b_allvalues = True if args.allvalues.lower().startswith('t') else False
         if b_allvalues:
             s_values = 'all'
-        s_opathfile = f'{s_pathfile.replace('.xml','')}_{s_values}.json'
+        s_opathfile = f"{s_pathfile.replace('.xml','')}_{s_values}.json"
 
     else:
         mcdsts = pcdl.pyMCDSts(
@@ -1036,7 +1037,7 @@ def get_cell_df():
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
     if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ pyCLI.get_cell_df : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).")
+        sys.exit(f'Error @ pyCLI.get_cell_df : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
     # run
     if os.path.isfile(args.path):
@@ -1191,7 +1192,7 @@ def get_anndata():
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
     if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ pyCLI.get_anndata : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).")
+        sys.exit(f'Error @ pyCLI.get_anndata : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
     # custom_data_type
     d_vartype = {}
@@ -1202,7 +1203,7 @@ def get_anndata():
         elif s_type in {'float'}: o_type = float
         elif s_type in {'str'}: o_type = str
         else:
-            sys.exit(f"Error @ pyCLI.get_anndata : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.")
+            sys.exit(f'Error @ pyCLI.get_anndata : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.')
         d_vartype.update({s_var : o_type})
 
     # run
@@ -1341,7 +1342,7 @@ def make_graph_gml():
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
     if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ pyCLI.make_graph_gml : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).")
+        sys.exit(f'Error @ pyCLI.make_graph_gml : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
     # custom_data_type
     d_vartype = {}
@@ -1352,7 +1353,7 @@ def make_graph_gml():
         elif s_type in {'float'}: o_type = float
         elif s_type in {'str'}: o_type = str
         else:
-            sys.exit(f"Error @ pyCLI.make_graph_gml : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.")
+            sys.exit(f'Error @ pyCLI.make_graph_gml : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.')
         d_vartype.update({s_var : o_type})
 
     # run
@@ -1529,17 +1530,17 @@ def plot_scatter():
         default = ['none'],
         help = 'size of the figure in pixels (integer), x y. the given x and y will be rounded to the nearest even number, to be able to generate movies from the images. None tries to take the values from the initial.svg file. fall back setting is 640 480. default is None.',
     )
-    # plot_scatter figbgcolor
-    parser.add_argument(
-        '--figbgcolor',
-        default = 'none',
-        help = 'figure background color. None is transparent (png) or white (jpeg, tiff). default is None.',
-    )
     # plot_scatter ext
     parser.add_argument(
         '--ext',
         default = 'jpeg',
         help = 'output image format. possible formats are jpeg, png, and tiff. default is jpeg.',
+    )
+    # plot_scatter figbgcolor
+    parser.add_argument(
+        '--figbgcolor',
+        default = 'none',
+        help = 'figure background color. None is transparent (png) or white (jpeg, tiff). default is None.',
     )
 
     # parse arguments
@@ -1554,7 +1555,7 @@ def plot_scatter():
     else:
         s_path = '/'.join(s_pathfile.split('/')[:-1])
     if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ pyCLI.plot_scatter : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).")
+        sys.exit(f'Error @ pyCLI.plot_scatter : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
     # custom_data_type
     d_vartype = {}
@@ -1565,7 +1566,7 @@ def plot_scatter():
         elif s_type in {'float'}: o_type = float
         elif s_type in {'str'}: o_type = str
         else:
-            sys.exit(f"Error @ pyCLI.plot_scatter : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.")
+            sys.exit(f'Error @ pyCLI.plot_scatter : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.')
         d_vartype.update({s_var : o_type})
 
     # run
@@ -1577,11 +1578,11 @@ def plot_scatter():
             microenv = False if args.microenv.lower().startswith('f') else True,
             graph = False,
             physiboss = False if args.physiboss.lower().startswith('f') else True,
-            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'fal     se')) else args.settingxml,
+            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
             verbose = False if args.verbose.lower().startswith('f') else True
         )
         # plot
-        s_opath = mcds.plot_scatter(
+        s_opathfile = mcds.plot_scatter(
             focus = args.focus,
             z_slice = args.z_slice,
             z_axis = None if (args.z_axis[0].lower() == 'none') else args.z_axis,
@@ -1594,13 +1595,13 @@ def plot_scatter():
             ylim = None if (args.ylim[0].lower() == 'none') else args.ylim,
             xyequal = False if args.xyequal.lower().startswith('f') else True,
             s = None if (args.s.lower() == 'none') else int(args.s),
+            ax = None,
             figsizepx = None if (args.figsizepx[0].lower() == 'none') else [int(i) for i in args.figsizepx],
-            figbgcolor = None if (args.figbgcolor.lower() == 'none') else args.figbgcolor,
             ext = args.ext,
-            ax = False,
+            figbgcolor = None if (args.figbgcolor.lower() == 'none') else args.figbgcolor,
         )
         # going home
-        return s_opath
+        return s_opathfile
 
     else:
         mcdsts = pcdl.pyMCDSts(
@@ -1614,7 +1615,7 @@ def plot_scatter():
             verbose = False if args.verbose.lower().startswith('f') else True,
         )
         # plot
-        ls_opath = mcdsts.plot_scatter(
+        ls_opathfile = mcdsts.plot_scatter(
             focus = args.focus,
             z_slice = args.z_slice,
             z_axis = None if (args.z_axis[0].lower() == 'none') else args.z_axis,
@@ -1628,11 +1629,12 @@ def plot_scatter():
             xyequal = False if args.xyequal.lower().startswith('f') else True,
             s = None if (args.s.lower() == 'none') else int(args.s),
             figsizepx = None if (args.figsizepx[0].lower() == 'none') else [int(i) for i in args.figsizepx],
-            figbgcolor = None if (args.figbgcolor.lower() == 'none') else args.figbgcolor,
             ext = args.ext,
+            figbgcolor = None if (args.figbgcolor.lower() == 'none') else args.figbgcolor,
         )
         # going home
-        return ls_opath
+        s_opathfile = '/'.join(ls_opathfile[0].split('/')[:-1])
+        return s_opathfile
 
 
 def make_cell_vtk():
@@ -1703,7 +1705,7 @@ def make_cell_vtk():
     else:
         s_path = '/'.join(s_pathfile.split('/')[:-1])
     if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ pyCLI.make_cell_vtk : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).")
+        sys.exit(f'Error @ pyCLI.make_cell_vtk : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
     # custom_data_type
     d_vartype = {}
@@ -1714,7 +1716,7 @@ def make_cell_vtk():
         elif s_type in {'float'}: o_type = float
         elif s_type in {'str'}: o_type = str
         else:
-            sys.exit(f"Error @ pyCLI.make_cell_vtk : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.")
+            sys.exit(f'Error @ pyCLI.make_cell_vtk : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.')
         d_vartype.update({s_var : o_type})
 
     # run
@@ -1960,7 +1962,7 @@ def plot_timeseries():
 
     # path
     if not os.path.exists(args.path + '/initial.xml'):
-        sys.exit(f"Error @ pyCLI.plot_timeseries : path does not look like a physicell output directory ({args.path}/initial.xml is missing).")
+        sys.exit(f'Error @ pyCLI.plot_timeseries : path does not look like a physicell output directory ({args.path}/initial.xml is missing).')
 
     # custom_data_type
     d_vartype = {}
@@ -1971,7 +1973,7 @@ def plot_timeseries():
         elif s_type in {'float'}: o_type = float
         elif s_type in {'str'}: o_type = str
         else:
-            sys.exit(f"Error @ pyCLI.plot_timeseries : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.")
+            sys.exit(f'Error @ pyCLI.plot_timeseries : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.')
         d_vartype.update({s_var : o_type})
 
     # aggregate_num
@@ -1982,7 +1984,7 @@ def plot_timeseries():
     elif (args.aggregate_num == 'min'): o_aggregate_num = np.nanmin
     elif (args.aggregate_num == 'std'): o_aggregate_num = np.nanstd
     elif (args.aggregate_num == 'var'): o_aggregate_num = np.nanvar
-    else: sys.exit(f"Error @ pyCLI.plot_timeseries : unknowen aggregate_num {args.aggregate_num}. knowen are entropy, max, mean, median, min, std, var.")
+    else: sys.exit(f'Error @ pyCLI.plot_timeseries : unknowen aggregate_num {args.aggregate_num}. knowen are entropy, max, mean, median, min, std, var.')
 
     # secondary_y
     if (args.secondary_y[0].lower() == 'false'): ls_secondary_y = False
@@ -2103,7 +2105,7 @@ def make_ome_tiff():
     else:
         s_path = '/'.join(s_pathfile.split('/')[:-1])
     if not os.path.exists(s_pathfile):
-        sys.exit(f"Error @ pyCLI.make_ome_tiff : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).")
+        sys.exit(f'Error @ pyCLI.make_ome_tiff : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
     # run
     if os.path.isfile(args.path):

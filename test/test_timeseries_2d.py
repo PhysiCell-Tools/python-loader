@@ -44,7 +44,8 @@ class TestPyMcdsTsMovies(object):
 
     ## make_gif and magick ommand ##
     def test_mcdsts_make_gif_jpeg(self, mcdsts=mcdsts):
-        s_opath = mcdsts.plot_scatter()
+        ls_opathfile = mcdsts.plot_scatter()
+        s_opath = '/'.join(ls_opathfile[0].replace('\\','/').split('/')[:-1])
         s_opathfile = mcdsts.make_gif(
             path = s_opath,
             #interface = 'jpeg',
@@ -56,7 +57,8 @@ class TestPyMcdsTsMovies(object):
         shutil.rmtree(s_opath)
 
     def test_mcdsts_make_gif_tiff(self, mcdsts=mcdsts):
-        s_opath = mcdsts.plot_scatter(ext='tiff')
+        ls_opathfile = mcdsts.plot_scatter(ext='tiff')
+        s_opath = '/'.join(ls_opathfile[0].replace('\\','/').split('/')[:-1])
         s_opathfile = mcdsts.make_gif(
             path = s_opath,
             interface = 'tiff',
@@ -69,7 +71,8 @@ class TestPyMcdsTsMovies(object):
 
     ## make_movie and magick command ##
     def test_mcdsts_make_movie_jpeg12(self, mcdsts=mcdsts):
-        s_opath = mcdsts.plot_scatter()
+        ls_opathfile = mcdsts.plot_scatter()
+        s_opath = '/'.join(ls_opathfile[0].replace('\\','/').split('/')[:-1])
         s_opathfile = mcdsts.make_movie(
             path = s_opath,
             #interface = 'jpeg',
@@ -82,7 +85,8 @@ class TestPyMcdsTsMovies(object):
         shutil.rmtree(s_opath)
 
     def test_mcdsts_make_movie_tiff12(self, mcdsts=mcdsts):
-        s_opath = mcdsts.plot_scatter(ext='tiff')
+        ls_opathfile = mcdsts.plot_scatter(ext='tiff')
+        s_opath = '/'.join(ls_opathfile[0].replace('\\','/').split('/')[:-1])
         s_opathfile = mcdsts.make_movie(
             path = s_opath,
             interface = 'tiff',
@@ -95,7 +99,8 @@ class TestPyMcdsTsMovies(object):
         shutil.rmtree(s_opath)
 
     def test_mcdsts_make_movie_jpeg6(self, mcdsts=mcdsts):
-        s_opath = mcdsts.plot_scatter()
+        ls_opathfile = mcdsts.plot_scatter()
+        s_opath = '/'.join(ls_opathfile[0].replace('\\','/').split('/')[:-1])
         s_opathfile = mcdsts.make_movie(
             path = s_opath,
             #interface = 'jpeg',
@@ -222,7 +227,7 @@ class TestPyMcdsTsMicroenv(object):
 
     ## plot_contour command ##
     def test_mcdsts_plot_contour_if(self, mcdsts=mcdsts):
-        s_path = mcdsts.plot_contour(
+        ls_pathfile = mcdsts.plot_contour(
             focus = 'oxygen',
             z_slice = -3.333,  # test if
             extrema = None,  # test if and for loop
@@ -235,17 +240,22 @@ class TestPyMcdsTsMicroenv(object):
             ylim = None,  # test if
             #xyequal = True,  # pyMCD
             figsizepx = None,  # test if
-            ext = 'jpeg',
+            ext = 'jpeg',  # test file case
             figbgcolor = None,  # test if
         )
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
-              (os.path.exists(s_path + 'output00000000_oxygen.jpeg')) and \
-              (os.path.exists(s_path + 'output00000012_oxygen.jpeg')) and \
-              (os.path.exists(s_path + 'output00000024_oxygen.jpeg'))
-        shutil.rmtree(s_path)
+              (ls_pathfile[0].replace('\\','/').endswith('/pcdl/data_timeseries_2d/conc_oxygen_z0.0/output00000000_oxygen.jpeg')) and \
+              (os.path.exists(ls_pathfile[0])) and \
+              (os.path.getsize(ls_pathfile[0]) > 2**10) and \
+              (ls_pathfile[-1].replace('\\','/').endswith('/pcdl/data_timeseries_2d/conc_oxygen_z0.0/output00000024_oxygen.jpeg')) and \
+              (os.path.exists(ls_pathfile[-1])) and \
+              (os.path.getsize(ls_pathfile[-1]) > 2**10) and \
+              (len(ls_pathfile) == 25)
+        for s_pathfile in ls_pathfile:
+            os.remove(s_pathfile)
 
     def test_mcdsts_plot_contour_else(self, mcdsts=mcdsts):
-        s_path = mcdsts.plot_contour(
+        l_fig = mcdsts.plot_contour(
             focus = 'oxygen',
             z_slice = 0.0,  # jump over if
             extrema = [0, 38],  # jump over if
@@ -258,14 +268,14 @@ class TestPyMcdsTsMicroenv(object):
             ylim = [-21, 201],  # jump over if
             #xyequal = True,  # pyMCDS
             figsizepx = [641, 481],  # test non even pixel
-            ext = 'tiff',
-            figbgcolor = 'yellow',  # jump over if
+            ext = None,  # test fig case
+            figbgcolor = 'yellow',  # not a file
         )
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
-              (os.path.exists(s_path + 'output00000000_oxygen.tiff')) and \
-              (os.path.exists(s_path + 'output00000012_oxygen.tiff')) and \
-              (os.path.exists(s_path + 'output00000024_oxygen.tiff'))
-        shutil.rmtree(s_path)
+              (str(type(l_fig[0])) == "<class 'matplotlib.figure.Figure'>") and \
+              (str(type(l_fig[-1])) == "<class 'matplotlib.figure.Figure'>") and \
+              (len(l_fig) == 25)
+        plt.close()
 
     def test_mcdsts_make_conc_vtk(self, mcdsts=mcdsts):
         ls_pathfile = mcdsts.make_conc_vtk()
@@ -346,7 +356,7 @@ class TestPyMcdsCell(object):
 
     ## plot_scatter command ##
     def test_mcdsts_plot_scatter_num(self, mcdsts=mcdsts):
-        s_path = mcdsts.plot_scatter(
+        ls_pathfile = mcdsts.plot_scatter(
             focus='pressure',  # case numeric
             z_slice = -3.333,   # test if
             z_axis = None,  # test iff numeric
@@ -360,17 +370,22 @@ class TestPyMcdsCell(object):
             #xyequal = True,  # pyMCDS
             s = None,  # test if
             figsizepx = None,  # case extract from initial.svg
-            ext = 'jpeg',
+            ext = 'jpeg',  # generate file case
             figbgcolor = None,  # test if
         )
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
-              (os.path.exists(s_path + 'output00000000_pressure.jpeg')) and \
-              (os.path.exists(s_path + 'output00000012_pressure.jpeg')) and \
-              (os.path.exists(s_path + 'output00000024_pressure.jpeg'))
-        shutil.rmtree(s_path)
+              (ls_pathfile[0].replace('\\','/').endswith('/pcdl/data_timeseries_2d/cell_pressure_z0.0/output00000000_pressure.jpeg')) and \
+              (os.path.exists(ls_pathfile[0])) and \
+              (os.path.getsize(ls_pathfile[0]) > 2**10) and \
+              (ls_pathfile[-1].replace('\\','/').endswith('/pcdl/data_timeseries_2d/cell_pressure_z0.0/output00000024_pressure.jpeg')) and \
+              (os.path.exists(ls_pathfile[-1])) and \
+              (os.path.getsize(ls_pathfile[-1]) > 2**10) and \
+              (len(ls_pathfile) == 25)
+        for s_pathfile in ls_pathfile:
+            os.remove(s_pathfile)
 
     def test_mcdsts_plot_scatter_cat(self, mcdsts=mcdsts):
-        s_path = mcdsts.plot_scatter(
+        l_fig = mcdsts.plot_scatter(
             focus='cell_type',  # case categorical
             z_slice = 0.0,   # jump over if
             z_axis = None,  # test iff  categorical
@@ -384,14 +399,14 @@ class TestPyMcdsCell(object):
             #xyequal = True,  # pyMCDS
             s = None,  # test if
             figsizepx = [641, 481],  # test case non even pixel number
-            ext = 'jpeg',
-            figbgcolor = 'cyan',  # jump over if
+            ext = None,  # test fig case
+            figbgcolor = None,  # not a file
         )
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
-              (os.path.exists(s_path + 'output00000000_cell_type.jpeg')) and \
-              (os.path.exists(s_path + 'output00000012_cell_type.jpeg')) and \
-              (os.path.exists(s_path + 'output00000024_cell_type.jpeg'))
-        shutil.rmtree(s_path)
+              (str(type(l_fig[0])) == "<class 'matplotlib.figure.Figure'>") and \
+              (str(type(l_fig[-1])) == "<class 'matplotlib.figure.Figure'>") and \
+              (len(l_fig) == 25)
+        plt.close()
 
     def test_mcdsts_make_cell_vtk(self, mcdsts=mcdsts):
         ls_pathfile = mcdsts.make_cell_vtk(visualize=False)

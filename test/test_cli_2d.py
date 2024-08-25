@@ -10,7 +10,7 @@
 #   pytest unit test library for the pcdl library comand line interface functions.
 #   + https://docs.pytest.org/
 #
-#   note:
+# note:
 #   assert actual == expected, message
 #   == value equality
 #   is reference equality
@@ -58,14 +58,14 @@ class TestPyCliVersion(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_version = s_result.stderr.decode('UTF8').replace('\r','')
-        assert (s_version.startswith('version:\nPhysiCell_'))
+        assert s_version.startswith('version:\nPhysiCell_')
 
     def test_pcdl_get_version_timestep(self):
         s_result = subprocess.run(['pcdl_get_version', s_pathfile_2d], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_version = s_result.stderr.decode('UTF8').replace('\r','')
-        assert (s_version.startswith('version:\nPhysiCell_'))
+        assert s_version.startswith('version:\nPhysiCell_')
 
 
 class TestPyCliUnitDict(object):
@@ -142,14 +142,14 @@ class TestPyCliSubstrateList(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_listing = s_result.stderr.decode('UTF8').replace('\r','')
-        assert (s_listing.startswith('version:\nPhysiCell_'))
+        assert (s_listing.startswith("['oxygen']"))
 
     def test_pcdl_get_substrate_list_timestep(self):
         s_result = subprocess.run(['pcdl_get_substrate_list', s_pathfile_2d], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_listing = s_result.stderr.decode('UTF8').replace('\r','')
-        assert (s_listing.startswith('version:\nPhysiCell_'))
+        assert (s_listing.startswith("['oxygen']"))
 
 
 class TestPyCliConcDfAttribute(object):
@@ -351,9 +351,10 @@ class TestPyCliPlotContour(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_stdout = s_result.stdout.decode('UTF8').replace('\r','')
-        s_opath = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (os.path.exists(s_opath + 'output00000024_oxygen.jpeg')) and \
-           (s_opath.endswith('pcdl/data_timeseries_2d/conc_oxygen_z0.0/')) and \
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opath = '/'.join(s_opathfile.split('/')[:-1])
+        assert (os.path.exists(s_opathfile)) and \
+           (s_opathfile.endswith('pcdl/data_timeseries_2d/conc_oxygen_z0.0/output00000024_oxygen.jpeg')) and \
            (s_stdout.find("focus='oxygen'") > -1) and \
            (s_stdout.find("z_slice=0.0") > -1) and \
            (s_stdout.find("extrema=['none']") > -1) and \
@@ -391,9 +392,10 @@ class TestPyCliPlotContour(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_stdout = s_result.stdout.decode('UTF8').replace('\r','')
-        s_opath = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (os.path.exists(s_opath + 'output00000024_oxygen.tiff')) and \
-           (s_opath.endswith('pcdl/data_timeseries_2d/conc_oxygen_z0.0/')) and \
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opath = '/'.join(s_opathfile.split('/')[:-1])
+        assert (os.path.exists(s_opathfile)) and \
+           (s_opathfile.endswith('pcdl/data_timeseries_2d/conc_oxygen_z0.0/output00000024_oxygen.tiff')) and \
            (s_stdout.find("focus='oxygen'") > -1) and \
            (s_stdout.find("z_slice=1.1") > -1) and \
            (s_stdout.find("extrema=['0.0', '40.0']") > -1) and \
@@ -458,14 +460,14 @@ class TestPyCliCelltypeList(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_listing = s_result.stderr.decode('UTF8').replace('\r','')
-        assert (s_listing.startswith('version:\nPhysiCell_'))
+        assert (s_listing.startswith("['cancer_cell']"))
 
     def test_pcdl_get_celltype_list_timestep(self):
         s_result = subprocess.run(['pcdl_get_celltype_list', s_pathfile_2d], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_listing = s_result.stderr.decode('UTF8').replace('\r','')
-        assert (s_listing.startswith('version:\nPhysiCell_'))
+        assert (s_listing.startswith("['cancer_cell']"))
 
 
 class TestPyCliCellDfAttribute(object):
@@ -1387,9 +1389,10 @@ class TestPyCliPlotScatter(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_stdout = s_result.stdout.decode('UTF8').replace('\r','')
-        s_opath = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (os.path.exists(s_opath + 'output00000024_cell_type.jpeg')) and \
-           (s_opath.endswith('pcdl/data_timeseries_2d/cell_cell_type_z0.0/')) and \
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opath = '/'.join(s_opathfile.split('/')[:-1])
+        assert (os.path.exists(s_opathfile)) and \
+           (s_opathfile.endswith('pcdl/data_timeseries_2d/cell_cell_type_z0.0/output00000024_cell_type.jpeg')) and \
            (s_stdout.find("custom_data_type=[]") > -1) and \
            (s_stdout.find("microenv='true'") > -1) and \
            (s_stdout.find("physiboss='true'") > -1) and \
@@ -1433,13 +1436,14 @@ class TestPyCliPlotScatter(object):
             '--ext', 'tiff',
             '--figbgcolor', 'yellow',
         ], check=False, capture_output=True)
-        #print(f'\ns_result: {s_result}\n')
-        #print(f'\ns_result.stdout: {s_result.stdout}\n')
-        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        print(f'\ns_result: {s_result}\n')
+        print(f'\ns_result.stdout: {s_result.stdout}\n')
+        print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_stdout = s_result.stdout.decode('UTF8').replace('\r','')
-        s_opath = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (os.path.exists(s_opath + 'output00000024_oxygen.tiff')) and \
-           (s_opath.endswith('pcdl/data_timeseries_2d/cell_oxygen_z0.0/')) and \
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opath = '/'.join(s_opathfile.split('/')[:-1])
+        assert (os.path.exists(s_opathfile)) and \
+           (s_opathfile.endswith('pcdl/data_timeseries_2d/cell_oxygen_z0.0/output00000024_oxygen.tiff')) and \
            (s_stdout.find("custom_data_type=['oncoprotein:str']") > -1) and \
            (s_stdout.find("microenv='True'") > -1) and \
            (s_stdout.find("physiboss='false'") > -1) and \

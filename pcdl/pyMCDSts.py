@@ -502,7 +502,7 @@ class pyMCDSts:
         return dlr_variable_range
 
 
-    def plot_contour(self, focus, z_slice=0, extrema=None, alpha=1, fill=True, cmap='viridis', title='', grid=True, xlim=None, ylim=None, xyequal=True, figsizepx=None, figbgcolor=None, ext='jpeg'):
+    def plot_contour(self, focus, z_slice=0.0, extrema=None, alpha=1, fill=True, cmap='viridis', title='', grid=True, xlim=None, ylim=None, xyequal=True, figsizepx=None, ext='jpeg', figbgcolor=None):
         """
         input:
             self: pyMCDSts class instance
@@ -510,7 +510,7 @@ class pyMCDSts:
             focus: string
                 column name within conc dataframe, for example.
 
-            z_slice: floating point number; default is 0
+            z_slice: floating point number; default is 0.0
                 z-axis position to slice a 2D xy-plain out of the
                 3D substrate concentration mesh. if z_slice position
                 is not an exact mesh center coordinate, then z_slice
@@ -556,13 +556,13 @@ class pyMCDSts:
                 None tries to take the values from the initial.svg file.
                 fall back setting is [640, 480].
 
-            figbgcolor: string; default is None which is transparent (png)
-                or white (jpeg, tiff).
-                figure background color.
-
             ext: string; default is jpeg
                 output image format. possible formats are jpeg, png, and tiff.
                 None will return the matplotlib fig object.
+
+            figbgcolor: string; default is None which is transparent (png)
+                or white (jpeg, tiff).
+                figure background color.
 
         output:
             fig: matplotlib figures, depending on ext, either as files or as
@@ -630,10 +630,10 @@ class pyMCDSts:
                 xlim = xlim,
                 ylim = ylim,
                 xyequal = xyequal,
-                figsizepx = figsizepx,
-                figbgcolor = figbgcolor,
-                ext = ext,
                 ax = None,
+                figsizepx = figsizepx,
+                ext = ext,
+                figbgcolor = figbgcolor,
             )
             lo_output.append(o_output)
 
@@ -826,7 +826,7 @@ class pyMCDSts:
         return dl_variable_range
 
 
-    def plot_scatter(self, focus='cell_type', z_slice=0, z_axis=None, alpha=1, cmap='viridis', title='', grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=None, figsizepx=None, figbgcolor=None, ext='jpeg'):
+    def plot_scatter(self, focus='cell_type', z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title='', grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=None, figsizepx=None, ext='jpeg', figbgcolor=None):
         """
         input:
             self: pyMCDSts class instance
@@ -834,7 +834,7 @@ class pyMCDSts:
             focus: string; default is 'cell_type'
                 column name within cell dataframe.
 
-            z_slice: floating point number; default is 0
+            z_slice: floating point number; default is 0.0
                 z-axis position to slice a 2D xy-plain out of the 3D mesh.
                 if z_slice position is not an exact mesh center coordinate,
                 then z_slice will be adjusted to the nearest mesh center value,
@@ -893,13 +893,13 @@ class pyMCDSts:
                 None tries to take the values from the initial.svg file.
                 fall back setting is [640, 480].
 
-            figbgcolor: string; default is None which is transparent (png)
-                or white (jpeg, tiff).
-                figure background color.
-
             ext: string; default is jpeg
                 output image format. possible formats are jpeg, png, and tiff.
                 None will return the matplotlib fig object.
+
+            figbgcolor: string; default is None which is transparent (png)
+                or white (jpeg, tiff).
+                figure background color.
 
         output:
             fig: matplotlib figures, depending on ext, either as files or
@@ -936,10 +936,10 @@ class pyMCDSts:
                 ylim = ylim,
                 xyequal = xyequal,
                 s = s,
-                figsizepx = figsizepx,
-                figbgcolor = figbgcolor,
-                ext = ext,
                 ax = None,
+                figsizepx = figsizepx,
+                ext = ext,
+                figbgcolor = figbgcolor,
             )
             lo_output.append(o_output)
 

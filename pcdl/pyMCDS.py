@@ -987,13 +987,13 @@ class pyMCDS:
         return df_conc
 
 
-    def plot_contour(self, focus, z_slice=0, vmin=None, vmax=None, alpha=1, fill=True, cmap='viridis', title=None, grid=True, xlim=None, ylim=None, xyequal=True, figsizepx=None, figbgcolor=None, ext=None, ax=None):
+    def plot_contour(self, focus, z_slice=0.0, vmin=None, vmax=None, alpha=1, fill=True, cmap='viridis', title=None, grid=True, xlim=None, ylim=None, xyequal=True, ax=None, figsizepx=None, ext=None, figbgcolor=None):
         """
         input:
             focus: string
                 column name within conc dataframe, for example substrate name.
 
-            z_slice: floating point number; default is 0
+            z_slice: floating point number; default is 0.0
                 z-axis position to slice a 2D xy-plain out of the
                 3D substrate concentration mesh. if z_slice position
                 is not an exact mesh center coordinate, then z_slice
@@ -1038,6 +1038,10 @@ class pyMCDS:
             xyequal: boolean; default True
                 to specify equal axis spacing for x and y axis.
 
+            ax: matplotlib axis object; default setting is None
+                the ax object, which will be used as a canvas for plotting.
+                None will generate a figure and ax object from scratch.
+
             figsizepx: list of two integers; default is None
                 size of the figure in pixels, (x, y).
                 the given x and y will be rounded to the nearest even number,
@@ -1045,17 +1049,13 @@ class pyMCDS:
                 None tries to take the values from the initial.svg file.
                 fall back setting is [640, 480].
 
-            figbgcolor: string; default is None which is transparent (png)
-                or white (jpeg, tiff).
-                figure background color.
-
             ext: string; default is None
                 output image format. possible formats are jpeg, png, and tiff.
                 None will return the matplotlib fig object.
 
-            ax: matplotlib axis object; default setting is None
-                the ax object, which will be used as a canvas for plotting.
-                None will generate a figure and ax object from scratch.
+            figbgcolor: string; default is None which is transparent (png)
+                or white (jpeg, tiff).
+                figure background color.
 
         output:
             fig: matplotlib figure, depending on ext, either as object or as file.
@@ -1168,7 +1168,7 @@ class pyMCDS:
 
         else:
             # handle output path and filename
-            s_path = f'{self.path}conc_{focus}_z{round(z_slice,9)}/'
+            s_path = f'{self.path}/conc_{focus}_z{round(z_slice,9)}/'
             os.makedirs(s_path, exist_ok=True)
             s_file = self.xmlfile.replace('.xml', f'_{focus}.{ext}')
             s_pathfile = f'{s_path}{s_file}'
@@ -1553,13 +1553,13 @@ class pyMCDS:
         return df_voxel
 
 
-    def plot_scatter(self, focus='cell_type', z_slice=0, z_axis=None, alpha=1, cmap='viridis', title=None, grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=None, figsizepx=None, figbgcolor=None, ext=None, ax=None):
+    def plot_scatter(self, focus='cell_type', z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title=None, grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=None, ax=None, figsizepx=None, ext=None, figbgcolor=None):
         """
         input:
             focus: string; default is 'cell_type'
                 column name within cell dataframe.
 
-            z_slice: floating point number; default is 0
+            z_slice: floating point number; default is 0.0
                 z-axis position to slice a 2D xy-plain out of the
                 3D substrate concentration mesh. if z_slice position
                 is not an exact mesh center coordinate, then z_slice
@@ -1612,6 +1612,10 @@ class pyMCDS:
                 None tries to take the value from the initial.svg file.
                 fall back setting is 36.
 
+            ax: matplotlib axis object; default setting is None
+                the ax object, which will be used as a canvas for plotting.
+                None will generate a figure and ax object from scratch.
+
             figsizepx: list of two integers; default is None
                 size of the figure in pixels, (x, y).
                 the given x and y will be rounded to the nearest even number,
@@ -1619,17 +1623,13 @@ class pyMCDS:
                 None tries to take the values from the initial.svg file.
                 fall back setting is [640, 480].
 
-            figbgcolor: string; default is None which is transparent (png)
-                or white (jpeg, tiff).
-                figure background color.
-
             ext: string; default is None
                 output image format. possible formats are jpeg, png, and tiff.
                 None will return the matplotlib fig object.
 
-            ax: matplotlib axis object; default setting is None
-                the ax object, which will be used as a canvas for plotting.
-                None will generate a figure and ax object from scratch.
+            figbgcolor: string; default is None which is transparent (png)
+                or white (jpeg, tiff).
+                figure background color.
 
         output:
             fig: matplotlib figure, depending on ext, either as object or as file.
@@ -1714,9 +1714,9 @@ class pyMCDS:
             es_category = None
             if (z_axis is None):
                 # extract min and max values from data
-                r_min = df_cell.loc[:,focus].min()
-                r_max = df_cell.loc[:,focus].max()
-                lr_extrema = [r_min, r_max]
+                r_zmin = df_cell.loc[:,focus].min()
+                r_zmax = df_cell.loc[:,focus].max()
+                lr_extrema = [r_zmin, r_zmax]
             else:
                 lr_extrema = z_axis
 
@@ -1810,7 +1810,7 @@ class pyMCDS:
 
         else:
             # handle output path and filename
-            s_path = f'{self.path}cell_{focus}_z{round(z_slice,9)}/'
+            s_path = f'{self.path}/cell_{focus}_z{round(z_slice,9)}/'
             os.makedirs(s_path, exist_ok=True)
             s_file = self.xmlfile.replace('.xml', f'_{focus}.{ext}')
             s_pathfile = f'{s_path}{s_file}'
