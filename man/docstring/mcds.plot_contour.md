@@ -6,7 +6,7 @@
             focus: string
                 column name within conc dataframe, for example substrate name.
 
-            z_slice: floating point number; default is 0
+            z_slice: floating point number; default is 0.0
                 z-axis position to slice a 2D xy-plain out of the
                 3D substrate concentration mesh. if z_slice position
                 is not an exact mesh center coordinate, then z_slice
@@ -51,6 +51,10 @@
             xyequal: boolean; default True
                 to specify equal axis spacing for x and y axis.
 
+            ax: matplotlib axis object; default setting is None
+                the ax object, which will be used as a canvas for plotting.
+                None will generate a figure and ax object from scratch.
+
             figsizepx: list of two integers; default is None
                 size of the figure in pixels, (x, y).
                 the given x and y will be rounded to the nearest even number,
@@ -58,17 +62,13 @@
                 None tries to take the values from the initial.svg file.
                 fall back setting is [640, 480].
 
-            figbgcolor: string; default is None which is transparent (png)
-                or white (jpeg, tiff).
-                figure background color.
-
             ext: string; default is None
                 output image format. possible formats are jpeg, png, and tiff.
                 None will return the matplotlib fig object.
 
-            ax: matplotlib axis object; default setting is None
-                the ax object, which will be used as a canvas for plotting.
-                None will generate a figure and ax object from scratch.
+            figbgcolor: string; default is None which is transparent (png)
+                or white (jpeg, tiff).
+                figure background color.
 
 ```
 

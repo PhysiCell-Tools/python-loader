@@ -8,7 +8,7 @@
             focus: string
                 column name within conc dataframe, for example.
 
-            z_slice: floating point number; default is 0
+            z_slice: floating point number; default is 0.0
                 z-axis position to slice a 2D xy-plain out of the
                 3D substrate concentration mesh. if z_slice position
                 is not an exact mesh center coordinate, then z_slice
@@ -54,13 +54,13 @@
                 None tries to take the values from the initial.svg file.
                 fall back setting is [640, 480].
 
-            figbgcolor: string; default is None which is transparent (png)
-                or white (jpeg, tiff).
-                figure background color.
-
             ext: string; default is jpeg
                 output image format. possible formats are jpeg, png, and tiff.
                 None will return the matplotlib fig object.
+
+            figbgcolor: string; default is None which is transparent (png)
+                or white (jpeg, tiff).
+                figure background color.
 
 ```
 
