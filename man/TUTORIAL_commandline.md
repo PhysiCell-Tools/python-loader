@@ -4,16 +4,32 @@
 
 The most important commands for down stream data analysis,
 available in the pcdl TimeStep and TimeSeries class,
-can be run straight from the command line shell like: [bash](https://en.wikipedia.org/wiki/Bash_(Unix_shell)), [csh](https://en.wikipedia.org/wiki/C_shell), [dos](https://en.wikipedia.org/wiki/DOS), [fish](https://en.wikipedia.org/wiki/Fish_(Unix_shell)), [ksh](https://en.wikipedia.org/wiki/KornShell), [powershell](https://en.wikipedia.org/wiki/PowerShell), [sh](https://en.wikipedia.org/wiki/Bourne_shell), [tsh](https://en.wikipedia.org/wiki/Tcsh), or [zsh](https://en.wikipedia.org/wiki/Z_shell).
+can be run straight from a command line shell like: [bash](https://en.wikipedia.org/wiki/Bash_(Unix_shell)), [csh](https://en.wikipedia.org/wiki/C_shell), [dos](https://en.wikipedia.org/wiki/DOS), [fish](https://en.wikipedia.org/wiki/Fish_(Unix_shell)), [ksh](https://en.wikipedia.org/wiki/KornShell), [powershell](https://en.wikipedia.org/wiki/PowerShell), [sh](https://en.wikipedia.org/wiki/Bourne_shell), [tsh](https://en.wikipedia.org/wiki/Tcsh), or [zsh](https://en.wikipedia.org/wiki/Z_shell), to name a view.
 
-The command names are drived from the related python3 function.
+The command names are drived from the related python3 function. \
+The command parameter mimic the related python3 function arguments as closely as possible. \
+You can always call the [help](https://en.wikipedia.org/wiki/Help!) parameter ( pcdl_command -h),
+to access the man page for a pcdl command!
 
-The command parameter mimic the related python3 function arguments as closely as possible.
+Please spend some time to learn about each of the 18 commands, by studing it's man page.
+this will truely make you a power user!
 
-You can always call the [help](https://en.wikipedia.org/wiki/Help!) parameter,
-to access the man page for a command!
 
-Please spend some time to learn about the command's positional argument logic described in each man page!
+## Preparation
+
+To runs this tutorial,
+you can install the 2D unittest dataset into your PhysiCell output folder,
+by executing the following command sequence.
+
+**Waring: all data currentlty in your PhysiCell/output folder will be overwritten!**
+
+```bash
+cd path/to/PhysiCell
+```
+```bash
+make data-cleanup
+python3 -c"import pathlib, pcdl, shutil; s_ipath=str(pathlib.Path(pcdl.__file__).parent.resolve()/'data_timeseries_2d'); shutil.copytree(s_ipath, 'output', dirs_exist_ok=True)"
+```
 
 
 ## Metadata related commands
@@ -23,7 +39,11 @@ Get PhysiCell, MCDS, and pcdl version.
 
 ```bash
 pcdl_get_version output
+```
+```bash
 pcdl_get_version output/output00000000.xml
+```
+```bash
 pcdl_get_version -h
 ```
 
@@ -31,7 +51,11 @@ Generate a [csv](https://en.wikipedia.org/wiki/Comma-separated_values) file that
 
 ```bash
 pcdl_get_unit_dict output
+```
+```bash
 pcdl_get_unit_dict output/output00000000.xml
+```
+```bash
 pcdl_get_unit_dict -h
 ```
 

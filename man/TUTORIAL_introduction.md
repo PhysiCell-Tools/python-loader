@@ -18,18 +18,19 @@ The original python-loader tutorial can be found here.
 
 In the very early days, [PhysiCell](https://github.com/MathCancer/PhysiCell) output was with the help of a MATLAB script loaded into MATLAB for analysis.\
 In 2019, a similar loader script was written for python3.
-The name of this script filed was pyMCDS.py basically defined one class named pyMCDS.
+The name of this script filed was pyMCDS.py and basically defined one class named pyMCDS.
 
 In autumn 2022 an endeavor was undertaken to pack the original pyMCDS.py script into a pip installable python3 library and develop it further, but always in such a way that, if necessary, the code could still be run like in the early days.\
-The result is the pcdl physicelldataloader library branch v2, v3.\
+The result is the pcdl physicelldataloader library branch v2, v3.
 In autumn 2024 the code was striped of some relec of the early days, to make the code more python3 than C++ like, which resulted in branch v4.
 
-The result for this whole endover is the pcdl physicelldataloader library here.\
-Basically, the pyMCDS class evolved into the TimeStep class, which is slightly heavier but much more powerful for downstream data analysis then the original pyMCDS class.
+The result from all of this is the pcdl physicelldataloader library here.\
+In the big picture, the pyMCDS class evolved into the TimeStep class, which is slightly heavier but much more powerful for downstream data analysis then the original pyMCDS class.
+Additionaly, a TimeSeries class was added.
 
 If you inspect branch v3 pcdl source code, you will see that the [pyMCDS.py](https://github.com/elmbeech/physicelldataloader/blob/v3/pcdl/pyMCDS.py) file still exists.
 And if you feel so, it is still possible to [load and process PhysiCell output the ancient way](https://github.com/elmbeech/physicelldataloader/blob/master/man/HOWTO.md#how-to-run-physicelldataloader-like-in-the-early-days-before-autumn-2022)!\
-Naturally, the full-fledged pcdl library is much more powerful than pyMCDS.py only.
+Naturally, the full-fledged pcdl library with the TimeSteps and TimeSeries class is much more powerful than pyMCDS.py only.
 
 
 ### Understanding PhysiCell's Time Step Output: the MultiCellular Data Standard (MCDS) Format
