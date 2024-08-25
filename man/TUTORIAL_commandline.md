@@ -48,7 +48,7 @@ pcdl_get_version output/output00000000.xml
 pcdl_get_version -h
 ```
 
-### pcdl\_get\_unit dict
+### &#x1F31F; pcdl\_get\_unit dict
 
 Generate a [csv](https://en.wikipedia.org/wiki/Comma-separated_values) file that maps attribute and units, as specified in the settings.xml.
 
