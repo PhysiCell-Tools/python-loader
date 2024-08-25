@@ -1,6 +1,4 @@
-<span style="color:maroon">
-# PhysiCell Data Loader Tutorial: pcdl from the Commandline
-</span>.
+# <span style="color:maroon">PhysiCell Data Loader Tutorial: pcdl from the Commandline</span>
 
 <!-- bue 2024-08-22: have to check if this works from dos and power shell. it will work somehow, because i can run the cli unit tests -->
 
@@ -17,8 +15,7 @@ Please spend some time to learn about each of the 18 commands, by studing it's m
 this will truely make you a power user!
 
 
-<span style="color:maroon">
-## Preparation
+## <span style="color:maroon"> Preparation </span>
 
 To runs this tutorial,
 you can install the 2D unittest dataset into your PhysiCell output folder,
