@@ -34,7 +34,7 @@ python3 -c"import pathlib, pcdl, shutil; s_ipath=str(pathlib.Path(pcdl.__file__)
 
 ## Metadata related commands
 
-### &#x2728 pcdl\_get\_version
+### &#x2728; pcdl\_get\_version
 
 Output PhysiCell, MCDS, and pcdl version on the screen.
 
