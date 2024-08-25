@@ -384,7 +384,7 @@ pcdl_make_ome_tiff -h
 <!-- bue 20240822: link extra tutorials -->
 
 
-## Making movies
+## [Making movies](https://en.wikipedia.org/wiki/Making_Movies)
 
 
 ### &#x2728; pcdl\_make\_movie

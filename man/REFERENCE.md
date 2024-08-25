@@ -25,8 +25,8 @@ Familiarize yourself well with their parameters!
 
 
 # Test datasets
-+ [help(pcdl.install_data](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.install_data.md)
-+ [help(pcdl.uninstall_data](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.uninstall_data.md)
++ [help(pcdl.install_data)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.install_data.md)
++ [help(pcdl.uninstall_data)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.uninstall_data.md)
 
 
 # TimeStep
@@ -38,7 +38,7 @@ Basically, there are four types of functions:
 + plot_ : plot functions generate a matplotlib figure, or axis object, or file output (jpeg, png, tiff), depending on your parameter settings.
 
 ### TimeStep initialize
-+ [help(pcdl.TimeStep.__init__)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.__init__.md)  #! workhorse function
++ [help(pcdl.TimeStep.\_\_init\_\_)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.__init__.md)  #! workhorse function
 + [help(mcds.set_verbose_false)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.set_verbose_false.md)  #! workhorse function
 + [help(mcds.set_verbose_true)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.set_verbose_true.md)  #! workhorse function
 
@@ -120,7 +120,7 @@ Basically, there are four types of functions:
 + plot_ : plot functions generate a matplotlib figure, or axis object, or file output (jpeg, png, tiff), depending on your parameter settings.
 
 ### TimeSeries initialization
-+ [help(pcdl.TimeSeries.__init__)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.__init__.md)  #! workhosefunction
++ [help(pcdl.TimeSeries.\_\_init\_\_)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.__init__.md)  #! workhosefunction
 + [help(mcdsts.get_xmlfile_list)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_xmlfile_list.md)  #! workhosefunction
 + [help(mcdsts.read_mcds)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.read_mcds.md)
 + [help(mcdsts.get_mcds_list)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_mcds_list.md)  #! workhose function
@@ -176,12 +176,14 @@ The command line interface functions mimic the name and parameter arguments as c
 + [pcdl_get_unit_dict --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_unit_dict.md)
 
 ### Command line microenvironment
++ [pcdl_get_substrate_list --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_substrate_list.md)  #! workhorse function
 + [pcdl_get_conc_attribute --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_conc_attribute.md)  #! workhorse function
 + [pcdl_get_conc_df --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_conc_df.md)  #! workhorse function
 + [pcdl_plot_contour --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_plot_contour.md)  #! workhorse function
 + [pcdl_make_conc_vtk --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_make_conc_vtk.md)  #! workhorse function
 
 ### Command line cells
++ [pcdl_get_celltype_list --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_celltype_list.md)  #! workhorse function
 + [pcdl_get_cell_attribute --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_cell_attribute.md)  #! workhorse function
 + [pcdl_get_cell_df --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_cell_df.md)  #! workhorse function
 + [pcdl_get_anndata --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_anndata.md)  #! workhorse function
