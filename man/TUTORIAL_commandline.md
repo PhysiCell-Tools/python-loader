@@ -1,4 +1,4 @@
-# $${\color{crimson}PhysiCell Data Loader Tutorial: pcdl from the Commandline}$$
+# PhysiCell Data Loader Tutorial: pcdl from the Commandline
 
 <!-- bue 2024-08-22: have to check if this works from dos and power shell. it will work somehow, because i can run the cli unit tests -->
 
@@ -15,7 +15,7 @@ Please spend some time to learn about each of the 18 commands, by studing it's m
 this will truely make you a power user!
 
 
-## $${\color{crimson}Preparation}$$
+## Preparation
 
 To runs this tutorial,
 you can install the 2D unittest dataset into your PhysiCell output folder,
@@ -32,9 +32,9 @@ python3 -c"import pathlib, pcdl, shutil; s_ipath=str(pathlib.Path(pcdl.__file__)
 ```
 
 
-## $${\color{crimson}Metadata related commands}$$
+## Metadata related commands
 
-### $${\color{crimson}pcdl get version}$$
+### &#x2728 pcdl\_get\_version
 
 Output PhysiCell, MCDS, and pcdl version on the screen.
 
@@ -48,7 +48,7 @@ pcdl_get_version output/output00000000.xml
 pcdl_get_version -h
 ```
 
-### $${\color{crimson}pcdl get unit dict}$$
+### pcdl\_get\_unit dict
 
 Generate a [csv](https://en.wikipedia.org/wiki/Comma-separated_values) file that maps attribute and units, as specified in the settings.xml.
 
@@ -63,10 +63,10 @@ pcdl_get_unit_dict -h
 ```
 
 
-## $${\color{crimson}Microenvironment realted commands}$$
+## Microenvironment realted commands
 
 
-### pcdl_get_substrate_list
+### pcdl\_get\_substrate\_list
 
 Output all substrated modeled in the microenviroment.
 
@@ -80,7 +80,7 @@ pcdl_get_substrate_list output/output00000000.xml
 pcdl_get_substrate_list -h
 ```
 
-### pcdl_get_conc_attribute
+### pcdl\_get\_conc\_attribute
 
 Generate a [json](https://en.wikipedia.org/wiki/JSON) file, that lists all substrate attributes.
 For each such attribute the min and the max value are listed.
@@ -102,7 +102,7 @@ pcdl_get_conc_attribute -h
 <!-- bue 20240822: link extra tutorials -->
 
 
-### pcdl_get_conc_df
+### pcdl\_get\_conc\_df
 
 Generate a [csv](https://en.wikipedia.org/wiki/Comma-separated_values) file that lists one voxel per row,
 all substarte concentrations.
