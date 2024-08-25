@@ -15,7 +15,7 @@ Please spend some time to learn about each of the 18 commands, by studing it's m
 this will truely make you a power user!
 
 
-## Preparation
+## $${\color{crimson}Preparation}$$
 
 To runs this tutorial,
 you can install the 2D unittest dataset into your PhysiCell output folder,
@@ -32,7 +32,7 @@ python3 -c"import pathlib, pcdl, shutil; s_ipath=str(pathlib.Path(pcdl.__file__)
 ```
 
 
-## Metadata related commands
+## $${\color{maroon}Metadata related commands}$$
 
 ### pcdl_get_version
 
