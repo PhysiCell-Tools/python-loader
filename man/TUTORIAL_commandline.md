@@ -35,7 +35,9 @@ python3 -c"import pathlib, pcdl, shutil; s_ipath=str(pathlib.Path(pcdl.__file__)
 ## Metadata related commands
 
 
-Get PhysiCell, MCDS, and pcdl version.
+### pcdl_get_version
+
+Output PhysiCell, MCDS, and pcdl version on the screen.
 
 ```bash
 pcdl_get_version output
@@ -46,6 +48,8 @@ pcdl_get_version output/output00000000.xml
 ```bash
 pcdl_get_version -h
 ```
+
+### pcdl_get_unit_dict
 
 Generate a [csv](https://en.wikipedia.org/wiki/Comma-separated_values) file that maps attribute and units, as specified in the settings.xml.
 
@@ -63,7 +67,21 @@ pcdl_get_unit_dict -h
 ## Microenvironment realted commands
 
 
-### Substrate concentration attributes
+### pcdl_get_substrate_list
+
+Output all substrated modeled in the microenviroment.
+
+```bash
+pcdl_get_substrate_list output
+```
+```bash
+pcdl_get_substrate_list output/output00000000.xml
+```
+```bash
+pcdl_get_substrate_list -h
+```
+
+### pcdl_get_conc_attribute
 
 Generate a [json](https://en.wikipedia.org/wiki/JSON) file, that lists all substrate attributes.
 For each such attribute the min and the max value are listed.
@@ -74,14 +92,18 @@ In the example below:
 
 ```bash
 pcdl_get_conc_attribute output 2
+```
+```bash
 pcdl_get_conc_attribute output/output00000000.xml 2
+```
+```bash
 pcdl_get_conc_attribute -h
 ```
 
 <!-- bue 20240822: link extra tutorials -->
 
 
-### Substrate concentration dataframe
+### pcdl_get_conc_df
 
 Generate a [csv](https://en.wikipedia.org/wiki/Comma-separated_values) file that lists one voxel per row,
 all substarte concentrations.
@@ -92,7 +114,11 @@ In the example below the generated csv contains:
 
 ```bash
 pcdl_get_conc_df output
+```
+```bash
 pcdl_get_conc_df output/output00000000.xml 2
+```
+```bash
 pcdl_get_conc_df -h
 ```
 
