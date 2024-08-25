@@ -48,7 +48,7 @@ pcdl_get_version output/output00000000.xml
 pcdl_get_version -h
 ```
 
-### $${\color{crimson}pcdl_get_unit_dict}$$
+### $${\color{crimson}pcdl\_get\_unit\_dict}$$
 
 Generate a [csv](https://en.wikipedia.org/wiki/Comma-separated_values) file that maps attribute and units, as specified in the settings.xml.
 
@@ -63,7 +63,7 @@ pcdl_get_unit_dict -h
 ```
 
 
-## <span style="color:blue"> Microenvironment realted commands </span>
+## <font color="blue"> Microenvironment realted commands </font>
 
 
 ### pcdl_get_substrate_list
