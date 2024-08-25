@@ -34,7 +34,7 @@ python3 -c"import pathlib, pcdl, shutil; s_ipath=str(pathlib.Path(pcdl.__file__)
 
 ## $${\color{crimson}Metadata related commands}$$
 
-### $${\color{crimson}pcdl\_get\_version}$$
+### $${\color{crimson}pcdl get version}$$
 
 Output PhysiCell, MCDS, and pcdl version on the screen.
 
@@ -48,7 +48,7 @@ pcdl_get_version output/output00000000.xml
 pcdl_get_version -h
 ```
 
-### $${\color{crimson}pcdl\_get\_unit\_dict}$$
+### $${\color{crimson}pcdl get unit dict}$$
 
 Generate a [csv](https://en.wikipedia.org/wiki/Comma-separated_values) file that maps attribute and units, as specified in the settings.xml.
 
