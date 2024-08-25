@@ -1,6 +1,6 @@
 # PhysiCell Data Loader Python Tutorial
 
-In this chapter, we will load the pcdl library and use its TimeStep class to load the data snapshot 00000012, described above, from [data\_timeseries\_ 2d](https://github.com/elmbeech/physicelldataloader/tree/master/pcdl/data_timeseries_2d) from the 2D time series test dataset.
+In this chapter, we will load the pcdl library and use its TimeStep class to load the data snapshot 00000012, from [data\_timeseries\_ 2d](https://github.com/elmbeech/physicelldataloader/tree/master/pcdl/data_timeseries_2d) from the 2D time series test dataset.
 
 First, please install the latest version of physicelldataloader (pcdl),
 as described in the [HowTo](https://github.com/elmbeech/physicelldataloader/blob/master/man/HOWTO.md) chapter.
@@ -34,7 +34,7 @@ For paths, in general, unix (slash) and windows (backslash) notation will work.
 ## Loading an MCDS Time Step
 
 By default, all data related to the snapshot is loaded.\
-For speed and less memory usage, it is however possible to only load the essential (output xml and cell mat data), and exclude microenvironment, graph data, and ID label mapping loading.\
+For speed and less memory usage, it is however possible to only load the essential (output xml and cell mat data), and exclude microenvironment, graph data, PhysiBoss data, and the PhysiCell\_settings.xml cell type ID label mapping.\
 Additionally, it is possible to specify data types for the custom\_data variables, apart from the generic float type, namely: int, bool, and str.
 
 The basic way to load a mcds time step object:
@@ -56,6 +56,8 @@ mcds = pcdl.TimeStep(s_pathfile, custom_data_type={}, microenv=True, graph=True,
 Verbosity you can tune, evnen after loading the data.
 ```python3
 mcds.set_verbose_false()
+```
+```python3
 mcds.set_verbose_true()
 ```
 
@@ -95,7 +97,7 @@ sorted(mcds.data['discrete_cells']['graph'].keys())  # neighbor_cells and attach
 ```
 
 **Once again, loud, for the ones in the back, in pcdl >= version 3, all data is accessible by functions.
-There should be no need to fetch data directly from the `mcds.data` dictionary of dictionaries.**
+There should be no need to fetch data directly from the `mcds.data` dictionaries.**
 
 We will explore these functions in the upcomming sections.
 
@@ -106,6 +108,8 @@ Fetch the data's MultiCellDS version, and the PhysiCell version the data was gen
 
 ```python
 mcds.get_multicellds_version()  # will return a string like MultiCellDS_2 or MultiCellDS_0.5
+```
+```python
 mcds.get_physicell_version()  # will return a string like PhysiCell_1.10.4 or BioFVM_1.1.7
 ```
 
@@ -113,7 +117,11 @@ Fetch simulation time, runtime, and time stamp when the data was processed.
 
 ```python
 mcds.get_time()   # will return a float value like 720.0
+```
+```python
 mcds.get_runtime()  # will return a float value like 15.596373
+```
+```python
 mcds.get_timestamp()  # will return a sting like 2022-10-19T01:12:01Z
 ```
 
@@ -121,6 +129,9 @@ Finally, it is possible to retrieve a dictionary that lists all units from all t
 
 ```python
 mcds.get_unit_dict()  # will return a dictionary, which maps the variables to the units specified in the setting.xml.
+```
+```python
+# sorted alphabetically
 sorted(mcds.get_unit_dict().items())
 ```
 
@@ -131,7 +142,6 @@ In the loaded dataset, only one substrate, oxygen, was part of the simulation.\
 However, let's have a look at the substrate microenviroment related functions.
 
 We can retrieve an alphabetically ordered list of all substrates processed in the simulation.
-(This function might become deprected in a future version of pcdl.)
 
 ```python
 mcds.get_substrate_list()  # ['oxygen']
@@ -141,11 +151,13 @@ We can retrieve a dictionary that maps substrate indexes to labels.
 
 ```python
 mcds.get_substrate_dict()  # {'0': 'oxygen'}
-
+```
+```python
 # substrates sorted alpahbetically
 sorted(mcds.get_substrate_dict().values())  # ['oxygen']
-
-# substrates sorted by index
+```
+```python
+# substrates sorted by substrate ID
 ds_substrate = mcds.get_substrate_dict())
 [ds_substrate[s_key] for s_key in sorted(ds_substrate, key=int)]  # ['oxygen']
 ```
@@ -157,13 +169,14 @@ df = mcds.get_substrate_df()
 df.head()
 ```
 
-Regarding the concentrations, we can retrieve a **pandas dataframe** with voxel ijk coordinate values, mesh center mnp coordinate values, and concentrations values for all substrates.
+Further, we can retrieve a **pandas dataframe** with voxel ijk coordinate values, mesh center mnp coordinate values, and concentrations values for all substrates.
 
 ```python
 # dataframe with complete voxel coordinate (ijk), mesh coordinate (mnp), and substrate concentration mapping
 df = mcds.get_conc_df()
 df.head()
-
+```
+```python
 # detect substrates that not over whole domain have the same concentration
 df = mcds.get_conc_df(values=2)
 df.head()  # oxygen concentration varies over the domain
@@ -175,10 +188,13 @@ To get a 2D meshgrids you can slice though any z stack value, the function will 
 
 ```python
 # concentration meshgrid for a particular substrate
-oxygen_3d = mcds.get_concentration('oxygen')
 oxygen_2d = mcds.get_concentration('oxygen', z_slice=0)
-oxygen_3d.shape  # (11, 11, 1)
 oxygen_2d.shape  # (11, 11)
+```
+```python
+# concentration meshgrid for a particular substrate
+oxygen_3d = mcds.get_concentration('oxygen')
+oxygen_3d.shape  # (11, 11, 1)
 ```
 
 Additionally, there is a less often used functions to retrieve a **numpy array** of all substrate concentrations at a particular xyz coordinate, ordered alphabetically by substrate name, like the list retrieved by the get\_substrate\_names function.
@@ -187,15 +203,21 @@ Additionally, there is a less often used functions to retrieve a **numpy array**
 ```python
 # all concentration values at a particular coordinate
 mcds.get_concentration_at(x=0, y=0, z=0)  # array([34.4166271])
+```
+```python
+# all concentration values at a particular coordinate
 mcds.get_concentration_at(x=111, y=22, z=-5)  # array([18.80652216])
+```
+```python
+# all concentration values at a particular coordinate
 mcds.get_concentration_at(x=111, y=22, z=-5.1)  # None and Warning @ pyMCDS.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0)
 ```
 
 For substrate concentration visualization **matplotlib contour and contourf plots**,
 for any substrate, through any z\_slice can be retrived.\
-The mcds.plot_contour function has many parameters to fine tune the plot.
-Please have a look at it's docstring in the [REFERENCE.md]()manual to learn more.\
-The mcds.plot_contour function output can combine with the mcds.plot_scatter output.
+The mcds.plot\_contour function has many parameters to fine tune the plot.
+Please have a look at it's docstring to learn more.\
+The mcds.plot\_contour function output can combine with the mcds.plot\_scatter output.
 Please have a look at the [TUTORIAL_python3_matplotlib.md]() to learn more.
 
 ```python
@@ -203,6 +225,9 @@ Please have a look at the [TUTORIAL_python3_matplotlib.md]() to learn more.
 fig = mcds.plot_contour('oxygen')
 fig = mcds.plot_contour('oxygen', z_slice=3.333)
 fig.show()
+```
+```python
+help(mcds.plot_contour)
 ```
 
 For substrate concentration visualization **rectilinear grid vtk files**
@@ -214,7 +239,7 @@ Please have a look at the [TUTORIAL_paraview.md]() to learn more.
 mcds.make_conc_vtk()
 ```
 
-
+BUE HERE I AM.
 ## Cell Data Related Functions (Discrete Cells)
 
 We can retrieve a dictionary that maps cell type indexes to labels.
