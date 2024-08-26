@@ -2053,6 +2053,7 @@ class pyMCDS:
 
         # extract and manipulate input from dataframe
         df_cell = df_cell.loc[:, ls_coor_xyz + ['cell_type', cell_attribute]]
+
         # manipulate cell_attribute value
         if (cell_attribute == 'cell_type'):
             sys.exit(f'Error @ pyMCDS.make_ome_tiff : cell_attribute can not be cell_type.')
@@ -2061,8 +2062,14 @@ class pyMCDS:
         elif (df_cell.loc[:, cell_attribute].dtype == bool): # in {bool, np.bool_, np.bool}):
             df_cell = df_cell.astype({cell_attribute: int})
         df_cell.loc[:, cell_attribute] = df_cell.loc[:, cell_attribute] - df_cell.loc[:, cell_attribute].min() + 1  # positive values starting at 1
+
+        # check for duplicates: two cell at exactelly the same xyz position.
+        if self.verbose and df_cell.loc[:,['position_x', 'position_y', 'position_z']].duplicated().any():
+            df_duplicate = df_cell.loc[(df_cell.loc[:, ['position_x', 'position_y', 'position_z']].duplicated()), :]
+            print(f"Warning @ pyMCDS.make_ome_tiff : {df_duplicate} cells at exactely the same xyz position detected!")
+
         # pivot cell_type
-        df_cell = df_cell.pivot_table(index=ls_coor_xyz, columns='cell_type', values=cell_attribute, fill_value=0, aggfunc='sum').reset_index()
+        df_cell = df_cell.pivot_table(index=ls_coor_xyz, columns='cell_type', values=cell_attribute, aggfunc='sum').reset_index()  # fill_value is na
         for s_celltype in ls_celltype:
             if not s_celltype in set(df_cell.columns):
                df_cell[s_celltype] = 0
@@ -2098,6 +2105,10 @@ class pyMCDS:
                         ((df_channel.loc[:, ls_coor[2]] >= lr_axis_z[i_zaxis]) & (df_channel.loc[:, ls_coor[2]] < lr_axis_z[i_zaxis + 1])),
                         ls_coor[:2] + [s_channel]
                     ]
+
+                    # drop row with na and duplicate entries
+                    df_yxchannel = df_yxchannel.dropna(axis=0)
+                    df_yxchannel = df_yxchannel.drop_duplicates()
 
                     # merge with coooridnates and get image
                     # bue 20240811: df_coor left side merge will cut off reset cell that are out of the xyz domain range, which is what we want.
@@ -2318,8 +2329,7 @@ class pyMCDS:
         ###############################
         # read PhysiCell_settings.xml #
         ###############################
-        # bue 2024-03-11: this part tries to be compatible with the PhysiCell Studio settings.xml file only,
-        # older and other settings.xml versions are disregarded.
+        # bue: used for cell_type label:id mapping for data generated with physicell versions < 3.15.
 
         if not ((self.settingxml is None) or (self.settingxml is False)):
             # load Physicell_settings xml file
@@ -2329,16 +2339,7 @@ class pyMCDS:
                 print(f'reading: {s_settingxmlpathfile}')
             self.x_settingxml = x_tree.getroot()
 
-            # bue 2024-07-31: will always be overwritten by handle microenvironment data.
-            # substrate loop
-            #for x_variable in self.x_settingxml.find('microenvironment_setup').findall('variable'):
-            #    # <variable>
-            #    s_id = str(x_variable.get('ID'))
-            #    s_substrate = x_variable.get('name').replace(' ', '_')
-            #    d_mcds['metadata']['substrate'].update({s_id : s_substrate})
-
-            # bue 2024-07-31: will in future physicell version (>=3.15?) be overwritten by handle cell data.
-            # cell loop
+            # metadata cell_type label:id mapping detection (silver quality)
             for x_celltype in self.x_settingxml.find('cell_definitions').findall('cell_definition'):
                 # <cell_definition>
                 s_id = str(x_celltype.get('ID'))
@@ -2550,7 +2551,8 @@ class pyMCDS:
                 x_celldata = x_simplified_data
                 break
 
-        # update metadata cell_type ID label dictionar
+        # update cell_type ID label dictionar
+        # metadata cell_type label:id mapping detection ~ physicell version >= 3.15 (gold quality)
         try:
             for x_celltype in x_celldata.find('cell_types').findall('type'):
                 s_id = str(x_celltype.get('ID'))
@@ -2560,6 +2562,16 @@ class pyMCDS:
         except AttributeError:
             pass
 
+        # metadata cell_type label:id mapping detection ~ label information lost (silver quality)
+        if not b_celltype:
+            for x_label in x_celldata.find('labels').findall('label'):
+                s_variable = x_label.text.replace(' ', '_')
+                if s_variable in es_var_cell:
+                    for i_id in range(int(x_label.get('size'))):
+                        s_id = str(i_id)
+                        d_mcds['metadata']['cell_type'].update({s_id : s_id})
+                    b_celltype = True
+
         # iterate over labels which are children of labels these will be used to label data arrays
         ls_variable = []
         for x_label in x_celldata.find('labels').findall('label'):
@@ -2567,12 +2579,6 @@ class pyMCDS:
             s_variable = x_label.text.replace(' ', '_')
             i_variable = int(x_label.get('size'))
             s_unit = x_label.get('units')
-
-            # update metadata cell_type ID label dictionar
-            if (not (b_celltype)) and (s_variable == 'cell_type'):
-                for i_id in range(i_variable):
-                    d_mcds['metadata']['cell_type'].update({str(i_id) : str(i_id)})
-                b_celltype = True
 
             # variable unique for each celltype substrate combination
             if s_variable in es_var_subs:
@@ -2637,6 +2643,13 @@ class pyMCDS:
         # check for column label mapping error (as good as it gets)
         if (ar_cell.shape[0] != len(ls_variable)):
             sys.exit(f'Error @ pyMCDS._read_xml : extracted column label list leng {len(ls_variable)} and data array shape {ar_cell.shape} are incompatible!')
+
+        # metadata cell_type label:id mapping detection ~ label information lost (bronze quality)
+        if not b_celltype:
+            for r_celltype in set(ar_cell[ls_variable.index('cell_type'),:]):
+                s_celltype = str(int(r_celltype))
+                d_mcds['metadata']['cell_type'].update({s_celltype : s_celltype})
+            b_celltype = True
 
         # store data
         d_mcds['discrete_cells']['data'] = {}
