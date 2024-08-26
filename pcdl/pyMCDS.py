@@ -264,6 +264,9 @@ class pyMCDS:
         self.settingxml = settingxml
         self.verbose = verbose
         self.data = self._read_xml(xmlfile, output_path)
+        # forward compatibility
+        #self.plot_conc = self.plot_contour
+        #self.plot_cell = self.plot_scatter
         # backwards compatibility
         #self.get_2D_mesh = self.get_mesh_2D
         #self.get_concentrations_at = self.get_concentration_at

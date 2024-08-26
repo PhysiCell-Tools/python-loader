@@ -412,3 +412,16 @@ pcdl_make_gif output/cell_cell_type_z0.0/
 pcdl_make_gif -h
 ```
 
+
+### Data Clean Up
+
+After you are done checking out the 2D unittest dataset,
+you can uninstall the datasets and remove the data in the output folder,
+by executing the following command sequence.
+
+```bash
+python3 -c"import pcdl; pcdl.uninstall_data()"
+make data-cleanup
+```
+
+That's it!

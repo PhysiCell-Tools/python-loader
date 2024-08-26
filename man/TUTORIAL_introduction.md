@@ -33,6 +33,12 @@ And if you feel so, it is still possible to [load and process PhysiCell output t
 Naturally, the full-fledged pcdl library with the TimeSteps and TimeSeries class is much more powerful than pyMCDS.py only.
 
 
+### Concept
+
+PhysiCell data loader is not yet another analysis software, it is just an interface to analysis software!
+If you work through the tutorials, and you will in in-depth grasp the meaning behind this sentence.
+
+
 ### Understanding PhysiCell's Time Step Output: the MultiCellular Data Standard (MCDS) Format
 
 MCDS Time Steps are the input for pcdl.

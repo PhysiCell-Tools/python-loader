@@ -141,7 +141,8 @@ sorted(mcds.get_unit_dict().items())
 In the loaded dataset, only one substrate, oxygen, was part of the simulation.\
 However, let's have a look at the substrate microenviroment related functions.
 
-We can retrieve an alphabetically ordered list of all substrates processed in the simulation.
+We can retrieve list of all substrates processed in the simulation,
+ordered by substrate ID.
 
 ```python
 mcds.get_substrate_list()  # ['oxygen']
@@ -156,11 +157,6 @@ mcds.get_substrate_dict()  # {'0': 'oxygen'}
 # substrates sorted alpahbetically
 sorted(mcds.get_substrate_dict().values())  # ['oxygen']
 ```
-```python
-# substrates sorted by substrate ID
-ds_substrate = mcds.get_substrate_dict())
-[ds_substrate[s_key] for s_key in sorted(ds_substrate, key=int)]  # ['oxygen']
-```
 
 We can also retrieve a pandas dataframe with the parameters (decay\_rate, diffusion\_coefficient) that were set for each substrate.
 
@@ -173,13 +169,20 @@ Further, we can retrieve a **pandas dataframe** with voxel ijk coordinate values
 
 ```python
 # dataframe with complete voxel coordinate (ijk), mesh coordinate (mnp), and substrate concentration mapping
-df = mcds.get_conc_df()
-df.head()
+df_conc = mcds.get_conc_df()
+df_conc.head()
 ```
+
+Substartes that have in the whole domain the same concentration, carry for that time step no information.
+Let's filter for substrates that have at least 2 different values over the whole domain.
 ```python
-# detect substrates that not over whole domain have the same concentration
-df = mcds.get_conc_df(values=2)
-df.head()  # oxygen concentration varies over the domain
+df_conc = mcds.get_conc_df(values=2)
+df_conc.head()  # oxygen concentration varies over the domain
+```
+
+Let's filter for substarte concentrations voxel i2 j1 k0.
+```python
+df_conc.loc[(df_conc.voxel_i == 2) & (df_conc.voxel_j == 1) & (df_conc.voxel_k == 0), :]
 ```
 
 Additionally, there is a less often used function to retrieve substrate specific 3D or 2D **meshgrid numpy arrays**.
@@ -213,11 +216,34 @@ mcds.get_concentration_at(x=111, y=22, z=-5)  # array([18.80652216])
 mcds.get_concentration_at(x=111, y=22, z=-5.1)  # None and Warning @ pyMCDS.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0)
 ```
 
+### &#x2728; Microenvironment Data Analysis with [Pandas](https://pandas.pydata.org/)
+
+Pandas is the library you will probably spend a lot of the time when you are analysis you data.
+Pandas mimics the computer language R.
+Pandas provides us with the Series and Dataframe data types.
+
+For getting started with pandas,
+and get a clearer idea what pandas is all about and capable of,
+I recommend you to work through this pandas cookbook from Julia Evens:
++ https://jvns.ca/blog/2013/12/22/cooking-with-pandas/
+
+The Pandas library as such is very well documented.
+Please spend some time to familarize your self with the homepage, the users guides, and the API reference.
++ https://pandas.pydata.org/
++ http://pandas.pydata.org/pandas-docs/stable/user_guide/index.html
++ http://pandas.pydata.org/pandas-docs/stable/reference/index.html
+
+
+### &#x2728; Microenvironment Data Analysis with [Mathplotlib](https://matplotlib.org/)
+
 For substrate concentration visualization **matplotlib contour and contourf plots**,
 for any substrate, through any z\_slice can be retrived.\
 The mcds.plot\_contour function has many parameters to fine tune the plot.
 Please have a look at it's docstring to learn more.\
 The mcds.plot\_contour function output can combine with the mcds.plot\_scatter output.
+
++ https://matplotlib.org/
+
 Please have a look at the [TUTORIAL_python3_matplotlib.md]() to learn more.
 
 ```python
@@ -230,168 +256,158 @@ fig.show()
 help(mcds.plot_contour)
 ```
 
+
+### &#x2728; Microenvironment Data Analysis with [Vtk](https://vtk.org/)
+
 For substrate concentration visualization **rectilinear grid vtk files**
 for any substrate can be retrived.\
 This files can be analysied, for example with the [Paraview](https://en.wikipedia.org/wiki/ParaView) software.
+
++ https://vtk.org/
+
 Please have a look at the [TUTORIAL_paraview.md]() to learn more.
 
 ```python
 mcds.make_conc_vtk()
 ```
 
-BUE HERE I AM.
 ## Cell Data Related Functions (Discrete Cells)
 
-We can retrieve a dictionary that maps cell type indexes to labels.
+In the loaded dataset, only one cell type, cancer\_cell, was part of the simulation.\
+However, let's have a look at the cell agenet related functions.
+
+We can retrieve list of all cell types processed in the simulation,
+ordered by cell type ID.
+
+```python
+mcds.get_celltype_list()  # ['cancer_cell']
+```
+
+We can retrieve a dictionary that maps cell type IDs to labels.
 
 ```python
 mcds.get_celltype_dict()  # {'0': 'cancer_cell'}
 ```
 
-
 Now, let's have a look at all variables we track from each agent.\
-It is quite a list.\
-This list is ordered alphabetically, except for the first entry, which always is ID.
-
-```python
-mcds.get_celltype_list()  # ['ID', 'attachment_elastic_constant', ..., 'velocity_z']
-len(mcds.get_celltype_list())  # 77
-```
-
-
-The data itself we can retrieve as dataframe.\
-There exist two functions to do so.\
-One that retrieves data from all agents in the whole domain, the other retrieves only data from the agents in a particular voxel, specified by the xyz coordinate.\
-Please note, this dataframes not only hold the exact xyz coordinate, and all discrete variables mentioned above, they list additionally all agent surrounding substrate concentrations, the containing ijk voxel coordinate, and the mnp mesh center coordinate.
+This data we can retrieve as dataframe. \
+By the way, this dataframes not only hold the exact xyz coordinate and all variables.
+The datafram list additionally ijk voxel coordinate, mnp mesh center coordinate,
+the cell surrounding substrate concentrations, and, if available, PhysiBosss output.
 
 ```python
 # data from all agents in the domain
-df = mcds.get_cell_df()
-df.shape  # (992, 94)  this means: 992 agents in the whole domain, 94 tracked variables
-df.info()
-df.head()
-
-# data variables that are in all agents the same carry no information
-# let's filter for variables that carry at least 2 values
-df = mcds.get_cell_df(values=2)
-df.shape # (992, 38) this means: 992 agents in the whole domain, 38 tracked variables have more than 2 values
+df_cell = mcds.get_cell_df()
+df_cell.shape  # (992, 95)  this means: 992 agents in the whole domain, 96 tracked variables
 ```
-BUE 20240808: Data Triage
+```python
+df_cell.info()
+```
+```python
+df_cell.head()
+```
+```python
+sorted(df_cell.columns)
+```
 
-Cell variables that have no variance, zero entropy, that are in all agent overall time steps in the same state, have always exacted the same value, carry no information.
-Similarly, substrates variables that over the whole domain overall time steps have the same concentration are not interesting.
+Cell attributes that carry in all agents the same value, carry no information.
+Let's filter for variables that carry at least 2 different values.
 
 ```python
-# fetch data
-mcdsts = pcdl.TimeSeries(s_path)
+df_cell = mcds.get_cell_df(values=2)
+df_cell.shape # (992, 40) this means: 992 agents in the whole domain, 40 tracked variables have more than 2 different values
 ```
 
-There are functions to help triage over the entier time series for attributes that more likely might carry information, by checking for variables with variation.
-```
-# cell data min max values
-dl_cell = mcdsts.get_cell_attribute()  # returns a dictionary with all attributes, listing all accessed values
-len(dl_cell)  # 84 attributes
-dl_cell.keys()  # list attribute names
-dl_cell['oxygen']  # list min and max oxygen values found, surrounding a cell, over the whole series
-
-# cell data number of values
-di_state = {}
-[di_state.update({s_attribute: len(li_state)}) for s_attribute, li_state in mcdsts.get_cell_attribute(allvalues=True).items()]
-di_state['oxygen']  # cell surrounding oxygen was found occupying 2388 different values (states) over the whole time series
-
-# substrate data
-dl_conc = mcdsts.get_conc_attribute()
-dl_conc.keys()  # list attribute names
-dl_conc['oxygen']  # list min and max oxygen values found in the domain over the whole series
-```
-BUE 20240808: Data Triage
-
-
-BUE 20240808: HELPER FUNCTIONS
+Let's filter for cells in voxel i2 j1 k0.
 
 ```python
-# data from all agents in the xyz specified voxel
-df = mcds.get_cell_df_at(x=0,y=0,z=0)
-df.shape  # (4, 94)
-
-df = mcds.get_cell_df_at(x=111,y=22,z=-5)
-df.shape  # (3, 94)
-
-df = mcds.get_cell_df_at(x=111,y=22,z=-5.1)  # None and Warning @ pyMCDS.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0)
-```
-BUE 20240808: HELPER FUNCTIONS
-
-
-Additionally, there is a scatter plot function available, shaped for df\_cell dataframe content.
-```
-# scatter plot
-fig = mcds.plot_scatter()  # default focus is cell_type and z_slice=0
-fig.show()
-
-fig = mcds.plot_scatter('oxygen', z_slice=3.333)
-fig.show()
+df_cell.loc[(df_cell.voxel_i == 2) & (df_cell.voxel_j == 1) & (df_cell.voxel_k == 0), :]  # cells: 5, 7, 39
 ```
 
-BUE 20240808: DANG.
-**make_cell_vtk**
+There exist an additional, less often used function,
+to filter for cells in xyz position plus minus (voxel spacing / 2).
+(This function might become deprected in a future version of pcdl.)
+
+```python
+mcds.get_cell_df_at(x=45, y=10, z=0)  # cells: 5, 7, 39
+```
+
+### &#x2728; Cell Data Analysis with [Pandas](https://pandas.pydata.org/)
 
 
-BUE 20240808: SINGLECELL DATA!
-#### Transform an MCDS Time Step into an AnnData Object
+BUE PANDAS!
++ https://pandas.pydata.org/
 
-The [AnnData](https://anndata.readthedocs.io/en/latest/) format is the de facto standard for single cell data analysis in python.\
-It is a one-liner to transform a mcds object onto an anndata object.\
-This is the gate to a whole new universe.
+
+### &#x2728; Cell Data Analysis with in the [Scverse](https://scverse.org/)
+
+To be able to analyse cell agent data the same way single cell RNA seq data is analysed,
+pcdl has a function to translate cell agent data into [AnnData](https://anndata.readthedocs.io/en/latest/) format.
+Anndata is the de facto standard for sc RNA seq  data analysis in python.
+Anndata is the backbone of the sc verse project.
 
 + https://scverse.org/
 
-```python
-ann = mcds.get_anndata()
-print(ann)  # AnnData object with n_obs × n_vars = 1099 × 80
-            #     obs: 'ID', 'current_phase', 'cycle_model'
+````python
+ann = mcds.get_anndata(values=2)
+print(ann)  # AnnData object with n_obs × n_vars = 992 × 26
+            #     obs: 'z_layer', 'time', 'current_phase', 'cycle_model'
+            #     uns: 'neighbor'
             #     obsm: 'spatial'
+            #     obsp: 'physicell_neighbor_conectivities', 'physicell_neighbor_distances'
 ```
 
-The output tells us that we have loaded a time step  with 1099 cells (agents) and 80 attributes.
-And that we have spatial coordinate annotation (position\_x, position\_y, position\_z, time) of the loaded data.
+variables
+```python
+ann.var_name  # numerical cell attributes:  Index(['cell_BM_repulsion_strength', ... , 'total_volume'], dtype='object')
+```
+
+observation
+
+```python
+ann.obs_names  # cell IDs: Index(['0', ..., '994'], dtype='object', name='ID', length=992)
+```
+```python
+ann.obs_keys()  # categorical cell attributes:  ['z_layer', 'time', 'current_phase', 'cycle_model']
+```
+```python
+ann.obsm_keys()  # cell coordinates: ['spatial']
+```
+```python
+ann.obsm['spatial']  # the coordinate values (position\_x, position\_y) of the loaded data.
+```
+```python
+ann.obsp  # cell neigborhood graph data.
+```
+
+unstructured data
+
+```python
+ann.uns_keys()  # ['neighbor']
+```
+```python
+ann.uns['neighbor']  # metadata about the neighborhood graph.
+```
+
+The output tells us that we have loaded a time step  with 992 cell agents and 26 numerical attributes (vars).
+Further, we have 4 categorical cell agent attributes (obs).
+We have each cell agnet's spatial coordinate information (obsm).
+And we have cell neighbor graph infromation (obsp, uns).
 
 Whatever you d'like to do with your physicell data, it most probably was already done with single cell wet lab data.
-That's being said: PhysiCell data is different scdata than scRNA seq, for example.
-scRNA seq data is higher dimensional (e.g. for the human genome, over 20000 genes each time step) than PhysiCell data (tens, maybe hundreds of attributes).
-scRNA seq data is always single time step data because the measurement consumes the sample.
-PhysiCell data is always time series data, even we look at this moment only at one time step.
-This all means, the wet lab bioinformatics will partially try to solve problems (e.g. trajectory inference), that simply are no problems for us and the other way around.
+That's being said: PhysiCell data is different scdata than scRNA seq!
+For example, scRNA seq data is higher dimensional (e.g. the human genome has over 20000 genes each time step) than PhysiCell data (tens, maybe hundreds of cell attributes).
+For example, scRNA seq data is always single time step data because the measurement consumes the sample. PhysiCell data is always time series data, even we look at this moment only at one time step.
+This means, the wet lab bioinformatics will partially try to solve problems (for example trajectory inference), that simply are no problems for us and the other way around.
+Anyhow, there are a lot of scRNA seq data analysis methodes around, whoch make sense to apply to both of this data types.
 
-Anyhow, the gate is open.
-For the shake of appearances, let's do a cluster analysis on PhysiCell output using scanpy.
+Please have a look at the [TUTORIAL_python3_scverse.md]() to learn more.
 
-```python
-import scanpy as sc
 
-# loads only attribute that have not the same value in all cells.
-# max absolute scales the attributes into a range between -1 and 1.
-ann = mcds.get_anndata(values=2, scale='maxabs')
+### &#x2728; Cell Data Analysis with in the [Networkx](https://networkx.org/) and [Igraph](https://igraph.org/)
 
-# principal component analysis
-sc.tl.pca(ann)  # process anndata object with the pca tool.
-sc.pl.pca(ann)  # plot pca result.
-ann.var_names  # list the numerical attributes we have at hand (alternative way: ann.var.index).
-ann.obs_keys()  # list the categories attributes we have at hand (alternative way: ann.obs.columns).
-sc.pl.pca(ann, color=['current_phase','oxygen'])  # plot the pca results colored by some attributes.
-sc.pl.pca(ann, color=list(ann.var_names)+list(ann.obs_keys()))  # gotta catch 'em all!
-sc.pl.pca_variance_ratio(ann)  # plot how much of the variation each principal component captures.
-
-# neighborhood graph clustering
-sc.pp.neighbors(ann, n_neighbors=15)  # compute the neighborhood graph with the neighbors preprocess step.
-sc.tl.leiden(ann, resolution=0.01)  # cluster the neighborhood graph with the leiden tool.
-sc.pl.pca(ann, color='leiden')  # plot the pca results colored by leiden clusters.
-
-# umap dimensional reduction embedding
-sc.tl.umap(ann)  # process anndata object with the umap tool.
-sc.pl.umap(ann, color=['current_phase','oxygen','leiden'])  # plot the umap result colored by some attributes.
-```
-
-## Graph data Functions
++ https://networkx.org/
++ https://igraph.org/
 
 Since lately, PhysiCell tracks for each cell, if this cell touches other cells.\
 This data is stored in two dictionaries of sets of integers which link the corresponding cell IDs.\
@@ -409,8 +425,33 @@ graph.keys()  # dict_keys([0, 1, ..., 993])
 graph[0]  # {1, 31, 33, 929, 935, 950}
 ```
 
+### &#x2728; Cell Data Analysis with [Mathplotlib](https://matplotlib.org/)
 
-## Mesh Data Functions
+Additionally, there is a scatter plot function available, shaped for df\_cell dataframe content.
+```
+# scatter plot
+fig = mcds.plot_scatter()  # default focus is cell_type and z_slice=0
+fig.show()
+
+fig = mcds.plot_scatter('oxygen', z_slice=3.333)
+fig.show()
+```
+
+BUE 20240808: DANG.
+**make_cell_vtk**
+
+
+## Microenvironment and Cell Data Related Functions
+
+### &#x2728; PhysiCell Data Analysis with [Napari](https://napari.org/stable/) and [Fiji Imagej](https://fiji.sc/)
+
+The open microscopy's [ome.tiff](https://www.openmicroscopy.org/ome-files/) file fromat.
+
++ https://napari.org/stable/
++ https://fiji.sc/
+
+
+## Mesh Data Related Functions
 
 For data analysis use, the functions realted to the mesh are most probably the least one you have to deal with.
 However, lets have a look these functions anyway:\

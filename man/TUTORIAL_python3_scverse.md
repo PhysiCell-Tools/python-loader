@@ -1,3 +1,33 @@
+
+For the shake of appearances, let's do a cluster analysis on PhysiCell output using scanpy.
+
+```python
+import scanpy as sc
+
+# loads only attribute that have not the same value in all cells.
+# max absolute scales the attributes into a range between -1 and 1.
+ann = mcds.get_anndata(values=2, scale='maxabs')
+
+# principal component analysis
+sc.tl.pca(ann)  # process anndata object with the pca tool.
+sc.pl.pca(ann)  # plot pca result.
+ann.var_names  # list the numerical attributes we have at hand (alternative way: ann.var.index).
+ann.obs_keys()  # list the categories attributes we have at hand (alternative way: ann.obs.columns).
+sc.pl.pca(ann, color=['current_phase','oxygen'])  # plot the pca results colored by some attributes.
+sc.pl.pca(ann, color=list(ann.var_names)+list(ann.obs_keys()))  # gotta catch 'em all!
+sc.pl.pca_variance_ratio(ann)  # plot how much of the variation each principal component captures.
+
+# neighborhood graph clustering
+sc.pp.neighbors(ann, n_neighbors=15)  # compute the neighborhood graph with the neighbors preprocess step.
+sc.tl.leiden(ann, resolution=0.01)  # cluster the neighborhood graph with the leiden tool.
+sc.pl.pca(ann, color='leiden')  # plot the pca results colored by leiden clusters.
+
+# umap dimensional reduction embedding
+sc.tl.umap(ann)  # process anndata object with the umap tool.
+sc.pl.umap(ann, color=['current_phase','oxygen','leiden'])  # plot the umap result colored by some attributes.
+```
+
+
 # Working with PhysiCell Data in Python
 
 + author: Elmar Bucher
