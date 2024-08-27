@@ -287,7 +287,7 @@ class pyMCDS:
             function to set verbosity.
         """
         self.verbose = False
-        print(f'pcdl: set mcds.verbose = False.')
+        #print(f'pcdl: set mcds.verbose = False.')
 
     def set_verbose_true(self):
         """
@@ -300,7 +300,7 @@ class pyMCDS:
             function to set verbosity.
         """
         self.verbose = True
-        print(f'pcdl: set mcds.verbose = True.')
+        #print(f'pcdl: set mcds.verbose = True.')
 
 
     ## METADATA RELATED FUNCTIONS ##

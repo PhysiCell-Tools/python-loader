@@ -218,20 +218,16 @@ mcds.get_concentration_at(x=111, y=22, z=-5.1)  # None and Warning @ pyMCDS.is_i
 
 ### &#x2728; Microenvironment Data Analysis with [Pandas](https://pandas.pydata.org/)
 
-Pandas is the library you will probably spend a lot of the time when you are analysis you data.
-Pandas mimics the computer language R.
-Pandas provides us with the Series and Dataframe data types.
+Pandas mimics the [R](https://en.wikipedia.org/wiki/R_(programming_language)) computer language,
+a computer language written for statistical computing.
+As such, pandas provides us with the Series and the spreadsheet like DataFrame data type.
 
-For getting started with pandas,
-and get a clearer idea what pandas is all about and capable of,
-I recommend you to work through this pandas cookbook from Julia Evens:
-+ https://jvns.ca/blog/2013/12/22/cooking-with-pandas/
+```python
+df_conc = mcds.get_conc_df()
+df_conc.info()
+```
 
-The Pandas library as such is very well documented.
-Please spend some time to familarize your self with the homepage, the users guides, and the API reference.
-+ https://pandas.pydata.org/
-+ http://pandas.pydata.org/pandas-docs/stable/user_guide/index.html
-+ http://pandas.pydata.org/pandas-docs/stable/reference/index.html
+Please have a look at the [TUTORIAL_python3_pandas.md]() to learn more.
 
 
 ### &#x2728; Microenvironment Data Analysis with [Mathplotlib](https://matplotlib.org/)
@@ -334,9 +330,16 @@ mcds.get_cell_df_at(x=45, y=10, z=0)  # cells: 5, 7, 39
 
 ### &#x2728; Cell Data Analysis with [Pandas](https://pandas.pydata.org/)
 
+Pandas mimics the [R](https://en.wikipedia.org/wiki/R_(programming_language)) computer language,
+a computer language written for statistical computing.
+As such, pandas provides us with the Series and the spreadsheet like DataFrame data type.
 
-BUE PANDAS!
-+ https://pandas.pydata.org/
+```python
+df_cell = mcds.get_cell_df()
+df_cel.info()
+```
+
+Please have a look at the [TUTORIAL_python3_pandas.md]() to learn more.
 
 
 ### &#x2728; Cell Data Analysis with in the [Scverse](https://scverse.org/)
@@ -348,7 +351,7 @@ Anndata is the backbone of the sc verse project.
 
 + https://scverse.org/
 
-````python
+```python
 ann = mcds.get_anndata(values=2)
 print(ann)  # AnnData object with n_obs × n_vars = 992 × 26
             #     obs: 'z_layer', 'time', 'current_phase', 'cycle_model'
@@ -437,9 +440,20 @@ fig = mcds.plot_scatter('oxygen', z_slice=3.333)
 fig.show()
 ```
 
-BUE 20240808: DANG.
-**make_cell_vtk**
 
+### &#x2728; Cell Data Analysis with [Vtk](https://vtk.org/)
+
+For substrate concentration visualization **rectilinear grid vtk files**
+for any substrate can be retrived.\
+This files can be analysied, for example with the [Paraview](https://en.wikipedia.org/wiki/ParaView) software.
+
++ https://vtk.org/
+
+Please have a look at the [TUTORIAL_paraview.md]() to learn more.
+
+```python
+mcds.make_cell_vtk()
+```
 
 ## Microenvironment and Cell Data Related Functions
 
