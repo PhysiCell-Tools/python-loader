@@ -15,6 +15,7 @@ Please spend some time to learn about each of the 18 commands, by studing it's m
 this will truely make you a power user!
 
 
+
 ## Preparation
 
 To runs this tutorial,
@@ -30,6 +31,7 @@ cd path/to/PhysiCell
 make data-cleanup
 python3 -c"import pathlib, pcdl, shutil; pcdl.install_data(); s_ipath=str(pathlib.Path(pcdl.__file__).parent.resolve()/'data_timeseries_2d'); shutil.copytree(s_ipath, 'output', dirs_exist_ok=True)"
 ```
+
 
 
 ## Metadata related commands
@@ -63,6 +65,7 @@ pcdl_get_unit_dict output/output00000000.xml
 ```bash
 pcdl_get_unit_dict -h
 ```
+
 
 
 ## Microenvironment realted commands
@@ -102,7 +105,10 @@ pcdl_get_conc_attribute output/output00000000.xml 2
 pcdl_get_conc_attribute -h
 ```
 
-<!-- bue 20240822: link extra tutorials -->
+Further readings:
++ [TUTORIAL_python3_json.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_pandas.md)
++ [TUTORIAL_r.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_r.md)
++ [TUTORIAL_julia.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_julia.md)
 
 
 ### &#x2728; pcdl\_get\_conc\_df
@@ -124,7 +130,10 @@ pcdl_get_conc_df output/output00000000.xml 2
 pcdl_get_conc_df -h
 ```
 
-<!-- bue 20240822: link extra tutorials -->
+Further readings:
++ [TUTORIAL_python3_pandas.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_pandas.md)
++ [TUTORIAL_r.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_r.md)
++ [TUTORIAL_julia.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_julia.md)
 
 
 ### &#x2728; pcdl\_plot\_contour
@@ -163,7 +172,10 @@ pcdl_make_conc_vtk output/output00000000.xml
 pcdl_make_conc_vtk -h
 ```
 
-<!-- bue 20240822: link extra tutorials -->
+Further readings:
++ [TUTORIAL_blender.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_blender.md)
++ [TUTORIAL_paraview.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_paraview.md)
+
 
 
 ## Cell agent related commands
@@ -203,7 +215,10 @@ pcdl_get_cell_attribute output/output00000000.xml 2
 pcdl_get_cell_attribute -h
 ```
 
-<!-- bue 20240822: link extra tutorials -->
+Further readings:
++ [TUTORIAL_python3_json.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_pandas.md)
++ [TUTORIAL_r.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_r.md)
++ [TUTORIAL_julia.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_julia.md)
 
 
 ### &#x2728; pcdl\_get\_cell\_df
@@ -221,12 +236,15 @@ pcdl_get_cell_df output/output00000000.xml
 pcdl_get_cell_df -h
 ```
 
-<!-- bue 20240822: link extra tutorials -->
+Further readings:
++ [TUTORIAL_python3_pandas.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_pandas.md)
++ [TUTORIAL_r.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_r.md)
++ [TUTORIAL_julia.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_julia.md)
 
 
 ### &#x2728; pcdl\_get\_anndata
 
-Frome the whole timeseries or from a single time step generate h5ad [anndata](https://anndata.readthedocs.io/en/latest/) [hd5](https://en.wikipedia.org/wiki/Hierarchical_Data_Format) files.
+From the whole timeseries or from a single time step generate h5ad [anndata](https://anndata.readthedocs.io/en/latest/) [hd5](https://en.wikipedia.org/wiki/Hierarchical_Data_Format) files.
 
 Anndata is the standard data format in the python single cell community.
 Data stored in this fromat can be analyzed the same way as usually sc RNA seq data is analysed.
@@ -242,7 +260,10 @@ pcdl_get_anndata output
 pcdl_get_anndata -h
 ```
 
-<!-- bue 20240822: link extra tutorials -->
+Further readings:
++ [TUTORIAL_python3_scverse.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_scverse.md)
++ [TUTORIAL_r.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_r.md)
++ [TUTORIAL_julia.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_julia.md)
 
 
 ### &#x2728; pcdl\_make\_graph\_gml
@@ -262,7 +283,10 @@ pcdl_make_graph_gml output
 pcdl_make_graph_gml -h
 ```
 
-<!-- bue 20240822: link extra tutorials -->
+Further readings:
++ [TUTORIAL_python3_graph.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_graph.md)
++ [TUTORIAL_r.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_r.md)
++ [TUTORIAL_julia.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_julia.md)
 
 
 ### &#x2728; pcdl\_plot\_scatter
@@ -305,7 +329,10 @@ pcdl_make_cell_vtk output
 pcdl_make_cell_vtk -h
 ```
 
-<!-- bue 20240822: link extra tutorials -->
+Further readings:
++ [TUTORIAL_blender.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_blender.md)
++ [TUTORIAL_paraview.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_paraview.md)
+
 
 
 ## Microenvironment and cell agent related commands
@@ -381,7 +408,10 @@ pcdl_make_ome_tiff output
 pcdl_make_ome_tiff -h
 ```
 
-<!-- bue 20240822: link extra tutorials -->
+Further readings:
++ [TUTORIAL_python3_napari.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_napari.md)
++ [TUTORIAL_fiji_imagej.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_fiji_imagej.md)
+
 
 
 ## [Making movies](https://en.wikipedia.org/wiki/Making_Movies)
@@ -411,6 +441,7 @@ pcdl_make_gif output/cell_cell_type_z0.0/
 ```bash
 pcdl_make_gif -h
 ```
+
 
 
 ### Data Clean Up

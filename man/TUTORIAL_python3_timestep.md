@@ -175,7 +175,7 @@ Pandas mimics the [R](https://en.wikipedia.org/wiki/R_(programming_language)) co
 a computer language written for statistical computing.
 As such, pandas provides us with the spreadsheet like DataFrame and the Series data type.
 
-For analysing the microenviroment statistcially, a pandas dataframe 
+For analysing the microenviroment statistcially, a pandas dataframe
 with mesh center coordinates (mnp), voxel coordinates (ijk), and all substrate concentration values can be retrieved.
 
 ```python
@@ -194,7 +194,7 @@ Let's filter for every substartes concentrations in voxel i == 2, j == 1, and k 
 df_conc.loc[(df_conc.voxel_i == 2) & (df_conc.voxel_j == 1) & (df_conc.voxel_k == 0), :]
 ```
 
-Please have a look at the [TUTORIAL_python3_pandas.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_pandas.md) to learn more.
+Please have a look at [TUTORIAL_python3_pandas.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_pandas.md) to learn more.
 
 
 Additionally, there is a less often used function to retrieve substrate specific 3D or 2D **meshgrid numpy arrays**.
@@ -246,7 +246,7 @@ help(mcds.plot_contour)
 ```
 
 The mcds.plot\_contour function output can combine with the mcds.plot\_scatter output. \
-Please have a look at the [TUTORIAL_python3_matplotlib.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_matplotlib.md) to learn more.
+Please have a look at [TUTORIAL_python3_matplotlib.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_matplotlib.md) to learn more.
 
 
 ### &#x2728; Microenvironment Data Analysis with [Vtk](https://vtk.org/)
@@ -258,7 +258,7 @@ This files can be analysied, for example with the [Paraview](https://en.wikipedi
 mcds.make_conc_vtk()
 ```
 
-Please have a look at the [TUTORIAL_paraview.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_paraview.md) to learn more.
+Please have a look at [TUTORIAL_paraview.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_paraview.md) to learn more.
 
 
 
@@ -287,7 +287,7 @@ Pandas mimics the [R](https://en.wikipedia.org/wiki/R_(programming_language)) co
 a computer language written for statistical computing.
 As such, pandas provides us with the spreadsheet like DataFrame and the Series data type.
 
-For analysing the cell agent data statistically, a pandas dataframe 
+For analysing the cell agent data statistically, a pandas dataframe
 with the agent's position (xyz), the realted mesh center coordinate (mnp), the related voxel coordinate (ijk), values from a bunch of cell attributes, the cell surrouning substrate concentrations, and some additional attributes like the voxel's cell density and the xyz vector length, and, if applicable, physiboss output, can be retrieved.
 
 ```python
@@ -312,7 +312,7 @@ Let's filter for cells in voxel i2 j1 k0.
 df_cell.loc[(df_cell.voxel_i == 2) & (df_cell.voxel_j == 1) & (df_cell.voxel_k == 0), :]  # cells: 5, 7, 39
 ```
 
-Please have a look at the [TUTORIAL_python3_pandas.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_pandas.md) to learn more.
+Please have a look at [TUTORIAL_python3_pandas.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_pandas.md) to learn more.
 
 
 There exist an additional, less often used function,
@@ -385,27 +385,35 @@ For example, scRNA seq data is always single time step data because the measurem
 This means, the wet lab bioinformatics will partially try to solve problems (for example trajectory inference), that simply are no problems for us and the other way around.
 Anyhow, there are a lot of scRNA seq data analysis methodes around, whoch make sense to apply to both of this data types.
 
-Please have a look at the [TUTORIAL_python3_scverse.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_scverse.md) to learn more.
+Please have a look at [TUTORIAL_python3_scverse.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_scverse.md) to learn more.
 
 
 ### &#x2728; Cell Data Analysis with in the [Networkx](https://networkx.org/) and [Igraph](https://igraph.org/)
 
-BUE HERE I AM 
-Since lately, PhysiCell tracks for each cell, if this cell touches other cells.\
-This data is stored in two dictionaries of sets of integers which link the corresponding cell IDs.\
-We have here a closer look at the neighbor graph because the attached graph is in this particular study not really interesting.
+Fore each cell, PhysiCell tracks the cell neigborhood (if cells touch each other, if cells are attached to each other).
+<!-- Also, to be able to generate lineage trees, PhysiCell tracks each cell's parent ID, time of birth, and time of death. -->
 
+All this information can be represented as graph (as in graph theory).
+Pcld has a function to dump this information as [gml](https://github.com/elmbeech/physicelldataloader/blob/master/man/publication/himsolt1996gml_a_portable_graph_file_format.pdf) (graph model language) files.
+This file format can be read by graph libraries, like network and igraph, for downstream analysis.
+
+Cell neighbor touching graph
 ```python
-# attached graph
-graph = mcds.get_attached_graph_dict()
-len(graph)  # 992
-
-# neighbor graph
-graph = mcds.get_neighbor_graph_dict()
-len(graph)  # 992
-graph.keys()  # dict_keys([0, 1, ..., 993])
-graph[0]  # {1, 31, 33, 929, 935, 950}
+mcds.make_graph_gml('touch')
 ```
+
+Cell neighbor attached graph
+```python
+mcds.make_graph_gml('attached')
+```
+<!--
+Cell lineage tree
+```python
+mcds.make_graph_gml('lineage')
+```
+-->
+
+Please have a look at [TUTORIAL_python3_graph.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_graph.md) to learn more.
 
 
 ### &#x2728; Cell Data Analysis with [Matplotlib](https://matplotlib.org/)
@@ -424,7 +432,7 @@ help(mcds.plot_scatter)
 ```
 
 The mcds.plot\_contour function output can combine with the mcds.plot\_contour output. \
-Please have a look at the [TUTORIAL_python3_matplotlib.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_matplotlib.md) to learn more.
+Please have a look at [TUTORIAL_python3_matplotlib.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_matplotlib.md) to learn more.
 
 
 ### &#x2728; Cell Data Analysis with [Vtk](https://vtk.org/)
@@ -439,7 +447,7 @@ mcds.make_cell_vtk()
 help(mcds.make_cell_vtk)
 ```
 
-Please have a look at the [TUTORIAL_paraview.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_paraview.md) to learn more.
+Please have a look at [TUTORIAL_paraview.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_paraview.md) to learn more.
 
 
 
@@ -447,7 +455,7 @@ Please have a look at the [TUTORIAL_paraview.md](https://github.com/elmbeech/phy
 
 ### &#x2728; PhysiCell Data Analysis with [Napari](https://napari.org/stable/) and [Fiji Imagej](https://fiji.sc/)
 
-BUE HERE I AM 
+BUE HERE I AM
 The open microscopy's [ome.tiff](https://www.openmicroscopy.org/ome-files/) file fromat.
 
 Load ometiff into python!
@@ -455,12 +463,14 @@ Load ometiff into python!
 + https://napari.org/stable/
 + https://fiji.sc/
 
+Please have a look at [TUTORIAL_python3_napari.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_napari.md)
+and [TUTORIAL_fiji_imagej.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_napari.md) to learn more.
 
 
 ## Mesh Data Related Functions
 
 These functions are very usefull for tool developers.
-However, For data analysis, the functions realted to the mesh are most probably the least one you have to deal with. 
+However, For data analysis, the functions realted to the mesh are most probably the least one you have to deal with.
 Lets have a look these functions anyway:\
 It is common, but not necessary, that the voxel's width, height, and depth is the same.\
 In fact, in this test dataset you will find that this is not the case. \
@@ -534,20 +544,46 @@ n_meshgrid.shape  # (11, 11, 1)
 p_meshgrid.shape  # (11, 11, 1)
 ```
 
-Furthermore, there are two helper function.\
-One to figure out if a particular xyz coordinate is still in side the mesh, another one to translate a xyz coordinate into ijk voxel indices.\
-The translation function will by default checks if the given coordinate is in the mesh.
+Furthermore, there are three helper function.\
+One to figure out if a particular xyz coordinate is still in side the mesh,
+the another ones to translate a xyz coordinate into ijk voxel or mnp mesh center indices.\
+The translation functions will by default checks if the given coordinate is in the mesh.
+
+
+Is given xyz is in the mesh?
 
 ```python
-# is given xyz is in the mesh?
 mcds.is_in_mesh(x=0, y=0, z=0)  # True
+```
+```python
 mcds.is_in_mesh(x=111, y=22, z=-5)  # True
+```
+```python
 mcds.is_in_mesh(x=111, y=22, z=-5.1)  # False and Warning @ pyMCDS.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0)
+```
 
-# translate xyz into ijk!
+Translate xyz position coordinates into ijk voxel coordinates:
+
+```python
 mcds.get_voxel_ijk(x=0, y=0, z=0)  # [0,0,0]
+```
+```python
 mcds.get_voxel_ijk(x=111, y=22, z=-5)  # [4, 2, 0]
+```
+```python
 mcds.get_voxel_ijk(x=111, y=22, z=-5.1)  # None and Warning @ pyMCDS.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0)
+```
+
+Translate xyz position coordinates into mnp mesh center coordinates:
+
+```python
+mcds.get_mesh_mnp(x=0, y=0, z=0)  # [0,0,0]
+```
+```python
+mcds.get_mesh_mnp(x=111, y=22, z=-5)  # [4, 2, 0]
+```
+```python
+mcds.get_mesh_mnp(x=111, y=22, z=-5.1)  # None and Warning @ pyMCDS.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0)
 ```
 
 
