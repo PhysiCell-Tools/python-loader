@@ -8,6 +8,7 @@ as described in the [HowTo](https://github.com/elmbeech/physicelldataloader/blob
 And, if not already doen so, have a quick read through the pcdl [background](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_introduction.md) infromation.
 
 
+
 ## Preparation: install the test data set and extract path where the dataset is stored.
 
 ```python
@@ -29,6 +30,7 @@ print('mcds xml path/file:', s_pathfile)
 ```
 
 For paths, in general, unix (slash) and windows (backslash) notation will work.
+
 
 
 ## Loading an MCDS Time Step
@@ -62,6 +64,7 @@ mcds.set_verbose_true()
 ```
 
 
+
 ## The MCDS Data Structure
 
 All loaded data lives in `mcds.data` dictionary.\
@@ -73,7 +76,6 @@ Regarding the origial python-loader, the structure has slightly changed.\
 Anyhow, let's take a look at what we actually have in here.
 
 ![mcds.data dictionary blueprint](img/physicelldataloader_data_dictionary_v3.2.2.png)
-
 
 ```python
 # main data branches
@@ -100,6 +102,7 @@ sorted(mcds.data['discrete_cells']['graph'].keys())  # neighbor_cells and attach
 There should be no need to fetch data directly from the `mcds.data` dictionaries.**
 
 We will explore these functions in the upcomming sections.
+
 
 
 ## Metadata Related Functions
@@ -136,6 +139,7 @@ sorted(mcds.get_unit_dict().items())
 ```
 
 
+
 ## Microenvironment Data Related Functions (Continuum Variables)
 
 In the loaded dataset, only one substrate, oxygen, was part of the simulation.\
@@ -165,29 +169,37 @@ df = mcds.get_substrate_df()
 df.head()
 ```
 
-Further, we can retrieve a **pandas dataframe** with voxel ijk coordinate values, mesh center mnp coordinate values, and concentrations values for all substrates.
+### &#x2728; Microenvironment Data Analysis with [Pandas](https://pandas.pydata.org/)
+
+Pandas mimics the [R](https://en.wikipedia.org/wiki/R_(programming_language)) computer language,
+a computer language written for statistical computing.
+As such, pandas provides us with the spreadsheet like DataFrame and the Series data type.
+
+For analysing the microenviroment statistcially, a pandas dataframe 
+with mesh center coordinates (mnp), voxel coordinates (ijk), and all substrate concentration values can be retrieved.
 
 ```python
-# dataframe with complete voxel coordinate (ijk), mesh coordinate (mnp), and substrate concentration mapping
 df_conc = mcds.get_conc_df()
-df_conc.head()
+df_conc.info()
 ```
-
 Substartes that have in the whole domain the same concentration, carry for that time step no information.
 Let's filter for substrates that have at least 2 different values over the whole domain.
 ```python
 df_conc = mcds.get_conc_df(values=2)
-df_conc.head()  # oxygen concentration varies over the domain
+df_conc.info()  # oxygen concentration varies over the domain
 ```
 
-Let's filter for substarte concentrations voxel i2 j1 k0.
+Let's filter for every substartes concentrations in voxel i == 2, j == 1, and k == 0.
 ```python
 df_conc.loc[(df_conc.voxel_i == 2) & (df_conc.voxel_j == 1) & (df_conc.voxel_k == 0), :]
 ```
 
+Please have a look at the [TUTORIAL_python3_pandas.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_pandas.md) to learn more.
+
+
 Additionally, there is a less often used function to retrieve substrate specific 3D or 2D **meshgrid numpy arrays**.
 To get a 2D meshgrids you can slice though any z stack value, the function will always pick the closest mesh center coordinate, the smaller coordinate, if you hit the saddle point between two voxels.
-(This function might become deprected in a future version of pcdl.)
+(This function might become deprected in a future pcdl version.)
 
 ```python
 # concentration meshgrid for a particular substrate
@@ -200,8 +212,9 @@ oxygen_3d = mcds.get_concentration('oxygen')
 oxygen_3d.shape  # (11, 11, 1)
 ```
 
+
 Additionally, there is a less often used functions to retrieve a **numpy array** of all substrate concentrations at a particular xyz coordinate, ordered alphabetically by substrate name, like the list retrieved by the get\_substrate\_names function.
-(This function might become deprected in a future version of pcdl as well.)
+(This function might become deprected in a future pcdl version.)
 
 ```python
 # all concentration values at a particular coordinate
@@ -216,56 +229,38 @@ mcds.get_concentration_at(x=111, y=22, z=-5)  # array([18.80652216])
 mcds.get_concentration_at(x=111, y=22, z=-5.1)  # None and Warning @ pyMCDS.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0)
 ```
 
-### &#x2728; Microenvironment Data Analysis with [Pandas](https://pandas.pydata.org/)
 
-Pandas mimics the [R](https://en.wikipedia.org/wiki/R_(programming_language)) computer language,
-a computer language written for statistical computing.
-As such, pandas provides us with the Series and the spreadsheet like DataFrame data type.
-
-```python
-df_conc = mcds.get_conc_df()
-df_conc.info()
-```
-
-Please have a look at the [TUTORIAL_python3_pandas.md]() to learn more.
-
-
-### &#x2728; Microenvironment Data Analysis with [Mathplotlib](https://matplotlib.org/)
+### &#x2728; Microenvironment Data Analysis with [Matplotlib](https://matplotlib.org/)
 
 For substrate concentration visualization **matplotlib contour and contourf plots**,
-for any substrate, through any z\_slice can be retrived.\
+for any substrate, through any z\_slice can be retrived. \
 The mcds.plot\_contour function has many parameters to fine tune the plot.
-Please have a look at it's docstring to learn more.\
-The mcds.plot\_contour function output can combine with the mcds.plot\_scatter output.
-
-+ https://matplotlib.org/
-
-Please have a look at the [TUTORIAL_python3_matplotlib.md]() to learn more.
+Please have a look at it's docstring to learn more.
 
 ```python
-# contour plot
 fig = mcds.plot_contour('oxygen')
-fig = mcds.plot_contour('oxygen', z_slice=3.333)
 fig.show()
 ```
 ```python
 help(mcds.plot_contour)
 ```
 
+The mcds.plot\_contour function output can combine with the mcds.plot\_scatter output. \
+Please have a look at the [TUTORIAL_python3_matplotlib.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_matplotlib.md) to learn more.
+
 
 ### &#x2728; Microenvironment Data Analysis with [Vtk](https://vtk.org/)
 
-For substrate concentration visualization **rectilinear grid vtk files**
-for any substrate can be retrived.\
+For substrate concentration visualization in 3D a **rectilinear grid vtk files** can be retrived.\
 This files can be analysied, for example with the [Paraview](https://en.wikipedia.org/wiki/ParaView) software.
-
-+ https://vtk.org/
-
-Please have a look at the [TUTORIAL_paraview.md]() to learn more.
 
 ```python
 mcds.make_conc_vtk()
 ```
+
+Please have a look at the [TUTORIAL_paraview.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_paraview.md) to learn more.
+
+
 
 ## Cell Data Related Functions (Discrete Cells)
 
@@ -285,25 +280,22 @@ We can retrieve a dictionary that maps cell type IDs to labels.
 mcds.get_celltype_dict()  # {'0': 'cancer_cell'}
 ```
 
-Now, let's have a look at all variables we track from each agent.\
-This data we can retrieve as dataframe. \
-By the way, this dataframes not only hold the exact xyz coordinate and all variables.
-The datafram list additionally ijk voxel coordinate, mnp mesh center coordinate,
-the cell surrounding substrate concentrations, and, if available, PhysiBosss output.
+
+### &#x2728; Cell Data Analysis with [Pandas](https://pandas.pydata.org/)
+
+Pandas mimics the [R](https://en.wikipedia.org/wiki/R_(programming_language)) computer language,
+a computer language written for statistical computing.
+As such, pandas provides us with the spreadsheet like DataFrame and the Series data type.
+
+For analysing the cell agent data statistically, a pandas dataframe 
+with the agent's position (xyz), the realted mesh center coordinate (mnp), the related voxel coordinate (ijk), values from a bunch of cell attributes, the cell surrouning substrate concentrations, and some additional attributes like the voxel's cell density and the xyz vector length, and, if applicable, physiboss output, can be retrieved.
 
 ```python
-# data from all agents in the domain
 df_cell = mcds.get_cell_df()
-df_cell.shape  # (992, 95)  this means: 992 agents in the whole domain, 96 tracked variables
+df_cel.info()
 ```
-```python
-df_cell.info()
 ```
-```python
-df_cell.head()
-```
-```python
-sorted(df_cell.columns)
+df_cell.shape  # (992, 95)  this means: 992 agents, 96 tracked variables
 ```
 
 Cell attributes that carry in all agents the same value, carry no information.
@@ -311,7 +303,7 @@ Let's filter for variables that carry at least 2 different values.
 
 ```python
 df_cell = mcds.get_cell_df(values=2)
-df_cell.shape # (992, 40) this means: 992 agents in the whole domain, 40 tracked variables have more than 2 different values
+df_cell.shape # (992, 40) this means: 992 agents, 40 tracked variables
 ```
 
 Let's filter for cells in voxel i2 j1 k0.
@@ -320,36 +312,24 @@ Let's filter for cells in voxel i2 j1 k0.
 df_cell.loc[(df_cell.voxel_i == 2) & (df_cell.voxel_j == 1) & (df_cell.voxel_k == 0), :]  # cells: 5, 7, 39
 ```
 
+Please have a look at the [TUTORIAL_python3_pandas.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_pandas.md) to learn more.
+
+
 There exist an additional, less often used function,
 to filter for cells in xyz position plus minus (voxel spacing / 2).
-(This function might become deprected in a future version of pcdl.)
+(This function might become deprected in a future pcdl version.)
 
 ```python
 mcds.get_cell_df_at(x=45, y=10, z=0)  # cells: 5, 7, 39
 ```
 
-### &#x2728; Cell Data Analysis with [Pandas](https://pandas.pydata.org/)
-
-Pandas mimics the [R](https://en.wikipedia.org/wiki/R_(programming_language)) computer language,
-a computer language written for statistical computing.
-As such, pandas provides us with the Series and the spreadsheet like DataFrame data type.
-
-```python
-df_cell = mcds.get_cell_df()
-df_cel.info()
-```
-
-Please have a look at the [TUTORIAL_python3_pandas.md]() to learn more.
-
 
 ### &#x2728; Cell Data Analysis with in the [Scverse](https://scverse.org/)
 
-To be able to analyse cell agent data the same way single cell RNA seq data is analysed,
+To be able to analyse cell agent data the same way as single cell RNA seq data is analysed,
 pcdl has a function to translate cell agent data into [AnnData](https://anndata.readthedocs.io/en/latest/) format.
 Anndata is the de facto standard for sc RNA seq  data analysis in python.
 Anndata is the backbone of the sc verse project.
-
-+ https://scverse.org/
 
 ```python
 ann = mcds.get_anndata(values=2)
@@ -360,12 +340,13 @@ print(ann)  # AnnData object with n_obs × n_vars = 992 × 26
             #     obsp: 'physicell_neighbor_conectivities', 'physicell_neighbor_distances'
 ```
 
-variables
+variables:
+
 ```python
 ann.var_name  # numerical cell attributes:  Index(['cell_BM_repulsion_strength', ... , 'total_volume'], dtype='object')
 ```
 
-observation
+observation:
 
 ```python
 ann.obs_names  # cell IDs: Index(['0', ..., '994'], dtype='object', name='ID', length=992)
@@ -383,7 +364,7 @@ ann.obsm['spatial']  # the coordinate values (position\_x, position\_y) of the l
 ann.obsp  # cell neigborhood graph data.
 ```
 
-unstructured data
+unstructured data:
 
 ```python
 ann.uns_keys()  # ['neighbor']
@@ -394,7 +375,7 @@ ann.uns['neighbor']  # metadata about the neighborhood graph.
 
 The output tells us that we have loaded a time step  with 992 cell agents and 26 numerical attributes (vars).
 Further, we have 4 categorical cell agent attributes (obs).
-We have each cell agnet's spatial coordinate information (obsm).
+We have each cell agnet's xy spatial coordinate information (obsm).
 And we have cell neighbor graph infromation (obsp, uns).
 
 Whatever you d'like to do with your physicell data, it most probably was already done with single cell wet lab data.
@@ -404,14 +385,12 @@ For example, scRNA seq data is always single time step data because the measurem
 This means, the wet lab bioinformatics will partially try to solve problems (for example trajectory inference), that simply are no problems for us and the other way around.
 Anyhow, there are a lot of scRNA seq data analysis methodes around, whoch make sense to apply to both of this data types.
 
-Please have a look at the [TUTORIAL_python3_scverse.md]() to learn more.
+Please have a look at the [TUTORIAL_python3_scverse.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_scverse.md) to learn more.
 
 
 ### &#x2728; Cell Data Analysis with in the [Networkx](https://networkx.org/) and [Igraph](https://igraph.org/)
 
-+ https://networkx.org/
-+ https://igraph.org/
-
+BUE HERE I AM 
 Since lately, PhysiCell tracks for each cell, if this cell touches other cells.\
 This data is stored in two dictionaries of sets of integers which link the corresponding cell IDs.\
 We have here a closer look at the neighbor graph because the attached graph is in this particular study not really interesting.
@@ -428,47 +407,61 @@ graph.keys()  # dict_keys([0, 1, ..., 993])
 graph[0]  # {1, 31, 33, 929, 935, 950}
 ```
 
-### &#x2728; Cell Data Analysis with [Mathplotlib](https://matplotlib.org/)
 
-Additionally, there is a scatter plot function available, shaped for df\_cell dataframe content.
-```
-# scatter plot
-fig = mcds.plot_scatter()  # default focus is cell_type and z_slice=0
-fig.show()
+### &#x2728; Cell Data Analysis with [Matplotlib](https://matplotlib.org/)
 
-fig = mcds.plot_scatter('oxygen', z_slice=3.333)
+For cell agent visualization **matplotlib scatter plots**,
+for any substrate, through any z\_slice can be retrived. \
+The mcds.plot\_scatter function has many parameters to fine tune the plot.
+Please have a look at it's docstring to learn more.
+
+```python
+fig = mcds.plot_scatter()
 fig.show()
 ```
+```python
+help(mcds.plot_scatter)
+```
+
+The mcds.plot\_contour function output can combine with the mcds.plot\_contour output. \
+Please have a look at the [TUTORIAL_python3_matplotlib.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_matplotlib.md) to learn more.
 
 
 ### &#x2728; Cell Data Analysis with [Vtk](https://vtk.org/)
 
-For substrate concentration visualization **rectilinear grid vtk files**
-for any substrate can be retrived.\
+For cell agent visualization in 3D **glyph vtk files** can be retrived.\
 This files can be analysied, for example with the [Paraview](https://en.wikipedia.org/wiki/ParaView) software.
-
-+ https://vtk.org/
-
-Please have a look at the [TUTORIAL_paraview.md]() to learn more.
 
 ```python
 mcds.make_cell_vtk()
 ```
+```python
+help(mcds.make_cell_vtk)
+```
+
+Please have a look at the [TUTORIAL_paraview.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_paraview.md) to learn more.
+
+
 
 ## Microenvironment and Cell Data Related Functions
 
 ### &#x2728; PhysiCell Data Analysis with [Napari](https://napari.org/stable/) and [Fiji Imagej](https://fiji.sc/)
 
+BUE HERE I AM 
 The open microscopy's [ome.tiff](https://www.openmicroscopy.org/ome-files/) file fromat.
+
+Load ometiff into python!
 
 + https://napari.org/stable/
 + https://fiji.sc/
 
 
+
 ## Mesh Data Related Functions
 
-For data analysis use, the functions realted to the mesh are most probably the least one you have to deal with.
-However, lets have a look these functions anyway:\
+These functions are very usefull for tool developers.
+However, For data analysis, the functions realted to the mesh are most probably the least one you have to deal with. 
+Lets have a look these functions anyway:\
 It is common, but not necessary, that the voxel's width, height, and depth is the same.\
 In fact, in this test dataset you will find that this is not the case. \
 In the related `PhysiCell_settings.xml` file the voxel was specified as 30[nm] high, 20[nm] wide, and 10[nm] deep.\
@@ -562,6 +555,9 @@ mcds.get_voxel_ijk(x=111, y=22, z=-5.1)  # None and Warning @ pyMCDS.is_in_mesh 
 
 After you are done checking out the results, you can uninstall the test datasets and all files stored within its folders.
 
-```
+```python
 pcdl.uninstall_data()
 ```
+
+That's it!
+

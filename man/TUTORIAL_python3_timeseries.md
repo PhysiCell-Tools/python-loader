@@ -1,9 +1,42 @@
 # PhysiCell Data Loader Python Tutorial
 
+All analysis function available for TimeStep are abailable for TimeSeries too.
+
+For microenviroment data:
++ mcdsts.get_conc_df()
++ mcdsts.plot_contour('substrate')
++ mcdsts.make_conc_vtk()
+
+For cell data:
++ mcdsts.get_cell_df()
++ mcdsts.get_anndata()
++ mcdsts.make_graph_gml()
++ mcdsts.plot_scatter()
++ mcdsts.make_cell_vtk()
+
+Additionaly there are
+New:
++ mcdsts.get_conc_attribute()
++ mcdsts.get_cell_attribute()
++ mcdsts.plot_timeseries()
++ make_ome_tiff()
+
++ mcdsts.get_xmlfile_list()
++ mcdsts.get_mcds_list()
++ mcdsts.get_annmcds_list()
++ mcdsts.read_mcds()
+
++ mcdsts.make_movie() and pcdl.make_movie()
++ mcdsts.make_gif() and pcdl.make_gif()
+
+(+ pcdl.scaler?; but the i have to do the parser and such too.)
+
+
 Please install the latest version of physicelldataloader (pcdl),
 as described in the [HowTo](https://github.com/elmbeech/physicelldataloader/blob/master/man/HOWTO.md) section.
 
 And have a quick read of the pcdl [background](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_introduction.md) infromation.
+
 
 
 ## Loading an MCDS (initialize)
@@ -29,21 +62,6 @@ mcds = pcdl.TimeStep(s_pathfile)  # loads the whole snapshot: the xml and all re
 
 Side note: for path, in general, unix (slash) and windows (backslash) notation will work.
 
-The legacy way of loading data, where filename and path had to be separated, works too.
-
-```python
-# legacy way of loading a mcds object
-mcds = pcdl.TimeStep('output00000012.xml', s_path)
-```
-
-By default, all data related to the snapshot is loaded.\
-For speed and less memory usage, it is however possible to only load the essential (output xml and cell mat data), and exclude microenvironment, graph data, and ID label mapping loading.\
-Additionally, it is possible to specify for custom\_data variable types other than the generic float type, namely: int, bool, and str.
-
-```python
-# fine tuned way of loading a mcds object
-mcds = pcdl.TimeStep(s_pathfile, custom_data_type={}, microenv=False, graph=False, settingxml=None)
-```
 
 
 ### Working With MCDS Time Series in Python3
@@ -304,40 +322,6 @@ dl_conc.keys()  # list attribute names
 dl_conc['oxygen']  # list min and max oxygen values found in the domain over the whole series
 ```
 
-
-
-BUE 20240808: Data Triage
-
-Cell variables that have no variance, zero entropy, that are in all agent overall time steps in the same state, have always exacted the same value, carry no information.
-Similarly, substrates variables that over the whole domain overall time steps have the same concentration are not interesting.
-
-There are functions to help triage over the entier time series for attributes that more likely might carry information, by checking for variables with variation.
-
-
-```
-# cell data min max values
-dl_cell = mcdsts.get_cell_attribute()  # returns a dictionary with all attributes, listing all accessed values
-len(dl_cell)  # 84 attributes
-dl_cell.keys()  # list attribute names
-dl_cell['oxygen']  # list min and max oxygen values found, surrounding a cell, over the whole series
-
-# cell data number of values
-di_state = {}
-[di_state.update({s_attribute: len(li_state)}) for s_attribute, li_state in mcdsts.get_cell_attribute(allvalues=True).items()]
-di_state['oxygen']  # cell surrounding oxygen was found occupying 2388 different values (states) over the whole time series
-
-# substrate data
-dl_conc = mcdsts.get_conc_attribute()
-dl_conc.keys()  # list attribute names
-dl_conc['oxygen']  # list min and max oxygen values found in the domain over the whole series
-```
-BUE 20240808: Data Triage
-
-
-
-
-
-
 ### Data Clean Up
 
 After you are done checking out the results, you can uninstall the test datasets and all files stored within its folders.
@@ -345,3 +329,6 @@ After you are done checking out the results, you can uninstall the test datasets
 ```
 pcdl.uninstall_data()
 ```
+
+
+That's it!
