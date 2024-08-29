@@ -126,6 +126,7 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
     + new pyCLI **pcdl_plot_contour** command line interface function.
     + new pyCLI **pcdl_plot_scatter** command line interface function.
     + new pyCLI **pcdl_plot_timeseries** command line interface function.
+    + new pyMCDS **mcds.get_mesh_mnp** function, the mesh version from mcds.get\_voxel\_ijk.
     + new pyMCDS **make_conc_vtk** function to save substrate data as rectilinear grid vtk file.
     + new pyMCDS **make_cell_vtk** function to save cell data as glyph vtk file.
     + new pyMCDS **make_graph_gml** function to save graphs in a networkx and igraph compatible files format.

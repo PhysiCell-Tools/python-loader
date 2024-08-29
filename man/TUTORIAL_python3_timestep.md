@@ -9,53 +9,52 @@ And, if not already doen so, have a quick read through the pcdl [background](htt
 
 
 
-## Preparation: install the test data set and extract path where the dataset is stored.
+## Preparation
 
-```python
-import pcdl  # the physicell data loader library
-import pathlib  # the library to locate the test data
+To runs this tutorial,
+you can either work the data that is currently in your outpufolder,
+or you can install the 2D unittest dataset into your PhysiCell output folder,
+by executing the following command sequence.
 
-# install the test datasets
-pcdl.install_data()
+**Waring: if you run this sequence, all data currentlty in your PhysiCell/output folder will be overwritten!**
 
-# local path to the installed test data set
-s_path = str(pathlib.Path(pcdl.__file__).parent.joinpath('data_timeseries_2d'))
-s_file = 'output00000012.xml'  # the snapshot we want to analyze
-s_pathfile = f'{s_path}/{s_file}'
-
-# output
-print('mcds xml path:', s_path)
-print('mcds xml file:', s_file)
-print('mcds xml path/file:', s_pathfile)
+```bash
+cd path/to/PhysiCell
 ```
-
-For paths, in general, unix (slash) and windows (backslash) notation will work.
+```bash
+make data-cleanup
+python3 -c"import pathlib, pcdl, shutil; pcdl.install_data(); s_ipath=str(pathlib.Path(pcdl.__file__).parent.resolve()/'data_timeseries_2d'); shutil.copytree(s_ipath, 'output', dirs_exist_ok=True)"
+```
 
 
 
 ## Loading an MCDS Time Step
 
-By default, all data related to the snapshot is loaded.\
-For speed and less memory usage, it is however possible to only load the essential (output xml and cell mat data), and exclude microenvironment, graph data, PhysiBoss data, and the PhysiCell\_settings.xml cell type ID label mapping.\
-Additionally, it is possible to specify data types for the custom\_data variables, apart from the generic float type, namely: int, bool, and str.
+By default, all data related to the snapshot is loaded.
+For speed and less memory usage, it is however possible to only load the essential (output xml and cell mat data),
+and exclude microenvironment, graph data, PhysiBoss data, and the PhysiCell\_settings.xml cell type ID label mapping. \
+For custom\_data variables it is possible to specify data types, apart from the generic float type, namely: int, bool, and str. \
+For paths, in general, unix (slash) and windows (backslash) notation will work.
 
 The basic way to load a mcds time step object:
 ```python
-import pcdl  # the physicell data loader library
+import pcdl  # load the physicell data loader library
 print('pcdl version:', pcdl.__version__)  # it is easy to figure out which pcdl version you run
 
-mcds = pcdl.TimeStep(s_pathfile)  # loads the whole snapshot: the xml and all related mat and graph files
+mcds = pcdl.TimeStep('output/output00000012.xml')  # loads the whole snapshot: the xml and all related mat and graph files
 ```
 
 The fine tuned way of loading a mcds time step object:
+
 ```python
-import pcdl  # the physicell data loader library
+import pcdl  # load the physicell data loader library
 print('pcdl version:', pcdl.__version__)  # it is easy to figure out which pcdl version you run
 
 mcds = pcdl.TimeStep(s_pathfile, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
 ```
 
-Verbosity you can tune, evnen after loading the data.
+The verbosity for pcdl outpur you can tune, evnen after loading the data.
+
 ```python3
 mcds.set_verbose_false()
 ```
@@ -168,6 +167,7 @@ We can also retrieve a pandas dataframe with the parameters (decay\_rate, diffus
 df = mcds.get_substrate_df()
 df.head()
 ```
+
 
 ### &#x2728; Microenvironment Data Analysis with [Pandas](https://pandas.pydata.org/)
 
@@ -455,38 +455,77 @@ Please have a look at [TUTORIAL_paraview.md](https://github.com/elmbeech/physice
 
 ### &#x2728; PhysiCell Data Analysis with [Napari](https://napari.org/stable/) and [Fiji Imagej](https://fiji.sc/)
 
-BUE HERE I AM
-The open microscopy's [ome.tiff](https://www.openmicroscopy.org/ome-files/) file fromat.
+For substrate and cell agent visualization, data can be saved in open microscopy's [ome.tiff](https://www.openmicroscopy.org/ome-files/) file fromat.
 
-Load ometiff into python!
+For cell agnets, the default cell\_attribute outputted is the cell ID + 1, result in segmentation masks,
+although, any numerical (bool, int, float) cell\_attribute can be outputted.
 
-+ https://napari.org/stable/
-+ https://fiji.sc/
+```python
+mcds.make_ome_tiff()  # mark by cell ID + 1.
+```
+```python
+mcds.make_ome_tiff('dead')  # mark dead and alive cells.
+```
 
+The ome.tiff files can be loaded back in to python, for example through the
+[sci-kit image](https://scikit-image.org/) library (image data only) or
+Allen Institute for Cell Science's [aicsiamgeio](https://github.com/AllenCellModeling/aicsimageio) library (image and metadata).
+
+```python
+from skimage import io
+
+a = io.imread('output/output00000012_ID.ome.tiff')
+a.shape  # numpy array with shape (2, 200, 300)
+```
+```python
+from aicsimageio import AICSImage
+
+img = AICSImage('output/output00000012_ID.ome.tiff')
+img.shape  # (1, 2, 1, 200, 300)
+```
+```python
+img.dims  # <Dimensions [T: 1, C: 2, Z: 1, Y: 200, X: 300]>
+```
+```python
+img.channel_names  # [np.str_('oxygen'), np.str_('cancer_cell')]
+```
+
+Beside that, ome.tiff files enabels us to study PhysiCell output the same way
+as commonly fluorescent microscopy data is analysed by wetlab scientists.
 Please have a look at [TUTORIAL_python3_napari.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_napari.md)
 and [TUTORIAL_fiji_imagej.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_napari.md) to learn more.
 
 
+
 ## Mesh Data Related Functions
 
-These functions are very usefull for tool developers.
-However, For data analysis, the functions realted to the mesh are most probably the least one you have to deal with.
-Lets have a look these functions anyway:\
-It is common, but not necessary, that the voxel's width, height, and depth is the same.\
-In fact, in this test dataset you will find that this is not the case. \
-In the related `PhysiCell_settings.xml` file the voxel was specified as 30[nm] high, 20[nm] wide, and 10[nm] deep.\
+For data analysis, the functions realted to the mesh are most probably the least one you have to deal with.
+However, these functions are very usefull for tool developers. \
+Lets have a look these functions anyway!
 
-We pcdl we can retrieve anytime the voxel spacing value and voxel volume.\
-Additionally, we can retrieve the mesh spacing.\
-You will notice that voxel and mesh spacing values differ.\
+
+#### Mesh and voxel spacing
+
+It is common, but not necessary, that the voxel's width, height, and depth is the same.
+In fact, in this test dataset you will find that this is not the case.
+In the related `PhysiCell_settings.xml` file the voxel was specified as 30[nm] high, 20[nm] wide, and 10[nm] deep.
+
+Retrieving voxel and mesh spacing from the loaded time step, you will notice that voxel and mesh spacing values differ.
 This is because this data set is from a 2D simulation. For that reason, the mesh depth is set to 1.\
 In 3D simulation data, voxel and mesh spacing will be the same because voxel and mesh depth is the same.
 
 ```python
 mcds.get_mesh_spacing()  # [30.0, 20.0, 1]
+```
+```python
 mcds.get_voxel_spacing() # [30.0, 20.0, 10.0]
+```
+```python
 mcds.get_voxel_volume()  # 30[nm] * 20[nm] * 10[nm] = 6000[nm\*\*3]
 ```
+
+
+#### Cell postion, mesh center, and voxel coordiante systems
 
 Since version 3, for clarity, coordinate labels are distinct for cell position, mesh center, and voxel index:
 + **x,y,z:** stand for cell position coordinates, and are real values.
@@ -498,11 +537,14 @@ Unlike in the python range function, not only the start value, but also the stop
 
 ```python
 mcds.get_voxel_ijk_range()  # [(0, 10), (0, 10), (0, 0)]
+```
+```python
 mcds.get_mesh_mnp_range()  # [(-15.0, 285.0), (-10.0, 190.0), (0.0, 0.0)]
+```
+```python
 mcds.get_xyz_range()  # [(-30.0, 300.0), (-20.0, 200.0), (-5.0, 5.0)]
 ```
 
-The domain benchmarks are:
 + voxel index values stretch from 0 to 10 longitude (i), 0 to 10 latitude (j), the 2D domain is only 1 voxel deep (k).
 + mesh center values stretch from -15[nm] to 285[nm] longitude (m), -10[nm] to 190[nm] latitude (n), and the depth mesh center (p) is at zero.
 + cells can hold a positioned between -30[nm] and 300[nm] longitude (x), -20[nm] and 200[nm] latitude (y), and -5[nm] and 5[nm] depth (z).
@@ -512,45 +554,20 @@ Each of this function will return a list of 3 numpy arrays, ordered by ijk or mn
 
 ```python
 mcds.get_voxel_ijk_axis()
+```
+```python
 mcds.get_mesh_mnp_axis()
 ```
 
-We can even retrieve all mnp mesh center coordinate triplets, and the meshgrids in 2D or 3D shape itself.\
-The coordinate triplets are returned as numpy array.\
-The meshgrids are returned as a 3 way tensor (2D) or 4 way tensor (3D) numpy array. \
-As shown below, these tensors can be subset in the common numpy way.
 
-```python
-# all mnp coordinates
-mnp_coordinats = mcds.get_mesh_coordinate()  # numpy array with shape (3, 121)
-mnp_coordinats.shape  # (3, 121)
+#### Coordinate system helper functions
 
-# 2D mesh grid
-mn_meshgrid = mcds.get_mesh_2D()  # numpy array with shape (2, 11, 11)
-mn_meshgrid.shape # (2, 11, 11)
-m_meshgrid = mn_meshgrid[0]  # or explicit mn_meshgrid[0,:,:]
-n_meshgrid = mn_meshgrid[1]  # or explicit mn_meshgrid[1,:,:]
-m_meshgrid.shape  # (11, 11)
-n_meshgrid.shape  # (11, 11)
-
-# 3D mesh grid
-mnp_meshgrid = mcds.get_mesh()  # numpy array with shape (3, 11, 11, 1)
-mnp_meshgrid.shape # (3, 11, 11, 1)
-m_meshgrid = mnp_meshgrid[0]  # or explicit mnp_meshgrid[0,:,:,:]
-n_meshgrid = mnp_meshgrid[1]  # or explicit mnp_meshgrid[1,:,:,:]
-p_meshgrid = mnp_meshgrid[2]  # or explicit mnp_meshgrid[2,:,:,:]
-m_meshgrid.shape  # (11, 11, 1)
-n_meshgrid.shape  # (11, 11, 1)
-p_meshgrid.shape  # (11, 11, 1)
-```
-
-Furthermore, there are three helper function.\
+There are three helper function for interacting with the coordiante systems:
 One to figure out if a particular xyz coordinate is still in side the mesh,
-the another ones to translate a xyz coordinate into ijk voxel or mnp mesh center indices.\
+the two other ones to translate an xyz coordinate into ijk voxel or mnp mesh center indices, respective.
 The translation functions will by default checks if the given coordinate is in the mesh.
 
-
-Is given xyz is in the mesh?
+Is the given xyz coordinate in the mesh?
 
 ```python
 mcds.is_in_mesh(x=0, y=0, z=0)  # True
@@ -562,8 +579,7 @@ mcds.is_in_mesh(x=111, y=22, z=-5)  # True
 mcds.is_in_mesh(x=111, y=22, z=-5.1)  # False and Warning @ pyMCDS.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0)
 ```
 
-Translate xyz position coordinates into ijk voxel coordinates:
-
+Translate a xyz position coordinate into a ijk voxel coordinate:
 ```python
 mcds.get_voxel_ijk(x=0, y=0, z=0)  # [0,0,0]
 ```
@@ -574,7 +590,7 @@ mcds.get_voxel_ijk(x=111, y=22, z=-5)  # [4, 2, 0]
 mcds.get_voxel_ijk(x=111, y=22, z=-5.1)  # None and Warning @ pyMCDS.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0)
 ```
 
-Translate xyz position coordinates into mnp mesh center coordinates:
+Translate a xyz position coordinate into a mnp mesh center coordinate:
 
 ```python
 mcds.get_mesh_mnp(x=0, y=0, z=0)  # [0,0,0]
@@ -587,12 +603,66 @@ mcds.get_mesh_mnp(x=111, y=22, z=-5.1)  # None and Warning @ pyMCDS.is_in_mesh :
 ```
 
 
-### Data Clean Up
+### The mesh
 
-After you are done checking out the results, you can uninstall the test datasets and all files stored within its folders.
+We can even retrieve all mnp mesh center coordinate triplets, and the meshgrids in 2D or 3D shape itself.
+
+The coordinate triplets are returned as [numpy](https://numpy.org/) array.
 
 ```python
-pcdl.uninstall_data()
+# all mnp coordinates
+mnp_coordinats = mcds.get_mesh_coordinate()  # numpy array with shape (3, 121)
+mnp_coordinats.shape  # (3, 121)
+```
+
+The meshgrids are returned as a 3 way tensor (2D) or 4 way tensor (3D) numpy array. \
+As shown below, these tensors can be subset in the common numpy way.
+
+2D mesh grid:
+
+```python
+mn_meshgrid = mcds.get_mesh_2D()  # numpy array with shape (2, 11, 11)
+mn_meshgrid.shape # (2, 11, 11)
+```
+```python
+m_meshgrid = mn_meshgrid[0]  # or explicit mn_meshgrid[0,:,:]
+m_meshgrid.shape  # (11, 11)
+```
+```python
+n_meshgrid = mn_meshgrid[1]  # or explicit mn_meshgrid[1,:,:]
+n_meshgrid.shape  # (11, 11)
+```
+
+3D mesh grid:
+
+```python
+mnp_meshgrid = mcds.get_mesh()  # numpy array with shape (3, 11, 11, 1)
+mnp_meshgrid.shape # (3, 11, 11, 1)
+```
+```python
+m_meshgrid = mnp_meshgrid[0]  # or explicit mnp_meshgrid[0,:,:,:]
+m_meshgrid.shape  # (11, 11, 1)
+```
+```python
+n_meshgrid = mnp_meshgrid[1]  # or explicit mnp_meshgrid[1,:,:,:]
+n_meshgrid.shape  # (11, 11, 1)
+```
+```python
+p_meshgrid = mnp_meshgrid[2]  # or explicit mnp_meshgrid[2,:,:,:]
+p_meshgrid.shape  # (11, 11, 1)
+```
+
+
+
+### Data Clean Up
+
+After you are done checking out the 2D unittest dataset,
+you can uninstall the datasets and remove the data in the output folder,
+by executing the following command sequence.
+
+```bash
+python3 -c"import pcdl; pcdl.uninstall_data()"
+make data-cleanup
 ```
 
 That's it!

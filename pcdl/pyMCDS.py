@@ -633,6 +633,47 @@ class pyMCDS:
         return b_isinmesh
 
 
+    def get_mesh_mnp(self, x, y, z, is_in_mesh=True):
+        """
+        input:
+            x: floating point number
+                position x-coordinate.
+
+            y: floating point number
+                position y-coordinate.
+
+            z: floating point number
+                position z-coordinate.
+
+            is_in_mesh: boolean; default is True
+                should function check, if the given coordinate is in the mesh,
+                and only calculate ijk values if is so?
+
+        output:
+            lr_mnp : list of 3 floats
+                m, n, p indices for the mesh center, 
+                for the mesh cell containing the x, y, z position.
+
+        description:
+            function returns the meshgrid indices m, n, p
+            for the given position x, y, z.
+        """
+        lr_mnp = None
+        b_calc = True
+
+        if is_in_mesh:
+            b_calc = self.is_in_mesh(x=x, y=y, z=z, halt=False)
+
+        if b_calc:
+            ar_m_axis, ar_n_axis, ar_p_axis = self.get_mesh_mnp_axis()
+            r_m = ar_m_axis[abs(ar_m_axis - x).argmin()]
+            r_n = ar_n_axis[abs(ar_n_axis - y).argmin()]
+            r_p = ar_p_axis[abs(ar_p_axis - z).argmin()]
+            lr_mnp = [r_m, r_n, r_p]
+
+        return lr_mnp
+
+
     def get_voxel_spacing(self):
         """
         input:
@@ -696,7 +737,7 @@ class pyMCDS:
             function returns the meshgrid indices i, j, k
             for the given position x, y, z.
         """
-        lr_ijk = None
+        li_ijk = None
         b_calc = True
 
         if is_in_mesh:
@@ -710,9 +751,9 @@ class pyMCDS:
             j = int(np.round((y - tr_n[0]) / dn))
             k = int(np.round((z - tr_p[0]) / dp))
 
-            lr_ijk = [i, j, k]
+            li_ijk = [i, j, k]
 
-        return lr_ijk
+        return li_ijk
 
 
     ## MICROENVIRONMENT RELATED FUNCTIONS ##
@@ -2186,13 +2227,13 @@ class pyMCDS:
         return self.data['discrete_cells']['graph']['neighbor_cells']
 
 
-    def make_graph_gml(self, graph_type='neighbor', edge_attribute=True, node_attribute=[]):
+    def make_graph_gml(self, graph_type, edge_attribute=True, node_attribute=[]):
         """
         input:
-            graph_type: string; default is neighbor
+            graph_type: string
                 to specify which physicell output data should be processed.
+                neighbor, touch: processes mcds.get_neighbor_graph_dict dictionary.
                 attached: processes mcds.get_attached_graph_dict dictionary.
-                neighbor: processes mcds.get_neighbor_graph_dict dictionary.
 
             edge_attribute: boolean; default True
                 specifies if the spatial Euclidean distance is used for
@@ -2226,10 +2267,12 @@ class pyMCDS:
         r_simtime = self.get_time()
         if (graph_type in {'attached'}):
             dei_graph = self.get_attached_graph_dict()
-        elif (graph_type in {'neighbor'}):
+        elif (graph_type in {'neighbor', 'touch'}):
             dei_graph = self.get_neighbor_graph_dict()
+        #elif (graph_type in {'evo','devo','lineage'}):
+        #    dei_graph = self.get_lineage_graph_dict()
         else:
-            sys.exit(f'Erro @ make_graph_gml : unknowen graph_type {graph_type}. knowen are attached and neighbor.')
+            sys.exit(f'Erro @ make_graph_gml : unknowen graph_type {graph_type}. knowen are attached, neighbor, and touch.')
 
         # generate filename
         s_gmlpathfile = self.path + '/' + self.xmlfile.replace('.xml',f'_{graph_type}.gml')

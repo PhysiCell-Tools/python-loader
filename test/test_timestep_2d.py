@@ -401,6 +401,19 @@ class TestPyMcdsMesh(object):
               (not mcds.is_in_mesh(x=0, y=201, z=0, halt=False)) and \
               (not mcds.is_in_mesh(x=0, y=0, z=6, halt=False))
 
+    def test_mcds_get_mesh_mnp(self, mcds=mcds):
+        li_mesh_0 = mcds.get_mesh_mnp(x=0, y=0, z=0, is_in_mesh=True) # if b_calc
+        li_mesh_1 = mcds.get_mesh_mnp(x=15, y=10, z=0, is_in_mesh=True) # if b_calc
+        li_mesh_2 = mcds.get_mesh_mnp(x=30, y=20, z=0, is_in_mesh=True) # if b_calc
+        li_mesh_none = mcds.get_mesh_mnp(x=-31, y=-21, z=-6, is_in_mesh=True) # else b_calc
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (str(type(li_mesh_0)) == "<class 'list'>") and \
+              (str(type(li_mesh_0[0])) == "<class 'numpy.float64'>") and \
+              (li_mesh_0 == [-15.0, -10.0, 0.0]) and \
+              (li_mesh_1 == [15.0, 10.0, 0.0]) and \
+              (li_mesh_2 == [15.0, 10.0, 0.0]) and \
+              (li_mesh_none is None)
+
     def test_mcds_get_voxel_ijk(self, mcds=mcds):
         li_voxel_0 = mcds.get_voxel_ijk(x=0, y=0, z=0, is_in_mesh=True) # if b_calc
         li_voxel_1 = mcds.get_voxel_ijk(x=15, y=10, z=0, is_in_mesh=True) # if b_calc
