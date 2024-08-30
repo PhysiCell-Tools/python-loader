@@ -13,7 +13,7 @@ Complex numbers are a standard data type in python, but complex numbers can not 
 Python dictonary keys can be of almost any data type, but json object keys have to be strings.
 
 
-### Dump pcdl data construnct from the command line into json
+### Dump pcdl data construnct from the command line into a json file
 
 ```bash
 pcdl_get_conc_attribute output 2
@@ -22,7 +22,7 @@ pcdl_get_conc_attribute output 2
 pcdl_get_cell_attribute output 2
 ```
 
-### Dump pcdl data construnct from within python into json
+### Dump pcdl data construnct from within python into a json file
 
 ```python
 import json
@@ -35,7 +35,6 @@ fp = open('output/timeseries_conc_attribute_minmax.json', 'w')
 json.dump(dl_conc, fp)
 f.close()
 ```
-
 ```python
 import json
 import pcdl
@@ -63,3 +62,5 @@ dl_cell = json.load('output/timeseries_cell_attribute_minmax.json')
 ```
 The python object we retieve from this pcdl conc attribute and cell attribute files is a dictionary of lists.
 
+
+That's it. The rest is analysis!

@@ -1694,7 +1694,7 @@ class pyMCDS:
         """
         # handle initial.svg for s and figsizepx
         if (s is None) or (figsizepx is None):
-            s_pathfile = self.path + 'initial.svg'
+            s_pathfile = self.path + '/initial.svg'
             try:
                 x_tree = etree.parse(s_pathfile)
                 x_root = x_tree.getroot()
