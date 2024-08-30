@@ -89,7 +89,6 @@ mcdsts = pcdl.TimeSeries('output/')
 ```
 
 Fine tuned the what data from a time step will be loaded
-
 Here we only load cell data, not even information about cell type ID:label mapping.
 
 ```python
@@ -100,7 +99,6 @@ mcdsts = pcdl.TimeSeries(s_path, custom_data_type={}, load=True, microenv=False,
 ```
 
 Fine tuned which time steps are loaded.
-
 Here we generate a mcdsts TimeSeris object, wihtout loading any data.
 
 ```python
@@ -116,15 +114,15 @@ This list can be manipulated, and later be fed into the **read_xml** function, t
 For example, if you want only to analyze hour 11, 12, and 13 from your run.
 
 ```python
-ls_xml = mcdsts.get_xmlfile_list()  # ['/path/to/output00000000.xml', '/path/to/output00000001.xml', ..., '/path/to/output00000024.xml']
-ls_xml_11_12_13 = ls_xml[11:14]  # ['/path/to/output00000011.xml', '/path/to/output00000012.xml', '/path/to/output00000013.xml']
+ls_xml = mcdsts.get_xmlfile_list()  # ['/path/to/output00000000.xml', ..., ...]
+ls_xml_11_12_13 = ls_xml[11:14]  # ['/path/to/output00000011.xml', ..., ...]
 ```
 
 For example, if data from every other hour will be enough, you can filter for every even time step.
 
 ```python
-ls_xml = mcdsts.get_xmlfile_list()  # ['/path/to/output00000000.xml', '/path/to/output00000001.xml', ..., '/path/to/output00000024.xml']
-ls_xml_even = [s_xml for i, s_xml in enumerate(ls_xml) if (i%2 == 0)]  # ['/path/to/output00000000.xml', '/path/to/output00000002.xml', ..., /path/to/output00000024.xml']
+ls_xml = mcdsts.get_xmlfile_list()  # ['/path/to/output00000000.xml', ..., ...]
+ls_xml_even = [s_xml for i, s_xml in enumerate(ls_xml) if (i%2 == 0)]  # ['/path/to/output00000000.xml', ..., ...]
 ```
 
 The **read_xml** function will fiannly read the snapshots into RAM.
@@ -160,7 +158,7 @@ using the collapse=False argument, you will endup with a similar list for AnnDat
 
 ```python
 mcdsts.get_anndata(values=2, scale='maxabs', collapse=False)
-mcdsts.get_annmcds_list()  # [AnnData object with n_obs × n_vars ..., ..., ... obsm: 'spatial']
+mcdsts.get_annmcds_list()  # [AnnData object with n_obs × n_vars ..., ..., ...]
 ```
 
 
