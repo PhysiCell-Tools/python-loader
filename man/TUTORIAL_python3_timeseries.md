@@ -1,9 +1,7 @@
 # PhysiCell Data Loader Python Tutorial
 
 If not already done so, please install the latest version of physicelldataloader (pcdl), as described in the [HowTo](https://github.com/elmbeech/physicelldataloader/blob/master/man/HOWTO.md) section.
-
 And maybe read about the pcdl [background](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_introduction.md) infromation.
-
 And maybe, work thorough the [TUTORIAL_python3_timestep.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_timestep.md)
 
 
@@ -38,10 +36,10 @@ For handling TimeSeries, these are:
 + mcdsts.get_mcds_list()
 + mcdsts.get_annmcds_list()
 
-For microenviroment data these are the functions:
+For microenviroment data these is the function:
 + mcdsts.get_conc_attribute()
 
-For cell data these are the functions:
+For cell data these is the function:
 + mcdsts.get_cell_attribute()
 
 For microenviroment and cell data these is the function:
