@@ -13,7 +13,7 @@ And, if not already doen so, have a quick read through the pcdl [background](htt
 
 To runs this tutorial,
 you can either work the data that is currently in your outpufolder,
-or you can install the 2D unittest dataset into your PhysiCell output folder,
+or you can install the 2D unit test dataset into your PhysiCell output folder,
 by executing the following command sequence.
 
 **Waring: if you run this sequence, all data currentlty in your PhysiCell/output folder will be overwritten!**
@@ -419,12 +419,16 @@ Please have a look at [TUTORIAL_python3_graph.md](https://github.com/elmbeech/ph
 ### &#x2728; Cell Data Analysis with [Matplotlib](https://matplotlib.org/)
 
 For cell agent visualization **matplotlib scatter plots**,
-for any substrate, through any z\_slice can be retrived. \
+for any cell attribute, through any z\_slice can be retrived. \
 The mcds.plot\_scatter function has many parameters to fine tune the plot.
 Please have a look at it's docstring to learn more.
 
 ```python
 fig = mcds.plot_scatter()
+fig.show()
+```
+```python
+fig = mcds.plot_scatter('pressure')
 fig.show()
 ```
 ```python
