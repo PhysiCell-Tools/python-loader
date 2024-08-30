@@ -13,7 +13,7 @@ Complex numbers are a standard data type in python, but complex numbers can not 
 Python dictonary keys can be of almost any data type, but json object keys have to be strings.
 
 
-Dump pcdl data construnct from the command line into json:
+### Dump pcdl data construnct from the command line into json
 
 ```bash
 pcdl_get_conc_attribute output 2
@@ -22,7 +22,7 @@ pcdl_get_conc_attribute output 2
 pcdl_get_cell_attribute output 2
 ```
 
-Dump pcdl data construnct from within python into json:
+### Dump pcdl data construnct from within python into json
 
 ```python
 import json
@@ -49,7 +49,7 @@ f.close()
 ```
 
 
-Load json files into python:
+### Load json files into python
 
 ```python
 import json

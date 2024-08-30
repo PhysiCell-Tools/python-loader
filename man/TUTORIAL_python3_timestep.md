@@ -197,7 +197,7 @@ df_conc.loc[(df_conc.voxel_i == 2) & (df_conc.voxel_j == 1) & (df_conc.voxel_k =
 Please have a look at [TUTORIAL_python3_pandas.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_pandas.md) to learn more.
 
 
-Additionally, there is a less often used function to retrieve substrate specific 3D or 2D **meshgrid numpy arrays**.
+Additionally, there is a less often used function to retrieve substrate specific 3D or 2D meshgrid [numpy](https://numpy.org/) arrays.
 To get a 2D meshgrids you can slice though any z stack value, the function will always pick the closest mesh center coordinate, the smaller coordinate, if you hit the saddle point between two voxels.
 (This function might become deprected in a future pcdl version.)
 
@@ -213,7 +213,7 @@ oxygen_3d.shape  # (11, 11, 1)
 ```
 
 
-Additionally, there is a less often used functions to retrieve a **numpy array** of all substrate concentrations at a particular xyz coordinate, ordered alphabetically by substrate name, like the list retrieved by the get\_substrate\_names function.
+Additionally, there is a less often used functions to retrieve a [numpy](https://numpy.org/) array of all substrate concentrations at a particular xyz coordinate, ordered alphabetically by substrate name, like the list retrieved by the get\_substrate\_names function.
 (This function might become deprected in a future pcdl version.)
 
 ```python
@@ -471,33 +471,14 @@ mcds.make_ome_tiff()  # mark by cell ID + 1.
 mcds.make_ome_tiff('dead')  # mark dead and alive cells.
 ```
 
-The ome.tiff files can be loaded back in to python, for example through the
-[sci-kit image](https://scikit-image.org/) library (image data only) or
-Allen Institute for Cell Science's [aicsiamgeio](https://github.com/AllenCellModeling/aicsimageio) library (image and metadata).
-
-```python
-from skimage import io
-
-a = io.imread('output/output00000012_ID.ome.tiff')
-a.shape  # numpy array with shape (2, 200, 300)
-```
-```python
-from aicsimageio import AICSImage
-
-img = AICSImage('output/output00000012_ID.ome.tiff')
-img.shape  # (1, 2, 1, 200, 300)
-```
-```python
-img.dims  # <Dimensions [T: 1, C: 2, Z: 1, Y: 200, X: 300]>
-```
-```python
-img.channel_names  # [np.str_('oxygen'), np.str_('cancer_cell')]
-```
-
+The tiff and ome.tiff files can be loaded back in to python as [numpy](https://numpy.org/) arrays.
 Beside that, ome.tiff files enabels us to study PhysiCell output the same way
 as commonly fluorescent microscopy data is analysed by wetlab scientists.
-Please have a look at [TUTORIAL_python3_napari.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_napari.md)
-and [TUTORIAL_fiji_imagej.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_napari.md) to learn more.
+Please have a look at
+[TUTORIAL_python3_ometiff.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_ometiff.md),
+[TUTORIAL_python3_napari.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_napari.md)
+and [TUTORIAL_fiji_imagej.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_napari.md)
+to learn more.
 
 
 
@@ -554,7 +535,7 @@ mcds.get_xyz_range()  # [(-30.0, 300.0), (-20.0, 200.0), (-5.0, 5.0)]
 + cells can hold a positioned between -30[nm] and 300[nm] longitude (x), -20[nm] and 200[nm] latitude (y), and -5[nm] and 5[nm] depth (z).
 
 For voxel and mesh centers, we can fetch the axis tick lists.\
-Each of this function will return a list of 3 numpy arrays, ordered by ijk or mnp, respective.
+Each of this function will return a list of 3 [numpy](https://numpy.org/) arrays, ordered by ijk or mnp, respective.
 
 ```python
 mcds.get_voxel_ijk_axis()
