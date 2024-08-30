@@ -2,6 +2,7 @@
 
 
 ## Abstract:
+
 physicelldataloader (pcdl) provides a platform independent, python3 based, [pip](https://en.wikipedia.org/wiki/Pip_(package_manager)) installable interface
 to load output, generated with the [PhysiCell](https://github.com/MathCancer/PhysiCell) agent-based modeling and diffusion solver framework,
 into [python3](https://en.wikipedia.org/wiki/Python_(programming_language)).
@@ -17,6 +18,7 @@ The pcdl python3 library maintains three branches branches:
 
 
 ## Header:
+
 + Language: python [>= 3.9](https://devguide.python.org/versions/)
 + Library dependencies: aicsimageio, anndata, matplotlib, numpy, pandas, scipy, (requests), vtk
 + Date of origin original PhysiCell-Tools python-loader: 2019-09-02
@@ -28,46 +30,64 @@ The pcdl python3 library maintains three branches branches:
 
 
 ## HowTo Guide:
+
 + [installation and troubleshooting](https://github.com/elmbeech/physicelldataloader/tree/master/man/HOWTO.md)
 
 
 ## Tutorial:
 
-Basics Tutorial:
+Basics Tutorials:
+
 1. [pcdl background](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_introduction.md)
 1. [pcdl processing mcds time steps in python3](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_timestep.md)
 1. [pcdl processing mcds time series in python3](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_timeseries.md)
 1. [pcdl from the command line](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_commandline.md)
 
-Extras Tutorials:
-<!--
-+ [pcdl and python3 matplotlib](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_matplotlib.md)
-+ [pcdl and python3 napari](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_napari.md)
-+ [pcdl and python3 scipy and scanpy](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_scverse.md)
+
+Extras tutorials python language:
++ [pcdl and python3 and json](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_pandas.md)
++ [pcdl and python3 and pandas](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_pandas.md)
++ [pcdl and python3 and scipy and scanpy](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_scverse.md)
++ [pcdl and python3 and graphs](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_graph.md)
++ [pcdl and python3 and matplotlib](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_matplotlib.md)
++ [pcdl and python3 and napari](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_napari.md)
+
+Extras tutorials other languages than python:
+
 + [pcdl and R](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_r.md)
 + [pcdl and julia](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_julia.md)
+
+
+Extras tutorials GUI software:
+
 + [pcdl and paraview](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_paraview.md)
 + [pcdl and blender](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_belender.md)
++ [pcdl and napari](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_napari.md)
 + [pcdl and fiji imagej](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_fijiimagej.md)
--->
+
 
 Slides:
+
 + [presentations given](https://github.com/elmbeech/physicelldataloader/tree/master/man/lecture)
 
 
 ## Reference Manual:
+
 + [API application interface](https://github.com/elmbeech/physicelldataloader/tree/master/man/REFERENCE.md)
 
 
 ## Discussion:
+
 To be developed.
 
 
 ## About Documentation:
+
 Within the pcdl library, we tried to stick to the documentation policy laid out by Daniele Procida in his "[what nobody tells you about documentation](https://www.youtube.com/watch?v=azf6yzuJt54)" talk at PyCon 2017 in Portland, Oregon.
 
 
 ## Contributions:
+
 + original PhysiCell-Tools python-loader implementation: Patrick Wall, Randy Heiland, Paul Macklin
 + fork pcdl implementation: Elmar Bucher
 + fork pcdl co-programmer: Furkan Kurtoglu, Jennifer Eng, Heber Rocha
@@ -80,6 +100,7 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
 
 
 ## Cite:
+
 ```bibtex
 @Misc{bucher2023,
   author    = {Bucher, Elmar and Wall, Patrick and Rocha, Heber and Kurtoglu, Furkan and Eng, Jennifer and Sundus, Aneequa, and Metzcar, John and Heiland, Randy and Macklin, Paul},
@@ -93,9 +114,11 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
 
 
 ## Road Map:
+
 ~
 
 ## Release Notes:
+
 + version 3.3.0 (2024-08-22): elmbeech/physicelldataloader
     + **pip install pcdl**: will again install all library dependencies, as well anndata and requests.
     + pyMCDS handels now intracellular **physinboss** data too, data is store in cell\_df.

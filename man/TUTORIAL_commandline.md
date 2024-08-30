@@ -106,7 +106,7 @@ pcdl_get_conc_attribute -h
 ```
 
 Further readings:
-+ [TUTORIAL_python3_json.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_pandas.md)
++ [TUTORIAL_python3_json.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_json.md)
 + [TUTORIAL_r.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_r.md)
 + [TUTORIAL_julia.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_julia.md)
 
@@ -216,7 +216,7 @@ pcdl_get_cell_attribute -h
 ```
 
 Further readings:
-+ [TUTORIAL_python3_json.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_pandas.md)
++ [TUTORIAL_python3_json.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_json.md)
 + [TUTORIAL_r.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_r.md)
 + [TUTORIAL_julia.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_julia.md)
 
