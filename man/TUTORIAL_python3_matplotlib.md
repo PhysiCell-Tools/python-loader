@@ -47,3 +47,38 @@ fig.savefig('pymcds_2d_cell_and_microenvironment.png', facecolor='white')
 plt.close()                                                                        
 ```                                                                             
 
+
+
+## 4 Matplotlib Embedding of Pandas and pcdl Plots
+
+
+```python
+# pandas to matplotlib
+fig, ax = plt.subplots(figsize=(9,6))
+fig.suptitle('cell_type and toxin')
+ax.axis('equal')
+mcds.plot_contour('toxin', vmin=0, vmax=0.15, cmap='Blues', ax=ax)
+mcds.plot_scatter(ax=ax)
+plt.tight_layout()
+fig.savefig(f'{s_path_2d}celltype_toxin_fusion.png', facecolor='white')
+#plt.close()
+```
+
+
+```python
+# pandas to matplotlib
+fig, ax = plt.subplots(nrows=1, ncols=2, sharey=True, figsize=(15,6))
+fig.suptitle('cell_type and toxin')
+ax = ax.ravel()
+ax[0].axis('equal')
+ax[1].axis('equal')
+# scatter
+mcds.plot_scatter(ax=ax[0])
+# contour
+mcds.plot_contour('toxin', vmin=0, vmax=0.15, cmap='viridis', ax=ax[1])
+# finalize
+plt.tight_layout()
+fig.savefig(f'{s_path_2d}celltype_toxin_separate.png', facecolor='white')
+#plt.close()
+```
+

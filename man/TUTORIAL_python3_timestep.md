@@ -327,9 +327,9 @@ mcds.get_cell_df_at(x=45, y=10, z=0)  # cells: 5, 7, 39
 ### &#x2728; Cell Data Analysis with in the [Scverse](https://scverse.org/)
 
 To be able to analyse cell agent data the same way as single cell RNA seq data is analysed,
-pcdl has a function to translate cell agent data into [AnnData](https://anndata.readthedocs.io/en/latest/) format.
-Anndata is the de facto standard for sc RNA seq  data analysis in python.
-Anndata is the backbone of the sc verse project.
+pcdl has a function to translate cell agent data into [anndata](https://anndata.readthedocs.io/en/latest/) format.
+Anndata is the de facto standard for sc RNA seq data analysis in python.
+Anndata is the backbone of the scverse (sinngle cell universe) project.
 
 ```python
 ann = mcds.get_anndata(values=2)
@@ -377,13 +377,6 @@ The output tells us that we have loaded a time step  with 992 cell agents and 26
 Further, we have 4 categorical cell agent attributes (obs).
 We have each cell agnet's xy spatial coordinate information (obsm).
 And we have cell neighbor graph infromation (obsp, uns).
-
-Whatever you d'like to do with your physicell data, it most probably was already done with single cell wet lab data.
-That's being said: PhysiCell data is different scdata than scRNA seq!
-For example, scRNA seq data is higher dimensional (e.g. the human genome has over 20000 genes each time step) than PhysiCell data (tens, maybe hundreds of cell attributes).
-For example, scRNA seq data is always single time step data because the measurement consumes the sample. PhysiCell data is always time series data, even we look at this moment only at one time step.
-This means, the wet lab bioinformatics will partially try to solve problems (for example trajectory inference), that simply are no problems for us and the other way around.
-Anyhow, there are a lot of scRNA seq data analysis methodes around, whoch make sense to apply to both of this data types.
 
 Please have a look at [TUTORIAL_python3_scverse.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_scverse.md) to learn more.
 

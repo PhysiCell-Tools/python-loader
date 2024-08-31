@@ -153,8 +153,8 @@ for mcds in mcdsts.get_mcds_list():
     print(mcds.get_mcds_list().get_time())
 ```
 
-If you translate your timeseries into [AnnData]((https://anndata.readthedocs.io/en/latest/) Objects,
-using the collapse=False argument, you will endup with a similar list for AnnData objects.
+If you translate your time series into [anndata]((https://anndata.readthedocs.io/en/latest/) Objects,
+using the collapse=False argument, you will endup with a similar list for anndata objects.
 
 ```python
 mcdsts.get_anndata(values=2, scale='maxabs', collapse=False)

@@ -444,7 +444,7 @@ pcdl_make_gif -h
 
 
 
-### Data Clean Up
+## Data Clean Up
 
 After you are done checking out the 2D unittest dataset,
 you can uninstall the datasets and remove the data in the output folder,
