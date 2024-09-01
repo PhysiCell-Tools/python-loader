@@ -67,4 +67,9 @@ df_cell = pd.read_csv('output/timeseries_cell.csv')
 df_cell.info()
 ```
 
+## Plot data from panadas dataframe
+
+It is easy  to plot data from pandas dataframes.
+Have a look at [TUTORIAL_python3_matplotlib.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_matplotlib.md).
+
 That's it. The rest is analysis!
