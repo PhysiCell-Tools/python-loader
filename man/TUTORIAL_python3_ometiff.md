@@ -19,6 +19,19 @@ Beside that, ome.tiff files can be loaded with Allen Institute for Cell Science'
 
 ### Save pcdl data constructs from the command line into tiff and ome.tiff files
 
+```bash
+pcdl_make_ome_tiff('output/')
+```
+```bash
+pcdl_plot_contour output/output00000012.xml oxygen
+```
+```bash
+pcdl_plot_scatter output/output00000012.xml
+```
+
+
+### Save pcdl data constructs from within python into tiff and ome.tiff files
+
 ```python
 import pcdl
 
@@ -56,11 +69,11 @@ a_ome.shape (25, 2, 200, 300)
 ```python
 from aicsimageio import AICSImage
 
-img = AICSImage('output/output00000012_ID.ome.tiff')
-img.shape  # (1, 2, 1, 200, 300)
+img = AICSImage('output/timeseries_ID.ome.tiff')
+img.shape  # (25, 2, 1, 200, 300)
 ```
 ```python
-img.dims  # <Dimensions [T: 1, C: 2, Z: 1, Y: 200, X: 300]>
+img.dims  # <Dimensions [T: 25, C: 2, Z: 1, Y: 200, X: 300]>
 ```
 ```python
 img.channel_names  # [np.str_('oxygen'), np.str_('cancer_cell')]
