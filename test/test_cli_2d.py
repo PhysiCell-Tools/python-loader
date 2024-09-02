@@ -421,8 +421,8 @@ class TestPyCliPlotContour(object):
     # + path nop
     # + verbose (true, _false_) nop
 
-#    def test_pcdl_make_conc.vtr_timeseries_default(self):
-#        s_result = subprocess.run(['pcdl_make_conc.vtr', s_path_2d], check=False, capture_output=True)
+#    def test_pcdl_make_conc_vtr_timeseries_default(self):
+#        s_result = subprocess.run(['pcdl_make_conc_vtr', s_path_2d], check=False, capture_output=True)
 #        print(f'\ns_result.stdout: {s_result.stdout}\n')
 #        print(f'\ns_result.stderr: {s_result.stderr}\n')
 #        ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
@@ -434,8 +434,8 @@ class TestPyCliPlotContour(object):
 #        for s_opathfile in ls_opathfile:
 #            os.remove(s_opathfile)
 
-#    def test_pcdl_make_conc.vtr_timestep_default(self):
-#        s_result = subprocess.run(['pcdl_make_conc.vtr', s_pathfile_2d], check=False, capture_output=True)
+#    def test_pcdl_make_conc_vtr_timestep_default(self):
+#        s_result = subprocess.run(['pcdl_make_conc_vtr', s_pathfile_2d], check=False, capture_output=True)
 #        print(f'\ns_result.stdout: {s_result.stdout}\n')
 #        print(f'\ns_result.stderr: {s_result.stderr}\n')
 #        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
@@ -1478,8 +1478,8 @@ class TestPyCliCellVtk(object):
     # + verbose (true, _false_) nop
     # + attribute (cell_type oxygen, _empty_) ok
 
-    def test_pcdl_make_cell.vtp_timeseries_default(self):
-        s_result = subprocess.run(['pcdl_make_cell.vtp', s_path_2d], check=False, capture_output=True)
+    def test_pcdl_make_cell_vtp_timeseries_default(self):
+        s_result = subprocess.run(['pcdl_make_cell_vtp', s_path_2d], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
@@ -1491,8 +1491,8 @@ class TestPyCliCellVtk(object):
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
 
-    def test_pcdl_make_cell.vtp_timeseries_customtype_attribute_one(self):
-        s_result = subprocess.run(['pcdl_make_cell.vtp', s_path_2d, 'oncoprotein', '--custom_data_type', 'oncoprotein:str'], check=False, capture_output=True)
+    def test_pcdl_make_cell_vtp_timeseries_customtype_attribute_one(self):
+        s_result = subprocess.run(['pcdl_make_cell_vtp', s_path_2d, 'oncoprotein', '--custom_data_type', 'oncoprotein:str'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
@@ -1504,8 +1504,8 @@ class TestPyCliCellVtk(object):
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
 
-    def test_pcdl_make_cell.vtp_timeseries_microenv(self):
-        s_result = subprocess.run(['pcdl_make_cell.vtp', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
+    def test_pcdl_make_cell_vtp_timeseries_microenv(self):
+        s_result = subprocess.run(['pcdl_make_cell_vtp', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
@@ -1516,21 +1516,8 @@ class TestPyCliCellVtk(object):
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
 
-    def test_pcdl_make_cell.vtp_timeseries_physiboss(self):
-        s_result = subprocess.run(['pcdl_make_cell.vtp', s_path_2d, '--physiboss', 'false'], check=False, capture_output=True)
-        #print(f'\ns_result.stdout: {s_result.stdout}\n')
-        #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
-        #print('ls_opathfile:', ls_opathfile)
-        assert (len(ls_opathfile) == 25) and \
-               (ls_opathfile[0].endswith('data_timeseries_2d/output00000000_cell.vtp')) and \
-               (ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_cell.vtp')) and \
-               (os.path.exists(ls_opathfile[12]))
-        for s_opathfile in ls_opathfile:
-            os.remove(s_opathfile)
-
-    def test_pcdl_make_cell.vtp_timeseries_settingxmlfalse_attribute_one(self):
-        s_result = subprocess.run(['pcdl_make_cell.vtp', s_path_2d, '0_attack_rates', '--settingxml', 'false'], check=False, capture_output=True)
+    def test_pcdl_make_cell_vtp_timeseries_physiboss(self):
+        s_result = subprocess.run(['pcdl_make_cell_vtp', s_path_2d, '--physiboss', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
@@ -1542,8 +1529,8 @@ class TestPyCliCellVtk(object):
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
 
-    def test_pcdl_make_cell.vtp_timeseries_settingxmlnone_attribute_one(self):
-        s_result = subprocess.run(['pcdl_make_cell.vtp', s_path_2d, '0_attack_rates', '--settingxml', 'none'], check=False, capture_output=True)
+    def test_pcdl_make_cell_vtp_timeseries_settingxmlfalse_attribute_one(self):
+        s_result = subprocess.run(['pcdl_make_cell_vtp', s_path_2d, '0_attack_rates', '--settingxml', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
@@ -1555,8 +1542,21 @@ class TestPyCliCellVtk(object):
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
 
-    def test_pcdl_make_cell.vtp_timeseries_attribute_many(self):
-        s_result = subprocess.run(['pcdl_make_cell.vtp', s_path_2d, 'cell_type', 'oxygen'], check=False, capture_output=True)
+    def test_pcdl_make_cell_vtp_timeseries_settingxmlnone_attribute_one(self):
+        s_result = subprocess.run(['pcdl_make_cell_vtp', s_path_2d, '0_attack_rates', '--settingxml', 'none'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
+        #print('ls_opathfile:', ls_opathfile)
+        assert (len(ls_opathfile) == 25) and \
+               (ls_opathfile[0].endswith('data_timeseries_2d/output00000000_cell.vtp')) and \
+               (ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_cell.vtp')) and \
+               (os.path.exists(ls_opathfile[12]))
+        for s_opathfile in ls_opathfile:
+            os.remove(s_opathfile)
+
+    def test_pcdl_make_cell_vtp_timeseries_attribute_many(self):
+        s_result = subprocess.run(['pcdl_make_cell_vtp', s_path_2d, 'cell_type', 'oxygen'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
@@ -1568,8 +1568,8 @@ class TestPyCliCellVtk(object):
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
 
-    def test_pcdl_make_cell.vtp_timestep_default(self):
-        s_result = subprocess.run(['pcdl_make_cell.vtp', s_pathfile_2d], check=False, capture_output=True)
+    def test_pcdl_make_cell_vtp_timestep_default(self):
+        s_result = subprocess.run(['pcdl_make_cell_vtp', s_pathfile_2d], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
@@ -1577,8 +1577,8 @@ class TestPyCliCellVtk(object):
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
-    def test_pcdl_make_cell.vtp_timestep_customtype_attribute_one(self):
-        s_result = subprocess.run(['pcdl_make_cell.vtp', s_pathfile_2d, 'oncoprotein', '--custom_data_type', 'oncoprotein:str'], check=False, capture_output=True)
+    def test_pcdl_make_cell_vtp_timestep_customtype_attribute_one(self):
+        s_result = subprocess.run(['pcdl_make_cell_vtp', s_pathfile_2d, 'oncoprotein', '--custom_data_type', 'oncoprotein:str'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
@@ -1586,8 +1586,8 @@ class TestPyCliCellVtk(object):
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
-    def test_pcdl_make_cell.vtp_timestep_microenv(self):
-        s_result = subprocess.run(['pcdl_make_cell.vtp', s_pathfile_2d, '--microenv', 'false'], check=False, capture_output=True)
+    def test_pcdl_make_cell_vtp_timestep_microenv(self):
+        s_result = subprocess.run(['pcdl_make_cell_vtp', s_pathfile_2d, '--microenv', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
@@ -1595,8 +1595,8 @@ class TestPyCliCellVtk(object):
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
-    def test_pcdl_make_cell.vtp_timestep_physiboss(self):
-        s_result = subprocess.run(['pcdl_make_cell.vtp', s_pathfile_2d, '--physiboss', 'false'], check=False, capture_output=True)
+    def test_pcdl_make_cell_vtp_timestep_physiboss(self):
+        s_result = subprocess.run(['pcdl_make_cell_vtp', s_pathfile_2d, '--physiboss', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
@@ -1604,8 +1604,8 @@ class TestPyCliCellVtk(object):
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
-    def test_pcdl_make_cell.vtp_timestep_settingxmlfalse_attribute_one(self):
-        s_result = subprocess.run(['pcdl_make_cell.vtp', s_pathfile_2d, '0_attack_rates', '--settingxml', 'false'], check=False, capture_output=True)
+    def test_pcdl_make_cell_vtp_timestep_settingxmlfalse_attribute_one(self):
+        s_result = subprocess.run(['pcdl_make_cell_vtp', s_pathfile_2d, '0_attack_rates', '--settingxml', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
@@ -1613,8 +1613,8 @@ class TestPyCliCellVtk(object):
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
-    def test_pcdl_make_cell.vtp_timestep_settingxmlnone_attribute_one(self):
-        s_result = subprocess.run(['pcdl_make_cell.vtp', s_pathfile_2d, '0_attack_rates', '--settingxml', 'none'], check=False, capture_output=True)
+    def test_pcdl_make_cell_vtp_timestep_settingxmlnone_attribute_one(self):
+        s_result = subprocess.run(['pcdl_make_cell_vtp', s_pathfile_2d, '0_attack_rates', '--settingxml', 'none'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
@@ -1622,8 +1622,8 @@ class TestPyCliCellVtk(object):
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
-    def test_pcdl_make_cell.vtp_timestep_attribute_many(self):
-        s_result = subprocess.run(['pcdl_make_cell.vtp', s_pathfile_2d, 'cell_type', 'oxygen'], check=False, capture_output=True)
+    def test_pcdl_make_cell_vtp_timestep_attribute_many(self):
+        s_result = subprocess.run(['pcdl_make_cell_vtp', s_pathfile_2d, 'cell_type', 'oxygen'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')

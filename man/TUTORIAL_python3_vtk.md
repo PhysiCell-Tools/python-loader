@@ -1,69 +1,92 @@
-#
+# PhysiCell Data Loader Tutorial: pcdl and Python and Vtk
 
+[Vtk](https://vtk.org/) the visualization tool kit is a software for image processing, 3D graphics, volume rendering and visualization. \
+Naturaly, we will work here with the [vtk](https://pypi.org/project/vtk/) python binding.
+Additionaly we will have a look at [fury](https://fury.gl/latest/index.html),
+a python library for scientific visualization and 3D animations that can read vtk files too.
+
+
+
+### Howto load and visualize a vtk file with the vtk python library
+
+Installation.
+
+```bash
+pip3 install vtk
+```
+
+Load and display conc.vtr rectilinear grid files.
+
+<!-- Randy, could you help me to write a minimal example? -->
+```python3
+import vtk
+
+# load file
+vtr_reader = vtk.vtkXMLRectilinearGridReader()
+vtr_reader.SetFileName('output/output00000012_conc.vtr')
+vtr_reader.Update()
+
+# actor
+# scene
+# show
+```
+
+Load and display cell.vtp ploydata files.
+
+<!-- Randy, could you help me to write a minimal example? -->
+```python3
+import vtk
+
+# load file
+vtp_reader = vtk.vtkXMLPolyDataReader()
+vtp_reader.SetFileName('output/output00000012_cell.vtp')
+vtp_reader.Update()
+
+# actor
+# scene
+# show
+```
 
 Official documentation:
-
-
-### howto load and visualize a  vtk file with the vtk python library
 + https://docs.vtk.org/en/latest/index.html
++ https://examples.vtk.org/site/Python/
++ https://examples.vtk.org/site/PythonHowTo/
++ https://examples.vtk.org/site/PythonicAPI/
++ https://examples.vtk.org/site/PythonicAPIComments/
 
-pip3 install vtk
 
-### howto load and visualize a  vtk file with the vtk python library
-+ https://fury.gl/latest/index.html
+### howto load and visualize a vtk file with the fury python library
 
+Installation.
 
+```bash
 pip3 install fury
+```
 
+<!-- ask Elef if this is true -->
+Unfortunately, rectiliniar grid files are not supported, conc.vtr files can't be loaded.
+
+Load and display cell.vtp ploydata files.
 
 ```python
 import fury
 
-v_cell = fury.io.load_polydata('output/output00000012_cell.vtk')
+# load file
+v_cell = fury.io.load_polydata('output/output00000012_cell.vtp')
+
+# actor
 actor = fury.get_actor_from_polydata(v_cell)
+
+# scene
 scene = fury.window.Scene()
-showm = fury.window.ShowManager(scene, size=(1024,720), reset_camera=False)
-showm.initialize()
 scene.add(actor)
+
+# show
+showm = fury.window.ShowManager(scene)
+showm.initialize()
 showm.start()
 ```
 
-get_actor_from_polydata(polydata)
+Official documentation:
++ https://fury.gl/latest/index.html
 
-
-Get actor from a vtkPolyData.
-
-get_actor_from_primitive(vertices, triangles, *)
-
-
-Get actor from a vtkPolyData.
-
-
-
-vtk library
-fury graph library
-
-https://docs.vtk.org/en/latest/getting_started/index.htmls
-
-
-```python
-import vtk
-
-```
-```bash
-itk-vtk-viewer
-```
-+ https://kitware.github.io/itk-vtk-viewer/docs/shortcuts.html
-
-
-
-
-
-
-+ https://examples.vtk.org/site/Python/
-+ https://examples.vtk.org/site/PythonHowTo/
-
-
-+ https://docs.vtk.org/en/latest/api/python.html
-+ https://examples.vtk.org/site/PythonicAPI/
-+ https://examples.vtk.org/site/PythonicAPIComments/

@@ -50,7 +50,7 @@ Extras tutorials python language:
 + [pcdl and python3 and scipy and scanpy](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_scverse.md)  [ok]
 + [pcdl and python3 and graphs](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_graph.md)  [ok]
 + [pcdl and python3 and matplotlib](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_matplotlib.md)  [ok]
-+ [pcdl and python3 and vtk](https://github.com/elmbeech/physicelldataloader/tree/master/man/man/TUTORIAL_python3_vtk.md) [!]
++ [pcdl and python3 and vtk](https://github.com/elmbeech/physicelldataloader/tree/master/man/man/TUTORIAL_python3_vtk.md) [ok]
 + [pcdl and python3 and ome.tiff, tiff, png, and jpeg](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_ometiff.md)  [ok]
 + [pcdl and python3 and napari](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_napari.md)  [ok]
 

@@ -353,8 +353,8 @@ class TestPyMcds3dMicroenvWorkhorse(object):
               (os.path.getsize(s_pathfile) > 2**10)
         os.remove(s_pathfile)
 
-    def test_mcds_make_conc.vtr(self, mcds=mcds):
-        s_pathfile = mcds.make_conc.vtr()
+    def test_mcds_make_conc_vtr(self, mcds=mcds):
+        s_pathfile = mcds.make_conc_vtr()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (s_pathfile.replace('\\','/').endswith('/pcdl/data_timeseries_3d/output00000024_conc.vtr')) and \
               (os.path.exists(s_pathfile)) and \
@@ -512,8 +512,8 @@ class TestPyMcds3dCellWorkhorse(object):
               (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
         plt.close()
 
-    def test_mcds_make_cell.vtp_attribute_default(self, mcds=mcds):
-        s_pathfile = mcds.make_cell.vtp(
+    def test_mcds_make_cell_vtp_attribute_default(self, mcds=mcds):
+        s_pathfile = mcds.make_cell_vtp(
             #attribute=['cell_type'],
             visualize=False,
         )
@@ -523,16 +523,16 @@ class TestPyMcds3dCellWorkhorse(object):
               (os.path.getsize(s_pathfile) > 2**10)
         os.remove(s_pathfile)
 
-    def test_mcds_make_cell.vtp_attribute_zero(self, mcds=mcds):
-        s_pathfile = mcds.make_cell.vtp(attribute=[], visualize=False)
+    def test_mcds_make_cell_vtp_attribute_zero(self, mcds=mcds):
+        s_pathfile = mcds.make_cell_vtp(attribute=[], visualize=False)
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (s_pathfile.replace('\\','/').endswith('/pcdl/data_timeseries_3d/output00000024_cell.vtp')) and \
               (os.path.exists(s_pathfile)) and \
               (os.path.getsize(s_pathfile) > 2**10)
         os.remove(s_pathfile)
 
-    def test_mcds_make_cell.vtp_attribute_many(self, mcds=mcds):
-        s_pathfile = mcds.make_cell.vtp(
+    def test_mcds_make_cell_vtp_attribute_many(self, mcds=mcds):
+        s_pathfile = mcds.make_cell_vtp(
             attribute=['dead', 'cell_count_voxel', 'pressure', 'cell_type'],
             visualize=False,
         )
