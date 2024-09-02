@@ -17,7 +17,7 @@ pip3 install vtk
 
 Load and display conc.vtr rectilinear grid files.
 
-<!-- Randy, could you help me to write a minimal example? -->
+<!-- Randy or Furkan, could you help me to write a minimal example? -->
 ```python3
 import vtk
 
@@ -33,7 +33,7 @@ vtr_reader.Update()
 
 Load and display cell.vtp ploydata files.
 
-<!-- Randy, could you help me to write a minimal example? -->
+<!-- Randy or Furkan, could you help me to write a minimal example? -->
 ```python3
 import vtk
 
@@ -48,6 +48,7 @@ vtp_reader.Update()
 ```
 
 Official documentation:
++ https://book.vtk.org/en/latest/index.html
 + https://docs.vtk.org/en/latest/index.html
 + https://examples.vtk.org/site/Python/
 + https://examples.vtk.org/site/PythonHowTo/
@@ -55,7 +56,7 @@ Official documentation:
 + https://examples.vtk.org/site/PythonicAPIComments/
 
 
-### howto load and visualize a vtk file with the fury python library
+### Howto load and visualize a vtk file with the fury python library
 
 Installation.
 
@@ -63,7 +64,7 @@ Installation.
 pip3 install fury
 ```
 
-<!-- ask Elef if this is true -->
+<!-- i have ask Elef if this is true -->
 Unfortunately, rectiliniar grid files are not supported, conc.vtr files can't be loaded.
 
 Load and display cell.vtp ploydata files.
