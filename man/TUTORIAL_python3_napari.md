@@ -51,4 +51,9 @@ viewer.open('output/timeseries_ID.ome.tiff')
 napari output/timeseries_ID.ome.tiff
 ```
 
+## Running napari
+
+Please follow the official documentation to learn how to run the software.
++ https://napari.org/stable/tutorials/start_index.html
+
 That's it. The rest is analysis within napari!
