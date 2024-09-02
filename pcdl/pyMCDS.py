@@ -1243,7 +1243,7 @@ class pyMCDS:
             https://www.paraview.org/
         """
         # off we go.
-        s_vtkfile = self.xmlfile.replace('.xml','_conc.vtk')
+        s_vtkfile = self.xmlfile.replace('.xml','_conc.vtr')
         if self.verbose:
             print(f'processing: {s_vtkfile} ...')
 
@@ -1893,7 +1893,7 @@ class pyMCDS:
             https://www.paraview.org/
         """
         # off we go.
-        s_vtkfile = self.xmlfile.replace('.xml','_cell.vtk')
+        s_vtkfile = self.xmlfile.replace('.xml','_cell.vtp')
         if self.verbose:
             print(f'processing: {s_vtkfile} ...')
 

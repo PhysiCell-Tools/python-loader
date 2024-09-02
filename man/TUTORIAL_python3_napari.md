@@ -18,14 +18,14 @@ pip3 install aicsimageio
 ```
 
 
-### Save pcdl data constructs from the command line into ome.tiff files
+### Generate ome.tiff files from the command line
 
 ```bash
 pcdl_make_ome_tiff('output/')
 ```
 
 
-### Save pcdl data constructs from within python into ome.tiff files
+### Generate ome.tiff files from within python
 
 ```python
 import pcdl
@@ -35,7 +35,7 @@ mcdsts.make_ome_tiff()
 ```
 
 
-### Open ome.tiff files in napari from withon python
+### Open ome.tiff files in napari from within python
 
 ```python
 import napari
@@ -53,7 +53,7 @@ napari output/timeseries_ID.ome.tiff
 
 ## Running napari
 
-Please follow the official documentation to learn how to run the software.
+Please work through the official documentation to learn how to run the software.
 + https://napari.org/stable/tutorials/start_index.html
 
 That's it. The rest is analysis within napari!

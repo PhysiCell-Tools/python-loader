@@ -9,7 +9,7 @@ into [python3](https://en.wikipedia.org/wiki/Python_(programming_language)).
 
 pcdl was forked from the original [PhysiCell-Tools](https://github.com/PhysiCell-Tools) [python-loader](https://github.com/PhysiCell-Tools/python-loader) implementation.
 
-The pcdl python3 library maintains three branches branches:
+The pcdl python3 library maintains three branches:
 
 + **Branch version 1** is the original PhysiCell-Tools/python-loader code.
 + **Branch version 2** will be strictly compatible with the original PhysiCell-Tools/python-loader code, although pip installable.
@@ -62,7 +62,7 @@ Extras tutorials other languages than python:
 
 Extras tutorials GUI software:
 
-+ [pcdl and paraview](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_paraview.md)  [!]
++ [pcdl and paraview](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_paraview.md)  [ok]
 + [pcdl and blender](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_belender.md)  [!]
 + [pcdl and napari](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_napari.md)  (ok)
 + [pcdl and fiji imagej](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_fijiimagej.md) [ok]
@@ -122,7 +122,7 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
 ## Release Notes:
 
 + version 3.3.0 (2024-08-22): elmbeech/physicelldataloader
-    + **pip install pcdl**: will again install all library dependencies, as well anndata and requests.
+    + **pip install pcdl**: will again install all library dependencies. No fine-tuning possible and for that reason less confussing.
     + pyMCDS handels now intracellular **physinboss** data too, data is store in cell\_df.
     + rename pyMCDS get\_cell\_variables to **get_celltype_list** for concisness and order list by ID.
     + rename pyMCDS get\_substrate\_names to **get_substrate_list** for concisness and order list by ID.
