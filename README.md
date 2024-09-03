@@ -63,10 +63,13 @@ Extras tutorials other languages than python:
 Extras tutorials GUI software:
 
 + [pcdl and paraview](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_paraview.md)  [ok]
-+ [pcdl and blender](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_belender.md)  [!]
++ [pcdl and blender](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_belender.md)  [ok]
 + [pcdl and napari](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_napari.md)  (ok)
 + [pcdl and fiji imagej](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_fijiimagej.md) [ok]
 
+<!--
++ [pcdl and neuroglancer](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_(python3)_neuroglancer.md) [?]
+-->
 
 Slides:
 

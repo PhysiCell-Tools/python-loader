@@ -206,8 +206,8 @@ class TestPyMcdsTs3DMicroenv(object):
         plt.close()
 
 
-    def test_mcdsts_make_conc_vtr(self, mcdsts=mcdsts):
-        ls_pathfile = mcdsts.make_conc_vtr()
+    def test_mcdsts_make_conc_vtk(self, mcdsts=mcdsts):
+        ls_pathfile = mcdsts.make_conc_vtk()
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (ls_pathfile[0].endswith('/pcdl/data_timeseries_3d/output00000000_conc.vtr')) and \
               (ls_pathfile[-1].endswith('/pcdl/data_timeseries_3d/output00000024_conc.vtr')) and \
@@ -337,8 +337,8 @@ class TestPyMcds3DCell(object):
               (len(l_fig) == 25)
         plt.close()
 
-    def test_mcdsts_make_cell_vtp(self, mcdsts=mcdsts):
-        ls_pathfile = mcdsts.make_cell_vtp(visualize=False)
+    def test_mcdsts_make_cell_vtk(self, mcdsts=mcdsts):
+        ls_pathfile = mcdsts.make_cell_vtk(visualize=False)
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (ls_pathfile[0].endswith('/pcdl/data_timeseries_3d/output00000000_cell.vtp')) and \
               (ls_pathfile[-1].endswith('/pcdl/data_timeseries_3d/output00000024_cell.vtp')) and \
