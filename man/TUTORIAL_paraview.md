@@ -1,5 +1,7 @@
 # PhysiCell Data Loader Tutorial: pcdl and Paraview
 
+[Paraview](https://www.paraview.org/) is a free and open source scientific visualzation software,
+that let us load and analyse vtk rectilinear grid data and vtk polynom data<!--, and even ome.tiff data files-->.
 
 # Install paraview
 

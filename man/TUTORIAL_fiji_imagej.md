@@ -1,6 +1,6 @@
 # PhysiCell Data Loader Tutorial: pcdl and Fiji Imagej
 
-[Fiji](https://fiji.sc/) is an image processing package,
+[Fiji](https://fiji.sc/) is a free and open source image processing library,
 a "batteries-included" distribution of [ImageJ](https://en.wikipedia.org/wiki/ImageJ),
 able to read [ome.tiff](https://www.openmicroscopy.org/ome-files/) files.
 
