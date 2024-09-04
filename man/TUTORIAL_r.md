@@ -6,7 +6,7 @@ which, becaue of it's libarary collection, is very popular amonst bioinformatici
 
 ## Handle csv files
 
-### Save pcdl data constructs as csv files from the command line
+### Save pcdl data structures as csv files from the command line
 
 ```bash
 cd path/to/PhysiCell
@@ -49,7 +49,7 @@ rownames(df_cell)
 
 ## Handle json files
 
-### Save pcdl data constructs as json files from the command line
+### Save pcdl data structures as json files from the command line
 
 ```bash
 cd path/to/PhysiCell
@@ -89,7 +89,7 @@ str(l_cell)
 
 ## Handle gml graph data files
 
-### Save pcdl data constructs as gml files from the command line
+### Save pcdl data structures as gml files from the command line
 
 ```bash
 cd path/to/PhysiCell
@@ -120,9 +120,9 @@ str(g)
 ```
 
 
-## Handle hd5ad single cell data files
+## Handle h5ad single cell data files
 
-### Save pcdl data constructs as gml files from the command line
+### Save pcdl data structures as h5ad files from the command line
 
 ```bash
 cd path/to/PhysiCell
@@ -134,7 +134,7 @@ pcdl_get_anndata output/
 ### AnnData, SingleCellExperiment and Seurat
 
 We will use the [schard](https://github.com/cellgeni/schard)) R package
-to translate the hd5ad file into R data structures that can be analysed
+to translate the h5ad file into R data structures that can be analysed
 by [singlecellexperiment](https://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html)
 and  [seurat](https://satijalab.org/seurat/).
 

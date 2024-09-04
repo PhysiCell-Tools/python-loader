@@ -1,4 +1,4 @@
-# PhysiCell Data Loader Tutorial: pcdl and Python and the Ome.tiff, Tiff, Png, and Json File Format
+# PhysiCell Data Loader Tutorial: pcdl and Python and the Ome.tiff, Tiff, Png, and Jpeg File Format
 
 In pcdl output form [TimeSteps](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_timestep.md) and [TimeSeries](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_timeseries.md) can be stotred as [ome.tiff](https://www.openmicroscopy.org/ome-files/), [tiff](https://www.loc.gov/preservation/digital/formats/fdd/fdd000022.shtml), [png](http://libpng.org/pub/png/), and [jpeg](https://jpeg.org/jpeg/) files.
 
