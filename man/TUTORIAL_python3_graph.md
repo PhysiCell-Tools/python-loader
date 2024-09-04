@@ -14,10 +14,10 @@ Beside that, this book is an eye-opener, why and how mathematicians like to prov
 ## pcdl: save a graph data into a gml file format from the command line
 
 ```bash
-pcdl_make_graph_gml output/output00000024.xml --node_attribute cell_type dead oxygen pressure
+pcdl_make_graph_gml output/output00000024.xml neighbor --node_attribute cell_type dead oxygen pressure
 ```
 ```bash
-pcdl_make_graph_gml output --node_attribute cell_type dead oxygen pressure
+pcdl_make_graph_gml output neighbor --node_attribute cell_type dead oxygen pressure
 ```
 ```bash
 pcdl_make_graph_gml -h

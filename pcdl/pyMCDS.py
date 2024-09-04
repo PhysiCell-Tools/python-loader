@@ -1028,6 +1028,8 @@ class pyMCDS:
 
         # output
         df_conc.sort_values(['voxel_i', 'voxel_j', 'voxel_k', 'time'], axis=0, inplace=True)
+        df_conc.reset_index(drop=True, inplace=True)
+        df_conc.index.name = 'index'
         return df_conc
 
 

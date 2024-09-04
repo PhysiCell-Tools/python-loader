@@ -415,7 +415,7 @@ def get_conc_df():
         )
         # going home
         s_opathfile = s_pathfile.replace('.xml','_conc.csv')
-        df_conc.to_csv(s_opathfile, index=False)
+        df_conc.to_csv(s_opathfile)
         return s_opathfile
 
     else:
@@ -440,12 +440,12 @@ def get_conc_df():
         # going home
         if b_collapse:
             s_opathfile = f'{s_path}/timeseries_conc.csv'
-            ldf_conc.to_csv(s_opathfile, index=False)
+            ldf_conc.to_csv(s_opathfile)
             return s_opathfile
         else:
             ls_opathfile = [f"{s_path}/{s_xmlfile.replace('.xml','_conc.csv')}" for s_xmlfile in mcdsts.get_xmlfile_list()]
             for i, df_conc in enumerate(ldf_conc):
-                df_conc.to_csv(ls_opathfile[i], index=False)
+                df_conc.to_csv(ls_opathfile[i])
             return ls_opathfile
 
 
@@ -1313,8 +1313,7 @@ def make_graph_gml():
     parser.add_argument(
         'graph_type',
         nargs = '?',
-        default = 'neighbor',
-        help = 'to specify which physicell output data should be processed. attached: processes mcds.get_attached_graph_dict dictionary. neighbor: processes mcds.get_neighbor_graph_dict dictionary. default is neighbor.',
+        help = 'to specify which physicell output data should be processed. attached: processes mcds.get_attached_graph_dict dictionary. neighbor: processes mcds.get_neighbor_graph_dict dictionary.',
     )
     # make_graph_gml edge_attribute
     parser.add_argument(

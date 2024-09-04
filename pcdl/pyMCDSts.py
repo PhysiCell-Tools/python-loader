@@ -1187,9 +1187,9 @@ class pyMCDSts:
         elif (focus_num == 'count'):
             ylabel = f'focus_num [{yunit}]'
         elif (yunit is None):
-            ylabel = f'{aggregate_num.__name__} {focus_num}'
+            ylabel = f"{aggregate_num.__name__.replace('np.nan','')} {focus_num}"
         else:
-            ylabel = f'{aggregate_num.__name__} {focus_num} [{yunit}]'
+            ylabel = f"{aggregate_num.__name__replace('np.nan','')} {focus_num} [{yunit}]"
 
         # generate series line plot
         if (ax is None):
@@ -1253,7 +1253,7 @@ class pyMCDSts:
             if (focus_num == 'count'):
                 s_pathfile = f'{self.path}timeseries_{frame}_{focus_cat}_{focus_num}.{ext}'
             else:
-                s_pathfile = f'{self.path}timeseries_{frame}_{focus_cat}_{focus_num}_{aggregate_num.__name__}.{ext}'
+                s_pathfile = f"{self.path}timeseries_{frame}_{focus_cat}_{focus_num}_{aggregate_num.__name__.replace('np.nan','')}.{ext}"
             if figbgcolor is None:
                 figbgcolor = 'auto'
             plt.tight_layout()
