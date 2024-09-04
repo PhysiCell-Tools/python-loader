@@ -99,7 +99,7 @@ pcdl_make_graph_gml output/output00000024.xml neighbor --node_attribute cell_typ
 
 ### Load gml files into a julia data structures
 
-**bue 2024-09-04: this is currently not working, since, for now, GraphIO can not handle the graph, node, and edge metadata in the file.**
+**bue 2024-09-04: this is currently not working, since, for now, GraphIO can not handle the graph, node, or edge metadata in the file.**
 
 We will use the [GraphIO.js](https://github.com/JuliaGraphs/GraphIO.jl) library,
 to load gml files.
@@ -108,20 +108,20 @@ Package installation.
 
 ```julia
 using Pkg
-Pkg.add("CodecZlib")
 Pkg.add("GraphIO")
 Pkg.add("Graphs")
+Pkg.add("ParserCombinator")
 ```
 
 Load gml.
 
 ```julia
-using CodecZlib
 using GraphIO
 using Graphs
+using ParserCombinator
 ```
 ```julia
-graph = loadgraph("/home/bue/src_git/PhysiCell/output/output00000024_neighbor.gml", "graph_key", GMLFormat())
+graph = loadgraph("output/output00000024_neighbor.gml", GraphIO.GML.GMLFormat())
 ```
 
 Please study the Graphs documentation to learn how to analyse graph data.
@@ -188,6 +188,9 @@ pcdl_make_ome_tiff('output/')
 
 ### Load jpeg, png, tiff, and ometiff files into a julia data structures
 
+**bue 2024-09-04: ometiff can currently not be loaded.**
++ https://github.com/tlnagy/OMETIFF.jl/issues/112
+
 We will use the [Images](https://github.com/JuliaImages/Images.jl) library and it's [OMETIFF](https://github.com/tlnagy/OMETIFF.jl) extension,
 to load jpeg, png, tiff, and ome.tiff files
 
@@ -238,7 +241,7 @@ vp_cell = VTKFile("output/output00000021_cell.vtp")
 
 bue 20240904: fails with ERROR: AssertionError: header_type == "UInt64".
 at their homepage under what does not work is written: probably reading from vtk files that were not created by WriteVTK.jl will fail.
-Maybe in fututre it will work.
+does not sound to me like this will work any time in the near future. so I will leave it there.
 
 + https://github.com/JuliaVTK/ReadVTK.jl
 -->
