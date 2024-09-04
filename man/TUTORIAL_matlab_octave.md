@@ -22,14 +22,18 @@ pcdl_get_conc_df output
 pcdl_get_cell_df output
 ```
 
-### Load a csv file into Matlab or Octave
+### Load a csv file into Matlab or Octave as a tabel
+
++ https://www.mathworks.com/help/matlab/ref/readtable.html
++ https://www.mathworks.com/help/matlab/matlab_external/python-pandas-dataframes.html
 
 ```matlab
-df_conc = csvread("output/timeseries_conc.csv")  # or evt textscan?
+df_conc = readtable("output/timeseries_conc.csv")
 ```
 ```matlab
-df_cell = csvread("output/timeseries_conc.csv")  # or evt textscan?
+df_cell = readtable("output/timeseries_conc.csv")
 ```
+
 
 
 ## Handle json files

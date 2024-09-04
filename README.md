@@ -43,7 +43,6 @@ Basics Tutorials:
 1. [pcdl processing mcds time series in python3](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_timeseries.md) [ok]
 1. [pcdl from the command line](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_commandline.md) [ok]
 
-
 Extras tutorials python language:
 + [pcdl and python3 and json](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_pandas.md)  [ok]
 + [pcdl and python3 and pandas](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_pandas.md)  [ok]
@@ -56,9 +55,11 @@ Extras tutorials python language:
 
 Extras tutorials other languages than python:
 
-+ [pcdl and R](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_r.md)  [!]
 + [pcdl and julia](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_julia.md) [!]
-
+<!--
++ [pcdl and matlab or octave](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_matlab_octave.md) [ok]
+-->
++ [pcdl and R](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_r.md)  [ok]
 
 Extras tutorials GUI software:
 
@@ -66,7 +67,6 @@ Extras tutorials GUI software:
 + [pcdl and blender](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_belender.md)  [ok]
 + [pcdl and napari](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_napari.md)  (ok)
 + [pcdl and fiji imagej](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_fijiimagej.md) [ok]
-
 <!--
 + [pcdl and neuroglancer](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_(python3)_neuroglancer.md) [?]
 -->

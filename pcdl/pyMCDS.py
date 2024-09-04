@@ -2041,6 +2041,7 @@ class pyMCDS:
             https://napari.org/stable/
             https://fiji.sc/
         """
+        # bue jenny: 20240904: a 16[bit] ome.tiff is good enough!
         # const
         ls_coor_mnp = ['mesh_center_m', 'mesh_center_n', 'mesh_center_p'] # xyz
         ls_coor_xyz = ['position_x', 'position_y', 'position_z'] # xyz
