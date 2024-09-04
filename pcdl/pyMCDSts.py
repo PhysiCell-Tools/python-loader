@@ -1189,7 +1189,7 @@ class pyMCDSts:
         elif (yunit is None):
             ylabel = f"{aggregate_num.__name__.replace('np.nan','')} {focus_num}"
         else:
-            ylabel = f"{aggregate_num.__name__replace('np.nan','')} {focus_num} [{yunit}]"
+            ylabel = f"{aggregate_num.__name__.replace('np.nan','')} {focus_num} [{yunit}]"
 
         # generate series line plot
         if (ax is None):

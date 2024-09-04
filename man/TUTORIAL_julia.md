@@ -171,8 +171,11 @@ Please study the Muon and AnnData documentation to learn how to analyse this dat
 ## Handle ome.tiff, tiff, png, and jpeg file format
 
 
-### Save pcdl data structures as jpeg and ome.tiff files from the command line
+### Save pcdl data structures as jpeg, png, tiff, and ome.tiff files from the command line
 
+```bash
+pcdl_plot_contour output/output00000021.xml oxygen --ext tiff
+```
 ```bash
 pcdl_plot_contour output/output00000021.xml oxygen
 ```
@@ -183,7 +186,7 @@ pcdl_plot_scatter output/output00000021.xml
 pcdl_make_ome_tiff('output/')
 ```
 
-### Load jpeg and ometiff files into a julia data structures
+### Load jpeg, png, tiff, and ometiff files into a julia data structures
 
 We will use the [Images](https://github.com/JuliaImages/Images.jl) library and it's [OMETIFF](https://github.com/tlnagy/OMETIFF.jl) extension,
 to load jpeg, png, tiff, and ome.tiff files
@@ -197,7 +200,7 @@ Pkg.add("Images")
 Pkg.add("OMETIFF")
 ```
 
-Load jpeg and ome.tiff file.
+Load image file.
 
 ```julia
 using FileIO

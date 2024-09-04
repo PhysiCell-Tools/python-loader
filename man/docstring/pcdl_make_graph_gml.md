@@ -20,7 +20,6 @@ positional arguments:
                         processed. attached: processes
                         mcds.get_attached_graph_dict dictionary. neighbor:
                         processes mcds.get_neighbor_graph_dict dictionary.
-                        default is neighbor.
 
 options:
   -h, --help            show this help message and exit

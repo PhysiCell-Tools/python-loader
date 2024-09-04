@@ -55,7 +55,7 @@ Extras tutorials python language:
 
 Extras tutorials other languages than python:
 
-+ [pcdl and julia](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_julia.md) [!]
++ [pcdl and julia](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_julia.md) [ok]
 <!--
 + [pcdl and matlab or octave](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_matlab_octave.md) [ok]
 -->
@@ -120,7 +120,10 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
 
 ## Road Map:
 
-~
++ add make\_conc\_vtk visualization parameter.
++ new next generation unit test dataset.
++ rewrite make\_ome\_tiff to use less RAM.
++ evt add neuroglancer ome.tiff support.
 
 ## Release Notes:
 

@@ -255,7 +255,7 @@ class TestPyCliConcDf(object):
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         df_conc = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('data_timeseries_2d/timeseries_conc.csv')) and \
-               (df_conc.shape == (3025, 9))
+               (df_conc.shape == (3025, 10))
         os.remove(s_opathfile)
 
     def test_pcdl_get_conc_df_timeseries_drop(self):
@@ -266,7 +266,7 @@ class TestPyCliConcDf(object):
         df_conc = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('data_timeseries_2d/timeseries_conc.csv')) and \
                (not set(df_conc.columns).issuperset({'oxygen'})) and \
-               (df_conc.shape == (3025, 8))
+               (df_conc.shape == (3025, 9))
         os.remove(s_opathfile)
 
     def test_pcdl_get_conc_df_timeseries_keep(self):
@@ -277,7 +277,7 @@ class TestPyCliConcDf(object):
         df_conc = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('data_timeseries_2d/timeseries_conc.csv')) and \
                (set(df_conc.columns).issuperset({'oxygen'})) and \
-               (df_conc.shape == (3025, 9))
+               (df_conc.shape == (3025, 10))
         os.remove(s_opathfile)
 
     def test_pcdl_get_conc_df_timestep(self):
@@ -296,7 +296,7 @@ class TestPyCliConcDf(object):
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         df_conc = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('data_timeseries_2d/output00000024_conc.csv')) and \
-               (df_conc.shape == (121, 9))
+               (df_conc.shape == (121, 10))
         os.remove(s_opathfile)
 
     def test_pcdl_get_conc_df_timestep_drop(self):
@@ -307,7 +307,7 @@ class TestPyCliConcDf(object):
         df_conc = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('data_timeseries_2d/output00000024_conc.csv')) and \
                (not set(df_conc.columns).issuperset({'oxygen'})) and \
-               (df_conc.shape == (121, 8))
+               (df_conc.shape == (121, 9))
         os.remove(s_opathfile)
 
     def test_pcdl_get_conc_df_timestep_keep(self):
@@ -318,7 +318,7 @@ class TestPyCliConcDf(object):
         df_conc = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('data_timeseries_2d/output00000024_conc.csv')) and \
                (set(df_conc.columns).issuperset({'oxygen'})) and \
-               (df_conc.shape == (121, 9))
+               (df_conc.shape == (121, 10))
         os.remove(s_opathfile)
 
 
@@ -1135,7 +1135,7 @@ class TestPyCliGraphGml(object):
     # + node_attribute (cell_type oxygen) ok
 
     def test_pcdl_make_graph_gml_timeseries_default(self):
-        s_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
@@ -1148,7 +1148,7 @@ class TestPyCliGraphGml(object):
             os.remove(s_opathfile)
 
     def test_pcdl_make_grah_gml_timeseries_customtype_nodeattribute_one(self):
-        s_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, '--custom_data_type', 'oncoprotein:str', '--node_attribute', 'oncoprotein'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--custom_data_type', 'oncoprotein:str', '--node_attribute', 'oncoprotein'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
@@ -1161,7 +1161,7 @@ class TestPyCliGraphGml(object):
             os.remove(s_opathfile)
 
     def test_pcdl_make_graph_gml_timeseries_microenv(self):
-        s_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--microenv', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
@@ -1174,7 +1174,7 @@ class TestPyCliGraphGml(object):
             os.remove(s_opathfile)
 
     def test_pcdl_make_graph_gml_timeseries_physiboss(self):
-        s_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, '--physiboss', 'false'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--physiboss', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
@@ -1187,7 +1187,7 @@ class TestPyCliGraphGml(object):
             os.remove(s_opathfile)
 
     def test_pcdl_make_graph_gml_timeseries_settingxmlfalse_nodeattribute_one(self):
-        s_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, '--settingxml', 'false', '--node_attribute', '0_attack_rates'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--settingxml', 'false', '--node_attribute', '0_attack_rates'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
@@ -1200,7 +1200,7 @@ class TestPyCliGraphGml(object):
             os.remove(s_opathfile)
 
     def test_pcdl_make_graph_gml_timeseries_settingxmlnone_nodeattribute_one(self):
-        s_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, '--settingxml', 'none', '--node_attribute', '0_attack_rates'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--settingxml', 'none', '--node_attribute', '0_attack_rates'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
@@ -1226,7 +1226,7 @@ class TestPyCliGraphGml(object):
             os.remove(s_opathfile)
 
     def test_pcdl_make_graph_gml_timeseries_edge_attribute(self):
-        s_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, '--edge_attribute', 'false'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--edge_attribute', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
@@ -1239,7 +1239,7 @@ class TestPyCliGraphGml(object):
             os.remove(s_opathfile)
 
     def test_pcdl_make_graph_gml_timeseries_nodeattribute_one(self):
-        s_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, '--node_attribute', 'cell_type'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--node_attribute', 'cell_type'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
@@ -1252,7 +1252,7 @@ class TestPyCliGraphGml(object):
             os.remove(s_opathfile)
 
     def test_pcdl_make_graph_gml_timeseries_nodeattribute_many(self):
-        s_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, '--node_attribute', 'cell_type', 'oxygen'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--node_attribute', 'cell_type', 'oxygen'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
@@ -1265,7 +1265,7 @@ class TestPyCliGraphGml(object):
             os.remove(s_opathfile)
 
     def test_pcdl_make_graph_gml_timestep_default(self):
-        s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
@@ -1274,7 +1274,7 @@ class TestPyCliGraphGml(object):
         os.remove(s_opathfile)
 
     def test_pcdl_make_graph_gml_timestep_customtype_nodeattribute_one(self):
-        s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, '--custom_data_type', 'oncoprotein:str', '--node_attribute', 'oncoprotein'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--custom_data_type', 'oncoprotein:str', '--node_attribute', 'oncoprotein'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
@@ -1283,7 +1283,7 @@ class TestPyCliGraphGml(object):
         os.remove(s_opathfile)
 
     def test_pcdl_make_graph_gml_timestep_microenv(self):
-        s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, '--microenv', 'false'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--microenv', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
@@ -1292,7 +1292,7 @@ class TestPyCliGraphGml(object):
         os.remove(s_opathfile)
 
     def test_pcdl_make_graph_gml_timestep_physiboss(self):
-        s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, '--physiboss', 'false'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--physiboss', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
@@ -1301,7 +1301,7 @@ class TestPyCliGraphGml(object):
         os.remove(s_opathfile)
 
     def test_pcdl_make_graph_gml_timestep_settingxmlfalse_nodeattribute_one(self):
-        s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, '--settingxml', 'false', '--node_attribute', '0_attack_rates'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--settingxml', 'false', '--node_attribute', '0_attack_rates'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
@@ -1310,7 +1310,7 @@ class TestPyCliGraphGml(object):
         os.remove(s_opathfile)
 
     def test_pcdl_make_graph_gml_timestep_settingxmlnone_nodeattribute_one(self):
-        s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, '--settingxml', 'none', '--node_attribute', '0_attack_rates'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--settingxml', 'none', '--node_attribute', '0_attack_rates'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
@@ -1328,7 +1328,7 @@ class TestPyCliGraphGml(object):
         os.remove(s_opathfile)
 
     def test_pcdl_make_graph_gml_timestep_edge_attribute(self):
-        s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, '--edge_attribute', 'false'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--edge_attribute', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
@@ -1337,7 +1337,7 @@ class TestPyCliGraphGml(object):
         os.remove(s_opathfile)
 
     def test_pcdl_make_graph_gml_timestep_node_attribute_one(self):
-        s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, '--node_attribute', 'cell_type'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--node_attribute', 'cell_type'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
@@ -1346,7 +1346,7 @@ class TestPyCliGraphGml(object):
         os.remove(s_opathfile)
 
     def test_pcdl_make_graph_gml_timestep_node_attribute_many(self):
-        s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, '--node_attribute', 'cell_type', 'oxygen'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--node_attribute', 'cell_type', 'oxygen'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
