@@ -9,16 +9,17 @@
 # releasing a next version on pypi:
 # 0. vim pcdl/VERSION.py  # increase version number in file
 # 1. git add pcdl/VERSION.py
-# 2. git status
-# 3. git commit -m'@ physicelldataloader : next release.'
-# 4. git tag -a v0.0.0 -m'version 0.0.0'
-# 5. rm -r dist
-# 6. python3 -c "import pcdl; pcdl.uninstall_data()"
-# 7. python3 -m build --sdist  # make source distribution
-# 8. python3 -m build --wheel  # make binary distribution python wheel
-# 9. twine upload dist/* --verbose
-# 10. git push origin
-# 11. git push --tag
+# 2. python3 man/scarab.py
+# 3. git status
+# 4. git commit -m'@ physicelldataloader : next release.'
+# 5. git tag -a v0.0.0 -m'version 0.0.0'
+# 6. rm -r dist
+# 7. python3 -c "import pcdl; pcdl.uninstall_data()"
+# 8. python3 -m build --sdist  # make source distribution
+# 9. python3 -m build --wheel  # make binary distribution python wheel
+# 10. twine upload dist/* --verbose
+# 11. git push origin
+# 12. git push --tag
 #####
 
 

@@ -186,8 +186,7 @@ pcdl_make_ome_tiff('output/')
 
 ### Load jpeg, png, tiff, and ometiff files into a julia data structures
 
-&#x26A0; **bue 2024-09-04:** ometiff can currently not be loaded.
-+ https://github.com/tlnagy/OMETIFF.jl/issues/112
+&#x26A0; **bue 2024-09-04:** ome.tiff files can currently not be loaded ( github issue: https://github.com/tlnagy/OMETIFF.jl/issues/112 ).
 
 We will use the [Images](https://github.com/JuliaImages/Images.jl) library and it's [OMETIFF](https://github.com/tlnagy/OMETIFF.jl) extension,
 to load jpeg, png, tiff, and ome.tiff files
