@@ -99,7 +99,7 @@ pcdl_make_graph_gml output/output00000024.xml neighbor --node_attribute cell_typ
 
 ### Load gml files into a julia data structures
 
-&#x26A0; **bue 2024-09-04: this is currently not working, since, for now, GraphIO can not handle the graph, node, or edge metadata in the file.**
+&#x26A0; **bue 2024-09-04:** this is currently not working, since, for now, GraphIO can not handle the graph, node, or edge metadata in the file.
 
 We will use the [GraphIO.js](https://github.com/JuliaGraphs/GraphIO.jl) library,
 to load gml files.
@@ -186,7 +186,7 @@ pcdl_make_ome_tiff('output/')
 
 ### Load jpeg, png, tiff, and ometiff files into a julia data structures
 
-&#x26A0; **bue 2024-09-04: ometiff can currently not be loaded.**
+&#x26A0; **bue 2024-09-04:** ometiff can currently not be loaded.
 + https://github.com/tlnagy/OMETIFF.jl/issues/112
 
 We will use the [Images](https://github.com/JuliaImages/Images.jl) library and it's [OMETIFF](https://github.com/tlnagy/OMETIFF.jl) extension,
