@@ -99,7 +99,7 @@ pcdl_make_graph_gml output/output00000024.xml neighbor --node_attribute cell_typ
 
 ### Load gml files into a julia data structures
 
-**bue 2024-09-04: this is currently not working, since, for now, GraphIO can not handle the graph, node, or edge metadata in the file.**
+&#x26A0; **bue 2024-09-04: this is currently not working, since, for now, GraphIO can not handle the graph, node, or edge metadata in the file.**
 
 We will use the [GraphIO.js](https://github.com/JuliaGraphs/GraphIO.jl) library,
 to load gml files.
@@ -167,9 +167,7 @@ Please study the Muon and AnnData documentation to learn how to analyse this dat
 + https://github.com/scverse/anndata
 
 
-
 ## Handle ome.tiff, tiff, png, and jpeg file format
-
 
 ### Save pcdl data structures as jpeg, png, tiff, and ome.tiff files from the command line
 
@@ -188,7 +186,7 @@ pcdl_make_ome_tiff('output/')
 
 ### Load jpeg, png, tiff, and ometiff files into a julia data structures
 
-**bue 2024-09-04: ometiff can currently not be loaded.**
+&#x26A0; **bue 2024-09-04: ometiff can currently not be loaded.**
 + https://github.com/tlnagy/OMETIFF.jl/issues/112
 
 We will use the [Images](https://github.com/JuliaImages/Images.jl) library and it's [OMETIFF](https://github.com/tlnagy/OMETIFF.jl) extension,
@@ -215,7 +213,6 @@ omeimg = load("output/timeseries_ID.ome.tiff")
 ```julia
 img = load("output/cell_cell_type_z0.0/output00000021_cell_type.jpeg")
 ```
-
 
 <!--
 ## Handle vtk rectiliniar grid and polydata files
@@ -245,6 +242,5 @@ does not sound to me like this will work any time in the near future. so I will 
 
 + https://github.com/JuliaVTK/ReadVTK.jl
 -->
-
 
 That's it!
