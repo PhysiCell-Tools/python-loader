@@ -2672,8 +2672,13 @@ class pyMCDS:
                     ls_variable.append(s_variable_spatial)
                     d_mcds['discrete_cells']['units'].update({s_variable_spatial: s_unit})
 
+            # simple variable and vectors
             else:
-                ls_variable.append(s_variable)
+                if (i_variable > 1):
+                    for i_n in range(i_variable):
+                        ls_variable.append(f'{s_variable}_{str(i_n).zfill(3)}')
+                else:
+                    ls_variable.append(s_variable)
                 d_mcds['discrete_cells']['units'].update({s_variable : s_unit})
 
         # load the file
