@@ -88,8 +88,8 @@ Basically, there are four types of functions:
 ### TimeStep cells
 + [help(mcds.get_celltype_list)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_celltype_list.md)  #! workhorse function
 + [help(mcds.get_celltype_dict)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_celltype_dict.md)
-+ [help(mcds.get_cell_df_at)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_cell_df_at.md)
 + [help(mcds.get_cell_df)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_cell_df.md)  #! workhorse function
++ [help(mcds.get_cell_df_at)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_cell_df_at.md)
 + [help(mcds.plot_scatter)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.plot_scatter.md)  #! workhorse function
 + [help(mcds.make_cell_vtk)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.make_cell_vtk.md)  #! workhorse function
 + [help(mcds.get_anndata)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_anndata.md)  #! workhorse function
@@ -144,7 +144,7 @@ Basically, there are four types of functions:
 ### TimeSeries cell graph
 + [help(mcdsts.get_graph_gml)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.make_graph_gml.md)  #! workhose function
 
-### TimeStep microenvironment and cells
+### TimeSteries microenvironment and cells
 + [help(mcdsts.make_ome_tiff)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.make_ome_tiff.md)  #! workhose function
 
 ### Timeseries timeseries

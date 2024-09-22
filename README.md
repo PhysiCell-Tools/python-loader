@@ -128,6 +128,9 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
 
 ## Release Notes:
 
++ version 3.3.1 (2024-09-22): elmbeech/physicelldataloader
+    + bugfix pyMCDS custom vectors loading.
+
 + version 3.3.0 (2024-08-22): elmbeech/physicelldataloader
     + **pip install pcdl**: will again install all library dependencies. The fine-tuned version was too confssing.
     + pyMCDS handels now intracellular **physinboss** data too; data is stored in cell\_df.

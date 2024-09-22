@@ -82,7 +82,7 @@ dependencies = [
 # metadata
 pcdl_get_version = "pcdl.pyCLI:get_version"
 pcdl_get_unit_dict = "pcdl.pyCLI:get_unit_dict"
-# substrte
+# substrate
 pcdl_get_substrate_list = "pcdl.pyCLI:get_substrate_list"
 pcdl_get_conc_attribute = "pcdl.pyCLI:get_conc_attribute"
 pcdl_get_conc_df = "pcdl.pyCLI:get_conc_df"
