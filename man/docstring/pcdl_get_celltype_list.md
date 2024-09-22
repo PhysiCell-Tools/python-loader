@@ -12,10 +12,11 @@ positional arguments:
 options:
   -h, --help            show this help message and exit
   --settingxml SETTINGXML
-                        from which settings.xml should units and cell type ID
-                        label mapping and units be extracted? set to None or
-                        False if the xml file is missing! default is
-                        PhysiCell_settings.xml.
+                        the settings.xml that is loaded, from which the cell
+                        type ID label mapping, is extracted, if this
+                        information is not found in the output xml file. set
+                        to None or False if the xml file is missing! default
+                        is PhysiCell_settings.xml.
   -v VERBOSE, --verbose VERBOSE
                         setting verbose to True for more text output, while
                         processing. default is False.

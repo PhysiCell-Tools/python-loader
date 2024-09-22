@@ -18,21 +18,22 @@
                 object initialization be read and stored to mcdsts.l_mcds?
 
             microenv: boole; default True
-                should the microenvironment be extracted?
+                should the microenvironment data be loaded?
                 setting microenv to False will use less memory and speed up
                 processing, similar to the original pyMCDS_cells.py script.
 
             graph: boole; default True
-                should neighbor graph and attached graph be extracted?
+                should neighbor graph and attached graph be loaded?
                 setting graph to False will use less memory and speed up processing.
 
             physiboss: boole; default True
-                should physiboss state data extracted, if found?
+                should physiboss state data be loaded, if found?
                 setting physiboss to False will use less memory and speed up processing.
 
             settingxml: string; default PhysiCell_settings.xml
-                from which settings.xml should the substrate and cell type
-                ID label mapping be extracted?
+                the settings.xml that is loaded, from which the cell type ID
+                label mapping, is extracted, if this information is not found
+                in the output xml file.
                 set to None or False if the xml file is missing!
 
             verbose: boole; default True

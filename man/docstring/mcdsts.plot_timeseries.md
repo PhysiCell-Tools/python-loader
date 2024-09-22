@@ -94,7 +94,7 @@
             ext: string; default is None
                 output image format. possible formats are None, jpeg, png, and tiff.
                 if None then the matplotlib figure is returned by the function
-                and not writen to file.
+                and not written to file.
 
             figbgcolor: string; default is None which is transparent (png)
                 or white (jpeg, tiff).

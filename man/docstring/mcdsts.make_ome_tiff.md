@@ -8,7 +8,7 @@
                 the column data type has to be numeric (bool, int, float) and can't be string.
 
             file: boolean; default True
-                if True, an ome.tiff file is output.
+                if True, an ome tiff file is output.
                 if False, a numpy array with shape tczyx is output.
 
             collapse: boole; default True
@@ -20,7 +20,7 @@
 
 ## output:
 ```
-            a_tczyx_img: numpy array or ome.tiff file.
+            a_tczyx_img: numpy array or ome tiff file.
 
 ```
 

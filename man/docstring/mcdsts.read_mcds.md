@@ -6,7 +6,7 @@
             self: pyMCDSts class instance.
 
             xmlfile_list: list of strings; default None
-                list of physicell output output*.xml strings.
+                list of physicell output*.xml strings.
 
 ```
 

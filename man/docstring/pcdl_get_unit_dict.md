@@ -11,15 +11,16 @@ positional arguments:
 
 options:
   -h, --help            show this help message and exit
-  --microenv MICROENV   should the microenvironment be extracted? setting
+  --microenv MICROENV   should the microenvironment data be loaded? setting
                         microenv to False will use less memory and speed up
                         processing, similar to the original pyMCDS_cells.py
                         script. default is True.
   --settingxml SETTINGXML
-                        from which settings.xml should units and cell type ID
-                        label mapping and units be extracted? set to None or
-                        False if the xml file is missing! default is
-                        PhysiCell_settings.xml.
+                        the settings.xml that is loaded, from which the cell
+                        type ID label mapping, is extracted, if this
+                        information is not found in the output xml file. set
+                        to None or False if the xml file is missing! default
+                        is PhysiCell_settings.xml.
   -v VERBOSE, --verbose VERBOSE
                         setting verbose to False for less text output, while
                         processing. default is True.

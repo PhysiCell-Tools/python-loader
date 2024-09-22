@@ -37,9 +37,11 @@ options:
                         if found, should physiboss state data be extracted and
                         loaded into the anndata object? default is True.
   --settingxml SETTINGXML
-                        from which settings.xml should the cell type ID label
-                        mapping be extracted? set to None or False if the xml
-                        file is missing! default is PhysiCell_settings.xml.
+                        the settings.xml that is loaded, from which the cell
+                        type ID label mapping, is extracted, if this
+                        information is not found in the output xml file. set
+                        to None or False if the xml file is missing! default
+                        is PhysiCell_settings.xml.
   -v VERBOSE, --verbose VERBOSE
                         setting verbose to False for less text output, while
                         processing. default is True.

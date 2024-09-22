@@ -39,6 +39,7 @@
             gml compatible and can as such read and write this file format.
 
             https://en.wikipedia.org/wiki/Graph_Modelling_Language
+            https://github.com/elmbeech/physicelldataloader/blob/master/man/publication/himsolt1996gml_a_portable_graph_file_format.pdf
             https://networkx.org/
             https://igraph.org/
         

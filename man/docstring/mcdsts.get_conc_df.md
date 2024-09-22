@@ -25,7 +25,7 @@
 
             collapse: boole; default True
                 should all mcds time steps from the time series be collapsed
-                into one pandas datafarme object, or a list of datafarme objects
+                into one pandas dataframe object, or a list of dataframe objects
                 for each time step?
 
 ```

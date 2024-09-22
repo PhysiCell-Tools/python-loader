@@ -38,7 +38,7 @@ options:
                         float and int will be handled as numeric, bool as
                         Boolean, and str as categorical data. default is an
                         empty string.
-  --microenv MICROENV   should the microenvironment be extracted? setting
+  --microenv MICROENV   should the microenvironment data be loaded? setting
                         microenv to False will use less memory and speed up
                         processing, similar to the original pyMCDS_cells.py
                         script. default is True.
@@ -46,9 +46,11 @@ options:
                         if found, should physiboss state data be extracted and
                         loaded into the df_cell dataframe? default is True.
   --settingxml SETTINGXML
-                        from which settings.xml should the cell type ID label
-                        mapping be extracted? set to None or False if the xml
-                        file is missing! default is PhysiCell_settings.xml.
+                        the settings.xml that is loaded, from which the cell
+                        type ID label mapping, is extracted, if this
+                        information is not found in the output xml file. set
+                        to None or False if the xml file is missing! default
+                        is PhysiCell_settings.xml.
   -v VERBOSE, --verbose VERBOSE
                         setting verbose to False for less text output, while
                         processing. default is True.
