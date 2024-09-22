@@ -180,21 +180,22 @@ class pyMCDSts:
                 object initialization be read and stored to mcdsts.l_mcds?
 
             microenv: boole; default True
-                should the microenvironment be extracted?
+                should the microenvironment data be loaded?
                 setting microenv to False will use less memory and speed up
                 processing, similar to the original pyMCDS_cells.py script.
 
             graph: boole; default True
-                should the graphs be extracted?
+                should the graphs be loaded?
                 setting graph to False will use less memory and speed up processing.
 
             physiboss: boole; default True
-                should physiboss state data extracted, if found?
+                should physiboss state data be loaded, if found?
                 setting physiboss to False will use less memory and speed up processing.
 
             settingxml: string; default PhysiCell_settings.xml
-                from which settings.xml should the cell type ID label mapping,
-                parameters, and units be extracted?
+                the settings.xml that is loaded, from which the cell type ID
+                label mapping, is extracted, if this information is not found
+                in the output xml file.
                 set to None or False if the xml file is missing!
 
             verbose: boole; default True
@@ -290,29 +291,13 @@ class pyMCDSts:
         return self.ls_xmlfile.copy()
 
 
-    def get_mcds_list(self):
-        """
-        input:
-            self: pyMCDSts class instance.
-
-        output:
-            self.l_mcds: list of chronologically ordered mcds objects.
-                watch out, this is a pointer to the
-                self.l_mcds list of mcds objects, not a copy of self.l_mcds!
-
-        description:
-            function returns a pointer to the self.l_mcds list of mcds objects.
-        """
-        return self.l_mcds
-
-
     def read_mcds(self, xmlfile_list=None):
         """
         input:
             self: pyMCDSts class instance.
 
             xmlfile_list: list of strings; default None
-                list of physicell output output*.xml strings.
+                list of physicell output*.xml strings.
 
         output:
             self.l_mcds: list of mcds objects
@@ -349,6 +334,22 @@ class pyMCDSts:
         return l_mcds
 
 
+    def get_mcds_list(self):
+        """
+        input:
+            self: pyMCDSts class instance.
+
+        output:
+            self.l_mcds: list of chronologically ordered mcds objects.
+                watch out, this is a pointer to the
+                self.l_mcds list of mcds objects, not a copy of self.l_mcds!
+
+        description:
+            function returns a pointer to the self.l_mcds list of mcds objects.
+        """
+        return self.l_mcds
+
+
     ## MICROENVIRONMENT RELATED FUNCTIONS ##
 
     def get_conc_df(self, values=1, drop=set(), keep=set(), collapse=True):
@@ -376,7 +377,7 @@ class pyMCDSts:
 
             collapse: boole; default True
                 should all mcds time steps from the time series be collapsed
-                into one pandas datafarme object, or a list of datafarme objects
+                into one pandas dataframe object, or a list of dataframe objects
                 for each time step?
 
         output:
@@ -695,7 +696,7 @@ class pyMCDSts:
 
             collapse: boole; default True
                 should all mcds time steps from the time series be collapsed
-                into one pandas datafarme object, or a list of datafarme objects
+                into one pandas dataframe object, or a list of dataframe objects
                 for each time step?
 
         output:
@@ -981,6 +982,98 @@ class pyMCDSts:
         return ls_vtkpathfile
 
 
+    ## OME TIFF RELATED FUNCTIONS ##
+
+    def make_ome_tiff(self, cell_attribute='ID', file=True, collapse=True):
+        """
+        input:
+            cell_attribute: strings; default is 'ID', with will result in a segmentation mask.
+                column name within cell dataframe.
+                the column data type has to be numeric (bool, int, float) and can't be string.
+
+            file: boolean; default True
+                if True, an ome tiff file is output.
+                if False, a numpy array with shape tczyx is output.
+
+            collapse: boole; default True
+                should all mcds time steps from the time series be collapsed
+                into one ome tiff file (numpy array),
+                or an ome tiff file (numpy array) for each time step?
+
+        output:
+            a_tczyx_img: numpy array or ome tiff file.
+
+        description:
+            function to transform chosen mcdsts output into an 1[um] spaced
+            tczyx (time, channel, z-axis, y-axis, x-axis) ome tiff file or numpy array,
+            one substrate or cell_type per channel.
+            a ome tiff file is more or less:
+            a numpy array, containing the image information
+            and a xml, containing the microscopy metadata information,
+            like the channel labels.
+            the ome tiff file format can for example be read by the napari
+            or fiji (imagej) software.
+
+            https://napari.org/stable/
+            https://fiji.sc/
+        """
+        # each T time step
+        l_tczyx_img = []
+        for i, mcds in enumerate(self.get_mcds_list()):
+            if (not file and not collapse) or (not file and collapse) or (file and collapse):  # 00, 01, 11
+                a_czyx_img = mcds.make_ome_tiff(cell_attribute=cell_attribute, file=False)
+                l_tczyx_img.append(a_czyx_img)
+
+            elif (file and not collapse):  # 10
+                s_pathfile = mcds.make_ome_tiff(cell_attribute=cell_attribute, file=True)
+                l_tczyx_img.append(s_pathfile)
+
+            else:
+                sys.exit(f'Error @ make_ome_tiff :.')
+
+        # output 00 list of numpy arrays
+        if (not file and not collapse):
+            if self.verbose:
+                print(f'la_tczyx_img shape: {len(l_tczyx_img)} * {l_tczyx_img[0].shape}')
+            return l_tczyx_img
+
+        # output 01 numpy array
+        elif (not file and collapse):  # 01
+            # numpy array
+            a_tczyx_img = np.array(l_tczyx_img)
+            if self.verbose:
+                print('a_tczyx_img shape:', a_tczyx_img.shape)
+            return a_tczyx_img
+
+        # output 10 list of pathfile strings
+        elif (file and not collapse):  # 01
+            return l_tczyx_img
+
+        # output 11 ometiff file
+        elif (file and collapse):  # 11
+            a_tczyx_img = np.array(l_tczyx_img)
+            if self.verbose:
+                print('a_tczyx_img shape:', a_tczyx_img.shape)
+            ls_channel = mcds.get_substrate_list() + mcds.get_celltype_list()
+            s_tiffpathfile = f'{self.path}timeseries_{cell_attribute}.ome.tiff'
+            OmeTiffWriter.save(
+                a_tczyx_img,
+                s_tiffpathfile,
+                dim_order = 'TCZYX',
+                #ome_xml=x_img,
+                channel_names = ls_channel,
+                image_names = [f'timeseries_{cell_attribute}'],
+                physical_pixel_sizes = aicsimageio.types.PhysicalPixelSizes(mcds.get_voxel_spacing()[2], 1.0, 1.0), #z,y,x [um]
+                #channel_colors=,
+                #fs_kwargs={},
+            )
+            return s_tiffpathfile
+
+        # error case
+        else:
+            sys.exit(f'Error @ make_ome_tiff :.')
+
+
     ## TIME SERIES RELATED FUNCTIONS ##
 
     def plot_timeseries(self, focus_cat=None, focus_num=None, aggregate_num=np.nanmean, frame='cell', z_slice=None, logy=False, ylim=None, secondary_y=None, subplots=False, sharex=False, sharey=False, linestyle='-', linewidth=None, cmap=None, color=None, grid=True, legend=True, yunit=None, title=None, ax=None, figsizepx=[640, 480], ext=None, figbgcolor=None):
@@ -1077,7 +1170,7 @@ class pyMCDSts:
             ext: string; default is None
                 output image format. possible formats are None, jpeg, png, and tiff.
                 if None then the matplotlib figure is returned by the function
-                and not writen to file.
+                and not written to file.
 
             figbgcolor: string; default is None which is transparent (png)
                 or white (jpeg, tiff).
@@ -1262,98 +1355,6 @@ class pyMCDSts:
             return s_pathfile
 
 
-    ## OME TIFF RELATED FUNCTIONS ##
-
-    def make_ome_tiff(self, cell_attribute='ID', file=True, collapse=True):
-        """
-        input:
-            cell_attribute: strings; default is 'ID', with will result in a segmentation mask.
-                column name within cell dataframe.
-                the column data type has to be numeric (bool, int, float) and can't be string.
-
-            file: boolean; default True
-                if True, an ome.tiff file is output.
-                if False, a numpy array with shape tczyx is output.
-
-            collapse: boole; default True
-                should all mcds time steps from the time series be collapsed
-                into one ome tiff file (numpy array),
-                or an ome tiff file (numpy array) for each time step?
-
-        output:
-            a_tczyx_img: numpy array or ome.tiff file.
-
-        description:
-            function to transform chosen mcdsts output into an 1[um] spaced
-            tczyx (time, channel, z-axis, y-axis, x-axis) ome tiff file or numpy array,
-            one substrate or cell_type per channel.
-            a ome tiff file is more or less:
-            a numpy array, containing the image information
-            and a xml, containing the microscopy metadata information,
-            like the channel labels.
-            the ome tiff file format can for example be read by the napari
-            or fiji (imagej) software.
-
-            https://napari.org/stable/
-            https://fiji.sc/
-        """
-        # each T time step
-        l_tczyx_img = []
-        for i, mcds in enumerate(self.get_mcds_list()):
-            if (not file and not collapse) or (not file and collapse) or (file and collapse):  # 00, 01, 11
-                a_czyx_img = mcds.make_ome_tiff(cell_attribute=cell_attribute, file=False)
-                l_tczyx_img.append(a_czyx_img)
-
-            elif (file and not collapse):  # 10
-                s_pathfile = mcds.make_ome_tiff(cell_attribute=cell_attribute, file=True)
-                l_tczyx_img.append(s_pathfile)
-
-            else:
-                sys.exit(f'Error @ make_ome_tiff :.')
-
-        # output 00 list of numpy arrays
-        if (not file and not collapse):
-            if self.verbose:
-                print(f'la_tczyx_img shape: {len(l_tczyx_img)} * {l_tczyx_img[0].shape}')
-            return l_tczyx_img
-
-        # output 01 numpy array
-        elif (not file and collapse):  # 01
-            # numpy array
-            a_tczyx_img = np.array(l_tczyx_img)
-            if self.verbose:
-                print('a_tczyx_img shape:', a_tczyx_img.shape)
-            return a_tczyx_img
-
-        # output 10 list of pathfile strings
-        elif (file and not collapse):  # 01
-            return l_tczyx_img
-
-        # output 11 ometiff file
-        elif (file and collapse):  # 11
-            a_tczyx_img = np.array(l_tczyx_img)
-            if self.verbose:
-                print('a_tczyx_img shape:', a_tczyx_img.shape)
-            ls_channel = mcds.get_substrate_list() + mcds.get_celltype_list()
-            s_tiffpathfile = f'{self.path}timeseries_{cell_attribute}.ome.tiff'
-            OmeTiffWriter.save(
-                a_tczyx_img,
-                s_tiffpathfile,
-                dim_order = 'TCZYX',
-                #ome_xml=x_img,
-                channel_names = ls_channel,
-                image_names = [f'timeseries_{cell_attribute}'],
-                physical_pixel_sizes = aicsimageio.types.PhysicalPixelSizes(mcds.get_voxel_spacing()[2], 1.0, 1.0), #z,y,x [um]
-                #channel_colors=,
-                #fs_kwargs={},
-            )
-            return s_tiffpathfile
-
-        # error case
-        else:
-            sys.exit(f'Error @ make_ome_tiff :.')
-
-
     ## GRAPH RELATED FUNCTIONS ##
 
     def make_graph_gml(self, graph_type='neighbor', edge_attribute=True, node_attribute=[]):
@@ -1389,6 +1390,7 @@ class pyMCDSts:
             gml compatible and can as such read and write this file format.
 
             https://en.wikipedia.org/wiki/Graph_Modelling_Language
+            https://github.com/elmbeech/physicelldataloader/blob/master/man/publication/himsolt1996gml_a_portable_graph_file_format.pdf
             https://networkx.org/
             https://igraph.org/
         """
@@ -1404,5 +1406,3 @@ class pyMCDSts:
 
         # outout
         return ls_pathfile
-
-

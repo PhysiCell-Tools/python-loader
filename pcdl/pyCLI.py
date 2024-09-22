@@ -116,7 +116,7 @@ def get_unit_dict():
     parser.add_argument(
         '--microenv',
         default = 'true',
-        help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.',
+        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.',
     )
     # TimeSeries graph False
     # TimeSeries physiboss False
@@ -124,7 +124,7 @@ def get_unit_dict():
     parser.add_argument(
         '--settingxml',
         default = 'PhysiCell_settings.xml',
-        help = 'from which settings.xml should units and cell type ID label mapping and units be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
     )
     # TimeSeries verbose
     parser.add_argument(
@@ -765,7 +765,7 @@ def get_celltype_list():
     parser.add_argument(
         '--settingxml',
         default = 'PhysiCell_settings.xml',
-        help = 'from which settings.xml should units and cell type ID label mapping and units be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
     )
     # TimeSeries verbose
     parser.add_argument(
@@ -830,7 +830,7 @@ def get_cell_attribute():
     parser.add_argument(
         '--microenv',
         default = 'true',
-        help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.',
+        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.',
     )
     # TimeSeries graph False
     # TimeSeries physiboss
@@ -843,7 +843,7 @@ def get_cell_attribute():
     parser.add_argument(
         '--settingxml',
         default = 'PhysiCell_settings.xml',
-        help = 'from which settings.xml should the cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
     )
     # TimeSeries verbose
     parser.add_argument(
@@ -975,7 +975,7 @@ def get_cell_df():
     parser.add_argument(
         '--microenv',
         default = 'true',
-        help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.'
+        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.'
     )
     # TimeSeries graph False
     # TimeSeries physiboss
@@ -988,7 +988,7 @@ def get_cell_df():
     parser.add_argument(
         '--settingxml',
         default = 'PhysiCell_settings.xml',
-        help = 'from which settings.xml should the cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
     )
     # TimeSeries verbose
     parser.add_argument(
@@ -1137,7 +1137,7 @@ def get_anndata():
     parser.add_argument(
         '--settingxml',
         default = 'PhysiCell_settings.xml',
-        help = 'from which settings.xml should the cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.'
+        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
     )
     # TimeSeries verbose
     parser.add_argument(
@@ -1288,7 +1288,7 @@ def make_graph_gml():
     parser.add_argument(
         '--microenv',
         default = 'true',
-        help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.'
+        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.'
     )
     # TimeSeries graph True
     # TimeSeries physiboss
@@ -1301,7 +1301,7 @@ def make_graph_gml():
     parser.add_argument(
         '--settingxml',
         default = 'PhysiCell_settings.xml',
-        help = 'from which settings.xml should the cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
     )
     # TimeSeries verbose
     parser.add_argument(
@@ -1422,7 +1422,7 @@ def plot_scatter():
     parser.add_argument(
         '--microenv',
         default = 'true',
-        help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.',
+        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.',
     )
     # TimeSeries graph False
     # TimeSeries physiboss
@@ -1435,7 +1435,7 @@ def plot_scatter():
     parser.add_argument(
         '--settingxml',
         default = 'PhysiCell_settings.xml',
-        help = 'from which settings.xml should the cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
     )
     # TimeSeries verbose
     parser.add_argument(
@@ -1663,7 +1663,7 @@ def make_cell_vtk():
     parser.add_argument(
         '--microenv',
         default = 'true',
-        help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.',
+        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.',
     )
     # TimeSeries graph False
     # TimeSeries physiboss
@@ -1676,7 +1676,7 @@ def make_cell_vtk():
     parser.add_argument(
         '--settingxml',
         default = 'PhysiCell_settings.xml',
-        help = 'from which settings.xml should the cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
     )
     # TimeSeries verbose
     parser.add_argument(
@@ -1786,7 +1786,7 @@ def plot_timeseries():
     parser.add_argument(
         '--microenv',
         default = 'true',
-        help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.',
+        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.',
     )
     # TimeSeries graph
     # nop
@@ -1800,7 +1800,7 @@ def plot_timeseries():
     parser.add_argument(
         '--settingxml',
         default = 'PhysiCell_settings.xml',
-        help = 'from which settings.xml should the cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
     )
     # TimeSeries verbose
     parser.add_argument(
@@ -2056,7 +2056,7 @@ def make_ome_tiff():
     parser.add_argument(
         '--microenv',
         default = 'true',
-        help = 'should the microenvironment be extracted? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.'
+        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.'
     )
     # TimeSeries graph False
     # TimeSeries physiboss
@@ -2069,7 +2069,7 @@ def make_ome_tiff():
     parser.add_argument(
         '--settingxml',
         default = 'PhysiCell_settings.xml',
-        help = 'from which settings.xml should the cell type ID label mapping be extracted? set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
     )
     # TimeSeries verbose
     parser.add_argument(

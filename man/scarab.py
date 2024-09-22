@@ -394,12 +394,12 @@ docstring_md(
 
 # write pyMCDSts microenvironment and cells function makdown files
 docstring_md(
-    s_function = 'mcdsts.plot_timeseries',
-    ls_doc = pcdl.TimeSeries.plot_timeseries.__doc__.split('\n'),
-)
-docstring_md(
     s_function = 'mcdsts.make_ome_tiff',
     ls_doc = pcdl.TimeSeries.make_ome_tiff.__doc__.split('\n'),
+)
+docstring_md(
+    s_function = 'mcdsts.plot_timeseries',
+    ls_doc = pcdl.TimeSeries.plot_timeseries.__doc__.split('\n'),
 )
 
 # write pyMCDSts making movies function markdown files
