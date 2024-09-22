@@ -9,7 +9,7 @@
 ## output:
 ```
             lr_ijk_spacing: list of 3 floating point numbers
-                voxel spacing in i, j, and k direction.
+                voxel spacing in i, j, and k directions.
 
 ```
 

@@ -202,8 +202,8 @@ docstring_md(
     ls_doc = pcdl.TimeStep.is_in_mesh.__doc__.split('\n'),
 )
 docstring_md(
-    s_function = 'mcds.is_in_mesh_mnp',
-    ls_doc = pcdl.TimeStep.is_in_mesh_mnp.__doc__.split('\n'),
+    s_function = 'mcds.get_mesh_mnp',
+    ls_doc = pcdl.TimeStep.get_mesh_mnp.__doc__.split('\n'),
 )
 # voxel
 docstring_md(

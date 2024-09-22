@@ -27,9 +27,9 @@
 
 ## description:
 ```
-            function evaluates, if the given position coordinate
+            function evaluates if the given position coordinate
             is inside the boundaries. if the coordinate is outside the
             mesh, a warning will be printed. if additionally
-            halt is set to True, program execution will break.
+            halt is set to True, program execution will halt.
         
 ```

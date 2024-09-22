@@ -20,8 +20,8 @@
 
 ## description:
 ```
-            function returns a numpy array of meshgrids each stores the
-            mesh center coordinate values from one particular axis.
+            function returns a numpy array of meshgrids each of which stores
+            the mesh center coordinate values from one particular axis.
             the function can either return meshgrids for the full
             m, n, p 3D cube, or only the 2D planes along the p-axis.
         
