@@ -470,7 +470,7 @@ as commonly fluorescent microscopy data is analysed by wetlab scientists.
 Please have a look at
 [TUTORIAL_python3_ometiff.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_ometiff.md),
 [TUTORIAL_python3_napari.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_napari.md)
-and [TUTORIAL_fiji_imagej.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_napari.md)
+and [TUTORIAL_fiji_imagej.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_fijiimagej.md)
 to learn more.
 
 

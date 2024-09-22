@@ -9,7 +9,7 @@ This means, being able to export PhysiCell output in ome.tiff files format
 enabels us to study PhysiCell output the same way
 as commonly fluorescent microscopy data is analysed by wetlab scientists.
 Please have a look at [TUTORIAL_python3_napari.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_napari.md)
-and [TUTORIAL_fiji_imagej.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_napari.md) to learn more.
+and [TUTORIAL_fiji_imagej.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_fijiimagej.md) to learn more.
 
 
 Additionaly ome.tiff, tiff, png, and jpeg files can as well be loaded back in to python as [numpy](https://numpy.org/) array, for example with the [sci-kit image](https://scikit-image.org/) library (image data only).
