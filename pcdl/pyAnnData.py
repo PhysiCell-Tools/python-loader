@@ -37,8 +37,8 @@ def scaler(df_x, scale='maxabs'):
               one attribute per column, one sample per row.
 
         scale: string; default 'maxabs'
-            None: no scaling. set scale to None if you would like to have raw data
-                or entirely scale, transform, and normalize the data later.
+            None: no scaling. set scale to None if you would like to have
+                raw data or scale, transform, and normalize the data later.
 
             maxabs: maximum absolute value distance scaler will linearly map
                 all values into a [-1, 1] interval. if the original data
@@ -67,9 +67,9 @@ def scaler(df_x, scale='maxabs'):
         offers a re-implementation of the linear re-scaling methods maxabs,
         minmax, and scale.
 
-        the robust scaler methods (quantile based) found there are missing.
-        since we deal with simulated data, we don't expect heavy outliers,
-        and if they exist, then they are of interest.
+        the robust scaler methods (quantile based) found in scikit-learn are
+        missing. since we deal with simulated data, we don't expect heavy
+        outliers, and if they exist, then they are of interest.
         the power and quantile based transformation methods and unit circle
         based normalizer methods found there are missing too.
         if you need to apply any such methods, you can do so to an anndata object

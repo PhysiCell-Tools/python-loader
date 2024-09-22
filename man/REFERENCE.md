@@ -58,7 +58,7 @@ Basically, there are four types of functions:
 ### TimeStep mesh
 *range and axis*
 + [help(mcds.get_voxel_ijk_range)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_voxel_ijk_range.md)
-+ [help(mcds.get_mesh_mnp_range)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_mesh_spacing.md)
++ [help(mcds.get_mesh_mnp_range)](https://github.com/elmbeech/physicelldataloader/blob/master/man/docstring/mcds.get_mesh_mnp_range.md)
 + [help(mcds.get_xyz_range)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_xyz_range.md)
 + [help(mcds.get_voxel_ijk_axis)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_voxel_ijk_axis.md)
 + [help(mcds.get_mesh_mnp_axis)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_mesh_mnp_axis.md)
@@ -69,6 +69,7 @@ Basically, there are four types of functions:
 + [help(mcds.get_mesh_coordinate)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_mesh_coordinate.md)
 + [help(mcds.get_mesh_spacing)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_mesh_spacing.md)
 + [help(mcds.is_in_mesh)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.is_in_mesh.md)
++ [help(mcds.get_mesh_mnp)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_mesh_mnp.md)
 
 *voxel ijk*
 + [help(mcds.get_voxel_spacing)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_voxel_spacing.md)

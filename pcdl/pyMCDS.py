@@ -219,21 +219,22 @@ class pyMCDS:
                 bool as Boolean, and str as categorical data.
 
             microenv: boole; default True
-                should the microenvironment be extracted?
+                should the microenvironment data be loaded?
                 setting microenv to False will use less memory and speed up
                 processing, similar to the original pyMCDS_cells.py script.
 
             graph: boole; default True
-                should the graphs be extracted?
+                should the graphs be loaded?
                 setting graph to False will use less memory and speed up processing.
 
             physiboss: boole; default True
-                should physiboss state data extracted, if found?
+                should physiboss state data be loaded, if found?
                 setting physiboss to False will use less memory and speed up processing.
 
             settingxml: string; default PhysiCell_settings.xml
-                the settings.xml that is loaded and, when not found in the
-                output file, the cell type ID label mapping, is extracted.
+                the settings.xml that is loaded, from which the cell type ID
+                label mapping, is extracted, if this information is not found
+                in the output xml file.
                 set to None or False if the xml file is missing!
 
             verbose: boole; default True
@@ -264,17 +265,6 @@ class pyMCDS:
         self.settingxml = settingxml
         self.verbose = verbose
         self.data = self._read_xml(xmlfile, output_path)
-        # forward compatibility
-        #self.plot_conc = self.plot_contour
-        #self.plot_cell = self.plot_scatter
-        # backwards compatibility
-        #self.get_2D_mesh = self.get_mesh_2D
-        #self.get_concentrations_at = self.get_concentration_at
-        #self.get_concentrations = self.get_conc_df
-        #self.get_concentration = self.get_conc_df
-        #self.get_concentration_df = self.get_conc_df
-        #self.get_cell_variables = self.get_celltype_list
-        #self.get_substrate_names = self.get_substrate_list
 
     def set_verbose_false(self):
         """
@@ -436,7 +426,7 @@ class pyMCDS:
             lti_i : list of tuple of 2 integer numbers
                 i-axis, j-aixs, and k-axis voxel range.
 
-        decritpion:
+        description:
             function returns in a list of tuples the lowest and highest
             i-axis, j-axis, and k-axis voxel value.
         """
@@ -451,7 +441,7 @@ class pyMCDS:
             ltr_mnp : list of tuple of 2 floating point numbers
                 m-axis, n-axis, and p-axis  mesh center range.
 
-        decritpion:
+        description:
             function returns in a list of tuples the lowest and highest
             m-axis, n-axis, and p-axis mesh center value.
         """
@@ -466,7 +456,7 @@ class pyMCDS:
             ltr_xyz : list of tuple of 2 floating point numbers
                 x-axis, y-axis, and z-axis position range.
 
-        decritpion:
+        description:
             function returns in a list of tuples the lowest and highest
             x-axis, y-axis, and z-axis position value.
         """
@@ -517,8 +507,8 @@ class pyMCDS:
                 coordinate values from the m, n, p-axis or m, n-axis.
 
         description:
-            function returns a numpy array of meshgrids each stores the
-            mesh center coordinate values from one particular axis.
+            function returns a numpy array of meshgrids each of which stores
+            the mesh center coordinate values from one particular axis.
             the function can either return meshgrids for the full
             m, n, p 3D cube, or only the 2D planes along the p-axis.
         """
@@ -607,10 +597,10 @@ class pyMCDS:
                 declares if the given coordinate is inside the mesh.
 
         description:
-            function evaluates, if the given position coordinate
+            function evaluates if the given position coordinate
             is inside the boundaries. if the coordinate is outside the
             mesh, a warning will be printed. if additionally
-            halt is set to True, program execution will break.
+            halt is set to True, program execution will halt.
         """
         b_isinmesh = True
 
@@ -680,7 +670,7 @@ class pyMCDS:
 
         output:
             lr_ijk_spacing: list of 3 floating point numbers
-                voxel spacing in i, j, and k direction.
+                voxel spacing in i, j, and k directions.
 
         description:
             function returns the voxel width, height, depth measurement,
@@ -2016,22 +2006,22 @@ class pyMCDS:
     def make_ome_tiff(self, cell_attribute='ID', file=True):
         """
         input:
-            cell_attribute: strings; default is 'ID', with will result in a segmentation mask.
+            cell_attribute: strings; default is 'ID', which will result in a segmentation mask.
                 column name within cell dataframe.
                 the column data type has to be numeric (bool, int, float) and can't be string.
 
             file: boolean; default True
-                if True, an ome.tiff file is output.
+                if True, an ome tiff file is output.
                 if False, a numpy array with shape czyx is output.
 
         output:
-            a_czyx_img: numpy array or ome.tiff file.
+            a_czyx_img: numpy array or ome tiff file.
 
         description:
             function to transform chosen mcds output into an 1[um] spaced
             czyx (channel, z-axis, y-axis, x-axis) ome tiff file or numpy array,
             one substrate or cell_type per channel.
-            a ome tiff file is more or less:
+            an ome tiff file is more or less:
             a numpy array, containing the image information
             and a xml, containing the microscopy metadata information,
             like the channel labels.
@@ -2260,6 +2250,7 @@ class pyMCDS:
             gml compatible and can as such read and write this file format.
 
             https://en.wikipedia.org/wiki/Graph_Modelling_Language
+            https://github.com/elmbeech/physicelldataloader/blob/master/man/publication/himsolt1996gml_a_portable_graph_file_format.pdf
             https://networkx.org/
             https://igraph.org/
         """
