@@ -31,7 +31,7 @@ options:
                         will always be kept. default is an empty string.
   --collapse COLLAPSE   should all mcds time steps from the time series be
                         collapsed into one big csv, or a many csv, one for
-                        each time step?, default is True.
+                        each time step? default is True.
 
 homepage: https://github.com/elmbeech/physicelldataloader
 ```

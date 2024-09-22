@@ -7,7 +7,7 @@ function to detect informative substrate concentration variables in a time
 series. this function detects even variables which have less than the minimal
 state count in each time step, but different values from time step to time
 step. the output is a json file with an entry of all non-coordinate column
-names that at least in one of the time steps or in between time steps, reach
+names that, at least in one of the time steps or in between time steps, reach
 the given minimal value count. key is the column name, mapped is a list of all
 values (bool, str, and, if allvalues is True, int and float) or a list with
 minimum and maximum values (int, float).

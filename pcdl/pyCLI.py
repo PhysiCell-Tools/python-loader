@@ -233,7 +233,7 @@ def get_conc_attribute():
     # argv
     parser = argparse.ArgumentParser(
         prog = 'pcdl_get_conc_attribute',
-        description = 'function to detect informative substrate concentration variables in a time series. this function detects even variables which have less than the minimal state count in each time step, but different values from time step to time step. the output is a json file with an entry of all non-coordinate column names that at least in one of the time steps or in between time steps, reach the given minimal value count. key is the column name, mapped is a list of all values (bool, str, and, if allvalues is True, int and float) or a list with minimum and maximum values (int, float).',
+        description = 'function to detect informative substrate concentration variables in a time series. this function detects even variables which have less than the minimal state count in each time step, but different values from time step to time step. the output is a json file with an entry of all non-coordinate column names that, at least in one of the time steps or in between time steps, reach the given minimal value count. key is the column name, mapped is a list of all values (bool, str, and, if allvalues is True, int and float) or a list with minimum and maximum values (int, float).',
         epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
     )
 
@@ -379,7 +379,7 @@ def get_conc_df():
     parser.add_argument(
         '--collapse',
         default = 'true',
-        help = 'should all mcds time steps from the time series be collapsed into one big csv, or a many csv, one for each time step?, default is True.'
+        help = 'should all mcds time steps from the time series be collapsed into one big csv, or a many csv, one for each time step? default is True.'
     )
 
     # parse arguments
