@@ -1,7 +1,7 @@
 # PhysiCell Data Loader Tutorial: pcdl and the R programming language
 
 [R](https://cran.r-project.org/index.html) is a programming language for statistical computing,
-which, becaue of it's libarary collection, is very popular amonst bioinformatician.
+which, because of its library collection, is very popular among bioinformatician.
 
 
 ## Handle csv files
@@ -20,7 +20,7 @@ pcdl_get_cell_df output
 
 ### Load a csv file into an R DataFrame
 
-Substarte concentration dataframe.
+Substrate concentration dataframe.
 
 ```R
 df_conc <- read.csv("output/timeseries_conc.csv", row.names="index")
@@ -61,7 +61,7 @@ pcdl_get_conc_attribute output 2
 pcdl_get_cell_attribute output 2
 ```
 
-### Load json files into a R data construct
+### Load json files into an R data construct
 
 We will use the [jsonlite](https://cran.r-project.org/web/packages/jsonlite/index.html) library to load json files into R.
 + jsonlite publication: https://doi.org/10.48550/arXiv.1403.2805
@@ -98,7 +98,7 @@ cd path/to/PhysiCell
 pcdl_make_graph_gml output/output00000024.xml neighbor --node_attribute cell_type dead oxygen pressure
 ```
 
-### Load gml files into a R data construct
+### Load gml files into an R data construct
 
 We will use the [igraph](https://cran.r-project.org/web/packages/igraph/index.html) library to load gml files into R.
 + https://r.igraph.org/
@@ -133,15 +133,15 @@ pcdl_get_anndata output/
 
 ### AnnData, SingleCellExperiment and Seurat
 
-We will use the [schard](https://github.com/cellgeni/schard)) R package
-to translate the h5ad file into R data structures that can be analysed
+We will use the [schard](https://github.com/cellgeni/schard) R package
+to translate the h5ad file into R data structures that can be analyzed
 by [singlecellexperiment](https://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html)
 and  [seurat](https://satijalab.org/seurat/).
 
 Special thanks to Marcello Hurtado from the Pancald Lab, who told me that such translation software exist!
 
 
-#### Install the schard h5ad translater R package
+#### Install the schard h5ad translator R package
 
 ```R
 install.packages("devtools")
@@ -163,7 +163,7 @@ install.packages("BiocManager")
 BiocManager::install("SingleCellExperiment")
 ```
 
-Translate the h5ad file to an sce R object
+Translate the h5ad file to a sce R object
 
 ```R
 cell.sce = schard::h5ad2sce("output/timeseries_cell_maxabs.h5ad")
@@ -185,7 +185,7 @@ Install the Seurat software.
 install.packages('Seurat')
 ```
 
-Translate the h5ad file to an seurat compatible R objects
+Translate the h5ad file to a seurat compatible R objects
 
 ```R
 cell.seurat = schard::h5ad2seurat("output/timeseries_cell_maxabs.h5ad")
@@ -196,7 +196,7 @@ cell.seurat_spatial = schard::h5ad2seurat_spatial("output/timeseries_cell_maxabs
 str(cell.seurat_spatial)
 ```
 
-For how to analyse with seurat, please study the official documentation.
+For how to analyze with seurat, please study the official documentation.
 
 + https://github.com/cellgeni/schard
 + https://satijalab.org/seurat/

@@ -4,11 +4,11 @@
 a "batteries-included" distribution of [ImageJ](https://en.wikipedia.org/wiki/ImageJ),
 able to read [ome.tiff](https://www.openmicroscopy.org/ome-files/) files.
 
-Fiji Imagej is used by wetlab scientist and bioinformatician to analyse fluorescent microscopy data.
+Fiji Imagej is used by wetlab scientists and bioinformatician to analyze fluorescent microscopy data.
 
 ## Install Fiji Imagej ~ the 64[bit] version!
 
-Please follow the installation instruction on the official hompage.
+Please follow the installation instructions on the official homepage.
 + https://imagej.net/software/fiji/
 
 
@@ -28,7 +28,7 @@ mcdsts = pcdl.TimeSeries('output/')
 mcdsts.make_ome_tiff()
 ```
 
-### Linux: open ome.tiff files in Fiji Imagej from the comandline
+### Linux: open ome.tiff files in Fiji Imagej from the commandline
 
 ```bash
 ./ImageJ-linux64 path/to/output/timeseries_ID.ome.tiff

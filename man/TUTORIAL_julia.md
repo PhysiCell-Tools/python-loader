@@ -99,7 +99,7 @@ pcdl_make_graph_gml output/output00000024.xml neighbor --node_attribute cell_typ
 
 ### Load gml files into a julia data structures
 
-&#x26A0; **bue 2024-09-04:** this is currently not working, since, for now, GraphIO can not handle the graph, node, or edge metadata in the file.
+&#x26A0; **bue 2024-09-04:** this is currently not working, since, for now, GraphIO cannot handle the graph, node, or edge metadata in the file.
 
 We will use the [GraphIO.js](https://github.com/JuliaGraphs/GraphIO.jl) library,
 to load gml files.
@@ -124,7 +124,7 @@ using ParserCombinator
 graph = loadgraph("output/output00000024_neighbor.gml", GraphIO.GML.GMLFormat())
 ```
 
-Please study the Graphs documentation to learn how to analyse graph data.
+Please study the Graphs documentation to learn how to analyze graph data.
 
 + https://github.com/JuliaGraphs/Graphs.jl
 + https://juliagraphs.org/Graphs.jl/stable/
@@ -162,7 +162,7 @@ using Muon
 adata = readh5ad("output/timeseries_cell_maxabs.h5ad")
 ```
 
-Please study the Muon and AnnData documentation to learn how to analyse this data.
+Please study the Muon and AnnData documentation to learn how to analyze this data.
 + https://github.com/scverse/Muon.jl/tree/main
 + https://github.com/scverse/anndata
 
@@ -186,9 +186,9 @@ pcdl_make_ome_tiff('output/')
 
 ### Load jpeg, png, tiff, and ometiff files into a julia data structures
 
-&#x26A0; **bue 2024-09-04:** ome.tiff files can currently not be loaded ( github issue: https://github.com/tlnagy/OMETIFF.jl/issues/112 ).
+&#x26A0; **bue 2024-09-04:** ome.tiff files currently cannot be loaded ( github issue: https://github.com/tlnagy/OMETIFF.jl/issues/112 ).
 
-We will use the [Images](https://github.com/JuliaImages/Images.jl) library and it's [OMETIFF](https://github.com/tlnagy/OMETIFF.jl) extension,
+We will use the [Images](https://github.com/JuliaImages/Images.jl) library, and it's [OMETIFF](https://github.com/tlnagy/OMETIFF.jl) extension,
 to load jpeg, png, tiff, and ome.tiff files
 
 Package installation.
@@ -214,7 +214,7 @@ img = load("output/cell_cell_type_z0.0/output00000021_cell_type.jpeg")
 ```
 
 <!--
-## Handle vtk rectiliniar grid and polydata files
+## Handle vtk rectiliniar grid and polynomial data files
 
 Package installation.
 
@@ -223,7 +223,7 @@ using Pkg
 Pkg.add("ReadVTK")
 ```
 
-Try to load vtk rectiliniar grid file (vtr) and polydata file (vtp).
+Try to load vtk rectiliniar grid file (vtr) and polynomial data file (vtp).
 
 ```julia
 using ReadVTK

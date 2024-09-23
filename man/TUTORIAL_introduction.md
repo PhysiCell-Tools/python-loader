@@ -1,6 +1,6 @@
 # PhysiCell Data Loader Tutorial: pcdl Introduction
 
-If you not have already done so, please install the latest version of physicelldataloader (pcdl),
+If you have not already done so, please install the latest version of physicelldataloader (pcdl),
 as described in the [HowTo](https://github.com/elmbeech/physicelldataloader/blob/master/man/HOWTO.md) section.\
 The current development happens in branch v3 and v4.
 Branch v1 and v2 exists, if ever needed, for reproducibility of old results.
@@ -22,11 +22,11 @@ The name of this script filed was pyMCDS.py and basically defined one class name
 
 In autumn 2022 an endeavor was undertaken to pack the original pyMCDS.py script into a pip installable python3 library and develop it further, but always in such a way that, if necessary, the code could still be run like in the early days.\
 The result is the pcdl physicelldataloader library branch v2, v3.
-In autumn 2024 the code was striped of some relec of the early days, to make the code more python3 than C++ like, which resulted in branch v4.
+In autumn 2024 the code was stripped of some relics from the early days, to make the code more python3 than C++ like, which resulted in branch v4.
 
 The result from all of this is the pcdl physicelldataloader library here.\
-In the big picture, the pyMCDS class evolved into the TimeStep class, which is slightly heavier but much more powerful for downstream data analysis then the original pyMCDS class.
-Additionaly, a TimeSeries class was added.
+In the big picture, the pyMCDS class evolved into the TimeStep class, which is slightly heavier but much more powerful for downstream data analysis than the original pyMCDS class.
+Additionally, a TimeSeries class was added.
 
 If you inspect branch v3 pcdl source code, you will see that the [pyMCDS.py](https://github.com/elmbeech/physicelldataloader/blob/v3/pcdl/pyMCDS.py) file still exists.
 And if you feel so, it is still possible to [load and process PhysiCell output the ancient way](https://github.com/elmbeech/physicelldataloader/blob/master/man/HOWTO.md#how-to-run-physicelldataloader-like-in-the-early-days-before-autumn-2022)!\

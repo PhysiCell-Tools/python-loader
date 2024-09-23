@@ -1,11 +1,11 @@
 # PhysiCell Data Loader Tutorial: pcdl and Paraview
 
-[Paraview](https://www.paraview.org/) is a free and open source scientific visualzation software,
-that let us load and analyse vtk rectilinear grid data and vtk polynom data<!--, and even ome.tiff data files-->.
+[Paraview](https://www.paraview.org/) is a free and open source scientific visualization software,
+that lets us load and analyze vtk rectilinear grid data and vtk polynomial data<!--, and even ome.tiff data files-->.
 
 # Install paraview
 
-For installation please follow the official documentation.
+For installation, please follow the official documentation.
 + https://www.paraview.org/download/
 
 
@@ -34,11 +34,11 @@ mcdsts.make_cell_vtk()
 
 1. **File** / **Open...** path/to/PhysiCell/output/output..\_conc.vtr [OK]
 2. **File** / **Open...** path/to/PhysiCell/output/output..\_cell.vtp [OK]
-3. In the **Pipeline Browser** click the closed **eyes**, so that they open.
-4. In the **Pipeline Browser** click the output00000000\_cell.vtp\* and under **Coloring** select cell\_type in the drop down menu.
-5. In the **Pipeline Browser** click the output00000000\_conc.vtr\* and under **Coloring** select the oxygen in the drop down menu.
+3. In the **Pipeline Browser**, click the closed **eyes**, so that they open.
+4. In the **Pipeline Browser**, click the output00000000\_cell.vtp\* and under **Coloring** select cell\_type in the dropdown menu.
+5. In the **Pipeline Browser**, click the output00000000\_conc.vtr\* and under **Coloring** select the oxygen in the dropdown menu.
 
-For learing more about how to run the software,
+For learning more about how to run the software,
 please work through the official documentation.
 + https://www.paraview.org/resources/
 

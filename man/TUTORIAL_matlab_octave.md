@@ -1,9 +1,9 @@
-# PhysiCell Data Loader Tutorial: pcdl and the Matlab and Octave programmming language
+# PhysiCell Data Loader Tutorial: pcdl and the Matlab and Octave programming language
 
 [Matlab](https://www.mathworks.com/products/matlab.html) / GNU [Octave](https://octave.org/)
 is a scientific programming language used by some engineers.
 The earliest predecessor of pcdl was actually a Matlab implementation.
-Comming full circle, this is how you can load some pcdl data constructs into Matlab and GNU Octave.
+Coming full circle, this is how you can load some pcdl data constructs into Matlab and GNU Octave.
 
 <!-- bue 20240903: could someone test and update who actuallty knows matlab or octave? -->
 
@@ -23,6 +23,8 @@ pcdl_get_cell_df output
 ```
 
 ### Load a csv file into Matlab or Octave as a tabel
+
+&#x26A0; **bue: as of 2024-09-24 the readtable function is not yet implemented in Octave.**
 
 + https://www.mathworks.com/help/matlab/ref/readtable.html
 + https://www.mathworks.com/help/matlab/matlab_external/python-pandas-dataframes.html
@@ -71,7 +73,7 @@ cd path/to/PhysiCell
 pcdl_make_graph_gml output/output00000024.xml neighbor --node_attribute cell_type dead oxygen pressure
 ```
 
-### Load gml files into a R data construct
+### Load gml files into a Matlab or Octave data construct
 
 We will use the [matlab-igraph](https://www.mathworks.com/matlabcentral/fileexchange/159001-matlab-igraph) toolbox to load gml files into Matlab or Octave.
 + https://github.com/DavidRConnell/matlab-igraph/releases/tag/v0.2.0
@@ -79,7 +81,7 @@ We will use the [matlab-igraph](https://www.mathworks.com/matlabcentral/fileexch
 
 Install matlab-igaph toolbox.
 
-Load gml file into Matlab or Octave
+Load gml file.
 
 ```matlab
 "output/output00000024_neighbor.gml"
@@ -88,7 +90,7 @@ Load gml file into Matlab or Octave
 
 # Handle vtk files
 
-### Save pcdl data constructs as vtr rectilinear grid files and vtp poly data file from the command line
+### Save pcdl data constructs as vtr rectilinear grid files and vtp polynomial data file from the command line
 
 ```bash
 cd path/to/PhysiCell
@@ -100,7 +102,7 @@ pcdl_make_conc_vtk output/output00000024.xml
 pcdl_make_cell_vtk output/output00000024.xml
 ```
 
-### Load a vtr and vtp file into Matlab or Octave
+### Load a vtr and vtp file into Matlab or Octave data construct
 
 + https://www.mathworks.com/matlabcentral/fileexchange/94993-vtktoolbox
 + https://github.com/KIT-IBT/vtkToolbox

@@ -1874,7 +1874,7 @@ class pyMCDS:
                 additionally, visualize cells using vtk renderer.
 
         output:
-            s_vtkpathfile: vtk 3D glyph polyinomial data file that contains cells.
+            s_vtkpathfile: vtk 3D glyph polynomial data file that contains cells.
 
         description:
             function that generates vtk 3D glyph polynomial data file for cells.

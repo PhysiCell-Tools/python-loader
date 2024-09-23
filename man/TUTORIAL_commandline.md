@@ -4,25 +4,25 @@
 
 The most important commands for down stream data analysis,
 available in the pcdl TimeStep and TimeSeries class,
-can be run straight from a command line shell like: [bash](https://en.wikipedia.org/wiki/Bash_(Unix_shell)), [csh](https://en.wikipedia.org/wiki/C_shell), [dos](https://en.wikipedia.org/wiki/DOS), [fish](https://en.wikipedia.org/wiki/Fish_(Unix_shell)), [ksh](https://en.wikipedia.org/wiki/KornShell), [powershell](https://en.wikipedia.org/wiki/PowerShell), [sh](https://en.wikipedia.org/wiki/Bourne_shell), [tsh](https://en.wikipedia.org/wiki/Tcsh), or [zsh](https://en.wikipedia.org/wiki/Z_shell), to name a view.
+can be run straight from a command line shell, like [bash](https://en.wikipedia.org/wiki/Bash_(Unix_shell)), [csh](https://en.wikipedia.org/wiki/C_shell), [dos](https://en.wikipedia.org/wiki/DOS), [fish](https://en.wikipedia.org/wiki/Fish_(Unix_shell)), [ksh](https://en.wikipedia.org/wiki/KornShell), [powershell](https://en.wikipedia.org/wiki/PowerShell), [sh](https://en.wikipedia.org/wiki/Bourne_shell), [tsh](https://en.wikipedia.org/wiki/Tcsh), or [zsh](https://en.wikipedia.org/wiki/Z_shell), to name a view.
 
-The command names are drived from the related python3 function. \
-The command parameter mimic the related python3 function arguments as closely as possible. \
-You can always call the [help](https://en.wikipedia.org/wiki/Help!) parameter ( pcdl_command -h),
+The command names are derived from the related python3 function. \
+The command parameter mimics the related python3 function arguments as closely as possible. \
+You can always call the [help](https://en.wikipedia.org/wiki/Help!) parameter ( pcdl\_command -h),
 to access the man page for a pcdl command!
 
-Please spend some time to learn about each of the 18 commands, by studing it's man page.
-this will truely make you a power user!
+Please spend some time to learn about each of the 18 commands, by studying its man page.
+This will truly make you a power user!
 
 
 
 ## Preparation
 
 To runs this tutorial,
-you can install the 2D unittest dataset into your PhysiCell output folder,
+you can install the 2D unit test dataset into your PhysiCell output folder,
 by executing the following command sequence.
 
-**Waring: all data currentlty in your PhysiCell/output folder will be overwritten!**
+**Waring: all data currently in your PhysiCell/output folder will be overwritten!**
 
 ```bash
 cd path/to/PhysiCell
@@ -39,7 +39,7 @@ python3 -c"import pathlib, pcdl, shutil; pcdl.install_data(); s_ipath=str(pathli
 
 ### &#x2728; pcdl\_get\_version
 
-Output PhysiCell, MCDS, and pcdl version on the screen.
+Outputs PhysiCell, MCDS, and pcdl version on screen.
 
 ```bash
 pcdl_get_version output
@@ -68,12 +68,12 @@ pcdl_get_unit_dict -h
 
 
 
-## Microenvironment realted commands
+## Microenvironment related commands
 
 
 ### &#x2728; pcdl\_get\_substrate\_list
 
-Output all substrated modeled in the microenviroment on the screen.
+Outputs all substrates modeled in the microenvironment on screen.
 
 ```bash
 pcdl_get_substrate_list output
@@ -92,7 +92,7 @@ Generate a [json](https://en.wikipedia.org/wiki/JSON) file, that lists all subst
 For each such attribute the min and the max value are listed.
 
 In the example below:
-+ all substrates attributes are listed, that over the whole timeseris have at least 2 diffrent values.
++ all substrates attributes are listed, that over the whole time series have at least 2 diffrent values.
 + all substrates attributes are listed, that in this particular time step have at least 2 different values.
 
 ```bash
@@ -114,11 +114,11 @@ Further readings:
 ### &#x2728; pcdl\_get\_conc\_df
 
 Generate a dataframe [csv](https://en.wikipedia.org/wiki/Comma-separated_values) file that lists one voxel per row,
-all substarte concentrations.
+all substrate concentrations.
 
-In the example below the generated csv contains:
-+ all substarte concentration values over the whole timeseries.
-+ all substarte that within this particular time step have more than 2 different concentration values.
+In the example below, the generated csv contains:
++ all substrate concentration values over the whole time series.
++ all substrate that within this particular time step have more than 2 different concentration values.
 
 ```bash
 pcdl_get_conc_df output
@@ -158,7 +158,7 @@ Generate a rectilinear grid [vtk](https://en.wikipedia.org/wiki/VTK) file from a
 or rectilinear grid vtk files from the whole time series,
 containing all the substrates from the model.
 
-These vtk files can be further analysed,
+These vtk files can be further analyzed,
 for example with the [paraview](https://www.paraview.org/) or [blender](https://www.blender.org/) software,
 as described in the extra tutorials.
 
@@ -200,10 +200,10 @@ pcdl_get_celltype_list -h
 ### &#x2728; pcdl\_get\_cell\_attribute
 
 Generate a [json](https://en.wikipedia.org/wiki/JSON) file, that lists all cell attributes.
-For each such attribute the min and the max value are listed.
+For each such attribute, the min and the max value are listed.
 
 In the example below:
-+ all cell attributes are listed, that over the whole timeseris have at least 2 diffrent values.
++ all cell attributes are listed, that over the whole time series have at least 2 different values.
 + all cell attributes are listed, that in this particular time step have at least 2 different values.
 
 ```bash
@@ -227,7 +227,7 @@ Further readings:
 Generate a dataframe [csv](https://en.wikipedia.org/wiki/Comma-separated_values) file that lists one cell per row,
 all attributes.
 
-In the example below the generated csv contains:
+In the example below, the generated csv contains:
 + all cell attributes, that over the whole time series have more than 2 different values.
 + from that particular time step all cell attributes available.
 
@@ -245,10 +245,10 @@ Further readings:
 
 ### &#x2728; pcdl\_get\_anndata
 
-From the whole timeseries or from a single time step generate h5ad [anndata](https://anndata.readthedocs.io/en/latest/) [hd5](https://en.wikipedia.org/wiki/Hierarchical_Data_Format) files.
+From the whole time series or from a single time step generate h5ad [anndata](https://anndata.readthedocs.io/en/latest/) [hd5](https://en.wikipedia.org/wiki/Hierarchical_Data_Format) files.
 
 Anndata is the standard data format in the python single cell community.
-Data stored in this fromat can be analyzed the same way as usually sc RNA seq data is analysed.
+Data stored in this format can be analyzed the same way as usually sc RNA seq data is analyzed.
 
 ```bash
 pcdl_get_anndata output/output00000000.xml
@@ -295,8 +295,8 @@ Further readings:
 Generate a [jpeg](https://en.wikipedia.org/wiki/JPEG) file that displaying all cells.
 
 In the example below:
-+ generate plots for the the whole time series, color the cells by cell\_type.
-+ generate a plot for a single timestep, color the cells by pressure.
++ generate plots for the whole time series, color the cells by cell\_type.
++ generate a plot for a single time step, color the cells by pressure.
 
 ```bash
 pcdl_plot_scatter output/output00000000.xml pressure
@@ -314,9 +314,9 @@ pcdl_plot_scatter -h
 Generate a 3D glyph [vtk](https://en.wikipedia.org/wiki/VTK) file from a single time step,
 or rectilinear grid vtk files from the whole time series,
 with information for the attributes listed.
-The deafalt atribute listed is cell\_type.
+The default attribute listed is cell\_type.
 
-These vtk files can be further analysed,
+These vtk files can be further analyzed,
 for example with the [paraview](https://www.paraview.org/) or [blender](https://www.blender.org/) software,
 as described in the extra tutorials.
 
@@ -343,11 +343,11 @@ Further readings:
 
 ### &#x2728; pcdl\_plot\_timeseries
 
-Generate a timeseries plot and save it as a [jpeg](https://en.wikipedia.org/wiki/JPEG) file.
+Generate a time series plot and save it as a [jpeg](https://en.wikipedia.org/wiki/JPEG) file.
 
 The default plots outputs total cell count over time.
-However, this is a very powerfull command!
-Below we generate a plot for:
+However, this is a very powerful command!
+Below, we generate a plot for:
 + total cell count
 + cell count per cell\_type
 + mean oxygen concentration detected per cell\_type
@@ -389,16 +389,16 @@ pcdl_plot_timeseries -h
 
 ### &#x2728; pcdl\_make\_ome\_tiff
 
-Generate a [ome.tiff](https://ome-model.readthedocs.io/en/stable/index.html) file,
-to analyse a single time step or the whole time series,
-the same way as usually fluorescent microscopy data is analysed.
+Generate an [ome.tiff](https://ome-model.readthedocs.io/en/stable/index.html) file,
+to analyze a single time step or the whole time series,
+the same way as usually fluorescent microscopy data is analyzed.
 
 By default, the cell\_attribute outputted is the cell ID + 1.
 However, any numerical (bool, int, float) cell\_attribute can be outputted.
 For example: dead, cells\_per\_voxel, or pressure.
 
-These ome.tiff files can be further analysed,
-for example with the [napari](https://napari.org/stable/) or [fiji imagej](https://fiji.sc/) software,
+These ome.tiff files can be further analyzed,
+for example with the [napari](https://napari.org/stable/) or [fiji imagej](https://fiji.sc/) or [blender](https://www.blender.org/) software,
 as described in the extra tutorials.
 
 ```bash
@@ -414,6 +414,7 @@ pcdl_make_ome_tiff -h
 Further readings:
 + [TUTORIAL_python3_napari.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_napari.md)
 + [TUTORIAL_fiji_imagej.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_fijiimagej.md)
++ [TUTORIAL_blender.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_blender.md)
 
 
 
@@ -422,7 +423,7 @@ Further readings:
 
 ### &#x2728; pcdl\_make\_movie
 
-Make an [mp4](https://en.wikipedia.org/wiki/MP4_file_format) movie from the jpeg plots from a time series.
+Make a [mp4](https://en.wikipedia.org/wiki/MP4_file_format) movie from the jpeg plots from a time series.
 
 ```bash
 pcdl_plot_scatter output
@@ -449,7 +450,7 @@ pcdl_make_gif -h
 
 ## Data Clean Up
 
-After you are done checking out the 2D unittest dataset,
+After you are done checking out the 2D unit test dataset,
 you can uninstall the datasets and remove the data in the output folder,
 by executing the following command sequence.
 
