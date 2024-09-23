@@ -8,7 +8,7 @@ Coming full circle, this is how you can load some pcdl data constructs into Matl
 <!-- bue 20240903: could someone test and update who actuallty knows matlab or octave? -->
 
 
-## Handle csv files
+## &#x2728; Handle csv files
 
 ### Save pcdl data constructs as csv files from the command line
 
@@ -24,7 +24,7 @@ pcdl_get_cell_df output
 
 ### Load a csv file into Matlab or Octave as a tabel
 
-&#x26A0; **bue: as of 2024-09-24 the readtable function is not yet implemented in Octave.**
+&#x26A0; **bue 2024-09-22:** the readtable function is not yet implemented in Octave.
 
 + https://www.mathworks.com/help/matlab/ref/readtable.html
 + https://www.mathworks.com/help/matlab/matlab_external/python-pandas-dataframes.html
@@ -37,8 +37,7 @@ df_cell = readtable("output/timeseries_conc.csv")
 ```
 
 
-
-## Handle json files
+## &#x2728; Handle json files
 
 ### Save pcdl data constructs as json files from the command line
 
@@ -62,7 +61,7 @@ struct_conc = jsondecode(fileread("output/timeseries_conc_attribute_minmax.json"
 ```
 
 
-## Handle gml graph data files
+## &#x2728; Handle gml graph data files
 
 ### Save pcdl data constructs as gml files from the command line
 
@@ -88,7 +87,7 @@ Load gml file.
 ```
 
 
-# Handle vtk files
+## &#x2728; Handle vtk files
 
 ### Save pcdl data constructs as vtr rectilinear grid files and vtp polynomial data file from the command line
 

@@ -3,13 +3,13 @@
 [Paraview](https://www.paraview.org/) is a free and open source scientific visualization software,
 that lets us load and analyze vtk rectilinear grid data and vtk polynomial data<!--, and even ome.tiff data files-->.
 
-# Install paraview
+## Install paraview
 
 For installation, please follow the official documentation.
 + https://www.paraview.org/download/
 
 
-# Generate vtk files from the command line
+## Generate vtk files from the command line
 
 ```bash
 pcdl_make_conc_vtk output
@@ -19,7 +19,7 @@ pcdl_make_cell_vtk output
 ```
 
 
-# Generate vtk files from within python
+## Generate vtk files from within python
 
 ```python
 import pcdl
@@ -30,7 +30,7 @@ mcdsts.make_cell_vtk()
 ```
 
 
-# Load vtk files with paraview
+## Load vtk files with paraview
 
 1. **File** / **Open...** path/to/PhysiCell/output/output..\_conc.vtr [OK]
 2. **File** / **Open...** path/to/PhysiCell/output/output..\_cell.vtp [OK]

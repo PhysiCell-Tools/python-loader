@@ -4,7 +4,7 @@
 which, because of its library collection, is very popular among bioinformatician.
 
 
-## Handle csv files
+## &#x2728; Handle csv files
 
 ### Save pcdl data structures as csv files from the command line
 
@@ -47,7 +47,7 @@ rownames(df_cell)
 ```
 
 
-## Handle json files
+## &#x2728; Handle json files
 
 ### Save pcdl data structures as json files from the command line
 
@@ -87,7 +87,7 @@ str(l_cell)
 ```
 
 
-## Handle gml graph data files
+## &#x2728; Handle gml graph data files
 
 ### Save pcdl data structures as gml files from the command line
 
@@ -120,7 +120,7 @@ str(g)
 ```
 
 
-## Handle h5ad single cell data files
+## &#x2728; Handle h5ad single cell data files
 
 ### Save pcdl data structures as h5ad files from the command line
 
@@ -140,7 +140,6 @@ and  [seurat](https://satijalab.org/seurat/).
 
 Special thanks to Marcello Hurtado from the Pancald Lab, who told me that such translation software exist!
 
-
 #### Install the schard h5ad translator R package
 
 ```R
@@ -152,7 +151,6 @@ devtools::install_github("cellgeni/schard")
 
 Homepage:
 + https://github.com/cellgeni/schard
-
 
 #### Data analysis with SingleCellExperiment R bioconductor package
 
@@ -175,7 +173,6 @@ For how to analyse with singlecellexperiment, please study the official publicat
 + https://github.com/cellgeni/schard
 + https://pubmed.ncbi.nlm.nih.gov/31792435/
 + https://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html
-
 
 #### Data analysis with Seurat R package
 

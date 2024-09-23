@@ -12,14 +12,14 @@ Please follow the installation instructions on the official homepage.
 + https://imagej.net/software/fiji/
 
 
-### Generate ome.tiff files from the command line
+## Generate ome.tiff files from the command line
 
 ```bash
 pcdl_make_ome_tiff('output/')
 ```
 
 
-### Generate ome.tiff files from within python
+## Generate ome.tiff files from within python
 
 ```python
 import pcdl
@@ -28,18 +28,18 @@ mcdsts = pcdl.TimeSeries('output/')
 mcdsts.make_ome_tiff()
 ```
 
-### Linux: open ome.tiff files in Fiji Imagej from the commandline
+## Linux: open ome.tiff files in Fiji Imagej from the commandline
 
 ```bash
 ./ImageJ-linux64 path/to/output/timeseries_ID.ome.tiff
 ```
 
 
-### Windows:
+## Windows:
 <!-- Jenny can you write here something inteligent on how to open ome.tiff files? -->
 
 
-### MacOS X:
+## MacOS X:
 <!-- Jenny can you write here something inteligent on how to open ome.tiff files? -->
 
 

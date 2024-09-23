@@ -2,22 +2,37 @@
 
 [Blender](https://www.blender.org/) is a modeling, rigging, animation, simulation, rendering, compositing,  motion tracking, video editing, and game creation software.
 Blender is free and open source.
-There exists a bioxel nodes plugin, that lets us load ome tiff files.
-And there exists a vtk nodes plugin, that lets us load <!-- vtk rectilinear grid data, -->vtk polynomial data files.
+There exists a vtk nodes plugin, that lets us load <!-- vtk rectilinear grid data, -->vtk polynomial data files.
+And there exists a bioxel nodes plugin, that lets us load ome tiff files.
 
 
-## The blender bioxel nodes plugin
+## &#x2728; Handle vtk files
 
-Please follow the official bioxelnodes instructions for installation
-and to learn how to use the plugin.
+The blender bvtk nodes plugin allows us to load vtk files into blender.
 
-+ https://omoolab.github.io/BioxelNodes/latest/
+### Generate vtk files from the command line
 
+```bash
+pcdl_make_conc_vtk output
+```
+```bash
+pcdl_make_cell_vtk output
+```
 
-## The blender vtk nodes plugin.
+### Generate vtk files from within python
+
+```python
+import pcdl
+
+mcdsts = pcdl.TimeSeries('output/')
+mcdsts.make_conc_vtk()
+mcdsts.make_cell_vtk()
+```
+
+### Blender vtk nodes plugin installation
 
 This installation is not for the faint hearted!
-Please follow the bvtknodes installation instructions,
+Please follow the bvtk nodes installation instructions,
 including workspace setup.
 
 + https://bvtknodes.readthedocs.io/en/latest/BVTKNodes.html#installation
@@ -33,7 +48,7 @@ including workspace setup.
 
 ### Load rectilinear grid vtk files
 
-I was not able to brdige that data yet.
+I was not able to bridge that data yet.
 
 <!-- Geometry nodes could be part of the solution,
 but I would have to write such a converter.
@@ -42,11 +57,42 @@ but I would have to write such a converter.
 + https://www.youtube.com/watch?v=LrEHoaq6QFE
 -->
 
-### More about blender and vtk
+### More about the blender vtk nodes plugin
 
-To learn more about Blender and BVTK Node, please study the official documentation.
+To learn more about Blender and BVTK Node plugin, please study the official documentation.
 + https://github.com/tkeskita/BVtkNodes/tree/master
 + https://docs.blender.org/manual/en/latest/
 
 
-That's it!
+## &#x2728; Handle ome tiff files
+
+The blender bioxel nodes plugin allows us load ome tiff files into blender.
+
+### Generate vtk files from the command line
+
+```bash
+pcdl_make_conc_vtk output
+```
+```bash
+pcdl_make_cell_vtk output
+```
+
+### Generate vtk files from within python
+
+```python
+import pcdl
+
+mcdsts = pcdl.TimeSeries('output/')
+mcdsts.make_conc_vtk()
+mcdsts.make_cell_vtk()
+```
+
+### The blender bioxel nodes plugin
+
+Please follow the official bioxel nodes instructions for installation
+and to learn how to use the plugin.
+
++ https://omoolab.github.io/BioxelNodes/latest/
+
+
+That's it! The rest is analysis within blender!

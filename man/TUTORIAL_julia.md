@@ -3,7 +3,7 @@
 [Julia](https://julialang.org/) is a scientific computing language.
 
 
-## Handle csv files
+## &#x2728; Handle csv files
 
 ### Save pcdl data structures as csv files from the command line
 
@@ -16,7 +16,6 @@ pcdl_get_conc_df output
 ```bash
 pcdl_get_cell_df output
 ```
-
 
 ### Load a csv file into jula data structures
 
@@ -45,7 +44,7 @@ df_conc = CSV.File("output/timeseries_cell.csv") |> DataFrame
 ```
 
 
-## Handle json files
+## &#x2728; Handle json files
 
 ### Save pcdl data structures as json files from the command line
 
@@ -86,7 +85,7 @@ j_cell = JSON3.read(json_string)
 ```
 
 
-## Handle gml graph files
+## &#x2728; Handle gml graph files
 
 ### Save pcdl data structures as gml files from the command line
 
@@ -130,7 +129,7 @@ Please study the Graphs documentation to learn how to analyze graph data.
 + https://juliagraphs.org/Graphs.jl/stable/
 
 
-## Handle h5ad single cell data files
+## &#x2728; Handle h5ad single cell data files
 
 ### Save pcdl data structures as h5ad files from the command line
 
@@ -167,7 +166,7 @@ Please study the Muon and AnnData documentation to learn how to analyze this dat
 + https://github.com/scverse/anndata
 
 
-## Handle ome.tiff, tiff, png, and jpeg file format
+## &#x2728; Handle ome.tiff, tiff, png, and jpeg file format
 
 ### Save pcdl data structures as jpeg, png, tiff, and ome.tiff files from the command line
 
@@ -214,7 +213,7 @@ img = load("output/cell_cell_type_z0.0/output00000021_cell_type.jpeg")
 ```
 
 <!--
-## Handle vtk rectiliniar grid and polynomial data files
+## &#x2728; Handle vtk rectiliniar grid and polynomial data files
 
 Package installation.
 
