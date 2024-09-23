@@ -13,7 +13,7 @@
 
 ## output:
 ```
-            s_vtkpathfile: vtk 3D glyph polyinomial data file that contains cells.
+            s_vtkpathfile: vtk 3D glyph polynomial data file that contains cells.
 
 ```
 
