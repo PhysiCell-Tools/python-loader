@@ -1,7 +1,7 @@
 # PhysiCell Data Loader Tutorial: pcdl and Python and Matplotlib
 
 [Matplotlib](https://matplotlib.org/) is the python's plotting backbone.
-It is an old library, matplotlib is not always intutive how to use, but there is no way around.
+It is an old library, matplotlib is not always intuitive how to use, but there is no way around.
 
 Pcdl's  **mcds.plot_contour** and **mcds.plot_scatter** plotting function
 can take a matplotlib axis object as input
@@ -46,7 +46,7 @@ Generate the plot.
 # load libraries
 import matplotlib.pyplot as plt
 
-# generate canavas
+# generate canvas
 fig, ax = plt.subplots(figsize=(10.24, 7.68))
 
 # plot substrate
@@ -56,7 +56,7 @@ mcds.plot_contour('oxygen', cmap='Blues', ax=ax)
 mcds.plot_scatter(cmap='turbo', ax=ax)
 
 # fine-tuning
-ax.axis('equal')  # this is essential, to overlay the coordinates propperly!
+ax.axis('equal')  # this is essential, to overlay the coordinates properly!
 fig.suptitle('cell agents and substrate')
 plt.tight_layout()
 
@@ -77,7 +77,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 
-# generate canavas
+# generate canvas
 i_total = len(mcds.get_substrate_list())
 i_x = int(np.ceil(np.sqrt(i_total)))
 i_y = int(np.floor(np.sqrt(i_total)))
@@ -205,9 +205,9 @@ df_conc.loc[:, mcds.get_substrate_list()].plot(kind='box')
 ```
 
 
-### On x axis ordered 2D numercial data
+### On x axis ordered 2D numerical data
 
-Line plot (on x axis ordered 2D numercial data)
+Line plot (on x axis ordered 2D numerical data)
 
 ```python
 df_focus = df_cell.loc[:, ['current_phase', 'elapsed_time_in_phase', 'surface_area']]
@@ -221,7 +221,7 @@ df_focus.plot(
 )
 ```
 
-Area plot (on x axis ordered 2D numercial data)
+Area plot (on x axis ordered 2D numerical data)
 
 ```python
 df_focus = df_cell.loc[:, ['current_phase', 'elapsed_time_in_phase', 'surface_area']]
@@ -235,9 +235,9 @@ df_focus.plot(
 )
 ```
 
-This is kind of like a continuous stacked bar plot.
+This is like a continuous stacked bar plot.
 Check it out!
-Change argument kind to *kind = 'bar'* and add the argument *stacked = True*.
+Change the argument kind to *kind = 'bar'* and add the argument *stacked = True*.
 
 
 ### Unordered 2D or 3D numerical data

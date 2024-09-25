@@ -22,7 +22,7 @@ To runs this tutorial,
 you can install the 2D unit test dataset into your PhysiCell output folder,
 by executing the following command sequence.
 
-**Waring: all data currently in your PhysiCell/output folder will be overwritten!**
+&#x26A0; **Warning: all data currently in your PhysiCell/output folder will be overwritten!**
 
 ```bash
 cd path/to/PhysiCell

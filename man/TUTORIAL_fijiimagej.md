@@ -28,7 +28,7 @@ mcdsts = pcdl.TimeSeries('output/')
 mcdsts.make_ome_tiff()
 ```
 
-## Linux: open ome.tiff files in Fiji Imagej from the commandline
+## Linux: open ome.tiff files in Fiji Imagej from the command line
 
 ```bash
 ./ImageJ-linux64 path/to/output/timeseries_ID.ome.tiff

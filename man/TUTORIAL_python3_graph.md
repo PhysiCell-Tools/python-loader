@@ -1,14 +1,14 @@
 # PhysiCell Data Loader Tutorial: pcdl and Python and Graphs
 
-[Gml](https://github.com/elmbeech/physicelldataloader/blob/master/man/publication/himsolt1996gml_a_portable_graph_file_format.pdf) (graph modeling language) is a portable palin text file format for graphs,
-that can be read by the populat graph libraries [networkx](https://networkx.org/) (python), [igraph](https://igraph.org/) (C, C++, mathematica, python, R), [JuliaGraphs](ttps://github.com/JuliaGraphs/GraphIO.jl), and possible other graph analysis software too.
+[Gml](https://github.com/elmbeech/physicelldataloader/blob/master/man/publication/himsolt1996gml_a_portable_graph_file_format.pdf) (graph modeling language) is a portable plain text file format for graphs,
+that can be read by the popular graph libraries [networkx](https://networkx.org/) (python), [igraph](https://igraph.org/) (C, C++, mathematica, python, R) <!--, [JuliaGraphs](ttps://github.com/JuliaGraphs/GraphIO.jl)-->, and possible other graph analysis software too.
 
 Pcdl can export neighborhood <!- and lineage tree --> graphs in gml format for downstream analysis.
 
-If you are new to graph theory, then I recommend to read [A Simple Introduction to Graph Theory](https://www.brianheinold.net/graph_theory/A_Simple_Introduction_to_Graph_Theory_Heinold.pdf)
+If you are new to graph theory, then I recommend reading [A Simple Introduction to Graph Theory](https://www.brianheinold.net/graph_theory/A_Simple_Introduction_to_Graph_Theory_Heinold.pdf)
 from Prof. Brian Heinold from Mount Saint Mary's University in Emmitsburg, Maryland, USA.
-This book will give you a solid  backgroud in graph theory.
-Beside that, this book is an eye-opener, why and how mathematicians like to prove.
+This book will give you a solid  background in graph theory.
+Besides, this book is an eye-opener, why and how mathematicians like to prove.
 
 
 ## pcdl: save a graph data into a gml file format from the command line

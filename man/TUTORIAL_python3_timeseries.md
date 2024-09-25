@@ -1,51 +1,51 @@
 # PhysiCell Data Loader Tutorial: pcdl and Python and MCDS TimeSeries
 
 If not already done so, please install the latest version of physicelldataloader (pcdl), as described in the [HowTo](https://github.com/elmbeech/physicelldataloader/blob/master/man/HOWTO.md) section.
-And maybe read about the pcdl [background](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_introduction.md) infromation.
-And maybe, work thorough the [TUTORIAL_python3_timestep.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_timestep.md)
+And maybe read about the pcdl [background](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_introduction.md) information.
+And perhaps, work thorough the [TUTORIAL_python3_timestep.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_timestep.md)
 
 
 An exciting thing about modeling is to have time series data.
 Pcdl's TimeSeries class is here to make the handling of a time series of MCD snapshots easy.
 
-All analysis function available for TimeStep are available for TimeSeries too,
+All analysis functions available for TimeStep are available for TimeSeries too,
 and we will not further discuss them here.
-For the details please study the docstring!
+For the details, please study the docstring!
 
-For microenviroment data these are the functions:
+For microenvironment data, these are the functions:
 + mcdsts.get_conc_df()
 + mcdsts.plot_contour('substrate')
 + mcdsts.make_conc_vtk()
 
-For cell data these are the functions:
+For cell data, these are the functions:
 + mcdsts.get_cell_df()
 + mcdsts.get_anndata()
 + mcdsts.make_graph_gml()
 + mcdsts.plot_scatter()
 + mcdsts.make_cell_vtk()
 
-For microenviroment and cell data these is the function:
+For microenvironment and cell data, this is the function:
 + mcdsts,make_ome_tiff()
 
 Yet, there are additional functions, that only make sense for TimeSeries,
 and those functions will be discussed in this chapter.
 
-For handling TimeSeries, these are:
+For handling TimeSeries, these are the functions:
 + mcdsts.get_xmlfile_list()
 + mcdsts.read_mcds()
 + mcdsts.get_mcds_list()
 + mcdsts.get_annmcds_list()
 
-For microenviroment data these is the function:
+For microenvironment data, this is the function:
 + mcdsts.get_conc_attribute()
 
-For cell data these is the function:
+For cell data, this is the function:
 + mcdsts.get_cell_attribute()
 
-For microenviroment and cell data these is the function:
+For microenvironment and cell data, this is the function:
 + mcdsts.plot_timeseries()
 
-Beside, there are functions to render a set of jpeg, png, or tiff images into a movie.
+Besides, there are functions to render a set of jpeg, png, or tiff images into a movie.
 + mcdsts.make_movie() and pcdl.make_movie()
 + mcdsts.make_gif() and pcdl.make_gif()
 
@@ -53,12 +53,12 @@ Beside, there are functions to render a set of jpeg, png, or tiff images into a 
 
 ## Preparation
 
-To runs this tutorial,
-you can either work the data that is currently in your outpufolder,
+To run this tutorial,
+you can either work the data that is currently in your output folder,
 or you can install the 2D unit test dataset into your PhysiCell output folder,
 by executing the following command sequence.
 
-**Waring: if you run this sequence, all data currentlty in your PhysiCell/output folder will be overwritten!**
+&#x26A0; **Warning: if you run this sequence, all data currently in your PhysiCell/output folder will be overwritten!**
 
 ```bash
 cd path/to/PhysiCell
@@ -76,10 +76,10 @@ python3 -c"import pathlib, pcdl, shutil; pcdl.install_data(); s_ipath=str(pathli
 Like in the pyMCDs class, for memory consumption and processing speed control,
 we can specify if we want to load microenvironment data and graph data from the snapshots we later on analyze.
 Additionally, we can specify, if for first even want to load data at all,
-or if we only want to load the output xml file list, which we will see, can be maipulated before actual data is loaded.
+or if we only would like to load the output xml file list, which we will see, can be manipulated before actual data is loaded.
 
 By default, all data from all snapshots is loaded.
-Side note: for path, in general, unix (slash) and windows (backslash) notation will work.
+Side note: for paths, in general, unix (slash) and windows (backslash) notation will work.
 
 ```python
 import pcdl  # the physicell data loader library
@@ -88,7 +88,7 @@ print('pcdl version:', pcdl.__version__)  # it is easy to figure out which pcdl 
 mcdsts = pcdl.TimeSeries('output/')
 ```
 
-Fine tuned the what data from a time step will be loaded
+Fine tuned what data from a time step will be loaded
 Here we only load cell data, not even information about cell type ID:label mapping.
 
 ```python
@@ -109,7 +109,7 @@ mcdsts = pcdl.TimeSeries(s_path, load=False)
 ```
 
 The **get_xmlfile_list** function will return a list of "absolute path to output xml file" strings.
-This list can be manipulated, and later be fed into the **read_xml** function, to only read choosen time steps into memory.
+This list can be manipulated, and later be fed into the **read_xml** function, to only read chosen time steps into memory.
 
 For example, if you want only to analyze hour 11, 12, and 13 from your run.
 
@@ -125,7 +125,7 @@ ls_xml = mcdsts.get_xmlfile_list()  # ['/path/to/output00000000.xml', ..., ...]
 ls_xml_even = [s_xml for i, s_xml in enumerate(ls_xml) if (i%2 == 0)]  # ['/path/to/output00000000.xml', ..., ...]
 ```
 
-The **read_xml** function will fiannly read the snapshots into RAM.
+The **read_xml** function will finally read the snapshots into RAM.
 
 Load snapshot 11, 12, and 13
 ```python
@@ -166,7 +166,7 @@ mcdsts.get_annmcds_list()  # [AnnData object with n_obs × n_vars ..., ..., ...]
 ## Microenvironment Data Related Functions (Continuum Variables)
 
 Substrates that have no variance, zero entropy, that have in every inch of the domain overall time steps the exact same concentration, carry no information.
-There is no need to analyse such substrate.
+There is no need to analyze such substrate.
 We can triage for substrate.
 
 All substrates:
@@ -204,9 +204,9 @@ help(mcdsts.get_conc_attribute)
 
 ## Cell Data Related Functions (Discrete Cells)
 
-Cell variables that show no variance, zero entropy, that have in all agent overall time steps always exactely the same value, carry no information.
-There is no need to analyse such cell attributes.
-We can triage for intresting attributes.
+Cell variables that show no variance, zero entropy, that have in all agent overall time steps always exactly the same value, carry no information.
+There is no need to analyze such cell attributes.
+We can triage for interesting attributes.
 
 List all tracked cell attributes:
 
@@ -244,8 +244,8 @@ help(mcdsts.get_cell_attribute)
 
 ## Microenvironment and Cell Data Related Functions
 
-For visualization the TimeSeries class has a versantile time series plot function.
-Below are some examples from what all can be plotted.
+For visualization, the TimeSeries class has a versatile time series plot function.
+Below are some examples, from what all can be plotted.
 
 Total cell count:
 
@@ -283,7 +283,7 @@ mean oxygen concentration detected in the domain:
 mcdsts.plot_timeseries(none oxygen --frame conc)
 ```
 
-Please study the docstring to grasp the full power if this function.
+Please study the docstring to grasp the full power of this function.
 
 ```python
 help(mcdsts.plot_timeseries)
@@ -296,7 +296,7 @@ help(mcdsts.plot_timeseries)
 With PhysiCell it is not only possible to take data snapshots,
 but as well [svg](https://en.wikipedia.org/wiki/SVG) vector graphics images snapshots. \
 PhysiCell's [Makefile](https://en.wikipedia.org/wiki/Make_(software)) has code
-to translate those svg images into [jpeg](https://en.wikipedia.org/wiki/JPEG) and [gif](https://en.wikipedia.org/wiki/GIF) imges,
+to translate those svg images into [jpeg](https://en.wikipedia.org/wiki/JPEG) and [gif](https://en.wikipedia.org/wiki/GIF) images,
 making use of the [image magick](https://en.wikipedia.org/wiki/ImageMagick) library. \
 The Makefile also has  code to translate the jpeg images into a [mp4](https://en.wikipedia.org/wiki/MP4_file_format) movie,
 therefore utilizing the [ffmpeg](https://en.wikipedia.org/wiki/FFmpeg) library.\
@@ -306,7 +306,7 @@ However, mp4 movies and gif images are generated in the same way.
 This means the mcdsts.make\_gif function will only run if image magick
 and mcdsts.make\_movie function will only run if ffmpeg is installed on your computer.
 
-For microenviroment data:
+For microenvironment data:
 
 ```python
 mcdsts.plot_contour(focus='oxygen')  # generate jpeg images colored by oxygen values
@@ -338,7 +338,7 @@ pcdl.make_movie('output/cell_cell_type_z0.0/')  # generate mp4 movie
 
 ### Data Clean Up
 
-After you are done checking out the 2D unittest dataset,
+After you are done checking out the 2D unit test dataset,
 you can uninstall the datasets and remove the data in the output folder,
 by executing the following command sequence.
 

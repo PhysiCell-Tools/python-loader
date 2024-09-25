@@ -1,20 +1,20 @@
 # PhysiCell Data Loader Tutorial: pcdl and Python and the Ome.tiff, Tiff, Png, and Jpeg File Format
 
-In pcdl output form [TimeSteps](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_timestep.md) and [TimeSeries](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_timeseries.md) can be stotred as [ome.tiff](https://www.openmicroscopy.org/ome-files/), [tiff](https://www.loc.gov/preservation/digital/formats/fdd/fdd000022.shtml), [png](http://libpng.org/pub/png/), and [jpeg](https://jpeg.org/jpeg/) files.
+In pcdl output from [TimeSteps](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_timestep.md) and [TimeSeries](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_timeseries.md) can be stotred as [ome.tiff](https://www.openmicroscopy.org/ome-files/), [tiff](https://www.loc.gov/preservation/digital/formats/fdd/fdd000022.shtml), [png](http://libpng.org/pub/png/), and [jpeg](https://jpeg.org/jpeg/) files.
 
 Tiff, png, and jpeg are raster graphic file formats.
 
 Ome.tiff is the open microscopy image standard.
 This means, being able to export PhysiCell output in ome.tiff files format
-enabels us to study PhysiCell output the same way
-as commonly fluorescent microscopy data is analysed by wetlab scientists.
+enables us to study PhysiCell output the same way
+as commonly fluorescent microscopy data is analyzed by wetlab scientists.
 Please have a look at [TUTORIAL_python3_napari.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_napari.md)
 and [TUTORIAL_fiji_imagej.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_fijiimagej.md) to learn more.
 
 
-Additionaly ome.tiff, tiff, png, and jpeg files can as well be loaded back in to python as [numpy](https://numpy.org/) array, for example with the [sci-kit image](https://scikit-image.org/) library (image data only).
+Additionally ome.tiff, tiff, png, and jpeg files can as well be loaded back in to python as [numpy](https://numpy.org/) array, for example with the [sci-kit image](https://scikit-image.org/) library (image data only).
 
-Beside that, ome.tiff files can be loaded with Allen Institute for Cell Science's [aicsiamgeio](https://github.com/AllenCellModeling/aicsimageio) library (image and metadata).
+Besides that, ome.tiff files can be loaded with Allen Institute for Cell Science's [aicsiamgeio](https://github.com/AllenCellModeling/aicsimageio) library (image and metadata).
 
 
 ### Save pcdl data constructs from the command line into tiff and ome.tiff files

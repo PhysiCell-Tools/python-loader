@@ -1,7 +1,7 @@
 # PhysiCell Data Loader Tutorial: pcdl and Python and Napari
 
 [Napari](https://napari.org/stable/) is both, a python library and a GUI software.
-Napari is used by wetlab scientist and bioinformatician to analyse fluorescent microscopy data.
+Napari is used by wetlab scientists and bioinformatician to analyze fluorescent microscopy data.
 Napari can read [ome.tiff](https://www.openmicroscopy.org/ome-files/) files.
 https://github.com/AllenCellModeling/napari-aicsimageio
 
@@ -45,7 +45,7 @@ viewer.open('output/timeseries_ID.ome.tiff')
 ```
 
 
-### Open ome.tiff files in napari from the comandline
+### Open ome.tiff files in napari from the command line
 
 ```bash
 napari output/timeseries_ID.ome.tiff

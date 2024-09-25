@@ -1,13 +1,13 @@
 # PhysiCell Data Loader Tutorial: pcdl and Python and Vtk
 
 [Vtk](https://vtk.org/) the visualization tool kit is a software for image processing, 3D graphics, volume rendering and visualization. \
-Naturaly, we will work here with the [vtk](https://pypi.org/project/vtk/) python binding.
-Additionaly we will have a look at [fury](https://fury.gl/latest/index.html),
+Naturally, we will work here with the [vtk](https://pypi.org/project/vtk/) python binding.
+Additionally, we will have a look at [fury](https://fury.gl/latest/index.html),
 a python library for scientific visualization and 3D animations that can read vtk files too.
 
 
 
-### Howto load and visualize a vtk file with the vtk python library
+### How to load and visualize a vtk file with the vtk python library
 
 Installation.
 
@@ -56,7 +56,7 @@ Official documentation:
 + https://examples.vtk.org/site/PythonicAPIComments/
 
 
-### Howto load and visualize a vtk file with the fury python library
+### How to load and visualize a vtk file with the fury python library
 
 Installation.
 

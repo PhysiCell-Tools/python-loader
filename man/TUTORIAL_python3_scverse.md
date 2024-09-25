@@ -1,22 +1,22 @@
 # PhysiCell Data Loader Tutorial: pcdl and Python and the scVerse
 
 [AnnData](https://anndata.readthedocs.io/en/latest/) is the data standard from the python single cell community.
-This means, PhysiCell output transformed into an AnnData object can be analysied the same way  sc RNA seq data is analysed.
-The whole [scverse](https://scverse.org/) (single cell univers)  becasomes accessible.
+This means, PhysiCell output transformed into an AnnData object can be analyzed the same way  sc RNA seq data is analyzed.
+The whole [scverse](https://scverse.org/) (single cell univers)  becomes accessible.
 
-This include:
-+ [scanpy](https://scanpy.readthedocs.io/en/latest/): for for classic single cell analysis.
+This includes:
++ [scanpy](https://scanpy.readthedocs.io/en/latest/): for classic single cell analysis.
 + [squidpy](https://squidpy.readthedocs.io/en/stable/): for spatial single cell analysis.
-+ [scvi-tools](https://scvi-tools.org/): for single cell machine learing.
++ [scvi-tools](https://scvi-tools.org/): for single cell machine learning.
 + [muon](https://muon.readthedocs.io/en/latest/): for multimodal omics analysis.
-And there is a whole [ecosystem](https://scverse.org/packages/#ecosystem) of libraries, compatible withthe AnnData format.
+And there is a whole [ecosystem](https://scverse.org/packages/#ecosystem) of libraries, compatible with the AnnData format.
 
 Whatever you d'like to do with your physicell data, it most probably was already done with single cell wet lab data.
 That's being said: PhysiCell data is different scdata than scRNA seq data!
 For example, scRNA seq data is higher dimensional (e.g. the human genome has over 20000 genes each time step) than PhysiCell data (tens, maybe hundreds of cell attributes).
 For example, scRNA seq data is always single time step data because the measurement consumes the sample. PhysiCell data is always time series data, even we look at this moment only at one time step.
 This means, the wet lab bioinformatics will partially try to solve problems (for example trajectory inference), that simply are no problems for us and the other way around.
-Anyhow, there are a lot of scRNA seq data analysis methodes around, which make sense to apply to both of this data types.
+Anyhow, there are a lot of scRNA seq data analysis methods around, which make sense to apply to both of these data types.
 
 For the shake of demonstration, let's do a classic scRNA seq analysis.
 
@@ -28,11 +28,11 @@ Let's install the required analysis libraries
 pip3 install -U scanpy[leiden]  # single cell analysis inclusive leiden graph clustering algorithm.
 ```
 
-To runs this tutorial,
-you can install the 3D unittest dataset into your PhysiCell output folder,
+To runs thi tutorial,
+you can install the 3D unit test dataset into your PhysiCell output folder,
 by executing the following command sequence.
 
-**Waring: all data currentlty in your PhysiCell/output folder will be overwritten!**
+&#x26A0; **Warning: all data currently in your PhysiCell/output folder will be overwritten!**
 
 ```bash
 cd path/to/PhysiCell
@@ -66,8 +66,8 @@ annts = mcdsts.get_anndata(values=2, scale='maxabs', collapse=True)
 print(annts)
 ```
 
-Let's do an interactiev data analysis.\
-Please note, sublibrary abrevations used in the scanpy and squidpy library are:
+Let's do an interactive data analysis.\
+Please note, sub-library abbreviations used in the scanpy and squidpy library are:
 
 + gr: graph
 + im: image
@@ -97,7 +97,7 @@ sc.pl.pca(annts, color='leiden')  # plot the pca results colored by leiden clust
 ```
 <!--
 #```python
-# leiden cluster celltype mapping
+# leiden cluster cell_type mapping
 d_leiden = {
 #    0: 'differentiated',
 #    1: 'stem',
@@ -115,7 +115,7 @@ d_leiden = {
 #import seaborn as sns
 #sc.metrics.confusion_matrix("cell_type", "leiden", ann.obs)  # pandas dataframe
 #ax = sns.heatmap(sc.metrics.confusion_matrix("cell_type", "leiden", ann.obs), cmap='viridis')
-#ax.set_title('celltype leiden cluster confusion matrix')
+#ax.set_title('cell type leiden cluster confusion matrix')
 #```
 -->
 
@@ -153,7 +153,7 @@ That's it. Please check out the official scverse documentation to learn more.
 
 ## Data Clean Up
 
-After you are done checking out the 3D unittest dataset,
+After you are done checking out the 3D unit test dataset,
 you can uninstall the datasets and remove the data in the output folder,
 by executing the following command sequence.
 

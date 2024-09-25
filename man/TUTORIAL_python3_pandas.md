@@ -3,27 +3,27 @@
 In pcdl output form
 [TimeStep](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_timestep.md)
 and [TimeSeries](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_timeseries.md)
-**mcds.get_conc_df** and **mcds.get_cell_df** can be dumped into [csv](https://en.wikipedia.org/wiki/Comma-separated_values) files,
+**mcds.get_conc_df** and **mcds.get_cell_df** can store,
 and from the [pcdl command line command](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_commandline.md)
-**pcdl_get_conc_df**, **pcdl_get_cell_df**, and **pcdl_get_unit_dict** stores data into csv file.
+**pcdl_get_conc_df**, **pcdl_get_cell_df**, and **pcdl_get_unit_dict** store data into a [csv](https://en.wikipedia.org/wiki/Comma-separated_values) file.
 
-[Pandas](https://pandas.pydata.org/) is the python3 library you will probably spend a lot of the time when you are analysis you data.
+[Pandas](https://pandas.pydata.org/) is the python3 library you will probably spend a lot of the time when you are analysis your data.
 Pandas mimics the computer language [R](https://en.wikipedia.org/wiki/R_(programming_language)).
 Pandas provides us with the spreadsheet like DataFrame and Series data types.
 Csv files can easily be loaded as a DataFrames or Series.
 
-For getting started with pandas, getiting an idea what it is all about and capable of,
-I recommend to work through this pandas cookbook from Julia Evens:
+For getting started with pandas, getting an idea of what it is all about and capable of,
+I recommend working through the pandas cookbook from Julia Evens:
 + https://jvns.ca/blog/2013/12/22/cooking-with-pandas/
 
 The pandas library as such is very well documented.
-Please spend some time to familarize your self with the homepage, the users guides, and the API reference.
+Please spend some time to familiarize yourself with the homepage, the users guides, and the API reference.
 + https://pandas.pydata.org/
 + http://pandas.pydata.org/pandas-docs/stable/user_guide/index.html
 + http://pandas.pydata.org/pandas-docs/stable/reference/index.html
 
 
-## Dump pcdl data construnct from the command line into a csv file
+## Dump pcdl data construct from the command line into a csv file
 
 ```bash
 pcdl_get_conc_df output 2
@@ -33,7 +33,7 @@ pcdl_get_cell_df output 2
 ```
 
 
-## Dump pcdl data construnct from the command line into a csv file
+## Dump pcdl data construct from the command line into a csv file
 
 ```python
 import pcdl

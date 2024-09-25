@@ -7,7 +7,7 @@
 # license: BSD 3-Clause
 #
 # description:
-#   pytest unit test library for the pcdl library comand line interface functions.
+#   pytest unit test library for the pcdl library command line interface functions.
 #   + https://docs.pytest.org/
 #
 # note:
