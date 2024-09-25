@@ -26,35 +26,37 @@ import numpy as np
 import pandas as pd
 from pcdl.pyMCDS import pyMCDS, es_coor_cell
 from pcdl.pyMCDSts import pyMCDSts
+from scipy import sparse
+import warnings
 
 
 def scaler(df_x, scale='maxabs'):
     """
     input:
         df_x: pandas dataframe
-              one feature per column, one sample per row.
+              one attribute per column, one sample per row.
 
         scale: string; default 'maxabs'
-            None: no scaling. set scale to None if you would like to have raw data
-                or entirely scale, transform, and normalize the data later.
+            None: no scaling. set scale to None if you would like to have
+                raw data or scale, transform, and normalize the data later.
 
             maxabs: maximum absolute value distance scaler will linearly map
                 all values into a [-1, 1] interval. if the original data
                 has no negative values, the result will be the same as with
-                the minmax scaler (except with features with only one state).
-                if the feature has only zeros, the value will be set to 0.
+                the minmax scaler (except with attributes with only one value).
+                if the attribute has only zeros, the value will be set to 0.
 
             minmax: minimum maximum distance scaler will map all values
                 linearly into a [0, 1] interval.
-                if the feature has only one state, the value will be set to 0.
+                if the attribute has only one value, the value will be set to 0.
 
             std: standard deviation scaler will result in sigmas.
-                each feature will be mean centered around 0.
+                each attribute will be mean centered around 0.
                 ddof delta degree of freedom is set to 1 because it is assumed
                 that the values are samples out of the population
                 and not the entire population. it is incomprehensible to me
                 that the equivalent sklearn method has ddof set to 0.
-                if the feature has only one state, the value will be set to 0.
+                if the attribute has only one value, the value will be set to 0.
 
     output:
         df_x: pandas dataframe
@@ -65,9 +67,9 @@ def scaler(df_x, scale='maxabs'):
         offers a re-implementation of the linear re-scaling methods maxabs,
         minmax, and scale.
 
-        the robust scaler methods (quantile based) found there are missing.
-        since we deal with simulated data, we don't expect heavy outliers,
-        and if they exist, then they are of interest.
+        the robust scaler methods (quantile based) found in scikit-learn are
+        missing. since we deal with simulated data, we don't expect heavy
+        outliers, and if they exist, then they are of interest.
         the power and quantile based transformation methods and unit circle
         based normalizer methods found there are missing too.
         if you need to apply any such methods, you can do so to an anndata object
@@ -87,63 +89,144 @@ def scaler(df_x, scale='maxabs'):
     # -1,1
     elif scale == 'maxabs':
         a_x = df_x.values
+        warnings.filterwarnings('ignore', category=RuntimeWarning)
         a_maxabs = a_x / abs(a_x).max(axis=0)
+        warnings.simplefilter('default')
         a_maxabs[np.isnan(a_maxabs)] = 0  # fix if entier column is 0
         df_x = pd.DataFrame(a_maxabs, columns=df_x.columns, index=df_x.index)
     # 0,1
     elif scale == 'minmax':
         a_x = df_x.values
+        warnings.simplefilter("ignore")
+        warnings.filterwarnings('ignore', category=RuntimeWarning)
         a_minmax = (a_x - a_x.min(axis=0)) / (a_x.max(axis=0) - a_x.min(axis=0))
+        warnings.simplefilter('default')
         a_minmax[np.isnan(a_minmax)] = 0  # fix if entier column has same value
         df_x = pd.DataFrame(a_minmax, columns=df_x.columns, index=df_x.index)
     # sigma
     elif scale == 'std':
         a_x = df_x.values
+        warnings.filterwarnings('ignore', category=RuntimeWarning)
         a_std = (a_x - a_x.mean(axis=0)) / a_x.std(axis=0, ddof=1)
+        warnings.simplefilter('default')
         a_std[np.isnan(a_std)] = 0  # fix if entier column has same value
         df_x = pd.DataFrame(a_std, columns=df_x.columns, index=df_x.index)
     else:
         raise ValueError(f"Error @ scaler : unknown scale algorithm {scale} detected. known are [None, 'maxabs', 'minmax', 'std'].")
+
     return df_x
 
 
-def _anndextract(df_cell, scale='maxabs'):
+def _anndextract(df_cell, scale='maxabs', graph_attached={}, graph_neighbor={}, graph_method='PhysiCell'):
     """
     input:
         df_cell:  pandas dataframe
             data frame retrieved with the mcds.get_cell_df function.
 
-        scale: string; default 'maxabs'
+        scale: string; default maxabs
             specify how the data should be scaled.
             possible values are None, maxabs, minmax, std.
             for more input, check out: help(pcdl.scaler).
 
+        graph_attached: dict; default {}
+            graph dictionary that, if loaded, can be
+            fetched with mcds.get_attched_graph().
+
+        graph_neighbor: dict; default {}
+            graph dictionary that, if loaded, can be
+            fetched with mcds.get_neighbor_graph().
+
+        graph_method: string; default PhysiCell
+            method how the graph was generated.
+
     output:
-        df_count, df_obs, df_spatial pandas dataframes
-        ready to be backed into an anndata object.
+        df_count, df_obs, d_obsm, d_obsp, d_uns dataframes and dictionaries,
+            ready to be backed into an anndata object.
 
     description:
         this function takes a pcdl df_cell pandas dataframe and re-formats
-        it into a set of three dataframes (df_count, df_obs, and df_spatial),
+        it into a set of two dataframes (df_count, df_obs),
+        two dictionary of numpy array (d_obsm, d_obsp),
+        and one dictionary of string (d_uns),
         which downstream might be transformed into an anndata object.
     """
     # transform index to string
+    df_coor = df_cell.loc[:,['position_x','position_y','position_z']].copy()
     df_cell.index = df_cell.index.astype(str)
 
-    # build on spatial and obs anndata object
-    if (len(set(df_cell.position_z)) == 1):
-        df_spatial = df_cell.loc[:,['position_x', 'position_y']].copy()
-    else:
-        df_spatial = df_cell.loc[:,['position_x', 'position_y','position_z']].copy()
-    df_obs = df_cell.loc[:,['mesh_center_p', 'time']].copy()
+    # build obs anndata object (annotation of observations)
+    df_obs = df_cell.loc[:,['mesh_center_p','time']].copy()
     df_obs.columns = ['z_layer', 'time']
+
+    # buil obsm anndata object spatial (multi-dimensional annotation of observations)
+    if (len(set(df_cell.position_z)) == 1):
+        df_obsm = df_cell.loc[:,['position_x','position_y']].copy()
+    else:
+        df_obsm = df_cell.loc[:,['position_x','position_y','position_z']].copy()
+    d_obsm = {"spatial": df_obsm.values}
+
+    # build obsp and uns anndata object graph (pairwise annotation of obeservation) and (unstructured data)
+    ####
+    # acknowledgement:
+    #   this code is inspired from the tysserand add_to_AnnData impelmentation
+    #   from Alexis Coullomb form the Pancaldi Lab.
+    #   https://github.com/VeraPancaldiLab/tysserand/blob/main/tysserand/tysserand.py#L1546
+    ####
+    # extract cell_id to index mapping (i always loved perl)
+    di_ididx = df_cell.reset_index().loc[:,'ID'].reset_index().astype(int).set_index('ID').squeeze().to_dict()
+    # transform cell id graph dict to index matrix and pack for anndata
+    d_obsp = {}  # pairwise annotation of obeservation
+    d_uns = {}  # unstructured data
+    for s_graph, dei_graph in [('neighbor', graph_neighbor), ('attached', graph_attached)]:
+        lli_edge = []
+        lr_distance = []
+        for i_src, ei_dst in dei_graph.items():
+            for i_dst in ei_dst:
+                # extract edge
+                lli_edge.append([di_ididx[i_src], di_ididx[i_dst]])
+                r_distance = ((df_coor.loc[i_src,:].values -  df_coor.loc[i_dst,:].values)**2).sum()**(1/2)
+                lr_distance.append(r_distance)
+        # if there is a graph
+        if (len(lli_edge) > 0):
+            # handle edge data
+            ai_edge = np.array(lli_edge, dtype=np.uint)
+            # handle connection data
+            ai_conectivity = np.ones(ai_edge.shape[0], dtype=np.uint16)
+            ai_conectivity_sparse = sparse.csr_matrix(
+                (ai_conectivity, (ai_edge[:,0], ai_edge[:,1])),
+                shape = (df_cell.shape[0], df_cell.shape[0]),
+                dtype = np.uint
+            )
+            # handle distance data
+            ar_distance  = np.array(lr_distance, dtype=np.float64)
+            ar_distance_sparse = sparse.csr_matrix(
+                (ar_distance, (ai_edge[:,0], ai_edge[:,1])),
+                shape = (df_cell.shape[0], df_cell.shape[0]),
+                dtype = np.float64
+            )
+            # pack obsp
+            d_obsp.update({
+                f'physicell_{s_graph}_conectivities': ai_conectivity_sparse,
+                f'physicell_{s_graph}_distances': ar_distance_sparse,
+            })
+            # pack uns
+            d_uns.update({
+                s_graph : {
+                    'connectivities_key': f'physicell_{s_graph}_conectivities',
+                    'distances_key': f'physicell_{s_graph}_distances',
+                    'params': {
+                        'metric': 'euclidean',
+                        'method': graph_method,
+                    }
+                }
+            })
 
     # extract discrete cell data
     es_drop = set(df_cell.columns).intersection({
         'voxel_i', 'voxel_j', 'voxel_k',
         'mesh_center_m', 'mesh_center_n', 'mesh_center_p',
         'position_x', 'position_y','position_z',
-        'time', 'runtime',
+        'time', 'runtime', 'xmlfile',
     })
     df_cell.drop(es_drop, axis=1, inplace=True)  # maybe obs?
 
@@ -170,66 +253,82 @@ def _anndextract(df_cell, scale='maxabs'):
         df_count[s_col] = df_count[s_col].astype(int)
     df_count = scaler(df_count, scale=scale)
 
-    # output
-    return(df_count, df_obs, df_spatial)
+    # return
+    return(df_count, df_obs, d_obsm, d_obsp, d_uns)
 
 
 # class definition
 class TimeStep(pyMCDS):
-    """
-    input:
-        xmlfile: string
-            name of the xml file with or without path.
-            in the with path case, output_path has to be set to the default!
-
-        output_path: string; default '.'
-            relative or absolute path to the directory where
-            the PhysiCell output files are stored.
-
-        custom_type: dictionary; default is {}
-            variable to specify custom_data variable types
-            besides float (int, bool, str) like this: {var: dtype, ...}.
-            downstream float and int will be handled as numeric,
-            bool as Boolean, and str as categorical data.
-
-        microenv: boole; default True
-            should the microenvironment be extracted?
-            setting microenv to False will use less memory and speed up
-            processing, similar to the original pyMCDS_cells.py script.
-
-        graph: boole; default True
-            should the graphs be extracted?
-            setting graph to False will use less memory and speed up processing.
-
-        settingxml: string; default PhysiCell_settings.xml
-            from which settings.xml should the substrate and cell type
-            ID label mapping be extracted?
-            set to None or False if the xml file is missing!
-
-        verbose: boole; default True
-            setting verbose to False for less text output while processing.
-
-    output:
-        mcds: TimeStep class instance
-            all fetched content is stored at mcds.data.
-
-    description:
-        TimeStep.__init__ will call pyMCDS.__init__ that generates a mcds
-        class instance, a dictionary of dictionaries data structure that
-        contains all output from a single PhysiCell model time step.
-        furthermore, the mcds object offers functions to access the stored data.
-        the code assumes that all related output files are stored
-        in the same directory. data is loaded by reading the xml file for
-        a particular time step and the therein referenced files.
-    """
-    def __init__(self, xmlfile, output_path='.', custom_type={}, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True):
-        pyMCDS.__init__(self, xmlfile=xmlfile, output_path=output_path, custom_type=custom_type, microenv=microenv, graph=graph, settingxml=settingxml, verbose=verbose)
-
-    def get_anndata(self, states=1, drop=set(), keep=set(), scale='maxabs'):
+    def __init__(self, xmlfile, output_path='.', custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True):
         """
         input:
-            states: integer; default is 1
-                minimal number of states a variable has to have to be outputted.
+            xmlfile: string
+                name of the xml file with or without path.
+                in the with path case, output_path has to be set to the default!
+
+            output_path: string; default '.'
+                relative or absolute path to the directory where
+                the PhysiCell output files are stored.
+
+            custom_data_type: dictionary; default is {}
+                variable to specify custom_data variable types
+                besides float (int, bool, str) like this: {var: dtype, ...}.
+                downstream float and int will be handled as numeric,
+                bool as Boolean, and str as categorical data.
+
+            microenv: boole; default True
+                should the microenvironment data be loaded?
+                setting microenv to False will use less memory and speed up
+                processing, similar to the original pyMCDS_cells.py script.
+
+            graph: boole; default True
+                should neighbor garph and attached graph be loaded?
+                setting graph to False will use less memory and speed up processing.
+
+            physiboss: boole; default True
+                should physiboss state data be loaded, if found?
+                setting physiboss to False will use less memory and speed up processing.
+
+            settingxml: string; default PhysiCell_settings.xml
+                the settings.xml that is loaded, from which the cell type ID
+                label mapping, is extracted, if this information is not found
+                in the output xml file.
+                set to None or False if the xml file is missing!
+
+            verbose: boole; default True
+                setting verbose to False for less text output while processing.
+
+        output:
+            mcds: TimeStep class instance
+                all fetched content is stored at mcds.data.
+
+        description:
+            TimeStep.__init__ will call pyMCDS.__init__ that generates a mcds
+            class instance, a dictionary of dictionaries data structure that
+            contains all output from a single PhysiCell model time step.
+            furthermore, the mcds object offers functions to access the stored data.
+            the code assumes that all related output files are stored
+            in the same directory. data is loaded by reading the xml file for
+            a particular time step and the therein referenced files.
+        """
+        pyMCDS.__init__(
+            self,
+            xmlfile = xmlfile,
+            output_path = output_path,
+            custom_data_type = custom_data_type,
+            microenv = microenv,
+            graph = graph,
+            physiboss = physiboss,
+            settingxml = settingxml,
+            verbose = verbose
+        )
+
+
+    def get_anndata(self, values=1, drop=set(), keep=set(), scale='maxabs'):
+        """
+        input:
+            values: integer; default is 1
+                minimal number of values a variable has to have to be outputted.
                 variables that have only 1 state carry no information.
                 None is a state too.
 
@@ -242,7 +341,7 @@ class TimeStep(pyMCDS):
 
             keep: set of strings; default is an empty set
                 set of column labels to be kept in the dataframe.
-                set states=1 to be sure that all variables are kept.
+                set values=1 to be sure that all variables are kept.
                 don't worry: essential columns like ID, coordinates
                 and time will always be kept.
 
@@ -260,68 +359,96 @@ class TimeStep(pyMCDS):
             for downstream analysis.
         """
         # processing
-        print(f'processing: 1/1 {round(self.get_time(),9)}[min] mcds into anndata obj.')
-        df_cell = self.get_cell_df(states=states, drop=drop, keep=keep)
-        df_count, df_obs, df_spatial = _anndextract(df_cell=df_cell, scale=scale)
-        annmcds = ad.AnnData(X=df_count, obs=df_obs, obsm={"spatial": df_spatial.values})
-
+        if self.verbose:
+            print(f'processing: 1/1 {round(self.get_time(),9)}[min] mcds into anndata obj.')
+        df_cell = self.get_cell_df(values=values, drop=drop, keep=keep)
+        df_count, df_obs, d_obsm, d_obsp, d_uns = _anndextract(
+            df_cell = df_cell,
+            scale = scale,
+            graph_attached = self.get_attached_graph_dict(),
+            graph_neighbor = self.get_neighbor_graph_dict(),
+            graph_method = self.get_physicell_version(),
+        )
+        annmcds = ad.AnnData(
+            X = df_count,
+            obs = df_obs,
+            obsm = d_obsm,
+            obsp = d_obsp,
+            uns = d_uns
+        )
         # output
         return annmcds
 
 
 class TimeSeries(pyMCDSts):
-    """
-    input:
-        output_path: string, default '.'
-            relative or absolute path to the directory where
-            the PhysiCell output files are stored.
-
-        custom_type: dictionary; default is {}
-            variable to specify custom_data variable types
-            besides float (int, bool, str) like this: {var: dtype, ...}.
-            downstream float and int will be handled as numeric,
-            bool as Boolean, and str as categorical data.
-
-        load: boole; default True
-            should the whole time series data, all time steps, straight at
-            object initialization be read and stored to mcdsts.l_mcds?
-
-        microenv: boole; default True
-            should the microenvironment be extracted?
-            setting microenv to False will use less memory and speed up
-            processing, similar to the original pyMCDS_cells.py script.
-
-        graph: boole; default True
-            should the graphs be extracted?
-            setting graph to False will use less memory and speed up processing.
-
-        settingxml: string; default PhysiCell_settings.xml
-            from which settings.xml should the substrate and cell type
-            ID label mapping be extracted?
-            set to None or False if the xml file is missing!
-
-        verbose: boole; default True
-            setting verbose to False for less text output while processing.
-
-    output:
-        mcdsts: pyMCDSts class instance
-            this instance offers functions to process all stored time steps
-            from a simulation.
-
-    description:
-        TimeSeries.__init__ will call pyMCDSts.__init__ that generates a mcdsts
-        class instance. this instance offers functions to process all time steps
-        in the output_path directory.
-    """
-    def __init__(self, output_path='.', custom_type={}, load=True, microenv=True, graph=True, settingxml='PhysiCell_settings.xml', verbose=True):
-        pyMCDSts.__init__(self, output_path=output_path, custom_type=custom_type, load=load, microenv=microenv, graph=graph, settingxml=settingxml, verbose=verbose)
-        self.l_annmcds = None
-
-    def get_anndata(self, states=1, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=True):
+    def __init__(self, output_path='.', custom_data_type={}, load=True, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True):
         """
         input:
-            states: integer; default is 1
-                minimal number of states a variable has to have to be outputted.
+            output_path: string, default '.'
+                relative or absolute path to the directory where
+                the PhysiCell output files are stored.
+
+            custom_data_type: dictionary; default is {}
+                variable to specify custom_data variable types
+                besides float (int, bool, str) like this: {var: dtype, ...}.
+                downstream float and int will be handled as numeric,
+                bool as Boolean, and str as categorical data.
+
+            load: boole; default True
+                should the whole time series data, all time steps, straight at
+                object initialization be read and stored to mcdsts.l_mcds?
+
+            microenv: boole; default True
+                should the microenvironment data be loaded?
+                setting microenv to False will use less memory and speed up
+                processing, similar to the original pyMCDS_cells.py script.
+
+            graph: boole; default True
+                should neighbor graph and attached graph be loaded?
+                setting graph to False will use less memory and speed up processing.
+
+            physiboss: boole; default True
+                should physiboss state data be loaded, if found?
+                setting physiboss to False will use less memory and speed up processing.
+
+            settingxml: string; default PhysiCell_settings.xml
+                the settings.xml that is loaded, from which the cell type ID
+                label mapping, is extracted, if this information is not found
+                in the output xml file.
+                set to None or False if the xml file is missing!
+
+            verbose: boole; default True
+                setting verbose to False for less text output while processing.
+
+        output:
+            mcdsts: pyMCDSts class instance
+                this instance offers functions to process all stored time steps
+                from a simulation.
+
+        description:
+            TimeSeries.__init__ will call pyMCDSts.__init__ that generates a mcdsts
+            class instance. this instance offers functions to process all time steps
+            in the output_path directory.
+        """
+        pyMCDSts.__init__(
+            self,
+            output_path = output_path,
+            custom_data_type = custom_data_type,
+            load = load,
+            microenv = microenv,
+            graph = graph,
+            physiboss = physiboss,
+            settingxml = settingxml,
+            verbose = verbose
+        )
+        self.l_annmcds = None
+
+
+    def get_anndata(self, values=1, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=True):
+        """
+        input:
+            values: integer; default is 1
+                minimal number of values a variable has to have to be outputted.
                 variables that have only 1 state carry no information.
                 None is a state too.
 
@@ -359,19 +486,25 @@ class TimeSeries(pyMCDSts):
             function to transform mcds time steps into one or many
             anndata objects for downstream analysis.
         """
+        # initialize vaiable
         l_annmcds = []
         df_anncount = None
         df_annobs = None
-        df_annspatial = None
+        ar_annobsm = None
 
         # variable triage
-        if (states < 2):
-            ls_column = list(self.l_mcds[0].get_cell_df().columns)
+        if (values < 2):
+            ls_column = list(self.l_mcds[0].get_cell_df(drop=drop, keep=keep).columns)
         else:
             ls_column = sorted(es_coor_cell.difference({'ID'}))
-            ls_column.extend(sorted(self.get_cell_df_states(states=states, drop=drop, keep=keep, allvalues=False).keys()))
+            ls_column.extend(sorted(self.get_cell_attribute(values=values, drop=drop, keep=keep, allvalues=False).keys()))
+
+        # collapse warning
+        if collapse:
+            print('Warning @ mcdsts.get_anndata : only df_cell data, but not graph data, can be collapsed.')
 
         # processing
+        lann_mcds = []
         i_mcds = len(self.l_mcds)
         for i in range(i_mcds):
             # fetch mcds
@@ -379,14 +512,25 @@ class TimeSeries(pyMCDSts):
                 mcds = self.l_mcds[i]
             else:
                 mcds = self.l_mcds.pop(0)
+            # extract physicell version
+            s_physicellv = mcds.get_physicell_version(),
             # extract time and dataframes
             r_time = round(mcds.get_time(),9)
-            print(f'processing: {i+1}/{i_mcds} {r_time}[min] mcds into anndata obj.')
+            if self.verbose:
+                print(f'processing: {i+1}/{i_mcds} {r_time}[min] mcds into anndata obj.')
             df_cell = mcds.get_cell_df()
             df_cell = df_cell.loc[:,ls_column]
-            df_count, df_obs, df_spatial = _anndextract(df_cell=df_cell, scale=scale)
+
             # pack collapsed
             if collapse:
+                # extract
+                df_count, df_obs, d_obsm, d_obsp, d_uns = _anndextract(
+                    df_cell=df_cell,
+                    scale = scale,
+                    #graph_attached = {},
+                    #graph_neighbor = {},
+                    #graph_method = s_physicellv,
+                )
                 # count
                 df_count.reset_index(inplace=True)
                 df_count.index = df_count.ID + f'id_{r_time}min'
@@ -404,27 +548,47 @@ class TimeSeries(pyMCDSts):
                     df_annobs = df_obs
                 else:
                     df_annobs = pd.concat([df_annobs, df_obs], axis=0)
-                # spatial
-                df_spatial.reset_index(inplace=True)
-                df_spatial.index = df_spatial.ID + f'id_{r_time}min'
-                df_spatial.index.name = 'id_time'
-                df_spatial.drop('ID', axis=1, inplace=True)
-                if df_annspatial is None:
-                    df_annspatial = df_spatial
+                # obsm (spatial)
+                if ar_annobsm is None:
+                    ar_annobsm = d_obsm['spatial']
                 else:
-                    df_annspatial = pd.concat([df_annspatial, df_spatial], axis=0)
+                    ar_annobsm = np.vstack([ar_annobsm, d_obsm['spatial']])
+                # obsp: nop (graph)
+                # uns: nop (graph)
+
             # pack not collapsed
             else:
-                annmcds = ad.AnnData(X=df_count, obs=df_obs, obsm={"spatial": df_spatial.values})
-                l_annmcds.append(annmcds)
+                # extract
+                df_count, df_obs, d_obsm, d_obsp, d_uns = _anndextract(
+                    df_cell=df_cell,
+                    scale = scale,
+                    graph_attached = mcds.get_attached_graph_dict(),
+                    graph_neighbor = mcds.get_neighbor_graph_dict(),
+                    graph_method = s_physicellv,
+                )
+                # annmcds
+                ann_mcds = ad.AnnData(
+                    X = df_count,
+                    obs = df_obs,
+                    obsm = d_obsm,
+                    obsp = d_obsp,
+                    uns = d_uns,
+                )
+                lann_mcds.append(ann_mcds)
 
         # output
         if collapse:
-            annmcdsts = ad.AnnData(X=df_anncount, obs=df_annobs, obsm={"spatial": df_annspatial.values})
+            ann_mcdsts = ad.AnnData(
+                X = df_anncount,
+                obs = df_annobs,
+                obsm = {'spatial': ar_annobsm},
+                #obsp = d_obsp,
+                #uns = d_uns
+            )
+            return ann_mcdsts
         else:
-            self.l_annmcds = l_annmcds
-            annmcdsts = l_annmcds
-        return annmcdsts
+            self.l_annmcds = lann_mcds
+            return self.l_annmcds
 
 
     def get_annmcds_list(self):
@@ -434,8 +598,8 @@ class TimeSeries(pyMCDSts):
 
         output:
             self.l_annmcds: list of chronologically ordered anndata mcds objects.
-            watch out, this is a dereferenced pointer to the
-            self.l_annmcds list of anndata mcds objects, not a copy of self.l_annmcds!
+                watch out, this is a pointer to the
+                self.l_annmcds list of anndata mcds objects, not a copy of self.l_annmcds!
 
         description:
             function returns a binding to the self.l_annmcds list of anndata mcds objects.

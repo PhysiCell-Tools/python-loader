@@ -1,23 +1,26 @@
-![physicellcdataloader logo & title](man/img/pcdataloader_title_v3.0.0.png)
+![physicellcdataloader logo & title](man/img/physicelldataloader_title_v3.0.0.png)
+
 
 ## Abstract:
+
 physicelldataloader (pcdl) provides a platform independent, python3 based, [pip](https://en.wikipedia.org/wiki/Pip_(package_manager)) installable interface
-to load output, generated with the [PhysiCell](https://github.com/MathCancer/PhysiCell) agent based modeling framework,
+to load output, generated with the [PhysiCell](https://github.com/MathCancer/PhysiCell) agent-based modeling and diffusion solver framework,
 into [python3](https://en.wikipedia.org/wiki/Python_(programming_language)).
 
 pcdl was forked from the original [PhysiCell-Tools](https://github.com/PhysiCell-Tools) [python-loader](https://github.com/PhysiCell-Tools/python-loader) implementation.
 
-The pcdl python3 library maintains three branches branches:
+The pcdl python3 library maintains three branches:
 
 + **Branch version 1** is the original PhysiCell-Tools/python-loader code.
 + **Branch version 2** will be strictly compatible with the original PhysiCell-Tools/python-loader code, although pip installable.
 + **Branch version 3** might break with old habits, although tries to be as much downward compatible as possible.
-  The aim of the v3 branch is to get a very lean and agile python3 physicell output interface, for the ones coming from the python world.
+  The aim of the v3 branch is to get a very lean and agile python3 physicell output interface for the ones coming from the python3 world.
 
 
 ## Header:
-+ Language: python [>= 3.8](https://devguide.python.org/versions/)
-+ Library dependencies: anndata, matplotlib, numpy, pandas, scipy
+
++ Language: python [>= 3.9](https://devguide.python.org/versions/)
++ Library dependencies: aicsimageio, anndata, matplotlib, numpy, pandas, (requests), scipy, vtk
 + Date of origin original PhysiCell-Tools python-loader: 2019-09-02
 + Date of origin pcdl fork: 2022-08-30
 + Doi: https://doi.org/10.5281/ZENODO.8176399
@@ -27,35 +30,86 @@ The pcdl python3 library maintains three branches branches:
 
 
 ## HowTo Guide:
-+ Check out: [man/HOWTO.md](https://github.com/elmbeech/physicelldataloader/tree/master/man/HOWTO.md)!
+
++ [installation and troubleshooting](https://github.com/elmbeech/physicelldataloader/tree/master/man/HOWTO.md)
 
 
 ## Tutorial:
-+ Check out: [man/TUTORIAL.md](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL.md)!
-+ Check out: [man/jupyter/pcdl\_repl\_programming.ipynb](https://github.com/elmbeech/physicelldataloader/tree/master/man/jupyter/pcdl_repl_programming.ipynb)
+
+Basics Tutorials:
+
+1. [pcdl background](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_introduction.md)
+1. [pcdl processing mcds time steps in python3](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_timestep.md)
+1. [pcdl processing mcds time series in python3](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_timeseries.md)
+1. [pcdl from the command line](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_commandline.md)
+
+Extras tutorials python3 language:
++ [pcdl and python3 and json](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_json.md)
++ [pcdl and python3 and pandas](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_pandas.md)
++ [pcdl and python3 and scipy and scanpy](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_scverse.md)
++ [pcdl and python3 and graphs](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_graph.md)
++ [pcdl and python3 and matplotlib](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_matplotlib.md)
++ [pcdl and python3 and vtk](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_vtk.md)
++ [pcdl and python3 and ome.tiff, tiff, png, and jpeg](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_ometiff.md)
++ [pcdl and python3 and napari](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_napari.md)
+
+Extras tutorials for other languages than python3:
+
++ [pcdl and julia](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_julia.md)
+<!--
++ [pcdl and matlab or octave](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_matlab_octave.md)
+-->
++ [pcdl and R](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_r.md)
+
+Extras tutorials for GUI software:
+
++ [pcdl and paraview](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_paraview.md)
++ [pcdl and blender](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_blender.md)
++ [pcdl and napari](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_napari.md)
++ [pcdl and fiji imagej](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_fijiimagej.md)
+<!--
++ [pcdl and neuroglancer](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_(python3)_neuroglancer.md)
+-->
+
+Slides:
+
++ [presentations given](https://github.com/elmbeech/physicelldataloader/tree/master/man/lecture)
+
 
 ## Reference Manual:
-+ Check out: [man/REFERENCE.md](https://github.com/elmbeech/physicelldataloader/tree/master/man/REFERENCE.md)!
+
++ [API application interface](https://github.com/elmbeech/physicelldataloader/tree/master/man/REFERENCE.md)
 
 
 ## Discussion:
+
 To be developed.
 
 
 ## About Documentation:
-Within the pcdl library, we tried to stick to the documentation policy lined out by Daniele Procida in his "[what nobody tells you about documentation](https://www.youtube.com/watch?v=azf6yzuJt54)" talk at PyCon 2017 in Portland, Oregon.
+
+Within the pcdl library, we tried to stick to the documentation policy laid out by Daniele Procida in his "[what nobody tells you about documentation](https://www.youtube.com/watch?v=azf6yzuJt54)" talk at PyCon 2017 in Portland, Oregon.
 
 
 ## Contributions:
+
 + original PhysiCell-Tools python-loader implementation: Patrick Wall, Randy Heiland, Paul Macklin
 + fork pcdl implementation: Elmar Bucher
-+ fork pcdl co-programmer and tester: Heber Rocha, Marshal Gress
++ fork pcdl co-programmer: Furkan Kurtoglu, Jennifer Eng, Heber Rocha
++ fork pcdl continuous testing and feedbacks: Aneequa Sundus, John Metzcar
++ student prj on pcdl:
+  Benjamin Jacobs (make\_gml),
+  Katie Pletz (beta testing),
+  Marshal Gress (plot\_scatter),
+  Nick Oldfather (unit test model),
+  Thierry-Pascal Fleurant (plot\_timeseries)
 
 
 ## Cite:
+
 ```bibtex
 @Misc{bucher2023,
-  author    = {Bucher, Elmar and Wall, Patrick and Gress, Marshal and Rocha, Heber and Heiland, Randy and Macklin, Paul},
+  author    = {Bucher, Elmar and Wall, Patrick and Rocha, Heber and Kurtoglu, Furkan and Eng, Jennifer and Sundus, Aneequa, and Metzcar, John and Heiland, Randy and Macklin, Paul},
   title     = {elmbeech/physicelldataloader: pcdl platform-independent, pip-installable interface to load PhysiCell agent-based modeling framework output into python3.},
   year      = {2023},
   copyright = {Open Access},
@@ -66,22 +120,80 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 
 
 ## Road Map:
-+ [vtk file format](https://docs.vtk.org/en/latest/design_documents/VTKFileFormats.html) output, maybe [stl](https://en.wikipedia.org/wiki/STL_(file_format)) and [wavefront obj](https://en.wikipedia.org/wiki/Wavefront_.obj_file) output.
-+ [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) ([networkx](https://networkx.org/) and [igraph](https://igraph.org/) compatible) output.
 
++ add make\_conc\_vtk visualization parameter.
++ new next generation unit test dataset.
++ rewrite make\_ome\_tiff to use less RAM.
++ evt add neuroglancer ome.tiff support.
 
 ## Release Notes:
-+ version 3.2.12 (2023-08-12): elmbeech/physicelldatalodader
-    + add **pcdl_repl_programming.ipynb** : Jupyter notebook to give an idea about how to work with pcdl in a Python3 REPL.
-    + add github **continuous integration**, all supported python versions, all supported operating systems.
 
-+ version 3.2.11 (2023-08-08): elmbeech/physicelldatalodader
++ version 3.3.1 (2024-09-22): elmbeech/physicelldataloader
+    + bugfix pyMCDS custom vectors loading.
+
++ version 3.3.0 (2024-08-22): elmbeech/physicelldataloader
+    + **pip install pcdl**: will again install all library dependencies. The fine-tuned version was too confssing.
+    + pyMCDS handels now intracellular **physinboss** data too; data is stored in cell\_df.
+    + rename pyMCDS get\_cell\_variables to **get_celltype_list** for conciseness and order list by ID.
+    + rename pyMCDS get\_substrate\_names to **get_substrate_list** for conciseness and order list by ID.
+    + rename pyMCDS get\_scatter to **plot_scatter** for conciseness.
+    + rename pyMCDS get\_contour to **plot_contour** for conciseness.
+    + rename pyMCDSts make\_imgcell to **plot_scatter** for conciseness.
+    + rename pyMCDSts make\_imgconc to **plot_contour** for conciseness.
+    + rename pyMCDSts get\_cell\_df\_states to **get_cell_attribute** for conciseness.
+    + rename pyMCDSts get\_conc\_df\_states to **get_conc_attribute** for conciseness.
+    + rewrite pyMCDS mcds.get\_unit\_se into **mcds.get_unit_dict**.
+    + new pyCLI **pcdl_get_anndata** command line interface function.
+    + new pyCLI **pcdl_get_celltype_list** command line interface function.
+    + new pyCLI **pcdl_get_cell_attribute** command line interface function.
+    + new pyCLI **pcdl_get_cell_df** command line interface function.
+    + new pyCLI **pcdl_get_substrate_list** command line interface function.
+    + new pyCLI **pcdl_get_conc_attribute** command line interface function.
+    + new pyCLI **pcdl_get_conc_df** command line interface function.
+    + new pyCLI **pcdl_get_graph_gml** command line interface function.
+    + new pyCLI **pcdl_get_unit_dict** command line interface function.
+    + new pyCLI **pcdl_get_version** command line interface function.
+    + new pyCLI **pcdl_make_cell_vtk** command line interface function.
+    + new pyCLI **pcdl_make_conc_vtk** command line interface function.
+    + new pyCLI **pcdl_make_gif** command line interface function.
+    + new pyCLI **pcdl_make_movie** command line interface function.
+    + new pyCLI **pcdl_make_ome_tiff** command line interface function.
+    + new pyCLI **pcdl_plot_contour** command line interface function.
+    + new pyCLI **pcdl_plot_scatter** command line interface function.
+    + new pyCLI **pcdl_plot_timeseries** command line interface function.
+    + new pyMCDS **mcds.get_mesh_mnp** function, the mesh version from mcds.get\_voxel\_ijk.
+    + new pyMCDS **make_conc_vtk** function, to save substrate data as rectilinear grid vtk file.
+    + new pyMCDS **make_cell_vtk** function, to save cell data as glyph vtk file.
+    + new pyMCDS **make_graph_gml** function, to save graphs in a networkx and igraph compatible file format.
+    + new pyMCDS **make_ome_tiff** function, to save the output data in ome tiff file format.
+    + new pyMCDS **set_verbosity_true** function, to complete pcdl.TimeStep(verbosity=True/False) experience.
+    + new pyMCDS **set_verbosity_false** function, to complete pcdl.TimeStep(verbosity=True/False) experience.
+    + new pyMCDSts **get_cell_df** function, to extract one big dataframe or a list of dataframes from the whole time series.
+    + new pyMCDSts **get_conc_df** function, to extract one big dataframe or a list of dataframes from the whole time series.
+    + new pyMCDSts **make_cell_vtk** function, to save substrate data as rectilinear grid vtk files.
+    + new pyMCDSts **make_conc_vtk** function, to save cell data as glyph vtk files.
+    + new pyMCDSts **make_graph_gml** function, to save graphs in a networkx and igraph compatible files format.
+    + new pyMCDSts **make_ome_tiff** function, to save the output data in ome tiff file format.
+    + new pyMCDSts **plot_timeseries** function, to plot time series.
+    + new pyMCDSts **set_verbosity_true** function, to complete the pcdl.TimeSeries(verbosity=True/False) experience.
+    + new pyMCDSts **set_verbosity_false** function to complete the pcdl.TimeSeries(verbosity=True/False) experience.
+
++ version 3.2.13 (2023-09-18): elmbeech/physicelldataloader
+    + rename pyMCDSts make\_imgsubs to **make_imgconc** for consistency.
+    + add **man/lecture/20230917_pcdl_repl_programming_analysis_plots.pdf** slide deck.
+
++ version 3.2.12 (2023-08-12): elmbeech/physicelldataloader
+    + add **man/jupyter/pcdl_repl_programming.ipynb** : Jupyter notebook to give an idea about how to work with pcdl in a python3 REPL.
+    + add **man/lecture/20230808_pcws2023_session07_pcdl.pdf** slide deck.
+    + add github **continuous integration** for all supported python3 versions, all supported operating systems.
+
++ version 3.2.11 (2023-08-08): elmbeech/physicelldataloader
     + **pip install pcdl**: will only install the bare minimum library dependencies.
     + **pip install pcdl[data]**: will install the minimum dependencies plus the dependencies to download the test dataset.
-    + **pip install pcdl[scverse]**: will install the minimum dependencies plus the dependencies needed to generate anndata object.
+    + **pip install pcdl[scverse]**: will install the minimum dependencies plus the dependencies needed to generate an anndata object.
     + **pip install pcdl[all]**: will always install all dependencies.
-    + new TimeSeries **get_annmcds_list** function, which, points to the self.l\_annmcds object.
-    + new pyMCDS **get_scatter** function split off from pyMCDSts make\_imgcell.
+    + new TimeSeries **get_annmcds_list** function, which points to the self.l\_annmcds object.
+    + new pyMCDS **get_scatter** function is split off from pyMCDSts make\_imgcell.
     + pyMCDSts **make_imgcell** and **make_imgsubs** bug fixes.
     + TimeStep and TimeSeries **get_anndata** evolution.
 
@@ -98,28 +210,28 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
     + internal pyAnnData **\_anndextract** function.
     + pyMCDS **_\_init__** seetingxml parameter changed from boolean to string to accept other PhysiCell\_settings.xml filenames than the default.
     + pyMCDS **get_cell_df** drop and keep parameters to declare a set of columns to be dropped or kept.
-    + pyMCDS **get_concentration_df** drop and keep parameters to declare a set of columns to be dropped or kept.
+    + pyMCDS **get_conc_df** drop and keep parameters to declare a set of columns to be dropped or kept.
     + new pyMCDS **get_conc_df** shorthand for get\_concentration\_df.
     + pyMCDSts get\_cell\_minstate\_col reimplementation as **get_cell_df_columns_states** function.
     + pyMCDSts get\_concentartion\_minstate\_col reimplementation as **get_conc_df_columns_states** function.
-    + new pyMCDSts **get_mcds_list** function which, points to the self.l\_mcds object.
+    + new pyMCDSts **get_mcds_list** function which points to the self.l\_mcds object.
 
 + version 3.2.8 (2023-06-21): elmbeech/physicelldataloader
     + pyMCDS **get_concentration_df** states parameter to filter out non-informative variables.
     + pyMCDS **get_cell_df** states parameter to filter out non-informative variables.
     + pyMCDSts **_\_init__** load parameter to specify if the whole time series data straight at object initialization should be loaded.
-    + new pyMCDSts **get_cell_minstate_col** function to scan the whole time series for informative features.
-    + new pyMCDSts **get_concentartion_minstate_col** function to scan the whole time series for informative features.
+    + new pyMCDSts **get_cell_minstate_col** function to scan the whole time series for informative attributes.
+    + new pyMCDSts **get_concentartion_minstate_col** function to scan the whole time series for informative attributes.
 
 + version 3.2.7 (2023-06-20): elmbeech/physicelldataloader
     + pyMCDS and pyMCDSts **_\_init__** custom\_type parameter to specify other custom\_data variable types (int, bool, str) then the generic float.
 
 + version 3.2.5 (2023-06-19): elmbeech/physicelldataloader
-    + pyMCDS resolve incompatibility with earlier PhysiCell and MultiCellDS versions.
+    + pyMCDS resolves incompatibility with earlier PhysiCell and MultiCellDS versions.
 
 + version 3.2.4 (2023-06-17): elmbeech/physicelldataloader
     + pyMCDS **_\_init__** seetingxml parameter for cases where in the output folder no PhysiCell\_settings.xml can be found.
-    + pyMCDSts **mcdsts.make_imgcell** extrema parameter replaced by z\_axis parameter to account for numerical and categorical variable types.
+    + pyMCDSts **mcdsts.make_imgcell** extrema parameter is replaced by the z\_axis parameter to account for numerical and categorical variable types.
 
 + version 3.2.2 (2023-06-16): elmbeech/physicelldataloader
     + pyMCDS **mcds.get_cell_df** sets distinct boolean, categorical, integer number, and real number variable types. categorical number codes are translated. for all spatial variables, the vector length value is calculated and added automatically.
@@ -136,7 +248,7 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 
 + version 3.0.7 (2023-06-08): elmbeech/physicelldataloader
     + pyMCDSts: replaces the svg dependent **mcdsts.make_jpeg**, **mcdsts.make_png**, and **mcdsts.make_tiff** with **mcdsts.make_imgcell** and **mcdsts.make_imgsubs** which generate images straight out of the loaded data. the **mcdsts.make_gif** and **mcdsts.make_movie** functions were adjusted accordingly.
-    + pyMCDSts: **mcdsts.read_mcds** loads now automatically all mcds snapshots, if no xmlfile\_list is provided (default).
+    + pyMCDSts: **mcdsts.read_mcds** loads now automatically all mcds snapshots if no xmlfile\_list is provided (default).
 
 + version 3.0.6 (2023-04-29): elmbeech/physicelldataloader
     + pyMCDS **\_read_xml** is now able to load time steps with zero cells.
@@ -144,7 +256,7 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
 
 + version 3.0.5 (2023-02-26): elmbeech/physicelldataloader pyMCDS **mcds.get_contour**  plots span now the whole domain and not only to the border voxel centers.
 + version 3.0.4 (2023-02-21): elmbeech/physicelldataloader pyMCDS **mcds.get_contour** function, to easily generate for substrates matplotlib contourf and contour plots because they do not exist as pandas plots.
-+ version 3.0.3 (2023-02-19): elmbeech/physicelldataloader branch 3 has no longer anndata and as such hdf5 dependency.
++ version 3.0.3 (2023-02-19): elmbeech/physicelldataloader branch 3 has no longer anndata and, as such, hdf5 dependency.
 + version 3.0.2 (2023-01-06): elmbeech/physicelldataloader bugfix installing package data.
 + version 3.0.0 (2023-01-06): elmbeech/physicelldataloader
     + **pyMCDS** parameter **xml_file** can now handle path/file.xml (unix) or path\file.xml (dos) input, as long output_path is the default.
@@ -157,7 +269,7 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
     + pyMCDS **mcds.get_voxel_spacing** returns now 3 specific values, one for x, y, and z, instead of 1 general value.
     + pyMCDS **mcds.get_concentrations** was renamed to **mcds.get_concentration** for consistency
     + pyMCDS **mcds.get_concentrations_at** was renamed to **mcds.get_concentration_at** for consistency
-    + pyMCDS **mcds.get_concentration_at** if z_slice is not a mesh center value, the function will by default adjust to nearest and no longer break.
+    + pyMCDS **mcds.get_concentration_at** if z_slice is not a mesh center value, the function will by default adjust to the nearest and no longer break.
     + pyMCDS **mcds.get_cell_variables** and **mcds.get_substrate_names** return now a strictly alphabetically ordered list.
     + pyMCDS **mcds.get_cell_df** returns now a pandas dataframe with the cell IDs as the index and not as a column.
       additionally, this dataframe contains now voxel, mesh_center, substrate parameter, substrate concentration, and cell density information too.
@@ -186,7 +298,7 @@ Within the pcdl library, we tried to stick to the documentation policy lined out
     + new pyMCDSts **make_tiff** function.
     + new pyMCDSts **make_gif** function.
     + new pyMCDSts **make_movie** function.
-    + all **plotting** functions were removed because pcdl only focus on making the raw data in python easy accessible for in-depth analysis.
+    + all **plotting** functions were removed because pcdl only focuses on making the raw data in python3 easy to access for in-depth analysis.
     + cell position coordinates are now constantly labeled as **x,y,z**, mesh center coordinates as **m,n,p**, and voxel coordinates as **i,j,k**.
     + the underling [mcds object data dictionary structure](https://github.com/elmbeech/physicelldataloader/tree/master/man/img/physicelldataloader_data_dictionary_v3.0.0.png) has changed.
     + [pytest](https://en.wikipedia.org/wiki/Pytest) unit tests exist now for all pyMCDS and pyMCDSts functions.

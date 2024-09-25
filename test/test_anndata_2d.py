@@ -24,7 +24,6 @@ import os
 import pandas as pd
 import pathlib
 import pcdl
-import pytest
 
 
 # const
@@ -38,87 +37,130 @@ if not os.path.exists(s_path_2d):
     pcdl.install_data()
 
 
-# helper function
-class TestScaler(object):
+## helper function ##
+class TestPyAnndataScaler(object):
     ''' test for pcdl.scaler function '''
     a_x = np.array([[ 1.,-1., 2., 0.],[ 2., 0., 0.,0.],[ 0., 1.,-1.,0.]])
     df_x = pd.DataFrame(a_x, columns=['a','b','c','d'])
 
     def test_scaler_none(self, df_x=df_x):
         df_scaled = pcdl.pyAnnData.scaler(df_x=df_x, scale=None)
-        assert all(df_scaled == df_x)
+        assert(str(type(df_scaled)) == "<class 'pandas.core.frame.DataFrame'>") and \
+              (all(df_scaled == df_x))
 
-    @pytest.mark.filterwarnings("ignore:invalid value encountered in divide")
     def test_scaler_minabs(self, df_x=df_x):
         df_scaled = pcdl.pyAnnData.scaler(df_x=df_x, scale='maxabs')
-        assert (df_scaled.values.sum().round(3) == 2.0) and \
-               (df_scaled.values.min().round(3) == -1.0) and \
-               (df_scaled.values.max().round(3) == 1.0)
+        assert(str(type(df_scaled)) == "<class 'pandas.core.frame.DataFrame'>") and \
+              (df_scaled.values.sum().round(3) == 2.0) and \
+              (df_scaled.values.min().round(3) == -1.0) and \
+              (df_scaled.values.max().round(3) == 1.0)
 
-    @pytest.mark.filterwarnings("ignore:invalid value encountered in divide")
     def test_scaler_minmax(self, df_x=df_x):
         df_scaled = pcdl.pyAnnData.scaler(df_x=df_x, scale='minmax')
-        assert (df_scaled.values.sum().round(3) == 4.333) and \
-               (df_scaled.values.min().round(3) == 0.0) and \
-               (df_scaled.values.max().round(3) == 1.0)
+        assert(str(type(df_scaled)) == "<class 'pandas.core.frame.DataFrame'>") and \
+              (df_scaled.values.sum().round(3) == 4.333) and \
+              (df_scaled.values.min().round(3) == 0.0) and \
+              (df_scaled.values.max().round(3) == 1.0)
 
-    @pytest.mark.filterwarnings("ignore:invalid value encountered in divide")
     def test_scaler_std(self, df_x=df_x):
         df_scaled = pcdl.pyAnnData.scaler(df_x=df_x, scale='std')
-        assert (df_scaled.values.sum().round(3) == 0.0) and \
-               (df_scaled.values.min().round(3) == -1.0) and \
-               (df_scaled.values.max().round(3) == 1.091)
+        assert(str(type(df_scaled)) == "<class 'pandas.core.frame.DataFrame'>") and \
+              (df_scaled.values.sum().round(3) == 0.0) and \
+              (df_scaled.values.min().round(3) == -1.0) and \
+              (df_scaled.values.max().round(3) == 1.091)
 
 
-# load physicell data time step
-class TestTimeStep(object):
+## load physicell data time step  ##
+class TestPyAnndataTimeStep(object):
     ''' test for pcdl.TimeStep class. '''
-    mcds = pcdl.TimeStep(s_pathfile_2d, verbose=False)
 
     ## get_anndata command ##
-    @pytest.mark.filterwarnings("ignore:invalid value encountered in divide")
-    def test_mcds_get_anndata(self, mcds=mcds):
-        ann = mcds.get_anndata(states=1, drop=set(), keep=set(), scale='maxabs')
-        assert (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
-               (ann.X.shape == (1099, 79)) and \
-               (ann.obs.shape == (1099, 6)) and \
-               (ann.obsm['spatial'].shape == (1099, 2)) and \
-               (ann.var.shape == (79, 0)) and \
-               (len(ann.uns) == 0)
+    def test_mcds_get_anndata(self):
+        mcds = pcdl.TimeStep(s_pathfile_2d, verbose=False)
+        ann = mcds.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs')
+        assert(str(type(mcds)) == "<class 'pcdl.pyAnnData.TimeStep'>") and \
+              (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (ann.X.shape == (1099, 78)) and \
+              (ann.obs.shape == (1099, 7)) and \
+              (ann.obsm['spatial'].shape == (1099, 2)) and \
+              (len(ann.obsp) == 2) and \
+              (ann.var.shape == (78, 0)) and \
+              (len(ann.uns) == 1)
 
 
-# load physicell data time series
-class TestTimeSeries(object):
+## load physicell data time series ##
+class TestPyAnndataTimeSeries(object):
     ''' test for pcdl.TestSeries class. '''
-    mcdsts = pcdl.TimeSeries(s_path_2d, verbose=False)
+
+    # get_anndata
+    # get_annmcds_list {integrated}
+    # value {1, _2_}
+    # collaps {True, _False_}
+    # keep_mcds {True, _False_}
 
     ## get_anndata command ##
-    @pytest.mark.filterwarnings("ignore:invalid value encountered in divide")
-    def test_mcdsts_get_anndata_collapse_mcds(self, mcdsts=mcdsts):
-        ann = mcdsts.get_anndata(states=1, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=True)
-        assert (len(mcdsts.l_mcds) == 25) and \
-               (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
-               (ann.X.shape == (24758, 79)) and \
-               (ann.obs.shape == (24758, 7)) and \
-               (ann.obsm['spatial'].shape == (24758, 2)) and \
-               (ann.var.shape == (79, 0)) and \
-               (len(ann.uns) == 0)
-
-    @pytest.mark.filterwarnings("ignore:invalid value encountered in divide")
-    def test_mcdsts_get_anndata_noncollapse_nonmcds(self, mcdsts=mcdsts):
-        l_ann = mcdsts.get_anndata(states=1, drop=set(), keep=set(), scale='maxabs', collapse=False, keep_mcds=False)
-        assert (len(mcdsts.l_mcds) == 0) and \
-               (str(type(l_ann)) == "<class 'list'>") and \
-               (len(l_ann) == 25) and \
-               (all([str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>" for ann in l_ann])) and \
-               (l_ann[24].X.shape == (1099, 79)) and \
-               (l_ann[24].obs.shape == (1099, 6)) and \
-               (l_ann[24].obsm['spatial'].shape == (1099, 2)) and \
-               (l_ann[24].var.shape == (79, 0)) and \
-               (len(l_ann[24].uns) == 0)
-
-    ## get_annmcds_list command ##
-    def test_mcdsts_get_annmcds_list(self, mcdsts=mcdsts):
+    def test_mcdsts_get_anndata(self):
+        mcdsts = pcdl.TimeSeries(s_path_2d, verbose=True)
+        ann = mcdsts.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=True)
         l_annmcds = mcdsts.get_annmcds_list()
-        assert l_annmcds == mcdsts.l_annmcds
+        assert(str(type(mcdsts)) == "<class 'pcdl.pyAnnData.TimeSeries'>") and \
+              (len(mcdsts.l_mcds) == 25) and \
+              (l_annmcds == mcdsts.l_annmcds) and \
+              (mcdsts.l_annmcds is None) and \
+              (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (ann.X.shape == (24758, 78)) and \
+              (ann.obs.shape == (24758, 8)) and \
+              (ann.obsm['spatial'].shape == (24758, 2)) and \
+              (len(ann.obsp) == 0) and \
+              (ann.var.shape == (78, 0)) and \
+              (len(ann.uns) == 0)
+
+    def test_mcdsts_get_anndata_value(self):
+        mcdsts = pcdl.TimeSeries(s_path_2d, verbose=True)
+        ann = mcdsts.get_anndata(values=2, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=True)
+        l_annmcds = mcdsts.get_annmcds_list()
+        assert(str(type(mcdsts)) == "<class 'pcdl.pyAnnData.TimeSeries'>") and \
+              (len(mcdsts.l_mcds) == 25) and \
+              (l_annmcds == mcdsts.l_annmcds) and \
+              (mcdsts.l_annmcds is None) and \
+              (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (ann.X.shape == (24758, 26)) and \
+              (ann.obs.shape == (24758, 5)) and \
+              (ann.obsm['spatial'].shape == (24758, 2)) and \
+              (len(ann.obsp) == 0) and \
+              (ann.var.shape == (26, 0)) and \
+              (len(ann.uns) == 0)
+
+    def test_mcdsts_get_anndata_collapsefalse(self):
+        mcdsts = pcdl.TimeSeries(s_path_2d, verbose=True)
+        ann = mcdsts.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs', collapse=False, keep_mcds=True)
+        l_annmcds = mcdsts.get_annmcds_list()
+        assert(str(type(mcdsts)) == "<class 'pcdl.pyAnnData.TimeSeries'>") and \
+              (len(mcdsts.l_mcds) == 25) and \
+              (l_annmcds == mcdsts.l_annmcds) and \
+              (str(type(mcdsts.l_annmcds)) == "<class 'list'>") and \
+              (len(mcdsts.l_annmcds) == 25) and \
+              (all([str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>" for ann in mcdsts.l_annmcds])) and \
+              (mcdsts.l_annmcds[24].X.shape == (1099, 78)) and \
+              (mcdsts.l_annmcds[24].obs.shape == (1099, 7)) and \
+              (mcdsts.l_annmcds[24].obsm['spatial'].shape == (1099, 2)) and \
+              (len(mcdsts.l_annmcds[24].obsp) == 2) and \
+              (mcdsts.l_annmcds[24].var.shape == (78, 0)) and \
+              (len(mcdsts.l_annmcds[24].uns) == 1)
+
+    def test_mcdsts_get_anndata_keepmcdsfalse(self):
+        mcdsts = pcdl.TimeSeries(s_path_2d, verbose=True)
+        ann = mcdsts.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=False)
+        l_annmcds = mcdsts.get_annmcds_list()
+        assert(str(type(mcdsts)) == "<class 'pcdl.pyAnnData.TimeSeries'>") and \
+              (len(mcdsts.l_mcds) == 0) and \
+              (l_annmcds == mcdsts.l_annmcds) and \
+              (mcdsts.l_annmcds is None) and \
+              (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (ann.X.shape == (24758, 78)) and \
+              (ann.obs.shape == (24758, 8)) and \
+              (ann.obsm['spatial'].shape == (24758, 2)) and \
+              (len(ann.obsp) == 0) and \
+              (ann.var.shape == (78, 0)) and \
+              (len(ann.uns) == 0)
 
