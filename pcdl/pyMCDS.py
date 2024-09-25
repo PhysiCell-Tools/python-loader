@@ -34,7 +34,8 @@ from pcdl.VERSION import __version__
 
 
 # const physicell codec
-# implemation based on PhysiCell/core/PhysiCell_constants.h.
+# implemation based on PhysiCell/core/PhysiCell_constants.h. (PhysiCell < 1.14)
+# implemented based on PhysiCell/core/PhysiCell_constants.cpp (PhysiCell >= 1.14)
 ds_cycle_model = {
     '0' : 'advanced_Ki67_cycle_model',
     '1' : 'basic_Ki67_cycle_model',
@@ -113,6 +114,7 @@ es_var_cell = {  # variable size=1 (check for the s at the end of the label)
     # interactions
     'live_phagocytosis_rates',
     'attack_rates',
+    'immunogenicities',
     'fusion_rates',
     'transformation_rates',
     # intracellular NOP

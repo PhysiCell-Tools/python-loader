@@ -6,6 +6,9 @@
 # https://packaging.python.org/en/latest/tutorials/packaging-projects/
 # https://hatch.pypa.io/latest/
 #
+# find files with traling spaces:
+# find . -type f -exec egrep -l " +$" {} \;
+#
 # releasing a next version on pypi:
 # 0. vim pcdl/VERSION.py  # increase version number in file
 # 1. git add pcdl/VERSION.py
