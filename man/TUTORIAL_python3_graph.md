@@ -60,7 +60,7 @@ import igraph as ig
 g = ig.Graph.Read_GML('output/output00000024_neighbor.gml')
 print(g)
 ```
-``python
+```python
 ig.summary(g)
 ```
 

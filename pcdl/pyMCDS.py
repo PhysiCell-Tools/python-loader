@@ -2162,11 +2162,11 @@ class pyMCDS:
 
                     # update output
                     la_zyx_img.append(a_yx_img)
-            a_zyx_img = np.array(la_zyx_img)
-            la_czyx_img.append(np.array(a_zyx_img))
+            a_zyx_img = np.array(la_zyx_img, np.float16)
+            la_czyx_img.append(np.array(a_zyx_img, np.float16))
 
         # output
-        a_czyx_img = np.array(la_czyx_img)
+        a_czyx_img = np.array(la_czyx_img, dtype=np.float16)
 
         # numpy array
         if not file:
