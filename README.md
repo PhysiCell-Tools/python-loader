@@ -123,10 +123,13 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
 
 + add make\_conc\_vtk visualization parameter.
 + new next generation unit test dataset.
-+ rewrite make\_ome\_tiff to use less RAM.
 + evt add neuroglancer ome.tiff support.
 
 ## Release Notes:
+
++ version 3.3.2 (2024-10-??): elmbeech/physicelldataloader
+    + **Warnings** will no longer be piped to standard output if verbose is set to False.
+    + pyMCDS **make_ome_tiff** function rewriten to be less RAM hungry and more versatile.
 
 + version 3.3.1 (2024-09-22): elmbeech/physicelldataloader
     + bugfix pyMCDS custom vectors loading.

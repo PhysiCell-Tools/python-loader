@@ -1,21 +1,23 @@
 ```
 usage: pcdl_make_ome_tiff [-h] [--microenv MICROENV] [--physiboss PHYSIBOSS]
                           [--settingxml SETTINGXML] [-v VERBOSE]
+                          [--cutoff [CUTOFF ...]] [--focus FOCUS [FOCUS ...]]
                           [--collapse COLLAPSE]
                           [path] [cell_attribute]
 
-function to transform chosen mcds output into an 1[um] spaced czyx (channel,
-z-axis, y-axis, x-axis) ome tiff file, one substrate or cell_type per channel.
-the ome tiff file format can for example be read by the napari
+function to transform chosen mcdsts output into an 1[um] spaced tczyx (time,
+channel, z-axis, y-axis, x-axis) ome tiff file, one substrate or cell_type per
+channel. the ome tiff file format can for example be read by the napari
 (https://napari.org/stable/) or fiji imagej (https://fiji.sc/) software.
 
 positional arguments:
   path                  path to the PhysiCell output directory or a
                         outputnnnnnnnn.xml file. default is . .
-  cell_attribute        mcds.get_cell_df dataframe columns, used for
+  cell_attribute        mcds.get_cell_df dataframe column, used for
                         cell_attribute. the column data type has to be numeric
-                        (bool, int, float) and can not be string. default is
-                        ID, with will result in a segmentation mask.
+                        (bool, int, float) and cannot be string. the result
+                        will be stored as 32 bit float. default is ID, with
+                        will result in a segmentation mask.
 
 options:
   -h, --help            show this help message and exit
@@ -35,6 +37,16 @@ options:
   -v VERBOSE, --verbose VERBOSE
                         setting verbose to False for less text output, while
                         processing. default is True.
+  --cutoff [CUTOFF ...]
+                        if a contour from a substrate or cell_type not should
+                        be cut by greater than zero, another cutoff value can
+                        be specified here like this attribute:value
+                        attribute:value attribute:value. defaukt is ID:0
+  --focus FOCUS [FOCUS ...]
+                        set of substrate and cell_type names to specify what
+                        will be translated into ome tiff format. if None, all
+                        substrates and cell types will be processed. default
+                        is a None.
   --collapse COLLAPSE   should all mcds time steps from the time series be
                         collapsed into one big ome.tiff, or a many ome.tiff,
                         one ome.tiff for each time step?, default is True.

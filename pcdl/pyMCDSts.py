@@ -984,16 +984,27 @@ class pyMCDSts:
 
     ## OME TIFF RELATED FUNCTIONS ##
 
-    def make_ome_tiff(self, cell_attribute='ID', file=True, collapse=True):
+    def make_ome_tiff(self, cell_attribute='ID', cutoff={'ID': 0}, focus=None, file=True, collapse=True):
         """
         input:
-            cell_attribute: strings; default is 'ID', with will result in a segmentation mask.
-                column name within cell dataframe.
-                the column data type has to be numeric (bool, int, float) and can't be string.
+            cell_attribute: strings; default is 'ID', which will result in a segmentation mask.
+                column name within the cell dataframe.
+                the column data type has to be numeric (bool, int, float)
+                and cannot be string.
+                the result will be stored as 32 bit float.
+
+            cutoff: dictionary string to real; default is {'ID': 0}
+                if a contour from a substrate or cell_type not should be cut by
+                greater than zero, another cutoff value can be specified here.
+
+            focus: set of strings; default is a None
+                set of substrate and cell_type names to specify what will be
+                translated into ome tiff format.
+                if None, all substrates and cell types will be processed.
 
             file: boolean; default True
-                if True, an ome tiff file is output.
-                if False, a numpy array with shape tczyx is output.
+                if True, an ome tiff file is the output.
+                if False, a numpy array with shape tczyx is the output.
 
             collapse: boole; default True
                 should all mcds time steps from the time series be collapsed
@@ -1002,6 +1013,7 @@ class pyMCDSts:
 
         output:
             a_tczyx_img: numpy array or ome tiff file.
+
 
         description:
             function to transform chosen mcdsts output into an 1[um] spaced
@@ -1020,19 +1032,21 @@ class pyMCDSts:
         # each T time step
         l_tczyx_img = []
         for i, mcds in enumerate(self.get_mcds_list()):
+
+            # processing
+            b_file = True # 10
             if (not file and not collapse) or (not file and collapse) or (file and collapse):  # 00, 01, 11
-                a_czyx_img = mcds.make_ome_tiff(cell_attribute=cell_attribute, file=False)
-                l_tczyx_img.append(a_czyx_img)
-
-            elif (file and not collapse):  # 10
-                s_pathfile = mcds.make_ome_tiff(cell_attribute=cell_attribute, file=True)
-                l_tczyx_img.append(s_pathfile)
-
-            else:
-                sys.exit(f'Error @ make_ome_tiff :.')
+                b_file = False
+            o_tczyx_img = mcds.make_ome_tiff(
+                cell_attribute = cell_attribute,
+                cutoff = cutoff,
+                focus = focus,
+                file = b_file
+            )
+            l_tczyx_img.append(o_tczyx_img)
 
         # output 00 list of numpy arrays
-        if (not file and not collapse):
+        if (not file and not collapse):  # 00
             if self.verbose:
                 print(f'la_tczyx_img shape: {len(l_tczyx_img)} * {l_tczyx_img[0].shape}')
             return l_tczyx_img
@@ -1046,7 +1060,7 @@ class pyMCDSts:
             return a_tczyx_img
 
         # output 10 list of pathfile strings
-        elif (file and not collapse):  # 01
+        elif (file and not collapse):  # 10
             return l_tczyx_img
 
         # output 11 ometiff file
@@ -1071,7 +1085,7 @@ class pyMCDSts:
 
         # error case
         else:
-            sys.exit(f'Error @ make_ome_tiff :.')
+            sys.exit(f'Error @ make_ome_tiff : {file} {collapse} strange file collapse combination.')
 
 
     ## TIME SERIES RELATED FUNCTIONS ##

@@ -65,7 +65,7 @@ pip3 install fury
 ```
 
 <!-- i have ask Elef if this is true -->
-Unfortunately, rectiliniar grid files are not supported, conc.vtr files can't be loaded.
+Unfortunately, rectiliniar grid files are not supported, conc.vtr files cannot be loaded.
 
 Load and display cell.vtp ploydata files.
 

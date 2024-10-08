@@ -500,7 +500,7 @@ class TimeSeries(pyMCDSts):
             ls_column.extend(sorted(self.get_cell_attribute(values=values, drop=drop, keep=keep, allvalues=False).keys()))
 
         # collapse warning
-        if collapse:
+        if collapse and self.verbose:
             print('Warning @ mcdsts.get_anndata : only df_cell data, but not graph data, can be collapsed.')
 
         # processing

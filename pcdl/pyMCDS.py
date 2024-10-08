@@ -610,13 +610,16 @@ class pyMCDS:
         tr_x, tr_y, tr_z = self.get_xyz_range()
 
         if (x < tr_x[0]) or (x > tr_x[1]):
-            print(f'Warning @ pyMCDS.is_in_mesh : x = {x} out of bounds: x-range is {tr_x}.')
+            if self.verbose:
+                print(f'Warning @ pyMCDS.is_in_mesh : x = {x} out of bounds: x-range is {tr_x}.')
             b_isinmesh = False
         elif (y < tr_y[0]) or (y > tr_y[1]):
-            print(f'Warning @ pyMCDS.is_in_mesh : y = {y} out of bounds: y-range is {tr_y}.')
+            if self.verbose:
+                print(f'Warning @ pyMCDS.is_in_mesh : y = {y} out of bounds: y-range is {tr_y}.')
             b_isinmesh = False
         elif (z < tr_z[0]) or (z > tr_z[1]):
-            print(f'Warning @ pyMCDS.is_in_mesh : z = {z} out of bounds: z-range is {tr_z}.')
+            if self.verbose:
+                print(f'Warning @ pyMCDS.is_in_mesh : z = {z} out of bounds: z-range is {tr_z}.')
             b_isinmesh = False
 
         # output
@@ -847,7 +850,8 @@ class pyMCDS:
         if not (z_slice is None):
             _, _, ar_p_axis = self.get_mesh_mnp_axis()
             if not (z_slice in ar_p_axis):
-                print(f'Warning @ pyMCDS.get_concentration : specified z_slice {z_slice} is not an element of the z-axis mesh centers set {ar_p_axis}.')
+                if self.verbose:
+                    print(f'Warning @ pyMCDS.get_concentration : specified z_slice {z_slice} is not an element of the z-axis mesh centers set {ar_p_axis}.')
                 if halt:
                     sys.exit('Processing stopped!')
                 else:
@@ -956,7 +960,8 @@ class pyMCDS:
         if not (z_slice is None):
             _, _, ar_p_axis = self.get_mesh_mnp_axis()
             if not (z_slice in ar_p_axis):
-                print(f'Warning @ pyMCDS.get_conc_df : specified z_slice {z_slice} is not an element of the z-axis mesh centers set {ar_p_axis}.')
+                if self.verbose:
+                    print(f'Warning @ pyMCDS.get_conc_df : specified z_slice {z_slice} is not an element of the z-axis mesh centers set {ar_p_axis}.')
                 if halt:
                     sys.exit('Processing stopped!')
                 else:
@@ -1114,7 +1119,8 @@ class pyMCDS:
                 i_height = int(np.ceil(float(x_root.get('height'))))  # px
                 figsizepx = [i_width, i_height]
             except FileNotFoundError:
-                print(f'Warning @ pyMCDS.plot_contour : could not load {s_pathfile} to auto detect figsizepx. take default.')
+                if self.verbose:
+                    print(f'Warning @ pyMCDS.plot_contour : could not load {s_pathfile} to auto detect figsizepx. take default.')
                 figsizepx = [640, 480]
 
         # handle figure size
@@ -1698,7 +1704,8 @@ class pyMCDS:
                         r_radius = float(circle_element.get('r')) # px
                         s = int(round((r_radius)**2))
                     else:
-                        print(f'Warning @ pyMCDSts.plot_scatter : these agents are not circles.')
+                        if self.verbose:
+                            print(f'Warning @ pyMCDSts.plot_scatter : these agents are not circles.')
                         s = plt.rcParams['lines.markersize']**2
                     if self.verbose:
                         print(f's set to {s}.')
@@ -1707,7 +1714,8 @@ class pyMCDS:
                     i_height = int(np.ceil(float(x_root.get('height'))))  # px
                     figsizepx = [i_width, i_height]
             except FileNotFoundError:
-                print(f'Warning @ pyMCDSts.plot_scatter : could not load {s_pathfile}.')
+                if self.verbose:
+                    print(f'Warning @ pyMCDSts.plot_scatter : could not load {s_pathfile}.')
                 if s is None:
                     s = plt.rcParams['lines.markersize']**2
                     if self.verbose:
@@ -2005,16 +2013,27 @@ class pyMCDS:
 
     ## MICROENVIRONMENT AND CELL AGENT RELATED FUNCTIONS ##
 
-    def make_ome_tiff(self, cell_attribute='ID', file=True):
+    def make_ome_tiff(self, cell_attribute='ID', cutoff={'ID': 0}, focus=None, file=True):
         """
         input:
             cell_attribute: strings; default is 'ID', which will result in a segmentation mask.
-                column name within cell dataframe.
-                the column data type has to be numeric (bool, int, float) and can't be string.
+                column name within the cell dataframe.
+                the column data type has to be numeric (bool, int, float)
+                and cannot be string.
+                the result will be stored as 32 bit float.
+
+            cutoff: dictionary string to real; default is {'ID': 0}
+                if a contour from a substrate or cell_type not should be cut by
+                greater than zero, another cutoff value can be specified here.
+
+            focus: set of strings; default is a None
+                set of substrate and cell_type names to specify what will be
+                translated into ome tiff format.
+                if None, all substrates and cell types will be processed.
 
             file: boolean; default True
-                if True, an ome tiff file is output.
-                if False, a numpy array with shape czyx is output.
+                if True, an ome tiff file is the output.
+                if False, a numpy array with shape czyx is the output.
 
         output:
             a_czyx_img: numpy array or ome tiff file.
@@ -2033,7 +2052,16 @@ class pyMCDS:
             https://napari.org/stable/
             https://fiji.sc/
         """
-        # bue jenny: 20240904: a 16[bit] ome.tiff is good enough!
+        # handle input
+        ls_substrate = self.get_substrate_list()
+        ls_celltype = self.get_celltype_list()
+
+        if not (focus is None):
+            ls_substrate = [s_substrate for s_substrate in ls_substrate if s_substrate in set(focus)]
+            ls_celltype = [s_celltype for s_celltype in ls_celltype if s_celltype in set(focus)]
+            if (set(focus) != set(ls_substrate).union(set(ls_celltype))):
+                sys.exit(f'Error : {focus} not found in {ls_substrate} {ls_celltype}')
+
         # const
         ls_coor_mnp = ['mesh_center_m', 'mesh_center_n', 'mesh_center_p'] # xyz
         ls_coor_xyz = ['position_x', 'position_y', 'position_z'] # xyz
@@ -2052,71 +2080,69 @@ class pyMCDS:
         df_coor = pd.DataFrame(lll_coor, columns=ls_coor[:2])
         lr_axis_z[-1] += 1
 
-        # get ordered substrate listing
-        ls_substrate = self.get_substrate_list()
-
-        # get substrate dataframe
+        # get and shift substrate xy data
         df_conc = self.get_conc_df()
-
-        # extract voxel radius
-        i_conc_grow = int(np.round(np.mean(self.get_voxel_spacing()[:2])) - 1)
-
-        # extract input from data frame
         df_conc = df_conc.loc[:, ls_coor_mnp + ls_substrate]
-
-        # shift substrate xy data
         df_conc.loc[:, 'mesh_center_m'] = (df_conc.loc[:, 'mesh_center_m'] - self.get_xyz_range()[0][0]).round()
         df_conc.loc[:, 'mesh_center_n'] = (df_conc.loc[:, 'mesh_center_n'] - self.get_xyz_range()[1][0]).round()
-
-        # relabel and retype xyz coordiantes
         df_conc.rename({'mesh_center_m':'voxel_x', 'mesh_center_n':'voxel_y', 'mesh_center_p':'voxel_z'}, axis=1, inplace=True)
         df_conc = df_conc.astype({'voxel_x': int, 'voxel_y': int, 'voxel_z': float})
+        # level the cake
+        for s_channel in cutoff.keys():
+            try:
+                if cutoff[s_channel] <= 0:
+                    df_conc.loc[:, s_channel] = df_conc.loc[:, s_channel] - cutoff[s_channel]  + 1  # positive values starting at > 0
+                df_conc.loc[(df_conc.loc[:, s_channel] <= cutoff[s_channel]), s_channel] = 0
+            except KeyError:
+                pass
 
-        # get ordered cell type listing
-        ls_celltype = self.get_celltype_list()
+        # extract voxel radius
+        di_grow = {}
+        for s_substarte in ls_substrate:
+            di_grow.update({
+                s_substarte : int(np.round(np.mean(self.get_voxel_spacing()[:2])) - 1)
+            })
 
-        # get cell dataframe
+        # get and shift cell xy data
         df_cell = self.get_cell_df().reset_index()
+        df_cell = df_cell.loc[:, ls_coor_xyz + ['cell_type', cell_attribute]]
+        if (cell_attribute == 'cell_type'):
+            sys.exit(f'Error @ pyMCDS.make_ome_tiff : cell_attribute cannot be cell_type.')
+        elif (df_cell.loc[:, cell_attribute].dtype == str) or (df_cell.loc[:, cell_attribute].dtype == np.object_):  # in {str, np.str_, np.object_}):
+            sys.exit(f'Error @ pyMCDS.make_ome_tiff : {cell_attribute} {df_cell.loc[:, cell_attribute].dtype} cell_attribute cannot be string or object. cell_attribute has to be boolean, integer, or float.')
+        elif (df_cell.loc[:, cell_attribute].dtype == bool): # in {bool, np.bool_, np.bool}):
+            df_cell = df_cell.astype({cell_attribute: int})
+        df_cell.loc[:, 'position_x'] = (df_cell.loc[:, 'position_x'] - self.get_xyz_range()[0][0]).round()
+        df_cell.loc[:, 'position_y'] = (df_cell.loc[:, 'position_y'] - self.get_xyz_range()[1][0]).round()
+        df_cell.rename({'position_x':'voxel_x', 'position_y':'voxel_y', 'position_z':'voxel_z'}, axis=1, inplace=True)
+        df_cell = df_cell.astype({'voxel_x': int, 'voxel_y': int, 'voxel_z': float})
+        # level the cake
+        for s_channel in cutoff.keys():
+            try:
+                if cutoff[s_channel] <= 0:
+                    df_cell.loc[:, s_channel] = df_cell.loc[:, s_channel] - cutoff[s_channel]  + 1  # positive values starting at > 0
+                df_cell.loc[(df_cell.loc[:, s_channel] <= 0), s_channel] = 0,
+            except KeyError:
+                pass
+
+        # check for duplicates: two cell at exactelly the same xyz position.
+        if self.verbose and df_cell.loc[:,['voxel_x', 'voxel_y', 'voxel_z']].duplicated().any():
+            df_duplicate = df_cell.loc[(df_cell.loc[:, ['voxel_x', 'voxel_y', 'voxel_z']].duplicated()), :]
+            sys.exit(f"Error @ pyMCDS.make_ome_tiff : {df_duplicate} cells at exactely the same xyz voxel position detected. cannot pivot!")
+
+        # pivot cell_type
+        df_cell = df_cell.pivot_table(index=ls_coor, columns='cell_type', values=cell_attribute, aggfunc='sum').reset_index()  # fill_value is na
+        for s_celltype in ls_celltype:
+            if not s_celltype in set(df_cell.columns):
+               df_cell[s_celltype] = 0
 
         # extract cell radius
-        di_cell_grow = {}
         for s_celltype in ls_celltype:
             try:
                 i_cell_grow = int(round(df_cell.loc[(df_cell.cell_type == s_celltype), 'radius'].mean()) - 1)
             except:
                 i_cell_grow = 0
-            di_cell_grow.update({s_celltype: i_cell_grow})
-
-        # extract and manipulate input from dataframe
-        df_cell = df_cell.loc[:, ls_coor_xyz + ['cell_type', cell_attribute]]
-
-        # manipulate cell_attribute value
-        if (cell_attribute == 'cell_type'):
-            sys.exit(f'Error @ pyMCDS.make_ome_tiff : cell_attribute can not be cell_type.')
-        elif (df_cell.loc[:, cell_attribute].dtype == str) or (df_cell.loc[:, cell_attribute].dtype == np.object_):  # in {str, np.str_, np.object_}):
-            sys.exit(f'Error @ pyMCDS.make_ome_tiff : {cell_attribute} {df_cell.loc[:, cell_attribute].dtype} cell_attribute can not be string or object. cell_attribute has to be boolean, integer, or float.')
-        elif (df_cell.loc[:, cell_attribute].dtype == bool): # in {bool, np.bool_, np.bool}):
-            df_cell = df_cell.astype({cell_attribute: int})
-        df_cell.loc[:, cell_attribute] = df_cell.loc[:, cell_attribute] - df_cell.loc[:, cell_attribute].min() + 1  # positive values starting at 1
-
-        # check for duplicates: two cell at exactelly the same xyz position.
-        if self.verbose and df_cell.loc[:,['position_x', 'position_y', 'position_z']].duplicated().any():
-            df_duplicate = df_cell.loc[(df_cell.loc[:, ['position_x', 'position_y', 'position_z']].duplicated()), :]
-            print(f"Warning @ pyMCDS.make_ome_tiff : {df_duplicate} cells at exactely the same xyz position detected!")
-
-        # pivot cell_type
-        df_cell = df_cell.pivot_table(index=ls_coor_xyz, columns='cell_type', values=cell_attribute, aggfunc='sum').reset_index()  # fill_value is na
-        for s_celltype in ls_celltype:
-            if not s_celltype in set(df_cell.columns):
-               df_cell[s_celltype] = 0
-
-        # shift cell position xy data
-        df_cell.loc[:, 'position_x'] = (df_cell.loc[:, 'position_x'] - self.get_xyz_range()[0][0]).round()
-        df_cell.loc[:, 'position_y'] = (df_cell.loc[:, 'position_y'] - self.get_xyz_range()[1][0]).round()
-
-        # relabel and retype xyz coordiantes
-        df_cell.rename({'position_x':'voxel_x', 'position_y':'voxel_y', 'position_z':'voxel_z'}, axis=1, inplace=True)
-        df_cell = df_cell.astype({'voxel_x': int, 'voxel_y': int, 'voxel_z': float})
+            di_grow.update({s_celltype : i_cell_grow})
 
         # each C channel - time step tensors
         la_czyx_img = []
@@ -2129,7 +2155,7 @@ class pyMCDS:
             elif s_channel in set(ls_celltype):
                 df_channel = df_cell.loc[:, ls_coor + [s_channel]]
             else:
-                sys.exit(f'Error @ pyMCDS.make_ome_tiff : {s_channel} unknowen channel detected. not in substrate and cell type list!')
+                sys.exit(f'Error @ pyMCDS.make_ome_tiff : {s_channel} unknowen channel detected. not in substrate and cell type list {ls_substrate} {ls_celltype}!')
 
             # each z axis
             la_zyx_img = []
@@ -2149,24 +2175,27 @@ class pyMCDS:
                     # merge with coooridnates and get image
                     # bue 20240811: df_coor left side merge will cut off reset cell that are out of the xyz domain range, which is what we want.
                     df_yxchannel = pd.merge(df_coor, df_yxchannel, on=ls_coor[:2], how='left').replace({np.nan: 0})
-                    df_yxchannel = df_yxchannel.pivot(columns=ls_coor[0], index=ls_coor[1], values=s_channel)
+                    try:
+                        df_yxchannel = df_yxchannel.pivot(columns=ls_coor[0], index=ls_coor[1], values=s_channel)
+                    except ValueError:  # two cells from the same cell type very close to each other detetced.
+                        if self.verbose:
+                            df_duplicate = df_cell.loc[(df_yxchannel.loc[:, ['voxel_x', 'voxel_y']].duplicated()), :]
+                            print(f'Warning: {s_channel} {df_duplicate} cells within 1[um] distance form each detected. cannot pivot. erase cell type from this timestep.')
+                        df_yxchannel.loc[:,s_channel] = 0  # erase cells
+                        df_yxchannel = df_yxchannel.drop_duplicates()
+                        df_yxchannel = df_yxchannel.pivot(columns=ls_coor[0], index=ls_coor[1], values=s_channel)
                     a_yx_img = df_yxchannel.values
 
                     # grow
-                    if s_channel in set(ls_substrate):
-                        a_yx_img = imagine.grow(a_yx_img, i_step=i_conc_grow, b_verbose=False)
-                    elif s_channel in set(ls_celltype):
-                        a_yx_img = imagine.grow_seed(a_yx_img, i_step=di_cell_grow[s_channel], b_verbose=False)
-                    else:
-                        sys.exit(f'Error @ pyMCDS.make_ome_tiff : {s_channel} unknowen channel detected. not in substrate and cell type list!')
+                    a_yx_img = imagine.grow_seed(a_yx_img, i_step=di_grow[s_channel], b_verbose=False)
 
                     # update output
                     la_zyx_img.append(a_yx_img)
-            a_zyx_img = np.array(la_zyx_img, np.float16)
-            la_czyx_img.append(np.array(a_zyx_img, np.float16))
+            a_zyx_img = np.array(la_zyx_img, np.float32)
+            la_czyx_img.append(np.array(a_zyx_img, np.float32))
 
         # output
-        a_czyx_img = np.array(la_czyx_img, dtype=np.float16)
+        a_czyx_img = np.array(la_czyx_img, dtype=np.float32)
 
         # numpy array
         if not file:
@@ -2681,7 +2710,8 @@ class pyMCDS:
             if self.verbose:
                 print(f'reading: {s_cellpathfile}')
         except ValueError:  # hack: some old PhysiCell versions generates a corrupt cells.mat file, if there are zero cells.
-            print(f'Warning @ pyMCDS._read_xml : corrupt {s_cellpathfile} detected!\nassuming time step with zero cells because of a known bug in PhysiCell MultiCellDS version 0.5 output.')
+            if self.verbose:
+                print(f'Warning @ pyMCDS._read_xml : corrupt {s_cellpathfile} detected!\nassuming time step with zero cells because of a known bug in PhysiCell MultiCellDS version 0.5 output.')
             ar_cell = np.empty([len(ls_variable),0])
 
         # check for column label mapping error (as good as it gets)
@@ -2761,8 +2791,11 @@ class pyMCDS:
                 for s_node in sorted(es_node):
                     df_physiboss[f'node_{s_node}'] = df_physiboss.state.str.find(s_node) > -1
 
-            else:
+            elif self.verbose:
                 print(f'Warning @ pyMCDS._read_xml : physiboss file missing {s_intracellpathfile}.')
+
+            else:
+                pass
 
             # store data
             d_mcds['discrete_cells']['physiboss'] = df_physiboss

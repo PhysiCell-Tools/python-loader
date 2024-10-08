@@ -2039,7 +2039,7 @@ def make_ome_tiff():
     # argv
     parser = argparse.ArgumentParser(
         prog = 'pcdl_make_ome_tiff',
-        description = 'function to transform chosen mcds output into an 1[um] spaced czyx (channel, z-axis, y-axis, x-axis) ome tiff file, one substrate or cell_type per channel. the ome tiff file format can for example be read by the napari (https://napari.org/stable/) or fiji imagej (https://fiji.sc/) software.',
+        description = 'function to transform chosen mcdsts output into an 1[um] spaced tczyx (time, channel, z-axis, y-axis, x-axis) ome tiff file, one substrate or cell_type per channel. the ome tiff file format can for example be read by the napari (https://napari.org/stable/) or fiji imagej (https://fiji.sc/) software.',
         epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
     )
 
@@ -2082,7 +2082,21 @@ def make_ome_tiff():
         'cell_attribute',
         nargs = '?',
         default = 'ID',
-        help = 'mcds.get_cell_df dataframe columns, used for cell_attribute. the column data type has to be numeric (bool, int, float) and can not be string. default is ID, with will result in a segmentation mask.',
+        help = 'mcds.get_cell_df dataframe column, used for cell_attribute. the column data type has to be numeric (bool, int, float) and cannot be string. the result will be stored as 32 bit float. default is ID, with will result in a segmentation mask.',
+    )
+    # make_ome_tiff cutoff
+    parser.add_argument(
+        '--cutoff',
+        nargs = '*',
+        default = ['ID:0'],
+        help = 'if a contour from a substrate or cell_type not should be cut by greater than zero, another cutoff value can be specified here like this attribute:value attribute:value attribute:value. defaukt is ID:0',
+    )
+    # make_ome_tiff focus
+    parser.add_argument(
+        '--focus',
+        nargs = '+',
+        default = ['none'],
+        help = 'set of substrate and cell_type names to specify what will be translated into ome tiff format. if None, all substrates and cell types will be processed. default is a None.',
     )
     # make_ome_tiff file True
     # make_ome_tiff collapse
@@ -2096,7 +2110,7 @@ def make_ome_tiff():
     args = parser.parse_args()
     print(args)
 
-    # process arguments
+    # path
     s_path = args.path
     s_pathfile = s_path
     if not s_pathfile.endswith('.xml'):
@@ -2105,6 +2119,22 @@ def make_ome_tiff():
         s_path = '/'.join(s_pathfile.split('/')[:-1])
     if not os.path.exists(s_pathfile):
         sys.exit(f'Error @ pyCLI.make_ome_tiff : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
+
+    # cutoff
+    d_cutoff = {}
+    for s_cutoff in args.cutoff:
+        s_attribute, s_value = s_cutoff.split(':')
+        if (s_value.find('.') > -1):
+            o_value = float(s_value)
+        else:
+            o_value = int(s_value)
+        d_cutoff.update({s_attribute : o_value})
+
+    # focus
+    if (args.focus[0].lower() == 'none'):
+        es_focus = None
+    else:
+        es_focus = set( args.focus)
 
     # run
     if os.path.isfile(args.path):
@@ -2120,6 +2150,8 @@ def make_ome_tiff():
         )
         s_opathfile = mcds.make_ome_tiff(
             cell_attribute = args.cell_attribute,
+            cutoff = d_cutoff,
+            focus = es_focus,
             file = True,
         )
         # going home
@@ -2138,6 +2170,8 @@ def make_ome_tiff():
         )
         o_opathfile = mcdsts.make_ome_tiff(
             cell_attribute = args.cell_attribute,
+            cutoff = d_cutoff,
+            focus = es_focus,
             file = True,
             collapse = False if args.collapse.lower().startswith('f') else True,
         )

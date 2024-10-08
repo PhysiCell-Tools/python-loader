@@ -292,7 +292,7 @@ with the agent's position (xyz), the related mesh center coordinate (mnp), the r
 
 ```python
 df_cell = mcds.get_cell_df()
-df_cel.info()
+df_cell.info()
 ```
 ```
 df_cell.shape  # (992, 95)  this means: 992 agents, 96 tracked variables
@@ -343,7 +343,7 @@ print(ann)  # AnnData object with n_obs × n_vars = 992 × 26
 variables:
 
 ```python
-ann.var_name  # numerical cell attributes:  Index(['cell_BM_repulsion_strength', ... , 'total_volume'], dtype='object')
+ann.var_names  # numerical cell attributes:  Index(['cell_BM_repulsion_strength', ... , 'total_volume'], dtype='object')
 ```
 
 observation:
@@ -375,7 +375,7 @@ ann.uns['neighbor']  # metadata about the neighborhood graph.
 
 The output tells us that we have loaded a time step  with 992 cell agents and 26 numerical attributes (vars).
 Further, we have 4 categorical cell agent attributes (obs).
-We have each cell agnet's xy spatial coordinate information (obsm).
+We have each cell agent's xy spatial coordinate information (obsm).
 And we have cell neighbor graph infromation (obsp, uns).
 
 Please have a look at [TUTORIAL_python3_scverse.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_scverse.md) to learn more.
