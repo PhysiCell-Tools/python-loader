@@ -2090,8 +2090,7 @@ class pyMCDS:
         # level the cake
         for s_channel in cutoff.keys():
             try:
-                if cutoff[s_channel] <= 0:
-                    df_conc.loc[:, s_channel] = df_conc.loc[:, s_channel] - cutoff[s_channel]  + 1  # positive values starting at > 0
+                df_conc.loc[:, s_channel] = df_conc.loc[:, s_channel] - cutoff[s_channel]  + 1  # positive values starting at > 0
                 df_conc.loc[(df_conc.loc[:, s_channel] <= cutoff[s_channel]), s_channel] = 0
             except KeyError:
                 pass
@@ -2119,8 +2118,7 @@ class pyMCDS:
         # level the cake
         for s_channel in cutoff.keys():
             try:
-                if cutoff[s_channel] <= 0:
-                    df_cell.loc[:, s_channel] = df_cell.loc[:, s_channel] - cutoff[s_channel]  + 1  # positive values starting at > 0
+                df_cell.loc[:, s_channel] = df_cell.loc[:, s_channel] - cutoff[s_channel]  + 1  # positive values starting at > 0
                 df_cell.loc[(df_cell.loc[:, s_channel] <= 0), s_channel] = 0,
             except KeyError:
                 pass
@@ -2203,7 +2201,9 @@ class pyMCDS:
 
         # write to file
         else:
-            s_tifffile = self.xmlfile.replace('.xml', f'_{cell_attribute}.ome.tiff')
+            s_channel = '_'.join(ls_channel)
+            s_cutoff = str(sorted(cutoff.items())).replace('[(','').replace('), (','_').replace(', ','').replace("'",'').replace(')]','')
+            s_tifffile = self.xmlfile.replace('.xml', f'_{s_channel}_{cell_attribute}_{s_cutoff}.ome.tiff')
             s_tiffpathfile = self.path + '/' + s_tifffile
             if self.verbose:
                 print('a_czyx_img shape:', a_czyx_img.shape)

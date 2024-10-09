@@ -1069,7 +1069,9 @@ class pyMCDSts:
             if self.verbose:
                 print('a_tczyx_img shape:', a_tczyx_img.shape)
             ls_channel = mcds.get_substrate_list() + mcds.get_celltype_list()
-            s_tiffpathfile = f'{self.path}timeseries_{cell_attribute}.ome.tiff'
+            s_channel = '_'.join(ls_channel)
+            s_cutoff = str(sorted(cutoff.items())).replace('[(','').replace('), (','_').replace(', ','').replace("'",'').replace(')]','')
+            s_tiffpathfile = f'{self.path}timeseries_{s_channel}_{cell_attribute}_{s_cutoff}.ome.tiff'
             OmeTiffWriter.save(
                 a_tczyx_img,
                 s_tiffpathfile,
