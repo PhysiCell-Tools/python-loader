@@ -2084,12 +2084,12 @@ def make_ome_tiff():
         default = 'ID',
         help = 'mcds.get_cell_df dataframe column, used for cell_attribute. the column data type has to be numeric (bool, int, float) and cannot be string. the result will be stored as 32 bit float. default is ID, with will result in a segmentation mask.',
     )
-    # make_ome_tiff cutoff
+    # make_ome_tiff conc_cutoff
     parser.add_argument(
-        '--cutoff',
+        '--conc_cutoff',
         nargs = '*',
-        default = ['ID:0'],
-        help = 'if a contour from a substrate or cell_type not should be cut by greater than zero, another cutoff value can be specified here like this attribute:value attribute:value attribute:value. defaukt is ID:0',
+        default = [],
+        help = 'if a contour from a substrate not should be cut by greater than zero, another cutoff value can be specified here like this: substarte:value substrate:value substarte:value . default is and empty string.',
     )
     # make_ome_tiff focus
     parser.add_argument(
@@ -2120,15 +2120,15 @@ def make_ome_tiff():
     if not os.path.exists(s_pathfile):
         sys.exit(f'Error @ pyCLI.make_ome_tiff : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
-    # cutoff
-    d_cutoff = {}
-    for s_cutoff in args.cutoff:
-        s_attribute, s_value = s_cutoff.split(':')
+    # conc_cutoff
+    d_conccutoff = {}
+    for s_conccutoff in args.conc_cutoff:
+        s_substrate, s_value = s_conccutoff.split(':')
         if (s_value.find('.') > -1):
             o_value = float(s_value)
         else:
             o_value = int(s_value)
-        d_cutoff.update({s_attribute : o_value})
+        d_conccutoff.update({s_substrate : o_value})
 
     # focus
     if (args.focus[0].lower() == 'none'):
@@ -2150,7 +2150,7 @@ def make_ome_tiff():
         )
         s_opathfile = mcds.make_ome_tiff(
             cell_attribute = args.cell_attribute,
-            cutoff = d_cutoff,
+            conc_cutoff = d_conccutoff,
             focus = es_focus,
             file = True,
         )
@@ -2170,7 +2170,7 @@ def make_ome_tiff():
         )
         o_opathfile = mcdsts.make_ome_tiff(
             cell_attribute = args.cell_attribute,
-            cutoff = d_cutoff,
+            conc_cutoff = d_conccutoff,
             focus = es_focus,
             file = True,
             collapse = False if args.collapse.lower().startswith('f') else True,

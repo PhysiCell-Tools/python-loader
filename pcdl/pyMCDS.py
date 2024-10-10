@@ -2013,18 +2013,19 @@ class pyMCDS:
 
     ## MICROENVIRONMENT AND CELL AGENT RELATED FUNCTIONS ##
 
-    def make_ome_tiff(self, cell_attribute='ID', cutoff={'ID': 0}, focus=None, file=True):
+    def make_ome_tiff(self, cell_attribute='ID', conc_cutoff={}, focus=None, file=True):
         """
         input:
-            cell_attribute: strings; default is 'ID', which will result in a segmentation mask.
+            cell_attribute: strings; default is 'ID', which will result in a
+                cell segmentation mask.
                 column name within the cell dataframe.
                 the column data type has to be numeric (bool, int, float)
                 and cannot be string.
                 the result will be stored as 32 bit float.
 
-            cutoff: dictionary string to real; default is {'ID': 0}
-                if a contour from a substrate or cell_type not should be cut by
-                greater than zero, another cutoff value can be specified here.
+            conc_cutoff: dictionary string to real; default is an empty dictionary.
+                if a contour from a substrate not should be cut by greater
+                than zero, another cutoff value can be specified here.
 
             focus: set of strings; default is a None
                 set of substrate and cell_type names to specify what will be
@@ -2052,7 +2053,7 @@ class pyMCDS:
             https://napari.org/stable/
             https://fiji.sc/
         """
-        # handle input
+        # handle channels
         ls_substrate = self.get_substrate_list()
         ls_celltype = self.get_celltype_list()
 
@@ -2088,10 +2089,10 @@ class pyMCDS:
         df_conc.rename({'mesh_center_m':'voxel_x', 'mesh_center_n':'voxel_y', 'mesh_center_p':'voxel_z'}, axis=1, inplace=True)
         df_conc = df_conc.astype({'voxel_x': int, 'voxel_y': int, 'voxel_z': float})
         # level the cake
-        for s_channel in cutoff.keys():
+        for s_channel in conc_cutoff.keys():
             try:
-                df_conc.loc[:, s_channel] = df_conc.loc[:, s_channel] - cutoff[s_channel]  + 1  # positive values starting at > 0
-                df_conc.loc[(df_conc.loc[:, s_channel] <= cutoff[s_channel]), s_channel] = 0
+                df_conc.loc[:, s_channel] = df_conc.loc[:, s_channel] - conc_cutoff[s_channel]  + 1  # positive values starting at > 0
+                df_conc.loc[(df_conc.loc[:, s_channel] <= conc_cutoff[s_channel]), s_channel] = 0
             except KeyError:
                 pass
 
@@ -2116,12 +2117,7 @@ class pyMCDS:
         df_cell.rename({'position_x':'voxel_x', 'position_y':'voxel_y', 'position_z':'voxel_z'}, axis=1, inplace=True)
         df_cell = df_cell.astype({'voxel_x': int, 'voxel_y': int, 'voxel_z': float})
         # level the cake
-        for s_channel in cutoff.keys():
-            try:
-                df_cell.loc[:, s_channel] = df_cell.loc[:, s_channel] - cutoff[s_channel]  + 1  # positive values starting at > 0
-                df_cell.loc[(df_cell.loc[:, s_channel] <= 0), s_channel] = 0,
-            except KeyError:
-                pass
+        df_cell.loc[:, cell_attribute] = df_cell.loc[:, cell_attribute] -  df_cell.loc[:, cell_attribute].min()  + 1  # positive values starting at > 0
 
         # check for duplicates: two cell at exactelly the same xyz position.
         if self.verbose and df_cell.loc[:,['voxel_x', 'voxel_y', 'voxel_z']].duplicated().any():
@@ -2201,12 +2197,23 @@ class pyMCDS:
 
         # write to file
         else:
-            s_channel = '_'.join(ls_channel)
-            s_cutoff = str(sorted(cutoff.items())).replace('[(','').replace('), (','_').replace(', ','').replace("'",'').replace(')]','')
-            s_tifffile = self.xmlfile.replace('.xml', f'_{s_channel}_{cell_attribute}_{s_cutoff}.ome.tiff')
-            s_tiffpathfile = self.path + '/' + s_tifffile
             if self.verbose:
                 print('a_czyx_img shape:', a_czyx_img.shape)
+            # generate filename
+            s_channel = ''
+            for s_substrate in ls_substrate:
+                try:
+                    r_value = conc_cutoff[s_substrate]
+                    s_channel += f'_{s_substrate}{r_value}'
+                except KeyError:
+                    s_channel += f'_{s_substrate}'
+            for s_celltype in ls_celltype:
+                s_channel += f'_{s_celltype}'
+            if len(ls_celltype) > 0:
+                s_channel += f'_{cell_attribute}'
+            s_tifffile = self.xmlfile.replace('.xml', f'{s_channel}.ome.tiff')
+            s_tiffpathfile = self.path + '/' + s_tifffile
+            # save to file
             OmeTiffWriter.save(
                 a_czyx_img,
                 s_tiffpathfile,

@@ -984,18 +984,19 @@ class pyMCDSts:
 
     ## OME TIFF RELATED FUNCTIONS ##
 
-    def make_ome_tiff(self, cell_attribute='ID', cutoff={'ID': 0}, focus=None, file=True, collapse=True):
+    def make_ome_tiff(self, cell_attribute='ID', conc_cutoff={}, focus=None, file=True, collapse=True):
         """
         input:
-            cell_attribute: strings; default is 'ID', which will result in a segmentation mask.
+            cell_attribute: strings; default is 'ID', which will result in a
+                cell segmentation mask.
                 column name within the cell dataframe.
                 the column data type has to be numeric (bool, int, float)
                 and cannot be string.
                 the result will be stored as 32 bit float.
 
-            cutoff: dictionary string to real; default is {'ID': 0}
-                if a contour from a substrate or cell_type not should be cut by
-                greater than zero, another cutoff value can be specified here.
+            conc_cutoff: dictionary string to real; default is an empty dictionary.
+                if a contour from a substrate not should be cut by greater
+                than zero, another cutoff value can be specified here.
 
             focus: set of strings; default is a None
                 set of substrate and cell_type names to specify what will be
@@ -1029,21 +1030,30 @@ class pyMCDSts:
             https://napari.org/stable/
             https://fiji.sc/
         """
-        # each T time step
+        # for each T time step
         l_tczyx_img = []
         for i, mcds in enumerate(self.get_mcds_list()):
-
             # processing
             b_file = True # 10
             if (not file and not collapse) or (not file and collapse) or (file and collapse):  # 00, 01, 11
                 b_file = False
             o_tczyx_img = mcds.make_ome_tiff(
                 cell_attribute = cell_attribute,
-                cutoff = cutoff,
+                conc_cutoff = conc_cutoff,
                 focus = focus,
                 file = b_file
             )
             l_tczyx_img.append(o_tczyx_img)
+
+        # handle channels
+        ls_substrate = mcds.get_substrate_list()
+        ls_celltype = mcds.get_celltype_list()
+
+        if not (focus is None):
+            ls_substrate = [s_substrate for s_substrate in ls_substrate if s_substrate in set(focus)]
+            ls_celltype = [s_celltype for s_celltype in ls_celltype if s_celltype in set(focus)]
+            if (set(focus) != set(ls_substrate).union(set(ls_celltype))):
+                sys.exit(f'Error : {focus} not found in {ls_substrate} {ls_celltype}')
 
         # output 00 list of numpy arrays
         if (not file and not collapse):  # 00
@@ -1068,16 +1078,26 @@ class pyMCDSts:
             a_tczyx_img = np.array(l_tczyx_img)
             if self.verbose:
                 print('a_tczyx_img shape:', a_tczyx_img.shape)
-            ls_channel = mcds.get_substrate_list() + mcds.get_celltype_list()
-            s_channel = '_'.join(ls_channel)
-            s_cutoff = str(sorted(cutoff.items())).replace('[(','').replace('), (','_').replace(', ','').replace("'",'').replace(')]','')
-            s_tiffpathfile = f'{self.path}timeseries_{s_channel}_{cell_attribute}_{s_cutoff}.ome.tiff'
+            # generate filename
+            s_channel = ''
+            for s_substrate in ls_substrate:
+                try:
+                    r_value = conc_cutoff[s_substrate]
+                    s_channel += f'_{s_substrate}{r_value}'
+                except KeyError:
+                    s_channel += f'_{s_substrate}'
+            for s_celltype in ls_celltype:
+                s_channel += f'_{s_celltype}'
+            if len(ls_celltype) > 0:
+                s_channel += f'_{cell_attribute}'
+            s_tiffpathfile = f'{self.path}timeseries{s_channel}.ome.tiff'
+            # save to file
             OmeTiffWriter.save(
                 a_tczyx_img,
                 s_tiffpathfile,
                 dim_order = 'TCZYX',
                 #ome_xml=x_img,
-                channel_names = ls_channel,
+                channel_names = ls_substrate + ls_celltype,
                 image_names = [f'timeseries_{cell_attribute}'],
                 physical_pixel_sizes = aicsimageio.types.PhysicalPixelSizes(mcds.get_voxel_spacing()[2], 1.0, 1.0), #z,y,x [um]
                 #channel_colors=,
