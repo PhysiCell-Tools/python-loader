@@ -2081,6 +2081,13 @@ class pyMCDS:
         df_coor = pd.DataFrame(lll_coor, columns=ls_coor[:2])
         lr_axis_z[-1] += 1
 
+        # extract voxel radius
+        di_grow = {}
+        for s_substarte in ls_substrate:
+            di_grow.update({
+                s_substarte : int(np.round(np.mean(self.get_voxel_spacing()[:2])) - 1)
+            })
+
         # get and shift substrate xy data
         df_conc = self.get_conc_df()
         df_conc = df_conc.loc[:, ls_coor_mnp + ls_substrate]
@@ -2096,15 +2103,19 @@ class pyMCDS:
             except KeyError:
                 pass
 
-        # extract voxel radius
-        di_grow = {}
-        for s_substarte in ls_substrate:
-            di_grow.update({
-                s_substarte : int(np.round(np.mean(self.get_voxel_spacing()[:2])) - 1)
-            })
 
-        # get and shift cell xy data
+        # get cell data
         df_cell = self.get_cell_df().reset_index()
+
+        # extract cell radius
+        for s_celltype in ls_celltype:
+            try:
+                i_cell_grow = int(round(df_cell.loc[(df_cell.cell_type == s_celltype), 'radius'].mean()) - 1)
+            except:
+                i_cell_grow = 0
+            di_grow.update({s_celltype : i_cell_grow})
+
+        # filter and shift
         df_cell = df_cell.loc[:, ls_coor_xyz + ['cell_type', cell_attribute]]
         if (cell_attribute == 'cell_type'):
             sys.exit(f'Error @ pyMCDS.make_ome_tiff : cell_attribute cannot be cell_type.')
@@ -2120,23 +2131,15 @@ class pyMCDS:
         df_cell.loc[:, cell_attribute] = df_cell.loc[:, cell_attribute] -  df_cell.loc[:, cell_attribute].min()  + 1  # positive values starting at > 0
 
         # check for duplicates: two cell at exactelly the same xyz position.
-        if self.verbose and df_cell.loc[:,['voxel_x', 'voxel_y', 'voxel_z']].duplicated().any():
-            df_duplicate = df_cell.loc[(df_cell.loc[:, ['voxel_x', 'voxel_y', 'voxel_z']].duplicated()), :]
-            sys.exit(f"Error @ pyMCDS.make_ome_tiff : {df_duplicate} cells at exactely the same xyz voxel position detected. cannot pivot!")
+        #if self.verbose and df_cell.loc[:,['voxel_x', 'voxel_y', 'voxel_z']].duplicated().any():
+        #    df_duplicate = df_cell.loc[(df_cell.loc[:, ['voxel_x', 'voxel_y', 'voxel_z']].duplicated()), :]
+        #    sys.exit(f"Error @ pyMCDS.make_ome_tiff : {df_duplicate} cells at exactely the same xyz voxel position detected. cannot pivot!")
 
         # pivot cell_type
         df_cell = df_cell.pivot_table(index=ls_coor, columns='cell_type', values=cell_attribute, aggfunc='sum').reset_index()  # fill_value is na
         for s_celltype in ls_celltype:
             if not s_celltype in set(df_cell.columns):
                df_cell[s_celltype] = 0
-
-        # extract cell radius
-        for s_celltype in ls_celltype:
-            try:
-                i_cell_grow = int(round(df_cell.loc[(df_cell.cell_type == s_celltype), 'radius'].mean()) - 1)
-            except:
-                i_cell_grow = 0
-            di_grow.update({s_celltype : i_cell_grow})
 
         # each C channel - time step tensors
         la_czyx_img = []
