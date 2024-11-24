@@ -824,8 +824,7 @@ class TestPyMcdsGraph(object):
               (s_file.find('node [\n    id') > -1) and \
               (s_file.find('edge [\n    source') == -1) and \
               (s_file.find('distance_microns') == -1)
-        #os.remove(s_pathfile)
-        print("BUE here we go:", s_pathfile)
+        os.remove(s_pathfile)
 
     def test_mcds_make_graph_gml_attached_edgeattrfalse(self, mcds=mcds):
         s_pathfile = mcds.make_graph_gml(graph_type='attached', edge_attribute=False, node_attribute=[])
@@ -840,8 +839,7 @@ class TestPyMcdsGraph(object):
               (s_file.find('node [\n    id') > -1) and \
               (s_file.find('edge [\n    source') == -1) and \
               (s_file.find('distance_microns') == -1)
-        #os.remove(s_pathfile)
-        print("BUE here we go:", s_pathfile)
+        os.remove(s_pathfile)
 
     def test_mcds_make_graph_gml_neighbor_nodeattrtrue(self, mcds=mcds):
         s_pathfile = mcds.make_graph_gml(graph_type='neighbor', edge_attribute=True, node_attribute=['dead','cell_count_voxel','cell_density_micron3','cell_type'])  # bool,int,float,str
@@ -860,8 +858,7 @@ class TestPyMcdsGraph(object):
               (s_file.find('cell_type') == -1) and \
               (s_file.find('edge [\n    source') > -1) and \
               (s_file.find('distance_microns')> -1)
-        #os.remove(s_pathfile)
-        print("BUE here we go:", s_pathfile)
+        os.remove(s_pathfile)
 
     # neighbor graph gml file
     def test_mcds_make_graph_gml_neighbor_defaultattr(self, mcds=mcds):
@@ -877,8 +874,7 @@ class TestPyMcdsGraph(object):
               (s_file.find('node [\n    id') > -1) and \
               (s_file.find('edge [\n    source') > -1) and \
               (s_file.find('distance_microns') > -1)
-        #os.remove(s_pathfile)
-        print("BUE here we go:", s_pathfile)
+        os.remove(s_pathfile)
 
     def test_mcds_make_graph_gml_neighbor_edgeattrfalse(self, mcds=mcds):
         s_pathfile = mcds.make_graph_gml(graph_type='neighbor', edge_attribute=False, node_attribute=[])
@@ -893,8 +889,7 @@ class TestPyMcdsGraph(object):
               (s_file.find('node [\n    id') > -1) and \
               (s_file.find('edge [\n    source') > -1) and \
               (s_file.find('distance_microns') == -1)
-        #os.remove(s_pathfile)
-        print("BUE here we go:", s_pathfile)
+        os.remove(s_pathfile)
 
     def test_mcds_make_graph_gml_neighbor_nodeattrtrue(self, mcds=mcds):
         s_pathfile = mcds.make_graph_gml(graph_type='neighbor', edge_attribute=True, node_attribute=['dead','cell_count_voxel','cell_density_micron3','cell_type'])  # bool,int,float,str
@@ -913,8 +908,7 @@ class TestPyMcdsGraph(object):
               (s_file.find('cell_type') > -1) and \
               (s_file.find('edge [\n    source') > -1) and \
               (s_file.find('distance_microns') > -1)
-        #os.remove(s_pathfile)
-        print("BUE here we go:", s_pathfile)
+        os.remove(s_pathfile)
 
 
 ## ome tiff related functions ##
@@ -925,32 +919,63 @@ class TestPyMcdsOmeTiff(object):
 
     ## ome tiff related functions ##
     def test_mcds_make_ome_tiff_default(self, mcds=mcds):
-        s_pathfile = mcds.make_ome_tiff(cell_attribute='ID', file=True)
+        s_pathfile = mcds.make_ome_tiff(cell_attribute='ID', conc_cutoff={}, focus=None, file=True)
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.replace('\\','/').endswith('/pcdl/data_timeseries_2d/output00000024_ID.ome.tiff')) and \
+              (s_pathfile.replace('\\','/').endswith('pcdl/data_timeseries_2d/output00000024_oxygen_cancer_cell_ID.ome.tiff')) and \
               (os.path.exists(s_pathfile)) and \
               (os.path.getsize(s_pathfile) > 2**10)
         os.remove(s_pathfile)
 
-    def test_mcds_make_ome_tiff_bool_0(self, mcds=mcds):
-        a_ometiff = mcds.make_ome_tiff(cell_attribute='dead', file=False)
+    def test_mcds_make_ome_tiff_bool(self, mcds=mcds):
+        a_ometiff = mcds.make_ome_tiff(cell_attribute='dead', conc_cutoff={}, focus=None, file=False)
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(a_ometiff)) == "<class 'numpy.ndarray'>") and \
-              (a_ometiff.dtype == float) and \
-              (a_ometiff.shape == (2, 1, 200, 300))
+              (a_ometiff.dtype == np.float32) and \
+              (a_ometiff.shape == (2, 1, 200, 300)) and \
+              (a_ometiff[0].min() < 14.0) and \
+              (a_ometiff[0].max() > 35.0) and \
+              (a_ometiff[1].min() == 0.0) and \
+              (a_ometiff[1].max() == 2.0)
 
-    def test_mcds_make_ome_tiff_int_0(self, mcds=mcds):
-        a_ometiff = mcds.make_ome_tiff(cell_attribute='cell_count_voxel', file=False)
+    def test_mcds_make_ome_tiff_int(self, mcds=mcds):
+        a_ometiff = mcds.make_ome_tiff(cell_attribute='cell_count_voxel', conc_cutoff={}, focus=None, file=False)
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(a_ometiff)) == "<class 'numpy.ndarray'>") and \
-              (a_ometiff.dtype == float) and \
-              (a_ometiff.shape == (2, 1, 200, 300))
+              (a_ometiff.dtype == np.float32) and \
+              (a_ometiff.shape == (2, 1, 200, 300)) and \
+              (a_ometiff[0].min() < 14.0) and \
+              (a_ometiff[0].max() > 35.0) and \
+              (a_ometiff[1].min() == 0.0) and \
+              (a_ometiff[1].max() == 236.0)
 
-
-    def test_mcds_make_ome_tiff_float_0(self, mcds=mcds):
-        a_ometiff = mcds.make_ome_tiff(cell_attribute='pressure', file=False)
+    def test_mcds_make_ome_tiff_float(self, mcds=mcds):
+        a_ometiff = mcds.make_ome_tiff(cell_attribute='pressure', conc_cutoff={}, focus=None, file=False)
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(a_ometiff)) == "<class 'numpy.ndarray'>") and \
-              (a_ometiff.dtype == float) and \
-              (a_ometiff.shape == (2, 1, 200, 300))
+              (a_ometiff.dtype == np.float32) and \
+              (a_ometiff.shape == (2, 1, 200, 300)) and\
+              (a_ometiff[0].min() < 14.0) and \
+              (a_ometiff[0].max() > 35.0) and \
+              (a_ometiff[1].min() == 0.0) and \
+              (a_ometiff[1].max() > 16.0)
+
+    def test_mcds_make_ome_tiff_conccutoff(self, mcds=mcds):
+        a_ometiff = mcds.make_ome_tiff(cell_attribute='ID', conc_cutoff={'oxygen': -1}, focus=None, file=False)
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (str(type(a_ometiff)) == "<class 'numpy.ndarray'>") and \
+              (a_ometiff.dtype == np.float32) and \
+              (a_ometiff.shape == (2, 1, 200, 300)) and \
+              (a_ometiff[0].min() < 16.0) and \
+              (a_ometiff[0].max() > 37.0) and \
+              (a_ometiff[1].min() == 0.0) and \
+              (a_ometiff[1].max() == 1113.0)
+
+    def test_mcds_make_ome_tiff_focus(self, mcds=mcds):
+        a_ometiff = mcds.make_ome_tiff(cell_attribute='ID', conc_cutoff={}, focus={'oxygen'}, file=False)
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (str(type(a_ometiff)) == "<class 'numpy.ndarray'>") and \
+              (a_ometiff.dtype == np.float32) and \
+              (a_ometiff.shape == (1, 1, 200, 300)) and \
+              (a_ometiff[0].min() < 14.0) and \
+              (a_ometiff[0].max() > 35.0)
 
