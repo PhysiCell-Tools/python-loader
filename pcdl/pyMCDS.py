@@ -2025,7 +2025,7 @@ class pyMCDS:
 
             conc_cutoff: dictionary string to real; default is an empty dictionary.
                 if a contour from a substrate not should be cut by greater
-                than zero (as such, integer 1), another cutoff value can be
+                than zero (shifted to integer 1), another cutoff value can be
                 specified here.
 
             focus: set of strings; default is a None

@@ -3,15 +3,17 @@
 
 ## input:
 ```
-            cell_attribute: strings; default is 'ID', which will result in a segmentation mask.
+            cell_attribute: strings; default is 'ID', which will result in a
+                cell segmentation mask.
                 column name within the cell dataframe.
                 the column data type has to be numeric (bool, int, float)
                 and cannot be string.
                 the result will be stored as 32 bit float.
 
-            cutoff: dictionary string to real; default is {'ID': 0}
-                if a contour from a substrate or cell_type not should be cut by
-                greater than zero, another cutoff value can be specified here.
+            conc_cutoff: dictionary string to real; default is an empty dictionary.
+                if a contour from a substrate not should be cut by greater
+                than zero (shifted to integer 1), another cutoff value can be
+                specified here.
 
             focus: set of strings; default is a None
                 set of substrate and cell_type names to specify what will be

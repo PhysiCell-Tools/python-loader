@@ -28,7 +28,7 @@ Let's install the required analysis libraries
 pip3 install -U scanpy[leiden]  # single cell analysis inclusive leiden graph clustering algorithm.
 ```
 
-To runs thi tutorial,
+To runs this tutorial,
 you can install the 3D unit test dataset into your PhysiCell output folder,
 by executing the following command sequence.
 

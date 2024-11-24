@@ -26,7 +26,7 @@ Package installation.
 
 ```julia
 using Pkg
-Pkg.add("CSV")
+Pkdg.add("CSV")
 Pkdg.add("DataFrames")
 ```
 

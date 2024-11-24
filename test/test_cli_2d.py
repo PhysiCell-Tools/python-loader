@@ -1789,7 +1789,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_ID.ome.tiff')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_oxygen_cancer_cell_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1798,7 +1798,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_ID.ome.tiff')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cancer_cell_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1807,7 +1807,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_ID.ome.tiff')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_oxygen_cancer_cell_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1816,7 +1816,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_ID.ome.tiff')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_oxygen_0_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1825,7 +1825,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_ID.ome.tiff')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_oxygen_0_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1834,7 +1834,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_dead.ome.tiff')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_oxygen_cancer_cell_dead.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1843,7 +1843,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_count_voxel.ome.tiff')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_oxygen_cancer_cell_cell_count_voxel.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1852,7 +1852,25 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_pressure.ome.tiff')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_oxygen_cancer_cell_pressure.ome.tiff')) and \
+               (os.path.exists(s_opathfile))
+        os.remove(s_opathfile)
+
+    def test_pcdl_make_ome_tiff_timeseries_conccutoff_oxygenminusone(self):
+        s_result = subprocess.run(['pcdl_make_ome_tiff', s_path_2d, '--conc_cutoff', 'oxygen:-1'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_oxygen-1_cancer_cell_ID.ome.tiff')) and \
+               (os.path.exists(s_opathfile))
+        os.remove(s_opathfile)
+
+    def test_pcdl_make_ome_tiff_timeseries_focus_(self):
+        s_result = subprocess.run(['pcdl_make_ome_tiff', s_path_2d, '--focus', 'oxygen'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_oxygen.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1863,8 +1881,8 @@ class TestPyCliOmeTiff(object):
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
         #print('ls_opathfile:', ls_opathfile)
         assert (len(ls_opathfile) == 25) and \
-               (ls_opathfile[0].endswith('data_timeseries_2d/output00000000_ID.ome.tiff')) and \
-               (ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_ID.ome.tiff')) and \
+               (ls_opathfile[0].endswith('data_timeseries_2d/output00000000_oxygen_cancer_cell_ID.ome.tiff')) and \
+               (ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_oxygen_cancer_cell_ID.ome.tiff')) and \
                (os.path.exists(ls_opathfile[12]))
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
@@ -1874,7 +1892,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_ID.ome.tiff')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_oxygen_cancer_cell_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1883,7 +1901,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_ID.ome.tiff')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cancer_cell_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1892,7 +1910,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_ID.ome.tiff')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_oxygen_cancer_cell_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1901,7 +1919,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_ID.ome.tiff')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_oxygen_0_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1910,7 +1928,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_ID.ome.tiff')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_oxygen_0_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1919,7 +1937,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_dead.ome.tiff')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_oxygen_cancer_cell_dead.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1928,7 +1946,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell_count_voxel.ome.tiff')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_oxygen_cancer_cell_cell_count_voxel.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1937,7 +1955,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_pressure.ome.tiff')) and \
+        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_oxygen_cancer_cell_pressure.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
