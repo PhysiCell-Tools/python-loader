@@ -1024,8 +1024,8 @@ class pyMCDS:
         df_conc.index.name = 'index'
         return df_conc
 
-
-    def plot_contour(self, focus, z_slice=0.0, vmin=None, vmax=None, alpha=1, fill=True, cmap='viridis', title=None, grid=True, xlim=None, ylim=None, xyequal=True, ax=None, figsizepx=None, ext=None, figbgcolor=None):
+    def plot_contour(self, focus, z_slice=0.0, vmin=None, vmax=None, alpha=1, fill=True, cmap='viridis', title=None,
+                     grid=True, xlim=None, ylim=None, xyequal=True, ax=None, figsizepx=None, ext=None, figbgcolor=None):
         """
         input:
             focus: string
@@ -1106,15 +1106,17 @@ class pyMCDS:
         """
         # handle initial.svg for s and figsizepx
         if (figsizepx is None):
-            s_pathfile = self.path + 'initial.svg'
+            s_pathfile = self.path + '/initial.svg'
             try:
                 x_tree = etree.parse(s_pathfile)
                 x_root = x_tree.getroot()
-                i_width = int(np.ceil(float(x_root.get('width')))) # px
+                i_width = int(np.ceil(float(x_root.get('width'))))  # px
                 i_height = int(np.ceil(float(x_root.get('height'))))  # px
                 figsizepx = [i_width, i_height]
             except FileNotFoundError:
-                print(f'Warning @ pyMCDS.plot_contour : could not load {s_pathfile} to auto detect figsizepx. take default.')
+                if self.verbose:
+                    print(
+                        f'Warning @ pyMCDS.plot_contour : could not load {s_pathfile} to auto detect figsizepx. take default.')
                 figsizepx = [640, 480]
 
         # handle figure size
@@ -1136,7 +1138,7 @@ class pyMCDS:
 
         # get data z slice
         df_conc = self.get_conc_df(values=1, drop=set(), keep=set())
-        df_conc = df_conc.loc[(df_conc.mesh_center_p == z_slice),:]
+        df_conc = df_conc.loc[(df_conc.mesh_center_p == z_slice), :]
         # extend to x y domain border
         df_mmin = df_conc.loc[(df_conc.mesh_center_m == df_conc.mesh_center_m.min()), :].copy()
         df_mmin.mesh_center_m = self.get_xyz_range()[0][0]
@@ -1144,7 +1146,7 @@ class pyMCDS:
         df_mmax.mesh_center_m = self.get_xyz_range()[0][1]
         df_conc = pd.concat([df_conc, df_mmin, df_mmax], axis=0)
         df_nmin = df_conc.loc[(df_conc.mesh_center_n == df_conc.mesh_center_n.min()), :].copy()
-        df_nmin.mesh_center_n =self.get_xyz_range()[1][0]
+        df_nmin.mesh_center_n = self.get_xyz_range()[1][0]
         df_nmax = df_conc.loc[(df_conc.mesh_center_n == df_conc.mesh_center_n.max()), :].copy()
         df_nmax.mesh_center_n = self.get_xyz_range()[1][1]
         df_conc = pd.concat([df_conc, df_nmin, df_nmax], axis=0)
@@ -1175,9 +1177,9 @@ class pyMCDS:
 
         # get contour plot
         if fill:
-            ax.contourf(df_mesh.columns, df_mesh.index, df_mesh.values, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
+            ax.contourf(df_mesh.index, df_mesh.columns, df_mesh.values.T, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
         else:
-            ax.contour(df_mesh.columns, df_mesh.index, df_mesh.values, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
+            ax.contour(df_mesh.index, df_mesh.columns, df_mesh.values.T, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
 
         # set title
         if not (title is None):
@@ -1206,7 +1208,7 @@ class pyMCDS:
 
         else:
             # handle output path and filename
-            s_path = f'{self.path}/conc_{focus}_z{round(z_slice,9)}/'
+            s_path = f'{self.path}/conc_{focus}_z{round(z_slice, 9)}/'
             os.makedirs(s_path, exist_ok=True)
             s_file = self.xmlfile.replace('.xml', f'_{focus}.{ext}')
             s_pathfile = f'{s_path}{s_file}'
