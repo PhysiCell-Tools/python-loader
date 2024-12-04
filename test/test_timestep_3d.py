@@ -20,6 +20,7 @@
 
 
 # load library
+import numpy as np
 import os
 import pathlib
 import pcdl
@@ -654,17 +655,18 @@ class TestPyMcds3dOmeTiffWorkhorse(object):
     mcds = pcdl.pyMCDS(xmlfile=s_pathfile_3d)  # custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True
 
     ## ome tiff related functions ##
-    def test_mcds_make_ome_tiff_default_0(self, mcds=mcds):
-        a_ometiff = mcds.make_ome_tiff(cell_attribute='ID', file=False)
+    def test_mcds_make_ome_tiff_default(self, mcds=mcds):
+        s_pathfile = mcds.make_ome_tiff(cell_attribute='ID', conc_cutoff={}, focus=None, file=True)
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (str(type(a_ometiff)) == "<class 'numpy.ndarray'>") and \
-              (a_ometiff.dtype == float) and \
-              (a_ometiff.shape == (4, 11, 200, 300))
-
-    def test_mcds_make_ome_tiff_default_1(self, mcds=mcds):
-        s_pathfile = mcds.make_ome_tiff(cell_attribute='ID', file=True)
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.replace('\\','/').endswith('/pcdl/data_timeseries_3d/output00000024_ID.ome.tiff')) and \
+              (s_pathfile.replace('\\','/').endswith('pcdl/data_timeseries_3d/output00000024_oxygen_immunostimulatory_factor_cancer_cell_immune_cell_ID.ome.tiff')) and \
               (os.path.exists(s_pathfile)) and \
               (os.path.getsize(s_pathfile) > 2**10)
         os.remove(s_pathfile)
+
+    def test_mcds_make_ome_tiff_nofile(self, mcds=mcds):
+        a_ometiff = mcds.make_ome_tiff(cell_attribute='ID', conc_cutoff={}, focus=None, file=False)
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (str(type(a_ometiff)) == "<class 'numpy.ndarray'>") and \
+              (a_ometiff.dtype == np.float32) and \
+              (a_ometiff.shape == (4, 11, 200, 300))
+

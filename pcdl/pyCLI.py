@@ -2089,7 +2089,7 @@ def make_ome_tiff():
         '--conc_cutoff',
         nargs = '*',
         default = [],
-        help = 'if a contour from a substrate not should be cut by greater than zero, another cutoff value can be specified here like this: substarte:value substrate:value substarte:value . default is and empty string.',
+        help = 'if a contour from a substrate not should be cut by greater than zero (shifted to integer 1), another cutoff value can be specified here like this: substarte:value substrate:value substarte:value . default is and empty string.',
     )
     # make_ome_tiff focus
     parser.add_argument(

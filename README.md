@@ -127,7 +127,7 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
 
 ## Release Notes:
 
-+ version 3.3.2 (2024-10-??): elmbeech/physicelldataloader
++ version 3.3.2 (2024-11-24): elmbeech/physicelldataloader
     + **Warnings** will no longer be piped to standard output if verbose is set to False.
     + pyMCDS **make_ome_tiff** function rewriten to be less RAM hungry and more versatile.
 

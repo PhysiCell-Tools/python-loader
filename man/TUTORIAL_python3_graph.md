@@ -48,7 +48,7 @@ print(sorted(g.edges.keys())[0:4])
 g.nodes['node_0']   # {'cell_type': 'cancer_cell', 'dead': 0, 'oxygen': 25.304510426523084, 'pressure': 10.519314516003435}
 ```
 ```python
-g.edgea[('node_0', 'node_1')]   # {'label': 'edge_0_1', 'distance_microns': 15}
+g.edges[('node_0', 'node_1')]   # {'label': 'edge_0_1', 'distance_microns': 15}
 ```
 
 

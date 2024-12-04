@@ -60,7 +60,7 @@ a_cell.shape  # (480, 640, 4)
 from skimage import io
 
 a_ome = io.imread('output/timeseries_ID.ome.tiff')
-a_ome.shape (25, 2, 200, 300)
+a_ome.shape  # (25, 2, 200, 300)
 ```
 
 

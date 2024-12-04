@@ -1,8 +1,8 @@
 ```
 usage: pcdl_make_ome_tiff [-h] [--microenv MICROENV] [--physiboss PHYSIBOSS]
                           [--settingxml SETTINGXML] [-v VERBOSE]
-                          [--cutoff [CUTOFF ...]] [--focus FOCUS [FOCUS ...]]
-                          [--collapse COLLAPSE]
+                          [--conc_cutoff [CONC_CUTOFF ...]]
+                          [--focus FOCUS [FOCUS ...]] [--collapse COLLAPSE]
                           [path] [cell_attribute]
 
 function to transform chosen mcdsts output into an 1[um] spaced tczyx (time,
@@ -37,11 +37,12 @@ options:
   -v VERBOSE, --verbose VERBOSE
                         setting verbose to False for less text output, while
                         processing. default is True.
-  --cutoff [CUTOFF ...]
-                        if a contour from a substrate or cell_type not should
-                        be cut by greater than zero, another cutoff value can
-                        be specified here like this attribute:value
-                        attribute:value attribute:value. defaukt is ID:0
+  --conc_cutoff [CONC_CUTOFF ...]
+                        if a contour from a substrate not should be cut by
+                        greater than zero (shifted to integer 1), another
+                        cutoff value can be specified here like this:
+                        substarte:value substrate:value substarte:value .
+                        default is and empty string.
   --focus FOCUS [FOCUS ...]
                         set of substrate and cell_type names to specify what
                         will be translated into ome tiff format. if None, all
