@@ -56,9 +56,7 @@ Extras tutorials python3 language:
 Extras tutorials for other languages than python3:
 
 + [pcdl and julia](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_julia.md)
-<!--
-+ [pcdl and matlab or octave](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_matlab_octave.md)
--->
++ [pcdl and matlab](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_matlab_octave.md)
 + [pcdl and R](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_r.md)
 
 Extras tutorials for GUI software:
@@ -121,11 +119,14 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
 
 ## Road Map:
 
-+ add make\_conc\_vtk visualization parameter.
-+ new next generation unit test dataset.
 + evt add neuroglancer ome.tiff support.
 
+
 ## Release Notes:
++ version 3.3.3 (2024-12-06): elmbeech/physicelldataloader
+    + bug fix **plot_contour** plot orientation. special thanks to Marco Ruscone!
+    + add test data for new improved **unittest physicell model**. special thanks to Nick Oldfather!
+    + add pyMCDS **make_conc_vtk** on the fly visualization. special thanks to Randy Heiland and Nick Oldfather!
 
 + version 3.3.2 (2024-11-24): elmbeech/physicelldataloader
     + **Warnings** will no longer be piped to standard output if verbose is set to False.
@@ -173,11 +174,11 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
     + new pyMCDS **set_verbosity_false** function, to complete pcdl.TimeStep(verbosity=True/False) experience.
     + new pyMCDSts **get_cell_df** function, to extract one big dataframe or a list of dataframes from the whole time series.
     + new pyMCDSts **get_conc_df** function, to extract one big dataframe or a list of dataframes from the whole time series.
-    + new pyMCDSts **make_cell_vtk** function, to save substrate data as rectilinear grid vtk files.
-    + new pyMCDSts **make_conc_vtk** function, to save cell data as glyph vtk files.
-    + new pyMCDSts **make_graph_gml** function, to save graphs in a networkx and igraph compatible files format.
+    + new pyMCDSts **make_cell_vtk** function, to save substrate data as rectilinear grid vtk files. special thanks to Furkan Kurtoglu!
+    + new pyMCDSts **make_conc_vtk** function, to save cell data as glyph vtk files. special thanks to Furkan Kurtoglu!
+    + new pyMCDSts **make_graph_gml** function, to save graphs in a networkx and igraph compatible files format. special thanks to Benjamin Jacobs!
     + new pyMCDSts **make_ome_tiff** function, to save the output data in ome tiff file format.
-    + new pyMCDSts **plot_timeseries** function, to plot time series.
+    + new pyMCDSts **plot_timeseries** function, to plot time series. special thanks to Thierry-Pascal Fleurant!
     + new pyMCDSts **set_verbosity_true** function, to complete the pcdl.TimeSeries(verbosity=True/False) experience.
     + new pyMCDSts **set_verbosity_false** function to complete the pcdl.TimeSeries(verbosity=True/False) experience.
 
@@ -250,7 +251,7 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
       given the computer is connected to the internet, test data can easily be installed and removed with the **pcdl.install_data()** and **pcdl.uninstall_data()** functions now.
 
 + version 3.0.7 (2023-06-08): elmbeech/physicelldataloader
-    + pyMCDSts: replaces the svg dependent **mcdsts.make_jpeg**, **mcdsts.make_png**, and **mcdsts.make_tiff** with **mcdsts.make_imgcell** and **mcdsts.make_imgsubs** which generate images straight out of the loaded data. the **mcdsts.make_gif** and **mcdsts.make_movie** functions were adjusted accordingly.
+    + pyMCDSts: replaces the svg dependent **mcdsts.make_jpeg**, **mcdsts.make_png**, and **mcdsts.make_tiff** with **mcdsts.make_imgcell** and **mcdsts.make_imgsubs** which generate images straight out of the loaded data. the **mcdsts.make_gif** and **mcdsts.make_movie** functions were adjusted accordingly. special thanks to Marshal Gress!
     + pyMCDSts: **mcdsts.read_mcds** loads now automatically all mcds snapshots if no xmlfile\_list is provided (default).
 
 + version 3.0.6 (2023-04-29): elmbeech/physicelldataloader
