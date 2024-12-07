@@ -1111,7 +1111,7 @@ class pyMCDS:
         """
         # handle initial.svg for s and figsizepx
         if (figsizepx is None):
-            s_pathfile = self.path + 'initial.svg'
+            s_pathfile = self.path + '/initial.svg'
             try:
                 x_tree = etree.parse(s_pathfile)
                 x_root = x_tree.getroot()
@@ -1181,9 +1181,9 @@ class pyMCDS:
 
         # get contour plot
         if fill:
-            ax.contourf(df_mesh.columns, df_mesh.index, df_mesh.values, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
+            ax.contourf(df_mesh.columns, df_mesh.index, df_mesh.values.T, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
         else:
-            ax.contour(df_mesh.columns, df_mesh.index, df_mesh.values, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
+            ax.contour(df_mesh.columns, df_mesh.index, df_mesh.values.T, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
 
         # set title
         if not (title is None):
