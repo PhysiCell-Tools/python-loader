@@ -68,14 +68,15 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Bio-Informatics",
 ]
 
+# bue 2024-12-06: enforcing numpy >= 2.0
 dependencies = [
     "aicsimageio",
-    "anndata",
+    "anndata>=0.10.8",
     "matplotlib",
-    "numpy",
-    "pandas",
+    "numpy>=2.0.0",
+    "pandas>=2.2.2",
     "requests",
-    "scipy",
+    "scipy>=1.13.0",
     "vtk",
 ]
 

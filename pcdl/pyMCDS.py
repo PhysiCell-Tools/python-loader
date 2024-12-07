@@ -1111,7 +1111,7 @@ class pyMCDS:
         """
         # handle initial.svg for s and figsizepx
         if (figsizepx is None):
-            s_pathfile = self.path + 'initial.svg'
+            s_pathfile = self.path + '/initial.svg'
             try:
                 x_tree = etree.parse(s_pathfile)
                 x_root = x_tree.getroot()
@@ -1212,7 +1212,7 @@ class pyMCDS:
 
         else:
             # handle output path and filename
-            s_path = f'{self.path}/conc_{focus}_z{round(z_slice,9)}/'
+            s_path = self.path + f'/conc_{focus}_z{round(z_slice,9)}/'
             os.makedirs(s_path, exist_ok=True)
             s_file = self.xmlfile.replace('.xml', f'_{focus}.{ext}')
             s_pathfile = f'{s_path}{s_file}'
@@ -1856,7 +1856,7 @@ class pyMCDS:
 
         else:
             # handle output path and filename
-            s_path = f'{self.path}/cell_{focus}_z{round(z_slice,9)}/'
+            s_path = self.path + f'/cell_{focus}_z{round(z_slice,9)}/'
             os.makedirs(s_path, exist_ok=True)
             s_file = self.xmlfile.replace('.xml', f'_{focus}.{ext}')
             s_pathfile = f'{s_path}{s_file}'
@@ -2785,7 +2785,7 @@ class pyMCDS:
 
             # intracellular file (hack because this is not yet in output.xml)
             df_physiboss = None
-            s_intracellpathfile = self.path + '/' + f'states_{self.xmlfile.replace("output","").replace(".xml",".csv")}'
+            s_intracellpathfile = self.path + f'/states_{self.xmlfile.replace("output","").replace(".xml",".csv")}'
             if os.path.exists(s_intracellpathfile):
                 if self.verbose:
                     print(f'reading: {s_intracellpathfile}')
