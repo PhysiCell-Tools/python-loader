@@ -34,7 +34,7 @@
         </full_data>
         <SVG>
             <interval units="min">60</interval>
-            <enable>true</enable>
+            <enable>false</enable>
             <plot_substrate enabled="false" limits="false">
                 <substrate>water</substrate>
                 <colormap>YlOrRd</colormap>
@@ -51,7 +51,7 @@
         <legacy_random_points_on_sphere_in_divide>false</legacy_random_points_on_sphere_in_divide>
         <virtual_wall_at_domain_edge>true</virtual_wall_at_domain_edge>
         <disable_automated_spring_adhesions>false</disable_automated_spring_adhesions>
-        <random_seed>system_clock</random_seed>
+        <random_seed>0</random_seed>
     </options>
 
     <microenvironment_setup>
@@ -73,18 +73,18 @@
         </variable>
         <variable name="water" units="dimensionless" ID="1">
             <physical_parameter_set>
-                <diffusion_coefficient units="micron^2/min">1e4</diffusion_coefficient>
-                <decay_rate units="1/min">0.1</decay_rate>
+                <diffusion_coefficient units="micron^2/min">1e6</diffusion_coefficient>
+                <decay_rate units="1/min">0.001</decay_rate>
             </physical_parameter_set>
-            <initial_condition units="dimensionless">0</initial_condition>
-            <Dirichlet_boundary_condition units="dimensionless" enabled="False">1e3</Dirichlet_boundary_condition>
+            <initial_condition units="dimensionless">1e3</initial_condition>
+            <Dirichlet_boundary_condition units="dimensionless" enabled="True">1e3</Dirichlet_boundary_condition>
             <Dirichlet_options>
-                <boundary_value ID="xmin" enabled="False">1e3</boundary_value>
-                <boundary_value ID="xmax" enabled="False">1e3</boundary_value>
-                <boundary_value ID="ymin" enabled="False">1e3</boundary_value>
-                <boundary_value ID="ymax" enabled="False">1e3</boundary_value>
-                <boundary_value ID="zmin" enabled="False">1e3</boundary_value>
-                <boundary_value ID="zmax" enabled="False">1e3</boundary_value>
+                <boundary_value ID="xmin" enabled="True">1e3</boundary_value>
+                <boundary_value ID="xmax" enabled="True">1e3</boundary_value>
+                <boundary_value ID="ymin" enabled="True">1e3</boundary_value>
+                <boundary_value ID="ymax" enabled="True">1e3</boundary_value>
+                <boundary_value ID="zmin" enabled="True">1e3</boundary_value>
+                <boundary_value ID="zmax" enabled="True">1e3</boundary_value>
             </Dirichlet_options>
         </variable>
         <options>
