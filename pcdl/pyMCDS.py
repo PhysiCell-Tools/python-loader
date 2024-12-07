@@ -1158,7 +1158,7 @@ class pyMCDS:
         df_conc.sort_values(['mesh_center_m', 'mesh_center_n', 'mesh_center_p'], inplace=True)
 
         # meshgrid shape
-        df_mesh = df_conc.pivot(index='mesh_center_m', columns='mesh_center_n', values=focus)
+        df_mesh = df_conc.pivot(index='mesh_center_n', columns='mesh_center_m', values=focus)
 
         # handle vmin and vmax input
         if (vmin is None):
@@ -1181,9 +1181,9 @@ class pyMCDS:
 
         # get contour plot
         if fill:
-            ax.contourf(df_mesh.columns, df_mesh.index, df_mesh.values.T, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
+            ax.contourf(df_mesh.columns, df_mesh.index, df_mesh.values, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
         else:
-            ax.contour(df_mesh.columns, df_mesh.index, df_mesh.values.T, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
+            ax.contour(df_mesh.columns, df_mesh.index, df_mesh.values, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
 
         # set title
         if not (title is None):
