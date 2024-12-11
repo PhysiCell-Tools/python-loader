@@ -71,6 +71,10 @@ def get_version():
 
     # process arguments
     s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
     s_pathfile = s_path
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
@@ -139,6 +143,10 @@ def get_unit_dict():
 
     # process arguments
     s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
     s_pathfile = s_path
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
@@ -206,6 +214,10 @@ def get_substrate_list():
 
     # process arguments
     s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
     s_pathfile = s_path
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
@@ -291,6 +303,10 @@ def get_conc_attribute():
 
     # process arguments
     s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
     s_pathfile = s_path
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
@@ -388,6 +404,10 @@ def get_conc_df():
 
     # process arguments
     s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
     s_pathfile = s_path
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
@@ -574,6 +594,10 @@ def plot_contour():
 
     # process arguments
     s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
     s_pathfile = s_path
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
@@ -697,6 +721,10 @@ def make_conc_vtk():
 
     # process arguments
     s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
     s_pathfile = s_path
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
@@ -780,6 +808,10 @@ def get_celltype_list():
 
     # process arguments
     s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
     s_pathfile = s_path
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
@@ -886,6 +918,10 @@ def get_cell_attribute():
 
     # process arguments
     s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
     s_pathfile = s_path
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
@@ -1031,6 +1067,10 @@ def get_cell_df():
 
     # process arguments
     s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
     s_pathfile = s_path
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
@@ -1186,6 +1226,10 @@ def get_anndata():
 
     # process arguments
     s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
     s_pathfile = s_path
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
@@ -1335,6 +1379,10 @@ def make_graph_gml():
 
     # process arguments
     s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
     s_pathfile = s_path
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
@@ -1548,6 +1596,10 @@ def plot_scatter():
 
     # process arguments
     s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
     s_pathfile = s_path
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
@@ -1698,6 +1750,10 @@ def make_cell_vtk():
 
     # process arguments
     s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
     s_pathfile = s_path
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
@@ -1958,6 +2014,12 @@ def plot_timeseries():
     print(args)
 
     # process arguments
+    s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
+    args.path = s_path
 
     # path
     if not os.path.exists(args.path + '/initial.xml'):
@@ -2112,6 +2174,10 @@ def make_ome_tiff():
 
     # path
     s_path = args.path
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
     s_pathfile = s_path
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
@@ -2211,6 +2277,13 @@ def make_gif():
     print(args)
 
     # process arguments
+    s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
+    args.path = s_path
+
     # run
     s_opathfile = pcdl.make_gif(
         path = args.path,
@@ -2255,6 +2328,13 @@ def make_movie():
     print(args)
 
     # process arguments
+    s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
+    args.path = s_path
+
     # run
     s_opathfile = pcdl.make_movie(
         path = args.path,

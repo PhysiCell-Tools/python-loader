@@ -29,7 +29,7 @@ import shutil
 import subprocess
 
 # const
-s_path_2d = str(pathlib.Path(pcdl.__file__).parent.resolve()/'data_timeseries_2d')
+s_path_2d = str(pathlib.Path(pcdl.__file__).parent.resolve()/'output_2d')
 s_file_2d = 'output00000024.xml'
 s_pathfile_2d = f'{s_path_2d}/{s_file_2d}'
 print("s_path_2d", s_path_2d)
@@ -82,7 +82,7 @@ class TestPyCliUnitDict(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_unit.csv')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_unit.csv')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -91,7 +91,7 @@ class TestPyCliUnitDict(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_unit.csv')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_unit.csv')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -101,7 +101,7 @@ class TestPyCliUnitDict(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_unit.csv')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_unit.csv')) and \
                (not set(df_cell.index).issuperset({'oxygen'}))
         os.remove(s_opathfile)
 
@@ -111,8 +111,8 @@ class TestPyCliUnitDict(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_unit.csv')) and \
-               (set(df_cell.index).issuperset({'0_attack_rates'}))
+        assert (s_opathfile.endswith('output_2d/timeseries_unit.csv')) and \
+               (set(df_cell.index).issuperset({'default_fusion_rates'}))
         os.remove(s_opathfile)
 
     def test_pcdl_get_unit_dict_timestep_settingxmlnone(self):
@@ -121,8 +121,8 @@ class TestPyCliUnitDict(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_unit.csv')) and \
-               (set(df_cell.index).issuperset({'0_attack_rates'}))
+        assert (s_opathfile.endswith('output_2d/timeseries_unit.csv')) and \
+               (set(df_cell.index).issuperset({'default_fusion_rates'}))
         os.remove(s_opathfile)
 
 
@@ -142,14 +142,14 @@ class TestPyCliSubstrateList(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_listing = s_result.stderr.decode('UTF8').replace('\r','')
-        assert (s_listing.startswith("['oxygen']"))
+        assert (s_listing.startswith("['oxygen', 'water']"))
 
     def test_pcdl_get_substrate_list_timestep(self):
         s_result = subprocess.run(['pcdl_get_substrate_list', s_pathfile_2d], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_listing = s_result.stderr.decode('UTF8').replace('\r','')
-        assert (s_listing.startswith("['oxygen']"))
+        assert (s_listing.startswith("['oxygen', 'water']"))
 
 
 class TestPyCliConcDfAttribute(object):
@@ -168,7 +168,7 @@ class TestPyCliConcDfAttribute(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_conc_attribute_minmax.json')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_conc_attribute_minmax.json')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -178,8 +178,8 @@ class TestPyCliConcDfAttribute(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         d_attribute = json.load(open(s_opathfile))
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_conc_attribute_minmax.json')) and \
-               (len(d_attribute) == 1)
+        assert (s_opathfile.endswith('output_2d/timeseries_conc_attribute_minmax.json')) and \
+               (len(d_attribute) == 2)
         os.remove(s_opathfile)
 
     def test_pcdl_get_conc_attribute_timeseries_drop(self):
@@ -188,9 +188,9 @@ class TestPyCliConcDfAttribute(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         d_attribute = json.load(open(s_opathfile))
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_conc_attribute_minmax.json')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_conc_attribute_minmax.json')) and \
                (not set(d_attribute.keys()).issuperset({'oxygen'})) and \
-               (len(d_attribute) == 0)
+               (len(d_attribute) == 1)
         os.remove(s_opathfile)
 
     def test_pcdl_get_conc_attribute_timeseries_keep(self):
@@ -199,7 +199,7 @@ class TestPyCliConcDfAttribute(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         d_attribute = json.load(open(s_opathfile))
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_conc_attribute_minmax.json')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_conc_attribute_minmax.json')) and \
                (set(d_attribute.keys()).issuperset({'oxygen'})) and \
                (len(d_attribute) == 1)
         os.remove(s_opathfile)
@@ -209,7 +209,7 @@ class TestPyCliConcDfAttribute(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_conc_attribute_all.json')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_conc_attribute_all.json')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -231,7 +231,7 @@ class TestPyCliConcDf(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_conc.csv')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_conc.csv')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -242,8 +242,8 @@ class TestPyCliConcDf(object):
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
         #print(ls_opathfile, len(ls_opathfile))
         assert len(ls_opathfile) == 25 and \
-               ls_opathfile[0].endswith('data_timeseries_2d/output00000000_conc.csv') and \
-               ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_conc.csv') and \
+               ls_opathfile[0].endswith('output_2d/output00000000_conc.csv') and \
+               ls_opathfile[-1].endswith('output_2d/output00000024_conc.csv') and \
                os.path.exists(ls_opathfile[12])
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
@@ -254,8 +254,9 @@ class TestPyCliConcDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         df_conc = pd.read_csv(s_opathfile, index_col=0)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_conc.csv')) and \
-               (df_conc.shape == (3025, 10))
+        assert (s_opathfile.endswith('output_2d/timeseries_conc.csv')) and \
+               (df_conc.shape[0] > 9) and \
+               (df_conc.shape[1] == 11)
         os.remove(s_opathfile)
 
     def test_pcdl_get_conc_df_timeseries_drop(self):
@@ -264,9 +265,10 @@ class TestPyCliConcDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         df_conc = pd.read_csv(s_opathfile, index_col=0)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_conc.csv')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_conc.csv')) and \
                (not set(df_conc.columns).issuperset({'oxygen'})) and \
-               (df_conc.shape == (3025, 9))
+               (df_conc.shape[0] > 9) and \
+               (df_conc.shape[1] == 10)
         os.remove(s_opathfile)
 
     def test_pcdl_get_conc_df_timeseries_keep(self):
@@ -275,9 +277,10 @@ class TestPyCliConcDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         df_conc = pd.read_csv(s_opathfile, index_col=0)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_conc.csv')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_conc.csv')) and \
                (set(df_conc.columns).issuperset({'oxygen'})) and \
-               (df_conc.shape == (3025, 10))
+               (df_conc.shape[0] > 9) and \
+               (df_conc.shape[1] == 10)
         os.remove(s_opathfile)
 
     def test_pcdl_get_conc_df_timestep(self):
@@ -285,7 +288,7 @@ class TestPyCliConcDf(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_conc.csv')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_conc.csv')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -295,8 +298,9 @@ class TestPyCliConcDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         df_conc = pd.read_csv(s_opathfile, index_col=0)
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_conc.csv')) and \
-               (df_conc.shape == (121, 10))
+        assert (s_opathfile.endswith('output_2d/output00000024_conc.csv')) and \
+               (df_conc.shape[0] > 9) and \
+               (df_conc.shape[1] == 11)
         os.remove(s_opathfile)
 
     def test_pcdl_get_conc_df_timestep_drop(self):
@@ -305,9 +309,10 @@ class TestPyCliConcDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         df_conc = pd.read_csv(s_opathfile, index_col=0)
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_conc.csv')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_conc.csv')) and \
                (not set(df_conc.columns).issuperset({'oxygen'})) and \
-               (df_conc.shape == (121, 9))
+               (df_conc.shape[0] > 9) and \
+               (df_conc.shape[1] == 10)
         os.remove(s_opathfile)
 
     def test_pcdl_get_conc_df_timestep_keep(self):
@@ -316,9 +321,10 @@ class TestPyCliConcDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         df_conc = pd.read_csv(s_opathfile, index_col=0)
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_conc.csv')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_conc.csv')) and \
                (set(df_conc.columns).issuperset({'oxygen'})) and \
-               (df_conc.shape == (121, 10))
+               (df_conc.shape[0] > 9) and \
+               (df_conc.shape[1] == 10)
         os.remove(s_opathfile)
 
 
@@ -354,7 +360,7 @@ class TestPyCliPlotContour(object):
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         s_opath = '/'.join(s_opathfile.split('/')[:-1])
         assert (os.path.exists(s_opathfile)) and \
-           (s_opathfile.endswith('pcdl/data_timeseries_2d/conc_oxygen_z0.0/output00000024_oxygen.jpeg')) and \
+           (s_opathfile.endswith('pcdl/output_2d/conc_oxygen_z0.0/output00000024_oxygen.jpeg')) and \
            (s_stdout.find("focus='oxygen'") > -1) and \
            (s_stdout.find("z_slice=0.0") > -1) and \
            (s_stdout.find("extrema=['none']") > -1) and \
@@ -395,7 +401,7 @@ class TestPyCliPlotContour(object):
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         s_opath = '/'.join(s_opathfile.split('/')[:-1])
         assert (os.path.exists(s_opathfile)) and \
-           (s_opathfile.endswith('pcdl/data_timeseries_2d/conc_oxygen_z0.0/output00000024_oxygen.tiff')) and \
+           (s_opathfile.endswith('pcdl/output_2d/conc_oxygen_z0.0/output00000024_oxygen.tiff')) and \
            (s_stdout.find("focus='oxygen'") > -1) and \
            (s_stdout.find("z_slice=1.1") > -1) and \
            (s_stdout.find("extrema=['0.0', '40.0']") > -1) and \
@@ -428,8 +434,8 @@ class TestPyCliPlotContour(object):
 #        ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
 #        #print('ls_opathfile:', ls_opathfile)
 #        assert (len(ls_opathfile) == 25) and \
-#               (ls_opathfile[0].endswith('data_timeseries_2d/output00000000_conc.vtr')) and \
-#               (ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_conc.vtr')) and \
+#               (ls_opathfile[0].endswith('output_2d/output00000000_conc.vtr')) and \
+#               (ls_opathfile[-1].endswith('output_2d/output00000024_conc.vtr')) and \
 #               (os.path.exists(ls_opathfile[12]))
 #        for s_opathfile in ls_opathfile:
 #            os.remove(s_opathfile)
@@ -439,7 +445,7 @@ class TestPyCliPlotContour(object):
 #        print(f'\ns_result.stdout: {s_result.stdout}\n')
 #        print(f'\ns_result.stderr: {s_result.stderr}\n')
 #        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-#        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_conc.vtr')) and \
+#        assert (s_opathfile.endswith('output_2d/output00000024_conc.vtr')) and \
 #               (os.path.exists(s_opathfile))
 #        os.remove(s_opathfile)
 
@@ -460,14 +466,14 @@ class TestPyCliCelltypeList(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_listing = s_result.stderr.decode('UTF8').replace('\r','')
-        assert (s_listing.startswith("['cancer_cell']"))
+        assert (s_listing.startswith("['default', 'blood_cells']"))
 
     def test_pcdl_get_celltype_list_timestep(self):
         s_result = subprocess.run(['pcdl_get_celltype_list', s_pathfile_2d], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_listing = s_result.stderr.decode('UTF8').replace('\r','')
-        assert (s_listing.startswith("['cancer_cell']"))
+        assert (s_listing.startswith("['default', 'blood_cells']"))
 
 
 class TestPyCliCellDfAttribute(object):
@@ -490,7 +496,7 @@ class TestPyCliCellDfAttribute(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_attribute_minmax.json')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_cell_attribute_minmax.json')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -499,10 +505,11 @@ class TestPyCliCellDfAttribute(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        print('BUE ERROR:', s_opathfile)
         d_cell = json.load(open(s_opathfile))
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_attribute_minmax.json')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_cell_attribute_minmax.json')) and \
                (d_cell['oncoprotein'] == ['0','1','2'])
-        os.remove(s_opathfile)
+        #os.remove(s_opathfile)
 
     def test_pcdl_get_cell_attribute_timeseries_microenv(self):
         s_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
@@ -510,9 +517,9 @@ class TestPyCliCellDfAttribute(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         d_attribute = json.load(open(s_opathfile))
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_attribute_minmax.json')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_cell_attribute_minmax.json')) and \
                (not set(d_attribute.keys()).issuperset({'oxygen'})) and \
-               (len(d_attribute) == 80)
+               (len(d_attribute) == 104)
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_attribute_timeseries_physiboss(self):
@@ -520,7 +527,7 @@ class TestPyCliCellDfAttribute(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_attribute_minmax.json')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_cell_attribute_minmax.json')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -530,9 +537,9 @@ class TestPyCliCellDfAttribute(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         d_attribute = json.load(open(s_opathfile))
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_attribute_minmax.json')) and \
-               (set(d_attribute.keys()).issuperset({'0_attack_rates'})) and \
-               (len(d_attribute) == 83)
+        assert (s_opathfile.endswith('output_2d/timeseries_cell_attribute_minmax.json')) and \
+               (set(d_attribute.keys()).issuperset({'default_fusion_rates'})) and \
+               (len(d_attribute) == 110)
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_attribute_timeseries_settingxmlnone(self):
@@ -541,9 +548,9 @@ class TestPyCliCellDfAttribute(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         d_attribute = json.load(open(s_opathfile))
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_attribute_minmax.json')) and \
-               (set(d_attribute.keys()).issuperset({'0_attack_rates'})) and \
-               (len(d_attribute) == 83)
+        assert (s_opathfile.endswith('output_2d/timeseries_cell_attribute_minmax.json')) and \
+               (set(d_attribute.keys()).issuperset({'default_fusion_rates'})) and \
+               (len(d_attribute) == 110)
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_attribute_timeseries_value(self):
@@ -552,8 +559,8 @@ class TestPyCliCellDfAttribute(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         d_attribute = json.load(open(s_opathfile))
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_attribute_minmax.json')) and \
-               (len(d_attribute) == 28)
+        assert (s_opathfile.endswith('output_2d/timeseries_cell_attribute_minmax.json')) and \
+               (len(d_attribute) == 54)
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_attribute_timeseries_drop(self):
@@ -562,9 +569,9 @@ class TestPyCliCellDfAttribute(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         d_attribute = json.load(open(s_opathfile))
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_attribute_minmax.json')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_cell_attribute_minmax.json')) and \
                (not set(d_attribute.keys()).issuperset({'cell_type', 'oxygen'})) and \
-               (len(d_attribute) == 81)
+               (len(d_attribute) == 108)
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_attribute_timeseries_keep(self):
@@ -573,7 +580,7 @@ class TestPyCliCellDfAttribute(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         d_attribute = json.load(open(s_opathfile))
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_attribute_minmax.json')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_cell_attribute_minmax.json')) and \
                (set(d_attribute.keys()).issuperset({'cell_type', 'oxygen'})) and \
                (len(d_attribute) == 2)
         os.remove(s_opathfile)
@@ -583,7 +590,7 @@ class TestPyCliCellDfAttribute(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_attribute_all.json')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_cell_attribute_all.json')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -610,7 +617,7 @@ class TestPyCliCellDf(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell.csv')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_cell.csv')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -621,8 +628,8 @@ class TestPyCliCellDf(object):
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
         #print(ls_opathfile, len(ls_opathfile))
         assert len(ls_opathfile) == 25 and \
-               ls_opathfile[0].endswith('data_timeseries_2d/output00000000_cell.csv') and \
-               ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_cell.csv') and \
+               ls_opathfile[0].endswith('output_2d/output00000000_cell.csv') and \
+               ls_opathfile[-1].endswith('output_2d/output00000024_cell.csv') and \
                os.path.exists(ls_opathfile[12])
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
@@ -633,7 +640,7 @@ class TestPyCliCellDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell.csv')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_cell.csv')) and \
                (not set(df_cell.columns).issuperset({'oxygen'}))
         os.remove(s_opathfile)
 
@@ -642,7 +649,7 @@ class TestPyCliCellDf(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell.csv')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_cell.csv')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -652,8 +659,8 @@ class TestPyCliCellDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell.csv')) and \
-               (set(df_cell.columns).issuperset({'0_attack_rates'}))
+        assert (s_opathfile.endswith('output_2d/timeseries_cell.csv')) and \
+               (set(df_cell.columns).issuperset({'default_fusion_rates'}))
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_df_timeseries_settingxmlnone(self):
@@ -662,8 +669,8 @@ class TestPyCliCellDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell.csv')) and \
-               (set(df_cell.columns).issuperset({'0_attack_rates'}))
+        assert (s_opathfile.endswith('output_2d/timeseries_cell.csv')) and \
+               (set(df_cell.columns).issuperset({'default_fusion_rates'}))
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_df_timeseries_value(self):
@@ -672,8 +679,9 @@ class TestPyCliCellDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell.csv')) and \
-               (df_cell.shape == (24758, 41))
+        assert (s_opathfile.endswith('output_2d/timeseries_cell.csv')) and \
+               (df_cell.shape[0] > 9 ) and \
+               (df_cell.shape[1] == 67)
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_df_timeseries_drop(self):
@@ -682,9 +690,10 @@ class TestPyCliCellDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell.csv')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_cell.csv')) and \
                (not set(df_cell.columns).issuperset({'cell_type', 'oxygen'})) and \
-               (df_cell.shape == (24758, 94))
+               (df_cell.shape[0] > 9 ) and \
+               (df_cell.shape[1] == 121)
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_df_timeseries_keep(self):
@@ -693,9 +702,10 @@ class TestPyCliCellDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell.csv')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_cell.csv')) and \
                (set(df_cell.columns).issuperset({'cell_type', 'oxygen'})) and \
-               (df_cell.shape == (24758, 15))
+               (df_cell.shape[0] > 9 ) and \
+               (df_cell.shape[1] == 15)
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_df_timestep(self):
@@ -703,7 +713,7 @@ class TestPyCliCellDf(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.csv'))
+        assert (s_opathfile.endswith('output_2d/output00000024_cell.csv'))
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_df_timestep_microenv(self):
@@ -712,7 +722,7 @@ class TestPyCliCellDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.csv')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_cell.csv')) and \
                (not set(df_cell.columns).issuperset({'oxygen'}))
         os.remove(s_opathfile)
 
@@ -721,7 +731,7 @@ class TestPyCliCellDf(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.csv'))
+        assert (s_opathfile.endswith('output_2d/output00000024_cell.csv'))
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_df_timestep_settingxmlfalse(self):
@@ -730,8 +740,8 @@ class TestPyCliCellDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.csv')) and \
-               (set(df_cell.columns).issuperset({'0_attack_rates'}))
+        assert (s_opathfile.endswith('output_2d/output00000024_cell.csv')) and \
+               (set(df_cell.columns).issuperset({'default_fusion_rates'}))
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_df_timestep_settingxmlnone(self):
@@ -740,8 +750,8 @@ class TestPyCliCellDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.csv')) and \
-               (set(df_cell.columns).issuperset({'0_attack_rates'}))
+        assert (s_opathfile.endswith('output_2d/output00000024_cell.csv')) and \
+               (set(df_cell.columns).issuperset({'default_fusion_rates'}))
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_df_timestep_value(self):
@@ -750,8 +760,9 @@ class TestPyCliCellDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.csv')) and \
-               (df_cell.shape == (1099, 40))
+        assert (s_opathfile.endswith('output_2d/output00000024_cell.csv')) and \
+               (df_cell.shape[0] > 9 ) and \
+               (df_cell.shape[1] == 66)
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_df_timestep_drop(self):
@@ -760,9 +771,10 @@ class TestPyCliCellDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.csv')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_cell.csv')) and \
                (not set(df_cell.columns).issuperset({'cell_type', 'oxygen'})) and \
-               (df_cell.shape == (1099, 93))
+               (df_cell.shape[0] > 9 ) and \
+               (df_cell.shape[1] == 120)
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_df_timestep_keep(self):
@@ -771,9 +783,10 @@ class TestPyCliCellDf(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         df_cell = pd.read_csv(s_opathfile, index_col=0)
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.csv')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_cell.csv')) and \
                (set(df_cell.columns).issuperset({'cell_type', 'oxygen'})) and \
-               (df_cell.shape == (1099, 14))
+               (df_cell.shape[0] > 9 ) and \
+               (df_cell.shape[1] == 14)
         os.remove(s_opathfile)
 
 
@@ -803,11 +816,13 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_maxabs.h5ad')) and \
-               (ann.shape == (24758, 78)) and \
-               (ann.obs.shape == (24758, 8)) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_cell_maxabs.h5ad')) and \
+               (ann.shape[0] >  9) and \
+               (ann.shape[1] == 105) and \
+               (ann.obs.shape[0] > 9) and \
+               (ann.obs.shape[1] == 8) and \
                (len(ann.obsp) == 0) and \
-               (ann.var.shape == (78, 0)) and \
+               (ann.var.shape == (105, 0)) and \
                (len(ann.uns) == 0)
         os.remove(s_opathfile)
 
@@ -817,8 +832,8 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
         assert len(ls_opathfile) == 25 and \
-               ls_opathfile[0].endswith('data_timeseries_2d/output00000000_cell_maxabs.h5ad') and \
-               ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_cell_maxabs.h5ad') and \
+               ls_opathfile[0].endswith('output_2d/output00000000_cell_maxabs.h5ad') and \
+               ls_opathfile[-1].endswith('output_2d/output00000024_cell_maxabs.h5ad') and \
                os.path.exists(ls_opathfile[12])
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
@@ -829,10 +844,12 @@ class TestPyCliAnndata(object):
         print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_maxabs.h5ad')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_cell_maxabs.h5ad')) and \
                (set(ann.obs.columns).issuperset({'oncoprotein'})) and \
-               (ann.shape == (24758, 77)) and \
-               (ann.obs.shape == (24758, 9)) and \
+               (ann.shape[0] > 0) and \
+               (ann.shape[1] == (24758, 77)) and \
+               (ann.obs.shape[0] > 9) and \
+               (ann.obs.shape[1] == 9) and \
                (len(ann.obsp) == 0) and \
                (ann.var.shape == (77, 0)) and \
                (len(ann.uns) == 0)
@@ -844,12 +861,14 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_maxabs.h5ad')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_cell_maxabs.h5ad')) and \
                (not set(ann.var_names).issuperset({'oxygen'})) and \
-               (ann.shape == (24758, 75)) and \
-               (ann.obs.shape == (24758, 8)) and \
+               (ann.shape[0] > 9) and \
+               (ann.shape[1] == 99) and \
+               (ann.obs.shape[0] > 9) and \
+               (ann.obs.shape[1] == 8) and \
                (len(ann.obsp) == 0) and \
-               (ann.var.shape == (75, 0)) and \
+               (ann.var.shape == (99, 0)) and \
                (len(ann.uns) == 0)
         os.remove(s_opathfile)
 
@@ -859,11 +878,13 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_maxabs.h5ad')) and \
-               (ann.shape == (24758, 78)) and \
-               (ann.obs.shape == (24758, 8)) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_cell_maxabs.h5ad')) and \
+               (ann.shape[0] > 9) and \
+               (ann.shape[1] == 105) and \
+               (ann.obs.shape[0] > 9) and \
+               (ann.obs.shape[1] == 8) and \
                (len(ann.obsp) == 0) and \
-               (ann.var.shape == (78, 0)) and \
+               (ann.var.shape == (105, 0)) and \
                (len(ann.uns) == 0)
         os.remove(s_opathfile)
 
@@ -873,11 +894,13 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_maxabs.h5ad')) and \
-               (ann.shape == (24758, 78)) and \
-               (ann.obs.shape == (24758, 8)) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_cell_maxabs.h5ad')) and \
+               (ann.shape[0] > 9) and \
+               (ann.shape[1] == 105) and \
+               (ann.obs.shape[0] > 9) and \
+               (ann.obs.shape[1] == 8) and \
                (len(ann.obsp) == 0) and \
-               (ann.var.shape == (78, 0)) and \
+               (ann.var.shape == (105, 0)) and \
                (len(ann.uns) == 0)
         os.remove(s_opathfile)
 
@@ -887,12 +910,14 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_maxabs.h5ad')) and \
-               (set(ann.var_names).issuperset({'0_attack_rates'})) and \
-               (ann.shape == (24758, 78)) and \
-               (ann.obs.shape == (24758, 8)) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_cell_maxabs.h5ad')) and \
+               (set(ann.var_names).issuperset({'default_fusion_rates'})) and \
+               (ann.shape[0] > 9) and \
+               (ann.shape[1] == 105) and \
+               (ann.obs.shape[0] > 9) and \
+               (ann.obs.shape[1] == 8) and \
                (len(ann.obsp) == 0) and \
-               (ann.var.shape == (78, 0)) and \
+               (ann.var.shape == (105, 0)) and \
                (len(ann.uns) == 0)
         os.remove(s_opathfile)
 
@@ -902,12 +927,14 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_maxabs.h5ad')) and \
-               (set(ann.var_names).issuperset({'0_attack_rates'})) and \
-               (ann.shape == (24758, 78)) and \
-               (ann.obs.shape == (24758, 8)) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_cell_maxabs.h5ad')) and \
+               (set(ann.var_names).issuperset({'default_fusion_rates'})) and \
+               (ann.shape[0] > 9) and \
+               (ann.shape[1] == 105) and \
+               (ann.obs.shape[0] > 9) and \
+               (ann.obs.shape[1] == 8) and \
                (len(ann.obsp) == 0) and \
-               (ann.var.shape == (78, 0)) and \
+               (ann.var.shape == (105, 0)) and \
                (len(ann.uns) == 0)
         os.remove(s_opathfile)
 
@@ -917,11 +944,13 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_maxabs.h5ad')) and \
-               (ann.shape == (24758, 26)) and \
-               (ann.obs.shape == (24758, 5)) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_cell_maxabs.h5ad')) and \
+               (ann.shape[0] > 9) and \
+               (ann.shape[1] == 50) and \
+               (ann.obs.shape[0] > 9) and \
+               (ann.obs.shape[1] == 7) and \
                (len(ann.obsp) == 0) and \
-               (ann.var.shape == (26, 0)) and \
+               (ann.var.shape == (50, 0)) and \
                (len(ann.uns) == 0)
         os.remove(s_opathfile)
 
@@ -931,13 +960,15 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_maxabs.h5ad')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_cell_maxabs.h5ad')) and \
                (not set(ann.var_names).issuperset({'cell_type'})) and \
                (not set(ann.obs_keys()).issuperset({'oxygen'})) and \
-               (ann.shape == (24758, 77)) and \
-               (ann.obs.shape == (24758, 7)) and \
+               (ann.shape[0] > 9) and \
+               (ann.shape[1] == 104) and \
+               (ann.obs.shape[0] > 9) and \
+               (ann.obs.shape[1] == 7) and \
                (len(ann.obsp) == 0) and \
-               (ann.var.shape == (77, 0)) and \
+               (ann.var.shape == (104, 0)) and \
                (len(ann.uns) == 0)
         os.remove(s_opathfile)
 
@@ -947,11 +978,13 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_maxabs.h5ad')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_cell_maxabs.h5ad')) and \
                (set(ann.var_names).issuperset({'oxygen'})) and \
                (set(ann.obs_keys()).issuperset({'cell_type'})) and \
-               (ann.shape == (24758, 1)) and \
-               (ann.obs.shape == (24758, 4)) and \
+               (ann.shape[0] > 9) and \
+               (ann.shape[1] == 1) and \
+               (ann.obs.shape[0] > 9) and \
+               (ann.obs.shape[1] == 4) and \
                (len(ann.obsp) == 0) and \
                (ann.var.shape == (1, 0)) and \
                (len(ann.uns) == 0)
@@ -963,11 +996,13 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cell_std.h5ad')) and \
-               (ann.shape == (24758, 78)) and \
-               (ann.obs.shape == (24758, 8)) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_cell_std.h5ad')) and \
+               (ann.shape[0] > 9) and \
+               (ann.shape[1] == 105) and \
+               (ann.obs.shape[0] > 9) and \
+               (ann.obs.shape[1] == 8) and \
                (len(ann.obsp) == 0) and \
-               (ann.var.shape == (78, 0)) and \
+               (ann.var.shape == (105, 0)) and \
                (len(ann.uns) == 0)
         os.remove(s_opathfile)
 
@@ -978,11 +1013,13 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell_maxabs.h5ad')) and \
-               (ann.shape == (1099, 78)) and \
-               (ann.obs.shape == (1099, 7)) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_cell_maxabs.h5ad')) and \
+               (ann.shape[0] > 9) and \
+               (ann.shape[1] == 105) and \
+               (ann.obs.shape[0] > 9) and \
+               (ann.obs.shape[1] == 7) and \
                (len(ann.obsp) == 2) and \
-               (ann.var.shape == (78, 0)) and \
+               (ann.var.shape == (105, 0)) and \
                (len(ann.uns) == 1)
         os.remove(s_opathfile)
 
@@ -992,12 +1029,14 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell_maxabs.h5ad')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_cell_maxabs.h5ad')) and \
                (not set(ann.var_names).issuperset({'oxygen'})) and \
-               (ann.shape == (1099, 75)) and \
-               (ann.obs.shape == (1099, 7)) and \
+               (ann.shape[0] > 9) and \
+               (ann.shape[1] == 99) and \
+               (ann.obs.shape[0] > 9) and \
+               (ann.obs.shape[1] == 7) and \
                (len(ann.obsp) == 2) and \
-               (ann.var.shape == (75, 0)) and \
+               (ann.var.shape == (99, 0)) and \
                (len(ann.uns) == 1)
         os.remove(s_opathfile)
 
@@ -1007,11 +1046,13 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell_maxabs.h5ad')) and \
-               (ann.shape == (1099, 78)) and \
-               (ann.obs.shape == (1099, 7)) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_cell_maxabs.h5ad')) and \
+               (ann.shape[0] > 9) and \
+               (ann.shape[1] == 105) and \
+               (ann.obs.shape[0] > 9) and \
+               (ann.obs.shape[1] == 7) and \
                (len(ann.obsp) == 0) and \
-               (ann.var.shape == (78, 0)) and \
+               (ann.var.shape == (105, 0)) and \
                (len(ann.uns) == 0)
         os.remove(s_opathfile)
 
@@ -1021,11 +1062,13 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell_maxabs.h5ad')) and \
-               (ann.shape == (1099, 78)) and \
-               (ann.obs.shape == (1099, 7)) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_cell_maxabs.h5ad')) and \
+               (ann.shape[0] > 9) and \
+               (ann.shape[1] == 105) and \
+               (ann.obs.shape[0] > 9) and \
+               (ann.obs.shape[1] == 7) and \
                (len(ann.obsp) == 2) and \
-               (ann.var.shape == (78, 0)) and \
+               (ann.var.shape == (105, 0)) and \
                (len(ann.uns) == 1)
         os.remove(s_opathfile)
 
@@ -1035,12 +1078,14 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell_maxabs.h5ad')) and \
-               (set(ann.var_names).issuperset({'0_attack_rates'})) and \
-               (ann.shape == (1099, 78)) and \
-               (ann.obs.shape == (1099, 7)) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_cell_maxabs.h5ad')) and \
+               (set(ann.var_names).issuperset({'default_fusion_rates'})) and \
+               (ann.shape[0] > 9) and \
+               (ann.shape[1] == 105) and \
+               (ann.obs.shape[0] > 9) and \
+               (ann.obs.shape[1] == 7) and \
                (len(ann.obsp) == 2) and \
-               (ann.var.shape == (78, 0)) and \
+               (ann.var.shape == (105, 0)) and \
                (len(ann.uns) == 1)
         os.remove(s_opathfile)
 
@@ -1050,12 +1095,14 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell_maxabs.h5ad')) and \
-               (set(ann.var_names).issuperset({'0_attack_rates'})) and \
-               (ann.shape == (1099, 78)) and \
-               (ann.obs.shape == (1099, 7)) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_cell_maxabs.h5ad')) and \
+               (set(ann.var_names).issuperset({'default_fusion_rates'})) and \
+               (ann.shape[0] > 9) and \
+               (ann.shape[1] == 105) and \
+               (ann.obs.shape[0] > 9) and \
+               (ann.obs.shape[1] == 7) and \
                (len(ann.obsp) == 2) and \
-               (ann.var.shape == (78, 0)) and \
+               (ann.var.shape == (105, 0)) and \
                (len(ann.uns) == 1)
         os.remove(s_opathfile)
 
@@ -1065,11 +1112,13 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell_maxabs.h5ad')) and \
-               (ann.shape == (1099, 26)) and \
-               (ann.obs.shape == (1099, 4)) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_cell_maxabs.h5ad')) and \
+               (ann.shape[0] > 9) and \
+               (ann.shape[1] == 50) and \
+               (ann.obs.shape[0] > 9) and \
+               (ann.obs.shape[1] == 6) and \
                (len(ann.obsp) == 2) and \
-               (ann.var.shape == (26, 0)) and \
+               (ann.var.shape == (50, 0)) and \
                (len(ann.uns) == 1)
         os.remove(s_opathfile)
 
@@ -1079,13 +1128,15 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell_maxabs.h5ad')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_cell_maxabs.h5ad')) and \
                (not set(ann.var_names).issuperset({'cell_type'})) and \
                (not set(ann.obs_keys()).issuperset({'oxygen'})) and \
-               (ann.shape == (1099, 77)) and \
-               (ann.obs.shape == (1099, 6)) and \
+               (ann.shape[0] > 9) and \
+               (ann.shape[1] == 104) and \
+               (ann.obs.shape[0] > 9) and \
+               (ann.obs.shape[1] == 6) and \
                (len(ann.obsp) == 2) and \
-               (ann.var.shape == (77, 0)) and \
+               (ann.var.shape == (104, 0)) and \
                (len(ann.uns) == 1)
         os.remove(s_opathfile)
 
@@ -1095,11 +1146,13 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell_maxabs.h5ad')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_cell_maxabs.h5ad')) and \
                (set(ann.var_names).issuperset({'oxygen'})) and \
                (set(ann.obs_keys()).issuperset({'cell_type'})) and \
-               (ann.shape == (1099, 1)) and \
-               (ann.obs.shape == (1099, 3)) and \
+               (ann.shape[0] > 9) and \
+               (ann.shape[1] == 1) and \
+               (ann.obs.shape[0] > 9) and \
+               (ann.obs.shape[1] == 3) and \
                (len(ann.obsp) == 2) and \
                (ann.var.shape == (1, 0)) and \
                (len(ann.uns) == 1)
@@ -1111,11 +1164,13 @@ class TestPyCliAnndata(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell_std.h5ad')) and \
-               (ann.shape == (1099, 78)) and \
-               (ann.obs.shape == (1099, 7)) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_cell_std.h5ad')) and \
+               (ann.shape[0] > 9) and \
+               (ann.shape[1] == 105) and \
+               (ann.obs.shape[0] > 9) and \
+               (ann.obs.shape[1] == 7) and \
                (len(ann.obsp) == 2) and \
-               (ann.var.shape == (78, 0)) and \
+               (ann.var.shape == (105, 0)) and \
                (len(ann.uns) == 1)
         os.remove(s_opathfile)
 
@@ -1141,21 +1196,21 @@ class TestPyCliGraphGml(object):
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
         #print('ls_opathfile:', ls_opathfile)
         assert (len(ls_opathfile) == 25) and \
-               (ls_opathfile[0].endswith('data_timeseries_2d/output00000000_neighbor.gml')) and \
-               (ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_neighbor.gml')) and \
+               (ls_opathfile[0].endswith('output_2d/output00000000_neighbor.gml')) and \
+               (ls_opathfile[-1].endswith('output_2d/output00000024_neighbor.gml')) and \
                (os.path.exists(ls_opathfile[12]))
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
 
-    def test_pcdl_make_grah_gml_timeseries_customtype_nodeattribute_one(self):
+    def test_pcdl_make_graph_gml_timeseries_customtype_nodeattribute_one(self):
         s_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--custom_data_type', 'oncoprotein:str', '--node_attribute', 'oncoprotein'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
         #print('ls_opathfile:', ls_opathfile)
         assert (len(ls_opathfile) == 25) and \
-               (ls_opathfile[0].endswith('data_timeseries_2d/output00000000_neighbor.gml')) and \
-               (ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_neighbor.gml')) and \
+               (ls_opathfile[0].endswith('output_2d/output00000000_neighbor.gml')) and \
+               (ls_opathfile[-1].endswith('output_2d/output00000024_neighbor.gml')) and \
                (os.path.exists(ls_opathfile[12]))
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
@@ -1167,8 +1222,8 @@ class TestPyCliGraphGml(object):
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
         #print('ls_opathfile:', ls_opathfile)
         assert (len(ls_opathfile) == 25) and \
-               (ls_opathfile[0].endswith('data_timeseries_2d/output00000000_neighbor.gml')) and \
-               (ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_neighbor.gml')) and \
+               (ls_opathfile[0].endswith('output_2d/output00000000_neighbor.gml')) and \
+               (ls_opathfile[-1].endswith('output_2d/output00000024_neighbor.gml')) and \
                (os.path.exists(ls_opathfile[12]))
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
@@ -1180,34 +1235,34 @@ class TestPyCliGraphGml(object):
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
         #print('ls_opathfile:', ls_opathfile)
         assert (len(ls_opathfile) == 25) and \
-               (ls_opathfile[0].endswith('data_timeseries_2d/output00000000_neighbor.gml')) and \
-               (ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_neighbor.gml')) and \
+               (ls_opathfile[0].endswith('output_2d/output00000000_neighbor.gml')) and \
+               (ls_opathfile[-1].endswith('output_2d/output00000024_neighbor.gml')) and \
                (os.path.exists(ls_opathfile[12]))
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
 
     def test_pcdl_make_graph_gml_timeseries_settingxmlfalse_nodeattribute_one(self):
-        s_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--settingxml', 'false', '--node_attribute', '0_attack_rates'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--settingxml', 'false', '--node_attribute', 'default_fusion_rates'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
         #print('ls_opathfile:', ls_opathfile)
         assert (len(ls_opathfile) == 25) and \
-               (ls_opathfile[0].endswith('data_timeseries_2d/output00000000_neighbor.gml')) and \
-               (ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_neighbor.gml')) and \
+               (ls_opathfile[0].endswith('output_2d/output00000000_neighbor.gml')) and \
+               (ls_opathfile[-1].endswith('output_2d/output00000024_neighbor.gml')) and \
                (os.path.exists(ls_opathfile[12]))
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
 
     def test_pcdl_make_graph_gml_timeseries_settingxmlnone_nodeattribute_one(self):
-        s_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--settingxml', 'none', '--node_attribute', '0_attack_rates'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--settingxml', 'none', '--node_attribute', 'default_fusion_rates'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
         #print('ls_opathfile:', ls_opathfile)
         assert (len(ls_opathfile) == 25) and \
-               (ls_opathfile[0].endswith('data_timeseries_2d/output00000000_neighbor.gml')) and \
-               (ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_neighbor.gml')) and \
+               (ls_opathfile[0].endswith('output_2d/output00000000_neighbor.gml')) and \
+               (ls_opathfile[-1].endswith('output_2d/output00000024_neighbor.gml')) and \
                (os.path.exists(ls_opathfile[12]))
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
@@ -1219,8 +1274,8 @@ class TestPyCliGraphGml(object):
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
         #print('ls_opathfile:', ls_opathfile)
         assert (len(ls_opathfile) == 25) and \
-               (ls_opathfile[0].endswith('data_timeseries_2d/output00000000_attached.gml')) and \
-               (ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_attached.gml')) and \
+               (ls_opathfile[0].endswith('output_2d/output00000000_attached.gml')) and \
+               (ls_opathfile[-1].endswith('output_2d/output00000024_attached.gml')) and \
                (os.path.exists(ls_opathfile[12]))
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
@@ -1232,8 +1287,8 @@ class TestPyCliGraphGml(object):
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
         #print('ls_opathfile:', ls_opathfile)
         assert (len(ls_opathfile) == 25) and \
-               (ls_opathfile[0].endswith('data_timeseries_2d/output00000000_neighbor.gml')) and \
-               (ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_neighbor.gml')) and \
+               (ls_opathfile[0].endswith('output_2d/output00000000_neighbor.gml')) and \
+               (ls_opathfile[-1].endswith('output_2d/output00000024_neighbor.gml')) and \
                (os.path.exists(ls_opathfile[12]))
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
@@ -1245,8 +1300,8 @@ class TestPyCliGraphGml(object):
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
         #print('ls_opathfile:', ls_opathfile)
         assert (len(ls_opathfile) == 25) and \
-               (ls_opathfile[0].endswith('data_timeseries_2d/output00000000_neighbor.gml')) and \
-               (ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_neighbor.gml')) and \
+               (ls_opathfile[0].endswith('output_2d/output00000000_neighbor.gml')) and \
+               (ls_opathfile[-1].endswith('output_2d/output00000024_neighbor.gml')) and \
                (os.path.exists(ls_opathfile[12]))
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
@@ -1258,8 +1313,8 @@ class TestPyCliGraphGml(object):
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
         #print('ls_opathfile:', ls_opathfile)
         assert (len(ls_opathfile) == 25) and \
-               (ls_opathfile[0].endswith('data_timeseries_2d/output00000000_neighbor.gml')) and \
-               (ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_neighbor.gml')) and \
+               (ls_opathfile[0].endswith('output_2d/output00000000_neighbor.gml')) and \
+               (ls_opathfile[-1].endswith('output_2d/output00000024_neighbor.gml')) and \
                (os.path.exists(ls_opathfile[12]))
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
@@ -1269,7 +1324,7 @@ class TestPyCliGraphGml(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_neighbor.gml')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_neighbor.gml')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1278,7 +1333,7 @@ class TestPyCliGraphGml(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_neighbor.gml')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_neighbor.gml')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1287,7 +1342,7 @@ class TestPyCliGraphGml(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_neighbor.gml')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_neighbor.gml')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1296,25 +1351,25 @@ class TestPyCliGraphGml(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_neighbor.gml')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_neighbor.gml')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
     def test_pcdl_make_graph_gml_timestep_settingxmlfalse_nodeattribute_one(self):
-        s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--settingxml', 'false', '--node_attribute', '0_attack_rates'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--settingxml', 'false', '--node_attribute', 'default_fusion_rates'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_neighbor.gml')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_neighbor.gml')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
     def test_pcdl_make_graph_gml_timestep_settingxmlnone_nodeattribute_one(self):
-        s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--settingxml', 'none', '--node_attribute', '0_attack_rates'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--settingxml', 'none', '--node_attribute', 'default_fusion_rates'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_neighbor.gml')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_neighbor.gml')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1323,7 +1378,7 @@ class TestPyCliGraphGml(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_attached.gml')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_attached.gml')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1332,7 +1387,7 @@ class TestPyCliGraphGml(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_neighbor.gml')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_neighbor.gml')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1341,7 +1396,7 @@ class TestPyCliGraphGml(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_neighbor.gml')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_neighbor.gml')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1350,7 +1405,7 @@ class TestPyCliGraphGml(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_neighbor.gml')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_neighbor.gml')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1392,7 +1447,7 @@ class TestPyCliPlotScatter(object):
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         s_opath = '/'.join(s_opathfile.split('/')[:-1])
         assert (os.path.exists(s_opathfile)) and \
-           (s_opathfile.endswith('pcdl/data_timeseries_2d/cell_cell_type_z0.0/output00000024_cell_type.jpeg')) and \
+           (s_opathfile.endswith('pcdl/output_2d/cell_cell_type_z0.0/output00000024_cell_type.jpeg')) and \
            (s_stdout.find("custom_data_type=[]") > -1) and \
            (s_stdout.find("microenv='true'") > -1) and \
            (s_stdout.find("physiboss='true'") > -1) and \
@@ -1443,7 +1498,7 @@ class TestPyCliPlotScatter(object):
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         s_opath = '/'.join(s_opathfile.split('/')[:-1])
         assert (os.path.exists(s_opathfile)) and \
-           (s_opathfile.endswith('pcdl/data_timeseries_2d/cell_oxygen_z0.0/output00000024_oxygen.tiff')) and \
+           (s_opathfile.endswith('pcdl/output_2d/cell_oxygen_z0.0/output00000024_oxygen.tiff')) and \
            (s_stdout.find("custom_data_type=['oncoprotein:str']") > -1) and \
            (s_stdout.find("microenv='True'") > -1) and \
            (s_stdout.find("physiboss='false'") > -1) and \
@@ -1485,8 +1540,8 @@ class TestPyCliCellVtk(object):
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
         #print('ls_opathfile:', ls_opathfile)
         assert (len(ls_opathfile) == 25) and \
-               (ls_opathfile[0].endswith('data_timeseries_2d/output00000000_cell.vtp')) and \
-               (ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_cell.vtp')) and \
+               (ls_opathfile[0].endswith('output_2d/output00000000_cell.vtp')) and \
+               (ls_opathfile[-1].endswith('output_2d/output00000024_cell.vtp')) and \
                (os.path.exists(ls_opathfile[12]))
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
@@ -1498,8 +1553,8 @@ class TestPyCliCellVtk(object):
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
         #print('ls_opathfile:', ls_opathfile)
         assert (len(ls_opathfile) == 25) and \
-               (ls_opathfile[0].endswith('data_timeseries_2d/output00000000_cell.vtp')) and \
-               (ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_cell.vtp')) and \
+               (ls_opathfile[0].endswith('output_2d/output00000000_cell.vtp')) and \
+               (ls_opathfile[-1].endswith('output_2d/output00000024_cell.vtp')) and \
                (os.path.exists(ls_opathfile[12]))
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
@@ -1510,8 +1565,8 @@ class TestPyCliCellVtk(object):
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
         assert (len(ls_opathfile) == 25) and \
-               (ls_opathfile[0].endswith('data_timeseries_2d/output00000000_cell.vtp')) and \
-               (ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_cell.vtp')) and \
+               (ls_opathfile[0].endswith('output_2d/output00000000_cell.vtp')) and \
+               (ls_opathfile[-1].endswith('output_2d/output00000024_cell.vtp')) and \
                (os.path.exists(ls_opathfile[12]))
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
@@ -1523,34 +1578,34 @@ class TestPyCliCellVtk(object):
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
         #print('ls_opathfile:', ls_opathfile)
         assert (len(ls_opathfile) == 25) and \
-               (ls_opathfile[0].endswith('data_timeseries_2d/output00000000_cell.vtp')) and \
-               (ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_cell.vtp')) and \
+               (ls_opathfile[0].endswith('output_2d/output00000000_cell.vtp')) and \
+               (ls_opathfile[-1].endswith('output_2d/output00000024_cell.vtp')) and \
                (os.path.exists(ls_opathfile[12]))
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
 
     def test_pcdl_make_cell_vtk_timeseries_settingxmlfalse_attribute_one(self):
-        s_result = subprocess.run(['pcdl_make_cell_vtk', s_path_2d, '0_attack_rates', '--settingxml', 'false'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_cell_vtk', s_path_2d, 'default_fusion_rates', '--settingxml', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
         #print('ls_opathfile:', ls_opathfile)
         assert (len(ls_opathfile) == 25) and \
-               (ls_opathfile[0].endswith('data_timeseries_2d/output00000000_cell.vtp')) and \
-               (ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_cell.vtp')) and \
+               (ls_opathfile[0].endswith('output_2d/output00000000_cell.vtp')) and \
+               (ls_opathfile[-1].endswith('output_2d/output00000024_cell.vtp')) and \
                (os.path.exists(ls_opathfile[12]))
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
 
     def test_pcdl_make_cell_vtk_timeseries_settingxmlnone_attribute_one(self):
-        s_result = subprocess.run(['pcdl_make_cell_vtk', s_path_2d, '0_attack_rates', '--settingxml', 'none'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_cell_vtk', s_path_2d, 'default_fusion_rates', '--settingxml', 'none'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
         #print('ls_opathfile:', ls_opathfile)
         assert (len(ls_opathfile) == 25) and \
-               (ls_opathfile[0].endswith('data_timeseries_2d/output00000000_cell.vtp')) and \
-               (ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_cell.vtp')) and \
+               (ls_opathfile[0].endswith('output_2d/output00000000_cell.vtp')) and \
+               (ls_opathfile[-1].endswith('output_2d/output00000024_cell.vtp')) and \
                (os.path.exists(ls_opathfile[12]))
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
@@ -1562,8 +1617,8 @@ class TestPyCliCellVtk(object):
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
         print('ls_opathfile:', ls_opathfile)
         assert (len(ls_opathfile) == 25) and \
-               (ls_opathfile[0].endswith('data_timeseries_2d/output00000000_cell.vtp')) and \
-               (ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_cell.vtp')) and \
+               (ls_opathfile[0].endswith('output_2d/output00000000_cell.vtp')) and \
+               (ls_opathfile[-1].endswith('output_2d/output00000024_cell.vtp')) and \
                (os.path.exists(ls_opathfile[12]))
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
@@ -1573,7 +1628,7 @@ class TestPyCliCellVtk(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.vtp')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_cell.vtp')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1582,7 +1637,7 @@ class TestPyCliCellVtk(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.vtp')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_cell.vtp')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1591,7 +1646,7 @@ class TestPyCliCellVtk(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.vtp')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_cell.vtp')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1600,25 +1655,25 @@ class TestPyCliCellVtk(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.vtp')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_cell.vtp')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
     def test_pcdl_make_cell_vtk_timestep_settingxmlfalse_attribute_one(self):
-        s_result = subprocess.run(['pcdl_make_cell_vtk', s_pathfile_2d, '0_attack_rates', '--settingxml', 'false'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_cell_vtk', s_pathfile_2d, 'default_fusion_rates', '--settingxml', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.vtp')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_cell.vtp')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
     def test_pcdl_make_cell_vtk_timestep_settingxmlnone_attribute_one(self):
-        s_result = subprocess.run(['pcdl_make_cell_vtk', s_pathfile_2d, '0_attack_rates', '--settingxml', 'none'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_cell_vtk', s_pathfile_2d, 'default_fusion_rates', '--settingxml', 'none'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.vtp')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_cell.vtp')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1627,7 +1682,7 @@ class TestPyCliCellVtk(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cell.vtp')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_cell.vtp')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1679,7 +1734,7 @@ class TestPyCliPlotTimeSeries(object):
         s_stdout = s_result.stdout.decode('UTF8').replace('\r','')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         assert (os.path.exists(s_opathfile)) and \
-           (s_opathfile.endswith('pcdl/data_timeseries_2d/timeseries_cell_total_count.jpeg')) and \
+           (s_opathfile.endswith('pcdl/output_2d/timeseries_cell_total_count.jpeg')) and \
            (s_stdout.find("custom_data_type=[]") > -1) and \
            (s_stdout.find("microenv='true'") > -1) and \
            (s_stdout.find("physiboss='true'") > -1) and \
@@ -1741,7 +1796,7 @@ class TestPyCliPlotTimeSeries(object):
         s_stdout = s_result.stdout.decode('UTF8').replace('\r','')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         assert (os.path.exists(s_opathfile)) and \
-           (s_opathfile.endswith('pcdl/data_timeseries_2d/timeseries_conc_total_oxygen_entropy.tiff')) and \
+           (s_opathfile.endswith('pcdl/output_2d/timeseries_conc_total_oxygen_entropy.tiff')) and \
            (s_stdout.find("custom_data_type=['oncoprotein:str']") > -1) and \
            (s_stdout.find("microenv='True'") > -1) and \
            (s_stdout.find("physiboss='false'") > -1) and \
@@ -1789,7 +1844,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_oxygen_cancer_cell_ID.ome.tiff')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1798,7 +1853,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_cancer_cell_ID.ome.tiff')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_default_blood_cells_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1807,7 +1862,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_oxygen_cancer_cell_ID.ome.tiff')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1816,7 +1871,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_oxygen_0_ID.ome.tiff')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_oxygen_0_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1825,7 +1880,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_oxygen_0_ID.ome.tiff')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_oxygen_0_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1834,7 +1889,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_oxygen_cancer_cell_dead.ome.tiff')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_oxygen_default_blood_cells_dead.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1843,7 +1898,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_oxygen_cancer_cell_cell_count_voxel.ome.tiff')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_oxygen_default_blood_cells_cell_count_voxel.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1852,7 +1907,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_oxygen_cancer_cell_pressure.ome.tiff')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_oxygen_default_blood_cells_pressure.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1861,7 +1916,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_oxygen-1_cancer_cell_ID.ome.tiff')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_oxygen-1_default_blood_cells_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1870,7 +1925,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/timeseries_oxygen.ome.tiff')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_oxygen.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1881,8 +1936,8 @@ class TestPyCliOmeTiff(object):
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
         #print('ls_opathfile:', ls_opathfile)
         assert (len(ls_opathfile) == 25) and \
-               (ls_opathfile[0].endswith('data_timeseries_2d/output00000000_oxygen_cancer_cell_ID.ome.tiff')) and \
-               (ls_opathfile[-1].endswith('data_timeseries_2d/output00000024_oxygen_cancer_cell_ID.ome.tiff')) and \
+               (ls_opathfile[0].endswith('output_2d/output00000000_oxygen_default_blood_cells_ID.ome.tiff')) and \
+               (ls_opathfile[-1].endswith('output_2d/output00000024_oxygen_default_blood_cells_ID.ome.tiff')) and \
                (os.path.exists(ls_opathfile[12]))
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
@@ -1892,7 +1947,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_oxygen_cancer_cell_ID.ome.tiff')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_oxygen_default_blood_cells_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1901,7 +1956,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_cancer_cell_ID.ome.tiff')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_default_blood_cells_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1910,7 +1965,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_oxygen_cancer_cell_ID.ome.tiff')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_oxygen_default_blood_cells_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1919,7 +1974,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_oxygen_0_ID.ome.tiff')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_oxygen_0_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1928,7 +1983,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_oxygen_0_ID.ome.tiff')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_oxygen_0_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1937,7 +1992,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_oxygen_cancer_cell_dead.ome.tiff')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_oxygen_default_blood_cells_dead.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1946,7 +2001,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_oxygen_cancer_cell_cell_count_voxel.ome.tiff')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_oxygen_default_blood_cells_cell_count_voxel.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1955,7 +2010,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('data_timeseries_2d/output00000024_oxygen_cancer_cell_pressure.ome.tiff')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_oxygen_default_blood_cells_pressure.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1978,7 +2033,7 @@ class TestPyCliMakeGif(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[-2]
-        assert (s_opathfile.endswith('data_timeseries_2d/cell_cell_type_z0.0/cell_cell_type_z0.0_jpeg.gif')) and \
+        assert (s_opathfile.endswith('output_2d/cell_cell_type_z0.0/cell_cell_type_z0.0_jpeg.gif')) and \
                (os.path.exists(s_opathfile))
         shutil.rmtree(s_path)
 
@@ -1989,7 +2044,7 @@ class TestPyCliMakeGif(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[-2]
-        assert (s_opathfile.endswith('data_timeseries_2d/conc_oxygen_z0.0/conc_oxygen_z0.0_tiff.gif')) and \
+        assert (s_opathfile.endswith('output_2d/conc_oxygen_z0.0/conc_oxygen_z0.0_tiff.gif')) and \
                (os.path.exists(s_opathfile))
         shutil.rmtree(s_path)
 
@@ -2009,7 +2064,7 @@ class TestPyCliMakeMove(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[-2]
-        assert (s_opathfile.endswith('data_timeseries_2d/cell_cell_type_z0.0/cell_cell_type_z0.0_jpeg12.mp4')) and \
+        assert (s_opathfile.endswith('output_2d/cell_cell_type_z0.0/cell_cell_type_z0.0_jpeg12.mp4')) and \
                (os.path.exists(s_opathfile))
         shutil.rmtree(s_path)
 
@@ -2020,7 +2075,7 @@ class TestPyCliMakeMove(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[-2]
-        assert (s_opathfile.endswith('data_timeseries_2d/conc_oxygen_z0.0/conc_oxygen_z0.0_tiff12.mp4')) and \
+        assert (s_opathfile.endswith('output_2d/conc_oxygen_z0.0/conc_oxygen_z0.0_tiff12.mp4')) and \
                (os.path.exists(s_opathfile))
         shutil.rmtree(s_path)
 
@@ -2031,6 +2086,6 @@ class TestPyCliMakeMove(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[-2]
-        assert (s_opathfile.endswith('data_timeseries_2d/conc_oxygen_z0.0/conc_oxygen_z0.0_jpeg9.mp4')) and \
+        assert (s_opathfile.endswith('output_2d/conc_oxygen_z0.0/conc_oxygen_z0.0_jpeg9.mp4')) and \
                (os.path.exists(s_opathfile))
         shutil.rmtree(s_path)

@@ -211,8 +211,10 @@ class pyMCDSts:
             functions to process all time steps in the output_path directory.
         """
         output_path = output_path.replace('\\','/')
-        if (output_path[-1] != '/'):
-            output_path = output_path + '/'
+        while (output_path.find('//') > -1):
+            output_path = output_path.replace('//','/')
+        if (output_path.endswith('/')) and (len(output_path) > 1):
+            output_path = output_path[:-1]
         if not os.path.isdir(output_path):
             print(f'Error @ pyMCDSts.__init__ : this is not a path! could not load {output_path}.')
         self.path = output_path
@@ -1280,7 +1282,7 @@ class pyMCDSts:
                 mcds.set_verbose_true()
             # error
             else:
-                sys.exit(f"Error @ pyMCDSts.plot_timeseries : unknowen frame {frame}. knowen are cell_df and conc_df.")
+                sys.exit(f"Error @ pyMCDSts.plot_timeseries : unknown frame {frame}. known are cell_df and conc_df.")
             # handle z_slize
             if not (z_slice is None):
                 df_frame = df_frame.loc[(df_frame.mesh_center_p == z_slice),:]
@@ -1400,8 +1402,9 @@ class pyMCDSts:
 
             graph_type: string; default is neighbor
                 to specify which physicell output data should be processed.
-                attached: processes mcds.get_attached_graph_dict dictionary.
+                attached, touch: processes mcds.get_attached_graph_dict dictionary.
                 neighbor: processes mcds.get_neighbor_graph_dict dictionary.
+                spring: processes mcds.get_spring_graph_dict dictionary.
 
             edge_attribute: boolean; default True
                 specifies if the spatial Euclidean distance is used for

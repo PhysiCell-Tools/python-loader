@@ -2153,7 +2153,7 @@ class pyMCDS:
             elif s_channel in set(ls_celltype):
                 df_channel = df_cell.loc[:, ls_coor + [s_channel]]
             else:
-                sys.exit(f'Error @ pyMCDS.make_ome_tiff : {s_channel} unknowen channel detected. not in substrate and cell type list {ls_substrate} {ls_celltype}!')
+                sys.exit(f'Error @ pyMCDS.make_ome_tiff : {s_channel} unknown channel detected. not in substrate and cell type list {ls_substrate} {ls_celltype}!')
 
             # each z axis
             la_zyx_img = []
@@ -2262,6 +2262,20 @@ class pyMCDS:
         return self.data['discrete_cells']['graph']['neighbor_cells']
 
 
+    def get_spring_graph_dict(self):
+        """
+        input:
+
+        output:
+            dei_graph: dictionary of sets of integers
+                maps each cell ID to the attached connected cell IDs.
+
+        description:
+            function returns the attached spring cell graph as a dictionary object.
+        """
+        return self.data['discrete_cells']['graph']['spring_attached_cells']
+
+
     def make_graph_gml(self, graph_type, edge_attribute=True, node_attribute=[]):
         """
         input:
@@ -2269,6 +2283,7 @@ class pyMCDS:
                 to specify which physicell output data should be processed.
                 neighbor, touch: processes mcds.get_neighbor_graph_dict dictionary.
                 attached: processes mcds.get_attached_graph_dict dictionary.
+                spring: processes mcds.get_spring_graph_dict dictionary.
 
             edge_attribute: boolean; default True
                 specifies if the spatial Euclidean distance is used for
@@ -2305,10 +2320,12 @@ class pyMCDS:
             dei_graph = self.get_attached_graph_dict()
         elif (graph_type in {'neighbor', 'touch'}):
             dei_graph = self.get_neighbor_graph_dict()
+        elif (graph_type in {'spring'}):
+            dei_graph = self.get_spring_graph_dict()
         #elif (graph_type in {'evo','devo','lineage'}):
         #    dei_graph = self.get_lineage_graph_dict()
         else:
-            sys.exit(f'Erro @ make_graph_gml : unknowen graph_type {graph_type}. knowen are attached, neighbor, and touch.')
+            sys.exit(f'Erro @ make_graph_gml : unknown graph_type {graph_type}. known are attached, neighbor, spring, and touch.')
 
         # generate filename
         s_gmlpathfile = self.path + '/' + self.xmlfile.replace('.xml',f'_{graph_type}.gml')
@@ -2388,6 +2405,10 @@ class pyMCDS:
             ls_xmlfile = xmlfile.split('/')
             s_xmlfile = ls_xmlfile.pop(-1)
             output_path = '/'.join(ls_xmlfile)
+        while (output_path.find('//') > -1):
+            output_path = output_path.replace('//','/')
+        if (output_path.endswith('/')) and (len(output_path) > 1):
+            output_path = output_path[:-1]
         self.path = output_path
         self.xmlfile = s_xmlfile
 

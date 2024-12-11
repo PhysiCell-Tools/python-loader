@@ -1,6 +1,6 @@
 # PhysiCell Data Loader Tutorial: pcdl and python and MCDS TimeSteps
 
-In this chapter, we will load the pcdl library and use its TimeStep class to load the data snapshot 00000012, from [data\_timeseries\_ 2d](https://github.com/elmbeech/physicelldataloader/tree/master/pcdl/data_timeseries_2d) from the 2D time series test dataset.
+In this chapter, we will load the pcdl library and use its TimeStep class to load the data snapshot 00000012, from [data\_timeseries\_ 2d](https://github.com/elmbeech/physicelldataloader/tree/master/pcdl/output_2d) from the 2D time series test dataset.
 
 First, please install the latest version of physicelldataloader (pcdl),
 as described in the [HowTo](https://github.com/elmbeech/physicelldataloader/blob/master/man/HOWTO.md) chapter.
@@ -23,7 +23,7 @@ cd path/to/PhysiCell
 ```
 ```bash
 make data-cleanup
-python3 -c"import pathlib, pcdl, shutil; pcdl.install_data(); s_ipath=str(pathlib.Path(pcdl.__file__).parent.resolve()/'data_timeseries_2d'); shutil.copytree(s_ipath, 'output', dirs_exist_ok=True)"
+python3 -c"import pathlib, pcdl, shutil; pcdl.install_data(); s_ipath=str(pathlib.Path(pcdl.__file__).parent.resolve()/'output_2d'); shutil.copytree(s_ipath, 'output', dirs_exist_ok=True)"
 ```
 
 

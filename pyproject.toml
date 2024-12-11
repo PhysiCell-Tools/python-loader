@@ -129,7 +129,7 @@ include = [
     "/test",
 ]
 exclude = [
-    "/data_timeseries_2d.tar.gz",
-    "/data_timeseries_3d.tar.gz",
+    "/output_2d.tar.gz",
+    "/output_3d.tar.gz",
     "/.pytest_cache",
 ]
