@@ -257,13 +257,13 @@ class TestPyMcdsMetadata(object):
         s_pcversion = mcds.get_physicell_version()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(s_pcversion)) == "<class 'str'>") and \
-              (s_pcversion == 'PhysiCell_1.14.0')
+              (s_pcversion == 'PhysiCell_1.14.1')
 
     def test_mcds_get_timestamp(self, mcds=mcds):
         s_timestamp = mcds.get_timestamp()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(s_timestamp)) == "<class 'str'>") and \
-              (s_timestamp == '2024-12-07T06:10:58Z')
+              (s_timestamp == '2025-01-05T08:08:22Z')
 
     def test_mcds_get_time(self, mcds=mcds):
         r_time = mcds.get_time()
@@ -275,7 +275,7 @@ class TestPyMcdsMetadata(object):
         r_runtime = mcds.get_runtime()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(r_runtime)) == "<class 'float'>") and \
-              (r_runtime == 1.834534)
+              (r_runtime == 1.952156)
 
 
 ## setting related functions ##

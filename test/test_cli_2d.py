@@ -481,7 +481,7 @@ class TestPyCliCellDfAttribute(object):
 
     # timeseries collapsed:
     # + path (str) nop
-    # + customtype ([], _oncoprotein:str_) ok
+    # + customtype ([], _sample:bool_) ok
     # + microenv (true, _false_) ok
     # + physiboss (true, _false_)
     # + settingxml (string, _none_, _false_) ok
@@ -501,15 +501,14 @@ class TestPyCliCellDfAttribute(object):
         os.remove(s_opathfile)
 
     def test_pcdl_get_cell_attribute_timeseries_customtype(self):
-        s_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--custom_data_type', 'oncoprotein:str'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--custom_data_type', 'sample:bool'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        print('BUE ERROR:', s_opathfile)
         d_cell = json.load(open(s_opathfile))
         assert (s_opathfile.endswith('output_2d/timeseries_cell_attribute_minmax.json')) and \
-               (d_cell['oncoprotein'] == ['0','1','2'])
-        #os.remove(s_opathfile)
+               (d_cell['sample'] == [False, True])
+        os.remove(s_opathfile)
 
     def test_pcdl_get_cell_attribute_timeseries_microenv(self):
         s_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
@@ -798,7 +797,7 @@ class TestPyCliAnndata(object):
 
     # timestep and timeseries:
     # + path nop
-    # + customtype ([], _oncoprotein:str_) ok
+    # + customtype ([], _sample:bool_) ok
     # + microenv (true, _false_) ok
     # + graph (true, _false_) ok
     # + physiboss (true, _false_) ok
@@ -839,19 +838,19 @@ class TestPyCliAnndata(object):
             os.remove(s_opathfile)
 
     def test_pcdl_get_anndata_timeseries_customtype(self):
-        s_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--custom_data_type', 'oncoprotein:str'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--custom_data_type', 'sample:bool'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/timeseries_cell_maxabs.h5ad')) and \
-               (set(ann.obs.columns).issuperset({'oncoprotein'})) and \
-               (ann.shape[0] > 0) and \
-               (ann.shape[1] == (24758, 77)) and \
+               (set(ann.var_names).issuperset({'sample'})) and \
+               (ann.shape[0] > 9) and \
+               (ann.shape[1] == 105) and \
                (ann.obs.shape[0] > 9) and \
-               (ann.obs.shape[1] == 9) and \
+               (ann.obs.shape[1] == 8) and \
                (len(ann.obsp) == 0) and \
-               (ann.var.shape == (77, 0)) and \
+               (ann.var.shape == (105, 0)) and \
                (len(ann.uns) == 0)
         os.remove(s_opathfile)
 
@@ -1180,7 +1179,7 @@ class TestPyCliGraphGml(object):
 
     # timestep and timeseries:
     # + path nop
-    # + customtype ([], _oncoprotein:str_) ok
+    # + customtype ([], _sample:bool_) ok
     # + microenv (true, false) ok
     # + physiboss (true, _false_)
     # + settingxml (string, _none_, _false_) ok
@@ -1203,7 +1202,7 @@ class TestPyCliGraphGml(object):
             os.remove(s_opathfile)
 
     def test_pcdl_make_graph_gml_timeseries_customtype_nodeattribute_one(self):
-        s_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--custom_data_type', 'oncoprotein:str', '--node_attribute', 'oncoprotein'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--custom_data_type', 'sample:bool', '--node_attribute', 'sample'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
@@ -1329,7 +1328,7 @@ class TestPyCliGraphGml(object):
         os.remove(s_opathfile)
 
     def test_pcdl_make_graph_gml_timestep_customtype_nodeattribute_one(self):
-        s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--custom_data_type', 'oncoprotein:str', '--node_attribute', 'oncoprotein'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--custom_data_type', 'sample:bool', '--node_attribute', 'sample'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
@@ -1415,7 +1414,7 @@ class TestPyCliPlotScatter(object):
 
     # time series and time steps.
     # + path nop
-    # + customtype ([], _oncoprotein:str_) ok
+    # + customtype ([], _sample:bool_) ok
     # + microenv (true, _false_)
     # + physiboss (true, _false_)
     # + settingxml (PhysiCell_settings.xml, _false_)
@@ -1472,7 +1471,7 @@ class TestPyCliPlotScatter(object):
     def test_pcdl_plot_scatter_set(self):
         s_result = subprocess.run([
             'pcdl_plot_scatter', s_pathfile_2d, 'oxygen',
-            '--custom_data_type', 'oncoprotein:str',
+            '--custom_data_type', 'sample:bool',
             '--microenv', 'True',
             '--physiboss', 'false',
             '--settingxml', 'false',
@@ -1499,7 +1498,7 @@ class TestPyCliPlotScatter(object):
         s_opath = '/'.join(s_opathfile.split('/')[:-1])
         assert (os.path.exists(s_opathfile)) and \
            (s_opathfile.endswith('pcdl/output_2d/cell_oxygen_z0.0/output00000024_oxygen.tiff')) and \
-           (s_stdout.find("custom_data_type=['oncoprotein:str']") > -1) and \
+           (s_stdout.find("custom_data_type=['sample:bool']") > -1) and \
            (s_stdout.find("microenv='True'") > -1) and \
            (s_stdout.find("physiboss='false'") > -1) and \
            (s_stdout.find("settingxml='false'") > -1) and \
@@ -1526,7 +1525,7 @@ class TestPyCliCellVtk(object):
 
     # timestep and timeseries:
     # + path nop
-    # + customtype ([], _oncoprotein:str_) ok
+    # + customtype ([], _sample:bool_) ok
     # + microenv (true, _false) ok
     # + physiboss (true, _false_)
     # + settingxml (string, _none_, _false_) ok
@@ -1547,7 +1546,7 @@ class TestPyCliCellVtk(object):
             os.remove(s_opathfile)
 
     def test_pcdl_make_cell_vtk_timeseries_customtype_attribute_one(self):
-        s_result = subprocess.run(['pcdl_make_cell_vtk', s_path_2d, 'oncoprotein', '--custom_data_type', 'oncoprotein:str'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_cell_vtk', s_path_2d, 'sample', '--custom_data_type', 'sample:bool'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
@@ -1633,7 +1632,7 @@ class TestPyCliCellVtk(object):
         os.remove(s_opathfile)
 
     def test_pcdl_make_cell_vtk_timestep_customtype_attribute_one(self):
-        s_result = subprocess.run(['pcdl_make_cell_vtk', s_pathfile_2d, 'oncoprotein', '--custom_data_type', 'oncoprotein:str'], check=False, capture_output=True)
+        s_result = subprocess.run(['pcdl_make_cell_vtk', s_pathfile_2d, 'sample', '--custom_data_type', 'sample:bool'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
@@ -1696,7 +1695,7 @@ class TestPyCliPlotTimeSeries(object):
 
     # time series.
     # + path nop
-    # + customtype ([], _oncoprotein:str_) ok
+    # + customtype ([], _sample:bool_) ok
     # + microenv (true, _false_)
     # + physiboss (true, _false_)
     # + settingxml (PhysiCell_settings.xml, _false_)
@@ -1766,7 +1765,7 @@ class TestPyCliPlotTimeSeries(object):
     def test_pcdl_plot_timeseries_set(self):
         s_result = subprocess.run([
             'pcdl_plot_timeseries', s_path_2d, 'None', 'oxygen', 'entropy', '-v', 'false',
-            '--custom_data_type', 'oncoprotein:str',
+            '--custom_data_type', 'sample:bool',
             '--microenv', 'True',
             '--physiboss', 'false',
             '--settingxml', 'false',
@@ -1797,7 +1796,7 @@ class TestPyCliPlotTimeSeries(object):
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         assert (os.path.exists(s_opathfile)) and \
            (s_opathfile.endswith('pcdl/output_2d/timeseries_conc_total_oxygen_entropy.tiff')) and \
-           (s_stdout.find("custom_data_type=['oncoprotein:str']") > -1) and \
+           (s_stdout.find("custom_data_type=['sample:bool']") > -1) and \
            (s_stdout.find("microenv='True'") > -1) and \
            (s_stdout.find("physiboss='false'") > -1) and \
            (s_stdout.find("settingxml='false'") > -1) and \
@@ -1871,7 +1870,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('output_2d/timeseries_oxygen_0_ID.ome.tiff')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1880,7 +1879,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('output_2d/timeseries_oxygen_0_ID.ome.tiff')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1889,7 +1888,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('output_2d/timeseries_oxygen_default_blood_cells_dead.ome.tiff')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_oxygen_water_default_blood_cells_dead.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1898,7 +1897,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('output_2d/timeseries_oxygen_default_blood_cells_cell_count_voxel.ome.tiff')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_oxygen_water_default_blood_cells_cell_count_voxel.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1907,7 +1906,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('output_2d/timeseries_oxygen_default_blood_cells_pressure.ome.tiff')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_oxygen_water_default_blood_cells_pressure.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1916,7 +1915,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('output_2d/timeseries_oxygen-1_default_blood_cells_ID.ome.tiff')) and \
+        assert (s_opathfile.endswith('output_2d/timeseries_oxygen-1_water_default_blood_cells_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1936,8 +1935,8 @@ class TestPyCliOmeTiff(object):
         ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
         #print('ls_opathfile:', ls_opathfile)
         assert (len(ls_opathfile) == 25) and \
-               (ls_opathfile[0].endswith('output_2d/output00000000_oxygen_default_blood_cells_ID.ome.tiff')) and \
-               (ls_opathfile[-1].endswith('output_2d/output00000024_oxygen_default_blood_cells_ID.ome.tiff')) and \
+               (ls_opathfile[0].endswith('output_2d/output00000000_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
+               (ls_opathfile[-1].endswith('output_2d/output00000024_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
                (os.path.exists(ls_opathfile[12]))
         for s_opathfile in ls_opathfile:
             os.remove(s_opathfile)
@@ -1947,7 +1946,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('output_2d/output00000024_oxygen_default_blood_cells_ID.ome.tiff')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1965,7 +1964,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('output_2d/output00000024_oxygen_default_blood_cells_ID.ome.tiff')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1974,7 +1973,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('output_2d/output00000024_oxygen_0_ID.ome.tiff')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1983,7 +1982,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('output_2d/output00000024_oxygen_0_ID.ome.tiff')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -1992,7 +1991,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('output_2d/output00000024_oxygen_default_blood_cells_dead.ome.tiff')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_oxygen_water_default_blood_cells_dead.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -2001,7 +2000,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('output_2d/output00000024_oxygen_default_blood_cells_cell_count_voxel.ome.tiff')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_oxygen_water_default_blood_cells_cell_count_voxel.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
@@ -2010,7 +2009,7 @@ class TestPyCliOmeTiff(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-        assert (s_opathfile.endswith('output_2d/output00000024_oxygen_default_blood_cells_pressure.ome.tiff')) and \
+        assert (s_opathfile.endswith('output_2d/output00000024_oxygen_water_default_blood_cells_pressure.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
 
