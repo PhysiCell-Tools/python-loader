@@ -1230,10 +1230,12 @@ class pyMCDS:
     def make_conc_vtk(self, visualize = True):
         """
         input:
+            visualize: boolean; default is True
+                additionally, visualize cells using vtk renderer.
 
         output:
             s_vtkpathfile: vtk rectilinear grid file that contains
-            3D distributions of all substrates over the microenvironment.
+                3D distributions of all substrates over the microenvironment.
 
         description:
             function generates a vtk rectilinear grid file that contains
@@ -1254,7 +1256,11 @@ class pyMCDS:
         vr_grid = vtk.vtkRectilinearGrid()
 
         # define dimensions of the grid
-        ti_dim = (df_micenv.loc[:, 'voxel_i'].unique().shape[0], df_micenv.loc[:, 'voxel_j'].unique().shape[0], df_micenv.loc[:, 'voxel_k'].unique().shape[0])
+        ti_dim = (
+            df_micenv.loc[:, 'voxel_i'].unique().shape[0],
+            df_micenv.loc[:, 'voxel_j'].unique().shape[0],
+            df_micenv.loc[:, 'voxel_k'].unique().shape[0],
+        )
 
         # define coordinates for the grid
         vf_x = vtk.vtkFloatArray()
@@ -1314,63 +1320,59 @@ class pyMCDS:
         vw_writer.SetInputData(vr_grid)
         vw_writer.Write()
 
-        # Build VTKLooktupTable (color scheme)
-        table_size = 256
-        lut = vtk.vtkLookupTable()
-        lut.SetNumberOfTableValues(table_size)
-        lut.SetHueRange( 0.667, 0.)  # blue-to-red
-        lut.Build()
+        # visualize
+        if (visualize):
 
-        #Iterate over each substrate
-        for s_substrate in self.get_substrate_list():
-            sub_dict = self.data['continuum_variables'][s_substrate]
-            sub_concentration = sub_dict['data']
-            ny,nx,nz = sub_concentration.shape
+            # Build VTKLooktupTable (color scheme)
+            lut = vtk.vtkLookupTable()
+            lut.SetNumberOfTableValues(256)
+            lut.SetHueRange(0.667, 0.0)  # blue-to-red
+            lut.Build()
+
+            # iterate over each substrate
+            for s_substrate in self.get_substrate_list():
+                sub_concentration = self.data['continuum_variables'][s_substrate]['data']
+                ny,nx,nz = sub_concentration.shape
+                #mcds.get_concentration('oxygen').shape
+
+                # create the structured grid.
+                substrate_data = vtk.vtkStructuredPoints()
+                substrate_voxel_scalars = vtk.vtkFloatArray()
+
+                voxel_size = 20
+                x0 = -(voxel_size * nx) / 2.0
+                y0 = x0
+                z0 = -10.0
+                #mcds.get_voxel_spacing()
+
+                substrate_data.SetDimensions( nx+1, ny+1, nz+1 )
+                substrate_data.SetOrigin( x0, y0, z0 ) # lower-left-front point of domain bounding box
+                substrate_data.SetSpacing( voxel_size, voxel_size, voxel_size )
+
+                vmax = -1.e6
+                vmin = -vmax
+                # # for z in range( 0, nz+1 ) :  # if point data, not cell data
+                for z in range( 0, nz ) :   # NOTE: using cell data, not point data
+                    for y in range( 0, ny ) :
+                        for x in range( 0, nx ) :
+                            val = sub_concentration[y,x,z]   # yes, it's confusingly swapped :/
+
+                            # if doing a fixed colormap
+                            if val > vmax:
+                                vmax = val
+                            if val < vmin:
+                                vmin = val
+
+                            substrate_voxel_scalars.InsertNextValue( val )
 
 
-        # # Create the structured grid.
-            substrate_data = vtk.vtkStructuredPoints()
-            substrate_voxel_scalars = vtk.vtkFloatArray()
-
-            voxel_size = 20
-            x0 = -(voxel_size * nx) / 2.0
-            y0 = x0
-            z0 = -10.0
-            substrate_data.SetDimensions( nx+1, ny+1, nz+1 )
-            substrate_data.SetOrigin( x0, y0, z0 ) # lower-left-front point of domain bounding box
-            substrate_data.SetSpacing( voxel_size, voxel_size, voxel_size )
-
-            vmax = -1.e6
-            vmin = -vmax
-            # # for z in range( 0, nz+1 ) :  # if point data, not cell data
-            for z in range( 0, nz ) :   # NOTE: using cell data, not point data
-                for y in range( 0, ny ) :
-                    for x in range( 0, nx ) :
-                        val = sub_concentration[y,x,z]   # yes, it's confusingly swapped :/
-
-            #             # if doing a fixed colormap
-                        if val > vmax:
-                            vmax = val
-                        if val < vmin:
-                            vmin = val
-
-                        substrate_voxel_scalars.InsertNextValue( val )
-            
-            # # write VTK
-            # s_vtkpathfile = self.path + '/' + s_vtkfile +'/' + s_substrate
-            # vw_writer = vtk.vtkStructuredPointsWriter()
-            # vw_writer.SetFileName(s_vtkpathfile)
-            # vw_writer.SetInputData(substrate_data)
-            # vw_writer.Write()
-
-            if visualize:
-                # Mapper
+                # mapper
                 substrate_data.GetCellData().SetScalars( substrate_voxel_scalars )
                 substrate_mapper = vtk.vtkDataSetMapper()
                 substrate_mapper.SetInputData(substrate_data)
                 substrate_mapper.Update()
 
-                # Actor
+                # actor
                 substrate_actor = vtk.vtkActor()
                 substrate_actor.SetMapper(substrate_mapper)
 
@@ -1378,10 +1380,9 @@ class pyMCDS:
                 substrate_mapper.SetScalarRange(0, vmax)
                 substrate_mapper.SetScalarModeToUseCellData()
 
-                # #---------------
-                # # Create a cutting plane
+                # create a cutting plane
                 plane = vtk.vtkPlane()
-                plane.SetOrigin(0,0,0)
+                plane.SetOrigin(0, 0, 0)
                 plane.SetNormal(0, 0, 1)
 
                 cutterXY = vtk.vtkCutter()
@@ -1400,8 +1401,7 @@ class pyMCDS:
                 cutterXYActor.SetMapper(cutterXYMapper)
                 cutterXYActor.GetProperty().EdgeVisibilityOn()
 
-                # #---------
-                # Outline
+                # outline
                 outline = vtk.vtkOutlineFilter()
                 outline.SetInputData(substrate_data)
 
@@ -1410,32 +1410,29 @@ class pyMCDS:
 
                 outlineActor = vtk.vtkActor()
                 outlineActor.SetMapper(outlineMapper)
-                outlineActor.GetProperty().SetColor(1,1,1)
+                outlineActor.GetProperty().SetColor(1, 1, 1)
 
-                # #-----------------------
-                # Scalar Bar
+                # scalar bar
                 scalarBar = vtk.vtkScalarBarActor()
                 scalarBar.SetTitle(s_substrate)
                 scalarBar.GetPositionCoordinate().SetCoordinateSystemToNormalizedViewport()
-                scalarBar.GetPositionCoordinate().SetValue(0.1,0.01)
+                scalarBar.GetPositionCoordinate().SetValue(0.1, 0.01)
                 scalarBar.SetOrientationToHorizontal()
                 scalarBar.SetWidth(0.8)
                 scalarBar.SetHeight(0.1)
-                scalarBar.GetProperty().SetColor(0,0,0)
-                scalarBar.GetTitleTextProperty().SetColor(0,0,0)
+                scalarBar.GetProperty().SetColor(0, 0, 0)
+                scalarBar.GetTitleTextProperty().SetColor(0, 0, 0)
                 scalarBar.GetTitleTextProperty().SetFontSize(22)
                 scalarBar.SetLookupTable(cutterXYMapper.GetLookupTable())
 
-                #-----------------------
-                # Renderer
+                # renderer
                 renderer = vtk.vtkRenderer()
-                renderer.SetBackground(0.5,0.5,0.5)
+                renderer.SetBackground(0.5, 0.5, 0.5)
                 renderer.AddActor(cutterXYActor)
                 renderer.AddActor(outlineActor)
                 renderer.AddActor2D(scalarBar)
 
-                # #---------------------------------------
-                # Window
+                # window
                 renWin = vtk.vtkRenderWindow()
                 renWin.AddRenderer(renderer)
 
@@ -1445,13 +1442,12 @@ class pyMCDS:
                 renderer.ResetCamera()
                 renWin.SetSize(900, 900)
 
-                # Interact with the data.
+                # interact with the data.
                 renWin.Render()
                 iren.Start()
 
-
         return s_vtkpathfile
-    
+
 
 
 
