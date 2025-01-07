@@ -70,8 +70,8 @@ classifiers = [
 
 # bue 2024-12-06: enforcing numpy >= 2.0
 dependencies = [
-    "aicsimageio",
     "anndata>=0.10.8",
+    "bioio",
     "matplotlib",
     "numpy>=2.0.0",
     "pandas>=2.2.2",
