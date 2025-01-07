@@ -15,8 +15,8 @@
 
 
 # load library
-import bioio
-from bioio.writers import OmeTiffWriter
+import aicsimageio  # bioio, bioio_base
+from aicsimageio.writers import OmeTiffWriter
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib import colors
@@ -1227,7 +1227,7 @@ class pyMCDS:
             return s_pathfile
 
 
-    def make_conc_vtk(self, visualize = True):
+    def make_conc_vtk(self, visualize=True):
         """
         input:
             visualize: boolean; default is True
@@ -2360,7 +2360,7 @@ class pyMCDS:
                 #ome_xml=x_img,
                 channel_names = ls_channel,
                 image_names = [s_tifffile.replace('.ome.tiff','')],
-                physical_pixel_sizes = bioio.types.PhysicalPixelSizes(self.get_voxel_spacing()[2], 1.0, 1.0), #z,y,x [um]
+                physical_pixel_sizes = aicsimageio.types.PhysicalPixelSizes(self.get_voxel_spacing()[2], 1.0, 1.0),  # z,y,x [um]
                 #channel_colors=,
                 #fs_kwargs={},
             )

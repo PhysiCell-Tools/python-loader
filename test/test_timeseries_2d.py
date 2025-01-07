@@ -278,7 +278,7 @@ class TestPyMcdsTsMicroenv(object):
         plt.close()
 
     def test_mcdsts_make_conc_vtk(self, mcdsts=mcdsts):
-        ls_pathfile = mcdsts.make_conc_vtk()
+        ls_pathfile = mcdsts.make_conc_vtk(visualize=False)
         assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
               (ls_pathfile[0].endswith('/pcdl/output_2d/output00000000_conc.vtr')) and \
               (ls_pathfile[-1].endswith('/pcdl/output_2d/output00000024_conc.vtr')) and \

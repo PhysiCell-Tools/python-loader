@@ -20,7 +20,7 @@ The pcdl python3 library maintains three branches:
 ## Header:
 
 + Language: python [>= 3.9](https://devguide.python.org/versions/)
-+ Library dependencies: anndata, bioio, matplotlib, numpy, pandas, (requests), scipy, vtk
++ Library dependencies: aicsimageio, anndata, matplotlib, numpy, pandas, (requests), scipy, vtk
 + Date of origin original PhysiCell-Tools python-loader: 2019-09-02
 + Date of origin pcdl fork: 2022-08-30
 + Doi: https://doi.org/10.5281/ZENODO.8176399
@@ -124,11 +124,11 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 + handle spring_attached_cells_graph.txt output files.
 + evt generate lineage tree graph output files.
 + evt add neuroglancer ome.tiff support.
++ switch from aicsimageio to bioio library, when the library is ripe (napari has switched to bioio).
 
 
 ## Release Notes:
 + version 3.3.3 (2025-01-xx): elmbeech/physicelldataloader
-    + **aicsimageio** to **bioio** library replacement. special thanks to Joel Eliason!
     + bug fix **plot_contour** plot orientation. special thanks to Marco Ruscone!
     + add test data for new improved **unittest physicell model**. special thanks to Nick Oldfather!
     + add pyMCDS **make_conc_vtk** on the fly visualization. special thanks to Randy Heiland and Nick Oldfather!

@@ -419,35 +419,35 @@ class TestPyCliPlotContour(object):
         shutil.rmtree(s_opath)
 
 
-# bue 20240822: mcds broken! PhysiCell_settings.xml and microenvironment0.mat file are incompatible.
-#class TestPyCliConcVtk(object):
-#    ''' tests for one pcdl.pyCli function. '''
+# bue 20250107: broken! FutureWarning causes troubles.
+class TestPyCliConcVtk(object):
+    ''' tests for one pcdl.pyCli function. '''
 
     # timestep and timeseries:
     # + path nop
     # + verbose (true, _false_) nop
 
-#    def test_pcdl_make_conc_vtk_timeseries_default(self):
-#        s_result = subprocess.run(['pcdl_make_conc_vtk', s_path_2d], check=False, capture_output=True)
-#        print(f'\ns_result.stdout: {s_result.stdout}\n')
-#        print(f'\ns_result.stderr: {s_result.stderr}\n')
-#        ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
-#        #print('ls_opathfile:', ls_opathfile)
-#        assert (len(ls_opathfile) == 25) and \
-#               (ls_opathfile[0].endswith('output_2d/output00000000_conc.vtr')) and \
-#               (ls_opathfile[-1].endswith('output_2d/output00000024_conc.vtr')) and \
-#               (os.path.exists(ls_opathfile[12]))
-#        for s_opathfile in ls_opathfile:
-#            os.remove(s_opathfile)
+    def test_pcdl_make_conc_vtk_timeseries_default(self):
+        s_result = subprocess.run(['pcdl_make_conc_vtk', s_path_2d], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("FutureWarning: Calling float on a single element Series is deprecated and will raise a TypeError in the future. Use float(ser.iloc[0]) instead.\n")[-1].split("', '")
+        #print('ls_opathfile:', ls_opathfile)
+        assert (len(ls_opathfile) == 25) and \
+               (ls_opathfile[0].endswith('output_2d/output00000000_conc.vtr')) and \
+               (ls_opathfile[-1].endswith('output_2d/output00000024_conc.vtr')) and \
+               (os.path.exists(ls_opathfile[12]))
+        for s_opathfile in ls_opathfile:
+            os.remove(s_opathfile)
 
-#    def test_pcdl_make_conc_vtk_timestep_default(self):
-#        s_result = subprocess.run(['pcdl_make_conc_vtk', s_pathfile_2d], check=False, capture_output=True)
-#        print(f'\ns_result.stdout: {s_result.stdout}\n')
-#        print(f'\ns_result.stderr: {s_result.stderr}\n')
-#        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
-#        assert (s_opathfile.endswith('output_2d/output00000024_conc.vtr')) and \
-#               (os.path.exists(s_opathfile))
-#        os.remove(s_opathfile)
+    def test_pcdl_make_conc_vtk_timestep_default(self):
+        s_result = subprocess.run(['pcdl_make_conc_vtk', s_pathfile_2d], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').split("FutureWarning: Calling float on a single element Series is deprecated and will raise a TypeError in the future. Use float(ser.iloc[0]) instead.")[-1]
+        assert (s_opathfile.endswith('output_2d/output00000024_conc.vtr')) and \
+               (os.path.exists(s_opathfile))
+        os.remove(s_opathfile)
 
 
 ################################
@@ -1435,6 +1435,7 @@ class TestPyCliPlotScatter(object):
     # + ext (jpeg, _tiff_)
     # + figbgcolor (none, _yellow_)
 
+    # bue 20250107: broken by Ignoring
     def test_pcdl_plot_scatter_default(self):
         s_result = subprocess.run([
             'pcdl_plot_scatter', s_pathfile_2d,
@@ -1443,7 +1444,7 @@ class TestPyCliPlotScatter(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_stdout = s_result.stdout.decode('UTF8').replace('\r','')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').split('Ignoring fixed x limits to fulfill fixed data aspect with adjustable data limits.')[-1]
         s_opath = '/'.join(s_opathfile.split('/')[:-1])
         assert (os.path.exists(s_opathfile)) and \
            (s_opathfile.endswith('pcdl/output_2d/cell_cell_type_z0.0/output00000024_cell_type.jpeg')) and \
@@ -2018,6 +2019,7 @@ class TestPyCliOmeTiff(object):
 # making movies test code #
 ###########################
 
+# bue 20250107: broken by Ignoring
 class TestPyCliMakeGif(object):
     ''' tests for one pcdl.pyCli function. '''
 
@@ -2027,7 +2029,7 @@ class TestPyCliMakeGif(object):
 
     def test_pcdl_make_gif_timeseries_default(self):
         s_path = subprocess.run(['pcdl_plot_scatter', s_path_2d], check=False, capture_output=True)
-        s_path = s_path.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_path = s_path.stderr.decode('UTF8').replace('\r','').replace('\n','').split('Ignoring fixed x limits to fulfill fixed data aspect with adjustable data limits.')[-1]
         s_result = subprocess.run(['pcdl_make_gif', s_path], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
@@ -2038,7 +2040,7 @@ class TestPyCliMakeGif(object):
 
     def test_pcdl_make_gif_timeseries_interface(self):
         s_path = subprocess.run(['pcdl_plot_contour', s_path_2d, 'oxygen', '--ext', 'tiff'], check=False, capture_output=True)
-        s_path = s_path.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_path = s_path.stderr.decode('UTF8').replace('\r','').replace('\n','').split('Ignoring fixed x limits to fulfill fixed data aspect with adjustable data limits.')[-1]
         s_result = subprocess.run(['pcdl_make_gif', s_path, 'tiff'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
@@ -2048,6 +2050,7 @@ class TestPyCliMakeGif(object):
         shutil.rmtree(s_path)
 
 
+    # bue 20250107: broken by Ignoring
 class TestPyCliMakeMove(object):
     ''' tests for one pcdl.pyCli function. '''
 
@@ -2058,10 +2061,10 @@ class TestPyCliMakeMove(object):
 
     def test_pcdl_make_movie_timeseries_default(self):
         s_path = subprocess.run(['pcdl_plot_scatter', s_path_2d], check=False, capture_output=True)
-        s_path = s_path.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_path = s_path.stderr.decode('UTF8').replace('\r','').replace('\n','').split('Ignoring fixed x limits to fulfill fixed data aspect with adjustable data limits.')[-1]
         s_result = subprocess.run(['pcdl_make_movie', s_path], check=False, capture_output=True)
-        #print(f'\ns_result.stdout: {s_result.stdout}\n')
-        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        print(f'\ns_result.stdout: {s_result.stdout}\n')
+        print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[-2]
         assert (s_opathfile.endswith('output_2d/cell_cell_type_z0.0/cell_cell_type_z0.0_jpeg12.mp4')) and \
                (os.path.exists(s_opathfile))
@@ -2069,7 +2072,7 @@ class TestPyCliMakeMove(object):
 
     def test_pcdl_make_movie_timeseries_interface(self):
         s_path = subprocess.run(['pcdl_plot_contour', s_path_2d, 'oxygen', '--ext', 'tiff'], check=False, capture_output=True)
-        s_path = s_path.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_path = s_path.stderr.decode('UTF8').replace('\r','').replace('\n','').split('Ignoring fixed x limits to fulfill fixed data aspect with adjustable data limits.')[-1]
         s_result = subprocess.run(['pcdl_make_movie', s_path, 'tiff'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
@@ -2080,7 +2083,7 @@ class TestPyCliMakeMove(object):
 
     def test_pcdl_make_movie_timeseries_farme(self):
         s_path = subprocess.run(['pcdl_plot_contour', s_path_2d, 'oxygen', '--ext', 'jpeg'], check=False, capture_output=True)
-        s_path = s_path.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_path = s_path.stderr.decode('UTF8').replace('\r','').replace('\n','').split('Ignoring fixed x limits to fulfill fixed data aspect with adjustable data limits.')[-1]
         s_result = subprocess.run(['pcdl_make_movie', s_path, '--framerate', '9'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')

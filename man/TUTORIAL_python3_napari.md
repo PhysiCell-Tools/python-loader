@@ -8,13 +8,13 @@ https://github.com/AllenCellModeling/napari-aicsimageio
 
 ## Install napari
 
-And install the [bioio](https://bioio-devs.github.io/bioio/OVERVIEW.html) library,
+And install the [aicsimageio](https://github.com/AllenCellModeling/aicsimageio) library,
 which installs the "ome-types" napari plugin,
 that napari can read ome.tiff images inclusive ome metadata.
 
 ```bash
 pip3 install napari[all]
-pip3 install bioio
+pip3 install aicsimageio
 ```
 
 

@@ -20,8 +20,8 @@
 
 
 # load libraries
-import bioio
-from bioio.writers import OmeTiffWriter
+import aicsimageio  # bioio, bioio_base
+from aicsimageio.writers import OmeTiffWriter
 import glob
 import matplotlib.pyplot as plt
 import numpy as np
@@ -644,9 +644,11 @@ class pyMCDSts:
         return lo_output
 
 
-    def make_conc_vtk(self):
+    def make_conc_vtk(self, visualize=True):
         """
         input:
+            visualize: boolean; default is False
+                additionally, visualize cells using vtk renderer.
 
         output:
             ls_vtkpathfile: one vtk file per mcds time step that contains
@@ -664,7 +666,7 @@ class pyMCDSts:
         # processing
         ls_vtkpathfile = []
         for mcds in self.get_mcds_list():
-            s_vtkpathfile = mcds.make_conc_vtk()
+            s_vtkpathfile = mcds.make_conc_vtk(visualize=visualize)
             ls_vtkpathfile.append(s_vtkpathfile)
 
         # output
@@ -1101,7 +1103,7 @@ class pyMCDSts:
                 #ome_xml=x_img,
                 channel_names = ls_substrate + ls_celltype,
                 image_names = [f'timeseries_{cell_attribute}'],
-                physical_pixel_sizes = bioio.types.PhysicalPixelSizes(mcds.get_voxel_spacing()[2], 1.0, 1.0), #z,y,x [um]
+                physical_pixel_sizes = aicsimageio.types.PhysicalPixelSizes(mcds.get_voxel_spacing()[2], 1.0, 1.0),  # z,y,x [um]
                 #channel_colors=,
                 #fs_kwargs={},
             )

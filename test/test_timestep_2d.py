@@ -585,7 +585,7 @@ class TestPyMcdsMicroenv(object):
         os.remove(s_pathfile)
 
     def test_mcds_make_conc_vtk(self, mcds=mcds):
-        s_pathfile = mcds.make_conc_vtk()
+        s_pathfile = mcds.make_conc_vtk(visualize=False)
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (s_pathfile.replace('\\','/').endswith('/pcdl/output_2d/output00000024_conc.vtr')) and \
               (os.path.exists(s_pathfile)) and \
@@ -939,7 +939,6 @@ class TestPyMcdsOmeTiff(object):
     ## ome tiff related functions ##
     def test_mcds_make_ome_tiff_default(self, mcds=mcds):
         s_pathfile = mcds.make_ome_tiff(cell_attribute='ID', conc_cutoff={}, focus=None, file=True)
-        print('BUE OMETIFF SIZE:', s_pathfile)
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (s_pathfile.replace('\\','/').endswith('pcdl/output_2d/output00000024_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
               (os.path.exists(s_pathfile)) and \

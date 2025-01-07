@@ -745,7 +745,9 @@ def make_conc_vtk():
             settingxml = None,
             verbose = False if args.verbose.lower().startswith('f') else True
         )
-        s_opathfile = mcds.make_conc_vtk()
+        s_opathfile = mcds.make_conc_vtk(
+            visualize = False,
+        )
         # going home
         return s_opathfile
 
@@ -760,7 +762,9 @@ def make_conc_vtk():
             settingxml = None,
             verbose = False if args.verbose.lower().startswith('f') else True,
         )
-        ls_opathfile = mcdsts.make_conc_vtk()
+        ls_opathfile = mcdsts.make_conc_vtk(
+            visualize = False,
+        )
         # going home
         return ls_opathfile
 

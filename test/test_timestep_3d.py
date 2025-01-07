@@ -321,7 +321,7 @@ class TestPyMcds3dMicroenvWorkhorse(object):
         os.remove(s_pathfile)
 
     def test_mcds_make_conc_vtk(self, mcds=mcds):
-        s_pathfile = mcds.make_conc_vtk()
+        s_pathfile = mcds.make_conc_vtk(visualize=False)
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (s_pathfile.replace('\\','/').endswith('/pcdl/output_3d/output00000024_conc.vtr')) and \
               (os.path.exists(s_pathfile)) and \
