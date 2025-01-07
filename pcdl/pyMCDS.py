@@ -1158,7 +1158,7 @@ class pyMCDS:
         df_conc.sort_values(['mesh_center_m', 'mesh_center_n', 'mesh_center_p'], inplace=True)
 
         # meshgrid shape
-        df_mesh = df_conc.pivot(index='mesh_center_m', columns='mesh_center_n', values=focus)
+        df_mesh = df_conc.pivot(index='mesh_center_n', columns='mesh_center_m', values=focus)
 
         # handle vmin and vmax input
         if (vmin is None):
@@ -1181,9 +1181,9 @@ class pyMCDS:
 
         # get contour plot
         if fill:
-            ax.contourf(df_mesh.columns, df_mesh.index, df_mesh.values.T, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
+            ax.contourf(df_mesh.columns, df_mesh.index, df_mesh.values, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
         else:
-            ax.contour(df_mesh.columns, df_mesh.index, df_mesh.values.T, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
+            ax.contour(df_mesh.columns, df_mesh.index, df_mesh.values, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
 
         # set title
         if not (title is None):
@@ -1212,7 +1212,7 @@ class pyMCDS:
 
         else:
             # handle output path and filename
-            s_path = f'{self.path}/conc_{focus}_z{round(z_slice,9)}/'
+            s_path = self.path + f'/conc_{focus}_z{round(z_slice,9)}/'
             os.makedirs(s_path, exist_ok=True)
             s_file = self.xmlfile.replace('.xml', f'_{focus}.{ext}')
             s_pathfile = f'{s_path}{s_file}'
@@ -1227,13 +1227,15 @@ class pyMCDS:
             return s_pathfile
 
 
-    def make_conc_vtk(self):
+    def make_conc_vtk(self, visualize = True):
         """
         input:
+            visualize: boolean; default is True
+                additionally, visualize cells using vtk renderer.
 
         output:
             s_vtkpathfile: vtk rectilinear grid file that contains
-            3D distributions of all substrates over the microenvironment.
+                3D distributions of all substrates over the microenvironment.
 
         description:
             function generates a vtk rectilinear grid file that contains
@@ -1254,7 +1256,11 @@ class pyMCDS:
         vr_grid = vtk.vtkRectilinearGrid()
 
         # define dimensions of the grid
-        ti_dim = (df_micenv.loc[:, 'voxel_i'].unique().shape[0], df_micenv.loc[:, 'voxel_j'].unique().shape[0], df_micenv.loc[:, 'voxel_k'].unique().shape[0])
+        ti_dim = (
+            df_micenv.loc[:, 'voxel_i'].unique().shape[0],
+            df_micenv.loc[:, 'voxel_j'].unique().shape[0],
+            df_micenv.loc[:, 'voxel_k'].unique().shape[0],
+        )
 
         # define coordinates for the grid
         vf_x = vtk.vtkFloatArray()
@@ -1313,7 +1319,136 @@ class pyMCDS:
         vw_writer.SetFileName(s_vtkpathfile)
         vw_writer.SetInputData(vr_grid)
         vw_writer.Write()
+
+        # visualize
+        if (visualize):
+
+            # Build VTKLooktupTable (color scheme)
+            lut = vtk.vtkLookupTable()
+            lut.SetNumberOfTableValues(256)
+            lut.SetHueRange(0.667, 0.0)  # blue-to-red
+            lut.Build()
+
+            # iterate over each substrate
+            for s_substrate in self.get_substrate_list():
+                sub_concentration = self.data['continuum_variables'][s_substrate]['data']
+                ny,nx,nz = sub_concentration.shape
+                #mcds.get_concentration('oxygen').shape
+
+                # create the structured grid.
+                substrate_data = vtk.vtkStructuredPoints()
+                substrate_voxel_scalars = vtk.vtkFloatArray()
+
+                voxel_size = 20
+                x0 = -(voxel_size * nx) / 2.0
+                y0 = x0
+                z0 = -10.0
+                #mcds.get_voxel_spacing()
+
+                substrate_data.SetDimensions( nx+1, ny+1, nz+1 )
+                substrate_data.SetOrigin( x0, y0, z0 ) # lower-left-front point of domain bounding box
+                substrate_data.SetSpacing( voxel_size, voxel_size, voxel_size )
+
+                vmax = -1.e6
+                vmin = -vmax
+                # # for z in range( 0, nz+1 ) :  # if point data, not cell data
+                for z in range( 0, nz ) :   # NOTE: using cell data, not point data
+                    for y in range( 0, ny ) :
+                        for x in range( 0, nx ) :
+                            val = sub_concentration[y,x,z]   # yes, it's confusingly swapped :/
+
+                            # if doing a fixed colormap
+                            if val > vmax:
+                                vmax = val
+                            if val < vmin:
+                                vmin = val
+
+                            substrate_voxel_scalars.InsertNextValue( val )
+
+
+                # mapper
+                substrate_data.GetCellData().SetScalars( substrate_voxel_scalars )
+                substrate_mapper = vtk.vtkDataSetMapper()
+                substrate_mapper.SetInputData(substrate_data)
+                substrate_mapper.Update()
+
+                # actor
+                substrate_actor = vtk.vtkActor()
+                substrate_actor.SetMapper(substrate_mapper)
+
+
+                substrate_mapper.SetScalarRange(0, vmax)
+                substrate_mapper.SetScalarModeToUseCellData()
+
+                # create a cutting plane
+                plane = vtk.vtkPlane()
+                plane.SetOrigin(0, 0, 0)
+                plane.SetNormal(0, 0, 1)
+
+                cutterXY = vtk.vtkCutter()
+                cutterXY.SetInputData(substrate_data)
+                cutterXY.SetCutFunction(plane)
+                cutterXY.GeneratePolygons = 1
+
+                cutterXYMapper = vtk.vtkPolyDataMapper()
+                cutterXYMapper.SetInputConnection(cutterXY.GetOutputPort())
+                cutterXYMapper.ScalarVisibilityOn()
+                cutterXYMapper.SetScalarRange(vmin, vmax)
+                cutterXYMapper.SetLookupTable(lut)
+                cutterXYMapper.SetScalarModeToUseCellData()
+
+                cutterXYActor = vtk.vtkActor()
+                cutterXYActor.SetMapper(cutterXYMapper)
+                cutterXYActor.GetProperty().EdgeVisibilityOn()
+
+                # outline
+                outline = vtk.vtkOutlineFilter()
+                outline.SetInputData(substrate_data)
+
+                outlineMapper = vtk.vtkPolyDataMapper()
+                outlineMapper.SetInputConnection(outline.GetOutputPort())
+
+                outlineActor = vtk.vtkActor()
+                outlineActor.SetMapper(outlineMapper)
+                outlineActor.GetProperty().SetColor(1, 1, 1)
+
+                # scalar bar
+                scalarBar = vtk.vtkScalarBarActor()
+                scalarBar.SetTitle(s_substrate)
+                scalarBar.GetPositionCoordinate().SetCoordinateSystemToNormalizedViewport()
+                scalarBar.GetPositionCoordinate().SetValue(0.1, 0.01)
+                scalarBar.SetOrientationToHorizontal()
+                scalarBar.SetWidth(0.8)
+                scalarBar.SetHeight(0.1)
+                scalarBar.GetProperty().SetColor(0, 0, 0)
+                scalarBar.GetTitleTextProperty().SetColor(0, 0, 0)
+                scalarBar.GetTitleTextProperty().SetFontSize(22)
+                scalarBar.SetLookupTable(cutterXYMapper.GetLookupTable())
+
+                # renderer
+                renderer = vtk.vtkRenderer()
+                renderer.SetBackground(0.5, 0.5, 0.5)
+                renderer.AddActor(cutterXYActor)
+                renderer.AddActor(outlineActor)
+                renderer.AddActor2D(scalarBar)
+
+                # window
+                renWin = vtk.vtkRenderWindow()
+                renWin.AddRenderer(renderer)
+
+                iren = vtk.vtkRenderWindowInteractor()
+                iren.SetRenderWindow(renWin)
+
+                renderer.ResetCamera()
+                renWin.SetSize(900, 900)
+
+                # interact with the data.
+                renWin.Render()
+                iren.Start()
+
         return s_vtkpathfile
+
+
 
 
     ## CELL AGENT RELATED FUNCTIONS ##
@@ -1856,7 +1991,7 @@ class pyMCDS:
 
         else:
             # handle output path and filename
-            s_path = f'{self.path}/cell_{focus}_z{round(z_slice,9)}/'
+            s_path = self.path + f'/cell_{focus}_z{round(z_slice,9)}/'
             os.makedirs(s_path, exist_ok=True)
             s_file = self.xmlfile.replace('.xml', f'_{focus}.{ext}')
             s_pathfile = f'{s_path}{s_file}'
@@ -2153,7 +2288,7 @@ class pyMCDS:
             elif s_channel in set(ls_celltype):
                 df_channel = df_cell.loc[:, ls_coor + [s_channel]]
             else:
-                sys.exit(f'Error @ pyMCDS.make_ome_tiff : {s_channel} unknowen channel detected. not in substrate and cell type list {ls_substrate} {ls_celltype}!')
+                sys.exit(f'Error @ pyMCDS.make_ome_tiff : {s_channel} unknown channel detected. not in substrate and cell type list {ls_substrate} {ls_celltype}!')
 
             # each z axis
             la_zyx_img = []
@@ -2262,6 +2397,20 @@ class pyMCDS:
         return self.data['discrete_cells']['graph']['neighbor_cells']
 
 
+    def get_spring_graph_dict(self):
+        """
+        input:
+
+        output:
+            dei_graph: dictionary of sets of integers
+                maps each cell ID to the attached connected cell IDs.
+
+        description:
+            function returns the attached spring cell graph as a dictionary object.
+        """
+        return self.data['discrete_cells']['graph']['spring_attached_cells']
+
+
     def make_graph_gml(self, graph_type, edge_attribute=True, node_attribute=[]):
         """
         input:
@@ -2269,6 +2418,7 @@ class pyMCDS:
                 to specify which physicell output data should be processed.
                 neighbor, touch: processes mcds.get_neighbor_graph_dict dictionary.
                 attached: processes mcds.get_attached_graph_dict dictionary.
+                spring: processes mcds.get_spring_graph_dict dictionary.
 
             edge_attribute: boolean; default True
                 specifies if the spatial Euclidean distance is used for
@@ -2305,10 +2455,12 @@ class pyMCDS:
             dei_graph = self.get_attached_graph_dict()
         elif (graph_type in {'neighbor', 'touch'}):
             dei_graph = self.get_neighbor_graph_dict()
+        elif (graph_type in {'spring'}):
+            dei_graph = self.get_spring_graph_dict()
         #elif (graph_type in {'evo','devo','lineage'}):
         #    dei_graph = self.get_lineage_graph_dict()
         else:
-            sys.exit(f'Erro @ make_graph_gml : unknowen graph_type {graph_type}. knowen are attached, neighbor, and touch.')
+            sys.exit(f'Erro @ make_graph_gml : unknown graph_type {graph_type}. known are attached, neighbor, spring, and touch.')
 
         # generate filename
         s_gmlpathfile = self.path + '/' + self.xmlfile.replace('.xml',f'_{graph_type}.gml')
@@ -2388,6 +2540,10 @@ class pyMCDS:
             ls_xmlfile = xmlfile.split('/')
             s_xmlfile = ls_xmlfile.pop(-1)
             output_path = '/'.join(ls_xmlfile)
+        while (output_path.find('//') > -1):
+            output_path = output_path.replace('//','/')
+        if (output_path.endswith('/')) and (len(output_path) > 1):
+            output_path = output_path[:-1]
         self.path = output_path
         self.xmlfile = s_xmlfile
 
@@ -2785,7 +2941,7 @@ class pyMCDS:
 
             # intracellular file (hack because this is not yet in output.xml)
             df_physiboss = None
-            s_intracellpathfile = self.path + '/' + f'states_{self.xmlfile.replace("output","").replace(".xml",".csv")}'
+            s_intracellpathfile = self.path + f'/states_{self.xmlfile.replace("output","").replace(".xml",".csv")}'
             if os.path.exists(s_intracellpathfile):
                 if self.verbose:
                     print(f'reading: {s_intracellpathfile}')

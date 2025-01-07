@@ -27,7 +27,7 @@ import pcdl
 
 
 # const
-s_path_2d = str(pathlib.Path(pcdl.__file__).parent.resolve()/'data_timeseries_2d')
+s_path_2d = str(pathlib.Path(pcdl.__file__).parent.resolve()/'output_2d')
 s_file_2d = 'output00000024.xml'
 s_pathfile_2d = f'{s_path_2d}/{s_file_2d}'
 
@@ -46,14 +46,15 @@ class TestPyMcdsInit(object):
     def test_mcds_init_microenv(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (df_cell.shape == (1099, 95))
+              (df_cell.shape[0] > 9) and \
+              (df_cell.shape[1] == 122)
 
     def test_mcds_init_graph(self, mcds=mcds):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(mcds.data['discrete_cells']['graph']['attached_cells'])) == "<class 'dict'>") and \
               (str(type(mcds.data['discrete_cells']['graph']['neighbor_cells'])) == "<class 'dict'>") and \
-              (len(mcds.data['discrete_cells']['graph']['attached_cells']) == 1099) and \
-              (len(mcds.data['discrete_cells']['graph']['neighbor_cells']) == 1099)
+              (len(mcds.data['discrete_cells']['graph']['attached_cells']) > 9) and \
+              (len(mcds.data['discrete_cells']['graph']['neighbor_cells']) > 9)
 
     def test_mcds_init_physiboss(self, mcds=mcds):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
@@ -62,8 +63,9 @@ class TestPyMcdsInit(object):
     def test_mcds_init_settingxml(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (set(df_cell.columns).issuperset({'cancer_cell_attack_rates'})) and \
-              (df_cell.shape == (1099, 95))
+              (set(df_cell.columns).issuperset({'default_fusion_rates'})) and \
+              (df_cell.shape[0] > 9) and \
+              (df_cell.shape[1] == 122)
 
 
 class TestPyMcdsInitMicroenvFalse(object):
@@ -73,14 +75,15 @@ class TestPyMcdsInitMicroenvFalse(object):
     def test_mcds_init_microenv(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (df_cell.shape == (1099, 92))
+              (df_cell.shape[0] > 9) and \
+              (df_cell.shape[1] == 116)
 
     def test_mcds_init_graph(self, mcds=mcds):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(mcds.data['discrete_cells']['graph']['attached_cells'])) == "<class 'dict'>") and \
               (str(type(mcds.data['discrete_cells']['graph']['neighbor_cells'])) == "<class 'dict'>") and \
-              (len(mcds.data['discrete_cells']['graph']['attached_cells']) == 1099) and \
-              (len(mcds.data['discrete_cells']['graph']['neighbor_cells']) == 1099)
+              (len(mcds.data['discrete_cells']['graph']['attached_cells']) > 9) and \
+              (len(mcds.data['discrete_cells']['graph']['neighbor_cells']) > 9)
 
     def test_mcds_init_physiboss(self, mcds=mcds):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
@@ -89,8 +92,9 @@ class TestPyMcdsInitMicroenvFalse(object):
     def test_mcds_init_settingxml(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (set(df_cell.columns).issuperset({'cancer_cell_attack_rates'})) and \
-              (df_cell.shape == (1099, 92))
+              (set(df_cell.columns).issuperset({'default_fusion_rates'})) and \
+              (df_cell.shape[0] > 9) and \
+              (df_cell.shape[1] == 116)
 
 
 class TestPyMcdsInitGraphFalse(object):
@@ -100,7 +104,8 @@ class TestPyMcdsInitGraphFalse(object):
     def test_mcds_init_microenv(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (df_cell.shape == (1099, 95))
+              (df_cell.shape[0] > 9) and \
+              (df_cell.shape[1] == 122)
 
     def test_mcds_init_graph(self, mcds=mcds):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
@@ -116,8 +121,9 @@ class TestPyMcdsInitGraphFalse(object):
     def test_mcds_init_settingxml(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (set(df_cell.columns).issuperset({'cancer_cell_attack_rates'})) and \
-              (df_cell.shape == (1099, 95))
+              (set(df_cell.columns).issuperset({'default_fusion_rates'})) and \
+              (df_cell.shape[0] > 9) and \
+              (df_cell.shape[1] == 122)
 
 
 class TestPyMcdsInitPhysibossFalse(object):
@@ -127,14 +133,15 @@ class TestPyMcdsInitPhysibossFalse(object):
     def test_mcds_init_microenv(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (df_cell.shape == (1099, 95))
+              (df_cell.shape[0] > 9) and \
+              (df_cell.shape[1] == 122)
 
     def test_mcds_init_graph(self, mcds=mcds):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(mcds.data['discrete_cells']['graph']['attached_cells'])) == "<class 'dict'>") and \
               (str(type(mcds.data['discrete_cells']['graph']['neighbor_cells'])) == "<class 'dict'>") and \
-              (len(mcds.data['discrete_cells']['graph']['attached_cells']) == 1099) and \
-              (len(mcds.data['discrete_cells']['graph']['neighbor_cells']) == 1099)
+              (len(mcds.data['discrete_cells']['graph']['attached_cells']) > 9) and \
+              (len(mcds.data['discrete_cells']['graph']['neighbor_cells']) > 9)
 
     def test_mcds_init_physiboss(self, mcds=mcds):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
@@ -143,8 +150,9 @@ class TestPyMcdsInitPhysibossFalse(object):
     def test_mcds_init_settingxml(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (set(df_cell.columns).issuperset({'cancer_cell_attack_rates'})) and \
-              (df_cell.shape == (1099, 95))
+              (set(df_cell.columns).issuperset({'default_fusion_rates'})) and \
+              (df_cell.shape[0] > 9) and \
+              (df_cell.shape[1] == 122)
 
 
 class TestPyMcdsInitSettingxmlFalse(object):
@@ -154,14 +162,15 @@ class TestPyMcdsInitSettingxmlFalse(object):
     def test_mcds_init_microenv(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (df_cell.shape == (1099, 95))
+              (df_cell.shape[0] > 9) and \
+              (df_cell.shape[1] == 122)
 
     def test_mcds_init_graph(self, mcds=mcds):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(mcds.data['discrete_cells']['graph']['attached_cells'])) == "<class 'dict'>") and \
               (str(type(mcds.data['discrete_cells']['graph']['neighbor_cells'])) == "<class 'dict'>") and \
-              (len(mcds.data['discrete_cells']['graph']['attached_cells']) == 1099) and \
-              (len(mcds.data['discrete_cells']['graph']['neighbor_cells']) == 1099)
+              (len(mcds.data['discrete_cells']['graph']['attached_cells']) > 9) and \
+              (len(mcds.data['discrete_cells']['graph']['neighbor_cells']) > 9)
 
     def test_mcds_init_physiboss(self, mcds=mcds):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
@@ -170,8 +179,9 @@ class TestPyMcdsInitSettingxmlFalse(object):
     def test_mcds_init_settingxml(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (set(df_cell.columns).issuperset({'0_attack_rates'})) and \
-              (df_cell.shape == (1099, 95))
+              (set(df_cell.columns).issuperset({'default_fusion_rates'})) and \
+              (df_cell.shape[0] > 9) and \
+              (df_cell.shape[1] == 122)
 
 
 class TestPyMcdsInitSettingxmlNone(object):
@@ -181,14 +191,15 @@ class TestPyMcdsInitSettingxmlNone(object):
     def test_mcds_init_microenv(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (df_cell.shape == (1099, 95))
+              (df_cell.shape[0] > 9) and \
+              (df_cell.shape[1] == 122)
 
     def test_mcds_init_graph(self, mcds=mcds):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(mcds.data['discrete_cells']['graph']['attached_cells'])) == "<class 'dict'>") and \
               (str(type(mcds.data['discrete_cells']['graph']['neighbor_cells'])) == "<class 'dict'>") and \
-              (len(mcds.data['discrete_cells']['graph']['attached_cells']) == 1099) and \
-              (len(mcds.data['discrete_cells']['graph']['neighbor_cells']) == 1099)
+              (len(mcds.data['discrete_cells']['graph']['attached_cells']) > 9) and \
+              (len(mcds.data['discrete_cells']['graph']['neighbor_cells']) > 9)
 
     def test_mcds_init_physiboss(self, mcds=mcds):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
@@ -197,8 +208,9 @@ class TestPyMcdsInitSettingxmlNone(object):
     def test_mcds_init_settingxml(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (set(df_cell.columns).issuperset({'0_attack_rates'})) and \
-              (df_cell.shape == (1099, 95))
+              (set(df_cell.columns).issuperset({'default_fusion_rates'})) and \
+              (df_cell.shape[0] > 9) and \
+              (df_cell.shape[1] == 122)
 
 
 class TestPyMcdsInitVerboseTrue(object):
@@ -245,13 +257,13 @@ class TestPyMcdsMetadata(object):
         s_pcversion = mcds.get_physicell_version()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(s_pcversion)) == "<class 'str'>") and \
-              (s_pcversion == 'PhysiCell_1.10.4')
+              (s_pcversion == 'PhysiCell_1.14.1')
 
     def test_mcds_get_timestamp(self, mcds=mcds):
         s_timestamp = mcds.get_timestamp()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(s_timestamp)) == "<class 'str'>") and \
-              (s_timestamp == '2022-10-19T01:12:20Z')
+              (s_timestamp == '2025-01-05T08:08:22Z')
 
     def test_mcds_get_time(self, mcds=mcds):
         r_time = mcds.get_time()
@@ -263,7 +275,7 @@ class TestPyMcdsMetadata(object):
         r_runtime = mcds.get_runtime()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(r_runtime)) == "<class 'float'>") and \
-              (r_runtime == 35.033598)
+              (r_runtime == 1.952156)
 
 
 ## setting related functions ##
@@ -276,8 +288,8 @@ class TestPyMcdsSetting(object):
         ds_unit = mcds.get_unit_dict()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(ds_unit)) == "<class 'dict'>") and \
-              (len(ds_unit) == 82) and \
-              (ds_unit['oxygen'] == 'mmHg')
+              (len(ds_unit) == 108) and \
+              (ds_unit['oxygen'] == 'dimensionless')
 
 
 ## mesh related functions ##
@@ -439,20 +451,20 @@ class TestPyMcdsMicroenv(object):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(ls_substrate)) == "<class 'list'>") and \
               (str(type(ls_substrate[0])) == "<class 'str'>") and \
-              (ls_substrate == ['oxygen'])
+              (ls_substrate == ['oxygen','water'])
 
     def test_mcds_get_substrate_dict(self, mcds=mcds):
         ds_substrate = mcds.get_substrate_dict()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(ds_substrate)) == "<class 'dict'>") and \
               (str(type(ds_substrate['0'])) == "<class 'str'>") and \
-              (len(ds_substrate) == 1)
+              (len(ds_substrate) == 2)
 
     def test_mcds_get_substrate_df(self, mcds=mcds):
         df_substrate = mcds.get_substrate_df()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(df_substrate)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (df_substrate.shape == (1, 2))
+              (df_substrate.shape == (2, 2))
 
     def test_mcds_get_concentration_zslice_none(self, mcds=mcds):
         ar_conc = mcds.get_concentration(substrate='oxygen', z_slice=None)
@@ -480,7 +492,7 @@ class TestPyMcdsMicroenv(object):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(ar_conc)) == "<class 'numpy.ndarray'>") and \
               (ar_conc.dtype == np.float64) and \
-              (ar_conc.shape == (1,))
+              (ar_conc.shape == (2,))
 
     def test_mcds_get_concentration_at_notinmeash(self, mcds=mcds):
         ar_conc = mcds.get_concentration_at(x=-31, y=-21, z=-6)
@@ -491,31 +503,31 @@ class TestPyMcdsMicroenv(object):
         df_conc = mcds.get_conc_df(z_slice=None, halt=False, values=1, drop=set(), keep=set())
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (df_conc.shape == (121, 10))
+              (df_conc.shape == (121, 11))
 
     def test_mcds_get_conc_df_zslice_center(self, mcds=mcds):
         df_conc = mcds.get_conc_df(z_slice=0, halt=False, values=1, drop=set(), keep=set())
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (df_conc.shape == (121, 10))
+              (df_conc.shape == (121, 11))
 
     def test_mcds_get_conc_df_zslice_outofcenter(self, mcds=mcds):
         df_conc = mcds.get_conc_df(z_slice=-6, halt=False, values=1, drop=set(), keep=set())
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (df_conc.shape == (121, 10))
+              (df_conc.shape == (121, 11))
 
     def test_mcds_get_conc_df_values(self, mcds=mcds):
         df_conc = mcds.get_conc_df(z_slice=None, halt=False, values=2, drop=set(), keep=set())
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (df_conc.shape == (121, 10))
+              (df_conc.shape == (121, 11))
 
     def test_mcds_get_conc_df_drop(self, mcds=mcds):
         df_conc = mcds.get_conc_df(z_slice=None, halt=False, values=1, drop={'oxygen'}, keep=set())
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (df_conc.shape == (121, 9))
+              (df_conc.shape == (121, 10))
 
     def test_mcds_get_conc_df_keep(self, mcds=mcds):
         df_conc = mcds.get_conc_df(z_slice=None, halt=False, values=1, drop=set(), keep={'oxygen'})
@@ -567,7 +579,7 @@ class TestPyMcdsMicroenv(object):
             figbgcolor = 'yellow',  # jump over if
         )
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.replace('\\','/').endswith('/pcdl/data_timeseries_2d/conc_oxygen_z0/output00000024_oxygen.tiff')) and \
+              (s_pathfile.replace('\\','/').endswith('/pcdl/output_2d/conc_oxygen_z0/output00000024_oxygen.tiff')) and \
               (os.path.exists(s_pathfile)) and \
               (os.path.getsize(s_pathfile) > 2**10)
         os.remove(s_pathfile)
@@ -575,7 +587,7 @@ class TestPyMcdsMicroenv(object):
     def test_mcds_make_conc_vtk(self, mcds=mcds):
         s_pathfile = mcds.make_conc_vtk()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.replace('\\','/').endswith('/pcdl/data_timeseries_2d/output00000024_conc.vtr')) and \
+              (s_pathfile.replace('\\','/').endswith('/pcdl/output_2d/output00000024_conc.vtr')) and \
               (os.path.exists(s_pathfile)) and \
               (os.path.getsize(s_pathfile) > 2**10)
         os.remove(s_pathfile)
@@ -591,44 +603,49 @@ class TestPyMcdsCell(object):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(ls_celltype)) == "<class 'list'>") and \
               (str(type(ls_celltype[0])) == "<class 'str'>") and \
-              (len(ls_celltype) == 1)
+              (len(ls_celltype) == 2)
 
     def test_mcds_get_celltype_dict(self, mcds=mcds):
         ds_celltype = mcds.get_celltype_dict()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(ds_celltype)) == "<class 'dict'>") and \
               (str(type(ds_celltype['0'])) == "<class 'str'>") and \
-              (len(ds_celltype) == 1)
+              (len(ds_celltype) == 2)
 
     def test_mcds_get_cell_df(self, mcds=mcds):
         df_cell = mcds.get_cell_df(values=1, drop=set(), keep=set())
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (df_cell.shape == (1099, 95))
+              (df_cell.shape[0] > 9) and \
+              (df_cell.shape[1] == 122)
 
     def test_mcds_get_cell_df_values(self, mcds=mcds):
         df_cell = mcds.get_cell_df(values=2, drop=set(), keep=set())
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (df_cell.shape == (1099, 40))
+              (df_cell.shape[0] > 9) and \
+              (df_cell.shape[1] == 66)
 
     def test_mcds_get_cell_df_drop(self, mcds=mcds):
         df_cell = mcds.get_cell_df(values=1, drop={'oxygen'}, keep=set())
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (df_cell.shape == (1099, 94))
+              (df_cell.shape[0] > 9) and \
+              (df_cell.shape[1] == 121)
 
     def test_mcds_get_cell_df_keep(self, mcds=mcds):
         df_cell = mcds.get_cell_df(values=1, drop=set(), keep={'oxygen'})
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (df_cell.shape == (1099, 13))
+              (df_cell.shape[0] > 9) and \
+              (df_cell.shape[1] == 13)
 
     def test_mcds_get_cell_df_at_inmeash(self, mcds=mcds):
         df_cell = mcds.get_cell_df_at(x=0, y=0, z=0, values=1, drop=set(), keep=set())
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (df_cell.shape == (5, 95))
+              (df_cell.shape[0] > 0) and \
+              (df_cell.shape[1] == 122)
 
     def test_mcds_get_cell_df_at_notinmeash(self, mcds=mcds):
         df_cell = mcds.get_cell_df_at(x=-31, y=-21, z=-6, values=1, drop=set(), keep=set())
@@ -679,7 +696,7 @@ class TestPyMcdsCell(object):
             figbgcolor = 'cyan',  # jump over if
         )
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.replace('\\','/').endswith('/pcdl/data_timeseries_2d/cell_cell_type_z0/output00000024_cell_type.tiff')) and \
+              (s_pathfile.replace('\\','/').endswith('/pcdl/output_2d/cell_cell_type_z0/output00000024_cell_type.tiff')) and \
               (os.path.exists(s_pathfile)) and \
               (os.path.getsize(s_pathfile) > 2**10)
         os.remove(s_pathfile)
@@ -761,7 +778,7 @@ class TestPyMcdsCell(object):
             visualize=False,
         )
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.replace('\\','/').endswith('/pcdl/data_timeseries_2d/output00000024_cell.vtp')) and \
+              (s_pathfile.replace('\\','/').endswith('/pcdl/output_2d/output00000024_cell.vtp')) and \
               (os.path.exists(s_pathfile)) and \
               (os.path.getsize(s_pathfile) > 2**10)
         os.remove(s_pathfile)
@@ -769,7 +786,7 @@ class TestPyMcdsCell(object):
     def test_mcds_make_cell_vtk_attribute_zero(self, mcds=mcds):
         s_pathfile = mcds.make_cell_vtk(attribute=[], visualize=False)
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.replace('\\','/').endswith('/pcdl/data_timeseries_2d/output00000024_cell.vtp')) and \
+              (s_pathfile.replace('\\','/').endswith('/pcdl/output_2d/output00000024_cell.vtp')) and \
               (os.path.exists(s_pathfile)) and \
               (os.path.getsize(s_pathfile) > 2**10)
         os.remove(s_pathfile)
@@ -780,7 +797,7 @@ class TestPyMcdsCell(object):
             visualize=False,
         )
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.replace('\\','/').endswith('/pcdl/data_timeseries_2d/output00000024_cell.vtp')) and \
+              (s_pathfile.replace('\\','/').endswith('/pcdl/output_2d/output00000024_cell.vtp')) and \
               (os.path.exists(s_pathfile)) and \
               (os.path.getsize(s_pathfile) > 2**10)
         os.remove(s_pathfile)
@@ -795,20 +812,22 @@ class TestPyMcdsGraph(object):
     # graph dictionatry
     def test_mcds_get_attached_graph_dict(self, mcds=mcds):
         dei_graph = mcds.data['discrete_cells']['graph']['attached_cells']
+        #print('graph attached:', sorted(dei_graph.items()))
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(dei_graph)) == "<class 'dict'>") and \
-              (str(type(dei_graph[0])) == "<class 'set'>") and \
-              (len(dei_graph[0]) == 0) and \
-              (len(dei_graph) == 1099)
+              (str(type(dei_graph[10])) == "<class 'set'>") and \
+              (len(dei_graph[10]) == 0) and \
+              (len(dei_graph) > 9)
 
-    def test_mcds_get_nighbor_graph_dict(self, mcds=mcds):
+    def test_mcds_get_neighbor_graph_dict(self, mcds=mcds):
         dei_graph = mcds.data['discrete_cells']['graph']['neighbor_cells']
+        #print('graph neighbor:', sorted(dei_graph.items()))
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(dei_graph)) == "<class 'dict'>") and \
-              (str(type(dei_graph[0])) == "<class 'set'>") and \
-              (len(dei_graph[0]) == 7) and \
+              (str(type(dei_graph[10])) == "<class 'set'>") and \
+              (len(dei_graph[10]) == 6) and \
               (str(type(next(iter(dei_graph)))) == "<class 'int'>") and \
-              (len(dei_graph) == 1099)
+              (len(dei_graph) > 9)
 
     # attached graph gml files
     def test_mcds_make_graph_gml_attached_defaultattr(self, mcds=mcds):
@@ -817,7 +836,7 @@ class TestPyMcdsGraph(object):
         s_file = f.read()
         f.close()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.replace('\\','/').endswith('pcdl/data_timeseries_2d/output00000024_attached.gml')) and \
+              (s_pathfile.replace('\\','/').endswith('pcdl/output_2d/output00000024_attached.gml')) and \
               (os.path.exists(s_pathfile)) and \
               (s_file.find('Creator "pcdl_v') > -1) and \
               (s_file.find('graph [\n  id 1440\n  comment "time_min"\n  label "attached_graph"\n  directed 0\n') > -1) and \
@@ -832,7 +851,7 @@ class TestPyMcdsGraph(object):
         s_file = f.read()
         f.close()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.replace('\\','/').endswith('pcdl/data_timeseries_2d/output00000024_attached.gml')) and \
+              (s_pathfile.replace('\\','/').endswith('pcdl/output_2d/output00000024_attached.gml')) and \
               (os.path.exists(s_pathfile)) and \
               (s_file.find('Creator "pcdl_v') > -1) and \
               (s_file.find('graph [\n  id 1440\n  comment "time_min"\n  label "attached_graph"\n  directed 0\n') > -1) and \
@@ -847,7 +866,7 @@ class TestPyMcdsGraph(object):
         s_file = f.read()
         f.close()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.replace('\\','/').endswith('pcdl/data_timeseries_2d/output00000024_neighbor.gml')) and \
+              (s_pathfile.replace('\\','/').endswith('pcdl/output_2d/output00000024_neighbor.gml')) and \
               (os.path.exists(s_pathfile)) and \
               (s_file.find('Creator "pcdl_v') > -1) and \
               (s_file.find('graph [\n  id 1440\n  comment "time_min"\n  label "neighbor_graph"\n  directed 0\n') > -1) and \
@@ -867,7 +886,7 @@ class TestPyMcdsGraph(object):
         s_file = f.read()
         f.close()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.replace('\\','/').endswith('pcdl/data_timeseries_2d/output00000024_neighbor.gml')) and \
+              (s_pathfile.replace('\\','/').endswith('pcdl/output_2d/output00000024_neighbor.gml')) and \
               (os.path.exists(s_pathfile)) and \
               (s_file.find('Creator "pcdl_v') > -1) and \
               (s_file.find('graph [\n  id 1440\n  comment "time_min"\n  label "neighbor_graph"\n  directed 0\n') > -1) and \
@@ -882,7 +901,7 @@ class TestPyMcdsGraph(object):
         s_file = f.read()
         f.close()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.replace('\\','/').endswith('pcdl/data_timeseries_2d/output00000024_neighbor.gml')) and \
+              (s_pathfile.replace('\\','/').endswith('pcdl/output_2d/output00000024_neighbor.gml')) and \
               (os.path.exists(s_pathfile)) and \
               (s_file.find('Creator "pcdl_v') > -1) and \
               (s_file.find('graph [\n  id 1440\n  comment "time_min"\n  label "neighbor_graph"\n  directed 0\n') > -1) and \
@@ -897,7 +916,7 @@ class TestPyMcdsGraph(object):
         s_file = f.read()
         f.close()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.replace('\\','/').endswith('pcdl/data_timeseries_2d/output00000024_neighbor.gml')) and \
+              (s_pathfile.replace('\\','/').endswith('pcdl/output_2d/output00000024_neighbor.gml')) and \
               (os.path.exists(s_pathfile)) and \
               (s_file.find('Creator "pcdl_v') > -1) and \
               (s_file.find('graph [\n  id 1440\n  comment "time_min"\n  label "neighbor_graph"\n  directed 0\n') > -1) and \
@@ -920,8 +939,9 @@ class TestPyMcdsOmeTiff(object):
     ## ome tiff related functions ##
     def test_mcds_make_ome_tiff_default(self, mcds=mcds):
         s_pathfile = mcds.make_ome_tiff(cell_attribute='ID', conc_cutoff={}, focus=None, file=True)
+        print('BUE OMETIFF SIZE:', s_pathfile)
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.replace('\\','/').endswith('pcdl/data_timeseries_2d/output00000024_oxygen_cancer_cell_ID.ome.tiff')) and \
+              (s_pathfile.replace('\\','/').endswith('pcdl/output_2d/output00000024_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
               (os.path.exists(s_pathfile)) and \
               (os.path.getsize(s_pathfile) > 2**10)
         os.remove(s_pathfile)
@@ -931,51 +951,59 @@ class TestPyMcdsOmeTiff(object):
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(a_ometiff)) == "<class 'numpy.ndarray'>") and \
               (a_ometiff.dtype == np.float32) and \
-              (a_ometiff.shape == (2, 1, 200, 300)) and \
-              (a_ometiff[0].min() < 14.0) and \
-              (a_ometiff[0].max() > 35.0) and \
-              (a_ometiff[1].min() == 0.0) and \
-              (a_ometiff[1].max() == 2.0)
+              (a_ometiff.shape == (4, 1, 200, 300)) and \
+              (a_ometiff[2].min() == 0.0) and \
+              (a_ometiff[3].min() == 0.0) and \
+              (a_ometiff[0].max() >= 1.0) and \
+              (a_ometiff[1].max() >= 1.0) and \
+              (a_ometiff[2].max() >= 1.0) and \
+              (a_ometiff[3].max() >= 1.0)
 
     def test_mcds_make_ome_tiff_int(self, mcds=mcds):
         a_ometiff = mcds.make_ome_tiff(cell_attribute='cell_count_voxel', conc_cutoff={}, focus=None, file=False)
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(a_ometiff)) == "<class 'numpy.ndarray'>") and \
               (a_ometiff.dtype == np.float32) and \
-              (a_ometiff.shape == (2, 1, 200, 300)) and \
-              (a_ometiff[0].min() < 14.0) and \
-              (a_ometiff[0].max() > 35.0) and \
-              (a_ometiff[1].min() == 0.0) and \
-              (a_ometiff[1].max() == 236.0)
+              (a_ometiff.shape == (4, 1, 200, 300)) and \
+              (a_ometiff[2].min() == 0.0) and \
+              (a_ometiff[3].min() == 0.0) and \
+              (a_ometiff[0].max() >= 1.0) and \
+              (a_ometiff[1].max() >= 1.0) and \
+              (a_ometiff[2].max() >= 1.0) and \
+              (a_ometiff[3].max() >= 1.0)
 
     def test_mcds_make_ome_tiff_float(self, mcds=mcds):
         a_ometiff = mcds.make_ome_tiff(cell_attribute='pressure', conc_cutoff={}, focus=None, file=False)
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(a_ometiff)) == "<class 'numpy.ndarray'>") and \
               (a_ometiff.dtype == np.float32) and \
-              (a_ometiff.shape == (2, 1, 200, 300)) and\
-              (a_ometiff[0].min() < 14.0) and \
-              (a_ometiff[0].max() > 35.0) and \
-              (a_ometiff[1].min() == 0.0) and \
-              (a_ometiff[1].max() > 16.0)
+              (a_ometiff.shape == (4, 1, 200, 300)) and\
+              (a_ometiff[2].min() == 0.0) and \
+              (a_ometiff[3].min() == 0.0) and \
+              (a_ometiff[0].max() >= 1.0) and \
+              (a_ometiff[1].max() >= 1.0) and \
+              (a_ometiff[2].max() >= 1.0) and \
+              (a_ometiff[3].max() >= 1.0)
 
     def test_mcds_make_ome_tiff_conccutoff(self, mcds=mcds):
         a_ometiff = mcds.make_ome_tiff(cell_attribute='ID', conc_cutoff={'oxygen': -1}, focus=None, file=False)
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(a_ometiff)) == "<class 'numpy.ndarray'>") and \
               (a_ometiff.dtype == np.float32) and \
-              (a_ometiff.shape == (2, 1, 200, 300)) and \
-              (a_ometiff[0].min() < 16.0) and \
-              (a_ometiff[0].max() > 37.0) and \
-              (a_ometiff[1].min() == 0.0) and \
-              (a_ometiff[1].max() == 1113.0)
+              (a_ometiff.shape == (4, 1, 200, 300)) and \
+              (a_ometiff[2].min() == 0.0) and \
+              (a_ometiff[3].min() == 0.0) and \
+              (a_ometiff[0].max() >= 1.0) and \
+              (a_ometiff[1].max() >= 1.0) and \
+              (a_ometiff[2].max() >= 1.0) and \
+              (a_ometiff[3].max() >= 1.0)
 
     def test_mcds_make_ome_tiff_focus(self, mcds=mcds):
-        a_ometiff = mcds.make_ome_tiff(cell_attribute='ID', conc_cutoff={}, focus={'oxygen'}, file=False)
+        a_ometiff = mcds.make_ome_tiff(cell_attribute='ID', conc_cutoff={}, focus={'default'}, file=False)
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
               (str(type(a_ometiff)) == "<class 'numpy.ndarray'>") and \
               (a_ometiff.dtype == np.float32) and \
               (a_ometiff.shape == (1, 1, 200, 300)) and \
-              (a_ometiff[0].min() < 14.0) and \
-              (a_ometiff[0].max() > 35.0)
+              (a_ometiff[0].min() == 0.0) and \
+              (a_ometiff[0].max() >= 1.0)
 

@@ -211,12 +211,14 @@ class pyMCDSts:
             functions to process all time steps in the output_path directory.
         """
         output_path = output_path.replace('\\','/')
-        if (output_path[-1] != '/'):
-            output_path = output_path + '/'
+        while (output_path.find('//') > -1):
+            output_path = output_path.replace('//','/')
+        if (output_path.endswith('/')) and (len(output_path) > 1):
+            output_path = output_path[:-1]
         if not os.path.isdir(output_path):
             print(f'Error @ pyMCDSts.__init__ : this is not a path! could not load {output_path}.')
         self.path = output_path
-        self.ls_xmlfile = [s_pathfile.replace('\\','/').split('/')[-1] for s_pathfile in sorted(glob.glob(f'{self.path}output*.xml'))]  # bue 2022-10-22: is output*.xml always the correct pattern?
+        self.ls_xmlfile = [s_pathfile.replace('\\','/').split('/')[-1] for s_pathfile in sorted(glob.glob(self.path + f'/output*.xml'))]  # bue 2022-10-22: is output*.xml always the correct pattern?
         self.custom_data_type = custom_data_type
         self.microenv = microenv
         self.graph = graph
@@ -310,7 +312,7 @@ class pyMCDSts:
         if (xmlfile_list is None):
             xmlfile_list = self.get_xmlfile_list()
         ls_xmlfile = sorted([s_xmlfile.replace('\\','/').split('/')[-1]  for s_xmlfile in xmlfile_list])
-        ls_xmlpathfile = [f'{self.path}{s_xmlfile}' for s_xmlfile in ls_xmlfile]
+        ls_xmlpathfile = [self.path + f'/{s_xmlfile}' for s_xmlfile in ls_xmlfile]
 
         # load mcds objects into list
         l_mcds = []
@@ -613,7 +615,7 @@ class pyMCDSts:
                 print(f'ylim set to {ylim}.')
 
         # handle output path
-        s_path = f'{self.path}conc_{focus}_z{round(z_slice,9)}/'
+        s_path = self.path + f'/conc_{focus}_z{round(z_slice,9)}/'
 
         # plotting
         lo_output = []
@@ -1090,7 +1092,7 @@ class pyMCDSts:
                 s_channel += f'_{s_celltype}'
             if len(ls_celltype) > 0:
                 s_channel += f'_{cell_attribute}'
-            s_tiffpathfile = f'{self.path}timeseries{s_channel}.ome.tiff'
+            s_tiffpathfile = self.path + f'/timeseries{s_channel}.ome.tiff'
             # save to file
             OmeTiffWriter.save(
                 a_tczyx_img,
@@ -1280,7 +1282,7 @@ class pyMCDSts:
                 mcds.set_verbose_true()
             # error
             else:
-                sys.exit(f"Error @ pyMCDSts.plot_timeseries : unknowen frame {frame}. knowen are cell_df and conc_df.")
+                sys.exit(f"Error @ pyMCDSts.plot_timeseries : unknown frame {frame}. known are cell_df and conc_df.")
             # handle z_slize
             if not (z_slice is None):
                 df_frame = df_frame.loc[(df_frame.mesh_center_p == z_slice),:]
@@ -1380,9 +1382,9 @@ class pyMCDSts:
             return fig
         else:
             if (focus_num == 'count'):
-                s_pathfile = f'{self.path}timeseries_{frame}_{focus_cat}_{focus_num}.{ext}'
+                s_pathfile = self.path + f'/timeseries_{frame}_{focus_cat}_{focus_num}.{ext}'
             else:
-                s_pathfile = f"{self.path}timeseries_{frame}_{focus_cat}_{focus_num}_{aggregate_num.__name__.replace('np.nan','')}.{ext}"
+                s_pathfile = self.path + f"/timeseries_{frame}_{focus_cat}_{focus_num}_{aggregate_num.__name__.replace('np.nan','')}.{ext}"
             if figbgcolor is None:
                 figbgcolor = 'auto'
             plt.tight_layout()
@@ -1400,8 +1402,9 @@ class pyMCDSts:
 
             graph_type: string; default is neighbor
                 to specify which physicell output data should be processed.
-                attached: processes mcds.get_attached_graph_dict dictionary.
+                attached, touch: processes mcds.get_attached_graph_dict dictionary.
                 neighbor: processes mcds.get_neighbor_graph_dict dictionary.
+                spring: processes mcds.get_spring_graph_dict dictionary.
 
             edge_attribute: boolean; default True
                 specifies if the spatial Euclidean distance is used for

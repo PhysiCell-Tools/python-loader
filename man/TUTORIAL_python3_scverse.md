@@ -39,7 +39,7 @@ cd path/to/PhysiCell
 ```
 ```bash
 make data-cleanup
-python3 -c"import pathlib, pcdl, shutil; pcdl.install_data(); s_ipath=str(pathlib.Path(pcdl.__file__).parent.resolve()/'data_timeseries_3d'); shutil.copytree(s_ipath, 'output', dirs_exist_ok=True)"
+python3 -c"import pathlib, pcdl, shutil; pcdl.install_data(); s_ipath=str(pathlib.Path(pcdl.__file__).parent.resolve()/'output_3d'); shutil.copytree(s_ipath, 'output', dirs_exist_ok=True)"
 ```
 
 
