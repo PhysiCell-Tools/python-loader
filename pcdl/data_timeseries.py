@@ -7,18 +7,16 @@
 # authors: Patrick Wall, Randy Heiland, Paul Macklin, Elmar Bucher
 #
 # description:
-#     code to download the data_timeseries.tar.gz files
+#     code to download the output.tar.gz files
 #     from the source code repository, and extract them to where
 #     the pcdl library is installed, and code to remove the installed
-#     data_timeseries folders.
-#     the extracted data_timeseries_2d and data_timeseries_3d folder contains
+#     output folders.
+#     the extracted output_2d and output_3d folder contains
 #     example PhysiCell output, necessary to run the pytest unit tests
 #     and useful to run through the tutorial.
 #########
 
-# bue 20240822: in future (with the next mcds version) in need a better dataset:
-# 2d and 3d, 2 substrates, 2 cell_types
-# mcds time step 60[min], total time 24[h]
+# bue 20240822: in future:
 # maybe physiboss output?
 
 # library
@@ -47,8 +45,8 @@ class install_data:
 
         # for each timeseries
         for s_url in [
-                'https://raw.githubusercontent.com/elmbeech/physicelldataloader/master/data_timeseries_2d.tar.gz',
-                'https://raw.githubusercontent.com/elmbeech/physicelldataloader/master/data_timeseries_3d.tar.gz',
+                'https://raw.githubusercontent.com/elmbeech/physicelldataloader/master/output_2d.tar.gz',
+                'https://raw.githubusercontent.com/elmbeech/physicelldataloader/master/output_3d.tar.gz',
             ]:
             # get path and filename
             s_file = s_url.split('/')[-1]
@@ -88,7 +86,7 @@ class uninstall_data:
 
         # for each obsolet timeserie
         for s_file in sorted(os.listdir(s_path)):
-            if s_file.startswith('data_timeseries_'):
+            if s_file.startswith('output_'):
 
                # get path and filename
                s_pathfile = s_path + s_file

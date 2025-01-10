@@ -20,7 +20,7 @@
 
 
 # load libraries
-import aicsimageio
+import aicsimageio  # bioio, bioio_base
 from aicsimageio.writers import OmeTiffWriter
 import glob
 import matplotlib.pyplot as plt
@@ -211,12 +211,14 @@ class pyMCDSts:
             functions to process all time steps in the output_path directory.
         """
         output_path = output_path.replace('\\','/')
-        if (output_path[-1] != '/'):
-            output_path = output_path + '/'
+        while (output_path.find('//') > -1):
+            output_path = output_path.replace('//','/')
+        if (output_path.endswith('/')) and (len(output_path) > 1):
+            output_path = output_path[:-1]
         if not os.path.isdir(output_path):
             print(f'Error @ pyMCDSts.__init__ : this is not a path! could not load {output_path}.')
         self.path = output_path
-        self.ls_xmlfile = [s_pathfile.replace('\\','/').split('/')[-1] for s_pathfile in sorted(glob.glob(f'{self.path}output*.xml'))]  # bue 2022-10-22: is output*.xml always the correct pattern?
+        self.ls_xmlfile = [s_pathfile.replace('\\','/').split('/')[-1] for s_pathfile in sorted(glob.glob(self.path + f'/output*.xml'))]  # bue 2022-10-22: is output*.xml always the correct pattern?
         self.custom_data_type = custom_data_type
         self.microenv = microenv
         self.graph = graph
@@ -310,7 +312,7 @@ class pyMCDSts:
         if (xmlfile_list is None):
             xmlfile_list = self.get_xmlfile_list()
         ls_xmlfile = sorted([s_xmlfile.replace('\\','/').split('/')[-1]  for s_xmlfile in xmlfile_list])
-        ls_xmlpathfile = [f'{self.path}{s_xmlfile}' for s_xmlfile in ls_xmlfile]
+        ls_xmlpathfile = [self.path + f'/{s_xmlfile}' for s_xmlfile in ls_xmlfile]
 
         # load mcds objects into list
         l_mcds = []
@@ -613,7 +615,7 @@ class pyMCDSts:
                 print(f'ylim set to {ylim}.')
 
         # handle output path
-        s_path = f'{self.path}conc_{focus}_z{round(z_slice,9)}/'
+        s_path = self.path + f'/conc_{focus}_z{round(z_slice,9)}/'
 
         # plotting
         lo_output = []
@@ -642,9 +644,11 @@ class pyMCDSts:
         return lo_output
 
 
-    def make_conc_vtk(self):
+    def make_conc_vtk(self, visualize=True):
         """
         input:
+            visualize: boolean; default is False
+                additionally, visualize cells using vtk renderer.
 
         output:
             ls_vtkpathfile: one vtk file per mcds time step that contains
@@ -662,7 +666,7 @@ class pyMCDSts:
         # processing
         ls_vtkpathfile = []
         for mcds in self.get_mcds_list():
-            s_vtkpathfile = mcds.make_conc_vtk()
+            s_vtkpathfile = mcds.make_conc_vtk(visualize=visualize)
             ls_vtkpathfile.append(s_vtkpathfile)
 
         # output
@@ -984,16 +988,28 @@ class pyMCDSts:
 
     ## OME TIFF RELATED FUNCTIONS ##
 
-    def make_ome_tiff(self, cell_attribute='ID', file=True, collapse=True):
+    def make_ome_tiff(self, cell_attribute='ID', conc_cutoff={}, focus=None, file=True, collapse=True):
         """
         input:
-            cell_attribute: strings; default is 'ID', with will result in a segmentation mask.
-                column name within cell dataframe.
-                the column data type has to be numeric (bool, int, float) and can't be string.
+            cell_attribute: strings; default is 'ID', which will result in a
+                cell segmentation mask.
+                column name within the cell dataframe.
+                the column data type has to be numeric (bool, int, float)
+                and cannot be string.
+                the result will be stored as 32 bit float.
+
+            conc_cutoff: dictionary string to real; default is an empty dictionary.
+                if a contour from a substrate not should be cut by greater
+                than zero (shifted to integer 1), another cutoff value can be specified here.
+
+            focus: set of strings; default is a None
+                set of substrate and cell_type names to specify what will be
+                translated into ome tiff format.
+                if None, all substrates and cell types will be processed.
 
             file: boolean; default True
-                if True, an ome tiff file is output.
-                if False, a numpy array with shape tczyx is output.
+                if True, an ome tiff file is the output.
+                if False, a numpy array with shape tczyx is the output.
 
             collapse: boole; default True
                 should all mcds time steps from the time series be collapsed
@@ -1002,6 +1018,7 @@ class pyMCDSts:
 
         output:
             a_tczyx_img: numpy array or ome tiff file.
+
 
         description:
             function to transform chosen mcdsts output into an 1[um] spaced
@@ -1017,22 +1034,33 @@ class pyMCDSts:
             https://napari.org/stable/
             https://fiji.sc/
         """
-        # each T time step
+        # for each T time step
         l_tczyx_img = []
         for i, mcds in enumerate(self.get_mcds_list()):
+            # processing
+            b_file = True # 10
             if (not file and not collapse) or (not file and collapse) or (file and collapse):  # 00, 01, 11
-                a_czyx_img = mcds.make_ome_tiff(cell_attribute=cell_attribute, file=False)
-                l_tczyx_img.append(a_czyx_img)
+                b_file = False
+            o_tczyx_img = mcds.make_ome_tiff(
+                cell_attribute = cell_attribute,
+                conc_cutoff = conc_cutoff,
+                focus = focus,
+                file = b_file
+            )
+            l_tczyx_img.append(o_tczyx_img)
 
-            elif (file and not collapse):  # 10
-                s_pathfile = mcds.make_ome_tiff(cell_attribute=cell_attribute, file=True)
-                l_tczyx_img.append(s_pathfile)
+        # handle channels
+        ls_substrate = mcds.get_substrate_list()
+        ls_celltype = mcds.get_celltype_list()
 
-            else:
-                sys.exit(f'Error @ make_ome_tiff :.')
+        if not (focus is None):
+            ls_substrate = [s_substrate for s_substrate in ls_substrate if s_substrate in set(focus)]
+            ls_celltype = [s_celltype for s_celltype in ls_celltype if s_celltype in set(focus)]
+            if (set(focus) != set(ls_substrate).union(set(ls_celltype))):
+                sys.exit(f'Error : {focus} not found in {ls_substrate} {ls_celltype}')
 
         # output 00 list of numpy arrays
-        if (not file and not collapse):
+        if (not file and not collapse):  # 00
             if self.verbose:
                 print(f'la_tczyx_img shape: {len(l_tczyx_img)} * {l_tczyx_img[0].shape}')
             return l_tczyx_img
@@ -1046,7 +1074,7 @@ class pyMCDSts:
             return a_tczyx_img
 
         # output 10 list of pathfile strings
-        elif (file and not collapse):  # 01
+        elif (file and not collapse):  # 10
             return l_tczyx_img
 
         # output 11 ometiff file
@@ -1054,16 +1082,28 @@ class pyMCDSts:
             a_tczyx_img = np.array(l_tczyx_img)
             if self.verbose:
                 print('a_tczyx_img shape:', a_tczyx_img.shape)
-            ls_channel = mcds.get_substrate_list() + mcds.get_celltype_list()
-            s_tiffpathfile = f'{self.path}timeseries_{cell_attribute}.ome.tiff'
+            # generate filename
+            s_channel = ''
+            for s_substrate in ls_substrate:
+                try:
+                    r_value = conc_cutoff[s_substrate]
+                    s_channel += f'_{s_substrate}{r_value}'
+                except KeyError:
+                    s_channel += f'_{s_substrate}'
+            for s_celltype in ls_celltype:
+                s_channel += f'_{s_celltype}'
+            if len(ls_celltype) > 0:
+                s_channel += f'_{cell_attribute}'
+            s_tiffpathfile = self.path + f'/timeseries{s_channel}.ome.tiff'
+            # save to file
             OmeTiffWriter.save(
                 a_tczyx_img,
                 s_tiffpathfile,
                 dim_order = 'TCZYX',
                 #ome_xml=x_img,
-                channel_names = ls_channel,
+                channel_names = ls_substrate + ls_celltype,
                 image_names = [f'timeseries_{cell_attribute}'],
-                physical_pixel_sizes = aicsimageio.types.PhysicalPixelSizes(mcds.get_voxel_spacing()[2], 1.0, 1.0), #z,y,x [um]
+                physical_pixel_sizes = aicsimageio.types.PhysicalPixelSizes(mcds.get_voxel_spacing()[2], 1.0, 1.0),  # z,y,x [um]
                 #channel_colors=,
                 #fs_kwargs={},
             )
@@ -1071,7 +1111,7 @@ class pyMCDSts:
 
         # error case
         else:
-            sys.exit(f'Error @ make_ome_tiff :.')
+            sys.exit(f'Error @ make_ome_tiff : {file} {collapse} strange file collapse combination.')
 
 
     ## TIME SERIES RELATED FUNCTIONS ##
@@ -1244,7 +1284,7 @@ class pyMCDSts:
                 mcds.set_verbose_true()
             # error
             else:
-                sys.exit(f"Error @ pyMCDSts.plot_timeseries : unknowen frame {frame}. knowen are cell_df and conc_df.")
+                sys.exit(f"Error @ pyMCDSts.plot_timeseries : unknown frame {frame}. known are cell_df and conc_df.")
             # handle z_slize
             if not (z_slice is None):
                 df_frame = df_frame.loc[(df_frame.mesh_center_p == z_slice),:]
@@ -1344,9 +1384,9 @@ class pyMCDSts:
             return fig
         else:
             if (focus_num == 'count'):
-                s_pathfile = f'{self.path}timeseries_{frame}_{focus_cat}_{focus_num}.{ext}'
+                s_pathfile = self.path + f'/timeseries_{frame}_{focus_cat}_{focus_num}.{ext}'
             else:
-                s_pathfile = f"{self.path}timeseries_{frame}_{focus_cat}_{focus_num}_{aggregate_num.__name__.replace('np.nan','')}.{ext}"
+                s_pathfile = self.path + f"/timeseries_{frame}_{focus_cat}_{focus_num}_{aggregate_num.__name__.replace('np.nan','')}.{ext}"
             if figbgcolor is None:
                 figbgcolor = 'auto'
             plt.tight_layout()
@@ -1357,15 +1397,16 @@ class pyMCDSts:
 
     ## GRAPH RELATED FUNCTIONS ##
 
-    def make_graph_gml(self, graph_type='neighbor', edge_attribute=True, node_attribute=[]):
+    def make_graph_gml(self, graph_type, edge_attribute=True, node_attribute=[]):
         """
         input:
             self: pyMCDS class instance.
 
-            graph_type: string; default is neighbor
+            graph_type: string
                 to specify which physicell output data should be processed.
-                attached: processes mcds.get_attached_graph_dict dictionary.
+                attached, touch: processes mcds.get_attached_graph_dict dictionary.
                 neighbor: processes mcds.get_neighbor_graph_dict dictionary.
+                spring: processes mcds.get_spring_graph_dict dictionary.
 
             edge_attribute: boolean; default True
                 specifies if the spatial Euclidean distance is used for

@@ -9,7 +9,7 @@ The [json library](https://docs.python.org/3/library/json.html) is a part of cor
 Json is the ideal data format for unstructured data constructs that not can be stored in csv file format, like a dictionary of lists.
 Please note, python objecta are not per se json comaptible.
 For example:
-Complex numbers are a standard data type in python, but complex numbers can not be stored in json.
+Complex numbers are a standard data type in python, but complex numbers cannot be stored in json.
 Python dictionary keys can be of almost any data type, but json object keys have to be strings.
 
 

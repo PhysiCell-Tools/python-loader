@@ -1,11 +1,11 @@
-# PhysiCell Data Loader Tutorial: pcdl and the Matlab and Octave programming language
-
-[Matlab](https://www.mathworks.com/products/matlab.html) / GNU [Octave](https://octave.org/)
-is a scientific programming language used by some engineers.
-The earliest predecessor of pcdl was actually a Matlab implementation.
-Coming full circle, this is how you can load some pcdl data constructs into Matlab and GNU Octave.
+# PhysiCell Data Loader Tutorial: pcdl and the Matlab programming language  <!-- and Octave-->
 
 <!-- bue 20240903: could someone test and update who actuallty knows matlab or octave? -->
+
+[Matlab](https://www.mathworks.com/products/matlab.html)  <!-- / GNU [Octave](https://octave.org/) -->
+is a scientific programming language used by some engineers.
+The earliest predecessor of pcdl was actually a Matlab implementation.
+Coming full circle, this is how you can load some pcdl data constructs into Matlab.  <!-- and GNU Octave -->
 
 
 ## &#x2728; Handle csv files
@@ -22,7 +22,7 @@ pcdl_get_conc_df output
 pcdl_get_cell_df output
 ```
 
-### Load a csv file into Matlab or Octave as a tabel
+### Load a csv file into Matlab as a tabel  <!-- or Octave -->
 
 &#x26A0; **bue 2024-09-22:** the readtable function is not yet implemented in Octave.
 
@@ -51,7 +51,7 @@ pcdl_get_conc_attribute output 2
 pcdl_get_cell_attribute output 2
 ```
 
-### Load json files into Matlab or Octave
+### Load json files into Matlab  <!-- or Octave -->
 
 ```matlab
 struct_conc = jsondecode(fileread("output/timeseries_conc_attribute_minmax.json"))
@@ -72,10 +72,10 @@ cd path/to/PhysiCell
 pcdl_make_graph_gml output/output00000024.xml neighbor --node_attribute cell_type dead oxygen pressure
 ```
 
-### Load gml files into a Matlab or Octave data construct
+### Load gml files into a Matlab data construct  <!-- or Octave -->
 
-We will use the [matlab-igraph](https://www.mathworks.com/matlabcentral/fileexchange/159001-matlab-igraph) toolbox to load gml files into Matlab or Octave.
-+ https://github.com/DavidRConnell/matlab-igraph/releases/tag/v0.2.0
+We will use the [matlab-igraph](https://www.mathworks.com/matlabcentral/fileexchange/159001-matlab-igraph) toolbox to load gml files into Matlab.  <!-- or Octave -->
++ https://github.com/DavidRConnell/matlab-igraph
 + https://igraph.org/
 
 Install matlab-igaph toolbox.
@@ -101,14 +101,14 @@ pcdl_make_conc_vtk output/output00000024.xml
 pcdl_make_cell_vtk output/output00000024.xml
 ```
 
-### Load a vtr and vtp file into Matlab or Octave data construct
+### Load a vtr and vtp file into Matlab data construct  <!-- or Octave -->
 
 + https://www.mathworks.com/matlabcentral/fileexchange/94993-vtktoolbox
 + https://github.com/KIT-IBT/vtkToolbox
 
-Install matlab-igaph toolbox.
+Install vtk toolbox.
 
-Load vtkfile into Matlab or Octave.
+Load vtkfile into Matlab.  <!-- or Octave -->
 
 ```matlab
 output/output00000024_conc.vtr

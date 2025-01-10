@@ -15,7 +15,7 @@
 
 
 # load library
-import aicsimageio
+import aicsimageio  # bioio, bioio_base
 from aicsimageio.writers import OmeTiffWriter
 import matplotlib.pyplot as plt
 from matplotlib import cm
@@ -610,13 +610,16 @@ class pyMCDS:
         tr_x, tr_y, tr_z = self.get_xyz_range()
 
         if (x < tr_x[0]) or (x > tr_x[1]):
-            print(f'Warning @ pyMCDS.is_in_mesh : x = {x} out of bounds: x-range is {tr_x}.')
+            if self.verbose:
+                print(f'Warning @ pyMCDS.is_in_mesh : x = {x} out of bounds: x-range is {tr_x}.')
             b_isinmesh = False
         elif (y < tr_y[0]) or (y > tr_y[1]):
-            print(f'Warning @ pyMCDS.is_in_mesh : y = {y} out of bounds: y-range is {tr_y}.')
+            if self.verbose:
+                print(f'Warning @ pyMCDS.is_in_mesh : y = {y} out of bounds: y-range is {tr_y}.')
             b_isinmesh = False
         elif (z < tr_z[0]) or (z > tr_z[1]):
-            print(f'Warning @ pyMCDS.is_in_mesh : z = {z} out of bounds: z-range is {tr_z}.')
+            if self.verbose:
+                print(f'Warning @ pyMCDS.is_in_mesh : z = {z} out of bounds: z-range is {tr_z}.')
             b_isinmesh = False
 
         # output
@@ -847,7 +850,8 @@ class pyMCDS:
         if not (z_slice is None):
             _, _, ar_p_axis = self.get_mesh_mnp_axis()
             if not (z_slice in ar_p_axis):
-                print(f'Warning @ pyMCDS.get_concentration : specified z_slice {z_slice} is not an element of the z-axis mesh centers set {ar_p_axis}.')
+                if self.verbose:
+                    print(f'Warning @ pyMCDS.get_concentration : specified z_slice {z_slice} is not an element of the z-axis mesh centers set {ar_p_axis}.')
                 if halt:
                     sys.exit('Processing stopped!')
                 else:
@@ -956,7 +960,8 @@ class pyMCDS:
         if not (z_slice is None):
             _, _, ar_p_axis = self.get_mesh_mnp_axis()
             if not (z_slice in ar_p_axis):
-                print(f'Warning @ pyMCDS.get_conc_df : specified z_slice {z_slice} is not an element of the z-axis mesh centers set {ar_p_axis}.')
+                if self.verbose:
+                    print(f'Warning @ pyMCDS.get_conc_df : specified z_slice {z_slice} is not an element of the z-axis mesh centers set {ar_p_axis}.')
                 if halt:
                     sys.exit('Processing stopped!')
                 else:
@@ -1106,7 +1111,7 @@ class pyMCDS:
         """
         # handle initial.svg for s and figsizepx
         if (figsizepx is None):
-            s_pathfile = self.path + 'initial.svg'
+            s_pathfile = self.path + '/initial.svg'
             try:
                 x_tree = etree.parse(s_pathfile)
                 x_root = x_tree.getroot()
@@ -1114,7 +1119,8 @@ class pyMCDS:
                 i_height = int(np.ceil(float(x_root.get('height'))))  # px
                 figsizepx = [i_width, i_height]
             except FileNotFoundError:
-                print(f'Warning @ pyMCDS.plot_contour : could not load {s_pathfile} to auto detect figsizepx. take default.')
+                if self.verbose:
+                    print(f'Warning @ pyMCDS.plot_contour : could not load {s_pathfile} to auto detect figsizepx. take default.')
                 figsizepx = [640, 480]
 
         # handle figure size
@@ -1152,7 +1158,7 @@ class pyMCDS:
         df_conc.sort_values(['mesh_center_m', 'mesh_center_n', 'mesh_center_p'], inplace=True)
 
         # meshgrid shape
-        df_mesh = df_conc.pivot(index='mesh_center_m', columns='mesh_center_n', values=focus)
+        df_mesh = df_conc.pivot(index='mesh_center_n', columns='mesh_center_m', values=focus)
 
         # handle vmin and vmax input
         if (vmin is None):
@@ -1206,7 +1212,7 @@ class pyMCDS:
 
         else:
             # handle output path and filename
-            s_path = f'{self.path}/conc_{focus}_z{round(z_slice,9)}/'
+            s_path = self.path + f'/conc_{focus}_z{round(z_slice,9)}/'
             os.makedirs(s_path, exist_ok=True)
             s_file = self.xmlfile.replace('.xml', f'_{focus}.{ext}')
             s_pathfile = f'{s_path}{s_file}'
@@ -1221,13 +1227,15 @@ class pyMCDS:
             return s_pathfile
 
 
-    def make_conc_vtk(self):
+    def make_conc_vtk(self, visualize=True):
         """
         input:
+            visualize: boolean; default is True
+                additionally, visualize cells using vtk renderer.
 
         output:
             s_vtkpathfile: vtk rectilinear grid file that contains
-            3D distributions of all substrates over the microenvironment.
+                3D distributions of all substrates over the microenvironment.
 
         description:
             function generates a vtk rectilinear grid file that contains
@@ -1242,71 +1250,177 @@ class pyMCDS:
             print(f'processing: {s_vtkfile} ...')
 
         # get microenviornment data frame
-        df_micenv = self.get_conc_df()
-
-        # generate a rectilinear grid
-        vr_grid = vtk.vtkRectilinearGrid()
+        df_conc = self.get_conc_df()
 
         # define dimensions of the grid
-        ti_dim = (df_micenv.loc[:, 'voxel_i'].unique().shape[0], df_micenv.loc[:, 'voxel_j'].unique().shape[0], df_micenv.loc[:, 'voxel_k'].unique().shape[0])
+        ti_dim = (
+            self.get_voxel_ijk_range()[0][1] + 1,
+            self.get_voxel_ijk_range()[1][1] + 1,
+            self.get_voxel_ijk_range()[2][1] + 1,
+        )
 
-        # define coordinates for the grid
-        vf_x = vtk.vtkFloatArray()
-        vf_y = vtk.vtkFloatArray()
-        vf_z = vtk.vtkFloatArray()
+        # generate a rectilinear grid
+        vrg_data = vtk.vtkRectilinearGrid()
 
-        # assign coordinates for the grid
-        vf_x.SetNumberOfTuples(ti_dim[0])
-        vf_y.SetNumberOfTuples(ti_dim[1])
-        vf_z.SetNumberOfTuples(ti_dim[2])
+        # generate and populate coordinates for the grid
+        vfa_x = vtk.vtkFloatArray()
+        vfa_y = vtk.vtkFloatArray()
+        vfa_z = vtk.vtkFloatArray()
+        vfa_x.SetNumberOfTuples(ti_dim[0])
+        vfa_y.SetNumberOfTuples(ti_dim[1])
+        vfa_z.SetNumberOfTuples(ti_dim[2])
 
-        # populate the coordinates
-        for m, x in enumerate(sorted(df_micenv.loc[:, 'mesh_center_m'].unique())):
-            vf_x.SetValue(m, x)
+        for i, m in enumerate(self.get_mesh_mnp_axis()[0]):
+            vfa_x.SetValue(i, m)
 
-        for n, y in enumerate(sorted(df_micenv.loc[:, 'mesh_center_n'].unique())):
-            vf_y.SetValue(n, y)
+        for j, n in enumerate(self.get_mesh_mnp_axis()[1]):
+            vfa_y.SetValue(j, n)
 
-        for p, z in enumerate(sorted(df_micenv.loc[:, 'mesh_center_p'].unique())):
-            vf_z.SetValue(p, z)
+        for k, p in enumerate(self.get_mesh_mnp_axis()[2]):
+            vfa_z.SetValue(k, p)
 
-        # grid dimensions
-        vr_grid.SetDimensions(ti_dim)
-        vr_grid.SetXCoordinates(vf_x)
-        vr_grid.SetYCoordinates(vf_y)
-        vr_grid.SetZCoordinates(vf_z)
+        # generate and populate grid dimensions
+        vrg_data.SetDimensions(ti_dim)
+        vrg_data.SetXCoordinates(vfa_x)
+        vrg_data.SetYCoordinates(vfa_y)
+        vrg_data.SetZCoordinates(vfa_z)
 
-        # loop over substartes to fill rectilinear grid
+        # loop over substartes to populate rectilinear grid
         b_first = True
         for s_substrate in self.get_substrate_list():
-            vf_values = vtk.vtkFloatArray()
-            vf_values.SetNumberOfComponents(1)
-            vf_values.SetNumberOfTuples(ti_dim[0] * ti_dim[1] * ti_dim[2])
-            vf_values.SetName(s_substrate)  # set the name of the array
+            vfa_value = vtk.vtkFloatArray()
+            vfa_value.SetNumberOfComponents(1)
+            vfa_value.SetNumberOfTuples(ti_dim[0] * ti_dim[1] * ti_dim[2])
+            vfa_value.SetName(s_substrate)
 
             # populate the substrate values
             for k in range(ti_dim[2]):
                 for j in range(ti_dim[1]):
                     for i in range(ti_dim[0]):
                         i_index = i + ti_dim[0] * (j + ti_dim[1] * k)
-                        r_conc = df_micenv.loc[
-                            (df_micenv.loc[:,'voxel_k'] == k) & (df_micenv.loc[:,'voxel_j'] == j) & (df_micenv.loc[:,'voxel_i'] == i),
+                        r_conc = df_conc.loc[
+                            (df_conc.loc[:,'voxel_k'] == k) & (df_conc.loc[:,'voxel_j'] == j) & (df_conc.loc[:,'voxel_i'] == i),
                             s_substrate
-                        ]
-                        vf_values.SetValue(i_index, r_conc)  # bue 20240821: FutureWarning: Calling float on a single element Series is deprecated and will raise a TypeError in the future. Use float(ser.iloc[0]) instead.
+                        ].values[0]
+                        #vfa_value.InsertNextValue(r_conc)
+                        vfa_value.SetValue(i_index, r_conc)
             if b_first:
-                vr_grid.GetPointData().SetScalars(vf_values)
+                #vrg_data.GetCellData().SetScalars(vfa_value)
+                vrg_data.GetPointData().SetScalars(vfa_value)
                 b_first = False
             else:
-                vr_grid.GetPointData().AddArray(vf_values)
-            del vf_values
+                #vrg_data.GetCellData().AddArray(vfa_value)
+                vrg_data.GetPointData().AddArray(vfa_value)
+
+            # visualize on the fly
+            if (visualize):
+                # get scalar range
+                r_vmin = np.floor(df_conc.loc[:, s_substrate].min())
+                r_vmax = np.ceil(df_conc.loc[:, s_substrate].max())
+
+                # generate the structured grid.
+                vsp_data = vtk.vtkStructuredPoints()
+                vsp_data.SetDimensions(ti_dim[0]+1, ti_dim[1]+1, ti_dim[2]+1)
+                vsp_data.SetSpacing(
+                    self.get_voxel_spacing()[0],
+                    self.get_voxel_spacing()[1],
+                    self.get_voxel_spacing()[2],
+                )
+                vsp_data.SetOrigin(
+                    self.get_mesh_mnp_range()[0][0],
+                    self.get_mesh_mnp_range()[1][0],
+                    self.get_mesh_mnp_range()[2][0],
+                )  # lower-left-front point of domain bounding box
+
+                # mapp grid and values
+                vdsm_data = vtk.vtkDataSetMapper()
+                vsp_data.GetCellData().SetScalars(vfa_value)
+                vdsm_data.SetInputData(vsp_data)
+                vdsm_data.Update()
+                vdsm_data.SetScalarRange(r_vmin, r_vmax)
+                vdsm_data.SetScalarModeToUseCellData()
+
+                # build VTKLooktupTable (color scheme)
+                vlt_color = vtk.vtkLookupTable()
+                vlt_color.SetNumberOfTableValues(256)
+                vlt_color.SetHueRange(0.667, 0.0)  # blue-to-red rainbow
+                vlt_color.Build()
+
+                # generate xy cutting plane actor
+                vp_canvas = vtk.vtkPlane()
+                vp_canvas.SetOrigin(0, 0, 0) # xyz
+                vp_canvas.SetNormal(0, 0, 1)
+
+                vc_canvas = vtk.vtkCutter()
+                vc_canvas.SetInputData(vsp_data)
+                vc_canvas.SetCutFunction(vp_canvas)
+                vc_canvas.GeneratePolygons = 1
+
+                vpdm_canvas = vtk.vtkPolyDataMapper()
+                vpdm_canvas.SetInputConnection(vc_canvas.GetOutputPort())
+                vpdm_canvas.ScalarVisibilityOn()
+                vpdm_canvas.SetScalarRange(r_vmin, r_vmax)
+                vpdm_canvas.SetLookupTable(vlt_color)
+                vpdm_canvas.SetScalarModeToUseCellData()
+
+                va_canvas = vtk.vtkActor()
+                va_canvas.SetMapper(vpdm_canvas)
+                va_canvas.GetProperty().EdgeVisibilityOn()
+
+                # generate outline actor
+                vof_frame = vtk.vtkOutlineFilter()
+                vof_frame.SetInputData(vsp_data)
+
+                vpdm_frame = vtk.vtkPolyDataMapper()
+                vpdm_frame.SetInputConnection(vof_frame.GetOutputPort())
+
+                va_frame = vtk.vtkActor()
+                va_frame.SetMapper(vpdm_frame)
+                va_frame.GetProperty().SetColor(1, 1, 1)
+
+                # generate scalar bar actor
+                vsba_spectrum = vtk.vtkScalarBarActor()
+                vsba_spectrum.SetTitle(s_substrate)
+                vsba_spectrum.GetPositionCoordinate().SetCoordinateSystemToNormalizedViewport()
+                vsba_spectrum.GetPositionCoordinate().SetValue(0.1, 0.01)
+                vsba_spectrum.SetOrientationToHorizontal()
+                vsba_spectrum.SetWidth(0.8)
+                vsba_spectrum.SetHeight(0.1)
+                vsba_spectrum.GetProperty().SetColor(0, 0, 0)
+                vsba_spectrum.GetTitleTextProperty().SetColor(0, 0, 0)
+                vsba_spectrum.GetTitleTextProperty().SetFontSize(22)
+                vsba_spectrum.SetLookupTable(vpdm_canvas.GetLookupTable())
+
+                # do render setup
+                ren = vtk.vtkRenderer()
+                renWin = vtk.vtkRenderWindow()
+                renWin.AddRenderer(ren)
+                renWin.SetSize(800, 600)
+                iren = vtk.vtkRenderWindowInteractor()
+                iren.SetRenderWindow(renWin)
+
+                # add the actor to the renderer
+                #ren.ResetCamera()
+                ren.SetBackground(1/3, 1/3, 1/3) # gray
+                ren.AddActor(va_canvas)
+                ren.AddActor(va_frame)
+                ren.AddActor2D(vsba_spectrum)
+
+                # render
+                iren.Initialize()
+                renWin.Render()
+                iren.Start()
+
+            # free memory
+            del vfa_value
 
         # save vtk file
         s_vtkpathfile = self.path + '/' + s_vtkfile
         vw_writer = vtk.vtkXMLRectilinearGridWriter()
         vw_writer.SetFileName(s_vtkpathfile)
-        vw_writer.SetInputData(vr_grid)
+        vw_writer.SetInputData(vrg_data)
         vw_writer.Write()
+
         return s_vtkpathfile
 
 
@@ -1698,7 +1812,8 @@ class pyMCDS:
                         r_radius = float(circle_element.get('r')) # px
                         s = int(round((r_radius)**2))
                     else:
-                        print(f'Warning @ pyMCDSts.plot_scatter : these agents are not circles.')
+                        if self.verbose:
+                            print(f'Warning @ pyMCDSts.plot_scatter : these agents are not circles.')
                         s = plt.rcParams['lines.markersize']**2
                     if self.verbose:
                         print(f's set to {s}.')
@@ -1707,7 +1822,8 @@ class pyMCDS:
                     i_height = int(np.ceil(float(x_root.get('height'))))  # px
                     figsizepx = [i_width, i_height]
             except FileNotFoundError:
-                print(f'Warning @ pyMCDSts.plot_scatter : could not load {s_pathfile}.')
+                if self.verbose:
+                    print(f'Warning @ pyMCDSts.plot_scatter : could not load {s_pathfile}.')
                 if s is None:
                     s = plt.rcParams['lines.markersize']**2
                     if self.verbose:
@@ -1782,7 +1898,7 @@ class pyMCDS:
         else:
             fig = plt.gcf()
 
-        # layout the canavas
+        # layout the canvas
         if xyequal:
             ax.axis('equal')
 
@@ -1848,7 +1964,7 @@ class pyMCDS:
 
         else:
             # handle output path and filename
-            s_path = f'{self.path}/cell_{focus}_z{round(z_slice,9)}/'
+            s_path = self.path + f'/cell_{focus}_z{round(z_slice,9)}/'
             os.makedirs(s_path, exist_ok=True)
             s_file = self.xmlfile.replace('.xml', f'_{focus}.{ext}')
             s_pathfile = f'{s_path}{s_file}'
@@ -1896,103 +2012,99 @@ class pyMCDS:
         df_cell = df_cell.reset_index()
 
         # generate VTK instances to fill for positions and radii
-        vp_points = vtkPoints()
-        vf_radii = vtk.vtkFloatArray()
-        vf_radii.SetName('radius')
+        vp_points = vtk.vtkPoints()
+        vfa_radii = vtk.vtkFloatArray()
+        vfa_radii.SetName('radius')
 
         # fill VTK instance with positions and radii
         for i in df_cell.index:
-            vp_points.InsertNextPoint(df_cell.loc[i, 'position_x'], df_cell.loc[i, 'position_y'], df_cell.loc[i, 'position_z'])
-            vf_radii.InsertNextValue(df_cell.loc[i, 'radius'])
+            vp_points.InsertNextPoint(
+                df_cell.loc[i, 'position_x'],
+                df_cell.loc[i, 'position_y'],
+                df_cell.loc[i, 'position_z']
+            )
+            vfa_radii.InsertNextValue(df_cell.loc[i, 'radius'])
 
         # generate data instances
-        vf_data = vtk.vtkFloatArray()
-        vf_data.SetNumberOfComponents(2)
-        vf_data.SetNumberOfTuples(df_cell.shape[0])
-        vf_data.CopyComponent(0, vf_radii, 0)
-        vf_data.SetName('positions_and_radii')
+        vfa_data = vtk.vtkFloatArray()
+        vfa_data.SetNumberOfComponents(2)
+        vfa_data.SetNumberOfTuples(df_cell.shape[0])
+        vfa_data.CopyComponent(0, vfa_radii, 0)
+        vfa_data.SetName('positions_and_radii')
 
         # generate unstructred grid for data
-        vu_grid = vtk.vtkUnstructuredGrid()
-        vu_grid.SetPoints(vp_points)
-        vu_grid.GetPointData().AddArray(vf_data)
-        vu_grid.GetPointData().SetActiveScalars('positions_and_radii')
+        vug_data = vtk.vtkUnstructuredGrid()
+        vug_data.SetPoints(vp_points)
+        vug_data.GetPointData().AddArray(vfa_data)
+        vug_data.GetPointData().SetActiveScalars('positions_and_radii')
 
         # fill this grid with given attributes
         for s_attribute in attribute:
             b_bool = False
             if (df_cell.loc[:, s_attribute].dtype == bool):  #in {bool, np.bool_, np.bool}):
                 b_bool = True
-                custom_data_vtk = vtk.vtkStringArray()
-                custom_data_vtk.SetName(s_attribute)
+                voa_data = vtk.vtkStringArray()
             elif (df_cell.loc[:, s_attribute].dtype == str) or  (df_cell.loc[:, s_attribute].dtype == np.object_):  # in {str, np.str_, np.object_}):
-                custom_data_vtk = vtk.vtkStringArray()
-                custom_data_vtk.SetName(s_attribute)
+                voa_data = vtk.vtkStringArray()
             elif (df_cell.loc[:, s_attribute].dtype == int) or (df_cell.loc[:, s_attribute].dtype == float):  # in {int, np.int_, np.int8, np.int16, np.int32, np.int64, float, np.float16, np.float32, np.float64, np.float128}):
-                custom_data_vtk = vtk.vtkFloatArray()
-                custom_data_vtk.SetName(s_attribute)
+                voa_data = vtk.vtkFloatArray()
             else:
                 sys.exit(f'Error @ pyMCDS.make_cell_vtk : {s_attribute} {df_cell.loc[:, s_attribute].dtype} unknown df_cell column data type.')
 
+            voa_data.SetName(s_attribute)
             for i in df_cell.index:
                 if b_bool:
                     if (df_cell.loc[i, s_attribute]):
-                        custom_data_vtk.InsertNextValue('True')
+                        voa_data.InsertNextValue('True')
                     else:
-                        custom_data_vtk.InsertNextValue('False')
+                        voa_data.InsertNextValue('False')
                 else:
-                    custom_data_vtk.InsertNextValue(df_cell.loc[i, s_attribute])
+                    voa_data.InsertNextValue(df_cell.loc[i, s_attribute])
 
-            vu_grid.GetPointData().AddArray(custom_data_vtk)
-            del custom_data_vtk
+            vug_data.GetPointData().AddArray(voa_data)
+            del voa_data
 
         # generate sphere source
-        vsp_sphere = vtk.vtkSphereSource()
-        vsp_sphere.SetRadius(1.0)
-        vsp_sphere.SetPhiResolution(16)
-        vsp_sphere.SetThetaResolution(32)
+        vss_data = vtk.vtkSphereSource()
+        vss_data.SetRadius(1.0)
+        vss_data.SetPhiResolution(16)
+        vss_data.SetThetaResolution(32)
 
         # generate Glyph to save
-        vg_glyph = vtk.vtkGlyph3D()
-        vg_glyph.SetInputData(vu_grid)
-        vg_glyph.SetSourceConnection(vsp_sphere.GetOutputPort())
+        vg_data = vtk.vtkGlyph3D()
+        vg_data.SetInputData(vug_data)
+        vg_data.SetSourceConnection(vss_data.GetOutputPort())
 
         # define important preferences for VTK
-        vg_glyph.ClampingOff()
-        vg_glyph.SetScaleModeToScaleByScalar()
-        vg_glyph.SetScaleFactor(1.0)
-        vg_glyph.SetColorModeToColorByScalar()
-        vg_glyph.Update()
-
-        # write VTK
-        s_vtkpathfile = self.path + '/' + s_vtkfile
-        vw_writer = vtk.vtkXMLPolyDataWriter()
-        vw_writer.SetFileName(s_vtkpathfile)
-        vw_writer.SetInputData(vg_glyph.GetOutput())
-        vw_writer.Write()
+        vg_data.ClampingOff()
+        vg_data.SetScaleModeToScaleByScalar()
+        vg_data.SetScaleFactor(1.0)
+        vg_data.SetColorModeToColorByScalar()
+        vg_data.Update()
 
         # visualize
         if (visualize):
             # set up the mapper
-            mapper = vtk.vtkPolyDataMapper()
-            #mapper.SetInput(glyph.GetOutput())
-            mapper.SetInputConnection(vg_glyph.GetOutputPort())
-            mapper.ScalarVisibilityOn()
-            mapper.ColorByArrayComponent('data', 1)
+            vpdm_data = vtk.vtkPolyDataMapper()
+            vpdm_data.SetInputConnection(vg_data.GetOutputPort())
+            vpdm_data.ScalarVisibilityOn()
+            #vpdm_data.ColorByArrayComponent(s_attribute, 0) # bue 20250110: not working and legacy better to do this in the lookup table.
 
             # set up the actor
             actor = vtk.vtkActor()
-            actor.SetMapper(mapper)
+            actor.SetMapper(vpdm_data)
 
-            # do renderer setup stuff
+            # do renderer setup
             ren = vtk.vtkRenderer()
             renWin = vtk.vtkRenderWindow()
             renWin.AddRenderer(ren)
-            renWin.SetSize(640, 480)
+            renWin.SetSize(800, 600)
             iren = vtk.vtkRenderWindowInteractor()
             iren.SetRenderWindow(renWin)
 
             # add the actor to the renderer
+            #ren.ResetCamera()
+            ren.SetBackground(1/3, 1/3, 1/3) # gray
             ren.AddActor(actor)
 
             # render
@@ -2000,21 +2112,41 @@ class pyMCDS:
             renWin.Render()
             iren.Start()
 
+        # write VTK
+        s_vtkpathfile = self.path + '/' + s_vtkfile
+        vw_writer = vtk.vtkXMLPolyDataWriter()
+        vw_writer.SetFileName(s_vtkpathfile)
+        vw_writer.SetInputData(vg_data.GetOutput())
+        vw_writer.Write()
+
         return s_vtkpathfile
 
 
     ## MICROENVIRONMENT AND CELL AGENT RELATED FUNCTIONS ##
 
-    def make_ome_tiff(self, cell_attribute='ID', file=True):
+    def make_ome_tiff(self, cell_attribute='ID', conc_cutoff={}, focus=None, file=True):
         """
         input:
-            cell_attribute: strings; default is 'ID', which will result in a segmentation mask.
-                column name within cell dataframe.
-                the column data type has to be numeric (bool, int, float) and can't be string.
+            cell_attribute: strings; default is 'ID', which will result in a
+                cell segmentation mask.
+                column name within the cell dataframe.
+                the column data type has to be numeric (bool, int, float)
+                and cannot be string.
+                the result will be stored as 32 bit float.
+
+            conc_cutoff: dictionary string to real; default is an empty dictionary.
+                if a contour from a substrate not should be cut by greater
+                than zero (shifted to integer 1), another cutoff value can be
+                specified here.
+
+            focus: set of strings; default is a None
+                set of substrate and cell_type names to specify what will be
+                translated into ome tiff format.
+                if None, all substrates and cell types will be processed.
 
             file: boolean; default True
-                if True, an ome tiff file is output.
-                if False, a numpy array with shape czyx is output.
+                if True, an ome tiff file is the output.
+                if False, a numpy array with shape czyx is the output.
 
         output:
             a_czyx_img: numpy array or ome tiff file.
@@ -2033,7 +2165,16 @@ class pyMCDS:
             https://napari.org/stable/
             https://fiji.sc/
         """
-        # bue jenny: 20240904: a 16[bit] ome.tiff is good enough!
+        # handle channels
+        ls_substrate = self.get_substrate_list()
+        ls_celltype = self.get_celltype_list()
+
+        if not (focus is None):
+            ls_substrate = [s_substrate for s_substrate in ls_substrate if s_substrate in set(focus)]
+            ls_celltype = [s_celltype for s_celltype in ls_celltype if s_celltype in set(focus)]
+            if (set(focus) != set(ls_substrate).union(set(ls_celltype))):
+                sys.exit(f'Error : {focus} not found in {ls_substrate} {ls_celltype}')
+
         # const
         ls_coor_mnp = ['mesh_center_m', 'mesh_center_n', 'mesh_center_p'] # xyz
         ls_coor_xyz = ['position_x', 'position_y', 'position_z'] # xyz
@@ -2052,71 +2193,65 @@ class pyMCDS:
         df_coor = pd.DataFrame(lll_coor, columns=ls_coor[:2])
         lr_axis_z[-1] += 1
 
-        # get ordered substrate listing
-        ls_substrate = self.get_substrate_list()
-
-        # get substrate dataframe
-        df_conc = self.get_conc_df()
-
         # extract voxel radius
-        i_conc_grow = int(np.round(np.mean(self.get_voxel_spacing()[:2])) - 1)
+        di_grow = {}
+        for s_substarte in ls_substrate:
+            di_grow.update({
+                s_substarte : int(np.round(np.mean(self.get_voxel_spacing()[:2])) - 1)
+            })
 
-        # extract input from data frame
+        # get and shift substrate xy data
+        df_conc = self.get_conc_df()
         df_conc = df_conc.loc[:, ls_coor_mnp + ls_substrate]
-
-        # shift substrate xy data
         df_conc.loc[:, 'mesh_center_m'] = (df_conc.loc[:, 'mesh_center_m'] - self.get_xyz_range()[0][0]).round()
         df_conc.loc[:, 'mesh_center_n'] = (df_conc.loc[:, 'mesh_center_n'] - self.get_xyz_range()[1][0]).round()
-
-        # relabel and retype xyz coordiantes
         df_conc.rename({'mesh_center_m':'voxel_x', 'mesh_center_n':'voxel_y', 'mesh_center_p':'voxel_z'}, axis=1, inplace=True)
         df_conc = df_conc.astype({'voxel_x': int, 'voxel_y': int, 'voxel_z': float})
+        # level the cake
+        for s_channel in conc_cutoff.keys():
+            try:
+                df_conc.loc[:, s_channel] = df_conc.loc[:, s_channel] - conc_cutoff[s_channel]  + 1  # positive values starting at > 0
+                df_conc.loc[(df_conc.loc[:, s_channel] <= conc_cutoff[s_channel]), s_channel] = 0
+            except KeyError:
+                pass
 
-        # get ordered cell type listing
-        ls_celltype = self.get_celltype_list()
 
-        # get cell dataframe
+        # get cell data
         df_cell = self.get_cell_df().reset_index()
 
         # extract cell radius
-        di_cell_grow = {}
         for s_celltype in ls_celltype:
             try:
                 i_cell_grow = int(round(df_cell.loc[(df_cell.cell_type == s_celltype), 'radius'].mean()) - 1)
             except:
                 i_cell_grow = 0
-            di_cell_grow.update({s_celltype: i_cell_grow})
+            di_grow.update({s_celltype : i_cell_grow})
 
-        # extract and manipulate input from dataframe
+        # filter and shift
         df_cell = df_cell.loc[:, ls_coor_xyz + ['cell_type', cell_attribute]]
-
-        # manipulate cell_attribute value
         if (cell_attribute == 'cell_type'):
-            sys.exit(f'Error @ pyMCDS.make_ome_tiff : cell_attribute can not be cell_type.')
+            sys.exit(f'Error @ pyMCDS.make_ome_tiff : cell_attribute cannot be cell_type.')
         elif (df_cell.loc[:, cell_attribute].dtype == str) or (df_cell.loc[:, cell_attribute].dtype == np.object_):  # in {str, np.str_, np.object_}):
-            sys.exit(f'Error @ pyMCDS.make_ome_tiff : {cell_attribute} {df_cell.loc[:, cell_attribute].dtype} cell_attribute can not be string or object. cell_attribute has to be boolean, integer, or float.')
+            sys.exit(f'Error @ pyMCDS.make_ome_tiff : {cell_attribute} {df_cell.loc[:, cell_attribute].dtype} cell_attribute cannot be string or object. cell_attribute has to be boolean, integer, or float.')
         elif (df_cell.loc[:, cell_attribute].dtype == bool): # in {bool, np.bool_, np.bool}):
             df_cell = df_cell.astype({cell_attribute: int})
-        df_cell.loc[:, cell_attribute] = df_cell.loc[:, cell_attribute] - df_cell.loc[:, cell_attribute].min() + 1  # positive values starting at 1
+        df_cell.loc[:, 'position_x'] = (df_cell.loc[:, 'position_x'] - self.get_xyz_range()[0][0]).round()
+        df_cell.loc[:, 'position_y'] = (df_cell.loc[:, 'position_y'] - self.get_xyz_range()[1][0]).round()
+        df_cell.rename({'position_x':'voxel_x', 'position_y':'voxel_y', 'position_z':'voxel_z'}, axis=1, inplace=True)
+        df_cell = df_cell.astype({'voxel_x': int, 'voxel_y': int, 'voxel_z': float})
+        # level the cake
+        df_cell.loc[:, cell_attribute] = df_cell.loc[:, cell_attribute] -  df_cell.loc[:, cell_attribute].min()  + 1  # positive values starting at > 0
 
         # check for duplicates: two cell at exactelly the same xyz position.
-        if self.verbose and df_cell.loc[:,['position_x', 'position_y', 'position_z']].duplicated().any():
-            df_duplicate = df_cell.loc[(df_cell.loc[:, ['position_x', 'position_y', 'position_z']].duplicated()), :]
-            print(f"Warning @ pyMCDS.make_ome_tiff : {df_duplicate} cells at exactely the same xyz position detected!")
+        #if self.verbose and df_cell.loc[:,['voxel_x', 'voxel_y', 'voxel_z']].duplicated().any():
+        #    df_duplicate = df_cell.loc[(df_cell.loc[:, ['voxel_x', 'voxel_y', 'voxel_z']].duplicated()), :]
+        #    sys.exit(f"Error @ pyMCDS.make_ome_tiff : {df_duplicate} cells at exactely the same xyz voxel position detected. cannot pivot!")
 
         # pivot cell_type
-        df_cell = df_cell.pivot_table(index=ls_coor_xyz, columns='cell_type', values=cell_attribute, aggfunc='sum').reset_index()  # fill_value is na
+        df_cell = df_cell.pivot_table(index=ls_coor, columns='cell_type', values=cell_attribute, aggfunc='sum').reset_index()  # fill_value is na
         for s_celltype in ls_celltype:
             if not s_celltype in set(df_cell.columns):
                df_cell[s_celltype] = 0
-
-        # shift cell position xy data
-        df_cell.loc[:, 'position_x'] = (df_cell.loc[:, 'position_x'] - self.get_xyz_range()[0][0]).round()
-        df_cell.loc[:, 'position_y'] = (df_cell.loc[:, 'position_y'] - self.get_xyz_range()[1][0]).round()
-
-        # relabel and retype xyz coordiantes
-        df_cell.rename({'position_x':'voxel_x', 'position_y':'voxel_y', 'position_z':'voxel_z'}, axis=1, inplace=True)
-        df_cell = df_cell.astype({'voxel_x': int, 'voxel_y': int, 'voxel_z': float})
 
         # each C channel - time step tensors
         la_czyx_img = []
@@ -2129,7 +2264,7 @@ class pyMCDS:
             elif s_channel in set(ls_celltype):
                 df_channel = df_cell.loc[:, ls_coor + [s_channel]]
             else:
-                sys.exit(f'Error @ pyMCDS.make_ome_tiff : {s_channel} unknowen channel detected. not in substrate and cell type list!')
+                sys.exit(f'Error @ pyMCDS.make_ome_tiff : {s_channel} unknown channel detected. not in substrate and cell type list {ls_substrate} {ls_celltype}!')
 
             # each z axis
             la_zyx_img = []
@@ -2149,24 +2284,27 @@ class pyMCDS:
                     # merge with coooridnates and get image
                     # bue 20240811: df_coor left side merge will cut off reset cell that are out of the xyz domain range, which is what we want.
                     df_yxchannel = pd.merge(df_coor, df_yxchannel, on=ls_coor[:2], how='left').replace({np.nan: 0})
-                    df_yxchannel = df_yxchannel.pivot(columns=ls_coor[0], index=ls_coor[1], values=s_channel)
+                    try:
+                        df_yxchannel = df_yxchannel.pivot(columns=ls_coor[0], index=ls_coor[1], values=s_channel)
+                    except ValueError:  # two cells from the same cell type very close to each other detetced.
+                        if self.verbose:
+                            df_duplicate = df_cell.loc[(df_yxchannel.loc[:, ['voxel_x', 'voxel_y']].duplicated()), :]
+                            print(f'Warning: {s_channel} {df_duplicate} cells within 1[um] distance form each detected. cannot pivot. erase cell type from this timestep.')
+                        df_yxchannel.loc[:,s_channel] = 0  # erase cells
+                        df_yxchannel = df_yxchannel.drop_duplicates()
+                        df_yxchannel = df_yxchannel.pivot(columns=ls_coor[0], index=ls_coor[1], values=s_channel)
                     a_yx_img = df_yxchannel.values
 
                     # grow
-                    if s_channel in set(ls_substrate):
-                        a_yx_img = imagine.grow(a_yx_img, i_step=i_conc_grow, b_verbose=False)
-                    elif s_channel in set(ls_celltype):
-                        a_yx_img = imagine.grow_seed(a_yx_img, i_step=di_cell_grow[s_channel], b_verbose=False)
-                    else:
-                        sys.exit(f'Error @ pyMCDS.make_ome_tiff : {s_channel} unknowen channel detected. not in substrate and cell type list!')
+                    a_yx_img = imagine.grow_seed(a_yx_img, i_step=di_grow[s_channel], b_verbose=False)
 
                     # update output
                     la_zyx_img.append(a_yx_img)
-            a_zyx_img = np.array(la_zyx_img)
-            la_czyx_img.append(np.array(a_zyx_img))
+            a_zyx_img = np.array(la_zyx_img, np.float32)
+            la_czyx_img.append(np.array(a_zyx_img, np.float32))
 
         # output
-        a_czyx_img = np.array(la_czyx_img)
+        a_czyx_img = np.array(la_czyx_img, dtype=np.float32)
 
         # numpy array
         if not file:
@@ -2174,10 +2312,23 @@ class pyMCDS:
 
         # write to file
         else:
-            s_tifffile = self.xmlfile.replace('.xml', f'_{cell_attribute}.ome.tiff')
-            s_tiffpathfile = self.path + '/' + s_tifffile
             if self.verbose:
                 print('a_czyx_img shape:', a_czyx_img.shape)
+            # generate filename
+            s_channel = ''
+            for s_substrate in ls_substrate:
+                try:
+                    r_value = conc_cutoff[s_substrate]
+                    s_channel += f'_{s_substrate}{r_value}'
+                except KeyError:
+                    s_channel += f'_{s_substrate}'
+            for s_celltype in ls_celltype:
+                s_channel += f'_{s_celltype}'
+            if len(ls_celltype) > 0:
+                s_channel += f'_{cell_attribute}'
+            s_tifffile = self.xmlfile.replace('.xml', f'{s_channel}.ome.tiff')
+            s_tiffpathfile = self.path + '/' + s_tifffile
+            # save to file
             OmeTiffWriter.save(
                 a_czyx_img,
                 s_tiffpathfile,
@@ -2185,7 +2336,7 @@ class pyMCDS:
                 #ome_xml=x_img,
                 channel_names = ls_channel,
                 image_names = [s_tifffile.replace('.ome.tiff','')],
-                physical_pixel_sizes = aicsimageio.types.PhysicalPixelSizes(self.get_voxel_spacing()[2], 1.0, 1.0), #z,y,x [um]
+                physical_pixel_sizes = aicsimageio.types.PhysicalPixelSizes(self.get_voxel_spacing()[2], 1.0, 1.0),  # z,y,x [um]
                 #channel_colors=,
                 #fs_kwargs={},
             )
@@ -2222,6 +2373,20 @@ class pyMCDS:
         return self.data['discrete_cells']['graph']['neighbor_cells']
 
 
+    def get_spring_graph_dict(self):
+        """
+        input:
+
+        output:
+            dei_graph: dictionary of sets of integers
+                maps each cell ID to the attached connected cell IDs.
+
+        description:
+            function returns the attached spring cell graph as a dictionary object.
+        """
+        return self.data['discrete_cells']['graph']['spring_attached_cells']
+
+
     def make_graph_gml(self, graph_type, edge_attribute=True, node_attribute=[]):
         """
         input:
@@ -2229,6 +2394,7 @@ class pyMCDS:
                 to specify which physicell output data should be processed.
                 neighbor, touch: processes mcds.get_neighbor_graph_dict dictionary.
                 attached: processes mcds.get_attached_graph_dict dictionary.
+                spring: processes mcds.get_spring_graph_dict dictionary.
 
             edge_attribute: boolean; default True
                 specifies if the spatial Euclidean distance is used for
@@ -2265,10 +2431,12 @@ class pyMCDS:
             dei_graph = self.get_attached_graph_dict()
         elif (graph_type in {'neighbor', 'touch'}):
             dei_graph = self.get_neighbor_graph_dict()
+        elif (graph_type in {'spring'}):
+            dei_graph = self.get_spring_graph_dict()
         #elif (graph_type in {'evo','devo','lineage'}):
         #    dei_graph = self.get_lineage_graph_dict()
         else:
-            sys.exit(f'Erro @ make_graph_gml : unknowen graph_type {graph_type}. knowen are attached, neighbor, and touch.')
+            sys.exit(f'Erro @ make_graph_gml : unknown graph_type {graph_type}. known are attached, neighbor, spring, and touch.')
 
         # generate filename
         s_gmlpathfile = self.path + '/' + self.xmlfile.replace('.xml',f'_{graph_type}.gml')
@@ -2348,6 +2516,10 @@ class pyMCDS:
             ls_xmlfile = xmlfile.split('/')
             s_xmlfile = ls_xmlfile.pop(-1)
             output_path = '/'.join(ls_xmlfile)
+        while (output_path.find('//') > -1):
+            output_path = output_path.replace('//','/')
+        if (output_path.endswith('/')) and (len(output_path) > 1):
+            output_path = output_path[:-1]
         self.path = output_path
         self.xmlfile = s_xmlfile
 
@@ -2681,7 +2853,8 @@ class pyMCDS:
             if self.verbose:
                 print(f'reading: {s_cellpathfile}')
         except ValueError:  # hack: some old PhysiCell versions generates a corrupt cells.mat file, if there are zero cells.
-            print(f'Warning @ pyMCDS._read_xml : corrupt {s_cellpathfile} detected!\nassuming time step with zero cells because of a known bug in PhysiCell MultiCellDS version 0.5 output.')
+            if self.verbose:
+                print(f'Warning @ pyMCDS._read_xml : corrupt {s_cellpathfile} detected!\nassuming time step with zero cells because of a known bug in PhysiCell MultiCellDS version 0.5 output.')
             ar_cell = np.empty([len(ls_variable),0])
 
         # check for column label mapping error (as good as it gets)
@@ -2708,6 +2881,7 @@ class pyMCDS:
         d_mcds['discrete_cells']['graph'] = {}
         d_mcds['discrete_cells']['graph'].update({'neighbor_cells': {}})
         d_mcds['discrete_cells']['graph'].update({'attached_cells': {}})
+        d_mcds['discrete_cells']['graph'].update({'spring_attached_cells': {}})
 
         if self.graph:
             if self.verbose:
@@ -2731,6 +2905,18 @@ class pyMCDS:
             # store data
             d_mcds['discrete_cells']['graph'].update({'attached_cells': dei_graph})
 
+            # spring attached cell graph
+            try:
+                s_cellpathfile = self.path + '/' + x_cell.find('spring_attached_cells_graph').find('filename').text
+                dei_graph = graphfile_parser(s_pathfile=s_cellpathfile)
+                if self.verbose:
+                    print(f'reading: {s_cellpathfile}')
+
+                # store data
+                d_mcds['discrete_cells']['graph'].update({'spring_attached_cells': dei_graph})
+            except AttributeError:
+                pass
+
 
         #########################
         # handle physiboss data #
@@ -2744,7 +2930,7 @@ class pyMCDS:
 
             # intracellular file (hack because this is not yet in output.xml)
             df_physiboss = None
-            s_intracellpathfile = self.path + '/' + f'states_{self.xmlfile.replace("output","").replace(".xml",".csv")}'
+            s_intracellpathfile = self.path + f'/states_{self.xmlfile.replace("output","").replace(".xml",".csv")}'
             if os.path.exists(s_intracellpathfile):
                 if self.verbose:
                     print(f'reading: {s_intracellpathfile}')
@@ -2761,8 +2947,11 @@ class pyMCDS:
                 for s_node in sorted(es_node):
                     df_physiboss[f'node_{s_node}'] = df_physiboss.state.str.find(s_node) > -1
 
-            else:
+            elif self.verbose:
                 print(f'Warning @ pyMCDS._read_xml : physiboss file missing {s_intracellpathfile}.')
+
+            else:
+                pass
 
             # store data
             d_mcds['discrete_cells']['physiboss'] = df_physiboss

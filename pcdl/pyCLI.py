@@ -71,6 +71,10 @@ def get_version():
 
     # process arguments
     s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
     s_pathfile = s_path
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
@@ -139,6 +143,10 @@ def get_unit_dict():
 
     # process arguments
     s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
     s_pathfile = s_path
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
@@ -206,6 +214,10 @@ def get_substrate_list():
 
     # process arguments
     s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
     s_pathfile = s_path
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
@@ -291,6 +303,10 @@ def get_conc_attribute():
 
     # process arguments
     s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
     s_pathfile = s_path
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
@@ -388,6 +404,10 @@ def get_conc_df():
 
     # process arguments
     s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
     s_pathfile = s_path
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
@@ -574,6 +594,10 @@ def plot_contour():
 
     # process arguments
     s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
     s_pathfile = s_path
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
@@ -697,6 +721,10 @@ def make_conc_vtk():
 
     # process arguments
     s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
     s_pathfile = s_path
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
@@ -717,7 +745,9 @@ def make_conc_vtk():
             settingxml = None,
             verbose = False if args.verbose.lower().startswith('f') else True
         )
-        s_opathfile = mcds.make_conc_vtk()
+        s_opathfile = mcds.make_conc_vtk(
+            visualize = False,
+        )
         # going home
         return s_opathfile
 
@@ -732,7 +762,9 @@ def make_conc_vtk():
             settingxml = None,
             verbose = False if args.verbose.lower().startswith('f') else True,
         )
-        ls_opathfile = mcdsts.make_conc_vtk()
+        ls_opathfile = mcdsts.make_conc_vtk(
+            visualize = False,
+        )
         # going home
         return ls_opathfile
 
@@ -780,6 +812,10 @@ def get_celltype_list():
 
     # process arguments
     s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
     s_pathfile = s_path
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
@@ -886,6 +922,10 @@ def get_cell_attribute():
 
     # process arguments
     s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
     s_pathfile = s_path
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
@@ -1031,6 +1071,10 @@ def get_cell_df():
 
     # process arguments
     s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
     s_pathfile = s_path
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
@@ -1125,7 +1169,7 @@ def get_anndata():
     parser.add_argument(
         '--graph',
         default = 'true',
-        help = 'should neighbor graph and attach graph be extracted and loaded into the anndata object? default is True.'
+        help = 'should neighbor graph, attach graph, and attached spring graph be extracted and loaded into the anndata object? default is True.'
     )
     # TimeSeries physiboss
     parser.add_argument(
@@ -1186,6 +1230,10 @@ def get_anndata():
 
     # process arguments
     s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
     s_pathfile = s_path
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
@@ -1313,7 +1361,7 @@ def make_graph_gml():
     parser.add_argument(
         'graph_type',
         nargs = '?',
-        help = 'to specify which physicell output data should be processed. attached: processes mcds.get_attached_graph_dict dictionary. neighbor: processes mcds.get_neighbor_graph_dict dictionary.',
+        help = 'to specify which physicell output data should be processed. attached: processes mcds.get_attached_graph_dict dictionary. neighbor: processes mcds.get_neighbor_graph_dict dictionary spring: processes mcds.get_spring_graph_dict dictionary.',
     )
     # make_graph_gml edge_attribute
     parser.add_argument(
@@ -1335,6 +1383,10 @@ def make_graph_gml():
 
     # process arguments
     s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
     s_pathfile = s_path
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
@@ -1548,6 +1600,10 @@ def plot_scatter():
 
     # process arguments
     s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
     s_pathfile = s_path
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
@@ -1698,6 +1754,10 @@ def make_cell_vtk():
 
     # process arguments
     s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
     s_pathfile = s_path
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
@@ -1958,6 +2018,12 @@ def plot_timeseries():
     print(args)
 
     # process arguments
+    s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
+    args.path = s_path
 
     # path
     if not os.path.exists(args.path + '/initial.xml'):
@@ -2039,7 +2105,7 @@ def make_ome_tiff():
     # argv
     parser = argparse.ArgumentParser(
         prog = 'pcdl_make_ome_tiff',
-        description = 'function to transform chosen mcds output into an 1[um] spaced czyx (channel, z-axis, y-axis, x-axis) ome tiff file, one substrate or cell_type per channel. the ome tiff file format can for example be read by the napari (https://napari.org/stable/) or fiji imagej (https://fiji.sc/) software.',
+        description = 'function to transform chosen mcdsts output into an 1[um] spaced tczyx (time, channel, z-axis, y-axis, x-axis) ome tiff file, one substrate or cell_type per channel. the ome tiff file format can for example be read by the napari (https://napari.org/stable/) or fiji imagej (https://fiji.sc/) software.',
         epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
     )
 
@@ -2082,7 +2148,21 @@ def make_ome_tiff():
         'cell_attribute',
         nargs = '?',
         default = 'ID',
-        help = 'mcds.get_cell_df dataframe columns, used for cell_attribute. the column data type has to be numeric (bool, int, float) and can not be string. default is ID, with will result in a segmentation mask.',
+        help = 'mcds.get_cell_df dataframe column, used for cell_attribute. the column data type has to be numeric (bool, int, float) and cannot be string. the result will be stored as 32 bit float. default is ID, with will result in a segmentation mask.',
+    )
+    # make_ome_tiff conc_cutoff
+    parser.add_argument(
+        '--conc_cutoff',
+        nargs = '*',
+        default = [],
+        help = 'if a contour from a substrate not should be cut by greater than zero (shifted to integer 1), another cutoff value can be specified here like this: substarte:value substrate:value substarte:value . default is and empty string.',
+    )
+    # make_ome_tiff focus
+    parser.add_argument(
+        '--focus',
+        nargs = '+',
+        default = ['none'],
+        help = 'set of substrate and cell_type names to specify what will be translated into ome tiff format. if None, all substrates and cell types will be processed. default is a None.',
     )
     # make_ome_tiff file True
     # make_ome_tiff collapse
@@ -2096,8 +2176,12 @@ def make_ome_tiff():
     args = parser.parse_args()
     print(args)
 
-    # process arguments
+    # path
     s_path = args.path
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
     s_pathfile = s_path
     if not s_pathfile.endswith('.xml'):
         s_pathfile = s_pathfile + '/initial.xml'
@@ -2105,6 +2189,22 @@ def make_ome_tiff():
         s_path = '/'.join(s_pathfile.split('/')[:-1])
     if not os.path.exists(s_pathfile):
         sys.exit(f'Error @ pyCLI.make_ome_tiff : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
+
+    # conc_cutoff
+    d_conccutoff = {}
+    for s_conccutoff in args.conc_cutoff:
+        s_substrate, s_value = s_conccutoff.split(':')
+        if (s_value.find('.') > -1):
+            o_value = float(s_value)
+        else:
+            o_value = int(s_value)
+        d_conccutoff.update({s_substrate : o_value})
+
+    # focus
+    if (args.focus[0].lower() == 'none'):
+        es_focus = None
+    else:
+        es_focus = set( args.focus)
 
     # run
     if os.path.isfile(args.path):
@@ -2120,6 +2220,8 @@ def make_ome_tiff():
         )
         s_opathfile = mcds.make_ome_tiff(
             cell_attribute = args.cell_attribute,
+            conc_cutoff = d_conccutoff,
+            focus = es_focus,
             file = True,
         )
         # going home
@@ -2138,6 +2240,8 @@ def make_ome_tiff():
         )
         o_opathfile = mcdsts.make_ome_tiff(
             cell_attribute = args.cell_attribute,
+            conc_cutoff = d_conccutoff,
+            focus = es_focus,
             file = True,
             collapse = False if args.collapse.lower().startswith('f') else True,
         )
@@ -2177,6 +2281,13 @@ def make_gif():
     print(args)
 
     # process arguments
+    s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
+    args.path = s_path
+
     # run
     s_opathfile = pcdl.make_gif(
         path = args.path,
@@ -2221,6 +2332,13 @@ def make_movie():
     print(args)
 
     # process arguments
+    s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
+    args.path = s_path
+
     # run
     s_opathfile = pcdl.make_movie(
         path = args.path,

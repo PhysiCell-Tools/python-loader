@@ -93,13 +93,13 @@ def docstring_md(s_function, ls_doc, s_header=None, s_opath='man/docstring/'):
 
 # load data
 mcds = pcdl.TimeStep(
-    'pcdl/data_timeseries_2d/output00000000.xml',
+    'pcdl/output_2d/output00000000.xml',
     custom_data_type={'oncoprotein': str},
     verbose=False,
 )
 
 mcdsts = pcdl.TimeSeries(
-    'pcdl/data_timeseries_2d/',
+    'pcdl/output_2d/',
     custom_data_type={'oncoprotein': str},
     verbose=False,
 )

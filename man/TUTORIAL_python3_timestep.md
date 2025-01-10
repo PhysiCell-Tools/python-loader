@@ -1,6 +1,6 @@
 # PhysiCell Data Loader Tutorial: pcdl and python and MCDS TimeSteps
 
-In this chapter, we will load the pcdl library and use its TimeStep class to load the data snapshot 00000012, from [data\_timeseries\_ 2d](https://github.com/elmbeech/physicelldataloader/tree/master/pcdl/data_timeseries_2d) from the 2D time series test dataset.
+In this chapter, we will load the pcdl library and use its TimeStep class to load the data snapshot 00000012, from [data\_timeseries\_ 2d](https://github.com/elmbeech/physicelldataloader/tree/master/pcdl/output_2d) from the 2D time series test dataset.
 
 First, please install the latest version of physicelldataloader (pcdl),
 as described in the [HowTo](https://github.com/elmbeech/physicelldataloader/blob/master/man/HOWTO.md) chapter.
@@ -23,7 +23,7 @@ cd path/to/PhysiCell
 ```
 ```bash
 make data-cleanup
-python3 -c"import pathlib, pcdl, shutil; pcdl.install_data(); s_ipath=str(pathlib.Path(pcdl.__file__).parent.resolve()/'data_timeseries_2d'); shutil.copytree(s_ipath, 'output', dirs_exist_ok=True)"
+python3 -c"import pathlib, pcdl, shutil; pcdl.install_data(); s_ipath=str(pathlib.Path(pcdl.__file__).parent.resolve()/'output_2d'); shutil.copytree(s_ipath, 'output', dirs_exist_ok=True)"
 ```
 
 
@@ -292,7 +292,7 @@ with the agent's position (xyz), the related mesh center coordinate (mnp), the r
 
 ```python
 df_cell = mcds.get_cell_df()
-df_cel.info()
+df_cell.info()
 ```
 ```
 df_cell.shape  # (992, 95)  this means: 992 agents, 96 tracked variables
@@ -343,7 +343,7 @@ print(ann)  # AnnData object with n_obs × n_vars = 992 × 26
 variables:
 
 ```python
-ann.var_name  # numerical cell attributes:  Index(['cell_BM_repulsion_strength', ... , 'total_volume'], dtype='object')
+ann.var_names  # numerical cell attributes:  Index(['cell_BM_repulsion_strength', ... , 'total_volume'], dtype='object')
 ```
 
 observation:
@@ -375,7 +375,7 @@ ann.uns['neighbor']  # metadata about the neighborhood graph.
 
 The output tells us that we have loaded a time step  with 992 cell agents and 26 numerical attributes (vars).
 Further, we have 4 categorical cell agent attributes (obs).
-We have each cell agnet's xy spatial coordinate information (obsm).
+We have each cell agent's xy spatial coordinate information (obsm).
 And we have cell neighbor graph infromation (obsp, uns).
 
 Please have a look at [TUTORIAL_python3_scverse.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_scverse.md) to learn more.
