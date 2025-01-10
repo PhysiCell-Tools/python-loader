@@ -1,0 +1,48 @@
+# This workflow will install Python dependencies, run tests and lint
+# with a variety of Python versions. For more information see:
+#https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: apple_pcdl_unitests
+run-name: ${{ github.actor }}::pytest pcdl library on mac os x; the latest python3 version.
+
+on:
+  push:
+    branches: ["master", "v3", "v4"]
+  pull_request:
+    branches: ["master", "v3", "v4"]
+
+jobs:
+  build-macosx:
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        #python-version: ["3.12"]
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+
+    env:
+      PYTHONPATH: /Users/runner/work/physicelldataloader/physicelldataloader
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: set up python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: install dependencies
+      run: |
+        brew install ffmpeg imagemagick
+        python -m pip install --upgrade pip
+        python -m pip install flake8 pytest aicsimageio anndata matplotlib numpy pandas requests scipy vtk
+        python -m pip install /Users/runner/work/physicelldataloader/physicelldataloader -v
+        #if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: lint with flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    - name: test with pytest
+      run: |
+        pytest
+

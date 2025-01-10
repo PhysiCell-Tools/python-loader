@@ -1,0 +1,135 @@
+#####
+# a hatchling based setup module.
+#
+# see:
+# https://packaging.python.org/en/latest/
+# https://packaging.python.org/en/latest/tutorials/packaging-projects/
+# https://hatch.pypa.io/latest/
+#
+# find files with traling spaces:
+# find . -type f -exec egrep -l " +$" {} \;
+#
+# releasing a next version on pypi:
+# 0. vim pcdl/VERSION.py  # increase version number in file
+# 1. git add pcdl/VERSION.py
+# 2. python3 man/scarab.py
+# 3. git status
+# 4. git commit -m'@ physicelldataloader : next release.'
+# 5. git tag -a v0.0.0 -m'version 0.0.0'
+# 6. rm -r dist
+# 7. python3 -c "import pcdl; pcdl.uninstall_data()"
+# 8. python3 -m build --sdist  # make source distribution
+# 9. python3 -m build --wheel  # make binary distribution python wheel
+# 10. twine upload dist/* --verbose
+# 11. git push origin
+# 12. git push --tag
+#####
+
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+
+[project]
+# name of the project
+# pip install pcdl
+# import pcdl
+name = "pcdl"
+dynamic = ["version"]
+
+description = "physicell data loader (pcdl) provides a platform independent, python3 based, pip installable interface to load output, generated with the PhysiCell agent based modeling framework, into python3."
+readme = "README.md"
+
+requires-python = ">=3.8, <4"
+
+license = "BSD-3-Clause"
+#license-files = {paths = ["LICENSE"]}
+
+authors = [
+  {name="Elmar Bucher", email="epbucher@iu.edu"}
+]
+maintainers = [
+  {name="Elmar Bucher", email="epbucher@iu.edu"}
+]
+
+keywords = [
+    "analysis",
+    "data",
+    "physicell",
+    "python3",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: BSD License",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+
+# bue 2024-12-06: enforcing some versions
+dependencies = [
+    "aicsimageio",
+    "anndata>=0.10.8",
+    "matplotlib",
+    "numpy<2.0.0",
+    "pandas>=2.2.2",
+    "requests",
+    "scipy>=1.13.0",
+    "vtk",
+]
+
+
+[project.scripts]
+# special thanks to Miguel Ponce-de-Leon who introduced me to entry point scripts!
+# metadata
+pcdl_get_version = "pcdl.pyCLI:get_version"
+pcdl_get_unit_dict = "pcdl.pyCLI:get_unit_dict"
+# substrate
+pcdl_get_substrate_list = "pcdl.pyCLI:get_substrate_list"
+pcdl_get_conc_attribute = "pcdl.pyCLI:get_conc_attribute"
+pcdl_get_conc_df = "pcdl.pyCLI:get_conc_df"
+pcdl_plot_contour = "pcdl.pyCLI:plot_contour"
+pcdl_make_conc_vtk = "pcdl.pyCLI:make_conc_vtk"
+# cell agent
+pcdl_get_celltype_list = "pcdl.pyCLI:get_celltype_list"
+pcdl_get_cell_attribute = "pcdl.pyCLI:get_cell_attribute"
+pcdl_get_cell_df = "pcdl.pyCLI:get_cell_df"
+pcdl_get_anndata = "pcdl.pyCLI:get_anndata"
+pcdl_make_graph_gml = "pcdl.pyCLI:make_graph_gml"
+pcdl_plot_scatter = "pcdl.pyCLI:plot_scatter"
+pcdl_make_cell_vtk = "pcdl.pyCLI:make_cell_vtk"
+# substrate and cell agent
+pcdl_plot_timeseries = "pcdl.pyCLI:plot_timeseries"
+pcdl_make_ome_tiff = "pcdl.pyCLI:make_ome_tiff"
+# making movies
+pcdl_make_gif = "pcdl.pyCLI:make_gif"
+pcdl_make_movie = "pcdl.pyCLI:make_movie"
+
+
+[project.urls]
+"Homepage lab" = "http://www.mathcancer.org/"
+"Homepage project" = "http://physicell.org/"
+Hompage = "https://github.com/elmbeech/physicelldataloader"
+Documentation = "https://github.com/elmbeech/physicelldataloader/tree/master/man"
+Issues = "https://github.com/elmbeech/physicelldataloader/issues"
+Source = "https://github.com/elmbeech/physicelldataloader"
+#DOI = "https://"
+
+
+[tool.hatch.version]
+path = "pcdl/VERSION.py"
+
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/man",
+    "/pcdl",
+    "/test",
+]
+exclude = [
+    "/output_2d.tar.gz",
+    "/output_3d.tar.gz",
+    "/.pytest_cache",
+]
