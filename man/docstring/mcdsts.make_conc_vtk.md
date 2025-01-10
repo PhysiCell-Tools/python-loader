@@ -3,6 +3,8 @@
 
 ## input:
 ```
+            visualize: boolean; default is False
+                additionally, visualize cells using vtk renderer.
 
 ```
 

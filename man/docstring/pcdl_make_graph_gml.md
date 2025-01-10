@@ -19,7 +19,9 @@ positional arguments:
   graph_type            to specify which physicell output data should be
                         processed. attached: processes
                         mcds.get_attached_graph_dict dictionary. neighbor:
-                        processes mcds.get_neighbor_graph_dict dictionary.
+                        processes mcds.get_neighbor_graph_dict dictionary
+                        spring: processes mcds.get_spring_graph_dict
+                        dictionary.
 
 options:
   -h, --help            show this help message and exit

@@ -5,10 +5,11 @@
 ```
             self: pyMCDS class instance.
 
-            graph_type: string; default is neighbor
+            graph_type: string
                 to specify which physicell output data should be processed.
-                attached: processes mcds.get_attached_graph_dict dictionary.
+                attached, touch: processes mcds.get_attached_graph_dict dictionary.
                 neighbor: processes mcds.get_neighbor_graph_dict dictionary.
+                spring: processes mcds.get_spring_graph_dict dictionary.
 
             edge_attribute: boolean; default True
                 specifies if the spatial Euclidean distance is used for
