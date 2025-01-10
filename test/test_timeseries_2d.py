@@ -24,6 +24,7 @@ import numpy  as np
 import os
 import pathlib
 import pcdl
+import pytest
 import shutil
 
 
@@ -254,6 +255,7 @@ class TestPyMcdsTsMicroenv(object):
         for s_pathfile in ls_pathfile:
             os.remove(s_pathfile)
 
+    @pytest.mark.filterwarnings("ignore:More than 20 figures have been opened.")
     def test_mcdsts_plot_contour_else(self, mcdsts=mcdsts):
         l_fig = mcdsts.plot_contour(
             focus = 'oxygen',

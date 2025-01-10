@@ -156,9 +156,9 @@ class TestPyAnndataTimeSeries(object):
               (mcdsts.l_annmcds[24].obs.shape[1] == 7) and \
               (mcdsts.l_annmcds[24].obsm['spatial'].shape[0] > 9) and \
               (mcdsts.l_annmcds[24].obsm['spatial'].shape[1] == 2) and \
-              (len(mcdsts.l_annmcds[24].obsp) == 2) and \
+              (len(mcdsts.l_annmcds[24].obsp) == 4) and \
               (mcdsts.l_annmcds[24].var.shape == (105, 0)) and \
-              (len(mcdsts.l_annmcds[24].uns) == 1)
+              (len(mcdsts.l_annmcds[24].uns) == 2)
 
     def test_mcdsts_get_anndata_keepmcdsfalse(self):
         mcdsts = pcdl.TimeSeries(s_path_2d, verbose=True)

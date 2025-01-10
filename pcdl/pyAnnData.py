@@ -117,7 +117,7 @@ def scaler(df_x, scale='maxabs'):
     return df_x
 
 
-def _anndextract(df_cell, scale='maxabs', graph_attached={}, graph_neighbor={}, graph_method='PhysiCell'):
+def _anndextract(df_cell, scale='maxabs', graph_attached={}, graph_neighbor={}, graph_spring={}, graph_method='PhysiCell'):
     """
     input:
         df_cell:  pandas dataframe
@@ -129,15 +129,19 @@ def _anndextract(df_cell, scale='maxabs', graph_attached={}, graph_neighbor={}, 
             for more input, check out: help(pcdl.scaler).
 
         graph_attached: dict; default {}
-            graph dictionary that, if loaded, can be
-            fetched with mcds.get_attched_graph().
+            attached graph dictionary, retrieved with
+            with the mcds.get_attched_graph() function.
 
         graph_neighbor: dict; default {}
-            graph dictionary that, if loaded, can be
-            fetched with mcds.get_neighbor_graph().
+            neighbor graph dictionary, retrieved
+            with the mcds.get_neighbor_graph() function.
+
+        graph_spring: dict; default {}
+            spring_attached graph dictionary, retrieved
+            with the mcds.get_spring_graph_dict() function.
 
         graph_method: string; default PhysiCell
-            method how the graph was generated.
+            method how the graphs were generated.
 
     output:
         df_count, df_obs, d_obsm, d_obsp, d_uns dataframes and dictionaries,
@@ -177,7 +181,7 @@ def _anndextract(df_cell, scale='maxabs', graph_attached={}, graph_neighbor={}, 
     # transform cell id graph dict to index matrix and pack for anndata
     d_obsp = {}  # pairwise annotation of obeservation
     d_uns = {}  # unstructured data
-    for s_graph, dei_graph in [('neighbor', graph_neighbor), ('attached', graph_attached)]:
+    for s_graph, dei_graph in [('neighbor', graph_neighbor), ('attached', graph_attached), ('spring', graph_spring)]:
         lli_edge = []
         lr_distance = []
         for i_src, ei_dst in dei_graph.items():
@@ -282,8 +286,9 @@ class TimeStep(pyMCDS):
                 processing, similar to the original pyMCDS_cells.py script.
 
             graph: boole; default True
-                should neighbor garph and attached graph be loaded?
-                setting graph to False will use less memory and speed up processing.
+                should neighbor garph, attached graph, and spring attached graph
+                be loaded? setting graph to False will use less memory and
+                speed up processing.
 
             physiboss: boole; default True
                 should physiboss state data be loaded, if found?
@@ -404,8 +409,9 @@ class TimeSeries(pyMCDSts):
                 processing, similar to the original pyMCDS_cells.py script.
 
             graph: boole; default True
-                should neighbor graph and attached graph be loaded?
-                setting graph to False will use less memory and speed up processing.
+                should neighbor garph, attached graph, and spring attached graph
+                be loaded? setting graph to False will use less memory and
+                speed up processing.
 
             physiboss: boole; default True
                 should physiboss state data be loaded, if found?
@@ -529,6 +535,7 @@ class TimeSeries(pyMCDSts):
                     scale = scale,
                     #graph_attached = {},
                     #graph_neighbor = {},
+                    #graph_spring = {},
                     #graph_method = s_physicellv,
                 )
                 # count
@@ -564,6 +571,7 @@ class TimeSeries(pyMCDSts):
                     scale = scale,
                     graph_attached = mcds.get_attached_graph_dict(),
                     graph_neighbor = mcds.get_neighbor_graph_dict(),
+                    graph_spring = mcds.get_spring_graph_dict(),
                     graph_method = s_physicellv,
                 )
                 # annmcds

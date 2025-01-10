@@ -121,17 +121,17 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 
 ## Road Map:
 
-+ handle spring_attached_cells_graph.txt output files.
 + evt generate lineage tree graph output files.
 + evt add neuroglancer ome.tiff support.
 + switch from aicsimageio to bioio library, when the library is ripe (napari has switched to bioio).
 
 
 ## Release Notes:
-+ version 3.3.3 (2025-01-xx): elmbeech/physicelldataloader
++ version 3.3.3 (2025-01-10): elmbeech/physicelldataloader
     + bug fix **plot_contour** plot orientation. special thanks to Marco Ruscone!
     + add test data for new improved **unittest physicell model**. special thanks to Nick Oldfather!
     + add pyMCDS **make_conc_vtk** on the fly visualization. special thanks to Randy Heiland and Nick Oldfather!
+    + pyMCDS and pyMCDSts **make_graph_gml** and pyAnnData **get_anndata** handles now spring\_attached\_cells graph too.
 
 + version 3.3.2 (2024-11-24): elmbeech/physicelldataloader
     + **Warnings** will no longer be piped to standard output if verbose is set to False.

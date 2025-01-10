@@ -1250,205 +1250,178 @@ class pyMCDS:
             print(f'processing: {s_vtkfile} ...')
 
         # get microenviornment data frame
-        df_micenv = self.get_conc_df()
-
-        # generate a rectilinear grid
-        vr_grid = vtk.vtkRectilinearGrid()
+        df_conc = self.get_conc_df()
 
         # define dimensions of the grid
         ti_dim = (
-            df_micenv.loc[:, 'voxel_i'].unique().shape[0],
-            df_micenv.loc[:, 'voxel_j'].unique().shape[0],
-            df_micenv.loc[:, 'voxel_k'].unique().shape[0],
+            self.get_voxel_ijk_range()[0][1] + 1,
+            self.get_voxel_ijk_range()[1][1] + 1,
+            self.get_voxel_ijk_range()[2][1] + 1,
         )
 
-        # define coordinates for the grid
-        vf_x = vtk.vtkFloatArray()
-        vf_y = vtk.vtkFloatArray()
-        vf_z = vtk.vtkFloatArray()
+        # generate a rectilinear grid
+        vrg_data = vtk.vtkRectilinearGrid()
 
-        # assign coordinates for the grid
-        vf_x.SetNumberOfTuples(ti_dim[0])
-        vf_y.SetNumberOfTuples(ti_dim[1])
-        vf_z.SetNumberOfTuples(ti_dim[2])
+        # generate and populate coordinates for the grid
+        vfa_x = vtk.vtkFloatArray()
+        vfa_y = vtk.vtkFloatArray()
+        vfa_z = vtk.vtkFloatArray()
+        vfa_x.SetNumberOfTuples(ti_dim[0])
+        vfa_y.SetNumberOfTuples(ti_dim[1])
+        vfa_z.SetNumberOfTuples(ti_dim[2])
 
-        # populate the coordinates
-        for m, x in enumerate(sorted(df_micenv.loc[:, 'mesh_center_m'].unique())):
-            vf_x.SetValue(m, x)
+        for i, m in enumerate(self.get_mesh_mnp_axis()[0]):
+            vfa_x.SetValue(i, m)
 
-        for n, y in enumerate(sorted(df_micenv.loc[:, 'mesh_center_n'].unique())):
-            vf_y.SetValue(n, y)
+        for j, n in enumerate(self.get_mesh_mnp_axis()[1]):
+            vfa_y.SetValue(j, n)
 
-        for p, z in enumerate(sorted(df_micenv.loc[:, 'mesh_center_p'].unique())):
-            vf_z.SetValue(p, z)
+        for k, p in enumerate(self.get_mesh_mnp_axis()[2]):
+            vfa_z.SetValue(k, p)
 
-        # grid dimensions
-        vr_grid.SetDimensions(ti_dim)
-        vr_grid.SetXCoordinates(vf_x)
-        vr_grid.SetYCoordinates(vf_y)
-        vr_grid.SetZCoordinates(vf_z)
+        # generate and populate grid dimensions
+        vrg_data.SetDimensions(ti_dim)
+        vrg_data.SetXCoordinates(vfa_x)
+        vrg_data.SetYCoordinates(vfa_y)
+        vrg_data.SetZCoordinates(vfa_z)
 
-        # loop over substartes to fill rectilinear grid
+        # loop over substartes to populate rectilinear grid
         b_first = True
         for s_substrate in self.get_substrate_list():
-            vf_values = vtk.vtkFloatArray()
-            vf_values.SetNumberOfComponents(1)
-            vf_values.SetNumberOfTuples(ti_dim[0] * ti_dim[1] * ti_dim[2])
-            vf_values.SetName(s_substrate)  # set the name of the array
+            vfa_value = vtk.vtkFloatArray()
+            vfa_value.SetNumberOfComponents(1)
+            vfa_value.SetNumberOfTuples(ti_dim[0] * ti_dim[1] * ti_dim[2])
+            vfa_value.SetName(s_substrate)
 
             # populate the substrate values
             for k in range(ti_dim[2]):
                 for j in range(ti_dim[1]):
                     for i in range(ti_dim[0]):
                         i_index = i + ti_dim[0] * (j + ti_dim[1] * k)
-                        r_conc = df_micenv.loc[
-                            (df_micenv.loc[:,'voxel_k'] == k) & (df_micenv.loc[:,'voxel_j'] == j) & (df_micenv.loc[:,'voxel_i'] == i),
+                        r_conc = df_conc.loc[
+                            (df_conc.loc[:,'voxel_k'] == k) & (df_conc.loc[:,'voxel_j'] == j) & (df_conc.loc[:,'voxel_i'] == i),
                             s_substrate
-                        ]
-                        vf_values.SetValue(i_index, r_conc)  # bue 20240821: FutureWarning: Calling float on a single element Series is deprecated and will raise a TypeError in the future. Use float(ser.iloc[0]) instead.
+                        ].values[0]
+                        #vfa_value.InsertNextValue(r_conc)
+                        vfa_value.SetValue(i_index, r_conc)
             if b_first:
-                vr_grid.GetPointData().SetScalars(vf_values)
+                #vrg_data.GetCellData().SetScalars(vfa_value)
+                vrg_data.GetPointData().SetScalars(vfa_value)
                 b_first = False
             else:
-                vr_grid.GetPointData().AddArray(vf_values)
-            del vf_values
+                #vrg_data.GetCellData().AddArray(vfa_value)
+                vrg_data.GetPointData().AddArray(vfa_value)
+
+            # visualize on the fly
+            if (visualize):
+                # get scalar range
+                r_vmin = np.floor(df_conc.loc[:, s_substrate].min())
+                r_vmax = np.ceil(df_conc.loc[:, s_substrate].max())
+
+                # generate the structured grid.
+                vsp_data = vtk.vtkStructuredPoints()
+                vsp_data.SetDimensions(ti_dim[0]+1, ti_dim[1]+1, ti_dim[2]+1)
+                vsp_data.SetSpacing(
+                    self.get_voxel_spacing()[0],
+                    self.get_voxel_spacing()[1],
+                    self.get_voxel_spacing()[2],
+                )
+                vsp_data.SetOrigin(
+                    self.get_mesh_mnp_range()[0][0],
+                    self.get_mesh_mnp_range()[1][0],
+                    self.get_mesh_mnp_range()[2][0],
+                )  # lower-left-front point of domain bounding box
+
+                # mapp grid and values
+                vdsm_data = vtk.vtkDataSetMapper()
+                vsp_data.GetCellData().SetScalars(vfa_value)
+                vdsm_data.SetInputData(vsp_data)
+                vdsm_data.Update()
+                vdsm_data.SetScalarRange(r_vmin, r_vmax)
+                vdsm_data.SetScalarModeToUseCellData()
+
+                # build VTKLooktupTable (color scheme)
+                vlt_color = vtk.vtkLookupTable()
+                vlt_color.SetNumberOfTableValues(256)
+                vlt_color.SetHueRange(0.667, 0.0)  # blue-to-red rainbow
+                vlt_color.Build()
+
+                # generate xy cutting plane actor
+                vp_canvas = vtk.vtkPlane()
+                vp_canvas.SetOrigin(0, 0, 0) # xyz
+                vp_canvas.SetNormal(0, 0, 1)
+
+                vc_canvas = vtk.vtkCutter()
+                vc_canvas.SetInputData(vsp_data)
+                vc_canvas.SetCutFunction(vp_canvas)
+                vc_canvas.GeneratePolygons = 1
+
+                vpdm_canvas = vtk.vtkPolyDataMapper()
+                vpdm_canvas.SetInputConnection(vc_canvas.GetOutputPort())
+                vpdm_canvas.ScalarVisibilityOn()
+                vpdm_canvas.SetScalarRange(r_vmin, r_vmax)
+                vpdm_canvas.SetLookupTable(vlt_color)
+                vpdm_canvas.SetScalarModeToUseCellData()
+
+                va_canvas = vtk.vtkActor()
+                va_canvas.SetMapper(vpdm_canvas)
+                va_canvas.GetProperty().EdgeVisibilityOn()
+
+                # generate outline actor
+                vof_frame = vtk.vtkOutlineFilter()
+                vof_frame.SetInputData(vsp_data)
+
+                vpdm_frame = vtk.vtkPolyDataMapper()
+                vpdm_frame.SetInputConnection(vof_frame.GetOutputPort())
+
+                va_frame = vtk.vtkActor()
+                va_frame.SetMapper(vpdm_frame)
+                va_frame.GetProperty().SetColor(1, 1, 1)
+
+                # generate scalar bar actor
+                vsba_spectrum = vtk.vtkScalarBarActor()
+                vsba_spectrum.SetTitle(s_substrate)
+                vsba_spectrum.GetPositionCoordinate().SetCoordinateSystemToNormalizedViewport()
+                vsba_spectrum.GetPositionCoordinate().SetValue(0.1, 0.01)
+                vsba_spectrum.SetOrientationToHorizontal()
+                vsba_spectrum.SetWidth(0.8)
+                vsba_spectrum.SetHeight(0.1)
+                vsba_spectrum.GetProperty().SetColor(0, 0, 0)
+                vsba_spectrum.GetTitleTextProperty().SetColor(0, 0, 0)
+                vsba_spectrum.GetTitleTextProperty().SetFontSize(22)
+                vsba_spectrum.SetLookupTable(vpdm_canvas.GetLookupTable())
+
+                # do render setup
+                ren = vtk.vtkRenderer()
+                renWin = vtk.vtkRenderWindow()
+                renWin.AddRenderer(ren)
+                renWin.SetSize(800, 600)
+                iren = vtk.vtkRenderWindowInteractor()
+                iren.SetRenderWindow(renWin)
+
+                # add the actor to the renderer
+                #ren.ResetCamera()
+                ren.SetBackground(1/3, 1/3, 1/3) # gray
+                ren.AddActor(va_canvas)
+                ren.AddActor(va_frame)
+                ren.AddActor2D(vsba_spectrum)
+
+                # render
+                iren.Initialize()
+                renWin.Render()
+                iren.Start()
+
+            # free memory
+            del vfa_value
 
         # save vtk file
         s_vtkpathfile = self.path + '/' + s_vtkfile
         vw_writer = vtk.vtkXMLRectilinearGridWriter()
         vw_writer.SetFileName(s_vtkpathfile)
-        vw_writer.SetInputData(vr_grid)
+        vw_writer.SetInputData(vrg_data)
         vw_writer.Write()
 
-        # visualize
-        if (visualize):
-
-            # Build VTKLooktupTable (color scheme)
-            lut = vtk.vtkLookupTable()
-            lut.SetNumberOfTableValues(256)
-            lut.SetHueRange(0.667, 0.0)  # blue-to-red
-            lut.Build()
-
-            # iterate over each substrate
-            for s_substrate in self.get_substrate_list():
-                sub_concentration = self.data['continuum_variables'][s_substrate]['data']
-                ny,nx,nz = sub_concentration.shape
-                #mcds.get_concentration('oxygen').shape
-
-                # create the structured grid.
-                substrate_data = vtk.vtkStructuredPoints()
-                substrate_voxel_scalars = vtk.vtkFloatArray()
-
-                voxel_size = 20
-                x0 = -(voxel_size * nx) / 2.0
-                y0 = x0
-                z0 = -10.0
-                #mcds.get_voxel_spacing()
-
-                substrate_data.SetDimensions( nx+1, ny+1, nz+1 )
-                substrate_data.SetOrigin( x0, y0, z0 ) # lower-left-front point of domain bounding box
-                substrate_data.SetSpacing( voxel_size, voxel_size, voxel_size )
-
-                vmax = -1.e6
-                vmin = -vmax
-                # # for z in range( 0, nz+1 ) :  # if point data, not cell data
-                for z in range( 0, nz ) :   # NOTE: using cell data, not point data
-                    for y in range( 0, ny ) :
-                        for x in range( 0, nx ) :
-                            val = sub_concentration[y,x,z]   # yes, it's confusingly swapped :/
-
-                            # if doing a fixed colormap
-                            if val > vmax:
-                                vmax = val
-                            if val < vmin:
-                                vmin = val
-
-                            substrate_voxel_scalars.InsertNextValue( val )
-
-
-                # mapper
-                substrate_data.GetCellData().SetScalars( substrate_voxel_scalars )
-                substrate_mapper = vtk.vtkDataSetMapper()
-                substrate_mapper.SetInputData(substrate_data)
-                substrate_mapper.Update()
-
-                # actor
-                substrate_actor = vtk.vtkActor()
-                substrate_actor.SetMapper(substrate_mapper)
-
-
-                substrate_mapper.SetScalarRange(0, vmax)
-                substrate_mapper.SetScalarModeToUseCellData()
-
-                # create a cutting plane
-                plane = vtk.vtkPlane()
-                plane.SetOrigin(0, 0, 0)
-                plane.SetNormal(0, 0, 1)
-
-                cutterXY = vtk.vtkCutter()
-                cutterXY.SetInputData(substrate_data)
-                cutterXY.SetCutFunction(plane)
-                cutterXY.GeneratePolygons = 1
-
-                cutterXYMapper = vtk.vtkPolyDataMapper()
-                cutterXYMapper.SetInputConnection(cutterXY.GetOutputPort())
-                cutterXYMapper.ScalarVisibilityOn()
-                cutterXYMapper.SetScalarRange(vmin, vmax)
-                cutterXYMapper.SetLookupTable(lut)
-                cutterXYMapper.SetScalarModeToUseCellData()
-
-                cutterXYActor = vtk.vtkActor()
-                cutterXYActor.SetMapper(cutterXYMapper)
-                cutterXYActor.GetProperty().EdgeVisibilityOn()
-
-                # outline
-                outline = vtk.vtkOutlineFilter()
-                outline.SetInputData(substrate_data)
-
-                outlineMapper = vtk.vtkPolyDataMapper()
-                outlineMapper.SetInputConnection(outline.GetOutputPort())
-
-                outlineActor = vtk.vtkActor()
-                outlineActor.SetMapper(outlineMapper)
-                outlineActor.GetProperty().SetColor(1, 1, 1)
-
-                # scalar bar
-                scalarBar = vtk.vtkScalarBarActor()
-                scalarBar.SetTitle(s_substrate)
-                scalarBar.GetPositionCoordinate().SetCoordinateSystemToNormalizedViewport()
-                scalarBar.GetPositionCoordinate().SetValue(0.1, 0.01)
-                scalarBar.SetOrientationToHorizontal()
-                scalarBar.SetWidth(0.8)
-                scalarBar.SetHeight(0.1)
-                scalarBar.GetProperty().SetColor(0, 0, 0)
-                scalarBar.GetTitleTextProperty().SetColor(0, 0, 0)
-                scalarBar.GetTitleTextProperty().SetFontSize(22)
-                scalarBar.SetLookupTable(cutterXYMapper.GetLookupTable())
-
-                # renderer
-                renderer = vtk.vtkRenderer()
-                renderer.SetBackground(0.5, 0.5, 0.5)
-                renderer.AddActor(cutterXYActor)
-                renderer.AddActor(outlineActor)
-                renderer.AddActor2D(scalarBar)
-
-                # window
-                renWin = vtk.vtkRenderWindow()
-                renWin.AddRenderer(renderer)
-
-                iren = vtk.vtkRenderWindowInteractor()
-                iren.SetRenderWindow(renWin)
-
-                renderer.ResetCamera()
-                renWin.SetSize(900, 900)
-
-                # interact with the data.
-                renWin.Render()
-                iren.Start()
-
         return s_vtkpathfile
-
-
 
 
     ## CELL AGENT RELATED FUNCTIONS ##
@@ -1925,7 +1898,7 @@ class pyMCDS:
         else:
             fig = plt.gcf()
 
-        # layout the canavas
+        # layout the canvas
         if xyequal:
             ax.axis('equal')
 
@@ -2039,109 +2012,112 @@ class pyMCDS:
         df_cell = df_cell.reset_index()
 
         # generate VTK instances to fill for positions and radii
-        vp_points = vtkPoints()
-        vf_radii = vtk.vtkFloatArray()
-        vf_radii.SetName('radius')
+        vp_points = vtk.vtkPoints()
+        vfa_radii = vtk.vtkFloatArray()
+        vfa_radii.SetName('radius')
 
         # fill VTK instance with positions and radii
         for i in df_cell.index:
-            vp_points.InsertNextPoint(df_cell.loc[i, 'position_x'], df_cell.loc[i, 'position_y'], df_cell.loc[i, 'position_z'])
-            vf_radii.InsertNextValue(df_cell.loc[i, 'radius'])
+            vp_points.InsertNextPoint(
+                df_cell.loc[i, 'position_x'],
+                df_cell.loc[i, 'position_y'],
+                df_cell.loc[i, 'position_z']
+            )
+            vfa_radii.InsertNextValue(df_cell.loc[i, 'radius'])
 
         # generate data instances
-        vf_data = vtk.vtkFloatArray()
-        vf_data.SetNumberOfComponents(2)
-        vf_data.SetNumberOfTuples(df_cell.shape[0])
-        vf_data.CopyComponent(0, vf_radii, 0)
-        vf_data.SetName('positions_and_radii')
+        vfa_data = vtk.vtkFloatArray()
+        vfa_data.SetNumberOfComponents(2)
+        vfa_data.SetNumberOfTuples(df_cell.shape[0])
+        vfa_data.CopyComponent(0, vfa_radii, 0)
+        vfa_data.SetName('positions_and_radii')
 
         # generate unstructred grid for data
-        vu_grid = vtk.vtkUnstructuredGrid()
-        vu_grid.SetPoints(vp_points)
-        vu_grid.GetPointData().AddArray(vf_data)
-        vu_grid.GetPointData().SetActiveScalars('positions_and_radii')
+        vug_data = vtk.vtkUnstructuredGrid()
+        vug_data.SetPoints(vp_points)
+        vug_data.GetPointData().AddArray(vfa_data)
+        vug_data.GetPointData().SetActiveScalars('positions_and_radii')
 
         # fill this grid with given attributes
         for s_attribute in attribute:
             b_bool = False
             if (df_cell.loc[:, s_attribute].dtype == bool):  #in {bool, np.bool_, np.bool}):
                 b_bool = True
-                custom_data_vtk = vtk.vtkStringArray()
-                custom_data_vtk.SetName(s_attribute)
+                voa_data = vtk.vtkStringArray()
             elif (df_cell.loc[:, s_attribute].dtype == str) or  (df_cell.loc[:, s_attribute].dtype == np.object_):  # in {str, np.str_, np.object_}):
-                custom_data_vtk = vtk.vtkStringArray()
-                custom_data_vtk.SetName(s_attribute)
+                voa_data = vtk.vtkStringArray()
             elif (df_cell.loc[:, s_attribute].dtype == int) or (df_cell.loc[:, s_attribute].dtype == float):  # in {int, np.int_, np.int8, np.int16, np.int32, np.int64, float, np.float16, np.float32, np.float64, np.float128}):
-                custom_data_vtk = vtk.vtkFloatArray()
-                custom_data_vtk.SetName(s_attribute)
+                voa_data = vtk.vtkFloatArray()
             else:
                 sys.exit(f'Error @ pyMCDS.make_cell_vtk : {s_attribute} {df_cell.loc[:, s_attribute].dtype} unknown df_cell column data type.')
 
+            voa_data.SetName(s_attribute)
             for i in df_cell.index:
                 if b_bool:
                     if (df_cell.loc[i, s_attribute]):
-                        custom_data_vtk.InsertNextValue('True')
+                        voa_data.InsertNextValue('True')
                     else:
-                        custom_data_vtk.InsertNextValue('False')
+                        voa_data.InsertNextValue('False')
                 else:
-                    custom_data_vtk.InsertNextValue(df_cell.loc[i, s_attribute])
+                    voa_data.InsertNextValue(df_cell.loc[i, s_attribute])
 
-            vu_grid.GetPointData().AddArray(custom_data_vtk)
-            del custom_data_vtk
+            vug_data.GetPointData().AddArray(voa_data)
+            del voa_data
 
         # generate sphere source
-        vsp_sphere = vtk.vtkSphereSource()
-        vsp_sphere.SetRadius(1.0)
-        vsp_sphere.SetPhiResolution(16)
-        vsp_sphere.SetThetaResolution(32)
+        vss_data = vtk.vtkSphereSource()
+        vss_data.SetRadius(1.0)
+        vss_data.SetPhiResolution(16)
+        vss_data.SetThetaResolution(32)
 
         # generate Glyph to save
-        vg_glyph = vtk.vtkGlyph3D()
-        vg_glyph.SetInputData(vu_grid)
-        vg_glyph.SetSourceConnection(vsp_sphere.GetOutputPort())
+        vg_data = vtk.vtkGlyph3D()
+        vg_data.SetInputData(vug_data)
+        vg_data.SetSourceConnection(vss_data.GetOutputPort())
 
         # define important preferences for VTK
-        vg_glyph.ClampingOff()
-        vg_glyph.SetScaleModeToScaleByScalar()
-        vg_glyph.SetScaleFactor(1.0)
-        vg_glyph.SetColorModeToColorByScalar()
-        vg_glyph.Update()
-
-        # write VTK
-        s_vtkpathfile = self.path + '/' + s_vtkfile
-        vw_writer = vtk.vtkXMLPolyDataWriter()
-        vw_writer.SetFileName(s_vtkpathfile)
-        vw_writer.SetInputData(vg_glyph.GetOutput())
-        vw_writer.Write()
+        vg_data.ClampingOff()
+        vg_data.SetScaleModeToScaleByScalar()
+        vg_data.SetScaleFactor(1.0)
+        vg_data.SetColorModeToColorByScalar()
+        vg_data.Update()
 
         # visualize
         if (visualize):
             # set up the mapper
-            mapper = vtk.vtkPolyDataMapper()
-            #mapper.SetInput(glyph.GetOutput())
-            mapper.SetInputConnection(vg_glyph.GetOutputPort())
-            mapper.ScalarVisibilityOn()
-            mapper.ColorByArrayComponent('data', 1)
+            vpdm_data = vtk.vtkPolyDataMapper()
+            vpdm_data.SetInputConnection(vg_data.GetOutputPort())
+            vpdm_data.ScalarVisibilityOn()
+            #vpdm_data.ColorByArrayComponent(s_attribute, 0) # bue 20250110: not working and legacy better to do this in the lookup table.
 
             # set up the actor
             actor = vtk.vtkActor()
-            actor.SetMapper(mapper)
+            actor.SetMapper(vpdm_data)
 
-            # do renderer setup stuff
+            # do renderer setup
             ren = vtk.vtkRenderer()
             renWin = vtk.vtkRenderWindow()
             renWin.AddRenderer(ren)
-            renWin.SetSize(640, 480)
+            renWin.SetSize(800, 600)
             iren = vtk.vtkRenderWindowInteractor()
             iren.SetRenderWindow(renWin)
 
             # add the actor to the renderer
+            #ren.ResetCamera()
+            ren.SetBackground(1/3, 1/3, 1/3) # gray
             ren.AddActor(actor)
 
             # render
             iren.Initialize()
             renWin.Render()
             iren.Start()
+
+        # write VTK
+        s_vtkpathfile = self.path + '/' + s_vtkfile
+        vw_writer = vtk.vtkXMLPolyDataWriter()
+        vw_writer.SetFileName(s_vtkpathfile)
+        vw_writer.SetInputData(vg_data.GetOutput())
+        vw_writer.Write()
 
         return s_vtkpathfile
 
@@ -2905,6 +2881,7 @@ class pyMCDS:
         d_mcds['discrete_cells']['graph'] = {}
         d_mcds['discrete_cells']['graph'].update({'neighbor_cells': {}})
         d_mcds['discrete_cells']['graph'].update({'attached_cells': {}})
+        d_mcds['discrete_cells']['graph'].update({'spring_attached_cells': {}})
 
         if self.graph:
             if self.verbose:
@@ -2927,6 +2904,18 @@ class pyMCDS:
 
             # store data
             d_mcds['discrete_cells']['graph'].update({'attached_cells': dei_graph})
+
+            # spring attached cell graph
+            try:
+                s_cellpathfile = self.path + '/' + x_cell.find('spring_attached_cells_graph').find('filename').text
+                dei_graph = graphfile_parser(s_pathfile=s_cellpathfile)
+                if self.verbose:
+                    print(f'reading: {s_cellpathfile}')
+
+                # store data
+                d_mcds['discrete_cells']['graph'].update({'spring_attached_cells': dei_graph})
+            except AttributeError:
+                pass
 
 
         #########################

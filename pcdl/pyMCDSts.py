@@ -1397,12 +1397,12 @@ class pyMCDSts:
 
     ## GRAPH RELATED FUNCTIONS ##
 
-    def make_graph_gml(self, graph_type='neighbor', edge_attribute=True, node_attribute=[]):
+    def make_graph_gml(self, graph_type, edge_attribute=True, node_attribute=[]):
         """
         input:
             self: pyMCDS class instance.
 
-            graph_type: string; default is neighbor
+            graph_type: string
                 to specify which physicell output data should be processed.
                 attached, touch: processes mcds.get_attached_graph_dict dictionary.
                 neighbor: processes mcds.get_neighbor_graph_dict dictionary.

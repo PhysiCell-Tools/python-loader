@@ -1169,7 +1169,7 @@ def get_anndata():
     parser.add_argument(
         '--graph',
         default = 'true',
-        help = 'should neighbor graph and attach graph be extracted and loaded into the anndata object? default is True.'
+        help = 'should neighbor graph, attach graph, and attached spring graph be extracted and loaded into the anndata object? default is True.'
     )
     # TimeSeries physiboss
     parser.add_argument(
@@ -1361,7 +1361,7 @@ def make_graph_gml():
     parser.add_argument(
         'graph_type',
         nargs = '?',
-        help = 'to specify which physicell output data should be processed. attached: processes mcds.get_attached_graph_dict dictionary. neighbor: processes mcds.get_neighbor_graph_dict dictionary.',
+        help = 'to specify which physicell output data should be processed. attached: processes mcds.get_attached_graph_dict dictionary. neighbor: processes mcds.get_neighbor_graph_dict dictionary spring: processes mcds.get_spring_graph_dict dictionary.',
     )
     # make_graph_gml edge_attribute
     parser.add_argument(
