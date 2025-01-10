@@ -3,13 +3,15 @@
 
 ## input:
 ```
+            visualize: boolean; default is True
+                additionally, visualize cells using vtk renderer.
 
 ```
 
 ## output:
 ```
             s_vtkpathfile: vtk rectilinear grid file that contains
-            3D distributions of all substrates over the microenvironment.
+                3D distributions of all substrates over the microenvironment.
 
 ```
 

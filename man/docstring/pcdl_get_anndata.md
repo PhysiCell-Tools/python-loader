@@ -31,8 +31,9 @@ options:
                         will use less memory and speed up processing, similar
                         to the original pyMCDS_cells.py script. default is
                         True.
-  --graph GRAPH         should neighbor graph and attach graph be extracted
-                        and loaded into the anndata object? default is True.
+  --graph GRAPH         should neighbor graph, attach graph, and attached
+                        spring graph be extracted and loaded into the anndata
+                        object? default is True.
   --physiboss PHYSIBOSS
                         if found, should physiboss state data be extracted and
                         loaded into the anndata object? default is True.

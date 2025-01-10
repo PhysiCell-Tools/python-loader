@@ -91,6 +91,11 @@ def docstring_md(s_function, ls_doc, s_header=None, s_opath='man/docstring/'):
     f.close()
 
 
+# download test dataset
+if not os.path.exists('pcdl/output_2d/') or not os.path.exists('pcdl/output_3d/'):
+    pcdl.install_data()
+
+
 # load data
 mcds = pcdl.TimeStep(
     'pcdl/output_2d/output00000000.xml',

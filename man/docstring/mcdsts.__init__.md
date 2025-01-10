@@ -23,8 +23,9 @@
                 processing, similar to the original pyMCDS_cells.py script.
 
             graph: boole; default True
-                should neighbor graph and attached graph be loaded?
-                setting graph to False will use less memory and speed up processing.
+                should neighbor garph, attached graph, and spring attached graph
+                be loaded? setting graph to False will use less memory and
+                speed up processing.
 
             physiboss: boole; default True
                 should physiboss state data be loaded, if found?
