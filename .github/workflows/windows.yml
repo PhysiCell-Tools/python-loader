@@ -21,7 +21,7 @@ jobs:
         python-version: ["3.9", "3.10", "3.11", "3.12"]
 
     env:
-      PYTHONPATH: D:\a\physicelldataloader\physicelldataloader
+      PYTHONPATH: D:\a\physicelldataloader\physicelldataloader:D:\a\python-loader\python-loader
 
     steps:
     - uses: actions/checkout@v4
