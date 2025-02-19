@@ -1412,7 +1412,7 @@ class pyMCDS:
                 iren.Start()
 
             # free memory
-            del vfa_value
+            #del vfa_value
 
         # save vtk file
         s_vtkpathfile = self.path + '/' + s_vtkfile
@@ -2062,7 +2062,8 @@ class pyMCDS:
                     voa_data.InsertNextValue(df_cell.loc[i, s_attribute])
 
             vug_data.GetPointData().AddArray(voa_data)
-            del voa_data
+            # free memory
+            #del voa_data
 
         # generate sphere source
         vss_data = vtk.vtkSphereSource()
