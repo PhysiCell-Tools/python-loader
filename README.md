@@ -1,10 +1,11 @@
 ![physicellcdataloader logo & title](man/img/physicelldataloader_title_v3.0.0.png)
 
 > [!WARNING]
-> For now, pcdl is only compiling on Python < v13!
-> The reason is the deprecated [AICSImageI](https://github.com/AllenCellModeling/aicsimageio) library dependency, which has lxml dependencies that no longer compile.
-> As soon as I find time (May or June 2025, after the spring semester), I will replace aicsimageio with its successor, the [bioio](https://github.com/bioio-devs/bioio) library.
-> Stay tuned. Thank you for your patience, Elmar
+> **For now, pcdl is only compiling on Python < v13!**
+> + The reason is the deprecated [AICSImageI](https://github.com/AllenCellModeling/aicsimageio) library dependency, which has lxml dependencies that no longer compile.
+> + As soon as I find time (May or June 2025, after the spring semester), I will replace aicsimageio with its successor, the [bioio](https://github.com/bioio-devs/bioio) library.
+>
+> Stay tuned and thank you for your patience, Elmar
 
 ## Abstract:
 
