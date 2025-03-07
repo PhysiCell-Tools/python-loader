@@ -569,12 +569,22 @@ class pyMCDS:
         tr_m_range, tr_n_range, tr_p_range = self.get_mesh_mnp_range()
         ar_m_axis, ar_n_axis, ar_p_axis = self.get_mesh_mnp_axis()
 
-        dm = (tr_m_range[1] - tr_m_range[0]) / (ar_m_axis.shape[0] - 1)
-        dn = (tr_n_range[1] - tr_n_range[0]) / (ar_n_axis.shape[0] - 1)
+        # m axis
+        if (len(set(tr_m_range)) == 1):
+            dm = np.float64(1.0)
+        else:
+            dm = (tr_m_range[1] - tr_m_range[0]) / (ar_m_axis.shape[0] - 1)
+        # n axis
+        if (len(set(tr_n_range)) == 1):
+            dn = np.float64(1.0)
+        else:
+            dn = (tr_n_range[1] - tr_n_range[0]) / (ar_n_axis.shape[0] - 1)
+        # p axis
         if (len(set(tr_p_range)) == 1):
             dp = np.float64(1.0)
         else:
             dp = (tr_p_range[1] - tr_p_range[0]) / (ar_p_axis.shape[0] - 1)
+
         return [dm, dn, dp]
 
 
