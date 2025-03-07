@@ -15,8 +15,8 @@
 
 
 # load library
-import aicsimageio  # bioio, bioio_base
-from aicsimageio.writers import OmeTiffWriter
+import bioio_base
+from bioio.writers import OmeTiffWriter
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib import colors
@@ -2337,7 +2337,7 @@ class pyMCDS:
                 #ome_xml=x_img,
                 channel_names = ls_channel,
                 image_names = [s_tifffile.replace('.ome.tiff','')],
-                physical_pixel_sizes = aicsimageio.types.PhysicalPixelSizes(self.get_voxel_spacing()[2], 1.0, 1.0),  # z,y,x [um]
+                physical_pixel_sizes = bioio_base.types.PhysicalPixelSizes(self.get_voxel_spacing()[2], 1.0, 1.0),  # z,y,x [um]
                 #channel_colors=,
                 #fs_kwargs={},
             )
