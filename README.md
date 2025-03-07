@@ -131,7 +131,7 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 + evt generate lineage tree graph output files.
 + evt add neuroglancer ome.tiff support.
 + switch from aicsimageio to bioio library, when the library is ripe (napari has switched to bioio).
-
++ add function parameter to specify an own output filename.
 
 ## Release Notes:
 + version 3.3.3 (2025-01-10): elmbeech/physicelldataloader
