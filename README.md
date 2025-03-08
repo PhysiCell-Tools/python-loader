@@ -1,13 +1,5 @@
 ![physicellcdataloader logo & title](man/img/physicelldataloader_title_v3.0.0.png)
 
-> [!WARNING]
-> **For now, pcdl is only compiling on Python < v13!**
->
-> *The reason is the deprecated [AICSImageIO](https://github.com/AllenCellModeling/aicsimageio) library dependency, which has lxml dependencies that no longer compile.*
-> *As soon as I find time (May or June 2025, after the spring semester), I will replace aicsimageio with its successor, the [BioIO](https://github.com/bioio-devs/bioio) library.*
->
-> **Stay tuned and thank you for your patience, Elmar**
-
 ## Abstract:
 
 physicelldataloader (pcdl) provides a platform independent, python3 based, [pip](https://en.wikipedia.org/wiki/Pip_(package_manager)) installable interface
@@ -27,7 +19,7 @@ The pcdl python3 library maintains three branches:
 ## Header:
 
 + Language: python [>= 3.9](https://devguide.python.org/versions/)
-+ Library dependencies: aicsimageio, anndata, matplotlib, numpy, pandas, (requests), scipy, vtk
++ Library dependencies: anndata, bioio, matplotlib, numpy, pandas, (requests), scipy, vtk
 + Date of origin original PhysiCell-Tools python-loader: 2019-09-02
 + Date of origin pcdl fork: 2022-08-30
 + Doi: https://doi.org/10.5281/ZENODO.8176399
@@ -130,10 +122,13 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 
 + evt generate lineage tree graph output files.
 + evt add neuroglancer ome.tiff support.
-+ switch from aicsimageio to bioio library, when the library is ripe (napari has switched to bioio).
-
++ evt add DataDiVR support.
 
 ## Release Notes:
++ version 3.3.4 (2025-03-07): elmbeech/physicelldataloader
+    + replace the **aicsimageio** library dependency with its successor **bioio**. special thanks to Joel Eliason!
+    + **make_ome_tiff** can handle automatically generated file names with > 255 characters.
+
 + version 3.3.3 (2025-01-10): elmbeech/physicelldataloader
     + bug fix **plot_contour** plot orientation. special thanks to Marco Ruscone!
     + add test data for new improved **unittest physicell model**. special thanks to Nick Oldfather!
