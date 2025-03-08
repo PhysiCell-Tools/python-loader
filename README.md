@@ -126,7 +126,8 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 
 ## Release Notes:
 + version 3.3.4 (2025-03-07): elmbeech/physicelldataloader
-    + replace the aicsimageio library dependency with its successor bioio. special thanks to Joel Eliason!
+    + replace the **aicsimageio** library dependency with its successor **bioio**. special thanks to Joel Eliason!
+    + **make_ome_tiff** can handle automatically generated file names with > 255 characters.
 
 + version 3.3.3 (2025-01-10): elmbeech/physicelldataloader
     + bug fix **plot_contour** plot orientation. special thanks to Marco Ruscone!
