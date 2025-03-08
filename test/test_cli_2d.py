@@ -841,7 +841,7 @@ class TestPyCliAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--custom_data_type', 'sample:bool'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/timeseries_cell_maxabs.h5ad')) and \
                (set(ann.var_names).issuperset({'sample'})) and \
