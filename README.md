@@ -123,7 +123,6 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 + evt generate lineage tree graph output files.
 + evt add neuroglancer ome.tiff support.
 + evt add DataDiVR support.
-+ add function parameter to specify an own output filename.
 
 ## Release Notes:
 + version 3.3.4 (2025-03-07): elmbeech/physicelldataloader

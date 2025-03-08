@@ -2338,7 +2338,12 @@ class pyMCDS:
             if len(ls_celltype) > 0:
                 s_channel += f'_{cell_attribute}'
             s_tifffile = self.xmlfile.replace('.xml', f'{s_channel}.ome.tiff')
+            if (len(s_tifffile) > 255):
+                print(f"Warning: filename {len(s_tifffile)} > 255 character.")
+                s_tifffile = self.xmlfile.replace('.xml', f'_channels.ome.tiff')
+                print(f"file name adjusted to {s_tifffile}.")
             s_tiffpathfile = self.path + '/' + s_tifffile
+
             # save to file
             OmeTiffWriter.save(
                 a_czyx_img,

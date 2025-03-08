@@ -1082,6 +1082,7 @@ class pyMCDSts:
             a_tczyx_img = np.array(l_tczyx_img)
             if self.verbose:
                 print('a_tczyx_img shape:', a_tczyx_img.shape)
+
             # generate filename
             s_channel = ''
             for s_substrate in ls_substrate:
@@ -1094,7 +1095,13 @@ class pyMCDSts:
                 s_channel += f'_{s_celltype}'
             if len(ls_celltype) > 0:
                 s_channel += f'_{cell_attribute}'
-            s_tiffpathfile = self.path + f'/timeseries{s_channel}.ome.tiff'
+            s_tifffile = f'timeseries{s_channel}.ome.tiff'
+            if (len(s_tifffile) > 255):
+                print(f"Warning: filename {len(s_tifffile)} > 255 character.")
+                s_tifffile = 'timeseries_channels.ome.tiff'
+                print(f"file name adjusted to {s_tifffile}.")
+            s_tiffpathfile = self.path + '/' + s_tifffile
+
             # save to file
             OmeTiffWriter.save(
                 a_tczyx_img,
