@@ -419,7 +419,7 @@ class TestPyMcds3DGraph(object):
               (a_ometiff.shape == (25, 4, 11, 200, 300))
 
 
-## timeseries related functions ##
+## time series related functions ##
 
 class TestPyMcds3DTimeseries(object):
     ''' tests for pcdl.TimeStep graph related functions. '''
@@ -670,4 +670,93 @@ class TestPyMcds3DTimeseries(object):
         assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
               (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
         plt.close()
+
+
+## anndata time series related functions ##
+class TestPyAnndata3DTimeSeries(object):
+    ''' test for pcdl.TestSeries class. '''
+
+    # get_anndata
+    # get_annmcds_list {integrated}
+    # value {1, _2_}
+    # collaps {True, _False_}
+    # keep_mcds {True, _False_}
+
+    ## get_anndata command ##
+    def test_mcdsts_get_anndata(self):
+        mcdsts = pcdl.TimeSeries(s_path_3d, verbose=True)
+        ann = mcdsts.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=True)
+        l_annmcds = mcdsts.get_annmcds_list()
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+              (len(mcdsts.l_mcds) == 25) and \
+              (l_annmcds == mcdsts.l_annmcds) and \
+              (mcdsts.l_annmcds is None) and \
+              (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (ann.X.shape[0] > 9) and \
+              (ann.X.shape[1] == 105) and \
+              (ann.obs.shape[0] > 9) and \
+              (ann.obs.shape[1] == 8) and \
+              (ann.obsm['spatial'].shape[0] > 9) and \
+              (ann.obsm['spatial'].shape[1] == 3) and \
+              (len(ann.obsp) == 0) and \
+              (ann.var.shape == (105, 0)) and \
+              (len(ann.uns) == 0)
+
+    def test_mcdsts_get_anndata_value(self):
+        mcdsts = pcdl.TimeSeries(s_path_3d, verbose=True)
+        ann = mcdsts.get_anndata(values=2, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=True)
+        l_annmcds = mcdsts.get_annmcds_list()
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+              (len(mcdsts.l_mcds) == 25) and \
+              (l_annmcds == mcdsts.l_annmcds) and \
+              (mcdsts.l_annmcds is None) and \
+              (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (ann.X.shape[0] > 9) and \
+              (ann.X.shape[1] == 56) and \
+              (ann.obs.shape[0] > 9) and \
+              (ann.obs.shape[1] == 7) and \
+              (ann.obsm['spatial'].shape[0] > 9) and \
+              (ann.obsm['spatial'].shape[1] == 3) and \
+              (len(ann.obsp) == 0) and \
+              (ann.var.shape == (56, 0)) and \
+              (len(ann.uns) == 0)
+
+    def test_mcdsts_get_anndata_collapsefalse(self):
+        mcdsts = pcdl.TimeSeries(s_path_3d, verbose=True)
+        ann = mcdsts.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs', collapse=False, keep_mcds=True)
+        l_annmcds = mcdsts.get_annmcds_list()
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+              (len(mcdsts.l_mcds) == 25) and \
+              (l_annmcds == mcdsts.l_annmcds) and \
+              (str(type(mcdsts.l_annmcds)) == "<class 'list'>") and \
+              (len(mcdsts.l_annmcds) == 25) and \
+              (all([str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>" for ann in mcdsts.l_annmcds])) and \
+              (mcdsts.l_annmcds[24].X.shape[0] > 9) and \
+              (mcdsts.l_annmcds[24].X.shape[1] == 105) and \
+              (mcdsts.l_annmcds[24].obs.shape[0] > 9) and \
+              (mcdsts.l_annmcds[24].obs.shape[1] == 7) and \
+              (mcdsts.l_annmcds[24].obsm['spatial'].shape[0] > 9) and \
+              (mcdsts.l_annmcds[24].obsm['spatial'].shape[1] == 3) and \
+              (len(mcdsts.l_annmcds[24].obsp) == 4) and \
+              (mcdsts.l_annmcds[24].var.shape == (105, 0)) and \
+              (len(mcdsts.l_annmcds[24].uns) == 2)
+
+    def test_mcdsts_get_anndata_keepmcdsfalse(self):
+        mcdsts = pcdl.TimeSeries(s_path_3d, verbose=True)
+        ann = mcdsts.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=False)
+        l_annmcds = mcdsts.get_annmcds_list()
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+              (len(mcdsts.l_mcds) == 0) and \
+              (l_annmcds == mcdsts.l_annmcds) and \
+              (mcdsts.l_annmcds is None) and \
+              (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (ann.X.shape[0] > 9) and \
+              (ann.X.shape[1] == 105) and \
+              (ann.obs.shape[0] > 9) and \
+              (ann.obs.shape[1] == 8) and \
+              (ann.obsm['spatial'].shape[0] > 9) and \
+              (ann.obsm['spatial'].shape[1] == 3) and \
+              (len(ann.obsp) == 0) and \
+              (ann.var.shape == (105, 0)) and \
+              (len(ann.uns) == 0)
 

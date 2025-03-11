@@ -22,6 +22,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+import pandas as pd
 import pathlib
 import pcdl
 
@@ -33,6 +34,17 @@ s_pathfile_2d = f'{s_path_2d}/{s_file_2d}'
 
 
 ## download test dataset ##
+if not os.path.exists(s_path_2d):
+    pcdl.install_data()
+
+
+# const
+s_path_2d = str(pathlib.Path(pcdl.__file__).parent.resolve()/'output_2d')
+s_file_2d = 'output00000024.xml'
+s_pathfile_2d = f'{s_path_2d}/{s_file_2d}'
+
+
+# test data
 if not os.path.exists(s_path_2d):
     pcdl.install_data()
 
@@ -1005,4 +1017,59 @@ class TestPyMcdsOmeTiff(object):
               (a_ometiff.shape == (1, 1, 200, 300)) and \
               (a_ometiff[0].min() == 0.0) and \
               (a_ometiff[0].max() >= 1.0)
+
+
+
+## anndata helper function ##
+class TestPyAnndataScaler(object):
+    ''' test for pcdl.scaler function '''
+    a_x = np.array([[ 1.,-1., 2., 0.],[ 2., 0., 0.,0.],[ 0., 1.,-1.,0.]])
+    df_x = pd.DataFrame(a_x, columns=['a','b','c','d'])
+
+    def test_scaler_none(self, df_x=df_x):
+        df_scaled = pcdl.timestep.scaler(df_x=df_x, scale=None)
+        assert(str(type(df_scaled)) == "<class 'pandas.core.frame.DataFrame'>") and \
+              (all(df_scaled == df_x))
+
+    def test_scaler_minabs(self, df_x=df_x):
+        df_scaled = pcdl.timestep.scaler(df_x=df_x, scale='maxabs')
+        assert(str(type(df_scaled)) == "<class 'pandas.core.frame.DataFrame'>") and \
+              (df_scaled.values.sum().round(3) == 2.0) and \
+              (df_scaled.values.min().round(3) == -1.0) and \
+              (df_scaled.values.max().round(3) == 1.0)
+
+    def test_scaler_minmax(self, df_x=df_x):
+        df_scaled = pcdl.timestep.scaler(df_x=df_x, scale='minmax')
+        assert(str(type(df_scaled)) == "<class 'pandas.core.frame.DataFrame'>") and \
+              (df_scaled.values.sum().round(3) == 4.333) and \
+              (df_scaled.values.min().round(3) == 0.0) and \
+              (df_scaled.values.max().round(3) == 1.0)
+
+    def test_scaler_std(self, df_x=df_x):
+        df_scaled = pcdl.timestep.scaler(df_x=df_x, scale='std')
+        assert(str(type(df_scaled)) == "<class 'pandas.core.frame.DataFrame'>") and \
+              (df_scaled.values.sum().round(3) == 0.0) and \
+              (df_scaled.values.min().round(3) == -1.0) and \
+              (df_scaled.values.max().round(3) == 1.091)
+
+
+## anndata time step related functions ##
+class TestPyAnndataTimeStep(object):
+    ''' test for pcdl.TimeStep class. '''
+
+    ## get_anndata command ##
+    def test_mcds_get_anndata(self):
+        mcds = pcdl.TimeStep(s_pathfile_2d, verbose=False)
+        ann = mcds.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs')
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+              (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (ann.X.shape[0] > 9) and \
+              (ann.X.shape[1] == 105) and \
+              (ann.obs.shape[0] > 9) and \
+              (ann.obs.shape[1] == 7) and \
+              (ann.obsm['spatial'].shape[0] > 9) and \
+              (ann.obsm['spatial'].shape[1] == 2) and \
+              (len(ann.obsp) == 2) and \
+              (ann.var.shape == (105, 0)) and \
+              (len(ann.uns) == 1)
 

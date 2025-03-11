@@ -22,6 +22,7 @@
 # load library
 import numpy as np
 import os
+import pandas as pd
 import pathlib
 import pcdl
 import matplotlib.pyplot as plt
@@ -639,4 +640,25 @@ class TestPyMcds3dOmeTiffWorkhorse(object):
               (str(type(a_ometiff)) == "<class 'numpy.ndarray'>") and \
               (a_ometiff.dtype == np.float32) and \
               (a_ometiff.shape == (4, 11, 200, 300))
+
+
+## anndata time step related functions ##
+class TestPyAnndata3DTimeStep(object):
+    ''' test for pcdl.TimeStep class. '''
+
+    ## get_anndata command ##
+    def test_mcds_get_anndata(self):
+        mcds = pcdl.TimeStep(s_pathfile_3d, verbose=False)
+        ann = mcds.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs')
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+              (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (ann.X.shape[0] > 9) and \
+              (ann.X.shape[1] == 105) and \
+              (ann.obs.shape[0] > 9) and \
+              (ann.obs.shape[1] == 7) and \
+              (ann.obsm['spatial'].shape[0] > 9) and \
+              (ann.obsm['spatial'].shape[1] == 3) and \
+              (len(ann.obsp) == 2) and \
+              (ann.var.shape == (105, 0)) and \
+              (len(ann.uns) == 1)
 
