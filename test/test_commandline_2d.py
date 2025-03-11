@@ -1,4 +1,4 @@
-###
+#####
 # title: test_cli_2d.py
 #
 # language: python3
@@ -39,7 +39,7 @@ print("s_pathfile_2d", s_pathfile_2d)
 if not os.path.exists(s_path_2d):
     pcdl.install_data()
 
-print(f"process: pcdl pyCLI functions from the command line...")
+print(f"process: pcdl command line interface functions from the command line...")
 
 
 ##############################
@@ -47,7 +47,7 @@ print(f"process: pcdl pyCLI functions from the command line...")
 ##############################
 
 class TestPyCliVersion(object):
-    ''' tests for one pcdl.pyCli function. '''
+    ''' tests for one pcdl command line interface function. '''
 
     # timestep:
     # + path (pathfile, path) ok
@@ -69,7 +69,7 @@ class TestPyCliVersion(object):
 
 
 class TestPyCliUnitDict(object):
-    ''' tests for one pcdl.pyCli function. '''
+    ''' tests for one  pcdl command line interface  function. '''
 
     # timestep:
     # + path (pathfile, path) ok
@@ -131,7 +131,7 @@ class TestPyCliUnitDict(object):
 ##############################
 
 class TestPyCliSubstrateList(object):
-    ''' tests for one pcdl.pyCli function. '''
+    ''' tests for one  pcdl command line interface  function. '''
 
     # timestep:
     # + path (pathfile, path) ok
@@ -153,7 +153,7 @@ class TestPyCliSubstrateList(object):
 
 
 class TestPyCliConcDfAttribute(object):
-    ''' tests for one pcdl.pyCli function. '''
+    ''' tests for one  pcdl command line interface  function. '''
 
     # timeseries collapsed:
     # + path (str) nop
@@ -215,7 +215,7 @@ class TestPyCliConcDfAttribute(object):
 
 
 class TestPyCliConcDf(object):
-    ''' tests for one pcdl.pyCli function. '''
+    ''' tests for one  pcdl command line interface  function. '''
 
     # timeseries
     # + collapse (true false) ok
@@ -329,7 +329,7 @@ class TestPyCliConcDf(object):
 
 
 class TestPyCliPlotContour(object):
-    ''' tests for one pcdl.pyCli function. '''
+    ''' tests for one  pcdl command line interface  function. '''
 
     # time series and time steps.
     # + path nop
@@ -421,7 +421,7 @@ class TestPyCliPlotContour(object):
 
 # bue 20250107: broken! FutureWarning causes troubles.
 class TestPyCliConcVtk(object):
-    ''' tests for one pcdl.pyCli function. '''
+    ''' tests for one  pcdl command line interface  function. '''
 
     # timestep and timeseries:
     # + path nop
@@ -455,7 +455,7 @@ class TestPyCliConcVtk(object):
 ################################
 
 class TestPyCliCelltypeList(object):
-    ''' tests for one pcdl.pyCli function. '''
+    ''' tests for one  pcdl command line interface  function. '''
 
     # timestep:
     # + path (pathfile, path) ok
@@ -477,7 +477,7 @@ class TestPyCliCelltypeList(object):
 
 
 class TestPyCliCellDfAttribute(object):
-    ''' tests for one pcdl.pyCli function. '''
+    ''' tests for one  pcdl command line interface  function. '''
 
     # timeseries collapsed:
     # + path (str) nop
@@ -595,7 +595,7 @@ class TestPyCliCellDfAttribute(object):
 
 
 class TestPyCliCellDf(object):
-    ''' tests for one pcdl.pyCli function. '''
+    ''' tests for one  pcdl command line interface  function. '''
 
     # timeseries
     # + collapse (true false) ok
@@ -790,7 +790,7 @@ class TestPyCliCellDf(object):
 
 
 class TestPyCliAnndata(object):
-    ''' tests for one pcdl.pyCli function. '''
+    ''' tests for one  pcdl command line interface  function. '''
 
     # timeseries
     # + collapse (true false) ok
@@ -1175,7 +1175,7 @@ class TestPyCliAnndata(object):
 
 
 class TestPyCliGraphGml(object):
-    ''' tests for one pcdl.pyCli function. '''
+    ''' tests for one  pcdl command line interface  function. '''
 
     # timestep and timeseries:
     # + path nop
@@ -1410,7 +1410,7 @@ class TestPyCliGraphGml(object):
 
 
 class TestPyCliPlotScatter(object):
-    ''' tests for one pcdl.pyCli function. '''
+    ''' tests for one  pcdl command line interface  function. '''
 
     # time series and time steps.
     # + path nop
@@ -1522,7 +1522,7 @@ class TestPyCliPlotScatter(object):
 
 
 class TestPyCliCellVtk(object):
-    ''' tests for one pcdl.pyCli function. '''
+    ''' tests for one  pcdl command line interface  function. '''
 
     # timestep and timeseries:
     # + path nop
@@ -1692,7 +1692,7 @@ class TestPyCliCellVtk(object):
 #######################################
 
 class TestPyCliPlotTimeSeries(object):
-    ''' tests for one pcdl.pyCli function. '''
+    ''' tests for one  pcdl command line interface  function. '''
 
     # time series.
     # + path nop
@@ -1827,7 +1827,7 @@ class TestPyCliPlotTimeSeries(object):
 
 
 class TestPyCliOmeTiff(object):
-    ''' tests for one pcdl.pyCli function. '''
+    ''' tests for one  pcdl command line interface  function. '''
 
     # timestep and timeseries:
     # + path nop
@@ -2021,7 +2021,7 @@ class TestPyCliOmeTiff(object):
 
 # bue 20250107: broken by Ignoring
 class TestPyCliMakeGif(object):
-    ''' tests for one pcdl.pyCli function. '''
+    ''' tests for one  pcdl command line interface  function. '''
 
     # time series
     # + path nop
@@ -2052,7 +2052,7 @@ class TestPyCliMakeGif(object):
 
     # bue 20250107: broken by Ignoring
 class TestPyCliMakeMove(object):
-    ''' tests for one pcdl.pyCli function. '''
+    ''' tests for one  pcdl command line interface  function. '''
 
     # time series
     # + path nop

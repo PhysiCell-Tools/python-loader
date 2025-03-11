@@ -49,7 +49,7 @@ class TestPyAnndata3DTimeStep(object):
     def test_mcds_get_anndata(self):
         mcds = pcdl.TimeStep(s_pathfile_3d, verbose=False)
         ann = mcds.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs')
-        assert(str(type(mcds)) == "<class 'pcdl.pyAnnData.TimeStep'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
               (ann.X.shape[0] > 9) and \
               (ann.X.shape[1] == 105) and \
@@ -82,7 +82,7 @@ class TestPyAnndata3DTimeSeries(object):
         mcdsts = pcdl.TimeSeries(s_path_3d, verbose=True)
         ann = mcdsts.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=True)
         l_annmcds = mcdsts.get_annmcds_list()
-        assert(str(type(mcdsts)) == "<class 'pcdl.pyAnnData.TimeSeries'>") and \
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
               (len(mcdsts.l_mcds) == 25) and \
               (l_annmcds == mcdsts.l_annmcds) and \
               (mcdsts.l_annmcds is None) and \
@@ -101,7 +101,7 @@ class TestPyAnndata3DTimeSeries(object):
         mcdsts = pcdl.TimeSeries(s_path_3d, verbose=True)
         ann = mcdsts.get_anndata(values=2, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=True)
         l_annmcds = mcdsts.get_annmcds_list()
-        assert(str(type(mcdsts)) == "<class 'pcdl.pyAnnData.TimeSeries'>") and \
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
               (len(mcdsts.l_mcds) == 25) and \
               (l_annmcds == mcdsts.l_annmcds) and \
               (mcdsts.l_annmcds is None) and \
@@ -120,7 +120,7 @@ class TestPyAnndata3DTimeSeries(object):
         mcdsts = pcdl.TimeSeries(s_path_3d, verbose=True)
         ann = mcdsts.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs', collapse=False, keep_mcds=True)
         l_annmcds = mcdsts.get_annmcds_list()
-        assert(str(type(mcdsts)) == "<class 'pcdl.pyAnnData.TimeSeries'>") and \
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
               (len(mcdsts.l_mcds) == 25) and \
               (l_annmcds == mcdsts.l_annmcds) and \
               (str(type(mcdsts.l_annmcds)) == "<class 'list'>") and \
@@ -140,7 +140,7 @@ class TestPyAnndata3DTimeSeries(object):
         mcdsts = pcdl.TimeSeries(s_path_3d, verbose=True)
         ann = mcdsts.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=False)
         l_annmcds = mcdsts.get_annmcds_list()
-        assert(str(type(mcdsts)) == "<class 'pcdl.pyAnnData.TimeSeries'>") and \
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
               (len(mcdsts.l_mcds) == 0) and \
               (l_annmcds == mcdsts.l_annmcds) and \
               (mcdsts.l_annmcds is None) and \

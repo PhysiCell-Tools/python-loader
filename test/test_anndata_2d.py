@@ -44,26 +44,26 @@ class TestPyAnndataScaler(object):
     df_x = pd.DataFrame(a_x, columns=['a','b','c','d'])
 
     def test_scaler_none(self, df_x=df_x):
-        df_scaled = pcdl.pyAnnData.scaler(df_x=df_x, scale=None)
+        df_scaled = pcdl.timestep.scaler(df_x=df_x, scale=None)
         assert(str(type(df_scaled)) == "<class 'pandas.core.frame.DataFrame'>") and \
               (all(df_scaled == df_x))
 
     def test_scaler_minabs(self, df_x=df_x):
-        df_scaled = pcdl.pyAnnData.scaler(df_x=df_x, scale='maxabs')
+        df_scaled = pcdl.timestep.scaler(df_x=df_x, scale='maxabs')
         assert(str(type(df_scaled)) == "<class 'pandas.core.frame.DataFrame'>") and \
               (df_scaled.values.sum().round(3) == 2.0) and \
               (df_scaled.values.min().round(3) == -1.0) and \
               (df_scaled.values.max().round(3) == 1.0)
 
     def test_scaler_minmax(self, df_x=df_x):
-        df_scaled = pcdl.pyAnnData.scaler(df_x=df_x, scale='minmax')
+        df_scaled = pcdl.timestep.scaler(df_x=df_x, scale='minmax')
         assert(str(type(df_scaled)) == "<class 'pandas.core.frame.DataFrame'>") and \
               (df_scaled.values.sum().round(3) == 4.333) and \
               (df_scaled.values.min().round(3) == 0.0) and \
               (df_scaled.values.max().round(3) == 1.0)
 
     def test_scaler_std(self, df_x=df_x):
-        df_scaled = pcdl.pyAnnData.scaler(df_x=df_x, scale='std')
+        df_scaled = pcdl.timestep.scaler(df_x=df_x, scale='std')
         assert(str(type(df_scaled)) == "<class 'pandas.core.frame.DataFrame'>") and \
               (df_scaled.values.sum().round(3) == 0.0) and \
               (df_scaled.values.min().round(3) == -1.0) and \
@@ -78,7 +78,7 @@ class TestPyAnndataTimeStep(object):
     def test_mcds_get_anndata(self):
         mcds = pcdl.TimeStep(s_pathfile_2d, verbose=False)
         ann = mcds.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs')
-        assert(str(type(mcds)) == "<class 'pcdl.pyAnnData.TimeStep'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
               (ann.X.shape[0] > 9) and \
               (ann.X.shape[1] == 105) and \
@@ -106,7 +106,7 @@ class TestPyAnndataTimeSeries(object):
         mcdsts = pcdl.TimeSeries(s_path_2d, verbose=True)
         ann = mcdsts.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=True)
         l_annmcds = mcdsts.get_annmcds_list()
-        assert(str(type(mcdsts)) == "<class 'pcdl.pyAnnData.TimeSeries'>") and \
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
               (len(mcdsts.l_mcds) == 25) and \
               (l_annmcds == mcdsts.l_annmcds) and \
               (mcdsts.l_annmcds is None) and \
@@ -125,7 +125,7 @@ class TestPyAnndataTimeSeries(object):
         mcdsts = pcdl.TimeSeries(s_path_2d, verbose=True)
         ann = mcdsts.get_anndata(values=2, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=True)
         l_annmcds = mcdsts.get_annmcds_list()
-        assert(str(type(mcdsts)) == "<class 'pcdl.pyAnnData.TimeSeries'>") and \
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
               (len(mcdsts.l_mcds) == 25) and \
               (l_annmcds == mcdsts.l_annmcds) and \
               (mcdsts.l_annmcds is None) and \
@@ -144,7 +144,7 @@ class TestPyAnndataTimeSeries(object):
         mcdsts = pcdl.TimeSeries(s_path_2d, verbose=True)
         ann = mcdsts.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs', collapse=False, keep_mcds=True)
         l_annmcds = mcdsts.get_annmcds_list()
-        assert(str(type(mcdsts)) == "<class 'pcdl.pyAnnData.TimeSeries'>") and \
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
               (len(mcdsts.l_mcds) == 25) and \
               (l_annmcds == mcdsts.l_annmcds) and \
               (str(type(mcdsts.l_annmcds)) == "<class 'list'>") and \
@@ -164,7 +164,7 @@ class TestPyAnndataTimeSeries(object):
         mcdsts = pcdl.TimeSeries(s_path_2d, verbose=True)
         ann = mcdsts.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=False)
         l_annmcds = mcdsts.get_annmcds_list()
-        assert(str(type(mcdsts)) == "<class 'pcdl.pyAnnData.TimeSeries'>") and \
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
               (len(mcdsts.l_mcds) == 0) and \
               (l_annmcds == mcdsts.l_annmcds) and \
               (mcdsts.l_annmcds is None) and \

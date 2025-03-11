@@ -7,7 +7,7 @@
 # license: BSD 3-Clause
 #
 # description:
-#   pytest unit test library for the pcdl library pyMCDS class.
+#   pytest unit test library for the pcdl library TimeStep class.
 #   focus is only in 3d and speed.
 #   + https://docs.pytest.org/
 #
@@ -43,14 +43,14 @@ if not os.path.exists(s_path_3d):
 ###########
 
 class TestPyMcds3dOnly(object):
-    ''' test for 3D only conditions in pcdl.pyMCDS functions. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_pathfile_3d)  # custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True
+    ''' test for 3D only conditions in pcdl.TimeStep functions. '''
+    mcds = pcdl.TimeStep(xmlfile=s_pathfile_3d)  # custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True
 
     ## mesh related functions ##
     # bue: check if in 2D
     def test_mcds_get_mesh_spacing(self, mcds=mcds):
         lr_spacing = mcds.get_mesh_spacing()
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(lr_spacing)) == "<class 'list'>") and \
               (str(type(lr_spacing[0])) == "<class 'numpy.float64'>") and \
               (str(type(lr_spacing[1])) == "<class 'numpy.float64'>") and \
@@ -63,28 +63,28 @@ class TestPyMcds3dOnly(object):
 ############################
 
 class TestPyMcdsInit(object):
-    ''' tests for loading a pcdl.pyMCDS data set. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_3d, output_path=s_path_3d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
+    ''' tests for loading a pcdl.TimeStep data set. '''
+    mcds = pcdl.TimeStep(xmlfile=s_file_3d, output_path=s_path_3d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
     df_cell = mcds.get_cell_df()
     def test_mcds_init_microenv(self, mcds=mcds, df_cell=df_cell):
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
               (df_cell.shape[0] > 9) and \
               (df_cell.shape[1] == 122)
 
     def test_mcds_init_graph(self, mcds=mcds):
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(mcds.data['discrete_cells']['graph']['attached_cells'])) == "<class 'dict'>") and \
               (str(type(mcds.data['discrete_cells']['graph']['neighbor_cells'])) == "<class 'dict'>") and \
               (len(mcds.data['discrete_cells']['graph']['attached_cells']) > 9) and \
               (len(mcds.data['discrete_cells']['graph']['neighbor_cells']) > 9)
 
     def test_mcds_init_physiboss(self, mcds=mcds):
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (mcds.data['discrete_cells']['physiboss'] == None)
 
     def test_mcds_init_settingxml(self, mcds=mcds, df_cell=df_cell):
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
               (set(df_cell.columns).issuperset({'default_fusion_rates'})) and \
               (df_cell.shape[0] > 9) and \
@@ -92,28 +92,28 @@ class TestPyMcdsInit(object):
 
 
 class TestPyMcdsInitMicroenvFalse(object):
-    ''' tests for loading a pcdl.pyMCDS data set with microenv false. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_3d, output_path=s_path_3d, custom_data_type={}, microenv=False, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
+    ''' tests for loading a pcdl.TimeStep data set with microenv false. '''
+    mcds = pcdl.TimeStep(xmlfile=s_file_3d, output_path=s_path_3d, custom_data_type={}, microenv=False, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
     df_cell = mcds.get_cell_df()
     def test_mcds_init_microenv(self, mcds=mcds, df_cell=df_cell):
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
               (df_cell.shape[0] > 9) and \
               (df_cell.shape[1] == 116)
 
     def test_mcds_init_graph(self, mcds=mcds):
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(mcds.data['discrete_cells']['graph']['attached_cells'])) == "<class 'dict'>") and \
               (str(type(mcds.data['discrete_cells']['graph']['neighbor_cells'])) == "<class 'dict'>") and \
               (len(mcds.data['discrete_cells']['graph']['attached_cells']) > 9) and \
               (len(mcds.data['discrete_cells']['graph']['neighbor_cells']) > 9)
 
     def test_mcds_init_physiboss(self, mcds=mcds):
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (mcds.data['discrete_cells']['physiboss'] == None)
 
     def test_mcds_init_settingxml(self, mcds=mcds, df_cell=df_cell):
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
               (set(df_cell.columns).issuperset({'default_fusion_rates'})) and \
               (df_cell.shape[0] > 9) and \
@@ -121,28 +121,28 @@ class TestPyMcdsInitMicroenvFalse(object):
 
 
 class TestPyMcdsInitGraphFalse(object):
-    ''' tests for loading a pcdl.pyMCDS data set with graph false. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_3d, output_path=s_path_3d, custom_data_type={}, microenv=True, graph=False, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
+    ''' tests for loading a pcdl.TimeStep data set with graph false. '''
+    mcds = pcdl.TimeStep(xmlfile=s_file_3d, output_path=s_path_3d, custom_data_type={}, microenv=True, graph=False, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
     df_cell = mcds.get_cell_df()
     def test_mcds_init_microenv(self, mcds=mcds, df_cell=df_cell):
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
               (df_cell.shape[0] > 9) and \
               (df_cell.shape[1] == 122)
 
     def test_mcds_init_graph(self, mcds=mcds):
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(mcds.data['discrete_cells']['graph']['attached_cells'])) == "<class 'dict'>") and \
               (str(type(mcds.data['discrete_cells']['graph']['neighbor_cells'])) == "<class 'dict'>") and \
               (len(mcds.data['discrete_cells']['graph']['attached_cells']) == 0) and \
               (len(mcds.data['discrete_cells']['graph']['neighbor_cells']) == 0)
 
     def test_mcds_init_physiboss(self, mcds=mcds):
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (mcds.data['discrete_cells']['physiboss'] == None)
 
     def test_mcds_init_settingxml(self, mcds=mcds, df_cell=df_cell):
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
               (set(df_cell.columns).issuperset({'default_fusion_rates'})) and \
               (df_cell.shape[0] > 9) and \
@@ -150,28 +150,28 @@ class TestPyMcdsInitGraphFalse(object):
 
 
 class TestPyMcdsInitPhysibossFalse(object):
-    ''' tests for loading a pcdl.pyMCDS data set with physiboss false. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_3d, output_path=s_path_3d, custom_data_type={}, microenv=True, graph=True, physiboss=False, settingxml='PhysiCell_settings.xml', verbose=True)
+    ''' tests for loading a pcdl.TimeStep data set with physiboss false. '''
+    mcds = pcdl.TimeStep(xmlfile=s_file_3d, output_path=s_path_3d, custom_data_type={}, microenv=True, graph=True, physiboss=False, settingxml='PhysiCell_settings.xml', verbose=True)
     df_cell = mcds.get_cell_df()
     def test_mcds_init_microenv(self, mcds=mcds, df_cell=df_cell):
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
               (df_cell.shape[0] > 9) and \
               (df_cell.shape[1] == 122)
 
     def test_mcds_init_graph(self, mcds=mcds):
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(mcds.data['discrete_cells']['graph']['attached_cells'])) == "<class 'dict'>") and \
               (str(type(mcds.data['discrete_cells']['graph']['neighbor_cells'])) == "<class 'dict'>") and \
               (len(mcds.data['discrete_cells']['graph']['attached_cells']) > 9) and \
               (len(mcds.data['discrete_cells']['graph']['neighbor_cells']) > 9)
 
     def test_mcds_init_physiboss(self, mcds=mcds):
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (mcds.data['discrete_cells']['physiboss'] == None)
 
     def test_mcds_init_settingxml(self, mcds=mcds, df_cell=df_cell):
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
               (set(df_cell.columns).issuperset({'default_fusion_rates'})) and \
               (df_cell.shape[0] > 9) and \
@@ -179,63 +179,63 @@ class TestPyMcdsInitPhysibossFalse(object):
 
 
 #class TestPyMcdsInitSettingxmlFalse(object):
-#    ''' tests for loading a pcdl.pyMCDS data set with settingxml false. '''
+#    ''' tests for loading a pcdl.TimeStep data set with settingxml false. '''
 #     NOP PhysiCell >= v1.14.0
 
 
 #class TestPyMcdsInitSettingxmlNone(object):
-#    ''' tests for loading a pcdl.pyMCDS data set with settingxml none. '''
+#    ''' tests for loading a pcdl.TimeStep data set with settingxml none. '''
 #     NOP PhysiCell >= v1.14.0
 
 
 class TestPyMcdsInitVerboseTrue(object):
-    ''' tests for loading a pcdl.pyMCDS data set and set_verbose_false function. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_3d, output_path=s_path_3d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
+    ''' tests for loading a pcdl.TimeStep data set and set_verbose_false function. '''
+    mcds = pcdl.TimeStep(xmlfile=s_file_3d, output_path=s_path_3d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
     def test_mcds_verbose_true(self, mcds=mcds):
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (mcds.verbose)
 
     def test_mcds_set_verbose_false(self, mcds=mcds):
         mcds.set_verbose_false()
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (not mcds.verbose)
 
 
 class TestPyMcdsInitVerboseFalse(object):
-    ''' tests for loading a pcdl.pyMCDS data set and set_verbose_true function. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_file_3d, output_path=s_path_3d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=False)
+    ''' tests for loading a pcdl.TimeStep data set and set_verbose_true function. '''
+    mcds = pcdl.TimeStep(xmlfile=s_file_3d, output_path=s_path_3d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=False)
 
     def test_mcds_verbose_false(self, mcds=mcds):
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (not mcds.verbose)
 
     def test_mcds_set_verbose_true(self, mcds=mcds):
         mcds.set_verbose_true()
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (mcds.verbose)
 
 
 class TestPyMcds3dSettingWorkhorse(object):
-    ''' tests on 3D data set, for speed, for pcdl.pyMCDS unit related workhorse functions. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_pathfile_3d)  # custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True
+    ''' tests on 3D data set, for speed, for pcdl.TimeStep unit related workhorse functions. '''
+    mcds = pcdl.TimeStep(xmlfile=s_pathfile_3d)  # custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True
 
     def test_mcds_get_unit_dict(self, mcds=mcds):
         ds_unit = mcds.get_unit_dict()
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(ds_unit)) == "<class 'dict'>") and \
               (len(ds_unit) > 9) and \
               (ds_unit['oxygen'] == 'dimensionless')
 
 
 class TestPyMcds3dMicroenvWorkhorse(object):
-    ''' tests on 3D data set, for speed, for pcdl.pyMCDS microenvironment related workhorse functions. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_pathfile_3d)  # custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True
+    ''' tests on 3D data set, for speed, for pcdl.TimeStep microenvironment related workhorse functions. '''
+    mcds = pcdl.TimeStep(xmlfile=s_pathfile_3d)  # custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True
 
     ## micro environment related functions ##
     def test_mcds_get_conc_df(self, mcds=mcds):
         df_conc = mcds.get_conc_df(z_slice=None, halt=False, values=1, drop=set(), keep=set())
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
               (df_conc.shape == (1331, 11))
               #(df_conc.shape[0] > 9) and \
@@ -243,31 +243,31 @@ class TestPyMcds3dMicroenvWorkhorse(object):
 
     def test_mcds_get_conc_df_zslice_center(self, mcds=mcds):
         df_conc = mcds.get_conc_df(z_slice=0, halt=False, values=1, drop=set(), keep=set())
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
               (df_conc.shape == (121, 11))
 
     def test_mcds_get_conc_df_zslice_outofcenter(self, mcds=mcds):
         df_conc = mcds.get_conc_df(z_slice=-6, halt=False, values=1, drop=set(), keep=set())
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
               (df_conc.shape == (121, 11))
 
     def test_mcds_get_conc_df_values(self, mcds=mcds):
         df_conc = mcds.get_conc_df(z_slice=None, halt=False, values=2, drop=set(), keep=set())
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
               (df_conc.shape == (1331, 11))
 
     def test_mcds_get_conc_df_drop(self, mcds=mcds):
         df_conc = mcds.get_conc_df(z_slice=None, halt=False, values=1, drop={'oxygen'}, keep=set())
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
               (df_conc.shape == (1331, 10))
 
     def test_mcds_get_conc_df_keep(self, mcds=mcds):
         df_conc = mcds.get_conc_df(z_slice=None, halt=False, values=1, drop=set(), keep={'oxygen'})
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
               (df_conc.shape == (1331, 10))
 
@@ -291,7 +291,7 @@ class TestPyMcds3dMicroenvWorkhorse(object):
             ext = None, # test fig case
             figbgcolor = None,  # not at file
         )
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
         plt.close()
 
@@ -314,7 +314,7 @@ class TestPyMcds3dMicroenvWorkhorse(object):
             ext = 'tiff', # test file case
             figbgcolor = 'orange',  # jump over if
         )
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (s_pathfile.replace('\\','/').endswith('/pcdl/output_3d/conc_oxygen_z-5.0/output00000024_oxygen.tiff')) and \
               (os.path.exists(s_pathfile)) and \
               (os.path.getsize(s_pathfile) > 2**10)
@@ -322,7 +322,7 @@ class TestPyMcds3dMicroenvWorkhorse(object):
 
     def test_mcds_make_conc_vtk(self, mcds=mcds):
         s_pathfile = mcds.make_conc_vtk(visualize=False)
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (s_pathfile.replace('\\','/').endswith('/pcdl/output_3d/output00000024_conc.vtr')) and \
               (os.path.exists(s_pathfile)) and \
               (os.path.getsize(s_pathfile) > 2**10)
@@ -330,34 +330,34 @@ class TestPyMcds3dMicroenvWorkhorse(object):
 
 
 class TestPyMcds3dCellWorkhorse(object):
-    ''' tests on 3D data set, for speed, for pcdl.pyMCDS cell related workhorse functions. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_pathfile_3d)  # custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True
+    ''' tests on 3D data set, for speed, for pcdl.TimeStep cell related workhorse functions. '''
+    mcds = pcdl.TimeStep(xmlfile=s_pathfile_3d)  # custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True
 
     ## cell related functions ##
     def test_mcds_get_cell_df(self, mcds=mcds):
         df_cell = mcds.get_cell_df(values=1, drop=set(), keep=set())
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
               (df_cell.shape[0] > 9) and \
               (df_cell.shape[1] == 122)
 
     def test_mcds_get_cell_df_values(self, mcds=mcds):
         df_cell = mcds.get_cell_df(values=2, drop=set(), keep=set())
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
               (df_cell.shape[0] > 9) and \
               (df_cell.shape[1] == 72)
 
     def test_mcds_get_cell_df_drop(self, mcds=mcds):
         df_cell = mcds.get_cell_df(values=1, drop={'oxygen'}, keep=set())
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
               (df_cell.shape[0] > 9) and \
               (df_cell.shape[1] == 121)
 
     def test_mcds_get_cell_df_keep(self, mcds=mcds):
         df_cell = mcds.get_cell_df(values=1, drop=set(), keep={'oxygen'})
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
               (df_cell.shape[0] > 9) and \
               (df_cell.shape[1] == 13)
@@ -383,7 +383,7 @@ class TestPyMcds3dCellWorkhorse(object):
             ext = None,  # test fig case
             figbgcolor = None,  # not a file
         )
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
         plt.close()
 
@@ -406,7 +406,7 @@ class TestPyMcds3dCellWorkhorse(object):
             ext = 'tiff',  # test file case
             figbgcolor = 'lime',  # jump over if
         )
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (s_pathfile.replace('\\','/').endswith('/pcdl/output_3d/cell_cell_type_z-5.0/output00000024_cell_type.tiff')) and \
               (os.path.exists(s_pathfile)) and \
               (os.path.getsize(s_pathfile) > 2**10)
@@ -432,7 +432,7 @@ class TestPyMcds3dCellWorkhorse(object):
             ext = None,  # test fig case
             figbgcolor = None,  # not a file
         )
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
         plt.close()
 
@@ -456,7 +456,7 @@ class TestPyMcds3dCellWorkhorse(object):
             ext = None,  # test fig case
             figbgcolor = None,  # not a file
         )
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
         plt.close()
 
@@ -479,7 +479,7 @@ class TestPyMcds3dCellWorkhorse(object):
             ext = None,  # test fig case
             figbgcolor = None,  # not a file
         )
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
         plt.close()
 
@@ -488,7 +488,7 @@ class TestPyMcds3dCellWorkhorse(object):
             #attribute=['cell_type'],
             visualize=False,
         )
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (s_pathfile.replace('\\','/').endswith('/pcdl/output_3d/output00000024_cell.vtp')) and \
               (os.path.exists(s_pathfile)) and \
               (os.path.getsize(s_pathfile) > 2**10)
@@ -496,7 +496,7 @@ class TestPyMcds3dCellWorkhorse(object):
 
     def test_mcds_make_cell_vtk_attribute_zero(self, mcds=mcds):
         s_pathfile = mcds.make_cell_vtk(attribute=[], visualize=False)
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (s_pathfile.replace('\\','/').endswith('/pcdl/output_3d/output00000024_cell.vtp')) and \
               (os.path.exists(s_pathfile)) and \
               (os.path.getsize(s_pathfile) > 2**10)
@@ -507,7 +507,7 @@ class TestPyMcds3dCellWorkhorse(object):
             attribute=['dead', 'cell_count_voxel', 'pressure', 'cell_type'],
             visualize=False,
         )
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (s_pathfile.replace('\\','/').endswith('/pcdl/output_3d/output00000024_cell.vtp')) and \
               (os.path.exists(s_pathfile)) and \
               (os.path.getsize(s_pathfile) > 2**10)
@@ -515,8 +515,8 @@ class TestPyMcds3dCellWorkhorse(object):
 
 
 class TestPyMcds3dGraphWorkhorse(object):
-    ''' tests on 3D data set, for speed, for pcdl.pyMCDS graph related workhorse functions. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_pathfile_3d)  # custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True
+    ''' tests on 3D data set, for speed, for pcdl.TimeStep graph related workhorse functions. '''
+    mcds = pcdl.TimeStep(xmlfile=s_pathfile_3d)  # custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True
 
     ## graph related functions ##
     # attached graph gml files
@@ -525,7 +525,7 @@ class TestPyMcds3dGraphWorkhorse(object):
         f = open(s_pathfile)
         s_file = f.read()
         f.close()
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (s_pathfile.replace('\\','/').endswith('pcdl/output_3d/output00000024_attached.gml')) and \
               (os.path.exists(s_pathfile)) and \
               (s_file.find('Creator "pcdl_v') > -1) and \
@@ -540,7 +540,7 @@ class TestPyMcds3dGraphWorkhorse(object):
         f = open(s_pathfile)
         s_file = f.read()
         f.close()
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (s_pathfile.replace('\\','/').endswith('pcdl/output_3d/output00000024_attached.gml')) and \
               (os.path.exists(s_pathfile)) and \
               (s_file.find('Creator "pcdl_v') > -1) and \
@@ -555,7 +555,7 @@ class TestPyMcds3dGraphWorkhorse(object):
         f = open(s_pathfile)
         s_file = f.read()
         f.close()
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (s_pathfile.replace('\\','/').endswith('pcdl/output_3d/output00000024_neighbor.gml')) and \
               (os.path.exists(s_pathfile)) and \
               (s_file.find('Creator "pcdl_v') > -1) and \
@@ -575,7 +575,7 @@ class TestPyMcds3dGraphWorkhorse(object):
         f = open(s_pathfile)
         s_file = f.read()
         f.close()
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (s_pathfile.replace('\\','/').endswith('pcdl/output_3d/output00000024_neighbor.gml')) and \
               (os.path.exists(s_pathfile)) and \
               (s_file.find('Creator "pcdl_v') > -1) and \
@@ -590,7 +590,7 @@ class TestPyMcds3dGraphWorkhorse(object):
         f = open(s_pathfile)
         s_file = f.read()
         f.close()
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (s_pathfile.replace('\\','/').endswith('pcdl/output_3d/output00000024_neighbor.gml')) and \
               (os.path.exists(s_pathfile)) and \
               (s_file.find('Creator "pcdl_v') > -1) and \
@@ -605,7 +605,7 @@ class TestPyMcds3dGraphWorkhorse(object):
         f = open(s_pathfile)
         s_file = f.read()
         f.close()
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (s_pathfile.replace('\\','/').endswith('pcdl/output_3d/output00000024_neighbor.gml')) and \
               (os.path.exists(s_pathfile)) and \
               (s_file.find('Creator "pcdl_v') > -1) and \
@@ -621,13 +621,13 @@ class TestPyMcds3dGraphWorkhorse(object):
 
 
 class TestPyMcds3dOmeTiffWorkhorse(object):
-    ''' tests on 3D data set, for speed, for pcdl.pyMCDS ome tiff related workhorse functions. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_pathfile_3d)  # custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True
+    ''' tests on 3D data set, for speed, for pcdl.TimeStep ome tiff related workhorse functions. '''
+    mcds = pcdl.TimeStep(xmlfile=s_pathfile_3d)  # custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True
 
     ## ome tiff related functions ##
     def test_mcds_make_ome_tiff_default(self, mcds=mcds):
         s_pathfile = mcds.make_ome_tiff(cell_attribute='ID', conc_cutoff={}, focus=None, file=True)
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (s_pathfile.replace('\\','/').endswith('pcdl/output_3d/output00000024_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
               (os.path.exists(s_pathfile)) and \
               (os.path.getsize(s_pathfile) > 2**10)
@@ -635,7 +635,7 @@ class TestPyMcds3dOmeTiffWorkhorse(object):
 
     def test_mcds_make_ome_tiff_nofile(self, mcds=mcds):
         a_ometiff = mcds.make_ome_tiff(cell_attribute='ID', conc_cutoff={}, focus=None, file=False)
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(a_ometiff)) == "<class 'numpy.ndarray'>") and \
               (a_ometiff.dtype == np.float32) and \
               (a_ometiff.shape == (4, 11, 200, 300))
