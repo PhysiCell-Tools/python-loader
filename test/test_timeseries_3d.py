@@ -43,7 +43,7 @@ if not os.path.exists(s_path_3d):
 
 ## data loading related functions ##
 
-class TestPyMcdsTs3DInit(object):
+class TestTimeSeries3dInit(object):
     ''' tests for loading a pcdl.TimeSeries data set. '''
 
     def test_mcdsts_set_verbose_true(self):
@@ -107,7 +107,7 @@ class TestPyMcdsTs3DInit(object):
 
 ## micro environment related functions ##
 
-class TestPyMcdsTs3DMicroenv(object):
+class TestTimeSeries3dMicroenv(object):
     ''' tests for pcdl.TimeStep micro environment related functions. '''
     mcdsts = pcdl.TimeSeries(s_path_3d, verbose=True)
 
@@ -159,14 +159,14 @@ class TestPyMcdsTs3DMicroenv(object):
             focus = 'oxygen',
             z_slice = -3.333,  # test if
             extrema = None,  # test if and for loop
-            #alpha = 1,  # pyMCD
-            #fill = True,  # pyMCD
-            #cmap = 'viridis',  # pyMCD
+            #alpha = 1,  # TimeStep
+            #fill = True,  # TimeStep
+            #cmap = 'viridis',  # TimeStep
             #title = '',  # test default
-            #grid = True,  # pyMCD
+            #grid = True,  # TimeStep
             xlim = None,  # test if
             ylim = None,  # test if
-            #xyequal = True,  # pyMCD
+            #xyequal = True,  # TimeStep
             figsizepx = None,  # test if
             ext = 'jpeg',
             figbgcolor = None,  # test if
@@ -222,7 +222,7 @@ class TestPyMcdsTs3DMicroenv(object):
 
 ## cell related functions ##
 
-class TestPyMcds3DCell(object):
+class TestTimeSeries3dCell(object):
     ''' tests for pcdl.TimeStep cell related functions. '''
     mcdsts = pcdl.TimeSeries(s_path_3d, verbose=False)
 
@@ -355,7 +355,7 @@ class TestPyMcds3DCell(object):
 
 
 ## graph related functions ##
-class TestPyMcds3DGraph(object):
+class TestTimeSeries3dGraph(object):
     ''' tests for pcdl.TimeStep graph related functions. '''
     mcdsts = pcdl.TimeSeries(s_path_3d, verbose=False)
 
@@ -394,7 +394,7 @@ class TestPyMcds3DGraph(object):
             os.remove(s_pathfile)
 
 ## graph related functions ##
-class TestPyMcds3DGraph(object):
+class TestTimeSeries3dGraph(object):
     ''' tests for pcdl.TimeStep graph related functions. '''
     mcdsts = pcdl.TimeSeries(s_path_3d, verbose=False)
 
@@ -421,7 +421,7 @@ class TestPyMcds3DGraph(object):
 
 ## time series related functions ##
 
-class TestPyMcds3DTimeseries(object):
+class TestTimeSeries3dTimeseries(object):
     ''' tests for pcdl.TimeStep graph related functions. '''
     mcdsts = pcdl.TimeSeries(s_path_3d, verbose=False)
 
@@ -673,7 +673,7 @@ class TestPyMcds3DTimeseries(object):
 
 
 ## anndata time series related functions ##
-class TestPyAnndata3DTimeSeries(object):
+class TestTimeSeries3dAnnData(object):
     ''' test for pcdl.TestSeries class. '''
 
     # get_anndata

@@ -80,8 +80,6 @@ Basically, there are four types of functions:
 + [help(mcds.get_substrate_list)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_substrate_list.md)  #! workhorse function
 + [help(mcds.get_substrate_dict)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_substrate_dict.md)
 + [help(mcds.get_substrate_df)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_substrate_df.md)
-+ [help(mcds.get_concentration)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_concentration.md)
-+ [help(mcds.get_concentration_at)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_concentration_at.md)
 + [help(mcds.get_conc_df)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_conc_df.md)  #! workhorse function
 + [help(mcds.plot_contour)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.plot_contour.md)  #! workhorse function
 + [help(mcds.make_conc_vtk)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.make_conc_vtk.md)  #! workhorse function
@@ -90,7 +88,6 @@ Basically, there are four types of functions:
 + [help(mcds.get_celltype_list)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_celltype_list.md)  #! workhorse function
 + [help(mcds.get_celltype_dict)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_celltype_dict.md)
 + [help(mcds.get_cell_df)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_cell_df.md)  #! workhorse function
-+ [help(mcds.get_cell_df_at)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_cell_df_at.md)
 + [help(mcds.plot_scatter)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.plot_scatter.md)  #! workhorse function
 + [help(mcds.make_cell_vtk)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.make_cell_vtk.md)  #! workhorse function
 + [help(mcds.get_anndata)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_anndata.md)  #! workhorse function
@@ -107,8 +104,8 @@ Basically, there are four types of functions:
 + [help(pcdl.scaler)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.scaler.md)  # anndata
 + [help(pcdl.graphfile_parser)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.graphfile_parser.md)  # mcds
 ```python3
-help(pcdl.pyMCDS._read_xml)
-help(pcdl.pyAnnData._anndextract)
+help(pcdl.TimeStep._read_xml)
+help(pcdl.TimeStep._anndextract)
 ```
 
 
@@ -160,8 +157,8 @@ Basically, there are four types of functions:
 ### TimeSeries internal functions
 + [help(pcdl.scaler)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.scaler.md)  # anndata
 ```python3
-help(pcdl.pyMCDSts._handle_magick)
-help(pcdl.pyAnnData._anndextract)
+help(pcdl.TimeSeries._handle_magick)
+help(pcdl.TimeSeries._anndextract)
 ```
 
 

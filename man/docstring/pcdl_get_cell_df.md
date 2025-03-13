@@ -20,7 +20,7 @@ options:
   -h, --help            show this help message and exit
   --microenv MICROENV   should the microenvironment data be loaded? setting
                         microenv to False will use less memory and speed up
-                        processing, similar to the original pyMCDS_cells.py
+                        processing, similar to the original TimeStep_cells.py
                         script. default is True.
   --physiboss PHYSIBOSS
                         if found, should physiboss state data be extracted and

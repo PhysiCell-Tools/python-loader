@@ -46,7 +46,7 @@ print(f"process: pcdl command line interface functions from the command line..."
 # metadata realted test code #
 ##############################
 
-class TestPyCliVersion(object):
+class TestCommandLineInterfaceVersion(object):
     ''' tests for one pcdl command line interface function. '''
 
     # timestep:
@@ -68,7 +68,7 @@ class TestPyCliVersion(object):
         assert s_version.startswith('version:\nPhysiCell_')
 
 
-class TestPyCliUnitDict(object):
+class TestCommandLineInterfaceUnitDict(object):
     ''' tests for one  pcdl command line interface  function. '''
 
     # timestep:
@@ -130,7 +130,7 @@ class TestPyCliUnitDict(object):
 # substarte relatd test code #
 ##############################
 
-class TestPyCliSubstrateList(object):
+class TestCommandLineInterfaceSubstrateList(object):
     ''' tests for one  pcdl command line interface  function. '''
 
     # timestep:
@@ -152,7 +152,7 @@ class TestPyCliSubstrateList(object):
         assert (s_listing.startswith("['oxygen', 'water']"))
 
 
-class TestPyCliConcDfAttribute(object):
+class TestCommandLineInterfaceConcDfAttribute(object):
     ''' tests for one  pcdl command line interface  function. '''
 
     # timeseries collapsed:
@@ -214,7 +214,7 @@ class TestPyCliConcDfAttribute(object):
         os.remove(s_opathfile)
 
 
-class TestPyCliConcDf(object):
+class TestCommandLineInterfaceConcDf(object):
     ''' tests for one  pcdl command line interface  function. '''
 
     # timeseries
@@ -328,7 +328,7 @@ class TestPyCliConcDf(object):
         os.remove(s_opathfile)
 
 
-class TestPyCliPlotContour(object):
+class TestCommandLineInterfacePlotContour(object):
     ''' tests for one  pcdl command line interface  function. '''
 
     # time series and time steps.
@@ -420,7 +420,7 @@ class TestPyCliPlotContour(object):
 
 
 # bue 20250107: broken! FutureWarning causes troubles.
-class TestPyCliConcVtk(object):
+class TestCommandLineInterfaceConcVtk(object):
     ''' tests for one  pcdl command line interface  function. '''
 
     # timestep and timeseries:
@@ -454,7 +454,7 @@ class TestPyCliConcVtk(object):
 # cell agent realted test code #
 ################################
 
-class TestPyCliCelltypeList(object):
+class TestCommandLineInterfaceCelltypeList(object):
     ''' tests for one  pcdl command line interface  function. '''
 
     # timestep:
@@ -476,7 +476,7 @@ class TestPyCliCelltypeList(object):
         assert (s_listing.startswith("['default', 'blood_cells']"))
 
 
-class TestPyCliCellDfAttribute(object):
+class TestCommandLineInterfaceCellDfAttribute(object):
     ''' tests for one  pcdl command line interface  function. '''
 
     # timeseries collapsed:
@@ -594,7 +594,7 @@ class TestPyCliCellDfAttribute(object):
         os.remove(s_opathfile)
 
 
-class TestPyCliCellDf(object):
+class TestCommandLineInterfaceCellDf(object):
     ''' tests for one  pcdl command line interface  function. '''
 
     # timeseries
@@ -789,7 +789,7 @@ class TestPyCliCellDf(object):
         os.remove(s_opathfile)
 
 
-class TestPyCliAnndata(object):
+class TestCommandLineInterfaceAnndata(object):
     ''' tests for one  pcdl command line interface  function. '''
 
     # timeseries
@@ -1174,7 +1174,7 @@ class TestPyCliAnndata(object):
         os.remove(s_opathfile)
 
 
-class TestPyCliGraphGml(object):
+class TestCommandLineInterfaceGraphGml(object):
     ''' tests for one  pcdl command line interface  function. '''
 
     # timestep and timeseries:
@@ -1409,7 +1409,7 @@ class TestPyCliGraphGml(object):
         os.remove(s_opathfile)
 
 
-class TestPyCliPlotScatter(object):
+class TestCommandLineInterfacePlotScatter(object):
     ''' tests for one  pcdl command line interface  function. '''
 
     # time series and time steps.
@@ -1521,7 +1521,7 @@ class TestPyCliPlotScatter(object):
         shutil.rmtree(s_opath)
 
 
-class TestPyCliCellVtk(object):
+class TestCommandLineInterfaceCellVtk(object):
     ''' tests for one  pcdl command line interface  function. '''
 
     # timestep and timeseries:
@@ -1691,7 +1691,7 @@ class TestPyCliCellVtk(object):
 # substrate and cell agenat test code #
 #######################################
 
-class TestPyCliPlotTimeSeries(object):
+class TestCommandLineInterfacePlotTimeSeries(object):
     ''' tests for one  pcdl command line interface  function. '''
 
     # time series.
@@ -1826,7 +1826,7 @@ class TestPyCliPlotTimeSeries(object):
         os.remove(s_opathfile)
 
 
-class TestPyCliOmeTiff(object):
+class TestCommandLineInterfaceOmeTiff(object):
     ''' tests for one  pcdl command line interface  function. '''
 
     # timestep and timeseries:
@@ -2020,7 +2020,7 @@ class TestPyCliOmeTiff(object):
 ###########################
 
 # bue 20250107: broken by Ignoring
-class TestPyCliMakeGif(object):
+class TestCommandLineInterfaceMakeGif(object):
     ''' tests for one  pcdl command line interface  function. '''
 
     # time series
@@ -2051,7 +2051,7 @@ class TestPyCliMakeGif(object):
 
 
     # bue 20250107: broken by Ignoring
-class TestPyCliMakeMove(object):
+class TestCommandLineInterfaceMakeMove(object):
     ''' tests for one  pcdl command line interface  function. '''
 
     # time series

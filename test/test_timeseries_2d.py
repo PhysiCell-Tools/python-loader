@@ -39,8 +39,8 @@ if not os.path.exists(s_path_2d):
 
 ## making movies related functions ##
 
-class TestPyMcdsTsMovies(object):
-    ''' tests for loading a pcdl.TimeStep data set. '''
+class TestTimeSeriesMovies(object):
+    ''' tests for loading a pcdl.TimeSeries data set. '''
     mcdsts = pcdl.TimeSeries(s_path_2d, verbose=True)
 
     ## make_gif and magick ommand ##
@@ -116,7 +116,7 @@ class TestPyMcdsTsMovies(object):
 
 ## data loading related functions ##
 
-class TestPyMcdsTsInit(object):
+class TestTimeSeriesInit(object):
     ''' tests for loading a pcdl.TimeSeries data set. '''
 
     def test_mcdsts_set_verbose_true(self):
@@ -180,8 +180,8 @@ class TestPyMcdsTsInit(object):
 
 ## micro environment related functions ##
 
-class TestPyMcdsTsMicroenv(object):
-    ''' tests for pcdl.TimeStep micro environment related functions. '''
+class TestTimeSeriesMicroenv(object):
+    ''' tests for pcdl.TimeSeriesmicro environment related functions. '''
     mcdsts = pcdl.TimeSeries(s_path_2d, verbose=True)
 
     def test_mcdsts_get_conc_df(self, mcdsts=mcdsts):
@@ -295,8 +295,8 @@ class TestPyMcdsTsMicroenv(object):
 
 ## cell related functions ##
 
-class TestPyMcdsCell(object):
-    ''' tests for pcdl.TimeStep cell related functions. '''
+class TestTimeSeriesCell(object):
+    ''' tests for pcdl.TimeSeries cell related functions. '''
     mcdsts = pcdl.TimeSeries(s_path_2d, verbose=False)
 
     def test_mcdsts_get_cell_df(self, mcdsts=mcdsts):
@@ -428,8 +428,8 @@ class TestPyMcdsCell(object):
 
 
 ## graph related functions ##
-class TestPyMcdsGraph(object):
-    ''' tests for pcdl.TimeStep graph related functions. '''
+class TestTimeSeriesGraph(object):
+    ''' tests for pcdl.TimeSeries graph related functions. '''
     mcdsts = pcdl.TimeSeries(s_path_2d, verbose=False)
 
     ## graph related functions ##
@@ -467,8 +467,8 @@ class TestPyMcdsGraph(object):
             os.remove(s_pathfile)
 
 ## ome tiff related functions ##
-class TestPyMcdsOmeTiff(object):
-    ''' tests for pcdl.TimeStep ome tiff related functions. '''
+class TestTimeSeriesOmeTiff(object):
+    ''' tests for pcdl.TimeSeries ome tiff related functions. '''
     mcdsts = pcdl.TimeSeries(s_path_2d, verbose=False)
 
     ## ome tiff related functions ##
@@ -515,8 +515,8 @@ class TestPyMcdsOmeTiff(object):
 
 ## time series related functions ##
 
-class TestPyMcdsTimeseries(object):
-    ''' tests for pcdl.TimeStep graph related functions. '''
+class TestTimeSeriesTimeseries(object):
+    ''' tests for pcdl.TimeSeries graph related functions. '''
     mcdsts = pcdl.TimeSeries(s_path_2d, verbose=False)
 
     ## plot_timeseries command ##
@@ -768,7 +768,7 @@ class TestPyMcdsTimeseries(object):
 
 ## anndata time series related functions ##
 
-class TestPyAnndataTimeSeries(object):
+class TestTimeSeriesAnnData(object):
     ''' test for pcdl.TestSeries class. '''
 
     # get_anndata

@@ -29,7 +29,7 @@ options:
   --microenv MICROENV   should the microenvironment be extracted and loaded
                         into the anndata object? setting microenv to False
                         will use less memory and speed up processing, similar
-                        to the original pyMCDS_cells.py script. default is
+                        to the original TimeStep_cells.py script. default is
                         True.
   --graph GRAPH         should neighbor graph, attach graph, and attached
                         spring graph be extracted and loaded into the anndata

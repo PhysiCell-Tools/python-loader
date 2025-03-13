@@ -1063,7 +1063,7 @@ class TimeStep:
         return df_substrate
 
 
-    def get_concentration(self, substrate, z_slice=None, halt=False):
+    def _get_concentration(self, substrate, z_slice=None, halt=False):
         """
         input:
             substrate: string
@@ -1097,7 +1097,7 @@ class TimeStep:
             _, _, ar_p_axis = self.get_mesh_mnp_axis()
             if not (z_slice in ar_p_axis):
                 if self.verbose:
-                    print(f'Warning @ TimeStep.get_concentration : specified z_slice {z_slice} is not an element of the z-axis mesh centers set {ar_p_axis}.')
+                    print(f'Warning @ TimeStep._get_concentration : specified z_slice {z_slice} is not an element of the z-axis mesh centers set {ar_p_axis}.')
                 if halt:
                     sys.exit('Processing stopped!')
                 else:
@@ -1111,49 +1111,6 @@ class TimeStep:
 
         # output
         return ar_conc
-
-
-    def get_concentration_at(self, x, y, z=0):
-        """
-        input:
-            x: floating point number
-                position x-coordinate.
-
-            y: floating point number
-                position y-coordinate.
-
-            z: floating point number; default is 0
-                position z-coordinate.
-
-        output:
-            ar_concs: numpy array of floating point numbers
-                array of substrate concentrations in the order
-                given by get_substrate_list().
-
-        description:
-            function return concentrations of each chemical species
-            inside a particular voxel that contains the point specified
-            in the arguments.
-        """
-        ar_concs = None
-
-        # is coordinate inside the domain?
-        b_calc = self.is_in_mesh(x=x, y=y, z=z, halt=False)
-        if b_calc:
-
-            # get voxel coordinate and substrate names
-            i, j, k = self.get_voxel_ijk(x, y, z, is_in_mesh=False)
-            ls_substrate = self.get_substrate_list()
-            ar_concs = np.zeros(len(ls_substrate))
-
-            # get substrate concentrations
-            for n, s_substrate in enumerate(ls_substrate):
-                ar_concs[n] = self.get_concentration(s_substrate)[j, i, k]
-                if self.verbose:
-                    print(f'pyMCD.get_concentration_at(x={x},y={y},z={z}) | jkl: [{i},{j},{k}] | substrate: {s_substrate} {ar_concs[n]}')
-
-        # output
-        return ar_concs
 
 
     def get_conc_df(self, z_slice=None, halt=False, values=1, drop=set(), keep=set()):
@@ -1238,7 +1195,7 @@ class TimeStep:
         # handle concentrations
         for s_substrate in self.get_substrate_list():
             ls_column.append(s_substrate)
-            ar_conc = self.get_concentration(substrate=s_substrate, z_slice=None)
+            ar_conc = self._get_concentration(substrate=s_substrate, z_slice=None)
             la_data.append(ar_conc.flatten(order='C'))
 
         # generate dataframe
@@ -1879,76 +1836,6 @@ class TimeStep:
         df_cell.set_index('ID', inplace=True)
         df_cell = df_cell.copy()
         return df_cell
-
-
-    def get_cell_df_at(self, x, y, z=0, values=1, drop=set(), keep=set()):
-        """
-        input:
-            x: floating point number
-                position x-coordinate.
-
-            y: floating point number
-                position y-coordinate.
-
-            z: floating point number; default is 0
-                position z-coordinate.
-
-            values: integer; default is 1
-                minimal number of values a variable has to have to be outputted.
-                variables that have only 1 state carry no information.
-                None is a state too.
-
-            drop: set of strings; default is an empty set
-                set of column labels to be dropped for the dataframe.
-                don't worry: essential columns like ID, coordinates
-                and time will never be dropped.
-                Attention: when the keep parameter is given, then
-                the drop parameter has to be an empty set!
-
-            keep: set of strings; default is an empty set
-                set of column labels to be kept in the dataframe.
-                set values=1 to be sure that all variables are kept.
-                don't worry: essential columns like ID, coordinates
-                and time will always be kept.
-
-        output:
-            df_voxel: pandas dataframe
-                x, y, z voxel filtered cell dataframe.
-
-        description:
-            function returns the cell dataframe for the voxel
-            specified with the x, y, z position coordinate.
-        """
-        df_voxel = None
-
-        # is coordinate inside the domain?
-        b_calc = self.is_in_mesh(x=x, y=y, z=z, halt=False)
-        if b_calc:
-
-            # get mesh and mesh spacing
-            dm, dn, dp = self.get_voxel_spacing()
-            ar_m, ar_n, ar_p = self.get_mesh()
-
-            # get voxel coordinate
-            i, j, k = self.get_voxel_ijk(x, y, z, is_in_mesh=False)
-            m = ar_m[j, i, k]
-            n = ar_n[j, i, k]
-            p = ar_p[j, i, k]
-
-            # get voxel
-            df_cell = self.get_cell_df(values=values, drop=drop, keep=keep)
-            inside_voxel = (
-                (df_cell['position_x'] <= m + dm / 2) &
-                (df_cell['position_x'] >= m - dm / 2) &
-                (df_cell['position_y'] <= n + dn / 2) &
-                (df_cell['position_y'] >= n - dn / 2) &
-                (df_cell['position_z'] <= p + dp / 2) &
-                (df_cell['position_z'] >= p - dp / 2)
-            )
-            df_voxel = df_cell[inside_voxel]
-
-        # output
-        return df_voxel
 
 
     def plot_scatter(self, focus='cell_type', z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title=None, grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=None, ax=None, figsizepx=None, ext=None, figbgcolor=None):

@@ -125,9 +125,22 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 + evt add DataDiVR support.
 
 ## Release Notes:
++ version 4.0.0 (2025-03-xx): elmbeech/physicelldataloader
+    + v4 was forked from v3.3.4!
+    + pyMCDS.py and part of pyAnnData.py was fused to timestep.py
+    + pyMCDSts.py and part of pyAnnData.py was fused to timeseries.py
+    + pyCLI.py was renames to commandline.py
+    + data\_timeseries.py was renamed to output\_data.py
+    + deprecate TimeSeries function **get_concentration** because pandas already has this functionlity.
+    + deprecate TimeSeries function **get_concentration_at** because pandas already has this functionlity.
+    + deprecate TimeSeries function **get_cell_df_at** because pandas already has this functionlity.
+
++ version 3.3.5 (2025-03-xx): elmbeech/physicelldataloader
+    + remove pyMCDS and pyMCDSts **make_ome_tiff** and pyCLI **pcdl_make_ome_tiff** removed to make pyMCS.py stand alone again.
+
 + version 3.3.4 (2025-03-07): elmbeech/physicelldataloader
     + replace the **aicsimageio** library dependency with its successor **bioio**. special thanks to Joel Eliason!
-    + **make_ome_tiff** can handle automatically generated file names with > 255 characters. special thank to Genevieve Stein-O'Brien and DanielBergman!
+    + **make_ome_tiff** can now handel generated file names with > 255 characters. special thank to Genevieve Stein-O'Brien and DanielBergman!
     + **get_mesh_spacing** handels now an edge case correctly that would have resulted in a division by zero. special thanks to Randy Heiland!
 
 + version 3.3.3 (2025-01-10): elmbeech/physicelldataloader

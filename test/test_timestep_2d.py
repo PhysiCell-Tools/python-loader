@@ -51,7 +51,7 @@ if not os.path.exists(s_path_2d):
 
 ## data loading related functions ##
 
-class TestPyMcdsInit(object):
+class TestTimeStepInit(object):
     ''' tests for loading a pcdl.TimeStep data set. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
     df_cell = mcds.get_cell_df()
@@ -80,7 +80,7 @@ class TestPyMcdsInit(object):
               (df_cell.shape[1] == 122)
 
 
-class TestPyMcdsInitMicroenvFalse(object):
+class TestTimeStepInitMicroenvFalse(object):
     ''' tests for loading a pcdl.TimeStep data set with microenv false. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=False, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
     df_cell = mcds.get_cell_df()
@@ -109,7 +109,7 @@ class TestPyMcdsInitMicroenvFalse(object):
               (df_cell.shape[1] == 116)
 
 
-class TestPyMcdsInitGraphFalse(object):
+class TestTimeStepInitGraphFalse(object):
     ''' tests for loading a pcdl.TimeStep data set with graph false. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=False, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
     df_cell = mcds.get_cell_df()
@@ -138,7 +138,7 @@ class TestPyMcdsInitGraphFalse(object):
               (df_cell.shape[1] == 122)
 
 
-class TestPyMcdsInitPhysibossFalse(object):
+class TestTimeStepInitPhysibossFalse(object):
     ''' tests for loading a pcdl.TimeStep data set with physiboss false. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=False, settingxml='PhysiCell_settings.xml', verbose=True)
     df_cell = mcds.get_cell_df()
@@ -167,7 +167,7 @@ class TestPyMcdsInitPhysibossFalse(object):
               (df_cell.shape[1] == 122)
 
 
-class TestPyMcdsInitSettingxmlFalse(object):
+class TestTimeStepInitSettingxmlFalse(object):
     ''' tests for loading a pcdl.TimeStep data set with settingxml false. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml=False, verbose=True)
     df_cell = mcds.get_cell_df()
@@ -196,7 +196,7 @@ class TestPyMcdsInitSettingxmlFalse(object):
               (df_cell.shape[1] == 122)
 
 
-class TestPyMcdsInitSettingxmlNone(object):
+class TestTimeStepInitSettingxmlNone(object):
     ''' tests for loading a pcdl.TimeStep data set with settingxml none. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml=None, verbose=True)
     df_cell = mcds.get_cell_df()
@@ -225,7 +225,7 @@ class TestPyMcdsInitSettingxmlNone(object):
               (df_cell.shape[1] == 122)
 
 
-class TestPyMcdsInitVerboseTrue(object):
+class TestTimeStepInitVerboseTrue(object):
     ''' tests for loading a pcdl.TimeStep data set and set_verbose_false function. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
@@ -239,7 +239,7 @@ class TestPyMcdsInitVerboseTrue(object):
               (not mcds.verbose)
 
 
-class TestPyMcdsInitVerboseFalse(object):
+class TestTimeStepInitVerboseFalse(object):
     ''' tests for loading a pcdl.TimeStep data set and set_verbose_true function. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=False)
 
@@ -255,7 +255,7 @@ class TestPyMcdsInitVerboseFalse(object):
 
 ## metadata related functions ##
 
-class TestPyMcdsMetadata(object):
+class TestTimeStepMetadata(object):
     ''' tests for pcdl.TimeStep metadata related functions. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
@@ -292,7 +292,7 @@ class TestPyMcdsMetadata(object):
 
 ## setting related functions ##
 
-class TestPyMcdsSetting(object):
+class TestTimeStepSetting(object):
     ''' tests for pcdl.TimeStep setting related functions. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
@@ -306,7 +306,7 @@ class TestPyMcdsSetting(object):
 
 ## mesh related functions ##
 
-class TestPyMcdsMesh(object):
+class TestTimeStepMesh(object):
     ''' tests for pcdl.TimeStep mesh related functions. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
@@ -454,7 +454,7 @@ class TestPyMcdsMesh(object):
 
 ## micro environment related functions ##
 
-class TestPyMcdsMicroenv(object):
+class TestTimeStepMicroenv(object):
     ''' tests for pcdl.TimeStep micro environment related functions. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
@@ -479,37 +479,25 @@ class TestPyMcdsMicroenv(object):
               (df_substrate.shape == (2, 2))
 
     def test_mcds_get_concentration_zslice_none(self, mcds=mcds):
-        ar_conc = mcds.get_concentration(substrate='oxygen', z_slice=None)
+        ar_conc = mcds._get_concentration(substrate='oxygen', z_slice=None)
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(ar_conc)) == "<class 'numpy.ndarray'>") and \
               (ar_conc.dtype == np.float64) and \
               (ar_conc.shape == (11, 11, 1))
 
     def test_mcds_get_concentration_zslice_meshcenter(self, mcds=mcds):
-        ar_conc = mcds.get_concentration(substrate='oxygen', z_slice=0, halt=False)
+        ar_conc = mcds._get_concentration(substrate='oxygen', z_slice=0, halt=False)
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(ar_conc)) == "<class 'numpy.ndarray'>") and \
               (ar_conc.dtype == np.float64) and \
               (ar_conc.shape == (11, 11))
 
     def test_mcds_get_concentration_zslice_notmeshcenter(self, mcds=mcds):
-        ar_conc = mcds.get_concentration(substrate='oxygen', z_slice=-3.333, halt=False)
+        ar_conc = mcds._get_concentration(substrate='oxygen', z_slice=-3.333, halt=False)
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(ar_conc)) == "<class 'numpy.ndarray'>") and \
               (ar_conc.dtype == np.float64) and \
               (ar_conc.shape == (11, 11))
-
-    def test_mcds_get_concentration_at_inmeash(self, mcds=mcds):
-        ar_conc = mcds.get_concentration_at(x=0, y=0, z=0)
-        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(ar_conc)) == "<class 'numpy.ndarray'>") and \
-              (ar_conc.dtype == np.float64) and \
-              (ar_conc.shape == (2,))
-
-    def test_mcds_get_concentration_at_notinmeash(self, mcds=mcds):
-        ar_conc = mcds.get_concentration_at(x=-31, y=-21, z=-6)
-        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (ar_conc is None)
 
     def test_mcds_get_conc_df(self, mcds=mcds):
         df_conc = mcds.get_conc_df(z_slice=None, halt=False, values=1, drop=set(), keep=set())
@@ -606,7 +594,7 @@ class TestPyMcdsMicroenv(object):
 
 ## cell related functions ##
 
-class TestPyMcdsCell(object):
+class TestTimeStepCell(object):
     ''' tests for pcdl.TimeStep cell related functions. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
@@ -651,18 +639,6 @@ class TestPyMcdsCell(object):
               (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
               (df_cell.shape[0] > 9) and \
               (df_cell.shape[1] == 13)
-
-    def test_mcds_get_cell_df_at_inmeash(self, mcds=mcds):
-        df_cell = mcds.get_cell_df_at(x=0, y=0, z=0, values=1, drop=set(), keep=set())
-        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
-              (df_cell.shape[0] > 0) and \
-              (df_cell.shape[1] == 122)
-
-    def test_mcds_get_cell_df_at_notinmeash(self, mcds=mcds):
-        df_cell = mcds.get_cell_df_at(x=-31, y=-21, z=-6, values=1, drop=set(), keep=set())
-        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (df_cell is None)
 
     # scatter categorical
     def test_mcds_plot_scatter_cat_if(self, mcds=mcds):
@@ -817,7 +793,7 @@ class TestPyMcdsCell(object):
 
 ## graph related functions ##
 
-class TestPyMcdsGraph(object):
+class TestTimeStepGraph(object):
     ''' tests for pcdl.TimeStep graph related functions. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
@@ -944,7 +920,7 @@ class TestPyMcdsGraph(object):
 
 ## ome tiff related functions ##
 
-class TestPyMcdsOmeTiff(object):
+class TestTimeStepOmeTiff(object):
     ''' tests for pcdl.TimeStep graph related functions. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
@@ -1021,7 +997,7 @@ class TestPyMcdsOmeTiff(object):
 
 
 ## anndata helper function ##
-class TestPyAnndataScaler(object):
+class TestTimeStepScaler(object):
     ''' test for pcdl.scaler function '''
     a_x = np.array([[ 1.,-1., 2., 0.],[ 2., 0., 0.,0.],[ 0., 1.,-1.,0.]])
     df_x = pd.DataFrame(a_x, columns=['a','b','c','d'])
@@ -1054,7 +1030,7 @@ class TestPyAnndataScaler(object):
 
 
 ## anndata time step related functions ##
-class TestPyAnndataTimeStep(object):
+class TestTimeStepAnnData(object):
     ''' test for pcdl.TimeStep class. '''
 
     ## get_anndata command ##

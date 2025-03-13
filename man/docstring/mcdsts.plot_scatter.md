@@ -3,7 +3,7 @@
 
 ## input:
 ```
-            self: pyMCDSts class instance
+            self: TimeSeries class instance
 
             focus: string; default is 'cell_type'
                 column name within cell dataframe.
