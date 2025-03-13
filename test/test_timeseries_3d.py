@@ -393,8 +393,8 @@ class TestTimeSeries3dGraph(object):
         for s_pathfile in ls_pathfile:
             os.remove(s_pathfile)
 
-## graph related functions ##
-class TestTimeSeries3dGraph(object):
+## ome.tiff related functions ##
+class TestTimeSeries3dOmeTiff(object):
     ''' tests for pcdl.TimeStep graph related functions. '''
     mcdsts = pcdl.TimeSeries(s_path_3d, verbose=False)
 
