@@ -71,7 +71,6 @@ classifiers = [
 # bue 2024-12-06: enforcing some versions
 dependencies = [
     "anndata>=0.10.8",
-    "bioio>=1.2.1",
     "matplotlib",
     "numpy<2.0.0",
     "pandas>=2.2.2",
@@ -102,7 +101,6 @@ pcdl_plot_scatter = "pcdl.pyCLI:plot_scatter"
 pcdl_make_cell_vtk = "pcdl.pyCLI:make_cell_vtk"
 # substrate and cell agent
 pcdl_plot_timeseries = "pcdl.pyCLI:plot_timeseries"
-pcdl_make_ome_tiff = "pcdl.pyCLI:make_ome_tiff"
 # making movies
 pcdl_make_gif = "pcdl.pyCLI:make_gif"
 pcdl_make_movie = "pcdl.pyCLI:make_movie"

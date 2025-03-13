@@ -393,31 +393,6 @@ class TestPyMcds3DGraph(object):
         for s_pathfile in ls_pathfile:
             os.remove(s_pathfile)
 
-## graph related functions ##
-class TestPyMcds3DGraph(object):
-    ''' tests for pcdl.pyMCDS graph related functions. '''
-    mcdsts = pcdl.pyMCDSts(s_path_3d, verbose=False)
-
-    ## graph related functions ##
-    def test_mcdsts_make_ome_tiff_defaultattr_00(self, mcdsts=mcdsts):
-        la_ometiff = mcdsts.make_ome_tiff(cell_attribute='ID', conc_cutoff={}, focus=None, file=False, collapse=False)
-        assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
-              (type(la_ometiff) is list) and \
-              (type(la_ometiff[0]) is np.ndarray) and \
-              (type(la_ometiff[-1]) is np.ndarray) and \
-              (la_ometiff[0].dtype == np.float32) and \
-              (la_ometiff[-1].dtype == np.float32) and \
-              (la_ometiff[0].shape == (4, 11, 200, 300)) and \
-              (la_ometiff[-1].shape ==  (4, 11, 200, 300)) and \
-              (len(la_ometiff) == 25)
-
-    def test_mcdsts_make_ome_tiff_defaultattr_01(self, mcdsts=mcdsts):
-        a_ometiff = mcdsts.make_ome_tiff(cell_attribute='ID', conc_cutoff={}, focus=None, file=False, collapse=True)
-        assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
-              (type(a_ometiff) is np.ndarray) and \
-              (a_ometiff.dtype == np.float32) and \
-              (a_ometiff.shape == (25, 4, 11, 200, 300))
-
 
 ## timeseries related functions ##
 

@@ -1,13 +1,7 @@
 # PhysiCell Data Loader Tutorial: pcdl and Paraview
 
-<!--
-bue 2024-09-02: vtk and paraview can handle up to 32 bit ometiff images.
-fluorescent microscopy ome tiff standard is 16 bit.
-+ https://discourse.vtk.org/t/failed-to-read-tiff-64-bit-samples/12118
--->
-
 [Paraview](https://www.paraview.org/) is a free and open source scientific visualization software,
-that lets us load and analyze vtk rectilinear grid data and vtk polynomial data<!--, and even ome.tiff data files-->.
+that lets us load and analyze vtk rectilinear grid data and vtk polynomial data.
 
 ## Install paraview
 

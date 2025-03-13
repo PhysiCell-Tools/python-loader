@@ -618,25 +618,3 @@ class TestPyMcds3dGraphWorkhorse(object):
               (s_file.find('edge [\n    source') > -1) and \
               (s_file.find('distance_microns') > -1)
         os.remove(s_pathfile)
-
-
-class TestPyMcds3dOmeTiffWorkhorse(object):
-    ''' tests on 3D data set, for speed, for pcdl.pyMCDS ome tiff related workhorse functions. '''
-    mcds = pcdl.pyMCDS(xmlfile=s_pathfile_3d)  # custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True
-
-    ## ome tiff related functions ##
-    def test_mcds_make_ome_tiff_default(self, mcds=mcds):
-        s_pathfile = mcds.make_ome_tiff(cell_attribute='ID', conc_cutoff={}, focus=None, file=True)
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (s_pathfile.replace('\\','/').endswith('pcdl/output_3d/output00000024_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
-              (os.path.exists(s_pathfile)) and \
-              (os.path.getsize(s_pathfile) > 2**10)
-        os.remove(s_pathfile)
-
-    def test_mcds_make_ome_tiff_nofile(self, mcds=mcds):
-        a_ometiff = mcds.make_ome_tiff(cell_attribute='ID', conc_cutoff={}, focus=None, file=False)
-        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
-              (str(type(a_ometiff)) == "<class 'numpy.ndarray'>") and \
-              (a_ometiff.dtype == np.float32) and \
-              (a_ometiff.shape == (4, 11, 200, 300))
-

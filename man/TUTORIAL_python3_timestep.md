@@ -447,34 +447,6 @@ help(mcds.make_cell_vtk)
 Please have a look at [TUTORIAL_paraview.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_paraview.md) to learn more.
 
 
-
-## Microenvironment and Cell Data Related Functions
-
-### &#x2728; PhysiCell Data Analysis with [Napari](https://napari.org/stable/) and [Fiji Imagej](https://fiji.sc/)
-
-For substrate and cell agent visualization, data can be saved in open microscopy's [ome.tiff](https://www.openmicroscopy.org/ome-files/) file format.
-
-For cell agents, the default cell\_attribute outputted is the cell ID + 1, results in segmentation masks,
-although, any numerical (bool, int, float) cell\_attribute can be outputted.
-
-```python
-mcds.make_ome_tiff()  # mark by cell ID + 1.
-```
-```python
-mcds.make_ome_tiff('dead')  # mark dead and alive cells.
-```
-
-The tiff and ome.tiff files can be loaded back in to python as [numpy](https://numpy.org/) arrays.
-Besides that, ome.tiff files enables us to study PhysiCell output the same way
-as commonly fluorescent microscopy data is analyzed by wetlab scientists.
-Please have a look at
-[TUTORIAL_python3_ometiff.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_ometiff.md),
-[TUTORIAL_python3_napari.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_napari.md)
-and [TUTORIAL_fiji_imagej.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_fijiimagej.md)
-to learn more.
-
-
-
 ## Mesh Data Related Functions
 
 For data analysis, the functions related to the mesh are most probably the least one you have to deal with.

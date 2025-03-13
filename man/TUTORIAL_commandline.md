@@ -387,37 +387,6 @@ pcdl_plot_timeseries -h
 ```
 
 
-### &#x2728; pcdl\_make\_ome\_tiff
-
-Generate an [ome.tiff](https://ome-model.readthedocs.io/en/stable/index.html) file,
-to analyze a single time step or the whole time series,
-the same way as usually fluorescent microscopy data is analyzed.
-
-By default, the cell\_attribute outputted is the cell ID + 1.
-However, any numerical (bool, int, float) cell\_attribute can be outputted.
-For example: dead, cells\_per\_voxel, or pressure.
-
-These ome.tiff files can be further analyzed,
-for example with the [napari](https://napari.org/stable/) or [fiji imagej](https://fiji.sc/) or [blender](https://www.blender.org/) software,
-as described in the extra tutorials.
-
-```bash
-pcdl_make_ome_tiff output/output00000000.xml pressure
-```
-```bash
-pcdl_make_ome_tiff output
-```
-```bash
-pcdl_make_ome_tiff -h
-```
-
-Further readings:
-+ [TUTORIAL_python3_napari.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_napari.md)
-+ [TUTORIAL_fiji_imagej.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_fijiimagej.md)
-+ [TUTORIAL_blender.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_blender.md)
-
-
-
 ## [Making movies](https://en.wikipedia.org/wiki/Making_Movies)
 
 

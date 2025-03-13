@@ -24,9 +24,6 @@ For cell data, these are the functions:
 + mcdsts.plot_scatter()
 + mcdsts.make_cell_vtk()
 
-For microenvironment and cell data, this is the function:
-+ mcdsts,make_ome_tiff()
-
 Yet, there are additional functions, that only make sense for TimeSeries,
 and those functions will be discussed in this chapter.
 

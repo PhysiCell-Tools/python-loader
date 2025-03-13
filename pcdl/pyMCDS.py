@@ -15,16 +15,14 @@
 
 
 # load library
-import bioio_base
-from bioio.writers import OmeTiffWriter
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib import colors
+import matplotlib.patches as mpatches
 import numpy as np
 import os
 import pandas as pd
-from pcdl import imagine
-from pcdl import pdplt
+import random
 from scipy import io
 import sys
 import vtk
@@ -171,6 +169,75 @@ es_coor_cell = {
 
 
 # functions
+def df_label_to_color(df_abc, s_focus, es_label=None, s_nolabel='gray', s_cmap='viridis', b_shuffle=False):
+    '''
+    input:
+        df_abc: dataframe to which the color column will be added.
+        s_focus: column name with sample labels for which a color column will be generated.
+        es_label: set of labels to color. if None, es_label will be extracted for the s_focus column.
+        s_nolabel: color for labels not defined in es_label.
+        s_cmap:  matplotlib color map label.
+            https://matplotlib.org/stable/tutorials/colors/colormaps.html
+        b_shuffle: should colors be given by alphabetical order,
+            or should the label color mapping order be random.
+
+    output:
+        df_abc: dataframe updated with color column.
+        ds_color: lable to hex color string mapping dictionary
+
+    description:
+        function adds for the selected label column
+        a color column to the df_abc dataframe.
+    '''
+    if (es_label is None):
+        es_label = set(df_abc.loc[:,s_focus])
+    if b_shuffle:
+       ls_label = list(es_label)
+       random.shuffle(ls_label)
+    else:
+       ls_label = sorted(es_label)
+    a_color = plt.get_cmap(s_cmap)(np.linspace(0, 1, len(ls_label)))
+    do_color = dict(zip(ls_label, a_color))
+    df_abc[f'{s_focus}_color'] = s_nolabel
+    ds_color = {}
+    for s_category, o_color in do_color.items():
+        s_color = colors.to_hex(o_color)
+        ds_color.update({s_category : s_color})
+        df_abc.loc[(df_abc.loc[:,s_focus] == s_category), f'{s_focus}_color'] = s_color
+    # output
+    return(ds_color)
+
+
+def ax_colorlegend(ax, ds_color, s_loc='lower left', s_fontsize='small'):
+    '''
+    input:
+        ax: matplotlib axis object to which a color legend will be added.
+        ds_color: lables to color strings mapping dictionary
+        s_loc: the location of the legend.
+            possible strings are: best,
+            upper right, upper center, upper left, center left,
+            lower left, lower center, lower right, center right,
+            center.
+        s_fontsize: font size used for the legend. known are:
+            xx-small, x-small, small, medium, large, x-large, xx-large.
+
+    output:
+        ax: matplotlib axis object updated with color legend.
+
+    description:
+        function to add color legend to a figure.
+    '''
+    lo_patch = []
+    for s_label, s_color in sorted(ds_color.items()):
+        o_patch = mpatches.Patch(color=s_color, label=s_label)
+        lo_patch.append(o_patch)
+    ax.legend(
+        handles = lo_patch,
+        loc = s_loc,
+        fontsize = s_fontsize
+    )
+
+
 def graphfile_parser(s_pathfile):
     """
     input:
@@ -1923,7 +1990,7 @@ class pyMCDS:
                     df_cell.loc[(df_cell.loc[:,focus] == s_category), s_focus_color] = s_color
             # generate category color dictionary
             else:
-                ds_color = pdplt.df_label_to_color(
+                ds_color = df_label_to_color(
                     df_abc = df_cell,
                     s_focus = focus,
                     es_label = es_category,
@@ -1960,7 +2027,7 @@ class pyMCDS:
 
         # plot categorical data legen
         if not (es_category is None):
-            pdplt.ax_colorlegend(
+            ax_colorlegend(
                 ax = ax,
                 ds_color = ds_color,
                 s_loc = legend_loc,
@@ -2131,232 +2198,6 @@ class pyMCDS:
         vw_writer.Write()
 
         return s_vtkpathfile
-
-
-    ## MICROENVIRONMENT AND CELL AGENT RELATED FUNCTIONS ##
-
-    def make_ome_tiff(self, cell_attribute='ID', conc_cutoff={}, focus=None, file=True):
-        """
-        input:
-            cell_attribute: strings; default is 'ID', which will result in a
-                cell segmentation mask.
-                column name within the cell dataframe.
-                the column data type has to be numeric (bool, int, float)
-                and cannot be string.
-                the result will be stored as 32 bit float.
-
-            conc_cutoff: dictionary string to real; default is an empty dictionary.
-                if a contour from a substrate not should be cut by greater
-                than zero (shifted to integer 1), another cutoff value can be
-                specified here.
-
-            focus: set of strings; default is a None
-                set of substrate and cell_type names to specify what will be
-                translated into ome tiff format.
-                if None, all substrates and cell types will be processed.
-
-            file: boolean; default True
-                if True, an ome tiff file is the output.
-                if False, a numpy array with shape czyx is the output.
-
-        output:
-            a_czyx_img: numpy array or ome tiff file.
-
-        description:
-            function to transform chosen mcds output into an 1[um] spaced
-            czyx (channel, z-axis, y-axis, x-axis) ome tiff file or numpy array,
-            one substrate or cell_type per channel.
-            an ome tiff file is more or less:
-            a numpy array, containing the image information
-            and a xml, containing the microscopy metadata information,
-            like the channel labels.
-            the ome tiff file format can for example be read by the napari
-            or fiji (imagej) software.
-
-            https://napari.org/stable/
-            https://fiji.sc/
-        """
-        # handle channels
-        ls_substrate = self.get_substrate_list()
-        ls_celltype = self.get_celltype_list()
-
-        if not (focus is None):
-            ls_substrate = [s_substrate for s_substrate in ls_substrate if s_substrate in set(focus)]
-            ls_celltype = [s_celltype for s_celltype in ls_celltype if s_celltype in set(focus)]
-            if (set(focus) != set(ls_substrate).union(set(ls_celltype))):
-                sys.exit(f'Error : {focus} not found in {ls_substrate} {ls_celltype}')
-
-        # const
-        ls_coor_mnp = ['mesh_center_m', 'mesh_center_n', 'mesh_center_p'] # xyz
-        ls_coor_xyz = ['position_x', 'position_y', 'position_z'] # xyz
-        ls_coor = ['voxel_x', 'voxel_y', 'voxel_z']
-
-        # time step tensor
-        i_time = int(self.get_time())
-
-        # get xy coordinate dataframe
-        lr_axis_z  = list(self.get_mesh_mnp_axis()[2] - self.get_voxel_spacing()[2] / 2)
-        lr_axis_z.append(self.get_mesh_mnp_axis()[2][-1] + self.get_voxel_spacing()[2] / 2)
-        lll_coor = []
-        for i_x in range(int(round(self.get_voxel_ijk_range()[0][1] * self.get_voxel_spacing()[0]))):
-            for i_y in range(int(round(self.get_voxel_ijk_range()[1][1] * self.get_voxel_spacing()[1]))):
-                lll_coor.append([i_x, i_y])
-        df_coor = pd.DataFrame(lll_coor, columns=ls_coor[:2])
-        lr_axis_z[-1] += 1
-
-        # extract voxel radius
-        di_grow = {}
-        for s_substarte in ls_substrate:
-            di_grow.update({
-                s_substarte : int(np.round(np.mean(self.get_voxel_spacing()[:2])) - 1)
-            })
-
-        # get and shift substrate xy data
-        df_conc = self.get_conc_df()
-        df_conc = df_conc.loc[:, ls_coor_mnp + ls_substrate]
-        df_conc.loc[:, 'mesh_center_m'] = (df_conc.loc[:, 'mesh_center_m'] - self.get_xyz_range()[0][0]).round()
-        df_conc.loc[:, 'mesh_center_n'] = (df_conc.loc[:, 'mesh_center_n'] - self.get_xyz_range()[1][0]).round()
-        df_conc.rename({'mesh_center_m':'voxel_x', 'mesh_center_n':'voxel_y', 'mesh_center_p':'voxel_z'}, axis=1, inplace=True)
-        df_conc = df_conc.astype({'voxel_x': int, 'voxel_y': int, 'voxel_z': float})
-        # level the cake
-        for s_channel in conc_cutoff.keys():
-            try:
-                df_conc.loc[:, s_channel] = df_conc.loc[:, s_channel] - conc_cutoff[s_channel]  + 1  # positive values starting at > 0
-                df_conc.loc[(df_conc.loc[:, s_channel] <= conc_cutoff[s_channel]), s_channel] = 0
-            except KeyError:
-                pass
-
-
-        # get cell data
-        df_cell = self.get_cell_df().reset_index()
-
-        # extract cell radius
-        for s_celltype in ls_celltype:
-            try:
-                i_cell_grow = int(round(df_cell.loc[(df_cell.cell_type == s_celltype), 'radius'].mean()) - 1)
-            except:
-                i_cell_grow = 0
-            di_grow.update({s_celltype : i_cell_grow})
-
-        # filter and shift
-        df_cell = df_cell.loc[:, ls_coor_xyz + ['cell_type', cell_attribute]]
-        if (cell_attribute == 'cell_type'):
-            sys.exit(f'Error @ pyMCDS.make_ome_tiff : cell_attribute cannot be cell_type.')
-        elif (df_cell.loc[:, cell_attribute].dtype == str) or (df_cell.loc[:, cell_attribute].dtype == np.object_):  # in {str, np.str_, np.object_}):
-            sys.exit(f'Error @ pyMCDS.make_ome_tiff : {cell_attribute} {df_cell.loc[:, cell_attribute].dtype} cell_attribute cannot be string or object. cell_attribute has to be boolean, integer, or float.')
-        elif (df_cell.loc[:, cell_attribute].dtype == bool): # in {bool, np.bool_, np.bool}):
-            df_cell = df_cell.astype({cell_attribute: int})
-        df_cell.loc[:, 'position_x'] = (df_cell.loc[:, 'position_x'] - self.get_xyz_range()[0][0]).round()
-        df_cell.loc[:, 'position_y'] = (df_cell.loc[:, 'position_y'] - self.get_xyz_range()[1][0]).round()
-        df_cell.rename({'position_x':'voxel_x', 'position_y':'voxel_y', 'position_z':'voxel_z'}, axis=1, inplace=True)
-        df_cell = df_cell.astype({'voxel_x': int, 'voxel_y': int, 'voxel_z': float})
-        # level the cake
-        df_cell.loc[:, cell_attribute] = df_cell.loc[:, cell_attribute] -  df_cell.loc[:, cell_attribute].min()  + 1  # positive values starting at > 0
-
-        # check for duplicates: two cell at exactelly the same xyz position.
-        #if self.verbose and df_cell.loc[:,['voxel_x', 'voxel_y', 'voxel_z']].duplicated().any():
-        #    df_duplicate = df_cell.loc[(df_cell.loc[:, ['voxel_x', 'voxel_y', 'voxel_z']].duplicated()), :]
-        #    sys.exit(f"Error @ pyMCDS.make_ome_tiff : {df_duplicate} cells at exactely the same xyz voxel position detected. cannot pivot!")
-
-        # pivot cell_type
-        df_cell = df_cell.pivot_table(index=ls_coor, columns='cell_type', values=cell_attribute, aggfunc='sum').reset_index()  # fill_value is na
-        for s_celltype in ls_celltype:
-            if not s_celltype in set(df_cell.columns):
-               df_cell[s_celltype] = 0
-
-        # each C channel - time step tensors
-        la_czyx_img = []
-        ls_channel = ls_substrate + ls_celltype
-        for s_channel in ls_channel:
-
-            # get channel dataframe
-            if s_channel in set(ls_substrate):
-                df_channel = df_conc.loc[:, ls_coor + [s_channel]]
-            elif s_channel in set(ls_celltype):
-                df_channel = df_cell.loc[:, ls_coor + [s_channel]]
-            else:
-                sys.exit(f'Error @ pyMCDS.make_ome_tiff : {s_channel} unknown channel detected. not in substrate and cell type list {ls_substrate} {ls_celltype}!')
-
-            # each z axis
-            la_zyx_img = []
-            for i_zaxis in range(len(lr_axis_z)):
-                if (i_zaxis < (len(lr_axis_z) - 1)):
-                    print(f'processing: {i_time} [min]  {s_channel} [channel]  {i_zaxis} [z_axis] ...')
-                    # extract z layer
-                    df_yxchannel = df_channel.loc[
-                        ((df_channel.loc[:, ls_coor[2]] >= lr_axis_z[i_zaxis]) & (df_channel.loc[:, ls_coor[2]] < lr_axis_z[i_zaxis + 1])),
-                        ls_coor[:2] + [s_channel]
-                    ]
-
-                    # drop row with na and duplicate entries
-                    df_yxchannel = df_yxchannel.dropna(axis=0)
-                    df_yxchannel = df_yxchannel.drop_duplicates()
-
-                    # merge with coooridnates and get image
-                    # bue 20240811: df_coor left side merge will cut off reset cell that are out of the xyz domain range, which is what we want.
-                    df_yxchannel = pd.merge(df_coor, df_yxchannel, on=ls_coor[:2], how='left').replace({np.nan: 0})
-                    try:
-                        df_yxchannel = df_yxchannel.pivot(columns=ls_coor[0], index=ls_coor[1], values=s_channel)
-                    except ValueError:  # two cells from the same cell type very close to each other detetced.
-                        if self.verbose:
-                            df_duplicate = df_cell.loc[(df_yxchannel.loc[:, ['voxel_x', 'voxel_y']].duplicated()), :]
-                            print(f'Warning: {s_channel} {df_duplicate} cells within 1[um] distance form each detected. cannot pivot. erase cell type from this timestep.')
-                        df_yxchannel.loc[:,s_channel] = 0  # erase cells
-                        df_yxchannel = df_yxchannel.drop_duplicates()
-                        df_yxchannel = df_yxchannel.pivot(columns=ls_coor[0], index=ls_coor[1], values=s_channel)
-                    a_yx_img = df_yxchannel.values
-
-                    # grow
-                    a_yx_img = imagine.grow_seed(a_yx_img, i_step=di_grow[s_channel], b_verbose=False)
-
-                    # update output
-                    la_zyx_img.append(a_yx_img)
-            a_zyx_img = np.array(la_zyx_img, np.float32)
-            la_czyx_img.append(np.array(a_zyx_img, np.float32))
-
-        # output
-        a_czyx_img = np.array(la_czyx_img, dtype=np.float32)
-
-        # numpy array
-        if not file:
-            return a_czyx_img
-
-        # write to file
-        else:
-            if self.verbose:
-                print('a_czyx_img shape:', a_czyx_img.shape)
-            # generate filename
-            s_channel = ''
-            for s_substrate in ls_substrate:
-                try:
-                    r_value = conc_cutoff[s_substrate]
-                    s_channel += f'_{s_substrate}{r_value}'
-                except KeyError:
-                    s_channel += f'_{s_substrate}'
-            for s_celltype in ls_celltype:
-                s_channel += f'_{s_celltype}'
-            if len(ls_celltype) > 0:
-                s_channel += f'_{cell_attribute}'
-            s_tifffile = self.xmlfile.replace('.xml', f'{s_channel}.ome.tiff')
-            if (len(s_tifffile) > 255):
-                print(f"Warning: filename {len(s_tifffile)} > 255 character.")
-                s_tifffile = self.xmlfile.replace('.xml', f'_channels.ome.tiff')
-                print(f"file name adjusted to {s_tifffile}.")
-            s_tiffpathfile = self.path + '/' + s_tifffile
-
-            # save to file
-            OmeTiffWriter.save(
-                a_czyx_img,
-                s_tiffpathfile,
-                dim_order = 'CZYX',
-                #ome_xml=x_img,
-                channel_names = ls_channel,
-                image_names = [s_tifffile.replace('.ome.tiff','')],
-                physical_pixel_sizes = bioio_base.types.PhysicalPixelSizes(self.get_voxel_spacing()[2], 1.0, 1.0),  # z,y,x [um]
-                #channel_colors=,
-                #fs_kwargs={},
-            )
-            return s_tiffpathfile
 
 
     ## GRAPH RELATED FUNCTIONS ##

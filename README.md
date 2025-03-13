@@ -19,7 +19,7 @@ The pcdl python3 library maintains three branches:
 ## Header:
 
 + Language: python [>= 3.9](https://devguide.python.org/versions/)
-+ Library dependencies: anndata, bioio, matplotlib, numpy, pandas, (requests), scipy, vtk
++ Library dependencies: anndata, matplotlib, numpy, pandas, (requests), scipy, vtk
 + Date of origin original PhysiCell-Tools python-loader: 2019-09-02
 + Date of origin pcdl fork: 2022-08-30
 + Doi: https://doi.org/10.5281/ZENODO.8176399
@@ -49,7 +49,7 @@ Extras tutorials python3 language:
 + [pcdl and python3 and graphs](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_graph.md)
 + [pcdl and python3 and matplotlib](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_matplotlib.md)
 + [pcdl and python3 and vtk](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_vtk.md)
-+ [pcdl and python3 and ome.tiff, tiff, png, and jpeg](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_ometiff.md)
++ [pcdl and python3 and tiff, png, and jpeg](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_ometiff.md)
 + [pcdl and python3 and napari](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_napari.md)
 
 Extras tutorials for other languages than python3:
@@ -62,8 +62,6 @@ Extras tutorials for GUI software:
 
 + [pcdl and paraview](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_paraview.md)
 + [pcdl and blender](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_blender.md)
-+ [pcdl and napari](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_napari.md)
-+ [pcdl and fiji imagej](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_fijiimagej.md)
 <!--
 + [pcdl and neuroglancer](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_(python3)_neuroglancer.md)
 -->
@@ -120,14 +118,13 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 
 ## Road Map:
 
-+ evt generate lineage tree graph output files.
-+ evt add neuroglancer ome.tiff support.
-+ evt add DataDiVR support.
-
 ## Release Notes:
-+ version 3.3.4 (2025-03-07): elmbeech/physicelldataloader
++ version 3.3.5 (2025-03-xx): elmbeech/physicelldataloader                      
+    + remove pyMCDS and pyMCDSts **make_ome_tiff** and pyCLI **pcdl_make_ome_tiff** removed to make pyMCS.py stand alone again.
+                                                                                
++ version 3.3.4 (2025-03-07): elmbeech/physicelldataloader                      
     + replace the **aicsimageio** library dependency with its successor **bioio**. special thanks to Joel Eliason!
-    + **make_ome_tiff** can handle automatically generated file names with > 255 characters. special thank to Genevieve Stein-O'Brien and DanielBergman!
+    + **make_ome_tiff** can now handel generated file names with > 255 characters. special thank to Genevieve Stein-O'Brien and DanielBergman!
     + **get_mesh_spacing** handels now an edge case correctly that would have resulted in a division by zero. special thanks to Randy Heiland!
 
 + version 3.3.3 (2025-01-10): elmbeech/physicelldataloader

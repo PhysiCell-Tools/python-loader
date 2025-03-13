@@ -34,7 +34,7 @@ Familiarize yourself well with their parameters!
 Basically, there are four types of functions:
 + set_ : set a python3 variable.
 + get_ : recall a python3 variable.
-+ make_ : make functions generate file output (gml, ome.tiff, vtk).
++ make_ : make functions generate file output (gml, vtk).
 + plot_ : plot functions generate a matplotlib figure, or axis object, or file output (jpeg, png, tiff), depending on your parameter settings.
 
 ### TimeStep initialize
@@ -100,9 +100,6 @@ Basically, there are four types of functions:
 + [help(mcds.get_neighbor_graph_dict)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_neighbor_graph_dict.md)
 + [help(mcds.make_graph_gml)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.make_graph_gml.md)  #! workhose function
 
-### TimeStep microenvironment and cells
-+ [help(mcds.make_ome_tiff)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.make_ome_tiff.md)  #! workhose function
-
 ### TimeStep internal functions
 + [help(pcdl.scaler)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.scaler.md)  # anndata
 + [help(pcdl.graphfile_parser)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.graphfile_parser.md)  # mcds
@@ -117,7 +114,7 @@ help(pcdl.pyAnnData._anndextract)
 Basically, there are four types of functions:
 + set_ : set a python3 variable.
 + get_ : recall a python3 variable.
-+ make_ : make functions generate file output (gif, gml, mp4, ome.tiff, vtk).
++ make_ : make functions generate file output (gif, gml, mp4, vtk).
 + plot_ : plot functions generate a matplotlib figure, or axis object, or file output (jpeg, png, tiff), depending on your parameter settings.
 
 ### TimeSeries initialization
@@ -144,9 +141,6 @@ Basically, there are four types of functions:
 
 ### TimeSeries cell graph
 + [help(mcdsts.get_graph_gml)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.make_graph_gml.md)  #! workhose function
-
-### TimeSteries microenvironment and cells
-+ [help(mcdsts.make_ome_tiff)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.make_ome_tiff.md)  #! workhose function
 
 ### Timeseries timeseries
 + [help(mcdsts.plot_timeseries)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.plot_timeseries.md)  #! workhorse function
@@ -193,9 +187,6 @@ The command line interface functions mimic the name and parameter arguments as c
 
 ### Command line cell graph
 + [pcdl_make_graph_gml --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_make_graph_gml.md)  #! workhorse function
-
-### Command line cells and microenvironment
-+ [pcdl_make_ome_tiff --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_make_ome_tiff.md)  #! workhorse function
 
 ### Command line timeseries
 + [pcdl_plot_timeseries --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_plot_timeseries.md)  #! workhorse function

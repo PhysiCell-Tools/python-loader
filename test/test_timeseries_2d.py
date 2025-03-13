@@ -466,52 +466,6 @@ class TestPyMcdsGraph(object):
         for s_pathfile in ls_pathfile:
             os.remove(s_pathfile)
 
-## ome tiff related functions ##
-class TestPyMcdsOmeTiff(object):
-    ''' tests for pcdl.pyMCDS ome tiff related functions. '''
-    mcdsts = pcdl.pyMCDSts(s_path_2d, verbose=False)
-
-    ## ome tiff related functions ##
-    def test_mcdsts_make_ome_tiff_defaultattr_00(self, mcdsts=mcdsts):
-        la_ometiff = mcdsts.make_ome_tiff(cell_attribute='ID', conc_cutoff={}, focus=None, file=False, collapse=False)
-        assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
-              (type(la_ometiff) is list) and \
-              (type(la_ometiff[0]) is np.ndarray) and \
-              (type(la_ometiff[-1]) is np.ndarray) and \
-              (la_ometiff[0].dtype == np.float32) and \
-              (la_ometiff[-1].dtype == np.float32) and \
-              (la_ometiff[0].shape == (4, 1, 200, 300)) and \
-              (la_ometiff[-1].shape ==  (4, 1, 200, 300)) and \
-              (len(la_ometiff) == 25)
-
-    def test_mcdsts_make_ome_tiff_defaultattr_01(self, mcdsts=mcdsts):
-        a_ometiff = mcdsts.make_ome_tiff(cell_attribute='ID', conc_cutoff={}, focus=None, file=False, collapse=True)
-        assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
-              (type(a_ometiff) is np.ndarray) and \
-              (a_ometiff.dtype == np.float32) and \
-              (a_ometiff.shape == (25, 4, 1, 200, 300))
-
-    def test_mcdsts_make_ome_tiff_defaultattr_10(self, mcdsts=mcdsts):
-        ls_pathfile = mcdsts.make_ome_tiff(cell_attribute='ID', conc_cutoff={}, focus=None, file=True, collapse=False)
-        assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
-              (ls_pathfile[0].endswith('pcdl/output_2d/output00000000_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
-              (ls_pathfile[-1].endswith('pcdl/output_2d/output00000024_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
-              (os.path.exists(ls_pathfile[0])) and \
-              (os.path.exists(ls_pathfile[-1])) and \
-              (os.path.getsize(ls_pathfile[0]) > 2**10) and\
-              (os.path.getsize(ls_pathfile[-1]) > 2**10) and\
-              (len(ls_pathfile) == 25)
-        for s_pathfile in ls_pathfile:
-            os.remove(s_pathfile)
-
-    def test_mcdsts_make_ome_tiff_defaultattr_11(self, mcdsts=mcdsts):
-        s_pathfile = mcdsts.make_ome_tiff(cell_attribute='ID', conc_cutoff={}, focus=None, file=True, collapse=True)
-        assert(str(type(mcdsts)) == "<class 'pcdl.pyMCDSts.pyMCDSts'>") and \
-              (s_pathfile.endswith('pcdl/output_2d/timeseries_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
-              (os.path.exists(s_pathfile)) and \
-              (os.path.getsize(s_pathfile) > 2**10 )
-        os.remove(s_pathfile)
-
 
 ## timeseries related functions ##
 
