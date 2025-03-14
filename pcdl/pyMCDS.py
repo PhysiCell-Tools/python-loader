@@ -1419,8 +1419,8 @@ class pyMCDS:
 
                 # build VTKLooktupTable (color scheme)
                 vlt_color = vtk.vtkLookupTable()
-                vlt_color.SetNumberOfTableValues(256)
-                vlt_color.SetHueRange(0.667, 0.0)  # blue-to-red rainbow
+                vlt_color.SetNumberOfTableValues(256)  # number of color shades
+                vlt_color.SetHueRange(9/12, 0/12)  # rainbow heat map
                 vlt_color.Build()
 
                 # generate xy cutting plane actor
@@ -2162,11 +2162,24 @@ class pyMCDS:
 
         # visualize
         if (visualize):
+            # select first attribute
+            s_attribute = attribute[0]
+
+            # build VTKLooktupTable (color scheme)
+            vlt_color = vtk.vtkLookupTable()
+            i_element = df_cell.loc[:, s_attribute].unique().shape[0]
+            if (i_element > 256):
+                i_element = 256
+            vlt_color.SetNumberOfTableValues(i_element)
+            vlt_color.SetHueRange(9/12, 0/12)  # rainbow heat map
+            vlt_color.Build()
+
             # set up the mapper
             vpdm_data = vtk.vtkPolyDataMapper()
             vpdm_data.SetInputConnection(vg_data.GetOutputPort())
             vpdm_data.ScalarVisibilityOn()
-            #vpdm_data.ColorByArrayComponent(s_attribute, 0) # bue 20250110: not working and legacy better to do this in the lookup table.
+            vpdm_data.SetLookupTable(vlt_color)
+            vpdm_data.ColorByArrayComponent(s_attribute, 1)
 
             # set up the actor
             actor = vtk.vtkActor()
