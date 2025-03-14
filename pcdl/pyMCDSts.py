@@ -28,7 +28,6 @@ import pandas as pd
 from pcdl.pyMCDS import pyMCDS, es_coor_cell, es_coor_conc
 import platform
 import sys
-import xml.etree.ElementTree as etree
 
 
 ############

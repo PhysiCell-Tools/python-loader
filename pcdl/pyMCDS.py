@@ -26,7 +26,6 @@ import random
 from scipy import io
 import sys
 import vtk
-from vtkmodules.vtkCommonCore import vtkPoints
 import xml.etree.ElementTree as etree
 from pcdl.VERSION import __version__
 
