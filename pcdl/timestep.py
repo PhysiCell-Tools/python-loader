@@ -20,7 +20,6 @@ import bioio_base
 from bioio.writers import OmeTiffWriter
 import matplotlib.pyplot as plt
 from matplotlib import cm
-from matplotlib import colormaps
 from matplotlib import colors
 import numpy as np
 import os
@@ -31,7 +30,6 @@ from scipy import io
 from scipy import sparse
 import sys
 import vtk
-from vtkmodules.vtkCommonCore import vtkPoints
 import warnings
 import xml.etree.ElementTree as etree
 from pcdl.VERSION import __version__

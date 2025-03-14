@@ -27,7 +27,6 @@ import pandas as pd
 from pcdl.timestep import TimeStep, es_coor_cell, es_coor_conc, _anndextract
 import platform
 import sys
-import xml.etree.ElementTree as etree
 
 
 ############
