@@ -21,10 +21,12 @@ from bioio.writers import OmeTiffWriter
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib import colors
+import neuroglancer
 import numpy as np
 import os
 import pandas as pd
 from pcdl import imagine
+from pcdl import neuromancer
 from pcdl import pdplt
 from scipy import io
 from scipy import sparse
@@ -2492,6 +2494,69 @@ class TimeStep:
                 #fs_kwargs={},
             )
             return s_tiffpathfile
+
+
+    def make_neuroglancer(self, cell_attribute='ID', cell_attribute_cm='gray', conc_cutoff={}, focus=None):
+        """
+        input:
+            cell_attribute: strings; default is 'ID', which will result in a
+                cell segmentation mask.
+                column name within the cell dataframe.
+                the column data type has to be numeric (bool, int, float)
+                and cannot be string.
+                the result will be stored as 32 bit float.
+
+            cell_attribute_cm: string; default is 'gray'.
+                matlab color map label, used to display expression intensity values.
+                if None, no intensity layers will be generated.
+                + https://matplotlib.org/stable/users/explain/colors/colormaps.html
+
+            conc_cutoff: dictionary string to real; default is an empty dictionary.
+                if a contour from a substrate not should be cut by greater
+                than zero (shifted to integer 1), another cutoff value can be
+                specified here.
+
+            focus: set of strings; default is a None
+                set of substrate and cell_type names to specify what will be
+                translated into ome tiff format.
+                if None, all substrates and cell types will be processed.
+
+        output:
+            s_czyx_url: url to the generated ome file loaded in neurogalncer.
+
+        description:
+            function to transform chosen mcds output into an 1[um] spaced
+            czyx (channel, z-axis, y-axis, x-axis) ome tiff file, one
+            substrate or cell_type per channel. this file is automatically
+            loaded into neuroglancer.
+            an ome tiff file is more or less:
+            a numpy array, containing the image information
+            and a xml, containing the microscopy metadata information,
+            like e.g. channel labels.
+        """
+        # generate ometiff
+        s_tiffpathfile = self.make_ome_tiff(
+            cell_attribute = cell_attribute,
+            conc_cutoff = conc_cutoff,
+            focus = focus,
+            file = True,
+        )
+
+        # start neuroglancer
+        viewer = neuroglancer.Viewer()
+        with viewer.txn() as state:
+            # render ometiff into neuroglancer
+            neuromancer.ometiff2neuro(
+                o_state = state,
+                s_pathfile_tiff = s_tiffpathfile,
+                s_intensity_cm = cell_attribute_cm,
+                b_intensity_norm = False,
+                o_thresh = None,
+                e_render = None,
+            )
+
+        # print neuroglancer viewer url
+        return viewer
 
 
     ## GRAPH RELATED FUNCTIONS ##

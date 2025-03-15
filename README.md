@@ -64,9 +64,7 @@ Extras tutorials for GUI software:
 + [pcdl and blender](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_blender.md)
 + [pcdl and napari](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_napari.md)
 + [pcdl and fiji imagej](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_fijiimagej.md)
-<!--
-+ [pcdl and neuroglancer](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_(python3)_neuroglancer.md)
--->
++ [pcdl and neuroglancer](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_neuroglancer.md)
 
 Slides:
 
@@ -96,10 +94,12 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
 + fork pcdl continuous testing and feedbacks: Aneequa Sundus, John Metzcar
 + student prj on pcdl:
   Benjamin Jacobs (make\_gml),
+  Jason Lu (make\_neuroglancer),
   Katie Pletz (beta testing),
   Marshal Gress (plot\_scatter),
   Nick Oldfather (unit test model),
-  Thierry-Pascal Fleurant (plot\_timeseries)
+  Thierry-Pascal Fleurant (plot\_timeseries),
+  Viviana Kwong (make\_neuroglancer)
 
 Developers, please make pull requests to the https://github.com/elmbeech/physicelldataloader/tree/development branch. Thanks!
 
@@ -121,7 +121,6 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 ## Road Map:
 
 + evt generate lineage tree graph output files.
-+ evt add neuroglancer ome.tiff support.
 + evt add DataDiVR support.
 
 ## Release Notes:
@@ -134,6 +133,9 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
     + deprecate TimeSeries function **get_concentration** because pandas already has this functionlity.
     + deprecate TimeSeries function **get_concentration_at** because pandas already has this functionlity.
     + deprecate TimeSeries function **get_cell_df_at** because pandas already has this functionlity.
+    + new TimeStep **make_neuroglancer** function, to render ome tiff image into neuroglancer.
+    + new TimeSteries **make_neuroglancer** function, to render ome tiff images into neuroglancer.
+    + new **pcdl_make_neuroglancer** function, to render ome tiff images into neuroglancer.
 
 + version 3.3.5 (2025-03-xx): elmbeech/physicelldataloader
     + remove pyMCDS and pyMCDSts **make_ome_tiff** and pyCLI **pcdl_make_ome_tiff** removed to make pyMCS.py stand alone again.

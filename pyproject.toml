@@ -72,10 +72,13 @@ classifiers = [
 dependencies = [
     "anndata>=0.10.8",
     "bioio>=1.2.1",
+    "bioio-ome-tiff",
     "matplotlib",
+    "neuroglancer",
     "numpy<2.0.0",
     "pandas>=2.2.2",
     "requests",
+    "scikit-image>=0.24.0",
     "scipy>=1.13.0",
     "vtk",
 ]
