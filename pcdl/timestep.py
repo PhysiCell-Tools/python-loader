@@ -2158,13 +2158,16 @@ class TimeStep:
         # fill this grid with given attributes
         for s_attribute in attribute:
             b_bool = False
-            if (df_cell.loc[:, s_attribute].dtype == bool):  #in {bool, np.bool_, np.bool}):
+            if pd.api.types.is_bool_dtype(df_cell.loc[:, s_attribute].dtype):
                 b_bool = True
                 voa_data = vtk.vtkStringArray()
-            elif (df_cell.loc[:, s_attribute].dtype == str) or  (df_cell.loc[:, s_attribute].dtype == np.object_):  # in {str, np.str_, np.object_}):
+                print(f'boole: {s_attribute}')
+            elif pd.api.types.is_string_dtype(df_cell.loc[:, s_attribute].dtype):
                 voa_data = vtk.vtkStringArray()
-            elif (df_cell.loc[:, s_attribute].dtype == int) or (df_cell.loc[:, s_attribute].dtype == float):  # in {int, np.int_, np.int8, np.int16, np.int32, np.int64, float, np.float16, np.float32, np.float64, np.float128}):
+                print(f'string: {s_attribute}')
+            elif  pd.api.types.is_integer_dtype(df_cell.loc[:, s_attribute].dtype) or pd.api.types.is_float_dtype(df_cell.loc[:, s_attribute].dtype):
                 voa_data = vtk.vtkFloatArray()
+                print(f'numeric: {s_attribute}')
             else:
                 sys.exit(f'Error @ TimeStep.make_cell_vtk : {s_attribute} {df_cell.loc[:, s_attribute].dtype} unknown df_cell column data type.')
 
