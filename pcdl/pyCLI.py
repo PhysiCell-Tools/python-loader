@@ -1571,8 +1571,9 @@ def plot_scatter():
     # plot_scatter s
     parser.add_argument(
         '--s',
-        default = 'none',
-        help = "scatter plot dot size in pixel. typographic points are 1/72 inch. the marker size s is specified in points**2. plt.rcParams['lines.markersize']**2 is in my case 36. None tries to take the value from the initial.svg file. fall back setting is 36. default is None.",
+        default = 1.0,
+        type = float,
+        help = 'scatter plot dot size scale factor. with figsizepx extracted from initial.svg, scale factor 1.0 should be ok. adjust if necessary. default 1.0.',
     )
     # plot_scatter figsizepx
     parser.add_argument(
@@ -1649,7 +1650,7 @@ def plot_scatter():
             xlim = None if (args.xlim[0].lower() == 'none') else args.xlim,
             ylim = None if (args.ylim[0].lower() == 'none') else args.ylim,
             xyequal = False if args.xyequal.lower().startswith('f') else True,
-            s = None if (args.s.lower() == 'none') else int(args.s),
+            s = args.s,
             ax = None,
             figsizepx = None if (args.figsizepx[0].lower() == 'none') else [int(i) for i in args.figsizepx],
             ext = args.ext,
@@ -1682,7 +1683,7 @@ def plot_scatter():
             xlim = None if (args.xlim[0].lower() == 'none') else args.xlim,
             ylim = None if (args.ylim[0].lower() == 'none') else args.ylim,
             xyequal = False if args.xyequal.lower().startswith('f') else True,
-            s = None if (args.s.lower() == 'none') else int(args.s),
+            s = args.s,
             figsizepx = None if (args.figsizepx[0].lower() == 'none') else [int(i) for i in args.figsizepx],
             ext = args.ext,
             figbgcolor = None if (args.figbgcolor.lower() == 'none') else args.figbgcolor,
