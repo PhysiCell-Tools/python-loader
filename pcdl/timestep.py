@@ -1931,7 +1931,7 @@ class TimeStep:
             https://en.wikipedia.org/wiki/Portable_Network_Graphics
             https://en.wikipedia.org/wiki/TIFF
         """
-        # handle initial.svg for s and figsizepx
+        # handle initial.svg for figsizepx
         if (figsizepx is None):
             s_pathfile = self.path + '/initial.svg'
             try:
