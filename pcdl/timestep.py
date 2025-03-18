@@ -1839,7 +1839,7 @@ class TimeStep:
         return df_cell
 
 
-    def plot_scatter(self, focus='cell_type', z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title=None, grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=None, ax=None, figsizepx=None, ext=None, figbgcolor=None):
+    def plot_scatter(self, focus='cell_type', z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title=None, grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=1.0, ax=None, figsizepx=None, ext=None, figbgcolor=None):
         """
         input:
             focus: string; default is 'cell_type'
@@ -1857,7 +1857,7 @@ class TimeStep:
                depending on the focus column variable dtype, default extracts
                labels or min and max values from data.
 
-            alpha: floating point number; default is 1
+            alpha: floating point number; default is 1.0
                 alpha channel transparency value
                 between 1 (not transparent at all) and 0 (totally transparent).
 
@@ -1890,13 +1890,10 @@ class TimeStep:
             xyequal: boolean; default True
                 to specify equal axis spacing for x and y axis.
 
-            s: integer; default is None
-                scatter plot dot size in pixel.
-                typographic points are 1/72 inch.
-                the marker size s is specified in points**2.
-                plt.rcParams['lines.markersize']**2 is in my case 36.
-                None tries to take the value from the initial.svg file.
-                fall back setting is 36.
+            s: floating point number; default is 1.0
+                scatter plot dot size scale factor.
+                with figsizepx extracted from initial.svg, scale factor 1.0
+                should be ok. adjust if necessary.
 
             ax: matplotlib axis object; default setting is None
                 the ax object, which will be used as a canvas for plotting.
@@ -1935,35 +1932,18 @@ class TimeStep:
             https://en.wikipedia.org/wiki/TIFF
         """
         # handle initial.svg for s and figsizepx
-        if (s is None) or (figsizepx is None):
+        if (figsizepx is None):
             s_pathfile = self.path + '/initial.svg'
             try:
                 x_tree = etree.parse(s_pathfile)
                 x_root = x_tree.getroot()
-                if s is None:
-                    circle_element = x_root.find('.//{*}circle')
-                    if not (circle_element is None):
-                        r_radius = float(circle_element.get('r')) # px
-                        s = int(round((r_radius)**2))
-                    else:
-                        if self.verbose:
-                            print(f'Warning @ TimeStepts.plot_scatter : these agents are not circles.')
-                        s = plt.rcParams['lines.markersize']**2
-                    if self.verbose:
-                        print(f's set to {s}.')
-                if figsizepx is None:
-                    i_width = int(np.ceil(float(x_root.get('width')))) # px
-                    i_height = int(np.ceil(float(x_root.get('height'))))  # px
-                    figsizepx = [i_width, i_height]
+                i_width = int(np.ceil(float(x_root.get('width')) * 2))  # px
+                i_height = int(np.ceil(float(x_root.get('height')) * 2))  # px
+                figsizepx = [i_width, i_height]
             except FileNotFoundError:
                 if self.verbose:
                     print(f'Warning @ TimeStepts.plot_scatter : could not load {s_pathfile}.')
-                if s is None:
-                    s = plt.rcParams['lines.markersize']**2
-                    if self.verbose:
-                        print(f's set to {s}.')
-                if figsizepx is None:
-                    figsizepx = [640, 480]
+                figsizepx = [640, 480]
 
         # handle figure size
         figsizepx[0] = figsizepx[0] - (figsizepx[0] % 2)  # enforce even pixel number
@@ -1985,6 +1965,9 @@ class TimeStep:
         # get data z slice
         df_cell = self.get_cell_df(values=1, drop=set(), keep=set())
         df_cell = df_cell.loc[(df_cell.mesh_center_p == z_slice),:]
+
+        # calculate marker size
+        df_cell.loc[:,'s'] = ((6 * df_cell.total_volume) / np.pi)**(2/3)  # diamter of a sphere and plt.rcParams['lines.markersize']**2.
 
         # handle z_axis categorical cases
         if (str(df_cell.loc[:,focus].dtype) in {'bool', 'object'}):
@@ -2077,7 +2060,7 @@ class TimeStep:
             title = title,
             xlim = xlim,
             ylim = ylim,
-            s = s,
+            s = 's',
             grid = grid,
             ax = ax,
         )
