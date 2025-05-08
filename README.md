@@ -120,6 +120,8 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 
 ## Road Map:
 
++ pcdl_get_cell_atribute_list
++ pcdl_get_conc_attribue_list => pcdl_get_substrate_list?
 + evt generate lineage tree graph output files.
 + evt add DataDiVR support.
 
