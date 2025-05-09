@@ -21,7 +21,7 @@ from bioio.writers import OmeTiffWriter
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib import colors
-import neuroglancer
+#import neuroglancer
 import numpy as np
 import os
 import pandas as pd
@@ -624,35 +624,7 @@ class TimeStep:
             function returns a dictionary that stores all tracked variables
             and their units.
         """
-        # extract data
-        ds_unit = {}
-        # units for metadata parameters
-        ds_unit.update({'time': self.data['metadata']['time_units']})
-        ds_unit.update({'runtime': self.data['metadata']['runtime_units']})
-        ds_unit.update({'spatial_unit': self.data['metadata']['spatial_units']})
-
-        # microenvironment
-        if self.microenv:
-            for s_substrate in self.get_substrate_list():
-                # unit from substrate parameters
-                s_unit = self.data['continuum_variables'][s_substrate]['units']
-                ds_unit.update({s_substrate: s_unit})
-
-                # units from microenvironment parameters
-                s_diffusion_key = f'{s_substrate}_diffusion_coefficient'
-                s_diffusion_unit = self.data['continuum_variables'][s_substrate]['diffusion_coefficient']['units']
-                ds_unit.update({s_diffusion_key: s_diffusion_unit})
-
-                s_decay_key = f'{s_substrate}_decay_rate'
-                s_decay_unit = self.data['continuum_variables'][s_substrate]['decay_rate']['units']
-                ds_unit.update({s_decay_key: s_decay_unit})
-
-        # units from cell parameters
-        ds_unit.update(self.data['discrete_cells']['units'])
-
-        # output
-        del ds_unit['ID']
-        return ds_unit
+        return self.data['metadata'].ds_unit.copy()
 
 
     ## MESH RELATED FUNCTIONS  ##
@@ -803,26 +775,7 @@ class TimeStep:
             function returns the distance in between mesh centers,
             in the spacial unit defined in the PhysiCell_settings.xml file.
         """
-        tr_m_range, tr_n_range, tr_p_range = self.get_mesh_mnp_range()
-        ar_m_axis, ar_n_axis, ar_p_axis = self.get_mesh_mnp_axis()
-
-        # m axis
-        if (len(set(tr_m_range)) == 1):
-            dm = np.float64(1.0)
-        else:
-            dm = (tr_m_range[1] - tr_m_range[0]) / (ar_m_axis.shape[0] - 1)
-        # n axis
-        if (len(set(tr_n_range)) == 1):
-            dn = np.float64(1.0)
-        else:
-            dn = (tr_n_range[1] - tr_n_range[0]) / (ar_n_axis.shape[0] - 1)
-        # p axis
-        if (len(set(tr_p_range)) == 1):
-            dp = np.float64(1.0)
-        else:
-            dp = (tr_p_range[1] - tr_p_range[0]) / (ar_p_axis.shape[0] - 1)
-
-        return [dm, dn, dp]
+        return self.data['mesh']['mnp_spacing'].copy()
 
 
     def is_in_mesh(self, x, y, z, halt=False):
@@ -928,10 +881,7 @@ class TimeStep:
             function returns the voxel width, height, depth measurement,
             in the spacial unit defined in the PhysiCell_settings.xml file.
         """
-        r_volume = self.get_voxel_volume()
-        dm, dn, _ = self.get_mesh_spacing()
-        dp  = r_volume / (dm * dn)
-        return [dm, dn, dp]
+        return self.data['mesh']['mnp_spacing'].copy()
 
 
     def get_voxel_volume(self):
@@ -947,11 +897,7 @@ class TimeStep:
             function returns the volume value for a single voxel, related
             to the spacial unit defined in the PhysiCell_settings.xml file.
         """
-        ar_volume = np.unique(self.data['mesh']['volumes'])
-        if ar_volume.shape != (1,):
-            sys.exit(f'Error @ TimeStep.get_voxel_volume : mesh is not built out of a unique voxel volume {ar_volume}.')
-        r_volume = ar_volume[0]
-        return r_volume
+        return self.data['mesh']['volume']
 
 
     def get_voxel_ijk(self, x, y, z, is_in_mesh=True):
@@ -1012,10 +958,7 @@ class TimeStep:
             function returns all chemical species names, modeled
             in the microenvironment, ordered by chemical species ID.
         """
-        # get substrate listing
-        ds_substrate = self.get_substrate_dict()
-        ls_substrate = [ds_substrate[s_key] for s_key in sorted(ds_substrate, key=int)]
-        return ls_substrate
+        return self.data['substrate']['ls_substarte'].copy()
 
 
     def get_substrate_dict(self):
@@ -1031,7 +974,7 @@ class TimeStep:
             microenvironment_setup variables,
             specified in the PhysiCell_settings.xml file.
         """
-        return self.data['metadata']['substrate']
+        return self.data['substrate']['ds_substrate'].copy()
 
 
     def get_substrate_df(self):
@@ -1047,71 +990,7 @@ class TimeStep:
             function returns a dataframe with each substrate's
             decay_rate and difusion_coefficient.
         """
-        # extract data
-        ls_column = ['substrate','decay_rate','diffusion_coefficient']
-        ll_sub = []
-        for s_substrate in self.get_substrate_list():
-            s_decay_value = self.data['continuum_variables'][s_substrate]['decay_rate']['value']
-            s_diffusion_value = self.data['continuum_variables'][s_substrate]['diffusion_coefficient']['value']
-            ll_sub.append([s_substrate, s_decay_value, s_diffusion_value])
-
-        # generate dataframe
-        df_substrate = pd.DataFrame(ll_sub, columns=ls_column)
-        df_substrate.set_index('substrate', inplace=True)
-        df_substrate.columns.name = 'attribute'
-
-        # output
-        return df_substrate
-
-
-    def _get_concentration(self, substrate, z_slice=None, halt=False):
-        """
-        input:
-            substrate: string
-                substrate name.
-
-            z_slice: floating point number; default is None
-                z-axis position to slice a 2D xy-plain out of the
-                3D substrate concentration mesh. if None the
-                whole 3D mesh will be returned.
-
-            halt: boolean; default is False
-                should program execution break or just spit out a warning,
-                if z_slice position is not an exact mesh center coordinate?
-                if False, z_slice will be adjusted to the nearest
-                mesh center value, the smaller one, if the coordinate
-                lies on a saddle point.
-
-        output:
-            ar_conc: numpy array of floating point numbers
-                substrate concentration meshgrid or xy-plain slice
-                through the meshgrid.
-
-        description:
-            function returns the concentration meshgrid, or a xy-plain slice
-            out of the whole meshgrid, for the specified chemical species.
-        """
-        ar_conc = self.data['continuum_variables'][substrate]['data'].copy()
-
-        # check if z_slice is a mesh center or None
-        if not (z_slice is None):
-            _, _, ar_p_axis = self.get_mesh_mnp_axis()
-            if not (z_slice in ar_p_axis):
-                if self.verbose:
-                    print(f'Warning @ TimeStep._get_concentration : specified z_slice {z_slice} is not an element of the z-axis mesh centers set {ar_p_axis}.')
-                if halt:
-                    sys.exit('Processing stopped!')
-                else:
-                    z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
-                    print(f'z_slice set to {z_slice}.')
-
-            # filter by z_slice
-            _, _, ar_p_grid = self.get_mesh()
-            mask = ar_p_grid == z_slice
-            ar_conc = ar_conc[mask].reshape((ar_p_grid.shape[0], ar_p_grid.shape[1]))
-
-        # output
-        return ar_conc
+        return self.data['substrate']['df_substarte'].copy()
 
 
     def get_conc_df(self, z_slice=None, halt=False, values=1, drop=set(), keep=set()):
@@ -1172,41 +1051,8 @@ class TimeStep:
                     z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
                     print(f'z_slice set to {z_slice}.')
 
-        # flatten mesh coordnates
-        ar_m, ar_n, ar_p = self.get_mesh()
-        ar_m = ar_m.flatten(order='C')
-        ar_n = ar_n.flatten(order='C')
-        ar_p = ar_p.flatten(order='C')
-
-        # get mesh spacing
-        dm, dn, dp = self.get_voxel_spacing()
-
-        # get voxel coordinates
-        ai_i = ((ar_m - ar_m.min()) / dm)
-        ai_j = ((ar_n - ar_n.min()) / dn)
-        ai_k = ((ar_p - ar_p.min()) / dp)
-
-        # handle coordinates
-        ls_column = [
-            'voxel_i','voxel_j','voxel_k',
-            'mesh_center_m','mesh_center_n','mesh_center_p'
-        ]
-        la_data = [ai_i, ai_j, ai_k, ar_m, ar_n, ar_p]
-
-        # handle concentrations
-        for s_substrate in self.get_substrate_list():
-            ls_column.append(s_substrate)
-            ar_conc = self._get_concentration(substrate=s_substrate, z_slice=None)
-            la_data.append(ar_conc.flatten(order='C'))
-
-        # generate dataframe
-        aa_data  = np.array(la_data)
-        df_conc = pd.DataFrame(aa_data.T, columns=ls_column)
-        df_conc['time'] = self.get_time()
-        df_conc['runtime'] = self.get_runtime() / 60  # in min
-        df_conc['xmlfile'] = self.xmlfile
-        d_dtype = {'voxel_i': int, 'voxel_j': int, 'voxel_k': int}
-        df_conc = df_conc.astype(d_dtype)
+        # fetch dataframe
+        df_conc = self.data['substrate']['df_conc']
 
         # filter z_slice
         if not (z_slice is None):
@@ -1642,9 +1488,7 @@ class TimeStep:
             function returns a list with all celltype labels,
             ordered by cell_type ID.
         """
-        ds_celltype = self.get_celltype_dict()
-        ls_celltype = [ds_celltype[s_key] for s_key in sorted(ds_celltype, key=int)]
-        return ls_celltype
+        return self.data['cell']['ls_celltype'].copy()
 
 
     def get_celltype_dict(self):
@@ -1659,7 +1503,7 @@ class TimeStep:
             function returns a dictionary that maps ID and name from all
             cell_definitions, specified in the PhysiCell_settings.xml file.
         """
-        return self.data['metadata']['cell_type']
+        return self.data['cell']['ds_celltype'].copy()
 
 
     def get_cell_df(self, values=1, drop=set(), keep=set()):
@@ -1699,122 +1543,8 @@ class TimeStep:
         if (len(keep) > 0) and (len(drop) > 0):
             sys.exit(f"Error @ TimeStep.get_cell_df : when keep is given {keep}, then drop has to be an empty set {drop}!")
 
-        # get cell position and more
-        df_cell = pd.DataFrame(self.data['discrete_cells']['data'])
-        df_cell['time'] = self.get_time()
-        df_cell['runtime'] = self.get_runtime() / 60  # in min
-        df_cell['xmlfile'] = self.xmlfile
-        df_voxel = df_cell.loc[:,['position_x','position_y','position_z']].copy()
-
-        # get mesh spacing
-        dm, dn, dp = self.get_voxel_spacing()
-
-        # get mesh and voxel min max values
-        tr_m_range, tr_n_range, tr_p_range = self.get_mesh_mnp_range()
-        tr_i_range, tr_j_range, tr_k_range = self.get_voxel_ijk_range()
-
-        # get voxel for each cell
-        df_voxel.loc[:,'voxel_i'] = np.round((df_voxel.loc[:,'position_x'] - tr_m_range[0]) / dm).astype(int)
-        df_voxel.loc[:,'voxel_j'] = np.round((df_voxel.loc[:,'position_y'] - tr_n_range[0]) / dn).astype(int)
-        df_voxel.loc[:,'voxel_k'] = np.round((df_voxel.loc[:,'position_z'] - tr_p_range[0]) / dp).astype(int)
-        df_voxel.loc[(df_voxel.voxel_i > tr_i_range[1]), 'voxel_i'] = tr_i_range[1]  # i_max
-        df_voxel.loc[(df_voxel.voxel_i < tr_i_range[0]), 'voxel_i'] = tr_i_range[0]  # i_min
-        df_voxel.loc[(df_voxel.voxel_j > tr_j_range[1]), 'voxel_j'] = tr_j_range[1]  # j_max
-        df_voxel.loc[(df_voxel.voxel_j < tr_j_range[0]), 'voxel_j'] = tr_j_range[0]  # j_min
-        df_voxel.loc[(df_voxel.voxel_k > tr_k_range[1]), 'voxel_k'] = tr_k_range[1]  # k_max
-        df_voxel.loc[(df_voxel.voxel_k < tr_k_range[0]), 'voxel_k'] = tr_k_range[0]  # k_min
-
-        # merge voxel (inner join)
-        df_cell = pd.merge(df_cell, df_voxel, on=['position_x', 'position_y', 'position_z'])
-
-        # merge cell_density (left join)
-        df_cellcount = df_cell.loc[:,['voxel_i','voxel_j','voxel_k','ID']].groupby(['voxel_i','voxel_j','voxel_k']).count().reset_index()
-        ls_column = list(df_cellcount.columns)
-        ls_column[-1] = 'cell_count_voxel'
-        df_cellcount.columns = ls_column
-        s_density = f"cell_density_{self.data['metadata']['spatial_units']}3"
-        df_cellcount[s_density] = df_cellcount.loc[:,'cell_count_voxel'] / self.get_voxel_volume()
-        df_cell = pd.merge(
-            df_cell,
-            df_cellcount,
-            on = ['voxel_i', 'voxel_j', 'voxel_k'],
-            how = 'left',
-        )
-
-        # get column label set
-        es_column = set(df_cell.columns)
-
-        # get vector length
-        for s_var_spatial in es_var_spatial:
-            es_vector = es_column.intersection({f'{s_var_spatial}_x',f'{s_var_spatial}_y',f'{s_var_spatial}_z'})
-            if len(es_vector) > 0:
-                # linear algebra
-                #a_vector = df_cell.loc[:,ls_vector].values
-                #a_length = np.sqrt(np.diag(np.dot(a_vector, a_vector.T)))
-                # pythoagoras
-                a_length = None
-                for s_vector in es_vector:
-                    a_vectorsq = df_cell.loc[:,s_vector].values**2
-                    if (a_length is None):
-                        a_length = a_vectorsq
-                    else:
-                        a_length += a_vectorsq
-                a_length = a_length**(1/2)
-                # result
-                df_cell[f'{s_var_spatial}_vectorlength'] = a_length
-
-        # physicell
-        if not (self.data['discrete_cells']['physiboss'] is None):
-            df_cell = pd.merge(
-                df_cell,
-                self.data['discrete_cells']['physiboss'],
-                left_index = True,
-                right_index = True,
-                how = 'left',
-            )
-
-
-        # microenvironment
-        if self.microenv:
-            # merge substrate (left join)
-            df_sub = self.get_substrate_df()
-            for s_sub in df_sub.index:
-                 for s_rate in df_sub.columns:
-                     s_var = f'{s_sub}_{s_rate}'
-                     df_cell[s_var] = df_sub.loc[s_sub,s_rate]
-
-        # merge concentration (left join)
-        df_conc = self.get_conc_df(z_slice=None, values=1, drop=set(), keep=set())
-        df_conc.drop({'time', 'runtime','xmlfile'}, axis=1, inplace=True)
-        df_cell = pd.merge(
-            df_cell,
-            df_conc,
-            on = ['voxel_i', 'voxel_j', 'voxel_k'],
-            how = 'left',
-        )
-
-        # variable typing
-        do_type = {}
-        [do_type.update({k:v}) for k,v in do_var_type.items() if k in es_column]
-        do_type.update(self.custom_data_type)
-        do_int = do_type.copy()
-        [do_int.update({k:int}) for k in do_int.keys()]
-        ls_int = sorted(do_int.keys())
-        df_cell.loc[:,ls_int] = df_cell.loc[:,ls_int].round()
-        df_cell = df_cell.astype(do_int)
-        df_cell = df_cell.astype(do_type)
-
-        # categorical translation
-        try:  # bue 20240805: missing in MCDS version <= 0.5 (November 2021)
-            df_cell.loc[:,'current_death_model'] = df_cell.loc[:,'current_death_model'].replace(ds_death_model)  # bue 20230614: this column looks like an artefact to me
-        except KeyError:
-            pass
-        df_cell.loc[:,'cycle_model'] = df_cell.loc[:,'cycle_model'].replace(ds_cycle_model)
-        df_cell.loc[:,'cycle_model'] = df_cell.loc[:,'cycle_model'].replace(ds_death_model)
-        df_cell.loc[:,'current_phase'] = df_cell.loc[:,'current_phase'].replace(ds_cycle_phase)
-        df_cell.loc[:,'current_phase'] = df_cell.loc[:,'current_phase'].replace(ds_death_phase)
-        df_cell.loc[:,'cell_type'] = df_cell.loc[:,'cell_type'].replace(self.data['metadata']['cell_type'])
-        df_cell.loc[:,'chemotaxis_index'] = df_cell.loc[:,'chemotaxis_index'].replace(self.data['metadata']['substrate'])
+        # fetch data frame
+        df_cell = self.data['cell']['df_cell']
 
         # filter
         es_attribute = set(df_cell.columns).difference(es_coor_cell)
@@ -1834,7 +1564,6 @@ class TimeStep:
         # output
         df_cell = df_cell.loc[:,sorted(df_cell.columns)]
         df_cell.sort_values('ID', axis=0, inplace=True)
-        df_cell.set_index('ID', inplace=True)
         df_cell = df_cell.copy()
         return df_cell
 
@@ -2558,7 +2287,7 @@ class TimeStep:
         description:
             function returns the attached cell graph as a dictionary object.
         """
-        return self.data['discrete_cells']['graph']['attached_cells']
+        return self.data['cell']['dei_graph']['attached_cells']
 
 
     def get_neighbor_graph_dict(self):
@@ -2572,7 +2301,7 @@ class TimeStep:
         description:
             function returns the cell neighbor graph as a dictionary object.
         """
-        return self.data['discrete_cells']['graph']['neighbor_cells']
+        return self.data['cell']['dei_graph']['neighbor_cells']
 
 
     def get_spring_graph_dict(self):
@@ -2586,7 +2315,7 @@ class TimeStep:
         description:
             function returns the attached spring cell graph as a dictionary object.
         """
-        return self.data['discrete_cells']['graph']['spring_attached_cells']
+        return self.data['cell']['dei_graph']['spring_attached_cells']
 
 
     def make_graph_gml(self, graph_type, edge_attribute=True, node_attribute=[]):
@@ -2744,7 +2473,6 @@ class TimeStep:
         return annmcds
 
 
-
     ## LOAD DATA  ##
 
     def _read_xml(self, xmlfile, output_path='.'):
@@ -2788,19 +2516,26 @@ class TimeStep:
         b_celltype = False
 
         # generate output dictionary
-        d_mcds = {}
-        d_mcds['metadata'] = {}
-        d_mcds['metadata']['substrate'] = {}
-        d_mcds['metadata']['cell_type'] = {}
-        d_mcds['mesh'] = {}
-        d_mcds['continuum_variables'] = {}
-        d_mcds['discrete_cells'] = {}
-        d_mcds['discrete_cells']['units'] = {}
-
+        d_mcds = {
+           'metadata': {},
+           'mesh': {},
+           'substrate': {
+               'ds_substrate': {},
+           },
+           'metadata': {},
+           'cell': {
+               'ds_celltype': {},
+           },
+           'raw_substrate': {},
+           'raw_cell': {
+               'units': {},
+           },
+        }
 
         ###############################
         # read PhysiCell_settings.xml #
         ###############################
+        ## get celltype dict
         # bue: used for cell_type label:id mapping for data generated with physicell versions < 3.15.
 
         if not ((self.settingxml is None) or (self.settingxml is False)):
@@ -2815,8 +2550,9 @@ class TimeStep:
             for x_celltype in self.x_settingxml.find('cell_definitions').findall('cell_definition'):
                 # <cell_definition>
                 s_id = str(x_celltype.get('ID'))
-                s_celltype = x_celltype.get('name').replace(' ', '_')
-                d_mcds['metadata']['cell_type'].update({s_id : s_celltype})
+                # I don't like spaces in cell type names!
+                s_celltype = x_celltype.get('name').replace(' ', '_') # ROH
+                d_mcds['cell']['ds_celltype'].update({s_id : s_celltype})
             b_celltype = True
 
         #######################################
@@ -2840,25 +2576,25 @@ class TimeStep:
         ### find the metadata node ###
         x_metadata = x_root.find('metadata')
 
-        # get multicellds xml version
+        ## get multicellds xml version
         d_mcds['metadata']['multicellds_version'] = f"MultiCellDS_{x_root.get('version')}"
 
-        # get physicell software version
+        ## get physicell software version
         x_software = x_metadata.find('software')
         x_physicelln = x_software.find('name')
         x_physicellv = x_software.find('version')
         d_mcds['metadata']['physicell_version'] = f'{x_physicelln.text}_{x_physicellv.text}'
 
-        # get timestamp
+        ## get timestamp
         x_time = x_metadata.find('created')
         d_mcds['metadata']['created'] = x_time.text
 
-        # get current simulated time
+        ## get current simulated time
         x_time = x_metadata.find('current_time')
         d_mcds['metadata']['current_time'] = float(x_time.text)
         d_mcds['metadata']['time_units'] = x_time.get('units')
 
-        # get current runtime
+        ## get current runtime
         x_time = x_metadata.find('current_runtime')
         d_mcds['metadata']['current_runtime'] = float(x_time.text)
         d_mcds['metadata']['runtime_units'] = x_time.get('units')
@@ -2874,7 +2610,7 @@ class TimeStep:
         ### find the mesh node ###
         x_microenv = x_root.find('microenvironment').find('domain')  # find the microenvironment node
         x_mesh = x_microenv.find('mesh')
-        d_mcds['metadata']['spatial_units'] = x_mesh.get('units')
+        d_mcds['metadata']['spatial_unit'] = x_mesh.get('units')
 
         # while we're at it, find the mesh
         s_x_coor = x_mesh.find('x_coordinates').text
@@ -2889,38 +2625,38 @@ class TimeStep:
         s_delim = x_mesh.find('z_coordinates').get('delimiter')
         ar_z_coor = np.array(s_z_coor.split(s_delim), dtype=np.float64)
 
-        # reshape into a meshgrid
+        ## get mesh grid
         d_mcds['mesh']['mnp_grid'] = np.array(np.meshgrid(ar_x_coor, ar_y_coor, ar_z_coor, indexing='xy'))
 
-        # get mesh center axis
+        ## get mesh center axis
         d_mcds['mesh']['mnp_axis'] = [
             np.unique(ar_x_coor),
             np.unique(ar_y_coor),
             np.unique(ar_z_coor),
         ]
 
-        # get mesh center range
+        ## get mesh center range
         d_mcds['mesh']['mnp_range'] = [
            (d_mcds['mesh']['mnp_axis'][0].min(), d_mcds['mesh']['mnp_axis'][0].max()),
            (d_mcds['mesh']['mnp_axis'][1].min(), d_mcds['mesh']['mnp_axis'][1].max()),
            (d_mcds['mesh']['mnp_axis'][2].min(), d_mcds['mesh']['mnp_axis'][2].max()),
         ]
 
-        # get voxel range
+        ## get voxel range
         d_mcds['mesh']['ijk_range'] = [
             (0, len(d_mcds['mesh']['mnp_axis'][0]) - 1),
             (0, len(d_mcds['mesh']['mnp_axis'][1]) - 1),
             (0, len(d_mcds['mesh']['mnp_axis'][2]) - 1),
         ]
 
-        # get voxel axis
+        ## get voxel axis
         d_mcds['mesh']['ijk_axis'] = [
             np.array(range(d_mcds['mesh']['ijk_range'][0][1] + 1)),
             np.array(range(d_mcds['mesh']['ijk_range'][1][1] + 1)),
             np.array(range(d_mcds['mesh']['ijk_range'][2][1] + 1)),
         ]
 
-        # get mesh bounding box range [xmin, ymin, zmin, xmax, ymax, zmax]
+        ## get mesh bounding box range [xmin, ymin, zmin, xmax, ymax, zmax]
         s_bboxcoor = x_mesh.find('bounding_box').text
         s_delim = x_mesh.find('bounding_box').get('delimiter')
         ar_bboxcoor = np.array(s_bboxcoor.split(s_delim), dtype=np.float64)
@@ -2937,10 +2673,34 @@ class TimeStep:
         if self.verbose:
             print(f'reading: {s_voxelpathfile}')
 
+        ## get voxle coordinates
         # center of voxel specified by first three rows [ x, y, z ]
-        # volume specified by fourth row
         d_mcds['mesh']['mnp_coordinate'] = ar_mesh_initial[:3, :]
-        d_mcds['mesh']['volumes'] = ar_mesh_initial[3, :]
+
+        ## get voxel volume
+        # volume specified by fourth row
+        ar_volume = ar_mesh_initial[3, :]
+        if (len(set(ar_volume)) != 1):
+            sys.exit(f'Error @ TimeStep._read_xml : mesh is not built out of a unique voxel volume {ar_volume}.')
+        d_mcds['mesh']['volume'] = ar_volume[0]
+
+        ## get mesh voxel spacing
+        tr_m_range, tr_n_range, tr_p_range = d_mcds['mesh']['mnp_range']
+        ar_m_axis, ar_n_axis, ar_p_axis = d_mcds['mesh']['mnp_axis']
+
+        if (len(set(tr_m_range)) == 1):  # m axis
+            dm = np.float64(1.0)
+        else:
+            dm = (tr_m_range[1] - tr_m_range[0]) / (ar_m_axis.shape[0] - 1)
+
+        if (len(set(tr_n_range)) == 1):  # n axis
+            dn = np.float64(1.0)
+        else:
+            dn = (tr_n_range[1] - tr_n_range[0]) / (ar_n_axis.shape[0] - 1)
+
+        dp  = d_mcds['mesh']['volume'] / (dm * dn)  # p axis
+
+        d_mcds['mesh']['mnp_spacing'] = [dm, dn, dp]
 
 
         ################################
@@ -2960,37 +2720,37 @@ class TimeStep:
             if self.verbose:
                 print(f'reading: {s_microenvpathfile}')
 
-            # continuum_variables, unlike in the matlab version the individual chemical
+            # raw_substrate, unlike in the matlab version the individual chemical
             # species will be primarily accessed through their names e.g.
-            # d_mcds['continuum_variables']['oxygen']['units']
-            # d_mcds['continuum_variables']['glucose']['data']
+            # d_mcds['raw_substrate']['oxygen']['units']
+            # d_mcds['raw_substrate']['glucose']['data']
 
             # substrate loop
             for i_s, x_substrate in enumerate(x_microenv.find('variables').findall('variable')):
                 # i don't like spaces in species names!
-                s_substrate = x_substrate.get('name').replace(' ', '_')
+                s_substrate = x_substrate.get('name').replace(' ', '_') # ROH
 
-                d_mcds['continuum_variables'][s_substrate] = {}
-                d_mcds['continuum_variables'][s_substrate]['units'] = x_substrate.get('units')
+                d_mcds['raw_substrate'][s_substrate] = {}
+                d_mcds['raw_substrate'][s_substrate]['units'] = x_substrate.get('units')
 
                 if self.verbose:
                     print(f'parsing: {s_substrate} data')
 
                 # update metadata substrate ID label dictionary
-                d_mcds['metadata']['substrate'].update({str(i_s) : s_substrate})
+                d_mcds['substrate']['ds_substrate'].update({str(i_s) : s_substrate})
 
                 # initialize meshgrid shaped array for concentration data
-                d_mcds['continuum_variables'][s_substrate]['data'] = np.zeros(d_mcds['mesh']['mnp_grid'][0].shape)
+                d_mcds['raw_substrate'][s_substrate]['data'] = np.zeros(d_mcds['mesh']['mnp_grid'][0].shape)
 
                 # diffusion data for each species
-                d_mcds['continuum_variables'][s_substrate]['diffusion_coefficient'] = {}
-                d_mcds['continuum_variables'][s_substrate]['diffusion_coefficient']['value'] = float(x_substrate.find('physical_parameter_set').find('diffusion_coefficient').text)
-                d_mcds['continuum_variables'][s_substrate]['diffusion_coefficient']['units'] = x_substrate.find('physical_parameter_set').find('diffusion_coefficient').get('units')
+                d_mcds['raw_substrate'][s_substrate]['diffusion_coefficient'] = {}
+                d_mcds['raw_substrate'][s_substrate]['diffusion_coefficient']['value'] = float(x_substrate.find('physical_parameter_set').find('diffusion_coefficient').text)
+                d_mcds['raw_substrate'][s_substrate]['diffusion_coefficient']['units'] = x_substrate.find('physical_parameter_set').find('diffusion_coefficient').get('units')
 
                 # decay data for each species
-                d_mcds['continuum_variables'][s_substrate]['decay_rate'] = {}
-                d_mcds['continuum_variables'][s_substrate]['decay_rate']['value']  = float(x_substrate.find('physical_parameter_set').find('decay_rate').text)
-                d_mcds['continuum_variables'][s_substrate]['decay_rate']['units']  = x_substrate.find('physical_parameter_set').find('decay_rate').get('units')
+                d_mcds['raw_substrate'][s_substrate]['decay_rate'] = {}
+                d_mcds['raw_substrate'][s_substrate]['decay_rate']['value']  = float(x_substrate.find('physical_parameter_set').find('decay_rate').text)
+                d_mcds['raw_substrate'][s_substrate]['decay_rate']['units']  = x_substrate.find('physical_parameter_set').find('decay_rate').get('units')
 
                 # store data from microenvironment file as numpy array
                 # iterate over each voxel
@@ -3004,13 +2764,72 @@ class TimeStep:
                     k = np.where(np.abs(ar_center[2] - d_mcds['mesh']['mnp_axis'][2]) < 1e-10)[0][0]
 
                     # store value
-                    d_mcds['continuum_variables'][s_substrate]['data'][j, i, k] = ar_microenv[4+i_s, i_voxel]
+                    d_mcds['raw_substrate'][s_substrate]['data'][j, i, k] = ar_microenv[4+i_s, i_voxel]
+
+
+            ## get substrate listing
+            ds_substrate =  d_mcds['substrate']['ds_substrate']
+            ls_substrate = [ds_substrate[s_key] for s_key in sorted(ds_substrate, key=int)]
+            # store values
+            d_mcds['substrate']['ls_substarte'] = ls_substrate
+
+            ## get substrate df
+            # extract data
+            ls_column = ['substrate','decay_rate','diffusion_coefficient']
+            ll_sub = []
+            for s_substrate in d_mcds['substrate']['ls_substarte']:
+                s_decay_value = d_mcds['raw_substrate'][s_substrate]['decay_rate']['value']
+                s_diffusion_value = d_mcds['raw_substrate'][s_substrate]['diffusion_coefficient']['value']
+                ll_sub.append([s_substrate, s_decay_value, s_diffusion_value])
+            # generate dataframe
+            df_substrate = pd.DataFrame(ll_sub, columns=ls_column)
+            df_substrate.set_index('substrate', inplace=True)
+            df_substrate.columns.name = 'attribute'
+            # store values
+            d_mcds['substrate']['df_substarte'] = df_substrate
+
+
+            ## get conc df
+            # flatten mesh coordnates
+            ar_m, ar_n, ar_p = d_mcds['mesh']['mnp_grid']
+            ar_m = ar_m.flatten(order='C')
+            ar_n = ar_n.flatten(order='C')
+            ar_p = ar_p.flatten(order='C')
+            # get mesh spacing
+            dm, dn, dp = d_mcds['mesh']['mnp_spacing']
+            # get voxel coordinates
+            ai_i = ((ar_m - ar_m.min()) / dm)
+            ai_j = ((ar_n - ar_n.min()) / dn)
+            ai_k = ((ar_p - ar_p.min()) / dp)
+            # handle coordinates
+            ls_column = [
+                'voxel_i','voxel_j','voxel_k',
+                'mesh_center_m','mesh_center_n','mesh_center_p'
+            ]
+            la_data = [ai_i, ai_j, ai_k, ar_m, ar_n, ar_p]
+            # handle concentrations
+            for s_substrate in d_mcds['substrate']['ls_substarte']:
+                ls_column.append(s_substrate)
+                ar_conc = d_mcds['raw_substrate'][s_substrate]['data'].copy()
+                la_data.append(ar_conc.flatten(order='C'))
+            # generate dataframe
+            aa_data  = np.array(la_data)
+            df_conc = pd.DataFrame(aa_data.T, columns=ls_column)
+            df_conc['time'] = d_mcds['metadata']['current_time']
+            df_conc['runtime'] = d_mcds['metadata']['current_runtime'] / 60  # in min
+            df_conc['xmlfile'] = self.xmlfile
+            d_dtype = {'voxel_i': int, 'voxel_j': int, 'voxel_k': int}
+            df_conc = df_conc.astype(d_dtype)
+            # store values
+            df_conc.sort_values(['voxel_i', 'voxel_j', 'voxel_k', 'time'], axis=0, inplace=True)
+            df_conc.reset_index(drop=True, inplace=True)
+            df_conc.index.name = 'index'
+            d_mcds['substrate']['df_conc'] = df_conc
 
 
         ####################
         # handle cell data #
         ####################
-
         if self.verbose:
             print('working on discrete cell data ...')
 
@@ -3028,8 +2847,9 @@ class TimeStep:
         try:
             for x_celltype in x_celldata.find('cell_types').findall('type'):
                 s_id = str(x_celltype.get('ID'))
-                s_celltype = (x_celltype.text).replace(' ', '_')
-                d_mcds['metadata']['cell_type'].update({s_id : s_celltype})
+                # I don't like spaces in cell type names!
+                s_celltype = x_celltype.text.replace(' ', '_')  # ROH
+                d_mcds['cell']['ds_celltype'].update({s_id : s_celltype})
             b_celltype = True
         except AttributeError:
             pass
@@ -3037,66 +2857,67 @@ class TimeStep:
         # metadata cell_type label:id mapping detection ~ label information lost (silver quality)
         if not b_celltype:
             for x_label in x_celldata.find('labels').findall('label'):
-                s_variable = x_label.text.replace(' ', '_')
+                # I don't like spaces in cell type names!
+                s_variable = x_label.tex.replace(' ', '_')  # ROH
                 if s_variable in es_var_cell:
                     for i_id in range(int(x_label.get('size'))):
                         s_id = str(i_id)
-                        d_mcds['metadata']['cell_type'].update({s_id : s_id})
+                        d_mcds['cell']['ds_celltype'].update({s_id : s_id})
                     b_celltype = True
 
         # iterate over labels which are children of labels these will be used to label data arrays
         ls_variable = []
         for x_label in x_celldata.find('labels').findall('label'):
             # I don't like spaces in my dictionary keys!
-            s_variable = x_label.text.replace(' ', '_')
+            s_variable = x_label.text.replace(' ', '_')  # ROH
             i_variable = int(x_label.get('size'))
             s_unit = x_label.get('units')
 
             # variable unique for each celltype substrate combination
             if s_variable in es_var_subs:
-                if (len(d_mcds['metadata']['substrate']) > 0):
+                if (len(d_mcds['substrate']['ds_substrate']) > 0):
                     # continuum_variable id label sorting (becaus this is an id label mapping dict)
-                    ls_substrate = [d_mcds['metadata']['substrate'][o_key] for o_key in sorted(d_mcds['metadata']['substrate'].keys(), key=int)]
+                    ls_substrate = [d_mcds['substrate']['ds_substrate'][o_key] for o_key in sorted(d_mcds['substrate']['ds_substrate'].keys(), key=int)]
                     for s_substrate in ls_substrate:
                         s_variable_subs = s_substrate + '_' + s_variable
                         ls_variable.append(s_variable_subs)
-                        d_mcds['discrete_cells']['units'].update({s_variable_subs : s_unit})
+                        d_mcds['raw_cell']['units'].update({s_variable_subs : s_unit})
                 else:
                     ls_substrate = [str(i_substrate) for i_substrate in range(i_variable)]
                     for s_substrate in ls_substrate:
                         s_variable_subs = s_variable + '_' + s_substrate
                         ls_variable.append(s_variable_subs)
-                        d_mcds['discrete_cells']['units'].update({s_variable_subs : s_unit})
+                        d_mcds['raw_cell']['units'].update({s_variable_subs : s_unit})
 
             # variable unique for each celltype celltype combination
             elif s_variable in es_var_cell:
-                if (len(d_mcds['metadata']['cell_type']) > 0):
-                    # discrete_cells id label sorting (becaus this is an id label mapping dict)
-                    ls_celltype = [d_mcds['metadata']['cell_type'][o_key] for o_key in sorted(d_mcds['metadata']['cell_type'].keys(), key=int)]
+                if (len(d_mcds['cell']['ds_celltype']) > 0):
+                    # raw_cell id label sorting (becaus this is an id label mapping dict)
+                    ls_celltype = [d_mcds['cell']['ds_celltype'][o_key] for o_key in sorted(d_mcds['cell']['ds_celltype'].keys(), key=int)]
                     for s_celltype in ls_celltype:
                         s_variable_celltype = s_celltype + '_' + s_variable
                         ls_variable.append(s_variable_celltype)
-                        d_mcds['discrete_cells']['units'].update({s_variable_celltype : s_unit})
+                        d_mcds['raw_cell']['units'].update({s_variable_celltype : s_unit})
                 else:
                     ls_celltype = [str(i_celltype) for i_celltype in range(i_variable)]
                     for s_celltype in ls_celltype:
                         s_variable_celltype = s_variable + '_' + s_celltype
                         ls_variable.append(s_variable_celltype)
-                        d_mcds['discrete_cells']['units'].update({s_variable_celltype : s_unit})
+                        d_mcds['raw_cell']['units'].update({s_variable_celltype : s_unit})
 
             # variable unique for each dead model
             elif s_variable in es_var_death:
                 for i_deathrate in range(i_variable):
                     s_variable_deathrate = s_variable + '_' + str(i_deathrate)
                     ls_variable.append(s_variable_deathrate)
-                    d_mcds['discrete_cells']['units'].update({s_variable_deathrate : s_unit})
+                    d_mcds['raw_cell']['units'].update({s_variable_deathrate : s_unit})
 
             # spatial variable
             elif s_variable in es_var_spatial:
                 for s_axis in ['_x','_y','_z']:
                     s_variable_spatial = s_variable + s_axis
                     ls_variable.append(s_variable_spatial)
-                    d_mcds['discrete_cells']['units'].update({s_variable_spatial: s_unit})
+                    d_mcds['raw_cell']['units'].update({s_variable_spatial: s_unit})
 
             # simple variable and vectors
             else:
@@ -3105,7 +2926,7 @@ class TimeStep:
                         ls_variable.append(f'{s_variable}_{str(i_n).zfill(3)}')
                 else:
                     ls_variable.append(s_variable)
-                d_mcds['discrete_cells']['units'].update({s_variable : s_unit})
+                d_mcds['raw_cell']['units'].update({s_variable : s_unit})
 
         # load the file
         s_cellpathfile = self.path + '/' + x_celldata.find('filename').text
@@ -3126,65 +2947,88 @@ class TimeStep:
         if not b_celltype:
             for r_celltype in set(ar_cell[ls_variable.index('cell_type'),:]):
                 s_celltype = str(int(r_celltype))
-                d_mcds['metadata']['cell_type'].update({s_celltype : s_celltype})
+                d_mcds['cell']['ds_celltype'].update({s_celltype : s_celltype})
             b_celltype = True
 
         # store data
-        d_mcds['discrete_cells']['data'] = {}
+        d_mcds['raw_cell']['data'] = {}
         for i_col in range(len(ls_variable)):
-            d_mcds['discrete_cells']['data'].update({ls_variable[i_col]: ar_cell[i_col,:]})
+            d_mcds['raw_cell']['data'].update({ls_variable[i_col]: ar_cell[i_col,:]})
 
 
-        #####################
-        # handle graph data #
-        #####################
-
-        d_mcds['discrete_cells']['graph'] = {}
-        d_mcds['discrete_cells']['graph'].update({'neighbor_cells': {}})
-        d_mcds['discrete_cells']['graph'].update({'attached_cells': {}})
-        d_mcds['discrete_cells']['graph'].update({'spring_attached_cells': {}})
-
-        if self.graph:
-            if self.verbose:
-                print('working on graph data ...')
-
-            # neighborhood cell graph
-            s_cellpathfile = self.path + '/' + x_cell.find('neighbor_graph').find('filename').text
-            dei_graph = graphfile_parser(s_pathfile=s_cellpathfile)
-            if self.verbose:
-                print(f'reading: {s_cellpathfile}')
-
-            # store data
-            d_mcds['discrete_cells']['graph'].update({'neighbor_cells': dei_graph})
-
-            # attached cell graph
-            s_cellpathfile = self.path + '/' + x_cell.find('attached_cells_graph').find('filename').text
-            dei_graph = graphfile_parser(s_pathfile=s_cellpathfile)
-            if self.verbose:
-                print(f'reading: {s_cellpathfile}')
-
-            # store data
-            d_mcds['discrete_cells']['graph'].update({'attached_cells': dei_graph})
-
-            # spring attached cell graph
-            try:
-                s_cellpathfile = self.path + '/' + x_cell.find('spring_attached_cells_graph').find('filename').text
-                dei_graph = graphfile_parser(s_pathfile=s_cellpathfile)
-                if self.verbose:
-                    print(f'reading: {s_cellpathfile}')
-
-                # store data
-                d_mcds['discrete_cells']['graph'].update({'spring_attached_cells': dei_graph})
-            except AttributeError:
-                pass
+        ## get celltype list
+        ds_celltype = d_mcds['cell']['ds_celltype']
+        ls_celltype = [ds_celltype[s_key] for s_key in sorted(ds_celltype, key=int)]
+        # store values
+        d_mcds['cell']['ls_celltype'] = ls_celltype
 
 
-        #########################
-        # handle physiboss data #
-        #########################
+        ## get cell df
+        # get cell position and more
+        df_cell = pd.DataFrame(d_mcds['raw_cell']['data'])
+        df_cell['time'] = d_mcds['metadata']['current_time']
+        df_cell['runtime'] = d_mcds['metadata']['current_runtime'] / 60  # in min
+        df_cell['xmlfile'] = self.xmlfile
+        df_voxel = df_cell.loc[:,['position_x','position_y','position_z']].copy()
 
-        d_mcds['discrete_cells']['physiboss'] = None
+        # get mesh spacing
+        dm, dn, dp = d_mcds['mesh']['mnp_spacing']
 
+        # get mesh and voxel min max values
+        tr_m_range, tr_n_range, tr_p_range = d_mcds['mesh']['mnp_range']
+        tr_i_range, tr_j_range, tr_k_range = d_mcds['mesh']['ijk_range']
+
+        # get voxel for each cell
+        df_voxel.loc[:,'voxel_i'] = np.round((df_voxel.loc[:,'position_x'] - tr_m_range[0]) / dm).astype(int)
+        df_voxel.loc[:,'voxel_j'] = np.round((df_voxel.loc[:,'position_y'] - tr_n_range[0]) / dn).astype(int)
+        df_voxel.loc[:,'voxel_k'] = np.round((df_voxel.loc[:,'position_z'] - tr_p_range[0]) / dp).astype(int)
+        df_voxel.loc[(df_voxel.voxel_i > tr_i_range[1]), 'voxel_i'] = tr_i_range[1]  # i_max
+        df_voxel.loc[(df_voxel.voxel_i < tr_i_range[0]), 'voxel_i'] = tr_i_range[0]  # i_min
+        df_voxel.loc[(df_voxel.voxel_j > tr_j_range[1]), 'voxel_j'] = tr_j_range[1]  # j_max
+        df_voxel.loc[(df_voxel.voxel_j < tr_j_range[0]), 'voxel_j'] = tr_j_range[0]  # j_min
+        df_voxel.loc[(df_voxel.voxel_k > tr_k_range[1]), 'voxel_k'] = tr_k_range[1]  # k_max
+        df_voxel.loc[(df_voxel.voxel_k < tr_k_range[0]), 'voxel_k'] = tr_k_range[0]  # k_min
+
+        # merge voxel (inner join)
+        df_cell = pd.merge(df_cell, df_voxel, on=['position_x', 'position_y', 'position_z'])
+
+        # merge cell_density (left join)
+        df_cellcount = df_cell.loc[:,['voxel_i','voxel_j','voxel_k','ID']].groupby(['voxel_i','voxel_j','voxel_k']).count().reset_index()
+        ls_column = list(df_cellcount.columns)
+        ls_column[-1] = 'cell_count_voxel'
+        df_cellcount.columns = ls_column
+        s_density = f"cell_density_{d_mcds['metadata']['spatial_unit']}3"
+        df_cellcount[s_density] = df_cellcount.loc[:,'cell_count_voxel'] / d_mcds['mesh']['volume']
+        df_cell = pd.merge(
+            df_cell,
+            df_cellcount,
+            on = ['voxel_i', 'voxel_j', 'voxel_k'],
+            how = 'left',
+        )
+
+        # get column label set
+        es_column = set(df_cell.columns)
+
+        # get vector length
+        for s_var_spatial in es_var_spatial:
+            es_vector = es_column.intersection({f'{s_var_spatial}_x',f'{s_var_spatial}_y',f'{s_var_spatial}_z'})
+            if len(es_vector) > 0:
+                # linear algebra
+                #a_vector = df_cell.loc[:,ls_vector].values
+                #a_length = np.sqrt(np.diag(np.dot(a_vector, a_vector.T)))
+                # pythoagoras
+                a_length = None
+                for s_vector in es_vector:
+                    a_vectorsq = df_cell.loc[:,s_vector].values**2
+                    if (a_length is None):
+                        a_length = a_vectorsq
+                    else:
+                        a_length += a_vectorsq
+                a_length = a_length**(1/2)
+                # result
+                df_cell[f'{s_var_spatial}_vectorlength'] = a_length
+
+        # physiboss
         if self.physiboss:
             if self.verbose:
                 print('working on physiboss data ...')
@@ -3208,14 +3052,153 @@ class TimeStep:
                 for s_node in sorted(es_node):
                     df_physiboss[f'node_{s_node}'] = df_physiboss.state.str.find(s_node) > -1
 
+                # store data
+                df_cell = pd.merge(
+                    df_cell,
+                    df_physiboss,
+                    left_index = True,
+                    right_index = True,
+                    how = 'left',
+                )
+
             elif self.verbose:
                 print(f'Warning @ TimeStep._read_xml : physiboss file missing {s_intracellpathfile}.')
 
             else:
                 pass
 
+
+        # microenvironment
+        if self.microenv:
+            # merge substrate (left join)
+            df_sub = d_mcds['substrate']['df_substarte']
+            for s_sub in df_sub.index:
+                 for s_rate in df_sub.columns:
+                     s_var = f'{s_sub}_{s_rate}'
+                     df_cell[s_var] = df_sub.loc[s_sub,s_rate]
+
+            # merge concentration (left join)
+            df_conc = d_mcds['substrate']['df_conc']
+            df_conc.drop({'time', 'runtime','xmlfile'}, axis=1, inplace=True)
+            df_cell = pd.merge(
+                df_cell,
+                df_conc,
+                on = ['voxel_i', 'voxel_j', 'voxel_k'],
+                how = 'left',
+            )
+
+        # variable typing
+        do_type = {}
+        [do_type.update({k:v}) for k,v in do_var_type.items() if k in es_column]
+        do_type.update(self.custom_data_type)
+        do_int = do_type.copy()
+        [do_int.update({k:int}) for k in do_int.keys()]
+        ls_int = sorted(do_int.keys())
+        df_cell.loc[:,ls_int] = df_cell.loc[:,ls_int].round()
+        df_cell = df_cell.astype(do_int)
+        df_cell = df_cell.astype(do_type)
+
+        # categorical translation
+        try:  # bue 20240805: missing in MCDS version <= 0.5 (November 2021)
+            df_cell.loc[:,'current_death_model'] = df_cell.loc[:,'current_death_model'].replace(ds_death_model)  # bue 20230614: this column looks like an artefact to me
+        except KeyError:
+            pass
+        df_cell.loc[:,'cycle_model'] = df_cell.loc[:,'cycle_model'].replace(ds_cycle_model)
+        df_cell.loc[:,'cycle_model'] = df_cell.loc[:,'cycle_model'].replace(ds_death_model)
+        df_cell.loc[:,'current_phase'] = df_cell.loc[:,'current_phase'].replace(ds_cycle_phase)
+        df_cell.loc[:,'current_phase'] = df_cell.loc[:,'current_phase'].replace(ds_death_phase)
+        df_cell.loc[:,'cell_type'] = df_cell.loc[:,'cell_type'].replace(d_mcds['cell']['ds_celltype'])
+        df_cell.loc[:,'chemotaxis_index'] = df_cell.loc[:,'chemotaxis_index'].replace(d_mcds['substrate']['ds_substrate'])
+
+        # store
+        df_cell = df_cell.loc[:,sorted(df_cell.columns)]
+        df_cell.sort_values('ID', axis=0, inplace=True)
+        df_cell.set_index('ID', inplace=True)
+        df_cell = df_cell.copy()
+        d_mcds['cell']['df_cell'] = df_cell.copy()
+
+
+        ####################
+        # handle unit data #
+        ####################
+
+        if self.verbose:
+            print('working on unit data ...')
+
+        # extract data
+        ds_unit = {}
+
+        # units for metadata parameters
+        ds_unit.update({'time': d_mcds['metadata']['time_units']})
+        ds_unit.update({'runtime': d_mcds['metadata']['runtime_units']})
+        ds_unit.update({'spatial_unit': d_mcds['metadata']['spatial_unit']})
+
+        # microenvironment
+        if self.microenv:
+            for s_substrate in d_mcds['substrate']['ls_substarte']:
+                # unit from substrate parameters
+                s_unit = d_mcds['raw_substrate'][s_substrate]['units']
+                ds_unit.update({s_substrate: s_unit})
+
+                # units from microenvironment parameters
+                s_diffusion_key = f'{s_substrate}_diffusion_coefficient'
+                s_diffusion_unit = d_mcds['raw_substrate'][s_substrate]['diffusion_coefficient']['units']
+                ds_unit.update({s_diffusion_key: s_diffusion_unit})
+
+                s_decay_key = f'{s_substrate}_decay_rate'
+                s_decay_unit = d_mcds['raw_substrate'][s_substrate]['decay_rate']['units']
+                ds_unit.update({s_decay_key: s_decay_unit})
+
+        # units from cell parameters
+        ds_unit.update(d_mcds['raw_cell']['units'])
+
+        # output
+        del ds_unit['ID']
+        d_mcds['metadata']['ds_unit'] = ds_unit
+
+
+        #####################
+        # handle graph data #
+        #####################
+
+        d_mcds['cell']['dei_graph'] = {}
+        d_mcds['cell']['dei_graph'].update({'neighbor_cells': {}})
+        d_mcds['cell']['dei_graph'].update({'attached_cells': {}})
+        d_mcds['cell']['dei_graph'].update({'spring_attached_cells': {}})
+
+        if self.graph:
+            if self.verbose:
+                print('working on graph data ...')
+
+            # neighborhood cell graph
+            s_cellpathfile = self.path + '/' + x_cell.find('neighbor_graph').find('filename').text
+            dei_graph = graphfile_parser(s_pathfile=s_cellpathfile)
+            if self.verbose:
+                print(f'reading: {s_cellpathfile}')
+
             # store data
-            d_mcds['discrete_cells']['physiboss'] = df_physiboss
+            d_mcds['cell']['dei_graph'].update({'neighbor_cells': dei_graph})
+
+            # attached cell graph
+            s_cellpathfile = self.path + '/' + x_cell.find('attached_cells_graph').find('filename').text
+            dei_graph = graphfile_parser(s_pathfile=s_cellpathfile)
+            if self.verbose:
+                print(f'reading: {s_cellpathfile}')
+
+            # store data
+            d_mcds['cell']['dei_graph'].update({'attached_cells': dei_graph})
+
+            # spring attached cell graph
+            try:
+                s_cellpathfile = self.path + '/' + x_cell.find('spring_attached_cells_graph').find('filename').text
+                dei_graph = graphfile_parser(s_pathfile=s_cellpathfile)
+                if self.verbose:
+                    print(f'reading: {s_cellpathfile}')
+
+                # store data
+                d_mcds['cell']['dei_graph'].update({'spring_attached_cells': dei_graph})
+            except AttributeError:
+                pass
 
 
         ##########
