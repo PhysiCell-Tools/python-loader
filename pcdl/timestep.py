@@ -2550,7 +2550,7 @@ class TimeStep:
                 # <cell_definition>
                 s_id = str(x_celltype.get('ID'))
                 # I don't like spaces in cell type names!
-                s_celltype = x_celltype.get('name').replace(' ', '_') # ROH
+                s_celltype = x_celltype.get('name') #.replace(' ', '_') # ROH
                 d_mcds['cell']['ds_celltype'].update({s_id : s_celltype})
             b_celltype = True
 
@@ -2727,7 +2727,7 @@ class TimeStep:
             # substrate loop
             for i_s, x_substrate in enumerate(x_microenv.find('variables').findall('variable')):
                 # i don't like spaces in species names!
-                s_substrate = x_substrate.get('name').replace(' ', '_') # ROH
+                s_substrate = x_substrate.get('name') #.replace(' ', '_') # ROH
 
                 d_mcds['raw_substrate'][s_substrate] = {}
                 d_mcds['raw_substrate'][s_substrate]['units'] = x_substrate.get('units')
@@ -2845,7 +2845,7 @@ class TimeStep:
             for x_celltype in x_celldata.find('cell_types').findall('type'):
                 s_id = str(x_celltype.get('ID'))
                 # I don't like spaces in cell type names!
-                s_celltype = x_celltype.text.replace(' ', '_')  # ROH
+                s_celltype = x_celltype.text #.replace(' ', '_')  # ROH
                 d_mcds['cell']['ds_celltype'].update({s_id : s_celltype})
             b_celltype = True
         except AttributeError:
@@ -2855,7 +2855,7 @@ class TimeStep:
         if not b_celltype:
             for x_label in x_celldata.find('labels').findall('label'):
                 # I don't like spaces in cell type names!
-                s_variable = x_label.tex.replace(' ', '_')  # ROH
+                s_variable = x_label.tex #.replace(' ', '_')  # ROH
                 if s_variable in es_var_cell:
                     for i_id in range(int(x_label.get('size'))):
                         s_id = str(i_id)
@@ -2866,7 +2866,7 @@ class TimeStep:
         ls_variable = []
         for x_label in x_celldata.find('labels').findall('label'):
             # I don't like spaces in my dictionary keys!
-            s_variable = x_label.text.replace(' ', '_')  # ROH
+            s_variable = x_label.text #.replace(' ', '_')  # ROH
             i_variable = int(x_label.get('size'))
             s_unit = x_label.get('units')
 
