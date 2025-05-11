@@ -81,7 +81,7 @@ class TestCommandLineInterfaceUnitDict(object):
         s_result = subprocess.run(['pcdl_get_unit_dict', s_path_2d], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/timeseries_unit.csv')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -90,7 +90,7 @@ class TestCommandLineInterfaceUnitDict(object):
         s_result = subprocess.run(['pcdl_get_unit_dict', s_pathfile_2d], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/timeseries_unit.csv')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -99,7 +99,7 @@ class TestCommandLineInterfaceUnitDict(object):
         s_result = subprocess.run(['pcdl_get_unit_dict', s_pathfile_2d, '--microenv', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         df_cell = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('output_2d/timeseries_unit.csv')) and \
                (not set(df_cell.index).issuperset({'oxygen'}))
@@ -109,7 +109,7 @@ class TestCommandLineInterfaceUnitDict(object):
         s_result = subprocess.run(['pcdl_get_unit_dict', s_pathfile_2d, '--settingxml', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         df_cell = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('output_2d/timeseries_unit.csv')) and \
                (set(df_cell.index).issuperset({'default_fusion_rates'}))
@@ -119,7 +119,7 @@ class TestCommandLineInterfaceUnitDict(object):
         s_result = subprocess.run(['pcdl_get_unit_dict', s_pathfile_2d, '--settingxml', 'none'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         df_cell = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('output_2d/timeseries_unit.csv')) and \
                (set(df_cell.index).issuperset({'default_fusion_rates'}))
@@ -167,7 +167,7 @@ class TestCommandLineInterfaceConcDfAttribute(object):
         s_result = subprocess.run(['pcdl_get_conc_attribute', s_path_2d], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/timeseries_conc_attribute_minmax.json')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -176,7 +176,7 @@ class TestCommandLineInterfaceConcDfAttribute(object):
         s_result = subprocess.run(['pcdl_get_conc_attribute', s_path_2d, '2'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         d_attribute = json.load(open(s_opathfile))
         assert (s_opathfile.endswith('output_2d/timeseries_conc_attribute_minmax.json')) and \
                (len(d_attribute) == 2)
@@ -186,7 +186,7 @@ class TestCommandLineInterfaceConcDfAttribute(object):
         s_result = subprocess.run(['pcdl_get_conc_attribute', s_path_2d, '--drop', 'conc_type', 'oxygen'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         d_attribute = json.load(open(s_opathfile))
         assert (s_opathfile.endswith('output_2d/timeseries_conc_attribute_minmax.json')) and \
                (not set(d_attribute.keys()).issuperset({'oxygen'})) and \
@@ -197,7 +197,7 @@ class TestCommandLineInterfaceConcDfAttribute(object):
         s_result = subprocess.run(['pcdl_get_conc_attribute', s_path_2d, '--keep', 'conc_type', 'oxygen'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         d_attribute = json.load(open(s_opathfile))
         assert (s_opathfile.endswith('output_2d/timeseries_conc_attribute_minmax.json')) and \
                (set(d_attribute.keys()).issuperset({'oxygen'})) and \
@@ -208,7 +208,7 @@ class TestCommandLineInterfaceConcDfAttribute(object):
         s_result = subprocess.run(['pcdl_get_conc_attribute', s_path_2d, '--allvalues', 'true'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/timeseries_conc_attribute_all.json')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -230,7 +230,7 @@ class TestCommandLineInterfaceConcDf(object):
         s_result = subprocess.run(['pcdl_get_conc_df', s_path_2d], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/timeseries_conc.csv')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -252,7 +252,7 @@ class TestCommandLineInterfaceConcDf(object):
         s_result = subprocess.run(['pcdl_get_conc_df', s_path_2d, '2'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         df_conc = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('output_2d/timeseries_conc.csv')) and \
                (df_conc.shape[0] > 9) and \
@@ -263,7 +263,7 @@ class TestCommandLineInterfaceConcDf(object):
         s_result = subprocess.run(['pcdl_get_conc_df', s_path_2d, '--drop', 'oxygen'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         df_conc = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('output_2d/timeseries_conc.csv')) and \
                (not set(df_conc.columns).issuperset({'oxygen'})) and \
@@ -275,7 +275,7 @@ class TestCommandLineInterfaceConcDf(object):
         s_result = subprocess.run(['pcdl_get_conc_df', s_path_2d, '--keep', 'oxygen'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         df_conc = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('output_2d/timeseries_conc.csv')) and \
                (set(df_conc.columns).issuperset({'oxygen'})) and \
@@ -287,7 +287,7 @@ class TestCommandLineInterfaceConcDf(object):
         s_result = subprocess.run(['pcdl_get_conc_df', s_pathfile_2d], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/output00000024_conc.csv')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -296,7 +296,7 @@ class TestCommandLineInterfaceConcDf(object):
         s_result = subprocess.run(['pcdl_get_conc_df', s_pathfile_2d, '2'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         df_conc = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('output_2d/output00000024_conc.csv')) and \
                (df_conc.shape[0] > 9) and \
@@ -307,7 +307,7 @@ class TestCommandLineInterfaceConcDf(object):
         s_result = subprocess.run(['pcdl_get_conc_df', s_pathfile_2d, '--drop', 'oxygen'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         df_conc = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('output_2d/output00000024_conc.csv')) and \
                (not set(df_conc.columns).issuperset({'oxygen'})) and \
@@ -319,7 +319,7 @@ class TestCommandLineInterfaceConcDf(object):
         s_result = subprocess.run(['pcdl_get_conc_df', s_pathfile_2d, '--keep', 'oxygen'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         df_conc = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('output_2d/output00000024_conc.csv')) and \
                (set(df_conc.columns).issuperset({'oxygen'})) and \
@@ -357,7 +357,7 @@ class TestCommandLineInterfacePlotContour(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_stdout = s_result.stdout.decode('UTF8').replace('\r','')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         s_opath = '/'.join(s_opathfile.split('/')[:-1])
         assert (os.path.exists(s_opathfile)) and \
            (s_opathfile.endswith('pcdl/output_2d/conc_oxygen_z0.0/output00000024_oxygen.jpeg')) and \
@@ -398,7 +398,7 @@ class TestCommandLineInterfacePlotContour(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_stdout = s_result.stdout.decode('UTF8').replace('\r','')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         s_opath = '/'.join(s_opathfile.split('/')[:-1])
         assert (os.path.exists(s_opathfile)) and \
            (s_opathfile.endswith('pcdl/output_2d/conc_oxygen_z0.0/output00000024_oxygen.tiff')) and \
@@ -444,7 +444,7 @@ class TestCommandLineInterfaceConcVtk(object):
         s_result = subprocess.run(['pcdl_make_conc_vtk', s_pathfile_2d], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').split("FutureWarning: Calling float on a single element Series is deprecated and will raise a TypeError in the future. Use float(ser.iloc[0]) instead.")[-1]
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/output00000024_conc.vtr')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -495,7 +495,7 @@ class TestCommandLineInterfaceCellDfAttribute(object):
         s_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/timeseries_cell_attribute_minmax.json')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -504,7 +504,7 @@ class TestCommandLineInterfaceCellDfAttribute(object):
         s_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--custom_data_type', 'sample:bool'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         d_cell = json.load(open(s_opathfile))
         assert (s_opathfile.endswith('output_2d/timeseries_cell_attribute_minmax.json')) and \
                (d_cell['sample'] == [False, True])
@@ -514,7 +514,7 @@ class TestCommandLineInterfaceCellDfAttribute(object):
         s_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         d_attribute = json.load(open(s_opathfile))
         assert (s_opathfile.endswith('output_2d/timeseries_cell_attribute_minmax.json')) and \
                (not set(d_attribute.keys()).issuperset({'oxygen'})) and \
@@ -525,7 +525,7 @@ class TestCommandLineInterfaceCellDfAttribute(object):
         s_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--physiboss', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/timeseries_cell_attribute_minmax.json')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -534,7 +534,7 @@ class TestCommandLineInterfaceCellDfAttribute(object):
         s_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--settingxml', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         d_attribute = json.load(open(s_opathfile))
         assert (s_opathfile.endswith('output_2d/timeseries_cell_attribute_minmax.json')) and \
                (set(d_attribute.keys()).issuperset({'default_fusion_rates'})) and \
@@ -545,7 +545,7 @@ class TestCommandLineInterfaceCellDfAttribute(object):
         s_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--settingxml', 'none'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         d_attribute = json.load(open(s_opathfile))
         assert (s_opathfile.endswith('output_2d/timeseries_cell_attribute_minmax.json')) and \
                (set(d_attribute.keys()).issuperset({'default_fusion_rates'})) and \
@@ -556,7 +556,7 @@ class TestCommandLineInterfaceCellDfAttribute(object):
         s_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '2'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         d_attribute = json.load(open(s_opathfile))
         assert (s_opathfile.endswith('output_2d/timeseries_cell_attribute_minmax.json')) and \
                (len(d_attribute) == 54)
@@ -566,7 +566,7 @@ class TestCommandLineInterfaceCellDfAttribute(object):
         s_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--drop', 'cell_type', 'oxygen'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         d_attribute = json.load(open(s_opathfile))
         assert (s_opathfile.endswith('output_2d/timeseries_cell_attribute_minmax.json')) and \
                (not set(d_attribute.keys()).issuperset({'cell_type', 'oxygen'})) and \
@@ -577,7 +577,7 @@ class TestCommandLineInterfaceCellDfAttribute(object):
         s_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--keep', 'cell_type', 'oxygen'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         d_attribute = json.load(open(s_opathfile))
         assert (s_opathfile.endswith('output_2d/timeseries_cell_attribute_minmax.json')) and \
                (set(d_attribute.keys()).issuperset({'cell_type', 'oxygen'})) and \
@@ -588,7 +588,7 @@ class TestCommandLineInterfaceCellDfAttribute(object):
         s_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--allvalues', 'true'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/timeseries_cell_attribute_all.json')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -615,7 +615,7 @@ class TestCommandLineInterfaceCellDf(object):
         s_result = subprocess.run(['pcdl_get_cell_df', s_path_2d], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/timeseries_cell.csv')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -637,7 +637,7 @@ class TestCommandLineInterfaceCellDf(object):
         s_result = subprocess.run(['pcdl_get_cell_df', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         df_cell = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('output_2d/timeseries_cell.csv')) and \
                (not set(df_cell.columns).issuperset({'oxygen'}))
@@ -647,7 +647,7 @@ class TestCommandLineInterfaceCellDf(object):
         s_result = subprocess.run(['pcdl_get_cell_df', s_path_2d, '--physiboss', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/timeseries_cell.csv')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -656,7 +656,7 @@ class TestCommandLineInterfaceCellDf(object):
         s_result = subprocess.run(['pcdl_get_cell_df', s_path_2d, '--settingxml', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         df_cell = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('output_2d/timeseries_cell.csv')) and \
                (set(df_cell.columns).issuperset({'default_fusion_rates'}))
@@ -666,7 +666,7 @@ class TestCommandLineInterfaceCellDf(object):
         s_result = subprocess.run(['pcdl_get_cell_df', s_path_2d, '--settingxml', 'none'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         df_cell = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('output_2d/timeseries_cell.csv')) and \
                (set(df_cell.columns).issuperset({'default_fusion_rates'}))
@@ -676,7 +676,7 @@ class TestCommandLineInterfaceCellDf(object):
         s_result = subprocess.run(['pcdl_get_cell_df', s_path_2d, '2'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         df_cell = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('output_2d/timeseries_cell.csv')) and \
                (df_cell.shape[0] > 9 ) and \
@@ -687,7 +687,7 @@ class TestCommandLineInterfaceCellDf(object):
         s_result = subprocess.run(['pcdl_get_cell_df', s_path_2d, '--drop', 'cell_type', 'oxygen'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         df_cell = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('output_2d/timeseries_cell.csv')) and \
                (not set(df_cell.columns).issuperset({'cell_type', 'oxygen'})) and \
@@ -699,7 +699,7 @@ class TestCommandLineInterfaceCellDf(object):
         s_result = subprocess.run(['pcdl_get_cell_df', s_path_2d, '--keep', 'cell_type', 'oxygen'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         df_cell = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('output_2d/timeseries_cell.csv')) and \
                (set(df_cell.columns).issuperset({'cell_type', 'oxygen'})) and \
@@ -711,7 +711,7 @@ class TestCommandLineInterfaceCellDf(object):
         s_result = subprocess.run(['pcdl_get_cell_df', s_pathfile_2d], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/output00000024_cell.csv'))
         os.remove(s_opathfile)
 
@@ -719,7 +719,7 @@ class TestCommandLineInterfaceCellDf(object):
         s_result = subprocess.run(['pcdl_get_cell_df', s_pathfile_2d, '--microenv', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         df_cell = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('output_2d/output00000024_cell.csv')) and \
                (not set(df_cell.columns).issuperset({'oxygen'}))
@@ -729,7 +729,7 @@ class TestCommandLineInterfaceCellDf(object):
         s_result = subprocess.run(['pcdl_get_cell_df', s_pathfile_2d, '--physiboss', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/output00000024_cell.csv'))
         os.remove(s_opathfile)
 
@@ -737,7 +737,7 @@ class TestCommandLineInterfaceCellDf(object):
         s_result = subprocess.run(['pcdl_get_cell_df', s_pathfile_2d, '--settingxml', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         df_cell = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('output_2d/output00000024_cell.csv')) and \
                (set(df_cell.columns).issuperset({'default_fusion_rates'}))
@@ -747,7 +747,7 @@ class TestCommandLineInterfaceCellDf(object):
         s_result = subprocess.run(['pcdl_get_cell_df', s_pathfile_2d, '--settingxml', 'none'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         df_cell = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('output_2d/output00000024_cell.csv')) and \
                (set(df_cell.columns).issuperset({'default_fusion_rates'}))
@@ -757,7 +757,7 @@ class TestCommandLineInterfaceCellDf(object):
         s_result = subprocess.run(['pcdl_get_cell_df', s_pathfile_2d, '2'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         df_cell = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('output_2d/output00000024_cell.csv')) and \
                (df_cell.shape[0] > 9 ) and \
@@ -768,7 +768,7 @@ class TestCommandLineInterfaceCellDf(object):
         s_result = subprocess.run(['pcdl_get_cell_df', s_pathfile_2d, '--drop', 'cell_type', 'oxygen'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         df_cell = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('output_2d/output00000024_cell.csv')) and \
                (not set(df_cell.columns).issuperset({'cell_type', 'oxygen'})) and \
@@ -780,7 +780,7 @@ class TestCommandLineInterfaceCellDf(object):
         s_result = subprocess.run(['pcdl_get_cell_df', s_pathfile_2d, '--keep', 'cell_type', 'oxygen'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         df_cell = pd.read_csv(s_opathfile, index_col=0)
         assert (s_opathfile.endswith('output_2d/output00000024_cell.csv')) and \
                (set(df_cell.columns).issuperset({'cell_type', 'oxygen'})) and \
@@ -811,9 +811,9 @@ class TestCommandLineInterfaceAnndata(object):
     # timeseries
     def test_pcdl_get_anndata_timeseries(self):
         s_result = subprocess.run(['pcdl_get_anndata', s_path_2d], check=False, capture_output=True)
-        #print(f'\ns_result.stdout: {s_result.stdout}\n')
-        #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
+        print(f'\ns_result.stdout: {s_result.stdout}\n')
+        print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/timeseries_cell_maxabs.h5ad')) and \
                (ann.shape[0] >  9) and \
@@ -825,11 +825,12 @@ class TestCommandLineInterfaceAnndata(object):
                (len(ann.uns) == 0)
         os.remove(s_opathfile)
 
+    # bue 20250307: >= python3.11 broken by DeprecationWarning
     def test_pcdl_get_anndata_timeseries_collapsed(self):
         s_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--collapse', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.\n','').replace("['","").replace("']\n","").split("', '")  # bue 20250307: >= python3.11
+        ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.\n','').replace("['","").replace("']\n","").split("', '")
         assert len(ls_opathfile) == 25 and \
                ls_opathfile[0].endswith('output_2d/output00000000_cell_maxabs.h5ad') and \
                ls_opathfile[-1].endswith('output_2d/output00000024_cell_maxabs.h5ad') and \
@@ -841,7 +842,7 @@ class TestCommandLineInterfaceAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--custom_data_type', 'sample:bool'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/timeseries_cell_maxabs.h5ad')) and \
                (set(ann.var_names).issuperset({'sample'})) and \
@@ -858,7 +859,7 @@ class TestCommandLineInterfaceAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/timeseries_cell_maxabs.h5ad')) and \
                (not set(ann.var_names).issuperset({'oxygen'})) and \
@@ -875,7 +876,7 @@ class TestCommandLineInterfaceAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--graph', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/timeseries_cell_maxabs.h5ad')) and \
                (ann.shape[0] > 9) and \
@@ -891,7 +892,7 @@ class TestCommandLineInterfaceAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--physiboss', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/timeseries_cell_maxabs.h5ad')) and \
                (ann.shape[0] > 9) and \
@@ -907,7 +908,7 @@ class TestCommandLineInterfaceAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--settingxml', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/timeseries_cell_maxabs.h5ad')) and \
                (set(ann.var_names).issuperset({'default_fusion_rates'})) and \
@@ -924,7 +925,7 @@ class TestCommandLineInterfaceAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--settingxml', 'none'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/timeseries_cell_maxabs.h5ad')) and \
                (set(ann.var_names).issuperset({'default_fusion_rates'})) and \
@@ -941,7 +942,7 @@ class TestCommandLineInterfaceAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '2'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/timeseries_cell_maxabs.h5ad')) and \
                (ann.shape[0] > 9) and \
@@ -957,7 +958,7 @@ class TestCommandLineInterfaceAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--drop', 'cell_type', 'oxygen'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/timeseries_cell_maxabs.h5ad')) and \
                (not set(ann.var_names).issuperset({'cell_type'})) and \
@@ -975,7 +976,7 @@ class TestCommandLineInterfaceAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--keep', 'cell_type', 'oxygen'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/timeseries_cell_maxabs.h5ad')) and \
                (set(ann.var_names).issuperset({'oxygen'})) and \
@@ -993,7 +994,7 @@ class TestCommandLineInterfaceAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--scale', 'std'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/timeseries_cell_std.h5ad')) and \
                (ann.shape[0] > 9) and \
@@ -1010,7 +1011,7 @@ class TestCommandLineInterfaceAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/output00000024_cell_maxabs.h5ad')) and \
                (ann.shape[0] > 9) and \
@@ -1026,7 +1027,7 @@ class TestCommandLineInterfaceAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--microenv', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/output00000024_cell_maxabs.h5ad')) and \
                (not set(ann.var_names).issuperset({'oxygen'})) and \
@@ -1043,7 +1044,7 @@ class TestCommandLineInterfaceAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--graph', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/output00000024_cell_maxabs.h5ad')) and \
                (ann.shape[0] > 9) and \
@@ -1059,7 +1060,7 @@ class TestCommandLineInterfaceAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--physiboss', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/output00000024_cell_maxabs.h5ad')) and \
                (ann.shape[0] > 9) and \
@@ -1075,7 +1076,7 @@ class TestCommandLineInterfaceAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--settingxml', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/output00000024_cell_maxabs.h5ad')) and \
                (set(ann.var_names).issuperset({'default_fusion_rates'})) and \
@@ -1092,7 +1093,7 @@ class TestCommandLineInterfaceAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--settingxml', 'none'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/output00000024_cell_maxabs.h5ad')) and \
                (set(ann.var_names).issuperset({'default_fusion_rates'})) and \
@@ -1109,7 +1110,7 @@ class TestCommandLineInterfaceAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '2'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/output00000024_cell_maxabs.h5ad')) and \
                (ann.shape[0] > 9) and \
@@ -1125,7 +1126,7 @@ class TestCommandLineInterfaceAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--drop', 'cell_type', 'oxygen'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/output00000024_cell_maxabs.h5ad')) and \
                (not set(ann.var_names).issuperset({'cell_type'})) and \
@@ -1143,7 +1144,7 @@ class TestCommandLineInterfaceAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--keep', 'cell_type', 'oxygen'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/output00000024_cell_maxabs.h5ad')) and \
                (set(ann.var_names).issuperset({'oxygen'})) and \
@@ -1161,7 +1162,7 @@ class TestCommandLineInterfaceAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--scale', 'std'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/output00000024_cell_std.h5ad')) and \
                (ann.shape[0] > 9) and \
@@ -1331,7 +1332,7 @@ class TestCommandLineInterfaceGraphGml(object):
         s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--custom_data_type', 'sample:bool', '--node_attribute', 'sample'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/output00000024_neighbor.gml')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -1340,7 +1341,7 @@ class TestCommandLineInterfaceGraphGml(object):
         s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--microenv', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/output00000024_neighbor.gml')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -1349,7 +1350,7 @@ class TestCommandLineInterfaceGraphGml(object):
         s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--physiboss', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/output00000024_neighbor.gml')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -1358,7 +1359,7 @@ class TestCommandLineInterfaceGraphGml(object):
         s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--settingxml', 'false', '--node_attribute', 'default_fusion_rates'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/output00000024_neighbor.gml')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -1367,7 +1368,7 @@ class TestCommandLineInterfaceGraphGml(object):
         s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--settingxml', 'none', '--node_attribute', 'default_fusion_rates'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/output00000024_neighbor.gml')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -1376,7 +1377,7 @@ class TestCommandLineInterfaceGraphGml(object):
         s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'attached'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/output00000024_attached.gml')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -1385,7 +1386,7 @@ class TestCommandLineInterfaceGraphGml(object):
         s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--edge_attribute', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/output00000024_neighbor.gml')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -1394,7 +1395,7 @@ class TestCommandLineInterfaceGraphGml(object):
         s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--node_attribute', 'cell_type'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/output00000024_neighbor.gml')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -1403,7 +1404,7 @@ class TestCommandLineInterfaceGraphGml(object):
         s_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--node_attribute', 'cell_type', 'oxygen'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/output00000024_neighbor.gml')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -1435,7 +1436,6 @@ class TestCommandLineInterfacePlotScatter(object):
     # + ext (jpeg, _tiff_)
     # + figbgcolor (none, _yellow_)
 
-    # bue 20250107: broken by Ignoring
     def test_pcdl_plot_scatter_default(self):
         s_result = subprocess.run([
             'pcdl_plot_scatter', s_pathfile_2d,
@@ -1444,7 +1444,7 @@ class TestCommandLineInterfacePlotScatter(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_stdout = s_result.stdout.decode('UTF8').replace('\r','')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').split('Ignoring fixed x limits to fulfill fixed data aspect with adjustable data limits.')[-1]
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[-2]
         s_opath = '/'.join(s_opathfile.split('/')[:-1])
         assert (os.path.exists(s_opathfile)) and \
            (s_opathfile.endswith('pcdl/output_2d/cell_cell_type_z0.0/output00000024_cell_type.jpeg')) and \
@@ -1463,7 +1463,7 @@ class TestCommandLineInterfacePlotScatter(object):
            (s_stdout.find("xlim=['none']") > -1) and \
            (s_stdout.find("ylim=['none']") > -1) and \
            (s_stdout.find("xyequal='true'") > -1) and \
-           (s_stdout.find("s='none'") > -1) and \
+           (s_stdout.find("s=1.0") > -1) and \
            (s_stdout.find("figsizepx=['none']") > -1) and \
            (s_stdout.find("ext='jpeg'") > -1) and \
            (s_stdout.find("figbgcolor='none'") > -1)
@@ -1491,11 +1491,11 @@ class TestCommandLineInterfacePlotScatter(object):
             '--ext', 'tiff',
             '--figbgcolor', 'yellow',
         ], check=False, capture_output=True)
-        print(f'\ns_result: {s_result}\n')
-        print(f'\ns_result.stdout: {s_result.stdout}\n')
-        print(f'\ns_result.stderr: {s_result.stderr}\n')
+        #print(f'\ns_result: {s_result}\n')
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_stdout = s_result.stdout.decode('UTF8').replace('\r','')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         s_opath = '/'.join(s_opathfile.split('/')[:-1])
         assert (os.path.exists(s_opathfile)) and \
            (s_opathfile.endswith('pcdl/output_2d/cell_oxygen_z0.0/output00000024_oxygen.tiff')) and \
@@ -1514,7 +1514,7 @@ class TestCommandLineInterfacePlotScatter(object):
            (s_stdout.find("xlim=['-40', '400']") > -1) and \
            (s_stdout.find("ylim=['-30', '300']") > -1) and \
            (s_stdout.find("xyequal='false'") > -1) and \
-           (s_stdout.find("s='74'") > -1) and \
+           (s_stdout.find("s=74.0") > -1) and \
            (s_stdout.find("figsizepx=['842', '531']") > -1) and \
            (s_stdout.find("ext='tiff'") > -1) and \
            (s_stdout.find("figbgcolor='yellow'") > -1)
@@ -1627,7 +1627,7 @@ class TestCommandLineInterfaceCellVtk(object):
         s_result = subprocess.run(['pcdl_make_cell_vtk', s_pathfile_2d], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/output00000024_cell.vtp')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -1636,7 +1636,7 @@ class TestCommandLineInterfaceCellVtk(object):
         s_result = subprocess.run(['pcdl_make_cell_vtk', s_pathfile_2d, 'sample', '--custom_data_type', 'sample:bool'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/output00000024_cell.vtp')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -1645,7 +1645,7 @@ class TestCommandLineInterfaceCellVtk(object):
         s_result = subprocess.run(['pcdl_make_cell_vtk', s_pathfile_2d, '--microenv', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/output00000024_cell.vtp')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -1654,7 +1654,7 @@ class TestCommandLineInterfaceCellVtk(object):
         s_result = subprocess.run(['pcdl_make_cell_vtk', s_pathfile_2d, '--physiboss', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/output00000024_cell.vtp')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -1663,7 +1663,7 @@ class TestCommandLineInterfaceCellVtk(object):
         s_result = subprocess.run(['pcdl_make_cell_vtk', s_pathfile_2d, 'default_fusion_rates', '--settingxml', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/output00000024_cell.vtp')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -1672,7 +1672,7 @@ class TestCommandLineInterfaceCellVtk(object):
         s_result = subprocess.run(['pcdl_make_cell_vtk', s_pathfile_2d, 'default_fusion_rates', '--settingxml', 'none'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/output00000024_cell.vtp')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -1681,7 +1681,7 @@ class TestCommandLineInterfaceCellVtk(object):
         s_result = subprocess.run(['pcdl_make_cell_vtk', s_pathfile_2d, 'cell_type', 'oxygen'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/output00000024_cell.vtp')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -1732,7 +1732,7 @@ class TestCommandLineInterfacePlotTimeSeries(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_stdout = s_result.stdout.decode('UTF8').replace('\r','')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (os.path.exists(s_opathfile)) and \
            (s_opathfile.endswith('pcdl/output_2d/timeseries_cell_total_count.jpeg')) and \
            (s_stdout.find("custom_data_type=[]") > -1) and \
@@ -1794,7 +1794,7 @@ class TestCommandLineInterfacePlotTimeSeries(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_stdout = s_result.stdout.decode('UTF8').replace('\r','')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (os.path.exists(s_opathfile)) and \
            (s_opathfile.endswith('pcdl/output_2d/timeseries_conc_total_oxygen_entropy.tiff')) and \
            (s_stdout.find("custom_data_type=['sample:bool']") > -1) and \
@@ -1843,7 +1843,7 @@ class TestCommandLineInterfaceOmeTiff(object):
         s_result = subprocess.run(['pcdl_make_ome_tiff', s_path_2d], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/timeseries_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -1852,7 +1852,7 @@ class TestCommandLineInterfaceOmeTiff(object):
         s_result = subprocess.run(['pcdl_make_ome_tiff', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/timeseries_default_blood_cells_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -1861,7 +1861,7 @@ class TestCommandLineInterfaceOmeTiff(object):
         s_result = subprocess.run(['pcdl_make_ome_tiff', s_path_2d, '--physiboss', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/timeseries_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -1870,7 +1870,7 @@ class TestCommandLineInterfaceOmeTiff(object):
         s_result = subprocess.run(['pcdl_make_ome_tiff', s_path_2d, '--settingxml', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/timeseries_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -1879,7 +1879,7 @@ class TestCommandLineInterfaceOmeTiff(object):
         s_result = subprocess.run(['pcdl_make_ome_tiff', s_path_2d, '--settingxml', 'none'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/timeseries_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -1888,7 +1888,7 @@ class TestCommandLineInterfaceOmeTiff(object):
         s_result = subprocess.run(['pcdl_make_ome_tiff', s_path_2d, 'dead'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/timeseries_oxygen_water_default_blood_cells_dead.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -1897,7 +1897,7 @@ class TestCommandLineInterfaceOmeTiff(object):
         s_result = subprocess.run(['pcdl_make_ome_tiff', s_path_2d, 'cell_count_voxel'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/timeseries_oxygen_water_default_blood_cells_cell_count_voxel.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -1906,7 +1906,7 @@ class TestCommandLineInterfaceOmeTiff(object):
         s_result = subprocess.run(['pcdl_make_ome_tiff', s_path_2d, 'pressure'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/timeseries_oxygen_water_default_blood_cells_pressure.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -1915,7 +1915,7 @@ class TestCommandLineInterfaceOmeTiff(object):
         s_result = subprocess.run(['pcdl_make_ome_tiff', s_path_2d, '--conc_cutoff', 'oxygen:-1'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/timeseries_oxygen-1_water_default_blood_cells_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -1924,7 +1924,7 @@ class TestCommandLineInterfaceOmeTiff(object):
         s_result = subprocess.run(['pcdl_make_ome_tiff', s_path_2d, '--focus', 'oxygen'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/timeseries_oxygen.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -1946,7 +1946,7 @@ class TestCommandLineInterfaceOmeTiff(object):
         s_result = subprocess.run(['pcdl_make_ome_tiff', s_pathfile_2d], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/output00000024_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -1955,7 +1955,7 @@ class TestCommandLineInterfaceOmeTiff(object):
         s_result = subprocess.run(['pcdl_make_ome_tiff', s_pathfile_2d, '--microenv', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/output00000024_default_blood_cells_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -1964,7 +1964,7 @@ class TestCommandLineInterfaceOmeTiff(object):
         s_result = subprocess.run(['pcdl_make_ome_tiff', s_pathfile_2d, '--physiboss', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/output00000024_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -1973,7 +1973,7 @@ class TestCommandLineInterfaceOmeTiff(object):
         s_result = subprocess.run(['pcdl_make_ome_tiff', s_pathfile_2d, '--settingxml', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/output00000024_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -1982,7 +1982,7 @@ class TestCommandLineInterfaceOmeTiff(object):
         s_result = subprocess.run(['pcdl_make_ome_tiff', s_pathfile_2d, '--settingxml', 'none'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/output00000024_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -1991,7 +1991,7 @@ class TestCommandLineInterfaceOmeTiff(object):
         s_result = subprocess.run(['pcdl_make_ome_tiff', s_pathfile_2d, 'dead'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/output00000024_oxygen_water_default_blood_cells_dead.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -2000,7 +2000,7 @@ class TestCommandLineInterfaceOmeTiff(object):
         s_result = subprocess.run(['pcdl_make_ome_tiff', s_pathfile_2d, 'cell_count_voxel'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/output00000024_oxygen_water_default_blood_cells_cell_count_voxel.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -2009,7 +2009,7 @@ class TestCommandLineInterfaceOmeTiff(object):
         s_result = subprocess.run(['pcdl_make_ome_tiff', s_pathfile_2d, 'pressure'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[0]
         assert (s_opathfile.endswith('output_2d/output00000024_oxygen_water_default_blood_cells_pressure.ome.tiff')) and \
                (os.path.exists(s_opathfile))
         os.remove(s_opathfile)
@@ -2033,7 +2033,7 @@ class TestCommandLineInterfaceMakeGif(object):
         s_result = subprocess.run(['pcdl_make_gif', s_path], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[-2]
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[1]
         assert (s_opathfile.endswith('output_2d/cell_cell_type_z0.0/cell_cell_type_z0.0_jpeg.gif')) and \
                (os.path.exists(s_opathfile))
         shutil.rmtree(s_path)
@@ -2044,13 +2044,13 @@ class TestCommandLineInterfaceMakeGif(object):
         s_result = subprocess.run(['pcdl_make_gif', s_path, 'tiff'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[-2]
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[1]
         assert (s_opathfile.endswith('output_2d/conc_oxygen_z0.0/conc_oxygen_z0.0_tiff.gif')) and \
                (os.path.exists(s_opathfile))
         shutil.rmtree(s_path)
 
 
-    # bue 20250107: broken by Ignoring
+# bue 20250107: broken by Ignoring
 class TestCommandLineInterfaceMakeMove(object):
     ''' tests for one  pcdl command line interface  function. '''
 
@@ -2063,8 +2063,8 @@ class TestCommandLineInterfaceMakeMove(object):
         s_path = subprocess.run(['pcdl_plot_scatter', s_path_2d], check=False, capture_output=True)
         s_path = s_path.stderr.decode('UTF8').replace('\r','').replace('\n','').split('Ignoring fixed x limits to fulfill fixed data aspect with adjustable data limits.')[-1]
         s_result = subprocess.run(['pcdl_make_movie', s_path], check=False, capture_output=True)
-        print(f'\ns_result.stdout: {s_result.stdout}\n')
-        print(f'\ns_result.stderr: {s_result.stderr}\n')
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[-2]
         assert (s_opathfile.endswith('output_2d/cell_cell_type_z0.0/cell_cell_type_z0.0_jpeg12.mp4')) and \
                (os.path.exists(s_opathfile))

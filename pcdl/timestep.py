@@ -624,7 +624,7 @@ class TimeStep:
             function returns a dictionary that stores all tracked variables
             and their units.
         """
-        return self.data['metadata'].ds_unit.copy()
+        return self.data['metadata']['ds_unit'].copy()
 
 
     ## MESH RELATED FUNCTIONS  ##
@@ -1052,7 +1052,7 @@ class TimeStep:
                     print(f'z_slice set to {z_slice}.')
 
         # fetch dataframe
-        df_conc = self.data['substrate']['df_conc']
+        df_conc = self.data['substrate']['df_conc'].copy()
 
         # filter z_slice
         if not (z_slice is None):
@@ -1544,7 +1544,7 @@ class TimeStep:
             sys.exit(f"Error @ TimeStep.get_cell_df : when keep is given {keep}, then drop has to be an empty set {drop}!")
 
         # fetch data frame
-        df_cell = self.data['cell']['df_cell']
+        df_cell = self.data['cell']['df_cell'].copy()
 
         # filter
         es_attribute = set(df_cell.columns).difference(es_coor_cell)
@@ -1564,7 +1564,6 @@ class TimeStep:
         # output
         df_cell = df_cell.loc[:,sorted(df_cell.columns)]
         df_cell.sort_values('ID', axis=0, inplace=True)
-        df_cell = df_cell.copy()
         return df_cell
 
 
@@ -2287,7 +2286,7 @@ class TimeStep:
         description:
             function returns the attached cell graph as a dictionary object.
         """
-        return self.data['cell']['dei_graph']['attached_cells']
+        return self.data['cell']['dei_graph']['attached_cells'].copy()
 
 
     def get_neighbor_graph_dict(self):
@@ -2301,7 +2300,7 @@ class TimeStep:
         description:
             function returns the cell neighbor graph as a dictionary object.
         """
-        return self.data['cell']['dei_graph']['neighbor_cells']
+        return self.data['cell']['dei_graph']['neighbor_cells'].copy()
 
 
     def get_spring_graph_dict(self):
@@ -2315,7 +2314,7 @@ class TimeStep:
         description:
             function returns the attached spring cell graph as a dictionary object.
         """
-        return self.data['cell']['dei_graph']['spring_attached_cells']
+        return self.data['cell']['dei_graph']['spring_attached_cells'].copy()
 
 
     def make_graph_gml(self, graph_type, edge_attribute=True, node_attribute=[]):
@@ -2766,65 +2765,63 @@ class TimeStep:
                     # store value
                     d_mcds['raw_substrate'][s_substrate]['data'][j, i, k] = ar_microenv[4+i_s, i_voxel]
 
+        ## get substrate listing
+        ds_substrate =  d_mcds['substrate']['ds_substrate']
+        ls_substrate = [ds_substrate[s_key] for s_key in sorted(ds_substrate, key=int)]
+        # store values
+        d_mcds['substrate']['ls_substarte'] = ls_substrate
 
-            ## get substrate listing
-            ds_substrate =  d_mcds['substrate']['ds_substrate']
-            ls_substrate = [ds_substrate[s_key] for s_key in sorted(ds_substrate, key=int)]
-            # store values
-            d_mcds['substrate']['ls_substarte'] = ls_substrate
+        ## get substrate df
+        # extract data
+        ls_column = ['substrate','decay_rate','diffusion_coefficient']
+        ll_sub = []
+        for s_substrate in d_mcds['substrate']['ls_substarte']:
+            s_decay_value = d_mcds['raw_substrate'][s_substrate]['decay_rate']['value']
+            s_diffusion_value = d_mcds['raw_substrate'][s_substrate]['diffusion_coefficient']['value']
+            ll_sub.append([s_substrate, s_decay_value, s_diffusion_value])
+        # generate dataframe
+        df_substrate = pd.DataFrame(ll_sub, columns=ls_column)
+        df_substrate.set_index('substrate', inplace=True)
+        df_substrate.columns.name = 'attribute'
+        # store values
+        d_mcds['substrate']['df_substarte'] = df_substrate
 
-            ## get substrate df
-            # extract data
-            ls_column = ['substrate','decay_rate','diffusion_coefficient']
-            ll_sub = []
-            for s_substrate in d_mcds['substrate']['ls_substarte']:
-                s_decay_value = d_mcds['raw_substrate'][s_substrate]['decay_rate']['value']
-                s_diffusion_value = d_mcds['raw_substrate'][s_substrate]['diffusion_coefficient']['value']
-                ll_sub.append([s_substrate, s_decay_value, s_diffusion_value])
-            # generate dataframe
-            df_substrate = pd.DataFrame(ll_sub, columns=ls_column)
-            df_substrate.set_index('substrate', inplace=True)
-            df_substrate.columns.name = 'attribute'
-            # store values
-            d_mcds['substrate']['df_substarte'] = df_substrate
-
-
-            ## get conc df
-            # flatten mesh coordnates
-            ar_m, ar_n, ar_p = d_mcds['mesh']['mnp_grid']
-            ar_m = ar_m.flatten(order='C')
-            ar_n = ar_n.flatten(order='C')
-            ar_p = ar_p.flatten(order='C')
-            # get mesh spacing
-            dm, dn, dp = d_mcds['mesh']['mnp_spacing']
-            # get voxel coordinates
-            ai_i = ((ar_m - ar_m.min()) / dm)
-            ai_j = ((ar_n - ar_n.min()) / dn)
-            ai_k = ((ar_p - ar_p.min()) / dp)
-            # handle coordinates
-            ls_column = [
-                'voxel_i','voxel_j','voxel_k',
-                'mesh_center_m','mesh_center_n','mesh_center_p'
-            ]
-            la_data = [ai_i, ai_j, ai_k, ar_m, ar_n, ar_p]
-            # handle concentrations
-            for s_substrate in d_mcds['substrate']['ls_substarte']:
-                ls_column.append(s_substrate)
-                ar_conc = d_mcds['raw_substrate'][s_substrate]['data'].copy()
-                la_data.append(ar_conc.flatten(order='C'))
-            # generate dataframe
-            aa_data  = np.array(la_data)
-            df_conc = pd.DataFrame(aa_data.T, columns=ls_column)
-            df_conc['time'] = d_mcds['metadata']['current_time']
-            df_conc['runtime'] = d_mcds['metadata']['current_runtime'] / 60  # in min
-            df_conc['xmlfile'] = self.xmlfile
-            d_dtype = {'voxel_i': int, 'voxel_j': int, 'voxel_k': int}
-            df_conc = df_conc.astype(d_dtype)
-            # store values
-            df_conc.sort_values(['voxel_i', 'voxel_j', 'voxel_k', 'time'], axis=0, inplace=True)
-            df_conc.reset_index(drop=True, inplace=True)
-            df_conc.index.name = 'index'
-            d_mcds['substrate']['df_conc'] = df_conc
+        ## get conc df
+        # flatten mesh coordnates
+        ar_m, ar_n, ar_p = d_mcds['mesh']['mnp_grid']
+        ar_m = ar_m.flatten(order='C')
+        ar_n = ar_n.flatten(order='C')
+        ar_p = ar_p.flatten(order='C')
+        # get mesh spacing
+        dm, dn, dp = d_mcds['mesh']['mnp_spacing']
+        # get voxel coordinates
+        ai_i = ((ar_m - ar_m.min()) / dm)
+        ai_j = ((ar_n - ar_n.min()) / dn)
+        ai_k = ((ar_p - ar_p.min()) / dp)
+        # handle coordinates
+        ls_column = [
+            'voxel_i','voxel_j','voxel_k',
+            'mesh_center_m','mesh_center_n','mesh_center_p'
+        ]
+        la_data = [ai_i, ai_j, ai_k, ar_m, ar_n, ar_p]
+        # handle concentrations
+        for s_substrate in d_mcds['substrate']['ls_substarte']:
+            ls_column.append(s_substrate)
+            ar_conc = d_mcds['raw_substrate'][s_substrate]['data'].copy()
+            la_data.append(ar_conc.flatten(order='C'))
+        # generate dataframe
+        aa_data  = np.array(la_data)
+        df_conc = pd.DataFrame(aa_data.T, columns=ls_column)
+        df_conc['time'] = d_mcds['metadata']['current_time']
+        df_conc['runtime'] = d_mcds['metadata']['current_runtime'] / 60  # in min
+        df_conc['xmlfile'] = self.xmlfile
+        d_dtype = {'voxel_i': int, 'voxel_j': int, 'voxel_k': int}
+        df_conc = df_conc.astype(d_dtype)
+        # store values
+        df_conc.sort_values(['voxel_i', 'voxel_j', 'voxel_k', 'time'], axis=0, inplace=True)
+        df_conc.reset_index(drop=True, inplace=True)
+        df_conc.index.name = 'index'
+        d_mcds['substrate']['df_conc'] = df_conc
 
 
         ####################
@@ -3077,15 +3074,15 @@ class TimeStep:
                      s_var = f'{s_sub}_{s_rate}'
                      df_cell[s_var] = df_sub.loc[s_sub,s_rate]
 
-            # merge concentration (left join)
-            df_conc = d_mcds['substrate']['df_conc']
-            df_conc.drop({'time', 'runtime','xmlfile'}, axis=1, inplace=True)
-            df_cell = pd.merge(
-                df_cell,
-                df_conc,
-                on = ['voxel_i', 'voxel_j', 'voxel_k'],
-                how = 'left',
-            )
+        # merge concentration (left join)
+        df_conc = d_mcds['substrate']['df_conc'].copy()  # voxel and mesh coordinates 
+        df_conc.drop({'time', 'runtime','xmlfile'}, axis=1, inplace=True)
+        df_cell = pd.merge(
+            df_cell,
+            df_conc,
+            on = ['voxel_i', 'voxel_j', 'voxel_k'],
+            how = 'left',
+        )
 
         # variable typing
         do_type = {}
@@ -3114,7 +3111,6 @@ class TimeStep:
         df_cell = df_cell.loc[:,sorted(df_cell.columns)]
         df_cell.sort_values('ID', axis=0, inplace=True)
         df_cell.set_index('ID', inplace=True)
-        df_cell = df_cell.copy()
         d_mcds['cell']['df_cell'] = df_cell.copy()
 
 

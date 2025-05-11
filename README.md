@@ -120,13 +120,14 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 
 ## Road Map:
 
-+ pcdl_get_cell_atribute_list
-+ pcdl_get_conc_attribue_list => pcdl_get_substrate_list?
++ manual: neuroglancer, qpath
++ pcdl_get_cell_atribute_list (4.0.0 & 3.3.5)
++ pcdl_get_conc_attribue_list => pcdl_get_substrate_list? (4.0.0 & 3.3.5)
 + evt generate lineage tree graph output files.
 + evt add DataDiVR support.
 
 ## Release Notes:
-+ version 4.0.0 (2025-03-xx): elmbeech/physicelldataloader
++ version 4.0.0 (2025-05-xx): elmbeech/physicelldataloader
     + v4 was forked from v3.3.4!
     + pyMCDS.py and part of pyAnnData.py was fused to timestep.py
     + pyMCDSts.py and part of pyAnnData.py was fused to timeseries.py
@@ -139,7 +140,7 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
     + new TimeSteries **make_neuroglancer** function, to render ome tiff images into neuroglancer.
     + new **pcdl_make_neuroglancer** function, to render ome tiff images into neuroglancer.
 
-+ version 3.3.5 (2025-03-xx): elmbeech/physicelldataloader
++ version 3.3.5 (2025-05-xx): elmbeech/physicelldataloader
     + remove pyMCDS and pyMCDSts **make_ome_tiff** and pyCLI **pcdl_make_ome_tiff** removed to make pyMCS.py stand alone again.
 
 + version 3.3.4 (2025-03-07): elmbeech/physicelldataloader

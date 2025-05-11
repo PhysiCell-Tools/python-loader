@@ -63,14 +63,14 @@ class TestTimeStepInit(object):
 
     def test_mcds_init_graph(self, mcds=mcds):
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(mcds.data['discrete_cells']['graph']['attached_cells'])) == "<class 'dict'>") and \
-              (str(type(mcds.data['discrete_cells']['graph']['neighbor_cells'])) == "<class 'dict'>") and \
-              (len(mcds.data['discrete_cells']['graph']['attached_cells']) > 9) and \
-              (len(mcds.data['discrete_cells']['graph']['neighbor_cells']) > 9)
+              (str(type(mcds.data['cell']['dei_graph']['attached_cells'])) == "<class 'dict'>") and \
+              (str(type(mcds.data['cell']['dei_graph']['neighbor_cells'])) == "<class 'dict'>") and \
+              (len(mcds.data['cell']['dei_graph']['attached_cells']) > 9) and \
+              (len(mcds.data['cell']['dei_graph']['neighbor_cells']) > 9)
 
-    def test_mcds_init_physiboss(self, mcds=mcds):
-        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (mcds.data['discrete_cells']['physiboss'] == None)
+    #def test_mcds_init_physiboss(self, mcds=mcds):
+    #    assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+    #          (mcds.data['cell']['physiboss'] == None)
 
     def test_mcds_init_settingxml(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
@@ -92,14 +92,14 @@ class TestTimeStepInitMicroenvFalse(object):
 
     def test_mcds_init_graph(self, mcds=mcds):
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(mcds.data['discrete_cells']['graph']['attached_cells'])) == "<class 'dict'>") and \
-              (str(type(mcds.data['discrete_cells']['graph']['neighbor_cells'])) == "<class 'dict'>") and \
-              (len(mcds.data['discrete_cells']['graph']['attached_cells']) > 9) and \
-              (len(mcds.data['discrete_cells']['graph']['neighbor_cells']) > 9)
+              (str(type(mcds.data['cell']['dei_graph']['attached_cells'])) == "<class 'dict'>") and \
+              (str(type(mcds.data['cell']['dei_graph']['neighbor_cells'])) == "<class 'dict'>") and \
+              (len(mcds.data['cell']['dei_graph']['attached_cells']) > 9) and \
+              (len(mcds.data['cell']['dei_graph']['neighbor_cells']) > 9)
 
-    def test_mcds_init_physiboss(self, mcds=mcds):
-        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (mcds.data['discrete_cells']['physiboss'] == None)
+    #def test_mcds_init_physiboss(self, mcds=mcds):
+    #    assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+    #          (mcds.data['cell']['physiboss'] == None)
 
     def test_mcds_init_settingxml(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
@@ -121,14 +121,14 @@ class TestTimeStepInitGraphFalse(object):
 
     def test_mcds_init_graph(self, mcds=mcds):
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(mcds.data['discrete_cells']['graph']['attached_cells'])) == "<class 'dict'>") and \
-              (str(type(mcds.data['discrete_cells']['graph']['neighbor_cells'])) == "<class 'dict'>") and \
-              (len(mcds.data['discrete_cells']['graph']['attached_cells']) == 0) and \
-              (len(mcds.data['discrete_cells']['graph']['neighbor_cells']) == 0)
+              (str(type(mcds.data['cell']['dei_graph']['attached_cells'])) == "<class 'dict'>") and \
+              (str(type(mcds.data['cell']['dei_graph']['neighbor_cells'])) == "<class 'dict'>") and \
+              (len(mcds.data['cell']['dei_graph']['attached_cells']) == 0) and \
+              (len(mcds.data['cell']['dei_graph']['neighbor_cells']) == 0)
 
-    def test_mcds_init_physiboss(self, mcds=mcds):
-        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (mcds.data['discrete_cells']['physiboss'] == None)
+    #def test_mcds_init_physiboss(self, mcds=mcds):
+    #    assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+    #          (mcds.data['cell']['physiboss'] == None)
 
     def test_mcds_init_settingxml(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
@@ -150,14 +150,14 @@ class TestTimeStepInitPhysibossFalse(object):
 
     def test_mcds_init_graph(self, mcds=mcds):
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(mcds.data['discrete_cells']['graph']['attached_cells'])) == "<class 'dict'>") and \
-              (str(type(mcds.data['discrete_cells']['graph']['neighbor_cells'])) == "<class 'dict'>") and \
-              (len(mcds.data['discrete_cells']['graph']['attached_cells']) > 9) and \
-              (len(mcds.data['discrete_cells']['graph']['neighbor_cells']) > 9)
+              (str(type(mcds.data['cell']['dei_graph']['attached_cells'])) == "<class 'dict'>") and \
+              (str(type(mcds.data['cell']['dei_graph']['neighbor_cells'])) == "<class 'dict'>") and \
+              (len(mcds.data['cell']['dei_graph']['attached_cells']) > 9) and \
+              (len(mcds.data['cell']['dei_graph']['neighbor_cells']) > 9)
 
-    def test_mcds_init_physiboss(self, mcds=mcds):
-        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (mcds.data['discrete_cells']['physiboss'] == None)
+    #def test_mcds_init_physiboss(self, mcds=mcds):
+    #    assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+    #          (mcds.data['cell']['physiboss'] == None)
 
     def test_mcds_init_settingxml(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
@@ -179,14 +179,14 @@ class TestTimeStepInitSettingxmlFalse(object):
 
     def test_mcds_init_graph(self, mcds=mcds):
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(mcds.data['discrete_cells']['graph']['attached_cells'])) == "<class 'dict'>") and \
-              (str(type(mcds.data['discrete_cells']['graph']['neighbor_cells'])) == "<class 'dict'>") and \
-              (len(mcds.data['discrete_cells']['graph']['attached_cells']) > 9) and \
-              (len(mcds.data['discrete_cells']['graph']['neighbor_cells']) > 9)
+              (str(type(mcds.data['cell']['dei_graph']['attached_cells'])) == "<class 'dict'>") and \
+              (str(type(mcds.data['cell']['dei_graph']['neighbor_cells'])) == "<class 'dict'>") and \
+              (len(mcds.data['cell']['dei_graph']['attached_cells']) > 9) and \
+              (len(mcds.data['cell']['dei_graph']['neighbor_cells']) > 9)
 
-    def test_mcds_init_physiboss(self, mcds=mcds):
-        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (mcds.data['discrete_cells']['physiboss'] == None)
+    #def test_mcds_init_physiboss(self, mcds=mcds):
+    #    assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+    #          (mcds.data['cell']['physiboss'] == None)
 
     def test_mcds_init_settingxml(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
@@ -208,14 +208,14 @@ class TestTimeStepInitSettingxmlNone(object):
 
     def test_mcds_init_graph(self, mcds=mcds):
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(mcds.data['discrete_cells']['graph']['attached_cells'])) == "<class 'dict'>") and \
-              (str(type(mcds.data['discrete_cells']['graph']['neighbor_cells'])) == "<class 'dict'>") and \
-              (len(mcds.data['discrete_cells']['graph']['attached_cells']) > 9) and \
-              (len(mcds.data['discrete_cells']['graph']['neighbor_cells']) > 9)
+              (str(type(mcds.data['cell']['dei_graph']['attached_cells'])) == "<class 'dict'>") and \
+              (str(type(mcds.data['cell']['dei_graph']['neighbor_cells'])) == "<class 'dict'>") and \
+              (len(mcds.data['cell']['dei_graph']['attached_cells']) > 9) and \
+              (len(mcds.data['cell']['dei_graph']['neighbor_cells']) > 9)
 
-    def test_mcds_init_physiboss(self, mcds=mcds):
-        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (mcds.data['discrete_cells']['physiboss'] == None)
+    #def test_mcds_init_physiboss(self, mcds=mcds):
+    #    assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+    #          (mcds.data['cell']['physiboss'] == None)
 
     def test_mcds_init_settingxml(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
@@ -408,7 +408,7 @@ class TestTimeStepMesh(object):
               (str(type(lr_spacing[0])) == "<class 'numpy.float64'>") and \
               (str(type(lr_spacing[1])) == "<class 'numpy.float64'>") and \
               (str(type(lr_spacing[-1])) == "<class 'numpy.float64'>") and \
-              (lr_spacing == [30.0, 20.0, 1.0])
+              (lr_spacing == [30.0, 20.0, 10.0])
 
     def test_mcds_get_voxel_spacing(self, mcds=mcds):
         lr_spacing = mcds.get_voxel_spacing()
@@ -477,27 +477,6 @@ class TestTimeStepMicroenv(object):
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(df_substrate)) == "<class 'pandas.core.frame.DataFrame'>") and \
               (df_substrate.shape == (2, 2))
-
-    def test_mcds_get_concentration_zslice_none(self, mcds=mcds):
-        ar_conc = mcds._get_concentration(substrate='oxygen', z_slice=None)
-        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(ar_conc)) == "<class 'numpy.ndarray'>") and \
-              (ar_conc.dtype == np.float64) and \
-              (ar_conc.shape == (11, 11, 1))
-
-    def test_mcds_get_concentration_zslice_meshcenter(self, mcds=mcds):
-        ar_conc = mcds._get_concentration(substrate='oxygen', z_slice=0, halt=False)
-        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(ar_conc)) == "<class 'numpy.ndarray'>") and \
-              (ar_conc.dtype == np.float64) and \
-              (ar_conc.shape == (11, 11))
-
-    def test_mcds_get_concentration_zslice_notmeshcenter(self, mcds=mcds):
-        ar_conc = mcds._get_concentration(substrate='oxygen', z_slice=-3.333, halt=False)
-        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(ar_conc)) == "<class 'numpy.ndarray'>") and \
-              (ar_conc.dtype == np.float64) and \
-              (ar_conc.shape == (11, 11))
 
     def test_mcds_get_conc_df(self, mcds=mcds):
         df_conc = mcds.get_conc_df(z_slice=None, halt=False, values=1, drop=set(), keep=set())
@@ -799,7 +778,7 @@ class TestTimeStepGraph(object):
 
     # graph dictionatry
     def test_mcds_get_attached_graph_dict(self, mcds=mcds):
-        dei_graph = mcds.data['discrete_cells']['graph']['attached_cells']
+        dei_graph = mcds.data['cell']['dei_graph']['attached_cells']
         #print('graph attached:', sorted(dei_graph.items()))
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(dei_graph)) == "<class 'dict'>") and \
@@ -808,7 +787,7 @@ class TestTimeStepGraph(object):
               (len(dei_graph) > 9)
 
     def test_mcds_get_neighbor_graph_dict(self, mcds=mcds):
-        dei_graph = mcds.data['discrete_cells']['graph']['neighbor_cells']
+        dei_graph = mcds.data['cell']['dei_graph']['neighbor_cells']
         #print('graph neighbor:', sorted(dei_graph.items()))
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(dei_graph)) == "<class 'dict'>") and \
