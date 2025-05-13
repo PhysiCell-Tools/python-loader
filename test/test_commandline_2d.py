@@ -476,6 +476,52 @@ class TestCommandLineInterfaceCelltypeList(object):
         assert (s_listing.startswith("['default', 'blood_cells']"))
 
 
+class TestCommandLineInterfaceCellAttributeList(object):
+    ''' tests for one  pcdl command line interface  function. '''
+
+    # timeseries collapsed:
+    # + path (str) nop
+    # + microenv (true, _false_) ok
+    # + physiboss (true, _false_)
+    # + settingxml (string, _none_, _false_) ok
+    # + verbose (true, _false_) nop
+
+    def test_pcdl_get_cell_attribute_list_timeseries(self):
+        s_result = subprocess.run(['pcdl_get_cell_attribute_list', s_path_2d], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_listing = s_result.stderr.decode('UTF8').replace('\r','')
+        assert (s_listing.startswith("['apoptotic_phagocytosis_rate', 'asymmetric"))
+
+    def test_pcdl_get_cell_attribute_list_timeseries_microenv(self):
+        s_result = subprocess.run(['pcdl_get_cell_attribute_list', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_listing = s_result.stderr.decode('UTF8').replace('\r','')
+        assert (s_listing.endswith("'uptake_rates_1', 'velocity_vectorlength', 'velocity_x', 'velocity_y', 'velocity_z']\n"))
+
+    def test_pcdl_get_cell_attribute_list_timeseries_physiboss(self):
+        s_result = subprocess.run(['pcdl_get_cell_attribute_list', s_path_2d, '--physiboss', 'false'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_listing = s_result.stderr.decode('UTF8').replace('\r','')
+        assert (s_listing.startswith("['apoptotic_phagocytosis_rate', 'asymmetric"))
+
+    def test_pcdl_get_cell_attribute_list_timeseries_settingxmlfalse(self):
+        s_result = subprocess.run(['pcdl_get_cell_attribute_list', s_path_2d, '--settingxml', 'false'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_listing = s_result.stderr.decode('UTF8').replace('\r','')
+        assert (s_listing.startswith("['apoptotic_phagocytosis_rate', 'asymmetric"))
+
+    def test_pcdl_get_cell_attribute_list_timeseries_settingxmlnone(self):
+        s_result = subprocess.run(['pcdl_get_cell_attribute_list', s_path_2d, '--settingxml', 'none'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_listing = s_result.stderr.decode('UTF8').replace('\r','')
+        assert (s_listing.startswith("['apoptotic_phagocytosis_rate', 'asymmetric"))
+
+
 class TestCommandLineInterfaceCellDfAttribute(object):
     ''' tests for one  pcdl command line interface  function. '''
 

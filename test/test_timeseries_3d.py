@@ -207,7 +207,7 @@ class TestTimeSeries3dMicroenv(object):
 
 
     def test_mcdsts_make_conc_vtk(self, mcdsts=mcdsts):
-        ls_pathfile = mcdsts.make_conc_vtk(visualize=False)
+        ls_pathfile = mcdsts.make_conc_vtk()
         assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
               (ls_pathfile[0].endswith('/pcdl/output_3d/output00000000_conc.vtr')) and \
               (ls_pathfile[-1].endswith('/pcdl/output_3d/output00000024_conc.vtr')) and \
@@ -341,7 +341,7 @@ class TestTimeSeries3dCell(object):
         plt.close()
 
     def test_mcdsts_make_cell_vtk(self, mcdsts=mcdsts):
-        ls_pathfile = mcdsts.make_cell_vtk(visualize=False)
+        ls_pathfile = mcdsts.make_cell_vtk()
         assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
               (ls_pathfile[0].endswith('/pcdl/output_3d/output00000000_cell.vtp')) and \
               (ls_pathfile[-1].endswith('/pcdl/output_3d/output00000024_cell.vtp')) and \

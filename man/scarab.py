@@ -99,13 +99,13 @@ if not os.path.exists('pcdl/output_2d/') or not os.path.exists('pcdl/output_3d/'
 # load data
 mcds = pcdl.TimeStep(
     'pcdl/output_2d/output00000000.xml',
-    custom_data_type={'oncoprotein': str},
+    #custom_data_type={'oncoprotein': str},
     verbose=False,
 )
 
 mcdsts = pcdl.TimeSeries(
     'pcdl/output_2d/',
-    custom_data_type={'oncoprotein': str},
+    #custom_data_type={'oncoprotein': str},
     verbose=False,
 )
 
@@ -264,6 +264,10 @@ docstring_md(
     ls_doc = pcdl.TimeStep.get_cell_df.__doc__.split('\n'),
 )
 docstring_md(
+    s_function = 'mcds.get_cell_attribute_list',
+    ls_doc = pcdl.TimeStep.get_cell_attribute_list.__doc__.split('\n'),
+)
+docstring_md(
     s_function = 'mcds.plot_scatter',
     ls_doc = pcdl.TimeStep.plot_scatter.__doc__.split('\n'),
 )
@@ -286,6 +290,10 @@ docstring_md(
     ls_doc = pcdl.TimeStep.get_neighbor_graph_dict.__doc__.split('\n'),
 )
 docstring_md(
+    s_function = 'mcds.get_spring_graph_dict',
+    ls_doc = pcdl.TimeStep.get_spring_graph_dict.__doc__.split('\n'),
+)
+docstring_md(
     s_function = 'mcds.make_graph_gml',
     ls_doc = pcdl.TimeStep.make_graph_gml.__doc__.split('\n'),
 )
@@ -294,6 +302,12 @@ docstring_md(
 docstring_md(
     s_function = 'mcds.make_ome_tiff',
     ls_doc = pcdl.TimeStep.make_ome_tiff.__doc__.split('\n'),
+)
+
+docstring_md(
+    s_function = 'pcdl.render_neuroglancer',
+    ls_doc = pcdl.render_neuroglancer.__doc__.split('\n'),
+    s_header = "mcds.render_neuroglancer('path/to/ome.tiff')"
 )
 
 # write TimeStep internal function makdown files
@@ -391,6 +405,11 @@ docstring_md(
     ls_doc = pcdl.TimeSeries.make_ome_tiff.__doc__.split('\n'),
 )
 docstring_md(
+    s_function = 'pcdl.render_neuroglancer',
+    ls_doc = pcdl.render_neuroglancer.__doc__.split('\n'),
+    s_header = "mcdsts.render_neuroglancer('path/to/ome.tiff')"
+)
+docstring_md(
     s_function = 'mcdsts.plot_timeseries',
     ls_doc = pcdl.TimeSeries.plot_timeseries.__doc__.split('\n'),
 )
@@ -420,6 +439,7 @@ help_md(s_command='pcdl_plot_contour')
 help_md(s_command='pcdl_make_conc_vtk')
 # cell agent
 help_md(s_command='pcdl_get_celltype_list')
+help_md(s_command='pcdl_get_cell_attribute_list')
 help_md(s_command='pcdl_get_cell_attribute')
 help_md(s_command='pcdl_get_cell_df')
 help_md(s_command='pcdl_get_anndata')
@@ -429,6 +449,7 @@ help_md(s_command='pcdl_make_cell_vtk')
 # substrate and cell agent
 help_md(s_command='pcdl_plot_timeseries')
 help_md(s_command='pcdl_make_ome_tiff')
+help_md(s_command='pcdl_render_neuroglancer')
 # making movies
 help_md(s_command='pcdl_make_gif')
 help_md(s_command='pcdl_make_movie')

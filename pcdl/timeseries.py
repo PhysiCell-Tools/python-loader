@@ -24,6 +24,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 import pandas as pd
+from pcdl import render_neuroglancer
 from pcdl.timestep import TimeStep, es_coor_cell, es_coor_conc, _anndextract
 import platform
 import sys
@@ -177,8 +178,7 @@ class TimeSeries:
 
             microenv: boole; default True
                 should the microenvironment data be loaded?
-                setting microenv to False will use less memory and speed up
-                processing, similar to the original pyMCDS_cells.py script.
+                setting microenv to False will use less memory and speed up processing.
 
             graph: boole; default True
                 should the graphs, like cell_neighbor_graph.txt, be loaded?
@@ -268,6 +268,18 @@ class TimeSeries:
         """
         s_opathfile = make_movie(path=path, interface=interface, framerate=framerate)
         return s_opathfile
+
+
+    def render_neuroglancer(self, tiffpathfile, timestep=0, intensity_cmap='gray'):
+        """
+        help(pcdl.render_neuroglancer)
+        """
+        o_viewer = render_neuroglancer(
+            tiffpathfile = tiffpathfile,
+            timestep = timestep,
+            intensity_cmap = intensity_cmap,
+        )
+        return o_viewer
 
 
     ## LOAD DATA ##
@@ -641,11 +653,9 @@ class TimeSeries:
         return lo_output
 
 
-    def make_conc_vtk(self, visualize=True):
+    def make_conc_vtk(self):
         """
         input:
-            visualize: boolean; default is False
-                additionally, visualize cells using vtk renderer.
 
         output:
             ls_vtkpathfile: one vtk file per mcds time step that contains
@@ -663,7 +673,7 @@ class TimeSeries:
         # processing
         ls_vtkpathfile = []
         for mcds in self.get_mcds_list():
-            s_vtkpathfile = mcds.make_conc_vtk(visualize=visualize)
+            s_vtkpathfile = mcds.make_conc_vtk()
             ls_vtkpathfile.append(s_vtkpathfile)
 
         # output
@@ -946,14 +956,11 @@ class TimeSeries:
         return lo_output
 
 
-    def make_cell_vtk(self, attribute=['cell_type'], visualize=False):
+    def make_cell_vtk(self, attribute=['cell_type']):
         """
         input:
             attribute: list of strings; default is ['cell_type']
                 column name within cell dataframe.
-
-            visualize: boolean; default is False
-                additionally, visualize cells using vtk renderer.
 
         output:
             ls_vtkpathfile: one 3D glyph vtk file per mcds time step
@@ -972,7 +979,6 @@ class TimeSeries:
         for mcds in self.get_mcds_list():
             s_vtkpathfile = mcds.make_cell_vtk(
                 attribute = attribute,
-                visualize = visualize,
             )
             ls_vtkpathfile.append(s_vtkpathfile)
 

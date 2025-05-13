@@ -120,28 +120,30 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 
 ## Road Map:
 
-+ manual: neuroglancer, qpath
-+ pcdl_get_cell_atribute_list (4.0.0 & 3.3.5)
-+ pcdl_get_conc_attribue_list => pcdl_get_substrate_list? (4.0.0 & 3.3.5)
 + evt generate lineage tree graph output files.
 + evt add DataDiVR support.
 
 ## Release Notes:
-+ version 4.0.0 (2025-05-xx): elmbeech/physicelldataloader
++ version 4.0.0 (2025-05-13): elmbeech/physicelldataloader
     + v4 was forked from v3.3.4!
-    + pyMCDS.py and part of pyAnnData.py was fused to timestep.py
-    + pyMCDSts.py and part of pyAnnData.py was fused to timeseries.py
-    + pyCLI.py was renames to commandline.py
-    + data\_timeseries.py was renamed to output\_data.py
-    + deprecate TimeSeries function **get_concentration** because pandas already has this functionlity.
-    + deprecate TimeSeries function **get_concentration_at** because pandas already has this functionlity.
-    + deprecate TimeSeries function **get_cell_df_at** because pandas already has this functionlity.
-    + new TimeStep **make_neuroglancer** function, to render ome tiff image into neuroglancer.
-    + new TimeSteries **make_neuroglancer** function, to render ome tiff images into neuroglancer.
-    + new **pcdl_make_neuroglancer** function, to render ome tiff images into neuroglancer.
+    + **mcds.data** struct was rewritten in more python less c++ way.
+    + pyMCDS.py and part of pyAnnData.py was fused to **timestep.py**.
+    + pyMCDSts.py and part of pyAnnData.py was fused to **timeseries.py**.
+    + pyCLI.py was renames to **commandline.py**.
+    + data\_timeseries.py was renamed to **output_data.py**.
+    + TimeStep function **get_concentration** was deprecated because pandas already has this functionlity.
+    + TimeStep function **get_concentration_at** was deprecated because pandas already has this functionlity.
+    + TimeStep function **get_cell_df_at** was deprecated because pandas already has this functionlity.
+    + **make_conc_vtk** and **make_cell_vtk** on the fly visualization was removed because paraview is good enough.
+    + new TimeStep **get_cell_attribute_list** function, to retrieve a list of all tracked cell attribute labels.
+    + new **pcdl_get_cell_attribute_list** function, to retrieve a list of all tracked cell attribute labels.
+    + new **render_neuroglancer** function, to render ome tiff image into neuroglancer.
+    + new **pcdl_render_neuroglancer** function, to render ome tiff images into neuroglancer.
 
 + version 3.3.5 (2025-05-xx): elmbeech/physicelldataloader
-    + remove pyMCDS and pyMCDSts **make_ome_tiff** and pyCLI **pcdl_make_ome_tiff** removed to make pyMCS.py stand alone again.
+    + remove pyMCDS and pyMCDSts **make_ome_tiff** and pyCLI **pcdl_make_ome_tiff** to make pyMCS.py stand alone again.
+    + new TimeStep **get_cell_attribute_list** function, to retrieve a list of all tracked cell attribute labels.
+    + new **pcdl_get_cell_attribute_list** function, to retrieve a list of all tracked cell attribute labels.
 
 + version 3.3.4 (2025-03-07): elmbeech/physicelldataloader
     + replace the **aicsimageio** library dependency with its successor **bioio**. special thanks to Joel Eliason!

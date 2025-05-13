@@ -19,8 +19,7 @@
 
             microenv: boole; default True
                 should the microenvironment data be loaded?
-                setting microenv to False will use less memory and speed up
-                processing, similar to the original pyMCDS_cells.py script.
+                setting microenv to False will use less memory and speed up processing.
 
             graph: boole; default True
                 should the graphs, like cell_neighbor_graph.txt, be loaded?

@@ -322,7 +322,7 @@ class TestTimeStep3dMicroenvWorkhorse(object):
         os.remove(s_pathfile)
 
     def test_mcds_make_conc_vtk(self, mcds=mcds):
-        s_pathfile = mcds.make_conc_vtk(visualize=False)
+        s_pathfile = mcds.make_conc_vtk()
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (s_pathfile.replace('\\','/').endswith('/pcdl/output_3d/output00000024_conc.vtr')) and \
               (os.path.exists(s_pathfile)) and \
@@ -487,7 +487,6 @@ class TestTimeStep3dCellWorkhorse(object):
     def test_mcds_make_cell_vtk_attribute_default(self, mcds=mcds):
         s_pathfile = mcds.make_cell_vtk(
             #attribute=['cell_type'],
-            visualize=False,
         )
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (s_pathfile.replace('\\','/').endswith('/pcdl/output_3d/output00000024_cell.vtp')) and \
@@ -496,7 +495,7 @@ class TestTimeStep3dCellWorkhorse(object):
         os.remove(s_pathfile)
 
     def test_mcds_make_cell_vtk_attribute_zero(self, mcds=mcds):
-        s_pathfile = mcds.make_cell_vtk(attribute=[], visualize=False)
+        s_pathfile = mcds.make_cell_vtk(attribute=[])
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (s_pathfile.replace('\\','/').endswith('/pcdl/output_3d/output00000024_cell.vtp')) and \
               (os.path.exists(s_pathfile)) and \
@@ -506,7 +505,6 @@ class TestTimeStep3dCellWorkhorse(object):
     def test_mcds_make_cell_vtk_attribute_many(self, mcds=mcds):
         s_pathfile = mcds.make_cell_vtk(
             attribute=['dead', 'cell_count_voxel', 'pressure', 'cell_type'],
-            visualize=False,
         )
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (s_pathfile.replace('\\','/').endswith('/pcdl/output_3d/output00000024_cell.vtp')) and \

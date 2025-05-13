@@ -564,7 +564,7 @@ class TestTimeStepMicroenv(object):
         os.remove(s_pathfile)
 
     def test_mcds_make_conc_vtk(self, mcds=mcds):
-        s_pathfile = mcds.make_conc_vtk(visualize=False)
+        s_pathfile = mcds.make_conc_vtk()
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (s_pathfile.replace('\\','/').endswith('/pcdl/output_2d/output00000024_conc.vtr')) and \
               (os.path.exists(s_pathfile)) and \
@@ -576,6 +576,13 @@ class TestTimeStepMicroenv(object):
 class TestTimeStepCell(object):
     ''' tests for pcdl.TimeStep cell related functions. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
+
+    def test_mcds_get_cell_attribute_list(self, mcds=mcds):
+        ls_cellattr = mcds.get_cell_attribute_list()
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+              (str(type(ls_cellattr)) == "<class 'list'>") and \
+              (str(type(ls_cellattr[0])) == "<class 'str'>") and \
+              (len(ls_cellattr) == 110)
 
     def test_mcds_get_celltype_list(self, mcds=mcds):
         ls_celltype = mcds.get_celltype_list()
@@ -742,7 +749,6 @@ class TestTimeStepCell(object):
     def test_mcds_make_cell_vtk_attribute_default(self, mcds=mcds):
         s_pathfile = mcds.make_cell_vtk(
             #attribute=['cell_type'],
-            visualize=False,
         )
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (s_pathfile.replace('\\','/').endswith('/pcdl/output_2d/output00000024_cell.vtp')) and \
@@ -751,7 +757,7 @@ class TestTimeStepCell(object):
         os.remove(s_pathfile)
 
     def test_mcds_make_cell_vtk_attribute_zero(self, mcds=mcds):
-        s_pathfile = mcds.make_cell_vtk(attribute=[], visualize=False)
+        s_pathfile = mcds.make_cell_vtk(attribute=[])
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (s_pathfile.replace('\\','/').endswith('/pcdl/output_2d/output00000024_cell.vtp')) and \
               (os.path.exists(s_pathfile)) and \
@@ -761,7 +767,6 @@ class TestTimeStepCell(object):
     def test_mcds_make_cell_vtk_attribute_many(self, mcds=mcds):
         s_pathfile = mcds.make_cell_vtk(
             attribute=['dead', 'cell_count_voxel', 'pressure', 'cell_type'],
-            visualize=False,
         )
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (s_pathfile.replace('\\','/').endswith('/pcdl/output_2d/output00000024_cell.vtp')) and \
@@ -973,6 +978,44 @@ class TestTimeStepOmeTiff(object):
               (a_ometiff[0].min() == 0.0) and \
               (a_ometiff[0].max() >= 1.0)
 
+
+class TestTimeSeriesNeuroglancer(object):
+    ''' tests for loading a pcdl.TimeSeries data set. '''
+    mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
+
+    ## make_gif and magick ommand ##
+    def test_mcds_render_neuroglancer_default(self, mcds=mcds):
+        s_tiffpathfile = mcds.make_ome_tiff()
+        o_viewer = mcds.render_neuroglancer(
+            tiffpathfile = s_tiffpathfile,
+             timestep = 0,
+             intensity_cmap='gray',
+        )
+        assert(str(type(o_viewer)) == "<class 'neuroglancer.viewer.Viewer'>") and \
+              (str(o_viewer).startswith('http://127.0.0.1:'))
+        os.remove(s_tiffpathfile)
+
+    def test_mcds_render_neuroglancer_timestep(self, mcds=mcds):
+        s_tiffpathfile = mcds.make_ome_tiff()
+        o_viewer = mcds.render_neuroglancer(
+            tiffpathfile = s_tiffpathfile,
+             timestep = -1,
+             intensity_cmap='gray',
+        )
+        assert(str(type(o_viewer)) == "<class 'neuroglancer.viewer.Viewer'>") and \
+              (str(o_viewer).startswith('http://127.0.0.1:'))
+        os.remove(s_tiffpathfile)
+
+    def test_mcds_render_neuroglancer_cmap(self, mcds=mcds):
+        s_tiffpathfile = mcds.make_ome_tiff()
+        o_viewer = mcds.render_neuroglancer(
+            tiffpathfile = s_tiffpathfile,
+             timestep = 0,
+             intensity_cmap='magma',
+        )
+        assert(str(type(o_viewer)) == "<class 'neuroglancer.viewer.Viewer'>") and \
+              (str(o_viewer).startswith('http://127.0.0.1:'))
+        os.remove(s_tiffpathfile)
 
 
 ## anndata helper function ##

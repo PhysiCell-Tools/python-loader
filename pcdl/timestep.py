@@ -21,13 +21,13 @@ from bioio.writers import OmeTiffWriter
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib import colors
-#import neuroglancer
+import neuroglancer
 import numpy as np
 import os
 import pandas as pd
 from pcdl import imagine
-from pcdl import neuromancer
 from pcdl import pdplt
+from pcdl import neuromancer
 from scipy import io
 from scipy import sparse
 import sys
@@ -175,6 +175,43 @@ es_coor_cell = {
 
 
 # functions
+def render_neuroglancer(tiffpathfile, timestep=0, intensity_cmap='gray'):
+    """
+    input:
+        tiffpathfile: string.
+            path to ome tiff file.
+
+        timestep: integer; default is 0.
+            time step, within a possibly collapsed ome tiff file, to render.
+            the default will work with single time step ome tiff files.
+
+        intensity_cmap: string; default is 'gray'.
+            matlab color map label, used to display expression intensity values.
+            if None, no intensity layers will be generated.
+            + https://matplotlib.org/stable/users/explain/colors/colormaps.html
+
+    output:
+        viewer: url to the loaded, neuroglancer rendered ome tiff file.
+
+    description:
+        function to load a time step from an ome tiff files, generated
+        with make_ome_tiff, into neuroglancer.
+    """
+    # start neuroglancer
+    viewer = neuroglancer.Viewer()
+    with viewer.txn() as state:
+        # render ometiff into neuroglancer
+        neuromancer.ometiff2neuro(
+            o_state = state,
+            s_pathfile_tiff = tiffpathfile,
+            i_timestep = timestep,
+            s_intensity_cmap = intensity_cmap,
+        )
+
+    # print neuroglancer viewer url
+    return viewer
+
+
 def graphfile_parser(s_pathfile):
     """
     input:
@@ -457,8 +494,7 @@ class TimeStep:
 
             microenv: boole; default True
                 should the microenvironment data be loaded?
-                setting microenv to False will use less memory and speed up
-                processing, similar to the original pyMCDS_cells.py script.
+                setting microenv to False will use less memory and speed up processing.
 
             graph: boole; default True
                 should the graphs, like cell_neighbor_graph.txt, be loaded?
@@ -1277,11 +1313,9 @@ class TimeStep:
             return s_pathfile
 
 
-    def make_conc_vtk(self, visualize=True):
+    def make_conc_vtk(self):
         """
         input:
-            visualize: boolean; default is True
-                additionally, visualize cells using vtk renderer.
 
         output:
             s_vtkpathfile: vtk rectilinear grid file that contains
@@ -1352,117 +1386,12 @@ class TimeStep:
                             (df_conc.loc[:,'voxel_k'] == k) & (df_conc.loc[:,'voxel_j'] == j) & (df_conc.loc[:,'voxel_i'] == i),
                             s_substrate
                         ].values[0]
-                        #vfa_value.InsertNextValue(r_conc)
                         vfa_value.SetValue(i_index, r_conc)
             if b_first:
-                #vrg_data.GetCellData().SetScalars(vfa_value)
                 vrg_data.GetPointData().SetScalars(vfa_value)
                 b_first = False
             else:
-                #vrg_data.GetCellData().AddArray(vfa_value)
                 vrg_data.GetPointData().AddArray(vfa_value)
-
-            # visualize on the fly
-            if (visualize):
-                # get scalar range
-                r_vmin = np.floor(df_conc.loc[:, s_substrate].min())
-                r_vmax = np.ceil(df_conc.loc[:, s_substrate].max())
-
-                # generate the structured grid.
-                vsp_data = vtk.vtkStructuredPoints()
-                vsp_data.SetDimensions(ti_dim[0]+1, ti_dim[1]+1, ti_dim[2]+1)
-                vsp_data.SetSpacing(
-                    self.get_voxel_spacing()[0],
-                    self.get_voxel_spacing()[1],
-                    self.get_voxel_spacing()[2],
-                )
-                vsp_data.SetOrigin(
-                    self.get_mesh_mnp_range()[0][0],
-                    self.get_mesh_mnp_range()[1][0],
-                    self.get_mesh_mnp_range()[2][0],
-                )  # lower-left-front point of domain bounding box
-
-                # mapp grid and values
-                vdsm_data = vtk.vtkDataSetMapper()
-                vsp_data.GetCellData().SetScalars(vfa_value)
-                vdsm_data.SetInputData(vsp_data)
-                vdsm_data.Update()
-                vdsm_data.SetScalarRange(r_vmin, r_vmax)
-                vdsm_data.SetScalarModeToUseCellData()
-
-                # build VTKLooktupTable (color scheme)
-                vlt_color = vtk.vtkLookupTable()
-                vlt_color.SetNumberOfTableValues(256)  # number of color shades
-                vlt_color.SetHueRange(9/12, 0/12)  # rainbow heat map
-                vlt_color.Build()
-
-                # generate xy cutting plane actor
-                vp_canvas = vtk.vtkPlane()
-                vp_canvas.SetOrigin(0, 0, 0) # xyz
-                vp_canvas.SetNormal(0, 0, 1)
-
-                vc_canvas = vtk.vtkCutter()
-                vc_canvas.SetInputData(vsp_data)
-                vc_canvas.SetCutFunction(vp_canvas)
-                vc_canvas.GeneratePolygons = 1
-
-                vpdm_canvas = vtk.vtkPolyDataMapper()
-                vpdm_canvas.SetInputConnection(vc_canvas.GetOutputPort())
-                vpdm_canvas.ScalarVisibilityOn()
-                vpdm_canvas.SetScalarRange(r_vmin, r_vmax)
-                vpdm_canvas.SetLookupTable(vlt_color)
-                vpdm_canvas.SetScalarModeToUseCellData()
-
-                va_canvas = vtk.vtkActor()
-                va_canvas.SetMapper(vpdm_canvas)
-                va_canvas.GetProperty().EdgeVisibilityOn()
-
-                # generate outline actor
-                vof_frame = vtk.vtkOutlineFilter()
-                vof_frame.SetInputData(vsp_data)
-
-                vpdm_frame = vtk.vtkPolyDataMapper()
-                vpdm_frame.SetInputConnection(vof_frame.GetOutputPort())
-
-                va_frame = vtk.vtkActor()
-                va_frame.SetMapper(vpdm_frame)
-                va_frame.GetProperty().SetColor(1, 1, 1)
-
-                # generate scalar bar actor
-                vsba_spectrum = vtk.vtkScalarBarActor()
-                vsba_spectrum.SetTitle(s_substrate)
-                vsba_spectrum.GetPositionCoordinate().SetCoordinateSystemToNormalizedViewport()
-                vsba_spectrum.GetPositionCoordinate().SetValue(0.1, 0.01)
-                vsba_spectrum.SetOrientationToHorizontal()
-                vsba_spectrum.SetWidth(0.8)
-                vsba_spectrum.SetHeight(0.1)
-                vsba_spectrum.GetProperty().SetColor(0, 0, 0)
-                vsba_spectrum.GetTitleTextProperty().SetColor(0, 0, 0)
-                vsba_spectrum.GetTitleTextProperty().SetFontSize(22)
-                vsba_spectrum.SetLookupTable(vpdm_canvas.GetLookupTable())
-
-                # do render setup
-                ren = vtk.vtkRenderer()
-                renWin = vtk.vtkRenderWindow()
-                renWin.AddRenderer(ren)
-                renWin.SetSize(800, 600)
-                iren = vtk.vtkRenderWindowInteractor()
-                iren.SetRenderWindow(renWin)
-
-                # add the actor to the renderer
-                #ren.ResetCamera()
-                ren.SetBackground(1/3, 1/3, 1/3) # gray
-                ren.AddActor(va_canvas)
-                ren.AddActor(va_frame)
-                ren.AddActor2D(vsba_spectrum)
-
-                # render
-                iren.Initialize()
-                renWin.Render()
-                iren.Start()
-
-            # free memory
-            #del vfa_value
 
         # save vtk file
         s_vtkpathfile = self.path + '/' + s_vtkfile
@@ -1565,6 +1494,21 @@ class TimeStep:
         df_cell = df_cell.loc[:,sorted(df_cell.columns)]
         df_cell.sort_values('ID', axis=0, inplace=True)
         return df_cell
+
+
+    def get_cell_attribute_list(self):
+        """
+        input:
+
+        output:
+            ls_cellattr: list of strings
+                alphabetically ordered list of all tracked cell attributes.
+
+        description:
+            function returns a list with all cell attribute labels,
+            alphabetically ordered.
+        """
+        return self.data['cell']['ls_cellattr'].copy()
 
 
     def plot_scatter(self, focus='cell_type', z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title=None, grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=1.0, ax=None, figsizepx=None, ext=None, figbgcolor=None):
@@ -1827,14 +1771,11 @@ class TimeStep:
         return fig
 
 
-    def make_cell_vtk(self, attribute=['cell_type'], visualize=True):
+    def make_cell_vtk(self, attribute=['cell_type']):
         """
         input:
             attribute: list of strings; default is ['cell_type']
                 column name within cell dataframe.
-
-            visualize: boolean; default is True
-                additionally, visualize cells using vtk renderer.
 
         output:
             s_vtkpathfile: vtk 3D glyph polynomial data file that contains cells.
@@ -1910,8 +1851,6 @@ class TimeStep:
                     voa_data.InsertNextValue(df_cell.loc[i, s_attribute])
 
             vug_data.GetPointData().AddArray(voa_data)
-            # free memory
-            #del voa_data
 
         # generate sphere source
         vss_data = vtk.vtkSphereSource()
@@ -1930,49 +1869,6 @@ class TimeStep:
         vg_data.SetScaleFactor(1.0)
         vg_data.SetColorModeToColorByScalar()
         vg_data.Update()
-
-        # visualize
-        if (visualize):
-            # select first attribute
-            s_attribute = attribute[0]
-
-            # build VTKLooktupTable (color scheme)
-            vlt_color = vtk.vtkLookupTable()
-            i_element = df_cell.loc[:, s_attribute].unique().shape[0]
-            if (i_element > 256):
-                i_element = 256
-            vlt_color.SetNumberOfTableValues(i_element)
-            vlt_color.SetHueRange(9/12, 0/12)  # rainbow heat map
-            vlt_color.Build()
-
-            # set up the mapper
-            vpdm_data = vtk.vtkPolyDataMapper()
-            vpdm_data.SetInputConnection(vg_data.GetOutputPort())
-            vpdm_data.ScalarVisibilityOn()
-            vpdm_data.SetLookupTable(vlt_color)
-            vpdm_data.ColorByArrayComponent(s_attribute, 1)
-
-            # set up the actor
-            actor = vtk.vtkActor()
-            actor.SetMapper(vpdm_data)
-
-            # do renderer setup
-            ren = vtk.vtkRenderer()
-            renWin = vtk.vtkRenderWindow()
-            renWin.AddRenderer(ren)
-            renWin.SetSize(800, 600)
-            iren = vtk.vtkRenderWindowInteractor()
-            iren.SetRenderWindow(renWin)
-
-            # add the actor to the renderer
-            #ren.ResetCamera()
-            ren.SetBackground(1/3, 1/3, 1/3) # gray
-            ren.AddActor(actor)
-
-            # render
-            iren.Initialize()
-            renWin.Render()
-            iren.Start()
 
         # write VTK
         s_vtkpathfile = self.path + '/' + s_vtkfile
@@ -2011,7 +1907,7 @@ class TimeStep:
                 if False, a numpy array with shape czyx is the output.
 
         output:
-            a_czyx_img: numpy array or ome tiff file.
+            a_tczyx_img: numpy array or ome tiff file.
 
         description:
             function to transform chosen mcds output into an 1[um] spaced
@@ -2210,67 +2106,16 @@ class TimeStep:
             return s_tiffpathfile
 
 
-    def make_neuroglancer(self, cell_attribute='ID', cell_attribute_cm='gray', conc_cutoff={}, focus=None):
+    def render_neuroglancer(self, tiffpathfile, timestep=0, intensity_cmap='gray'):
         """
-        input:
-            cell_attribute: strings; default is 'ID', which will result in a
-                cell segmentation mask.
-                column name within the cell dataframe.
-                the column data type has to be numeric (bool, int, float)
-                and cannot be string.
-                the result will be stored as 32 bit float.
-
-            cell_attribute_cm: string; default is 'gray'.
-                matlab color map label, used to display expression intensity values.
-                if None, no intensity layers will be generated.
-                + https://matplotlib.org/stable/users/explain/colors/colormaps.html
-
-            conc_cutoff: dictionary string to real; default is an empty dictionary.
-                if a contour from a substrate not should be cut by greater
-                than zero (shifted to integer 1), another cutoff value can be
-                specified here.
-
-            focus: set of strings; default is a None
-                set of substrate and cell_type names to specify what will be
-                translated into ome tiff format.
-                if None, all substrates and cell types will be processed.
-
-        output:
-            s_czyx_url: url to the generated ome file loaded in neurogalncer.
-
-        description:
-            function to transform chosen mcds output into an 1[um] spaced
-            czyx (channel, z-axis, y-axis, x-axis) ome tiff file, one
-            substrate or cell_type per channel. this file is automatically
-            loaded into neuroglancer.
-            an ome tiff file is more or less:
-            a numpy array, containing the image information
-            and a xml, containing the microscopy metadata information,
-            like e.g. channel labels.
+        help(pcdl.render_neuroglancer)
         """
-        # generate ometiff
-        s_tiffpathfile = self.make_ome_tiff(
-            cell_attribute = cell_attribute,
-            conc_cutoff = conc_cutoff,
-            focus = focus,
-            file = True,
+        o_viewer = render_neuroglancer(
+            tiffpathfile = tiffpathfile,
+            timestep = timestep,
+            intensity_cmap = intensity_cmap,
         )
-
-        # start neuroglancer
-        viewer = neuroglancer.Viewer()
-        with viewer.txn() as state:
-            # render ometiff into neuroglancer
-            neuromancer.ometiff2neuro(
-                o_state = state,
-                s_pathfile_tiff = s_tiffpathfile,
-                s_intensity_cm = cell_attribute_cm,
-                b_intensity_norm = False,
-                o_thresh = None,
-                e_render = None,
-            )
-
-        # print neuroglancer viewer url
-        return viewer
+        return o_viewer
 
 
     ## GRAPH RELATED FUNCTIONS ##
@@ -3075,7 +2920,7 @@ class TimeStep:
                      df_cell[s_var] = df_sub.loc[s_sub,s_rate]
 
         # merge concentration (left join)
-        df_conc = d_mcds['substrate']['df_conc'].copy()  # voxel and mesh coordinates 
+        df_conc = d_mcds['substrate']['df_conc'].copy()  # voxel and mesh coordinates
         df_conc.drop({'time', 'runtime','xmlfile'}, axis=1, inplace=True)
         df_cell = pd.merge(
             df_cell,
@@ -3112,6 +2957,9 @@ class TimeStep:
         df_cell.sort_values('ID', axis=0, inplace=True)
         df_cell.set_index('ID', inplace=True)
         d_mcds['cell']['df_cell'] = df_cell.copy()
+
+        ## get cell attribute list
+        d_mcds['cell']['ls_cellattr'] = sorted(set(d_mcds['cell']['df_cell'].columns).difference(es_coor_cell))
 
 
         ####################

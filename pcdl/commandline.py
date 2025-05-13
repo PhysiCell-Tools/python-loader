@@ -120,7 +120,7 @@ def get_unit_dict():
     parser.add_argument(
         '--microenv',
         default = 'true',
-        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing, similar to the original TimeStep_cells.py script. default is True.',
+        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing. default is True.',
     )
     # TimeSeries graph False
     # TimeSeries physiboss False
@@ -745,9 +745,7 @@ def make_conc_vtk():
             settingxml = None,
             verbose = False if args.verbose.lower().startswith('f') else True
         )
-        s_opathfile = mcds.make_conc_vtk(
-            visualize = False,
-        )
+        s_opathfile = mcds.make_conc_vtk()
         # going home
         return s_opathfile
 
@@ -762,9 +760,7 @@ def make_conc_vtk():
             settingxml = None,
             verbose = False if args.verbose.lower().startswith('f') else True,
         )
-        ls_opathfile = mcdsts.make_conc_vtk(
-            visualize = False,
-        )
+        ls_opathfile = mcdsts.make_conc_vtk()
         # going home
         return ls_opathfile
 
@@ -839,6 +835,83 @@ def get_celltype_list():
     return mcds.get_celltype_list()
 
 
+def get_cell_attribute_list():
+    # argv
+    parser = argparse.ArgumentParser(
+        prog = 'pcdl_get_cell_attribute_list',
+        description = 'this function is returns a list with all cell attribute labels, alphabetically ordered.',
+        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
+    )
+
+    # TimeSeries path
+    parser.add_argument(
+        'path',
+        nargs = '?',
+        default = '.',
+        help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .',
+    )
+    # TimeSeries output_path '.'
+    # TimeSeries custom_data_type nop
+    # TimeSeries microenv
+    parser.add_argument(
+        '--microenv',
+        default = 'true',
+        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing. default is True.',
+    )
+    # TimeSeries graph False
+    # TimeSeries physiboss
+    parser.add_argument(
+        '--physiboss',
+        default = 'true',
+        help = 'if found, should physiboss state data be extracted and loaded into df_cell dataframe? default is True.'
+    )
+    # TimeSeries settingxml
+    parser.add_argument(
+        '--settingxml',
+        default = 'PhysiCell_settings.xml',
+        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+    )
+    # TimeSeries verbose
+    parser.add_argument(
+        '-v', '--verbose',
+        default = 'false',
+        help = 'setting verbose to True for more text output, while processing. default is False.',
+    )
+
+    # parse arguments
+    args = parser.parse_args()
+    print(args)
+
+    # process arguments
+    s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
+    s_pathfile = s_path
+    if not s_pathfile.endswith('.xml'):
+        s_pathfile = s_pathfile + '/initial.xml'
+    else:
+        s_path = '/'.join(s_path.split('/')[:-1])
+    if not os.path.exists(s_pathfile):
+        sys.exit(f'Error @ pcdl_get_cell_attribute_list : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
+
+    # run
+    mcds = pcdl.TimeStep(
+        xmlfile = s_pathfile,
+        output_path = '.',
+        #custom_data_type,
+        microenv = False if args.microenv.lower().startswith('f') else True,
+        graph = False,
+        physiboss = False if args.physiboss.lower().startswith('f') else True,
+        settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
+        verbose = True if args.verbose.lower().startswith('t') else False
+    )
+
+    # going home
+    return mcds.get_cell_attribute_list()
+
+
 def get_cell_attribute():
     # argv
     parser = argparse.ArgumentParser(
@@ -866,7 +939,7 @@ def get_cell_attribute():
     parser.add_argument(
         '--microenv',
         default = 'true',
-        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing, similar to the original TimeStep_cells.py script. default is True.',
+        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing. default is True.',
     )
     # TimeSeries graph False
     # TimeSeries physiboss
@@ -1015,7 +1088,7 @@ def get_cell_df():
     parser.add_argument(
         '--microenv',
         default = 'true',
-        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing, similar to the original TimeStep_cells.py script. default is True.'
+        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing. default is True.'
     )
     # TimeSeries graph False
     # TimeSeries physiboss
@@ -1163,7 +1236,7 @@ def get_anndata():
     parser.add_argument(
         '--microenv',
         default = 'true',
-        help = 'should the microenvironment be extracted and loaded into the anndata object? setting microenv to False will use less memory and speed up processing, similar to the original TimeStep_cells.py script. default is True.'
+        help = 'should the microenvironment be extracted and loaded into the anndata object? setting microenv to False will use less memory and speed up processing. default is True.'
     )
     # TimeSeries graph
     parser.add_argument(
@@ -1336,7 +1409,7 @@ def make_graph_gml():
     parser.add_argument(
         '--microenv',
         default = 'true',
-        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing, similar to the original TimeStep_cells.py script. default is True.'
+        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing. default is True.'
     )
     # TimeSeries graph True
     # TimeSeries physiboss
@@ -1474,7 +1547,7 @@ def plot_scatter():
     parser.add_argument(
         '--microenv',
         default = 'true',
-        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing, similar to the original TimeStep_cells.py script. default is True.',
+        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing. default is True.',
     )
     # TimeSeries graph False
     # TimeSeries physiboss
@@ -1720,7 +1793,7 @@ def make_cell_vtk():
     parser.add_argument(
         '--microenv',
         default = 'true',
-        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing, similar to the original TimeStep_cells.py script. default is True.',
+        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing. default is True.',
     )
     # TimeSeries graph False
     # TimeSeries physiboss
@@ -1793,7 +1866,6 @@ def make_cell_vtk():
         )
         s_opathfile = mcds.make_cell_vtk(
             attribute = args.attribute,
-            visualize = False,
         )
         # going home
         return s_opathfile
@@ -1811,7 +1883,6 @@ def make_cell_vtk():
         )
         ls_opathfile = mcdsts.make_cell_vtk(
             attribute = args.attribute,
-            visualize = False,
         )
         # going home
         return ls_opathfile
@@ -1847,7 +1918,7 @@ def plot_timeseries():
     parser.add_argument(
         '--microenv',
         default = 'true',
-        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing, similar to the original TimeStep_cells.py script. default is True.',
+        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing. default is True.',
     )
     # TimeSeries graph
     # nop
@@ -2123,7 +2194,7 @@ def make_ome_tiff():
     parser.add_argument(
         '--microenv',
         default = 'true',
-        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing, similar to the original TimeStep_cells.py script. default is True.'
+        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing. default is True.'
     )
     # TimeSeries graph False
     # TimeSeries physiboss
@@ -2248,6 +2319,55 @@ def make_ome_tiff():
         )
         # going home
         return o_opathfile
+
+
+#######################
+# render neuroglancer #
+#######################
+
+def render_neuroglancer():
+    # argv
+    parser = argparse.ArgumentParser(
+        prog = 'pcdl_render_neuroglancer',
+        description = 'function to load a time step from an ome tiff files, generated with make_ome_tiff, into neuroglancer.',
+        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
+    )
+    # ome tiff path file
+    parser.add_argument(
+        'tiffpathfile',
+        nargs = '?',
+        default = '.',
+        help = 'path to ome tiff file.',
+    )
+    # time step
+    parser.add_argument(
+        '--timestep',
+        default = 0,
+        type = int,
+        help = 'time step, within a possibly collapsed ome tiff file, to render. the default will work with single time step ome tiff files.',
+    )
+    # intensity colormap
+    parser.add_argument(
+        '--intensity_cmap',
+        default = 'gray',
+        help = 'matlab color map label, used to display expression intensity values. if None, no intensity layers will be generated. https://matplotlib.org/stable/users/explain/colors/colormaps.html',
+    )
+
+    # parse arguments
+    args = parser.parse_args()
+    print(args)
+
+    # process arguments
+    #s_tiffpathfile = args.tiffpathfile.replace('\\','/')
+
+    # run
+    viewer = pcdl.render_neuroglancer(
+        tiffpathfile = args.tiffpathfile,
+        timestep = args.timestep,
+        intensity_cmap = None if (args.intensity_cmap.lower() == 'none') else args.intensity_cmap,
+    )
+    # going home
+    return viewer
 
 
 #################
