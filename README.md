@@ -18,7 +18,7 @@ The pcdl python3 library maintains three branches:
 
 ## Header:
 
-+ Language: python [>= 3.9](https://devguide.python.org/versions/)
++ Language: python [>= 3.10](https://devguide.python.org/versions/)
 + Library dependencies: anndata, bioio, matplotlib, numpy, pandas, (requests), scipy, vtk
 + Date of origin original PhysiCell-Tools python-loader: 2019-09-02
 + Date of origin pcdl fork: 2022-08-30
@@ -140,7 +140,11 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
     + new **render_neuroglancer** function, to render ome tiff image into neuroglancer.
     + new **pcdl_render_neuroglancer** function, to render ome tiff images into neuroglancer.
 
-+ version 3.3.5 (2025-05-xx): elmbeech/physicelldataloader
++ version 3.3.6 (2025-05-13): elmbeech/physicelldataloader
+    + compatible with numpy >= 2.0.0 and python >= 3.9.
+
++ version 3.3.5 (2025-05-13): elmbeech/physicelldataloader
+    + compatible with numpy < 2.0.0 and python >= 3.9.
     + remove pyMCDS and pyMCDSts **make_ome_tiff** and pyCLI **pcdl_make_ome_tiff** to make pyMCS.py stand alone again.
     + new TimeStep **get_cell_attribute_list** function, to retrieve a list of all tracked cell attribute labels.
     + new **pcdl_get_cell_attribute_list** function, to retrieve a list of all tracked cell attribute labels.

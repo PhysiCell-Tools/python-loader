@@ -2065,7 +2065,6 @@ class TestCommandLineInterfaceOmeTiff(object):
 # making movies test code #
 ###########################
 
-# bue 20250107: broken by Ignoring
 class TestCommandLineInterfaceMakeGif(object):
     ''' tests for one  pcdl command line interface  function. '''
 
@@ -2075,7 +2074,7 @@ class TestCommandLineInterfaceMakeGif(object):
 
     def test_pcdl_make_gif_timeseries_default(self):
         s_path = subprocess.run(['pcdl_plot_scatter', s_path_2d], check=False, capture_output=True)
-        s_path = s_path.stderr.decode('UTF8').replace('\r','').replace('\n','').split('Ignoring fixed x limits to fulfill fixed data aspect with adjustable data limits.')[-1]
+        s_path = s_path.stderr.decode('UTF8').replace('\r','').split('\n')[-2]
         s_result = subprocess.run(['pcdl_make_gif', s_path], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
@@ -2086,7 +2085,7 @@ class TestCommandLineInterfaceMakeGif(object):
 
     def test_pcdl_make_gif_timeseries_interface(self):
         s_path = subprocess.run(['pcdl_plot_contour', s_path_2d, 'oxygen', '--ext', 'tiff'], check=False, capture_output=True)
-        s_path = s_path.stderr.decode('UTF8').replace('\r','').replace('\n','').split('Ignoring fixed x limits to fulfill fixed data aspect with adjustable data limits.')[-1]
+        s_path = s_path.stderr.decode('UTF8').replace('\r','').split('\n')[-2]
         s_result = subprocess.run(['pcdl_make_gif', s_path, 'tiff'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
@@ -2096,7 +2095,6 @@ class TestCommandLineInterfaceMakeGif(object):
         shutil.rmtree(s_path)
 
 
-# bue 20250107: broken by Ignoring
 class TestCommandLineInterfaceMakeMove(object):
     ''' tests for one  pcdl command line interface  function. '''
 
@@ -2107,7 +2105,7 @@ class TestCommandLineInterfaceMakeMove(object):
 
     def test_pcdl_make_movie_timeseries_default(self):
         s_path = subprocess.run(['pcdl_plot_scatter', s_path_2d], check=False, capture_output=True)
-        s_path = s_path.stderr.decode('UTF8').replace('\r','').replace('\n','').split('Ignoring fixed x limits to fulfill fixed data aspect with adjustable data limits.')[-1]
+        s_path = s_path.stderr.decode('UTF8').replace('\r','').split('\n')[-2]
         s_result = subprocess.run(['pcdl_make_movie', s_path], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
@@ -2118,7 +2116,7 @@ class TestCommandLineInterfaceMakeMove(object):
 
     def test_pcdl_make_movie_timeseries_interface(self):
         s_path = subprocess.run(['pcdl_plot_contour', s_path_2d, 'oxygen', '--ext', 'tiff'], check=False, capture_output=True)
-        s_path = s_path.stderr.decode('UTF8').replace('\r','').replace('\n','').split('Ignoring fixed x limits to fulfill fixed data aspect with adjustable data limits.')[-1]
+        s_path = s_path.stderr.decode('UTF8').replace('\r','').split('\n')[-2]
         s_result = subprocess.run(['pcdl_make_movie', s_path, 'tiff'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
@@ -2129,7 +2127,7 @@ class TestCommandLineInterfaceMakeMove(object):
 
     def test_pcdl_make_movie_timeseries_farme(self):
         s_path = subprocess.run(['pcdl_plot_contour', s_path_2d, 'oxygen', '--ext', 'jpeg'], check=False, capture_output=True)
-        s_path = s_path.stderr.decode('UTF8').replace('\r','').replace('\n','').split('Ignoring fixed x limits to fulfill fixed data aspect with adjustable data limits.')[-1]
+        s_path = s_path.stderr.decode('UTF8').replace('\r','').split('\n')[-2]
         s_result = subprocess.run(['pcdl_make_movie', s_path, '--framerate', '9'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
