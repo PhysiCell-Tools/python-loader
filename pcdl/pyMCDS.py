@@ -1781,6 +1781,23 @@ class pyMCDS:
         return df_voxel
 
 
+    def get_cell_attribute_list(self):
+        """
+        input:
+
+        output:
+            ls_cellattr: list of strings
+                alphabetically ordered list of all tracked cell attributes.
+
+        description:
+            function returns a list with all cell attribute labels,
+            alphabetically ordered.
+        """
+        df_cell = self.get_cell_df()
+        ls_cellattr = sorted(set(df_cell.columns).difference(es_coor_cell))
+        return ls_cellattr
+
+
     def plot_scatter(self, focus='cell_type', z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title=None, grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=1.0, ax=None, figsizepx=None, ext=None, figbgcolor=None):
         """
         input:

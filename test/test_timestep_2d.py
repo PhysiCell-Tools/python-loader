@@ -598,6 +598,13 @@ class TestPyMcdsCell(object):
     ''' tests for pcdl.pyMCDS cell related functions. '''
     mcds = pcdl.pyMCDS(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
+    def test_mcds_get_cell_attribute_list(self, mcds=mcds):
+        ls_cellattr = mcds.get_cell_attribute_list()
+        assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \
+              (str(type(ls_cellattr)) == "<class 'list'>") and \
+              (str(type(ls_cellattr[0])) == "<class 'str'>") and \
+              (len(ls_cellattr) == 110)
+
     def test_mcds_get_celltype_list(self, mcds=mcds):
         ls_celltype = mcds.get_celltype_list()
         assert(str(type(mcds)) == "<class 'pcdl.pyMCDS.pyMCDS'>") and \

@@ -594,6 +594,52 @@ class TestPyCliCellDfAttribute(object):
         os.remove(s_opathfile)
 
 
+class TestPyCliCellAttributeList(object):
+    ''' tests for one  pcdl command line interface  function. '''
+
+    # timeseries collapsed:
+    # + path (str) nop
+    # + microenv (true, _false_) ok
+    # + physiboss (true, _false_)
+    # + settingxml (string, _none_, _false_) ok
+    # + verbose (true, _false_) nop
+
+    def test_pcdl_get_cell_attribute_list_timeseries(self):
+        s_result = subprocess.run(['pcdl_get_cell_attribute_list', s_path_2d], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_listing = s_result.stderr.decode('UTF8').replace('\r','')
+        assert (s_listing.startswith("['apoptotic_phagocytosis_rate', 'asymmetric"))
+
+    def test_pcdl_get_cell_attribute_list_timeseries_microenv(self):
+        s_result = subprocess.run(['pcdl_get_cell_attribute_list', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_listing = s_result.stderr.decode('UTF8').replace('\r','')
+        assert (s_listing.endswith("'uptake_rates_1', 'velocity_vectorlength', 'velocity_x', 'velocity_y', 'velocity_z']\n"))
+
+    def test_pcdl_get_cell_attribute_list_timeseries_physiboss(self):
+        s_result = subprocess.run(['pcdl_get_cell_attribute_list', s_path_2d, '--physiboss', 'false'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_listing = s_result.stderr.decode('UTF8').replace('\r','')
+        assert (s_listing.startswith("['apoptotic_phagocytosis_rate', 'asymmetric"))
+
+    def test_pcdl_get_cell_attribute_list_timeseries_settingxmlfalse(self):
+        s_result = subprocess.run(['pcdl_get_cell_attribute_list', s_path_2d, '--settingxml', 'false'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_listing = s_result.stderr.decode('UTF8').replace('\r','')
+        assert (s_listing.startswith("['apoptotic_phagocytosis_rate', 'asymmetric"))
+
+    def test_pcdl_get_cell_attribute_list_timeseries_settingxmlnone(self):
+        s_result = subprocess.run(['pcdl_get_cell_attribute_list', s_path_2d, '--settingxml', 'none'], check=False, capture_output=True)
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
+        s_listing = s_result.stderr.decode('UTF8').replace('\r','')
+        assert (s_listing.startswith("['apoptotic_phagocytosis_rate', 'asymmetric"))
+
+
 class TestPyCliCellDf(object):
     ''' tests for one pcdl.pyCli function. '''
 
@@ -1444,7 +1490,7 @@ class TestPyCliPlotScatter(object):
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_stdout = s_result.stdout.decode('UTF8').replace('\r','')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').split('Ignoring fixed x limits to fulfill fixed data aspect with adjustable data limits.')[-1]
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').split('\n')[-2]
         s_opath = '/'.join(s_opathfile.split('/')[:-1])
         assert (os.path.exists(s_opathfile)) and \
            (s_opathfile.endswith('pcdl/output_2d/cell_cell_type_z0.0/output00000024_cell_type.jpeg')) and \
@@ -1463,7 +1509,7 @@ class TestPyCliPlotScatter(object):
            (s_stdout.find("xlim=['none']") > -1) and \
            (s_stdout.find("ylim=['none']") > -1) and \
            (s_stdout.find("xyequal='true'") > -1) and \
-           (s_stdout.find("s='none'") > -1) and \
+           (s_stdout.find("s=1.0") > -1) and \
            (s_stdout.find("figsizepx=['none']") > -1) and \
            (s_stdout.find("ext='jpeg'") > -1) and \
            (s_stdout.find("figbgcolor='none'") > -1)
@@ -1491,9 +1537,9 @@ class TestPyCliPlotScatter(object):
             '--ext', 'tiff',
             '--figbgcolor', 'yellow',
         ], check=False, capture_output=True)
-        print(f'\ns_result: {s_result}\n')
-        print(f'\ns_result.stdout: {s_result.stdout}\n')
-        print(f'\ns_result.stderr: {s_result.stderr}\n')
+        #print(f'\ns_result: {s_result}\n')
+        #print(f'\ns_result.stdout: {s_result.stdout}\n')
+        #print(f'\ns_result.stderr: {s_result.stderr}\n')
         s_stdout = s_result.stdout.decode('UTF8').replace('\r','')
         s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
         s_opath = '/'.join(s_opathfile.split('/')[:-1])
@@ -1514,7 +1560,7 @@ class TestPyCliPlotScatter(object):
            (s_stdout.find("xlim=['-40', '400']") > -1) and \
            (s_stdout.find("ylim=['-30', '300']") > -1) and \
            (s_stdout.find("xyequal='false'") > -1) and \
-           (s_stdout.find("s='74'") > -1) and \
+           (s_stdout.find("s=74.0") > -1) and \
            (s_stdout.find("figsizepx=['842', '531']") > -1) and \
            (s_stdout.find("ext='tiff'") > -1) and \
            (s_stdout.find("figbgcolor='yellow'") > -1)

@@ -93,6 +93,7 @@ pcdl_plot_contour = "pcdl.pyCLI:plot_contour"
 pcdl_make_conc_vtk = "pcdl.pyCLI:make_conc_vtk"
 # cell agent
 pcdl_get_celltype_list = "pcdl.pyCLI:get_celltype_list"
+pcdl_get_cell_attribute_list = "pcdl.pyCLI:get_cell_attribute_list"
 pcdl_get_cell_attribute = "pcdl.pyCLI:get_cell_attribute"
 pcdl_get_cell_df = "pcdl.pyCLI:get_cell_df"
 pcdl_get_anndata = "pcdl.pyCLI:get_anndata"
