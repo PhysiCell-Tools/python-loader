@@ -127,9 +127,9 @@ planemo tool_init --force \
 --example_command 'pcdl_make_cell_vtk output_3d/output00000000.xml cell_type --custom_data_type --microenv true --physiboss true --settingxml PhysiCell_settings.xml --verbose false' \
 --example_input output_3d/output00000000.xml \
 --example_output output_3d/output00000000_cell.vtp \
+--test_case \
 --help_from_command 'pcdl_make_cell_vtk --help' \
 --cite_url https://github.com/elmbeech/physicelldataloader
---test_case
 
 # pcdl_make_conc_vtk
 planemo tool_init --force \
@@ -140,9 +140,9 @@ planemo tool_init --force \
 --example_command 'pcdl_make_conc_vtk output_3d/output00000000.xml --verbose false' \
 --example_input output_3d/output00000000.xml \
 --example_output output_3d/output00000000_conc.vtr \
+--test_case \
 --help_from_command 'pcdl_make_conc_vtk --help' \
 --cite_url https://github.com/elmbeech/physicelldataloader
---test_case
 
 # pcdl_make_graph_gml
 planemo tool_init --force \
@@ -153,9 +153,9 @@ planemo tool_init --force \
 --example_command 'pcdl_make_graph_gml output_3d/output00000012.xml neighbor --custom_data_type --microenv true --physiboss true --settingxml PhysiCell_settings.xml --verbose false --edge_attribute true --node_attribute' \
 --example_input output_3d/output00000012.xml \
 --example_output output_3d/output00000012_neighbor.gml \
+--test_case \
 --help_from_command 'pcdl_get_anndata --help' \
 --cite_url https://github.com/elmbeech/physicelldataloader
---test_case
 
 # pcdl_plot_contour
 planemo tool_init --force \
@@ -166,9 +166,9 @@ planemo tool_init --force \
 --example_command 'pcdl_plot_contour output_3d/output00000012.xml oxygen --verbose false --z_slice 0.0 --extrema none --alpha 1.0 --fill true --cmap viridis --title "" --grid true --xlim none --ylim none --xyequal true --figsizepx none --ext jpeg --figbgcolor none' \
 --example_input output_3d/output00000012.xml \
 --example_output output_3d/conc_oxygen_z-5.0/output00000012_oxygen.jpeg \
+--test_case \
 --help_from_command 'pcdl_plot_contour --help' \
 --cite_url https://github.com/elmbeech/physicelldataloader
---test_case
 
 
 # pcdl_plot_scatter
@@ -180,9 +180,9 @@ planemo tool_init --force \
 --example_command 'pcdl_plot_scatter output_3d/output00000012.xml cell_type --custom_data_type --microenv true --physiboss true --settingxml PhysiCell_settings.xml --verbose false --z_slice 0.0 --z_axis none --alpha 1.0 --cmap viridis --title "" --grid true --legend_loc "lower left" --xlim none --ylim none --xyequal true --s 1.0 --figsizepx none --ext jpeg --figbgcolor none' \
 --example_input output_3d/output00000012.xml \
 --example_output output_3d/cell_cell_type_z-5.0/output00000012_cell_type.jpeg \
+--test_case \
 --help_from_command 'pcdl_plot_scatter --help' \
 --cite_url https://github.com/elmbeech/physicelldataloader
---test_case
 
 # pcdl_plot_timeseries
 planemo tool_init --force \
