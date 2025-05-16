@@ -1,0 +1,75 @@
+<tool id="pcdl_get_version" name="pcdl_get_version" version="3.0.0+galaxy0" python_template_version="3.5" profile="21.05">
+    <requirements>
+        <requirement type="package" version="3.3.6">pcdl</requirement>
+    </requirements>
+
+    <stdio>
+        <exit_code
+            range=":"
+            level="log"
+            description="hello world!"
+        />
+    </stdio>
+    <command detect_errors="exit_code"><![CDATA[
+        #import re
+	mkdir output_pc &&
+	#for $file in $path:
+            #set $filename = re.sub('[^\w\-\.\s]', '_', str($file.element_identifier))
+	    ln -s $file output_pc/$filename &&
+	#end for
+
+        pcdl_get_version output_pc --verbose $verbose 2> $version
+    ]]></command>
+
+    <inputs>
+        <section name="positional arguments:" expanded="true">
+        <param
+            name="path" label="path"
+            type="data_collection" collection_type="list"
+            help="path to the PhysiCell output data collection"
+        />
+        </section>
+
+        <section name="options:" expanded="true">
+        <param
+            name="verbose" label="verbose"
+            type="boolean" truevalue="true" falsevalue="false"
+            checked="false"
+            help="setting verbose to True for more text output, while processing. default is False."
+        />
+        </section>
+    </inputs>
+
+    <outputs>
+        <data
+            name="version" label="version"
+            format="txt"
+        />
+    </outputs>
+
+    <tests>
+        <test>
+            <param name="path" value="output_pc"/>
+            <output name="version" file="version.txt"/>
+        </test>
+    </tests>
+
+    <help><![CDATA[
+this function is extracting PhysiCell and MultiCellDS version from the dataset
+and the installed pcdl module version.
+
+homepage: https://github.com/elmbeech/physicelldataloader
+
+    ]]></help>
+    <citations>
+        <citation type="bibtex">
+        @misc{githubphysicelldataloader,
+            author = {Bucher, Elmar},
+            year = {2025},
+            title = {physicelldataloader},
+            publisher = {GitHub},
+            journal = {GitHub repository},
+            url = {https://github.com/elmbeech/physicelldataloader},
+        }</citation>
+    </citations>
+</tool>
