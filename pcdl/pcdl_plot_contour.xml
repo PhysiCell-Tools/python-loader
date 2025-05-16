@@ -3,7 +3,8 @@
         <requirement type="package" version="3.3.6">pcdl</requirement>
     </requirements>
 
-    <command detect_errors="exit_code"><![CDATA[
+    <stdio> <exit_code range=":" level="log" description="hello world!"/> </stdio>
+    <command><![CDATA[
         #import re
         mkdir output_pc &&
         #for $file in $path:
@@ -11,12 +12,11 @@
             ln -s $file output_pc/$filename &&
         #end for
 
-        pcdl_plot_contour output_pc $focus --verbose $verbose --z_slice $z_slice --extrema $extrema --alpha $alpha --fill $fill --cmap $cmap --title "$title" --grid $grid --xlim $xlim --ylim $ylim --xyequal $xyequal --figsizepx $figsizepx --ext $ext --figbgcolor $figbgcolor 2> $sterr
-
+        pcdl_plot_contour output_pc $focus --verbose $verbose --z_slice $z_slice --extrema $extrema --alpha $alpha --fill $fill --cmap $cmap --title "$title" --grid $grid --xlim $xlim --ylim $ylim --xyequal $xyequal --figsizepx $figsizepx --ext $ext --figbgcolor $figbgcolor
     ]]></command>
 
     <inputs>
-        <section name="positional arguments:" expanded="true">
+        <section name="positional_arguments" title="positional arguments:" expanded="true">
         <param
             name="path" label="path"
             type="data_collection" collection_type="list"
@@ -29,115 +29,99 @@
         />
         </section>
 
-        <section name="options:" expanded="true">
+        <section name="options" title="options:" expanded="true">
         <param
             name="verbose" label="verbose"
-            type="boolean" truevalue="true" falsevalue="false"
-            checked="false"
+            type="boolean" truevalue="true" falsevalue="false" checked="false"
             help="setting verbose to True for more text output, while processing. default is False."
         />
         <param
             name="z_slice" label="z_slice"
-            type="float"
-            value="0.0" optional="false"
+            type="float" value="0.0" optional="false"
             help="z-axis position to slice a 2D xy-plain out of the 3D mesh. if z_slice position numeric but not an exact mesh center coordinate, then z_slice will be adjusted to the nearest mesh center value, the smaller one, if the coordinate lies on a saddle point. default is 0.0."
         />
         <param
             name="extrema" label="extrema"
-            type="text"
-            value="none" optional="false"
+            type="text" value="none" optional="false"
             help="two floats separated by a space. None takes min and max from data. default is None."
         />
         <param
             name="alpha" label="alpha"
-            type="float"
-            value="1.0" optional="false"
+            type="float" value="1.0" optional="false"
             help="alpha channel transparency value between 1 (not transparent at all) and 0 (totally transparent). default is 1.0."
         />
         <param
             name="fill" label="fill"
-            type="boolean" truevalue="true" falsevalue="false"
-            checked="true"
+            type="boolean" truevalue="true" falsevalue="false" checked="true"
             help="True generates a matplotlib contourf plot. False generates a matplotlib contour plot. default is True."
         />
         <param
             name="cmap" label="cmap"
-            type="text"
-            value="viridis" optional="false"
+            type="text" value="viridis" optional="false"
             help="matplotlib colormap string from https://matplotlib.org/stable/tutorials/colors/colormaps.html . default is viridis."
         />
         <param
             name="title" label="title"
-            type="text"
-            value="" optional="false"
+            type="text" value="" optional="true"
             help="title prefix. default is an empty string."
         />
         <param
             name="grid" label="grid"
-            type="boolean" truevalue="true" falsevalue="false"
-            checked="true"
+            type="boolean" truevalue="true" falsevalue="false" checked="true"
             help="plot axis grid lines. default is True."
         />
         <param
             name="xlim" label="xlim"
-            type="text"
-            value="none" optional="false"
+            type="text" value="none" optional="false"
             help="two floats separated by a space. x axis min and max value. None takes min and max from mesh x axis range. default is None."
         />
         <param
             name="ylim" label="ylim"
-            type="text"
-            value="none" optional="false"
+            type="text" value="none" optional="false"
             help="two floats separated by a space. y axis min and max value. None takes min and max from mesh y axis range. default is None."
         />
         <param
             name="xyequal" label="xyequal"
-            type="boolean" truevalue="true" falsevalue="false"
-            checked="true"
+            type="boolean" truevalue="true" falsevalue="false" checked="true"
             help="to specify equal axis spacing for x and y axis. default is true."
         />
         <param
             name="figsizepx" label="figsizepx"
-            type="text"
-            value="none" optional="false"
+            type="text" value="none" optional="false"
             help="size of the figure in pixels (integer), x y. the given x and y will be rounded to the nearest even number, to be able to generate movies from the images. None tries to take the values from the initial.svg file. fall back setting is 640 480. default is None."
         />
         <param
             name="ext" label="ext"
-            type="select" display="radio"
-            value="jpeg"
-            help="output image format. possible formats are jpeg, png, and tiff. default is jpeg."
+            type="select" display="radio" value="jpg"
+            help="output image format. possible formats are jpg, png, and tif. default is jpg."
         >
-        <option value="jpeg">jpeg</option>
+        <option value="jpg">jpg</option>
         <option value="png">png</option>
-        <option value="tiff">tiff</option>
+        <option value="tif">tif</option>
         </param>
         <param
             name="figbgcolor" label="figbgcolor"
-            type="text"
-            value="none" optional="false"
-            help="figure background color. None is transparent (png) or white (jpeg, tiff). default is None."
+            type="text" value="none" optional="false"
+            help="figure background color. None is transparent (png) or white (jpg, tif). default is None."
         />
         </section>
     </inputs>
 
     <outputs>
-        <data
-            name="sterr" label="sterr"
-            format="text"
-        />
+        <collection name="plot_contour" label="plot_contour" type="list">
+            <discover_datasets pattern="__name_and_ext__" directory="output_pc/conc_oxygen_z-5.0/" />
+        </collection>
     </outputs>
 
     <tests>
         <test>
             <param name="input1" value="output_3d/output00000012.xml"/>
-            <output name="output1" file="output_3d/conc_oxygen_z-5.0/output00000012_oxygen.jpeg"/>
+            <output name="output1" file="output_3d/conc_oxygen_z-5.0/output00000012_oxygen.jpg"/>
         </test>
     </tests>
 
     <help><![CDATA[
-function generates matplotlib contour (or contourf) plots, inclusive color
-bar, for the substrate specified, under the returned path.
+function generates matplotlib contour (or contourf) plots, inclusive color bar, for the substrate specified, under the returned path.
 
 homepage: https://github.com/elmbeech/physicelldataloader
     ]]></help>

@@ -3,14 +3,8 @@
         <requirement type="package" version="3.3.6">pcdl</requirement>
     </requirements>
 
-    <stdio>
-        <exit_code
-            range=":"
-            level="log"
-            description="hello world!"
-        />
-    </stdio>
-    <command detect_errors="exit_code"><![CDATA[
+    <stdio> <exit_code range=":" level="log" description="hello world!"/> </stdio>
+    <command><![CDATA[
         #import re
 	mkdir output_pc &&
 	#for $file in $path:
@@ -18,11 +12,11 @@
 	    ln -s $file output_pc/$filename &&
 	#end for
 
-        pcdl_get_version output_pc --verbose $verbose 2> $version
+        pcdl_get_version output_pc --verbose $verbose 2> $version_txt
     ]]></command>
 
     <inputs>
-        <section name="positional arguments:" expanded="true">
+        <section name="positional_arguments" title="positional arguments:" expanded="true">
         <param
             name="path" label="path"
             type="data_collection" collection_type="list"
@@ -30,7 +24,7 @@
         />
         </section>
 
-        <section name="options:" expanded="true">
+        <section name="options" title="options:" expanded="true">
         <param
             name="verbose" label="verbose"
             type="boolean" truevalue="true" falsevalue="false"
@@ -41,10 +35,7 @@
     </inputs>
 
     <outputs>
-        <data
-            name="version" label="version"
-            format="txt"
-        />
+        <data name="version_txt" label="version_txt" format="txt" />
     </outputs>
 
     <tests>
@@ -55,12 +46,11 @@
     </tests>
 
     <help><![CDATA[
-this function is extracting PhysiCell and MultiCellDS version from the dataset
-and the installed pcdl module version.
+this function is extracting PhysiCell and MultiCellDS version from the dataset and the installed pcdl module version.
 
 homepage: https://github.com/elmbeech/physicelldataloader
-
     ]]></help>
+
     <citations>
         <citation type="bibtex">
         @misc{githubphysicelldataloader,

@@ -1,0 +1,61 @@
+<tool id="pcdl_make_gif" name="pcdl_make_gif" version="3.0.0+galaxy0" python_template_version="3.5" profile="21.05">
+    <requirements>
+        <requirement type="package" version="3.3.6">pcdl</requirement>
+    </requirements>
+
+    <stdio> <exit_code range=":" level="log" description="hello world!"/> </stdio>
+    <command><![CDATA[
+        #import re
+        mkdir output_pcdl &&
+        #for $file in $path:
+            #set $filename = re.sub('[^\w\-\.\s]', '_', str($file.element_identifier))
+            ln -s $file output_pcdl/$filename &&
+        #end for
+
+        pcdl_make_gif output_pcdl $interface
+    ]]></command>
+
+    <inputs>
+        <section name="positional_arguments" title="positional arguments:" expanded="true">
+        <param
+            name="path" label="path"
+            type="data_collection" collection_type="list"
+            help="images data collection from which the gif will be generated."
+        />
+        <param
+            name="interface" label="interface"
+            type="select" display="radio" value="jpg"
+            help="specify the image format from which the gif will be generated.    
+              these images have to exist under the given path. they can be      
+              generated with the pcdl_plot_scatter or pcdl_plot_contour function.         
+              default is jpg."
+        >
+        <option value="jpg">jpg</option>
+        <option value="png">png</option>
+        <option value="tif">tif</option>
+        </param>
+        </section>
+    </inputs>
+
+    <outputs>
+        <data name="timeseries_gif" label="timeseries_gif" format="gif" from_work_dir="output_3d/cell_cell_type_z-5.0/" />  <!-- cell_cell_type_z-5.0_jpeg.gif -->
+    </outputs>
+
+    <help><![CDATA[
+this function generates a gif movie from all image files found in the path directory in the specified interface file format.
+
+homepage: https://github.com/elmbeech/physicelldataloader
+    ]]></help>
+
+    <citations>
+        <citation type="bibtex">
+        @misc{githubphysicelldataloader,
+            author = {Bucher, Elmar},
+            year = {2025},
+            title = {physicelldataloader},
+            publisher = {GitHub},
+            journal = {GitHub repository},
+            url = {https://github.com/elmbeech/physicelldataloader},
+        }</citation>
+    </citations>
+</tool>
