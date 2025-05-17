@@ -41,7 +41,7 @@
     <tests>
         <test>
             <param name="path" value="output_pc"/>
-            <output name="version" file="version.txt"/>
+            <output name="version_txt" file="version_txt.txt"/>
         </test>
     </tests>
 

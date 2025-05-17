@@ -1,5 +1,4 @@
-<tool id="pcdl_get_cell_attribute_list" name="pcdl_get_cell_attribute_list" version="3.0.0+galaxy0" python_template_version="3.5" profile="21.05">
-
+<tool id="pcdl_get_celltype_list" name="pcdl_get_celltype_list" version="3.0.0+galaxy0" python_template_version="3.5" profile="21.05">
     <requirements>
         <requirement type="package" version="3.3.6">pcdl</requirement>
     </requirements>
@@ -13,7 +12,7 @@
             ln -s $file output_pc/$filename &&
         #end for
 
-        pcdl_get_cell_attribute_list output_pc --microenv $microenv --physiboss $physiboss --settingxml "$settingxml" --verbose $verbose 2> $cell_attribute_txt
+        pcdl_get_celltype_list output_pc --settingxml "$settingxml" --verbose $verbose 2> $celltype_txt
     ]]></command>
 
     <inputs>
@@ -26,16 +25,6 @@
         </section>
 
         <section name="options" title="options:" expanded="true">
-        <param
-            name="microenv" label="microenv"
-            type="boolean" truevalue="true" falsevalue="false" checked="true"
-            help="should the microenvironment be extracted and loaded into the df_cell dataframe? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True."
-        />
-        <param
-            name="physiboss" label="physiboss"
-            type="boolean" truevalue="true" falsevalue="false" checked="true"
-            help="if found, should physiboss state data be extracted and loaded into the df_cell dataframe? default is True."
-        />
         <param
             name="settingxml" label="settingxml"
             type="text" value="PhysiCell_settings.xml" optional="true"
@@ -50,14 +39,15 @@
     </inputs>
 
     <outputs>
-        <data name="cell_attribute_txt" label="cell_attribute_txt" format="txt" />
+        <data name="celltype_txt" label="celltype_txt" format="txt" />
     </outputs>
 
     <help><![CDATA[
-this function is returns a list with all cell attribute labels, alphabetically ordered.
+this function is returns a list with all celltype labels ordered by celltype ID.
 
 homepage: https://github.com/elmbeech/physicelldataloader
     ]]></help>
+
     <citations>
         <citation type="bibtex">
         @misc{githubphysicelldataloader,

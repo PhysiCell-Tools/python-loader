@@ -1,4 +1,4 @@
-<tool id="pcdl_make_gif" name="pcdl_make_gif" version="3.0.0+galaxy0" python_template_version="3.5" profile="21.05">
+<tool id="pcdl_make_movie" name="pcdl_make_movie" version="3.0.0+galaxy0" python_template_version="3.5" profile="21.05">
     <requirements>
         <requirement type="package" version="3.3.6">pcdl</requirement>
     </requirements>
@@ -12,7 +12,7 @@
             ln -s $file output_pcdl/$filename &&
         #end for
 
-        pcdl_make_gif output_pcdl $interface
+        pcdl_make_movie output_pcdl $interface --framerate $framerate
     ]]></command>
 
     <inputs>
@@ -20,26 +20,34 @@
         <param
             name="path" label="path"
             type="data_collection" collection_type="list"
-            help="images data collection from which the gif will be generated."
+            help="images data collection from which the mp4 movie will be generated."
         />
         <param
             name="interface" label="interface"
             type="select" display="radio" value="jpg"
-            help="specify the image format from which the gif will be generated. these images can be generated with the pcdl_plot_scatter or pcdl_plot_contour function. default is jpg."
+            help="specify the image format from which the mp4 movie will be generated. these images can be generated with the pcdl_plot_scatter or pcdl_plot_contour function. default is jpeg."
         >
         <option value="jpg">jpg</option>
         <option value="png">png</option>
         <option value="tif">tif</option>
         </param>
         </section>
+
+        <section name="options" title="options:" expanded="true">
+        <param
+            name="framerate" label="values"
+            type="integer" value="12" optional="false"
+            help="specifies how many images per second will be used. humans are capable of processing 12 images per second and seeing them individually. higher rates are seen as motion. default is 12."
+        />
+        </section>
     </inputs>
 
     <outputs>
-        <data name="timeseries_gif" label="timeseries_gif" format="gif" from_work_dir="output_3d/cell_cell_type_z-5.0/" />  <!-- cell_cell_type_z-5.0_jpeg.gif -->
+        <data name="output1" format="mp4" from_work_dir="output_pc/cell_cell_type_z-5.0/cell_cell_type_z-5.0_jpeg12.mp4" />
     </outputs>
 
     <help><![CDATA[
-this function generates a gif movie from all image files found in the path directory in the specified interface file format.
+this function generates an mp4 movie file from all image files found in the path directory in the specified interface file format.
 
 homepage: https://github.com/elmbeech/physicelldataloader
     ]]></help>

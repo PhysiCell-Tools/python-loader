@@ -1,11 +1,10 @@
-<tool id="pcdl_get_cell_attribute_list" name="pcdl_get_cell_attribute_list" version="3.0.0+galaxy0" python_template_version="3.5" profile="21.05">
-
+<tool id="pcdl_get_unit_dict" name="pcdl_get_unit_dict" version="3.0.0+galaxy0" python_template_version="3.5" profile="21.05">
     <requirements>
         <requirement type="package" version="3.3.6">pcdl</requirement>
     </requirements>
 
     <stdio> <exit_code range=":" level="log" description="hello world!"/> </stdio>
-    <command><![CDATA[
+    <command detect_errors="exit_code"><![CDATA[
         #import re
         mkdir output_pc &&
         #for $file in $path:
@@ -13,7 +12,7 @@
             ln -s $file output_pc/$filename &&
         #end for
 
-        pcdl_get_cell_attribute_list output_pc --microenv $microenv --physiboss $physiboss --settingxml "$settingxml" --verbose $verbose 2> $cell_attribute_txt
+        pcdl_get_unit_dict output_pc --microenv $microenv --settingxml "$settingxml" --verbose $verbose
     ]]></command>
 
     <inputs>
@@ -32,11 +31,6 @@
             help="should the microenvironment be extracted and loaded into the df_cell dataframe? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True."
         />
         <param
-            name="physiboss" label="physiboss"
-            type="boolean" truevalue="true" falsevalue="false" checked="true"
-            help="if found, should physiboss state data be extracted and loaded into the df_cell dataframe? default is True."
-        />
-        <param
             name="settingxml" label="settingxml"
             type="text" value="PhysiCell_settings.xml" optional="true"
             help="the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is PhysiCell_settings.xml."
@@ -50,14 +44,15 @@
     </inputs>
 
     <outputs>
-        <data name="cell_attribute_txt" label="cell_attribute_txt" format="txt" />
+        <data name="unit_dict_csv" label="unit_dict_csv" format="csv" from_work_dir="output_pc/unit_dict_csv.csv" />
     </outputs>
 
     <help><![CDATA[
-this function is returns a list with all cell attribute labels, alphabetically ordered.
+function returns a csv that lists all tracked variables from metadata, cell, and microenvironment and maps them to their unit.
 
 homepage: https://github.com/elmbeech/physicelldataloader
     ]]></help>
+
     <citations>
         <citation type="bibtex">
         @misc{githubphysicelldataloader,
