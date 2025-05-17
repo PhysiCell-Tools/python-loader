@@ -167,7 +167,7 @@
 #--example_input output_3d/output00000012.xml \
 #--example_output output_3d/output00000012_neighbor.gml \
 #--test_case \
-#--help_from_command 'pcdl_get_anndata --help' \
+#--help_from_command 'pcdl_make_graph_gml --help' \
 #--cite_url https://github.com/elmbeech/physicelldataloader
 
 ## pcdl_plot_contour

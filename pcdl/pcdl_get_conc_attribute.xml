@@ -1,10 +1,10 @@
-<tool id="pcdl_get_cell_attribute" name="pcdl_get_cell_attribute" version="3.0.0+galaxy0" python_template_version="3.5" profile="21.05">
+<tool id="pcdl_get_conc_attribute" name="pcdl_get_conc_attribute" version="3.0.0+galaxy0" python_template_version="3.5" profile="21.05">
     <requirements>
         <requirement type="package" version="3.3.6">pcdl</requirement>
     </requirements>
 
     <stdio> <exit_code range=":" level="log" description="hello world!"/> </stdio>
-    <command><![CDATA[
+    <command detect_errors="exit_code"><![CDATA[
         #import re
         mkdir output_pc &&
         #for $file in $path:
@@ -12,10 +12,11 @@
             ln -s $file output_pc/$filename &&
         #end for
 
-        pcdl_get_cell_attribute output_pc $focus --custom_data_type $custom_data_type --microenv $microenv --physiboss $physiboss --settingxml "$settingxml" --verbose $verbose --drop $drop --keep $keep --allvalues $allvalues
+        pcdl_get_conc_attribute output_pc $focus --verbose $verbose --drop $drop --keep $keep --allvalues $allvalues
     ]]></command>
 
     <inputs>
+        <param type="data" name="input1" format="" />
         <section name="positional_arguments" title="positional arguments:" expanded="true">
         <param
             name="path" label="path"
@@ -30,26 +31,6 @@
         </section>
 
         <section name="options" title="options:" expanded="true">
-        <param
-            name="custom_data_type" label="custom_data_type"
-            type="text" value="" optional="true"
-            help="parameter to specify custom_data variable types other than float (namely: int, bool, str) like this var:dtype myint:int mybool:bool mystr:str. downstream float and int will be handled as numeric, bool as Boolean, and str as categorical data. default is an empty string."
-        />
-        <param
-            name="microenv" label="microenv"
-            type="boolean" truevalue="true" falsevalue="false" checked="true"
-            help="should the microenvironment be extracted and loaded into the df_cell dataframe? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True."
-        />
-        <param
-            name="physiboss" label="physiboss"
-            type="boolean" truevalue="true" falsevalue="false" checked="true"
-            help="if found, should physiboss state data be extracted and loaded into the df_cell dataframe? default is True."
-        />
-        <param
-            name="settingxml" label="settingxml"
-            type="text" value="PhysiCell_settings.xml" optional="true"
-            help="the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is PhysiCell_settings.xml."
-        />
         <param
             name="verbose" label="verbose"
             type="boolean" truevalue="true" falsevalue="false" checked="false"
@@ -74,11 +55,12 @@
     </inputs>
 
     <outputs>
-        <data name="cell_attribute_json" label="cell_attribute_json" format="json" from_work_dir="output_pc/cell_attribute_json.json" />
+        <data name="conc_attribute_json" label="conc_attribute_json" format="json" from_work_dir="output_pc/conc_attribute_json.json" />
     </outputs>
 
     <help><![CDATA[
-function to detect informative variables in a time series. this function detects even variables which have less than the minimal state count in each time step, but different values from time step to time step. the output is a json file with an entry of all non-coordinate column names that at least in one of the time steps or in between time steps, reach the given minimal value count. key is the column name, mapped is a list of all values (bool, str, and, if allvalues is True, int and float) or a list with minimum and maximum values (int, float).
+function to detect informative substrate concentration variables in a time series. this function detects even variables which have less than the minimal state count in each time step, but different values from time step to time step. the output is a json file with an entry of all non-coordinate column names that, at least in one of the time steps or in between time steps, reach
+the given minimal value count. key is the column name, mapped is a list of all values (bool, str, and, if allvalues is True, int and float) or a list with minimum and maximum values (int, float).
 
 homepage: https://github.com/elmbeech/physicelldataloader
     ]]></help>

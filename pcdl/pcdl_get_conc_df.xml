@@ -1,4 +1,4 @@
-<tool id="pcdl_get_cell_df" name="pcdl_get_cell_df" version="3.0.0+galaxy0" python_template_version="3.5" profile="21.05">
+<tool id="pcdl_get_conc_df" name="pcdl_get_conc_df" version="3.0.0+galaxy0" python_template_version="3.5" profile="21.05">
     <requirements>
         <requirement type="package" version="3.3.6">pcdl</requirement>
     </requirements>
@@ -12,7 +12,7 @@
             ln -s $file output_pc/$filename &&
         #end for
 
-        pcdl_get_cell_df output_pc $focus --microenv $microenv --physiboss $physiboss --settingxml "$settingxml" --verbose $verbose --drop $drop --keep $keep --collapse $collapse
+        pcdl_get_conc_pc output_3d focus --verbose $verbose --drop $drop --keep $keep --collapse $collapse
     ]]></command>
 
     <inputs>
@@ -30,21 +30,6 @@
         </section>
 
         <section name="options" title="options:" expanded="true">
-        <param
-            name="microenv" label="microenv"
-            type="boolean" truevalue="true" falsevalue="false" checked="true"
-            help="should the microenvironment be extracted and loaded into the df_cell dataframe? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True."
-        />
-        <param
-            name="physiboss" label="physiboss"
-            type="boolean" truevalue="true" falsevalue="false" checked="true"
-            help="if found, should physiboss state data be extracted and loaded into the df_cell dataframe? default is True."
-        />
-        <param
-            name="settingxml" label="settingxml"
-            type="text" value="PhysiCell_settings.xml" optional="true"
-            help="the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is PhysiCell_settings.xml."
-        />
         <param
             name="verbose" label="verbose"
             type="boolean" truevalue="true" falsevalue="false" checked="false"
@@ -69,16 +54,15 @@
     </inputs>
 
     <outputs>
-        <collection name="cell_csv" label="cell_csv" type="list" format="csv">
-            <discover_datasets pattern="__name_and_ext__" directory="output_pc/" />
-        </collection>
+        <data name="output1" format="csv" from_work_dir="output_3d/timeseries_conc.csv" />
     </outputs>
 
     <help><![CDATA[
-this function extracts dataframes with a cell centric view of the simulation and saves them as csv files.
+this function extracts dataframes with concentration values for all chemical species in all voxels and saves them as csv files. additionally, this dataframe lists voxel and mesh center coordinates.
 
 homepage: https://github.com/elmbeech/physicelldataloader
     ]]></help>
+
     <citations>
         <citation type="bibtex">
         @misc{githubphysicelldataloader,
