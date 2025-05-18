@@ -16,7 +16,6 @@
     ]]></command>
 
     <inputs>
-        <param type="data" name="input1" format="" />
         <section name="positional_arguments" title="positional arguments:" expanded="true">
         <param
             name="path" label="path"

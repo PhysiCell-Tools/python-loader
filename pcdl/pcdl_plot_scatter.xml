@@ -87,7 +87,7 @@
         />
         <param
             name="legend_loc" label="legend_loc"
-            type="select" display="radio" value="lower left"
+            type="select" display="radio"
             help="the location of the categorical legend, if applicable. default is 'lower left'"
         >
         <option value="best">best</option>
@@ -95,7 +95,7 @@
         <option value="upper center"></option>
         <option value="upper left"></option>
         <option value="center left"></option>
-        <option value="lower left"></option>
+        <option value="lower left" selected="true"></option>
         <option value="lower center"></option>
         <option value="lower right"></option>
         <option value="center right"></option>
@@ -128,10 +128,10 @@
         />
         <param
             name="ext" label="ext"
-            type="select" display="radio" value="jpg"
+            type="select" display="radio"
             help="output image format. possible formats are jpg, png, and tif. default is jpg."
         >
-        <option value="jpg">jpg</option>
+        <option value="jpg" selected="true">jpg</option>
         <option value="png">png</option>
         <option value="tif">tif</option>
         </param>
@@ -144,13 +144,13 @@
     </inputs>
 
     <outputs>
-        <data name="output1" format="0/output00000012_cell_type.jpeg" from_work_dir="output_3d/cell_cell_type_z-5.0/output00000012_cell_type.jpeg" />
+        <data name="output1" format="jpg" from_work_dir="output_3d/cell_cell_type_z-5.0/output00000012_cell_type.jpg" />
     </outputs>
 
     <tests>
         <test>
             <param name="input1" value="output_3d/output00000012.xml"/>
-            <output name="output1" file="output_3d/cell_cell_type_z-5.0/output00000012_cell_type.jpeg"/>
+            <output name="output1" file="output_3d/cell_cell_type_z-5.0/output00000012_cell_type.jpg"/>
         </test>
     </tests>
 

@@ -24,10 +24,10 @@
         />
         <param
             name="interface" label="interface"
-            type="select" display="radio" value="jpg"
+            type="select" display="radio"
             help="specify the image format from which the gif will be generated. these images can be generated with the pcdl_plot_scatter or pcdl_plot_contour function. default is jpg."
         >
-        <option value="jpg">jpg</option>
+        <option value="jpg" selected="true">jpg</option>
         <option value="png">png</option>
         <option value="tif">tif</option>
         </param>

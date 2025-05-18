@@ -24,10 +24,10 @@
         />
         <param
             name="graph_type" label="graph_type"
-            type="select" display="radio" value="neighbor"
+            type="select" display="radio"
             help="specify which physicell graph output data should be processed. neighbor: neighbor graph dictionary. attached: attached graph dictionary. spring: spring attache graph dictionary."
         >
-        <option value="neighbor">neighbor</option>
+        <option value="neighbor" selected="true">neighbor</option>
         <option value="attached">attached</option>
         <option value="spring">spring</option>
         </param>

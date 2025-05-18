@@ -35,11 +35,11 @@
         />
         <param
             name="aggregate_num" label="aggregate_num"
-            type="select" display="radio" value="mean"
+            type="select" display="radio"
             help="aggregation function {max, mean, median, min, std, var} for focus_num data. default is mean."
         >
         <option value="max">max</option>
-        <option value="mean">mean</option>
+        <option value="mean" selected="true">mean</option>
         <option value="median">median</option>
         <option value="min">min</option>
         <option value="std">std</option>
@@ -75,10 +75,10 @@
         />
         <param
             name="frame" label="frame"
-            type="select" display="radio" value="cell"
+            type="select" display="radio"
             help="to specifies the data dataframe from which the values are taken. cell: agent centric value. conc: whole domain centric substarte concentration values. default is cell."
         >
-        <option value="cell">cell</option>
+        <option value="cell" selected="true">cell</option>
         <option value="conc">conc</option>
         </param>
         <param
@@ -118,10 +118,10 @@
         />
         <param
             name="linestyle" label="linestyle"
-            type="select" display="radio" value="-"
+            type="select" display="radio"
             help="matplotlib line style {-, --, .-, :} string. default is - ."
         >
-        <option value="-">-</option>
+        <option value="-" selected="true">-</option>
         <option value="--">--</option>
         <option value=".-">.-</option>
         <option value=":">:</option>
@@ -154,12 +154,12 @@
         />
         <param
             name="legend" label="legend"
-            type="select" display="radio" value="true"
+            type="select" display="radio"
             help="if True or reverse, place legend on axis subplots. default is True."
         >
         <option value="false">false</option>
         <option value="reverse">reverse</option>
-        <option value="true">true</option>
+        <option value="true" selected="true">true</option>
         </param>
         <param
             name="yunit" label="yunit"
@@ -178,10 +178,10 @@
         />
         <param
             name="ext" label="ext"
-            type="select" display="radio" value="jpg"
+            type="select" display="radio"
             help="output image format. possible formats are jpg, png, and tif. default is jpg."
         >
-        <option value="jpg">jpg</option>
+        <option value="jpg" selected="true">jpg</option>
         <option value="png">png</option>
         <option value="tif">tif</option>
         </param>
@@ -194,7 +194,7 @@
     </inputs>
 
     <outputs>
-        <data name="output1" format="jpeg" from_work_dir="output_3d/timeseries_cell_total_count.jpeg" />
+        <data name="output1" format="jpg" from_work_dir="output_3d/timeseries_cell_total_count.jpg" />
     </outputs>
 
     <help><![CDATA[

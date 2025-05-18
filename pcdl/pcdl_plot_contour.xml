@@ -92,10 +92,10 @@
         />
         <param
             name="ext" label="ext"
-            type="select" display="radio" value="jpg"
+            type="select" display="radio"
             help="output image format. possible formats are jpg, png, and tif. default is jpg."
         >
-        <option value="jpg">jpg</option>
+        <option value="jpg" selected="true">jpg</option>
         <option value="png">png</option>
         <option value="tif">tif</option>
         </param>
