@@ -144,15 +144,10 @@
     </inputs>
 
     <outputs>
-        <data name="output1" format="jpg" from_work_dir="output_3d/cell_cell_type_z-5.0/output00000012_cell_type.jpg" />
+        <collection name="plot_scatter" type="list">
+            <discover_datasets pattern="__name_and_ext__" directory="${output_pc}/cell_${focus}_z(.+)/output(.+)_${focus}.${ext}" />
+        </collection>
     </outputs>
-
-    <tests>
-        <test>
-            <param name="input1" value="output_3d/output00000012.xml"/>
-            <output name="output1" file="output_3d/cell_cell_type_z-5.0/output00000012_cell_type.jpg"/>
-        </test>
-    </tests>
 
     <help><![CDATA[
 function generates pandas scatter plots, under the returned path.

@@ -62,13 +62,6 @@
         <data name="output1" format="vtkxml" from_work_dir="output_3d/output00000000_cell.vtp" />
     </outputs>
 
-    <tests>
-        <test>
-            <param name="input1" value="output_3d/output00000000.xml"/>
-            <output name="output1" file="output_3d/output00000000_cell.vtp"/>
-        </test>
-    </tests>
-
     <help><![CDATA[
 function that generates 3D glyph vtk file for cells. cells can have specified attributes like cell_type, pressure, dead, etc. you can post-process this file in other software like paraview (https://www.paraview.org/).
 

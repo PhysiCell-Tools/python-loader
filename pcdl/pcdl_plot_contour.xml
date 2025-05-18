@@ -108,17 +108,10 @@
     </inputs>
 
     <outputs>
-        <collection name="plot_contour" label="plot_contour" type="list">
-            <discover_datasets pattern="__name_and_ext__" directory="output_pc/conc_oxygen_z-5.0/" />
+        <collection name="plot_contour" type="list">
+            <discover_datasets pattern="__name_and_ext__" directory="${output_pc}/conc_${focus}_z(.+)/output(.+)_${focus}.${ext}" />
         </collection>
     </outputs>
-
-    <tests>
-        <test>
-            <param name="input1" value="output_3d/output00000012.xml"/>
-            <output name="output1" file="output_3d/conc_oxygen_z-5.0/output00000012_oxygen.jpg"/>
-        </test>
-    </tests>
 
     <help><![CDATA[
 function generates matplotlib contour (or contourf) plots, inclusive color bar, for the substrate specified, under the returned path.

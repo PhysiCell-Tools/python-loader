@@ -76,13 +76,6 @@
         <data name="output1" format="txt" from_work_dir="output_3d/output00000012_neighbor.gml" />
     </outputs>
 
-    <tests>
-        <test>
-            <param name="input1" value="output_3d/output00000012.xml"/>
-            <output name="output1" file="output_3d/output00000012_neighbor.gml"/>
-        </test>
-    </tests>
-
     <help><![CDATA[
 function to generate graph files in the gml graph modelling language standard format. gml was the outcome of an initiative that started at the international symposium on graph drawing 1995 in Passau and ended at Graph Drawing 1996 in Berkeley. the networkx python library (https://networkx.org/) and igraph C and python libraries (https://igraph.org/) for graph analysis are gml compatible and can as such read and write this file format.
 

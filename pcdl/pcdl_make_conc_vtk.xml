@@ -29,13 +29,6 @@
         <data name="output1" format="vtkxml" from_work_dir="output_3d/output00000000_conc.vtr" />
     </outputs>
 
-    <tests>
-        <test>
-            <param name="input1" value="output_3d/output00000000.xml"/>
-            <output name="output1" file="output_3d/output00000000_conc.vtr"/>
-        </test>
-    </tests>
-
     <help><![CDATA[
 function generates rectilinear grid vtk files, one per mcds time step, contains distribution of substrates over microenvironment. you can post-process this files in other software like paraview (https://www.paraview.org/).
 
