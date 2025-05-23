@@ -12,11 +12,10 @@
             ln -s $file output_pc/$filename &&
         #end for
 
-        pcdl_plot_timeseries output_pc focus_cat focus_num aggregate_num --custom_data_type "$custom_data_type" --microenv $microenv --physiboss $physiboss --settingxml "$settingxml" --verbose $verbose --frame $frame --z_slice "$z_slice" --logy $logy --ylim "$ylim" --secondary_y $secondary_y --subplots $subplots --sharex $sharex --sharey $sharey --linestyle $linestyle --linewidth "$linewidth" --cmap "$cmap" --color "$color" --grid $grid --legend $legend --yunit "$yunit" --title "$title" --figsizepx "$figsizepx" --ext $ext --figbgcolor "$figbgcolor"
+        pcdl_plot_timeseries output_pc $focus_cat $focus_num $aggregate_num --custom_data_type $custom_data_type --microenv $microenv --physiboss $physiboss --settingxml "$settingxml" --verbose $verbose --frame $frame --z_slice "$z_slice" --logy $logy --ylim "$ylim" --secondary_y $secondary_y --subplots $subplots --sharex $sharex --sharey $sharey --linestyle $linestyle --linewidth "$linewidth" --cmap "$cmap" --color "$color" --grid $grid --legend $legend --yunit "$yunit" --title "$title" --figsizepx $figsizepx --ext $ext --figbgcolor "$figbgcolor"
     ]]></command>
 
     <inputs>
-        <param type="data" name="input1" format="" />
         <section name="positional_arguments" title="positional arguments:" expanded="true">
         <param
             name="path" label="path"
@@ -148,11 +147,6 @@
             help="plot axis grid lines. default is True."
         />
         <param
-            name="" label=""
-            type="boolean" truevalue="true" falsevalue="false" checked="true"
-            help=""
-        />
-        <param
             name="legend" label="legend"
             type="select" display="radio"
             help="if True or reverse, place legend on axis subplots. default is True."
@@ -194,7 +188,9 @@
     </inputs>
 
     <outputs>
-        <data name="plot_timeseries" format="${ext}" from_work_dir="${output_pc}/timeseries_${frame}_(.+).$(ext)" />
+        <collection name="timeseries_plot" type="list">
+            <discover_datasets pattern="(?P&lt;designation&gt;timeseries_.+)\..+" format="jpg" directory="output_pc" visible="false" />
+        </collection>
     </outputs>
 
     <help><![CDATA[
