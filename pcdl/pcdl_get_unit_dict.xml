@@ -4,7 +4,7 @@
     </requirements>
 
     <stdio> <exit_code range=":" level="log" description="hello world!"/> </stdio>
-    <command detect_errors="exit_code"><![CDATA[
+    <command><![CDATA[
         #import re
         mkdir output_pc &&
         #for $file in $path:
@@ -43,9 +43,12 @@
         </section>
     </inputs>
 
-    <outputs>
-        <data name="unit_dict_csv" format="csv" from_work_dir="${output_pc}/timeseries_unit.csv" />
-    </outputs>
+    <outputs>                                                                   
+        <collection name="timeseries_unit" type="list">                                
+            <discover_datasets pattern="(?P&lt;designation&gt;timeseries_unit)\.csv" format="csv" directory="output_pc" visible="false" />
+        </collection>                                                           
+    </outputs>                                                                  
+
 
     <help><![CDATA[
 function returns a csv that lists all tracked variables from metadata, cell, and microenvironment and maps them to their unit.

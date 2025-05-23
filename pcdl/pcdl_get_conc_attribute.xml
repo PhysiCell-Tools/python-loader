@@ -4,7 +4,7 @@
     </requirements>
 
     <stdio> <exit_code range=":" level="log" description="hello world!"/> </stdio>
-    <command detect_errors="exit_code"><![CDATA[
+    <command><![CDATA[
         #import re
         mkdir output_pc &&
         #for $file in $path:
@@ -54,7 +54,9 @@
     </inputs>
 
     <outputs>
-        <data name="conc_attribute_json" format="json" from_work_dir="${output_pc}/timeseries_conc_attribute_(.+).json" />
+        <collection name="conc_attribute_json" type="list">
+            <discover_datasets pattern="(?P&lt;designation&gt;timeseries_conc_attribute_.+)\.json" format="json" directory="output_pc" visible="false" />
+        </collection>
     </outputs>
 
     <help><![CDATA[

@@ -12,7 +12,7 @@
             ln -s $file output_pc/$filename &&
         #end for
 
-        pcdl_get_conc_pc output_3d focus --verbose $verbose --drop $drop --keep $keep --collapse $collapse
+        pcdl_get_conc_df output_pc $focus --verbose $verbose --drop $drop --keep $keep --collapse $collapse
     ]]></command>
 
     <inputs>
@@ -54,8 +54,11 @@
     </inputs>
 
     <outputs>
-        <data name="output1" format="csv" from_work_dir="output_3d/timeseries_conc.csv" />
+        <collection name="conc_csv" type="list">
+            <discover_datasets pattern="(?P&lt;designation&gt;.+_conc)\.csv" format="csv" directory="output_pc" visible="false" />
+        </collection>
     </outputs>
+
 
     <help><![CDATA[
 this function extracts dataframes with concentration values for all chemical species in all voxels and saves them as csv files. additionally, this dataframe lists voxel and mesh center coordinates.

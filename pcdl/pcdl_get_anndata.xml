@@ -90,7 +90,7 @@
 
     <outputs>
         <collection name="anndata_h5ad" type="list">
-            <discover_datasets pattern="__designation__" format="h5ad" directory="output_pc" visible="true" />
+            <discover_datasets pattern="(?P&lt;designation&gt;.+)\.h5ad" format="h5ad" directory="output_pc" visible="false" />
         </collection>
     </outputs>
 

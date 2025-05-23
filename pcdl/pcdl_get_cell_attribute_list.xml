@@ -52,6 +52,12 @@
     <outputs>
         <data name="cell_attribute_txt" label="cell_attribute_txt" format="txt" />
     </outputs>
+    <outputs>
+        <collection name="anndata_h5ad" type="list">
+            <discover_datasets pattern="(?P&lt;designation&gt;.+)\.h5ad" format="h5ad" directory="output_pc" visible="false" />
+        </collection>
+    </outputs>
+
 
     <help><![CDATA[
 this function is returns a list with all cell attribute labels, alphabetically ordered.

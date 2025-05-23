@@ -69,8 +69,8 @@
     </inputs>
 
     <outputs>
-        <collection name="cell_csv" label="cell_csv" type="list" format="csv">
-            <discover_datasets pattern="__name_and_ext__" directory="output_pc/" />
+        <collection name="cell_csv" type="list">
+            <discover_datasets pattern="(?P&lt;designation&gt;.+_cell)\.csv" format="csv" directory="output_pc" visible="false" />
         </collection>
     </outputs>
 

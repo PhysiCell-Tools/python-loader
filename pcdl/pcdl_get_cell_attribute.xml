@@ -74,7 +74,9 @@
     </inputs>
 
     <outputs>
-        <data name="cell_attribute_json" format="json" from_work_dir="${output_pc}/timeseries_cell_attribute_(.+).json" /> <!-- minmax all -->
+        <collection name="cell_attribute_json" type="list">
+            <discover_datasets pattern="(?P&lt;designation&gt;timeseries_cell_attribute_.+)\.json" format="json" directory="output_pc" visible="false" />
+        </collection>
     </outputs>
 
     <help><![CDATA[

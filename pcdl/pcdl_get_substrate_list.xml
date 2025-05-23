@@ -6,10 +6,10 @@
     <stdio> <exit_code range=":" level="log" description="hello world!"/> </stdio>
     <command><![CDATA[
         #import re
-        mkdir output_pcdl &&
+        mkdir output_pc &&
         #for $file in $path:
             #set $filename = re.sub('[^\w\-\.\s]', '_', str($file.element_identifier))
-            ln -s $file output_pcdl/$filename &&
+            ln -s $file output_pc/$filename &&
         #end for
 
         pcdl_get_substrate_list output_pc --verbose $verbose 2> $substrate_txt
