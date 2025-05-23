@@ -59,7 +59,9 @@
     </inputs>
 
     <outputs>
-        <data name="output1" format="vtkxml" from_work_dir="output_3d/output00000000_cell.vtp" />
+        <collection name="cell_vtk" type="list">
+            <discover_datasets pattern="(?P&lt;designation&gt;.+_cell)\.vtp" format="vtp" directory="output_pc" visible="false" />
+        </collection>
     </outputs>
 
     <help><![CDATA[

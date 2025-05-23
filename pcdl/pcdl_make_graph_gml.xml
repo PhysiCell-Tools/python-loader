@@ -12,7 +12,7 @@
             ln -s $file output_pc/$filename &&
         #end for
 
-        pcdl_make_graph_gml output_pc $graph_type --custom_data_type "$custom_data_type" --microenv $microenv --physiboss $physiboss --settingxml "$settingxml" --verbose $verbose --edge_attribute $edge_attribut --node_attribute "$node_attribute"
+        pcdl_make_graph_gml output_pc $graph_type --custom_data_type $custom_data_type --microenv $microenv --physiboss $physiboss --settingxml "$settingxml" --verbose $verbose --edge_attribute $edge_attribute --node_attribute $node_attribute
     ]]></command>
 
     <inputs>
@@ -73,7 +73,9 @@
     </inputs>
 
     <outputs>
-        <data name="output1" format="txt" from_work_dir="output_3d/output00000012_neighbor.gml" />
+        <collection name="graph_gml" type="list">
+            <discover_datasets pattern="(?P&lt;designation&gt;.+)\.gml" format="txt" directory="output_pc" visible="false" />
+        </collection>
     </outputs>
 
     <help><![CDATA[
