@@ -39,7 +39,7 @@
     </outputs>
 
     <tests>
-        <test>
+        <test expect_num_outputs="1">
             <param name="path">
                 <collection type="list">
                     <element name="initial_attached_cells_graph.txt" value="initial_attached_cells_graph.txt" />
@@ -57,12 +57,12 @@
                     <element name="output00000000_microenvironment0.mat" value="output00000000_microenvironment0.mat" />
                     <element name="output00000000_spring_attached_cells_graph.txt" value="output00000000_spring_attached_cells_graph.txt" />
                     <element name="output00000000.xml" value="output00000000.xml" />
-                    <element name="output00000002_attached_cells_graph.txt" value="output00000002_attached_cells_graph.txt" />
-                    <element name="output00000002_cell_neighbor_graph.txt" value="output00000002_cell_neighbor_graph.txt" />
-                    <element name="output00000002_cells.mat" value="output00000002_cells.mat" />
-                    <element name="output00000002_microenvironment0.mat" value="output00000002_microenvironment0.mat" />
-                    <element name="output00000002_spring_attached_cells_graph.txt" value="output00000002_spring_attached_cells_graph.txt" />
-                    <element name="output00000002.xml" value="output00000002.xml" />
+                    <element name="output00000001_attached_cells_graph.txt" value="output00000001_attached_cells_graph.txt" />
+                    <element name="output00000001_cell_neighbor_graph.txt" value="output00000001_cell_neighbor_graph.txt" />
+                    <element name="output00000001_cells.mat" value="output00000001_cells.mat" />
+                    <element name="output00000001_microenvironment0.mat" value="output00000001_microenvironment0.mat" />
+                    <element name="output00000001_spring_attached_cells_graph.txt" value="output00000001_spring_attached_cells_graph.txt" />
+                    <element name="output00000001.xml" value="output00000001.xml" />
                     <element name="final_attached_cells_graph.txt" value="final_attached_cells_graph.txt" />
                     <element name="final_cell_neighbor_graph.txt" value="final_cell_neighbor_graph.txt" />
                     <element name="final_cells.mat" value="final_cells.mat" />
@@ -74,7 +74,11 @@
                 </collection>
             </param>
             <param name="verbose" value="true" />
-            <output name="version_txt" file="version_txt.txt" ftype="txt" />
+            <output name="version_txt" file="version_txt.txt" ftype="txt">
+                <assert_contents>
+                    <has_text text="version:" />
+                </assert_contents>
+            </output>
         </test>
     </tests>
 
