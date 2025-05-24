@@ -1343,7 +1343,7 @@ def get_anndata():
             values = args.values,
             drop = set(args.drop),
             keep = set(args.keep),
-            scale = args.scale,
+            scale = None if (args.scale.lower() == 'none') else args.scale,
         )
         # going home
         s_opathfile = s_pathfile.replace('.xml', f'_cell_{args.scale}.h5ad')
@@ -1367,16 +1367,17 @@ def get_anndata():
             values = args.values,
             drop = set(args.drop),
             keep = set(args.keep),
-            scale = args.scale,  # ERROR
+            scale = None if (args.scale.lower() == 'none') else args.scale,
             collapse = b_collapse,
         )
         # going home
         if b_collapse :
             s_opathfile = f'{s_path}/timeseries_cell_{args.scale}.h5ad'
+            s_opathfile = f'{s_path}/timeseries_cell_{args.scale.lower()}.h5ad'
             ann_mcdsts.write_h5ad(s_opathfile)
             return s_opathfile
         else:
-            ls_opathfile = [f"{s_path}/{s_xmlfile.replace('.xml', '_cell_{}.h5ad'.format(args.scale))}" for s_xmlfile in mcdsts.get_xmlfile_list()]
+            ls_opathfile = [f"{s_path}/{s_xmlfile.replace('.xml', '_cell_{}.h5ad'.format(args.scale.lower()))}" for s_xmlfile in mcdsts.get_xmlfile_list()]
             for i, ann_mcds in enumerate(ann_mcdsts):
                 ann_mcds.write_h5ad(ls_opathfile[i])
             return ls_opathfile
