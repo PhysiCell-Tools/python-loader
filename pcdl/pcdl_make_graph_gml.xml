@@ -74,9 +74,149 @@
 
     <outputs>
         <collection name="graph_gml" type="list">
-            <discover_datasets pattern="(?P&lt;designation&gt;.+)\.gml" format="txt" directory="output_pc" visible="false" />
+            <discover_datasets pattern="(?P&lt;designation&gt;.+)\.gml" format="gml" directory="output_pc" visible="false" />
         </collection>
     </outputs>
+
+    <tests>
+        <test expect_num_outputs="1">
+            <section name="positional_arguments">
+                <param name="path" >
+                    <collection type="list">
+                        <element name="initial_attached_cells_graph.txt" value="initial_attached_cells_graph.txt" />
+                        <element name="initial_cell_neighbor_graph.txt" value="initial_cell_neighbor_graph.txt" />
+                        <element name="initial_cells.mat" value="initial_cells.mat" />
+                        <element name="initial_mesh0.mat" value="initial_mesh0.mat" />
+                        <element name="initial_microenvironment0.mat" value="initial_microenvironment0.mat" />
+                        <element name="initial_spring_attached_cells_graph.txt" value="initial_spring_attached_cells_graph.txt" />
+                        <element name="initial.svg" value="initial.svg" />
+                        <element name="initial.xml" value="initial.xml" />
+                        <element name="legend.svg" value="legend.svg" />
+                        <element name="output00000000_attached_cells_graph.txt" value="output00000000_attached_cells_graph.txt" />
+                        <element name="output00000000_cell_neighbor_graph.txt" value="output00000000_cell_neighbor_graph.txt" />
+                        <element name="output00000000_cells.mat" value="output00000000_cells.mat" />
+                        <element name="output00000000_microenvironment0.mat" value="output00000000_microenvironment0.mat" />
+                        <element name="output00000000_spring_attached_cells_graph.txt" value="output00000000_spring_attached_cells_graph.txt" />
+                        <element name="output00000000.xml" value="output00000000.xml" />
+                        <element name="output00000001_attached_cells_graph.txt" value="output00000001_attached_cells_graph.txt" />
+                        <element name="output00000001_cell_neighbor_graph.txt" value="output00000001_cell_neighbor_graph.txt" />
+                        <element name="output00000001_cells.mat" value="output00000001_cells.mat" />
+                        <element name="output00000001_microenvironment0.mat" value="output00000001_microenvironment0.mat" />
+                        <element name="output00000001_spring_attached_cells_graph.txt" value="output00000001_spring_attached_cells_graph.txt" />
+                        <element name="output00000001.xml" value="output00000001.xml" />
+                        <element name="final_attached_cells_graph.txt" value="final_attached_cells_graph.txt" />
+                        <element name="final_cell_neighbor_graph.txt" value="final_cell_neighbor_graph.txt" />
+                        <element name="final_cells.mat" value="final_cells.mat" />
+                        <element name="final_microenvironment0.mat" value="final_microenvironment0.mat" />
+                        <element name="final_spring_attached_cells_graph.txt" value="final_spring_attached_cells_graph.txt" />
+                        <element name="final.svg" value="final.svg" />
+                        <element name="final.xml" value="final.xml" />
+                        <element name="PhysiCell_settings.xml" value="PhysiCell_settings.xml" />
+                    </collection>
+                </param>
+                <param name="graph_type" value="attached" />
+            </section>
+            <section name="options">
+                <param name="verbose" value="false" />
+            </section>
+            <output_collection name="graph_gml" count="2">
+                 <element name="output00000000_attached" file="output00000000_attached.gml" ftype="gml" />
+                 <element name="output00000001_attached" file="output00000001_attached.gml" ftype="gml" />
+            </output_collection>
+        </test>
+
+        <test expect_num_outputs="1">
+            <section name="positional_arguments">
+                <param name="path" >
+                    <collection type="list">
+                        <element name="initial_attached_cells_graph.txt" value="initial_attached_cells_graph.txt" />
+                        <element name="initial_cell_neighbor_graph.txt" value="initial_cell_neighbor_graph.txt" />
+                        <element name="initial_cells.mat" value="initial_cells.mat" />
+                        <element name="initial_mesh0.mat" value="initial_mesh0.mat" />
+                        <element name="initial_microenvironment0.mat" value="initial_microenvironment0.mat" />
+                        <element name="initial_spring_attached_cells_graph.txt" value="initial_spring_attached_cells_graph.txt" />
+                        <element name="initial.svg" value="initial.svg" />
+                        <element name="initial.xml" value="initial.xml" />
+                        <element name="legend.svg" value="legend.svg" />
+                        <element name="output00000000_attached_cells_graph.txt" value="output00000000_attached_cells_graph.txt" />
+                        <element name="output00000000_cell_neighbor_graph.txt" value="output00000000_cell_neighbor_graph.txt" />
+                        <element name="output00000000_cells.mat" value="output00000000_cells.mat" />
+                        <element name="output00000000_microenvironment0.mat" value="output00000000_microenvironment0.mat" />
+                        <element name="output00000000_spring_attached_cells_graph.txt" value="output00000000_spring_attached_cells_graph.txt" />
+                        <element name="output00000000.xml" value="output00000000.xml" />
+                        <element name="output00000001_attached_cells_graph.txt" value="output00000001_attached_cells_graph.txt" />
+                        <element name="output00000001_cell_neighbor_graph.txt" value="output00000001_cell_neighbor_graph.txt" />
+                        <element name="output00000001_cells.mat" value="output00000001_cells.mat" />
+                        <element name="output00000001_microenvironment0.mat" value="output00000001_microenvironment0.mat" />
+                        <element name="output00000001_spring_attached_cells_graph.txt" value="output00000001_spring_attached_cells_graph.txt" />
+                        <element name="output00000001.xml" value="output00000001.xml" />
+                        <element name="final_attached_cells_graph.txt" value="final_attached_cells_graph.txt" />
+                        <element name="final_cell_neighbor_graph.txt" value="final_cell_neighbor_graph.txt" />
+                        <element name="final_cells.mat" value="final_cells.mat" />
+                        <element name="final_microenvironment0.mat" value="final_microenvironment0.mat" />
+                        <element name="final_spring_attached_cells_graph.txt" value="final_spring_attached_cells_graph.txt" />
+                        <element name="final.svg" value="final.svg" />
+                        <element name="final.xml" value="final.xml" />
+                        <element name="PhysiCell_settings.xml" value="PhysiCell_settings.xml" />
+                    </collection>
+                </param>
+                <param name="graph_type" value="neighbor" />
+            </section>
+            <section name="options">
+                <param name="verbose" value="false" />
+            </section>
+            <output_collection name="graph_gml" count="2">
+                 <element name="output00000000_neighbor" file="output00000000_neighbor.gml" ftype="gml" />
+                 <element name="output00000001_neighbor" file="output00000001_neighbor.gml" ftype="gml" />
+            </output_collection>
+        </test>
+
+        <test expect_num_outputs="1">
+            <section name="positional_arguments">
+                <param name="path" >
+                    <collection type="list">
+                        <element name="initial_attached_cells_graph.txt" value="initial_attached_cells_graph.txt" />
+                        <element name="initial_cell_neighbor_graph.txt" value="initial_cell_neighbor_graph.txt" />
+                        <element name="initial_cells.mat" value="initial_cells.mat" />
+                        <element name="initial_mesh0.mat" value="initial_mesh0.mat" />
+                        <element name="initial_microenvironment0.mat" value="initial_microenvironment0.mat" />
+                        <element name="initial_spring_attached_cells_graph.txt" value="initial_spring_attached_cells_graph.txt" />
+                        <element name="initial.svg" value="initial.svg" />
+                        <element name="initial.xml" value="initial.xml" />
+                        <element name="legend.svg" value="legend.svg" />
+                        <element name="output00000000_attached_cells_graph.txt" value="output00000000_attached_cells_graph.txt" />
+                        <element name="output00000000_cell_neighbor_graph.txt" value="output00000000_cell_neighbor_graph.txt" />
+                        <element name="output00000000_cells.mat" value="output00000000_cells.mat" />
+                        <element name="output00000000_microenvironment0.mat" value="output00000000_microenvironment0.mat" />
+                        <element name="output00000000_spring_attached_cells_graph.txt" value="output00000000_spring_attached_cells_graph.txt" />
+                        <element name="output00000000.xml" value="output00000000.xml" />
+                        <element name="output00000001_attached_cells_graph.txt" value="output00000001_attached_cells_graph.txt" />
+                        <element name="output00000001_cell_neighbor_graph.txt" value="output00000001_cell_neighbor_graph.txt" />
+                        <element name="output00000001_cells.mat" value="output00000001_cells.mat" />
+                        <element name="output00000001_microenvironment0.mat" value="output00000001_microenvironment0.mat" />
+                        <element name="output00000001_spring_attached_cells_graph.txt" value="output00000001_spring_attached_cells_graph.txt" />
+                        <element name="output00000001.xml" value="output00000001.xml" />
+                        <element name="final_attached_cells_graph.txt" value="final_attached_cells_graph.txt" />
+                        <element name="final_cell_neighbor_graph.txt" value="final_cell_neighbor_graph.txt" />
+                        <element name="final_cells.mat" value="final_cells.mat" />
+                        <element name="final_microenvironment0.mat" value="final_microenvironment0.mat" />
+                        <element name="final_spring_attached_cells_graph.txt" value="final_spring_attached_cells_graph.txt" />
+                        <element name="final.svg" value="final.svg" />
+                        <element name="final.xml" value="final.xml" />
+                        <element name="PhysiCell_settings.xml" value="PhysiCell_settings.xml" />
+                    </collection>
+                </param>
+                <param name="graph_type" value="spring" />
+            </section>
+            <section name="options">
+                <param name="verbose" value="false" />
+            </section>
+            <output_collection name="graph_gml" count="2">
+                 <element name="output00000000_spring" file="output00000000_spring.gml" ftype="gml" />
+                 <element name="output00000001_spring" file="output00000001_spring.gml" ftype="gml" />
+            </output_collection>
+        </test>
+    </tests>
 
     <help><![CDATA[
 function to generate graph files in the gml graph modelling language standard format. gml was the outcome of an initiative that started at the international symposium on graph drawing 1995 in Passau and ended at Graph Drawing 1996 in Berkeley. the networkx python library (https://networkx.org/) and igraph C and python libraries (https://igraph.org/) for graph analysis are gml compatible and can as such read and write this file format.
