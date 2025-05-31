@@ -11,8 +11,7 @@
             #set $filename = re.sub('[^\w\-\.\s]', '_', str($file.element_identifier))
             ln -s $file output_pc/$filename &&
         #end for
-
-        pcdl_plot_timeseries output_pc $focus_cat $focus_num $aggregate_num --custom_data_type $custom_data_type --microenv $microenv --physiboss $physiboss --settingxml "$settingxml" --verbose $verbose --frame $frame --z_slice "$z_slice" --logy $logy --ylim "$ylim" --secondary_y $secondary_y --subplots $subplots --sharex $sharex --sharey $sharey --linestyle $linestyle --linewidth "$linewidth" --cmap "$cmap" --color "$color" --grid $grid --legend $legend --yunit "$yunit" --title "$title" --figsizepx $figsizepx --ext $ext --figbgcolor "$figbgcolor"
+        pcdl_plot_timeseries output_pc "$focus_cat" "$focus_num" "$aggregate_num" --custom_data_type $custom_data_type --microenv $microenv --physiboss $physiboss --settingxml "$settingxml" --verbose $verbose --frame $frame --z_slice "$z_slice" --logy $logy --ylim "$ylim" --secondary_y $secondary_y --subplots $subplots --sharex $sharex --sharey $sharey --linestyle $linestyle --linewidth "$linewidth" --cmap "$cmap" --color "$color" --grid $grid --legend $legend --yunit "$yunit" --title "$title" --figsizepx $figsizepx --ext $ext --figbgcolor "$figbgcolor"
     ]]></command>
 
     <inputs>
@@ -173,25 +172,74 @@
         <param
             name="ext" label="ext"
             type="select" display="radio"
-            help="output image format. possible formats are jpg, png, and tif. default is jpg."
+            help="output image format. possible formats are jpeg, png, and tiff. default is jpeg."
         >
-        <option value="jpg" selected="true">jpg</option>
+        <option value="jpeg" selected="true">jpeg</option>
+        <!--
         <option value="png">png</option>
-        <option value="tif">tif</option>
+        <option value="tiff">tiff</option>
+        -->
         </param>
         <param
             name="figbgcolor" label="figbgcolor"
             type="text" value="none" optional="false"
-            help="figure background color. None is transparent (png) or white (jpg, tif). default is None."
+            help="figure background color. None is transparent (png) or white (jpeg, tiff). default is None."
         />
         </section>
     </inputs>
 
     <outputs>
         <collection name="timeseries_plot" type="list">
-            <discover_datasets pattern="(?P&lt;designation&gt;timeseries_.+)\..+" format="jpg" directory="output_pc" visible="false" />
+            <discover_datasets pattern="(?P&lt;designation&gt;timeseries_.+)\.jpeg" format="jpg" directory="output_pc" visible="false" />
         </collection>
     </outputs>
+
+    <tests>
+        <test expect_num_outputs="1">
+            <section name="positional_arguments">
+                <param name="path">
+                    <collection type="list">
+                        <element name="initial_attached_cells_graph.txt" value="initial_attached_cells_graph.txt" />
+                        <element name="initial_cell_neighbor_graph.txt" value="initial_cell_neighbor_graph.txt" />
+                        <element name="initial_cells.mat" value="initial_cells.mat" />
+                        <element name="initial_mesh0.mat" value="initial_mesh0.mat" />
+                        <element name="initial_microenvironment0.mat" value="initial_microenvironment0.mat" />
+                        <element name="initial_spring_attached_cells_graph.txt" value="initial_spring_attached_cells_graph.txt" />
+                        <element name="initial.svg" value="initial.svg" />
+                        <element name="initial.xml" value="initial.xml" />
+                        <element name="legend.svg" value="legend.svg" />
+                        <element name="output00000000_attached_cells_graph.txt" value="output00000000_attached_cells_graph.txt" />
+                        <element name="output00000000_cell_neighbor_graph.txt" value="output00000000_cell_neighbor_graph.txt" />
+                        <element name="output00000000_cells.mat" value="output00000000_cells.mat" />
+                        <element name="output00000000_microenvironment0.mat" value="output00000000_microenvironment0.mat" />
+                        <element name="output00000000_spring_attached_cells_graph.txt" value="output00000000_spring_attached_cells_graph.txt" />
+                        <element name="output00000000.xml" value="output00000000.xml" />
+                        <element name="output00000001_attached_cells_graph.txt" value="output00000001_attached_cells_graph.txt" />
+                        <element name="output00000001_cell_neighbor_graph.txt" value="output00000001_cell_neighbor_graph.txt" />
+                        <element name="output00000001_cells.mat" value="output00000001_cells.mat" />
+                        <element name="output00000001_microenvironment0.mat" value="output00000001_microenvironment0.mat" />
+                        <element name="output00000001_spring_attached_cells_graph.txt" value="output00000001_spring_attached_cells_graph.txt" />
+                        <element name="output00000001.xml" value="output00000001.xml" />
+                        <element name="final_attached_cells_graph.txt" value="final_attached_cells_graph.txt" />
+                        <element name="final_cell_neighbor_graph.txt" value="final_cell_neighbor_graph.txt" />
+                        <element name="final_cells.mat" value="final_cells.mat" />
+                        <element name="final_microenvironment0.mat" value="final_microenvironment0.mat" />
+                        <element name="final_spring_attached_cells_graph.txt" value="final_spring_attached_cells_graph.txt" />
+                        <element name="final.svg" value="final.svg" />
+                        <element name="final.xml" value="final.xml" />
+                        <element name="PhysiCell_settings.xml" value="PhysiCell_settings.xml" />
+                    </collection>
+                </param>
+            </section>
+            <section name="options">
+                <param name="verbose" value="true" />
+            </section>
+            <output_collection name="timeseries_plot" count="1">
+                 <element name="timeseries_cell_total_count" file="timeseries_cell_total_count.jpeg" ftype="jpg" />
+            </output_collection>
+        </test>
+    </tests>
+
 
     <help><![CDATA[
 this function to generate a timeseries plot and either returns a matplotlib figure or an image file (jpeg, png, tiff).
