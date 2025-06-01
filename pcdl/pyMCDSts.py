@@ -502,7 +502,7 @@ class pyMCDSts:
         return dlr_variable_range
 
 
-    def plot_contour(self, focus, z_slice=0.0, extrema=None, alpha=1, fill=True, cmap='viridis', title='', grid=True, xlim=None, ylim=None, xyequal=True, figsizepx=None, jakku=False, ext='jpeg', figbgcolor=None):
+    def plot_contour(self, focus, z_slice=0.0, extrema=None, alpha=1, fill=True, cmap='viridis', title='', grid=True, xlim=None, ylim=None, xyequal=True, figsizepx=None, directory=None, ext='jpeg', figbgcolor=None):
         """
         input:
             self: pyMCDSts class instance
@@ -556,10 +556,10 @@ class pyMCDSts:
                 None tries to take the values from the initial.svg file.
                 fall back setting is [640, 480].
 
-            jakku: boolean; default False
-                if True, then the resulting plots will be moved
-                to a folder named jakku.
-                only set true when this function is run on galaxy.
+            directory: string; default None
+                if None, a meaningful output directory name will be generated,
+                based on focus and z_slice parameters, else the resulting plots
+                will be moved to the explicit name directory.
 
             ext: string; default is jpeg
                 output image format. possible formats are jpeg, png, and tiff.
@@ -637,7 +637,7 @@ class pyMCDSts:
                 xyequal = xyequal,
                 ax = None,
                 figsizepx = figsizepx,
-                jakku = jakku,
+                directory = directory,
                 ext = ext,
                 figbgcolor = figbgcolor,
             )
@@ -834,7 +834,7 @@ class pyMCDSts:
         return dl_variable_range
 
 
-    def plot_scatter(self, focus='cell_type', z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title='', grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=1.0, figsizepx=None, jakku=False, ext='jpeg', figbgcolor=None):
+    def plot_scatter(self, focus='cell_type', z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title='', grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=1.0, figsizepx=None, directory=None, ext='jpeg', figbgcolor=None):
         """
         input:
             self: pyMCDSts class instance
@@ -898,10 +898,10 @@ class pyMCDSts:
                 None tries to take the values from the initial.svg file.
                 fall back setting is [640, 480].
 
-            jakku: boolean; default False
-                if True, then the resulting plots will be moved
-                to a folder named jakku.
-                only set true when this function is run on galaxy.
+            directory: string; default None                                     
+                if None, a meaningful output directory name will be generated,  
+                based on focus and z_slice parameters, else the resulting plots 
+                will be moved to the explicit name directory.                   
 
             ext: string; default is jpeg
                 output image format. possible formats are jpeg, png, and tiff.
@@ -948,7 +948,7 @@ class pyMCDSts:
                 s = s,
                 ax = None,
                 figsizepx = figsizepx,
-                jakku = jakku,
+                directory = directory,
                 ext = ext,
                 figbgcolor = figbgcolor,
             )
