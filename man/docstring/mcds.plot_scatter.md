@@ -51,13 +51,10 @@
             xyequal: boolean; default True
                 to specify equal axis spacing for x and y axis.
 
-            s: integer; default is None
-                scatter plot dot size in pixel.
-                typographic points are 1/72 inch.
-                the marker size s is specified in points**2.
-                plt.rcParams['lines.markersize']**2 is in my case 36.
-                None tries to take the value from the initial.svg file.
-                fall back setting is 36.
+            s: floating point number; default is 1.0
+                scatter plot dot size scale factor.
+                with figsizepx extracted from initial.svg, scale factor 1.0
+                should be ok. adjust if necessary.
 
             ax: matplotlib axis object; default setting is None
                 the ax object, which will be used as a canvas for plotting.
@@ -69,6 +66,11 @@
                 to be able to generate movies from the images.
                 None tries to take the values from the initial.svg file.
                 fall back setting is [640, 480].
+
+            directory: string; default None
+                if None, a meaningful output directory name will be generated,
+                based on focus and z_slice parameters, else the resulting plots
+                will be moved to the explicit name directory.
 
             ext: string; default is None
                 output image format. possible formats are jpeg, png, and tiff.
