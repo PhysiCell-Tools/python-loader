@@ -1106,7 +1106,7 @@ class pyMCDS:
         return df_conc
 
 
-    def plot_contour(self, focus, z_slice=0.0, vmin=None, vmax=None, alpha=1, fill=True, cmap='viridis', title=None, grid=True, xlim=None, ylim=None, xyequal=True, ax=None, figsizepx=None, ext=None, figbgcolor=None):
+    def plot_contour(self, focus, z_slice=0.0, vmin=None, vmax=None, alpha=1, fill=True, cmap='viridis', title=None, grid=True, xlim=None, ylim=None, xyequal=True, ax=None, figsizepx=None, directory=None, ext=None, figbgcolor=None):
         """
         input:
             focus: string
@@ -1167,6 +1167,11 @@ class pyMCDS:
                 to be able to generate movies from the images.
                 None tries to take the values from the initial.svg file.
                 fall back setting is [640, 480].
+
+            directory: string; default None
+                if None, a meaningful output directory name will be generated,
+                based on focus and z_slice parameters, else the resulting plots
+                will be moved to the explicit name directory.
 
             ext: string; default is None
                 output image format. possible formats are jpeg, png, and tiff.
@@ -1288,7 +1293,10 @@ class pyMCDS:
 
         else:
             # handle output path and filename
-            s_path = self.path + f'/conc_{focus}_z{round(z_slice,9)}/'
+            if (directory is None):
+                s_path = self.path + f'/conc_{focus}_z{round(z_slice,9)}/'
+            else:
+                s_path = f'{directory}/'
             os.makedirs(s_path, exist_ok=True)
             s_file = self.xmlfile.replace('.xml', f'_{focus}.{ext}')
             s_pathfile = f'{s_path}{s_file}'
@@ -1798,7 +1806,7 @@ class pyMCDS:
         return ls_cellattr
 
 
-    def plot_scatter(self, focus='cell_type', z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title=None, grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=1.0, ax=None, figsizepx=None, ext=None, figbgcolor=None):
+    def plot_scatter(self, focus='cell_type', z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title=None, grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=1.0, ax=None, figsizepx=None, directory=None, ext=None, figbgcolor=None):
         """
         input:
             focus: string; default is 'cell_type'
@@ -1864,6 +1872,11 @@ class pyMCDS:
                 to be able to generate movies from the images.
                 None tries to take the values from the initial.svg file.
                 fall back setting is [640, 480].
+
+            directory: string; default None
+                if None, a meaningful output directory name will be generated,
+                based on focus and z_slice parameters, else the resulting plots
+                will be moved to the explicit name directory.
 
             ext: string; default is None
                 output image format. possible formats are jpeg, png, and tiff.
@@ -2040,7 +2053,10 @@ class pyMCDS:
 
         else:
             # handle output path and filename
-            s_path = self.path + f'/cell_{focus}_z{round(z_slice,9)}/'
+            if (directory is None):
+                s_path = self.path + f'/cell_{focus}_z{round(z_slice,9)}/'
+            else:
+                s_path = f'{directory}/'
             os.makedirs(s_path, exist_ok=True)
             s_file = self.xmlfile.replace('.xml', f'_{focus}.{ext}')
             s_pathfile = f'{s_path}{s_file}'

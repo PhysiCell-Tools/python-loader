@@ -575,6 +575,12 @@ def plot_contour():
         default = ['none'],
         help = 'size of the figure in pixels (integer), x y. the given x and y will be rounded to the nearest even number, to be able to generate movies from the images. None tries to take the values from the initial.svg file. fall back setting is 640 480. default is None.',
     )
+    # plot_contour directory
+    parser.add_argument(
+        '--directory',
+        default = 'none',
+        help = 'if none, a meaningful output directory name will be generated, based on focus and z_slice parameters, else the resulting plots will be moved to the explicit name directory.',
+    )
     # plot_contour ext
     parser.add_argument(
         '--ext',
@@ -648,6 +654,7 @@ def plot_contour():
             xyequal = False if args.xyequal.lower().startswith('f') else True,
             ax = None,
             figsizepx = None if (args.figsizepx[0].lower() == 'none') else [int(n) for n in args.figsizepx],
+            directory = None if (args.directory.lower() == 'none') else args.directory,
             ext = args.ext,
             figbgcolor = None if (args.figbgcolor.lower() == 'none') else args.figbgcolor,
         )
@@ -679,6 +686,7 @@ def plot_contour():
             ylim = None if (args.ylim[0].lower() == 'none') else args.ylim,
             xyequal = False if args.xyequal.lower().startswith('f') else True,
             figsizepx = None if (args.figsizepx[0].lower() == 'none') else [int(n) for n in args.figsizepx],
+            directory = None if (args.directory.lower() == 'none') else args.directory,
             ext = args.ext,
             figbgcolor = None if (args.figbgcolor.lower() == 'none') else args.figbgcolor,
         )
@@ -1659,6 +1667,12 @@ def plot_scatter():
         default = ['none'],
         help = 'size of the figure in pixels (integer), x y. the given x and y will be rounded to the nearest even number, to be able to generate movies from the images. None tries to take the values from the initial.svg file. fall back setting is 640 480. default is None.',
     )
+    # plot_scatter directory
+    parser.add_argument(
+        '--directory',
+        default = 'none',
+        help = 'if none, a meaningful output directory name will be generated, based on focus and z_slice parameters, else the resulting plots will be moved to the explicit name directory.',
+    )
     # plot_scatter ext
     parser.add_argument(
         '--ext',
@@ -1730,6 +1744,7 @@ def plot_scatter():
             s = args.s,
             ax = None,
             figsizepx = None if (args.figsizepx[0].lower() == 'none') else [int(i) for i in args.figsizepx],
+            directory = None if (args.directory.lower() == 'none') else args.directory,
             ext = args.ext,
             figbgcolor = None if (args.figbgcolor.lower() == 'none') else args.figbgcolor,
         )
@@ -1762,6 +1777,7 @@ def plot_scatter():
             xyequal = False if args.xyequal.lower().startswith('f') else True,
             s = args.s,
             figsizepx = None if (args.figsizepx[0].lower() == 'none') else [int(i) for i in args.figsizepx],
+            directory = None if (args.directory.lower() == 'none') else args.directory,
             ext = args.ext,
             figbgcolor = None if (args.figbgcolor.lower() == 'none') else args.figbgcolor,
         )
