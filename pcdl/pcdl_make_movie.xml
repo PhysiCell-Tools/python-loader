@@ -1,18 +1,18 @@
 <tool id="pcdl_make_movie" name="pcdl_make_movie" version="3.0.0+galaxy0" python_template_version="3.5" profile="21.05">
     <requirements>
-        <requirement type="package" version="3.3.6">pcdl</requirement>
+        <requirement type="package" version="3.3.7">pcdl</requirement>
     </requirements>
 
     <stdio> <exit_code range=":" level="log" description="hello world!"/> </stdio>
     <command><![CDATA[
         #import re
-        mkdir output_pcdl &&
+        mkdir timeseries &&
         #for $file in $path:
             #set $filename = re.sub('[^\w\-\.\s]', '_', str($file.element_identifier))
-            ln -s $file output_pcdl/$filename &&
+            ln -s $file timeseries/$filename &&
         #end for
 
-        pcdl_make_movie output_pcdl $interface --framerate $framerate
+        pcdl_make_movie timeseries $interface --framerate $framerate
     ]]></command>
 
     <inputs>
@@ -27,9 +27,11 @@
             type="select" display="radio"
             help="specify the image format from which the mp4 movie will be generated. these images can be generated with the pcdl_plot_scatter or pcdl_plot_contour function. default is jpeg."
         >
-        <option value="jpg" selected="true">jpg</option>
+        <option value="jpeg" selected="true">jpeg</option>
+        <!--
         <option value="png">png</option>
-        <option value="tif">tif</option>
+        <option value="tiff">tiff</option>
+        -->
         </param>
         </section>
 
@@ -43,8 +45,29 @@
     </inputs>
 
     <outputs>
-        <data name="output1" format="mp4" from_work_dir="output_pc/cell_cell_type_z-5.0/cell_cell_type_z-5.0_jpeg12.mp4" />
+        <collection name="timeseries_mp4" type="list">
+            <discover_datasets pattern="(?P&lt;designation&gt;timeseries_.+)\.mp4" format="mp4" directory="timeseries" visible="false" />
+        </collection>
     </outputs>
+
+    <tests>
+        <test expect_num_outputs="1">
+            <section name="positional_arguments">
+                <param name="path">
+                    <collection type="list">
+                        <element name="output00000000_oxygen.jpeg" value="output00000000_oxygen.jpeg" />
+                        <element name="output00000001_oxygen.jpeg" value="output00000001_oxygen.jpeg" />
+                    </collection>
+                </param>
+            </section>
+            <section name="options">
+                <param name="interface" value="jpeg" />
+            </section>
+            <output_collection name="timeseries_mp4" count="1">
+                 <element name="timeseries_jpeg12" file="timeseries_jpeg12.mp4" ftype="mp4" />
+            </output_collection>
+        </test>
+    </tests>
 
     <help><![CDATA[
 this function generates an mp4 movie file from all image files found in the path directory in the specified interface file format.
