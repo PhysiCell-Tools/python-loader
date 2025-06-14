@@ -1170,7 +1170,7 @@ class pyMCDS:
 
             directory: string; default None
                 if None, a meaningful output directory name will be generated,
-                based on focus and z_slice parameters, else the resulting plots 
+                based on focus and z_slice parameters, else the resulting plots
                 will be moved to the explicit name directory.
 
             ext: string; default is None
@@ -1875,7 +1875,7 @@ class pyMCDS:
 
             directory: string; default None
                 if None, a meaningful output directory name will be generated,
-                based on focus and z_slice parameters, else the resulting plots 
+                based on focus and z_slice parameters, else the resulting plots
                 will be moved to the explicit name directory.
 
             ext: string; default is None
