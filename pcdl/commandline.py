@@ -2342,7 +2342,8 @@ def render_neuroglancer():
     )
     # time step
     parser.add_argument(
-        '--timestep',
+        'timestep',
+        nargs = '?',
         default = 0,
         type = int,
         help = 'time step, within a possibly collapsed ome tiff file, to render. the default will work with single time step ome tiff files.',

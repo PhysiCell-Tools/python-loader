@@ -1,7 +1,5 @@
 # PhysiCell Data Loader Tutorial: pcdl from the Commandline
 
-<!-- bue 2024-08-22: have to check if this works from dos and power shell. it will work somehow, because i can run the cli unit tests -->
-
 The most important commands for down stream data analysis,
 available in the pcdl TimeStep and TimeSeries class,
 can be run straight from a command line shell, like [bash](https://en.wikipedia.org/wiki/Bash_(Unix_shell)), [csh](https://en.wikipedia.org/wiki/C_shell), [dos](https://en.wikipedia.org/wiki/DOS), [fish](https://en.wikipedia.org/wiki/Fish_(Unix_shell)), [ksh](https://en.wikipedia.org/wiki/KornShell), [powershell](https://en.wikipedia.org/wiki/PowerShell), [sh](https://en.wikipedia.org/wiki/Bourne_shell), [tsh](https://en.wikipedia.org/wiki/Tcsh), or [zsh](https://en.wikipedia.org/wiki/Z_shell), to name a view.
@@ -196,6 +194,19 @@ pcdl_get_celltype_list output/output00000000.xml
 pcdl_get_celltype_list -h
 ```
 
+### &#x2728; pcdl\_get\_cell\_attrribute\_list
+
+Output all recorded cell attributes.
+
+```bash
+pcdl_get_cell_attribute_list output
+```
+```bash
+pcdl_get_cell_attribute_list output/output00000000.xml
+```
+```bash
+pcdl_get_cell_attribute_list -h
+```
 
 ### &#x2728; pcdl\_get\_cell\_attribute
 
@@ -417,22 +428,27 @@ Further readings:
 + [TUTORIAL_blender.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_blender.md)
 
 
+### &#x2728; pcdl\_render\_neuroglancer (experimental)
+
+With this command, you can render a time step ome.tiff file or a time step from a whole time series ome.tiff file straight into [neurogalancer](https://neuroglancer-docs.web.app/index.html), which is a WebGL-based viewer that will render the ome.tiff straight in your browser.
+
+&#x26A0; currently, you still have to manually modify the entry point script, as described in the HowTo, to make this command line command work!
+
+Below, we render time step zero into neuroglancer, first utilizing the time step ome.tiff, then using the whole time series ome.tiff.
+```bash
+pcdl_make_ome_tiff output/output00000000.xml
+pcdl_render_neuroglancer output_2d/output00000000_oxygen_water_default_blood_cells_ID.ome.tiff
+```
+```bash
+pcdl_make_ome_tiff output
+pcdl_render_neuroglancer output_2d/pcdl_render_neuroglancer output_2d/timeseries_oxygen_water_default_blood_cells_ID.ome.tiff 3
+```
+```bash
+pcdl_make_ome_tiff -h
+```
+
 
 ## [Making movies](https://en.wikipedia.org/wiki/Making_Movies)
-
-
-### &#x2728; pcdl\_make\_movie
-
-Make a [mp4](https://en.wikipedia.org/wiki/MP4_file_format) movie from the jpeg plots from a time series.
-
-```bash
-pcdl_plot_scatter output
-pcdl_make_movie output/cell_cell_type_z0.0/
-```
-```bash
-pcdl_make_movie -h
-```
-
 
 ### &#x2728; pcdl\_make\_gif
 
@@ -446,7 +462,17 @@ pcdl_make_gif output/cell_cell_type_z0.0/
 pcdl_make_gif -h
 ```
 
+### &#x2728; pcdl\_make\_movie
 
+Make a [mp4](https://en.wikipedia.org/wiki/MP4_file_format) movie from the jpeg plots from a time series.
+
+```bash
+pcdl_plot_scatter output
+pcdl_make_movie output/cell_cell_type_z0.0/
+```
+```bash
+pcdl_make_movie -h
+```
 
 ## Data Clean Up
 

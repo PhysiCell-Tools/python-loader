@@ -8,12 +8,13 @@ into [python3](https://en.wikipedia.org/wiki/Python_(programming_language)).
 
 pcdl was forked from the original [PhysiCell-Tools](https://github.com/PhysiCell-Tools) [python-loader](https://github.com/PhysiCell-Tools/python-loader) implementation.
 
-The pcdl python3 library maintains three branches:
+The pcdl python3 library maintains four branches:
 
 + **Branch version 1** is the original PhysiCell-Tools/python-loader code.
 + **Branch version 2** will be strictly compatible with the original PhysiCell-Tools/python-loader code, although pip installable.
 + **Branch version 3** might break with old habits, although tries to be as much downward compatible as possible.
   The aim of the v3 branch is to get a very lean and agile python3 physicell output interface for the ones coming from the python3 world.
++ Finally, **Branch version 4** reimplemented the backend in a more python3, less C++ like manner.
 
 
 ## Header:
@@ -28,12 +29,12 @@ The pcdl python3 library maintains three branches:
 + Source code: [https://github.com/elmbeech/physicelldataloader](https://github.com/elmbeech/physicelldataloader)
 
 
-## HowTo Guide:
+## &#x2728; HowTo Guide:
 
 + [installation and troubleshooting](https://github.com/elmbeech/physicelldataloader/tree/master/man/HOWTO.md)
 
 
-## Tutorial:
+## &#x2728; Tutorial:
 
 Basics Tutorials:
 
@@ -63,7 +64,7 @@ Extras tutorials for GUI software:
 + [pcdl and paraview](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_paraview.md)
 + [pcdl and blender](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_blender.md)
 + [pcdl and napari](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_napari.md)
-+ [pcdl and fiji imagej](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_fijiimagej.md)
++ [pcdl and fiji imagej, icy, qupath](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_fijiimagej.md)
 + [pcdl and neuroglancer](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_neuroglancer.md)
 
 Slides:
@@ -71,7 +72,7 @@ Slides:
 + [presentations given](https://github.com/elmbeech/physicelldataloader/tree/master/man/lecture)
 
 
-## Reference Manual:
+## &#x2728; Reference Manual:
 
 + [API application interface](https://github.com/elmbeech/physicelldataloader/tree/master/man/REFERENCE.md)
 
@@ -121,7 +122,6 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 ## Road Map:
 
 + evt generate lineage tree graph output files.
-+ evt add DataDiVR support.
 
 ## Release Notes:
 + version 4.0.0 (2025-05-13): elmbeech/physicelldataloader

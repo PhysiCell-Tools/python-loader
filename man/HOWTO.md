@@ -121,6 +121,27 @@ or
 source ~/.bash_profile
 ```
 
+## How to make the experimental pcdl\_render_\neuroglancer command line argument work?
+
+Basically, that pcdl\_render_\neuroglancer command works, python3 has to be run in interactive mode.
+
+This means we have slightly to modify the entry point script; that pip automatically generated.
+This is easy under Linux and MacOsX.
+
+Find out where the entry point script is installed:
+```bash
+which pcdl_render_neuroglancer
+```
+Modify the first line from the entry hook script from something like: `#!/usr/bin/python3.xx`\
+to: `#!/usr/bin/python3.xx -i`
+
+Now you are rolling!
+
+Unfortunately, I have at this moment no idea how under Windows the pcdl\_render_\neuroglancer.exe file could be modified to achieve the same.
+
+I opened an issue at setuptools. If we are lucky, then what we need will be supported in future setuptools versions.
++ https://github.com/pypa/setuptools/issues/5036
+
 
 ## How to load data with pyMCDS.py like in the early days?
 
@@ -146,5 +167,6 @@ pyMCDS.py and the pyMCDS class is very lightweight.
 Besides the python3 core library, this code has only matplotlib, numpy, pandas, scipy, and vtk library dependencies.\
 The pyMCDS class evolved into the pcdl.TimeStep class, which has additionally anndata dependency, which makes the library slightly heavier but much more powerful for downstream data analysis.
 Apart from that, pcdl offers the pcdl.TimeSeries class to handle the mcds snapshots from an entire PhysiCell run, and a set of functions that can be run straight from the command line, without even having to fire up a python3 shell.
-Future branch version 4 will abandon this ancient library structure to become more concise.
-Don't fear. pyMCDS.py is there to last. We will keep on maintaining pyMCDS.py from branch version 3.
+Finally, branch version 4 broke with this ancient library structure because it is just out of time to run the code like this.\
+Stay assured, if you like pyMCDS.py, it is there to last.
+We will keep on maintaining pyMCDS.py from branch version 3.
