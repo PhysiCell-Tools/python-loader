@@ -432,16 +432,16 @@ Further readings:
 
 With this command, you can render a time step ome.tiff file or a time step from a whole time series ome.tiff file straight into [neurogalancer](https://neuroglancer-docs.web.app/index.html), which is a WebGL-based viewer that will render the ome.tiff straight in your browser.
 
-&#x26A0; currently, you still have to manually modify the entry point script, as described in the HowTo, to make this command line command work!
+&#x26A0; currently, you still have to manually modify the entry point script, as described in the [HowTo](https://github.com/elmbeech/physicelldataloader/blob/master/man/HOWTO.md#how-to-make-the-experimental-pcdl_render_neuroglancer-command-line-argument-work), to make this command line command work (and I only know how to do this on Linux and MacOsX)!
 
-Below, we render time step zero into neuroglancer, first utilizing the time step ome.tiff, then using the whole time series ome.tiff.
+Below, we render a time step into neuroglancer, first utilizing the time step ome.tiff, then using the whole time series ome.tiff.
 ```bash
 pcdl_make_ome_tiff output/output00000000.xml
 pcdl_render_neuroglancer output_2d/output00000000_oxygen_water_default_blood_cells_ID.ome.tiff
 ```
 ```bash
 pcdl_make_ome_tiff output
-pcdl_render_neuroglancer output_2d/pcdl_render_neuroglancer output_2d/timeseries_oxygen_water_default_blood_cells_ID.ome.tiff 3
+pcdl_render_neuroglancer output_2d/pcdl_render_neuroglancer output_2d/timeseries_oxygen_water_default_blood_cells_ID.ome.tiff 3  # render time step 3 from the time series
 ```
 ```bash
 pcdl_make_ome_tiff -h

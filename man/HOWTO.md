@@ -141,6 +141,7 @@ Unfortunately, I have at this moment no idea how under Windows the pcdl\_render_
 
 I opened an issue at setuptools. If we are lucky, then what we need will be supported in future setuptools versions.
 + https://github.com/pypa/setuptools/issues/5036
++ https://github.com/pypa/hatch/issues/2003
 
 
 ## How to load data with pyMCDS.py like in the early days?
