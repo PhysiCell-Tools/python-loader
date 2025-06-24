@@ -23,8 +23,10 @@ import json
 import numpy as np
 import os
 import pandas as pd
+import pathlib
 import pcdl
 from scipy import stats
+import subprocess
 import sys
 
 
@@ -2360,16 +2362,12 @@ def render_neuroglancer():
     print(args)
 
     # process arguments
-    #s_tiffpathfile = args.tiffpathfile.replace('\\','/')
+    s_neuromancerpath = str(pathlib.Path(pcdl.__file__).parent).replace('\\','/') + '/'
+    s_tiffpathfile = args.tiffpathfile.replace('\\','/')
 
     # run
-    viewer = pcdl.render_neuroglancer(
-        tiffpathfile = args.tiffpathfile,
-        timestep = args.timestep,
-        intensity_cmap = None if (args.intensity_cmap.lower() == 'none') else args.intensity_cmap,
-    )
-    # going home
-    return viewer
+    # bue 20250623: use subprocess to run python3 in interactive mode to run the neuromancer script, which is needed to keep the neuroglancer web gl server running.
+    subprocess.run(['python3', '-i', f'{s_neuromancerpath}neuromancer.py', s_tiffpathfile, '--timestep', str(args.timestep), '--intensity_cmap', args.intensity_cmap])
 
 
 #################
