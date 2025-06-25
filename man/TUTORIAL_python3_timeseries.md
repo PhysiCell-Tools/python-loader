@@ -55,43 +55,23 @@ Yet, there are additional functions, that only make sense for TimeSeries,
 and those functions will be discussed in this chapter.
 
 For handling TimeSeries, these are the functions:
-```python
-mcdsts.get_xmlfile_list()
-```
-```python
-mcdsts.read_mcds()
-```
-```python
-mcdsts.get_mcds_list()
-```
-```python
-mcdsts.get_annmcds_list()
-```
++ `mcdsts.get_xmlfile_list()`
++ `mcdsts.read_mcds()`
++ `mcdsts.get_mcds_list()`
++ `mcdsts.get_annmcds_list()`
 
 For microenvironment data, this is the function:
-```python
-mcdsts.get_conc_attribute()
-```
++ `mcdsts.get_conc_attribute()`
 
 For cell data, this is the function:
-```python
-mcdsts.get_cell_attribute()
-```
++ `mcdsts.get_cell_attribute()`
 
 For microenvironment and cell data, this is the function:
-```python
-mcdsts.plot_timeseries()
-```
++ `mcdsts.plot_timeseries()`
 
 Besides, there are functions to render a set of jpeg, png, or tiff images into a movie.
-```python
-mcdsts.make_movie()
-pcdl.make_movie()
-```
-```python
-mcdsts.make_gif()
-pcdl.make_gif()
-```
++ `mcdsts.make_movie()` and `pcdl.make_movie()`
++ `mcdsts.make_gif()` and `pcdl.make_gif()`
 
 
 
