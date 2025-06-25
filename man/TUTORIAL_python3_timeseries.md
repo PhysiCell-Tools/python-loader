@@ -13,7 +13,9 @@ and we will not further discuss them here.
 For the details, please read the TimeStep tutorial and study the docstrings!
 
 For microenvironment data, these are the functions:
-#+ mcdsts.get_substrate_list()  # bue: will never be implementd
+<!--
++ mcdsts.get_substrate_list()  # bue: will never be implementd
+-->
 ```python
 mcdsts.get_conc_df()
 ```
@@ -25,8 +27,10 @@ mcdsts.make_conc_vtk()
 ```
 
 For cell data, these are the functions:
-#+ mcdsts.get_celltype_list()  # bue: will never be implementd
-#+ mcdsts.get_cell_attribute_list()  # bue: will never be implementd
+<!--
++ mcdsts.get_celltype_list()  # bue: will never be implementd
++ mcdsts.get_cell_attribute_list()  # bue: will never be implementd
+-->
 ```python
 mcdsts.get_cell_df()
 ```
