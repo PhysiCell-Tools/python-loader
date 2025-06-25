@@ -409,7 +409,7 @@ However, any numerical (bool, int, float) cell\_attribute can be outputted.
 For example: dead, cells\_per\_voxel, or pressure.
 
 These ome.tiff files can be further analyzed,
-for example with the [napari](https://napari.org/stable/) or [fiji imagej](https://fiji.sc/) or [blender](https://www.blender.org/) software,
+for example with the [Napari](https://napari.org/stable/) or [Fiji Imagej](https://fiji.sc/) or [Neuroglancer](https://research.google/blog/an-interactive-automated-3d-reconstruction-of-a-fly-brain/) or [Blender](https://www.blender.org/) or similar software,
 as described in the extra tutorials.
 
 ```bash
@@ -425,27 +425,30 @@ pcdl_make_ome_tiff -h
 Further readings:
 + [TUTORIAL_python3_napari.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_napari.md)
 + [TUTORIAL_fiji_imagej.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_fijiimagej.md)
++ [TUTORIAL_neuroglancer.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_neuroglancer.md)
 + [TUTORIAL_blender.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_blender.md)
 
 
-### &#x2728; pcdl\_render\_neuroglancer (experimental)
+### &#x2728; pcdl\_render\_neuroglancer
 
-With this command, you can render a time step ome.tiff file or a time step from a whole time series ome.tiff file straight into [neurogalancer](https://neuroglancer-docs.web.app/index.html), which is a WebGL-based viewer that will render the ome.tiff straight in your browser.
+With this command, you can render a time step ome.tiff file or a time step from a whole time series ome.tiff file straight into [Neuroglancer](https://research.google/blog/an-interactive-automated-3d-reconstruction-of-a-fly-brain/), which is a [WebGL](https://en.wikipedia.org/wiki/WebGL)-based viewer that will render the ome.tiff straight in your browser.
 
-&#x26A0; currently, you still have to manually modify the entry point script, as described in the [HowTo](https://github.com/elmbeech/physicelldataloader/blob/master/man/HOWTO.md#how-to-make-the-experimental-pcdl_render_neuroglancer-command-line-argument-work), to make this command line command work (and I only know how to do this on Linux and MacOsX)!
-
-Below, we render a time step into neuroglancer, first utilizing the time step ome.tiff, then using the whole time series ome.tiff.
+Below, we render a time step into Neuroglancer, first utilizing the time step ome.tiff, then using the whole time series ome.tiff.
+You can only render one time step at a time and not a entire time series, like, for example, in napari.
 ```bash
 pcdl_make_ome_tiff output/output00000000.xml
 pcdl_render_neuroglancer output_2d/output00000000_oxygen_water_default_blood_cells_ID.ome.tiff
 ```
 ```bash
 pcdl_make_ome_tiff output
-pcdl_render_neuroglancer output_2d/pcdl_render_neuroglancer output_2d/timeseries_oxygen_water_default_blood_cells_ID.ome.tiff 3  # render time step 3 from the time series
+pcdl_render_neuroglancer output_2d/timeseries_oxygen_water_default_blood_cells_ID.ome.tiff 3  # render time step 3 from the time series
 ```
 ```bash
 pcdl_make_ome_tiff -h
 ```
+
+Further readings:
++ [TUTORIAL_neuroglancer.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_neuroglancer.md)
 
 
 ## [Making movies](https://en.wikipedia.org/wiki/Making_Movies)

@@ -121,28 +121,6 @@ or
 source ~/.bash_profile
 ```
 
-## How to make the experimental pcdl\_render_\neuroglancer command line argument work?
-
-Basically, that pcdl\_render_\neuroglancer command works, python3 has to be run in interactive mode.
-
-This means we have slightly to modify the entry point script; that pip automatically generated.
-This is easy under Linux and MacOsX.
-
-Find out where the entry point script is installed:
-```bash
-which pcdl_render_neuroglancer
-```
-Modify the first line from the entry hook script from something like: `#!/usr/bin/python3.xx`\
-to: `#!/usr/bin/python3.xx -i`
-
-Now you are rolling!
-
-Unfortunately, I have at this moment no idea how under Windows the pcdl\_render_\neuroglancer.exe file could be modified to achieve the same.
-
-I opened an issue at setuptools. If we are lucky, then what we need will be supported in future setuptools versions.
-+ https://github.com/pypa/setuptools/issues/5036
-+ https://github.com/pypa/hatch/issues/2003
-
 
 ## How to load data with pyMCDS.py like in the early days?
 

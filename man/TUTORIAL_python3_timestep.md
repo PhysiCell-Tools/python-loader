@@ -423,7 +423,7 @@ Please have a look at [TUTORIAL_paraview.md](https://github.com/elmbeech/physice
 
 ## Microenvironment and Cell Data Related Functions
 
-### &#x2728; PhysiCell Data Analysis with [Napari](https://napari.org/stable/), [Fiji Imagej](https://fiji.sc/), [Neuroglancer](https://neuroglancer-docs.web.app/), and similar software.
+### &#x2728; PhysiCell Data Analysis with [Napari](https://napari.org/stable/), [Fiji Imagej](https://fiji.sc/), [Neuroglancer](https://research.google/blog/an-interactive-automated-3d-reconstruction-of-a-fly-brain/), and similar software.
 
 For substrate and cell agent visualization, data can be saved in open microscopy's [ome.tiff](https://www.openmicroscopy.org/ome-files/) file format.
 
@@ -437,7 +437,7 @@ mcds.make_ome_tiff()  # mark by cell ID + 1.
 mcds.make_ome_tiff('dead')  # mark dead and alive cells.
 ```
 ```python
-mcds.render_neuroglancer(mcds.make_ome_tiff())  # load generated ome.tiff files straigth into the webgl based neuroglancer software.
+mcds.render_neuroglancer(mcds.make_ome_tiff())  # load generated ome.tiff files straigth into the WebGL-based Neuroglancer software.
 ```
 ```python
 help(mcds.make_ome_tiff)
