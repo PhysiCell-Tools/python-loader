@@ -1398,7 +1398,7 @@ class TimeSeries:
             return fig
         else:
             if (focus_num == 'count'):
-                s_ofile = 'timeseries_{frame}_{focus_cat}_{focus_num}.{ext}'.replace(' ','_')
+                s_ofile = f'timeseries_{frame}_{focus_cat}_{focus_num}.{ext}'.replace(' ','_')
             else:
                 s_ofile = f"timeseries_{frame}_{focus_cat}_{focus_num}_{aggregate_num.__name__.replace('np.nan','')}.{ext}".replace(' ','_')
             s_pathfile = self.path + '/' + s_ofile
