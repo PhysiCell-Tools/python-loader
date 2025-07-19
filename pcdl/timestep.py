@@ -1118,7 +1118,7 @@ class TimeStep:
         return df_conc
 
 
-    def plot_contour(self, focus, z_slice=0.0, vmin=None, vmax=None, alpha=1, fill=True, cmap='viridis', title=None, grid=True, xlim=None, ylim=None, xyequal=True, ax=None, figsizepx=None, ext=None, figbgcolor=None, **kawargs):
+    def plot_contour(self, focus, z_slice=0.0, vmin=None, vmax=None, alpha=1, fill=True, cmap='viridis', title=None, grid=True, xlim=None, ylim=None, xyequal=True, ax=None, figsizepx=None, ext=None, figbgcolor=None, **kwargs):
         """
         input:
             focus: string
@@ -1274,9 +1274,9 @@ class TimeStep:
 
         # get contour plot
         if fill:
-            ax.contourf(df_mesh.columns, df_mesh.index, df_mesh.values, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap, kwargs)
+            ax.contourf(df_mesh.columns, df_mesh.index, df_mesh.values, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap, **kwargs)
         else:
-            ax.contour(df_mesh.columns, df_mesh.index, df_mesh.values, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap, kwargs)
+            ax.contour(df_mesh.columns, df_mesh.index, df_mesh.values, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap, **kwargs)
 
         # set title
         if not (title is None):
@@ -1746,7 +1746,7 @@ class TimeStep:
             s = 's',
             grid = grid,
             ax = ax,
-            kwargs,
+            **kwargs,
         )
 
         # plot categorical data legen

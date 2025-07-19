@@ -658,7 +658,7 @@ class TimeSeries:
                 figsizepx = figsizepx,
                 ext = ext,
                 figbgcolor = figbgcolor,
-                kwargs,
+                **kwargs,
             )
             lo_output.append(o_output)
 
@@ -966,6 +966,7 @@ class TimeSeries:
                 figsizepx = figsizepx,
                 ext = ext,
                 figbgcolor = figbgcolor,
+                **kwargs,
             )
             lo_output.append(o_output)
 
@@ -1385,7 +1386,7 @@ class TimeSeries:
                 xlabel = f"time [{mcds.get_unit_dict()['time']}]",
                 title = title,
                 ax = ax,
-                kwargs,
+                **kwargs,
             )
         else:
             # if color
@@ -1406,7 +1407,7 @@ class TimeSeries:
                 xlabel = f"time [{mcds.get_unit_dict()['time']}]",
                 title = title,
                 ax = ax,
-                kwargs,
+                **kwargs,
             )
 
         # output
