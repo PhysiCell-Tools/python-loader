@@ -125,6 +125,10 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 + evt generate lineage tree graph output files.
 
 ## Release Notes:
++ version 4.0.3 (2025-07-20): elmbeech/physicelldataloader
+    + timestep and timeseries **plot_contour**, **plot_scatter**, and **plot_timeseries** handle now **kwargs** arguments.
+    + minor bugfixes.
+
 + version 4.0.2 (2025-06-29): elmbeech/physicelldataloader
     + minor bugfixes.
 
