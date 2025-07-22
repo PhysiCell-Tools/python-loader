@@ -8,18 +8,19 @@ into [python3](https://en.wikipedia.org/wiki/Python_(programming_language)).
 
 pcdl was forked from the original [PhysiCell-Tools](https://github.com/PhysiCell-Tools) [python-loader](https://github.com/PhysiCell-Tools/python-loader) implementation.
 
-The pcdl python3 library maintains three branches:
+The pcdl python3 library maintains four branches:
 
 + **Branch version 1** is the original PhysiCell-Tools/python-loader code.
 + **Branch version 2** will be strictly compatible with the original PhysiCell-Tools/python-loader code, although pip installable.
 + **Branch version 3** might break with old habits, although tries to be as much downward compatible as possible.
   The aim of the v3 branch is to get a very lean and agile python3 physicell output interface for the ones coming from the python3 world.
++ Finally, **Branch version 4** reimplemented the backend in a more python3, less C++ like manner.
 
 
 ## Header:
 
-+ Language: python [>= 3.9](https://devguide.python.org/versions/)
-+ Library dependencies: anndata, matplotlib, numpy, pandas, (requests), scipy, vtk
++ Language: python [>= 3.10](https://devguide.python.org/versions/)
++ Library dependencies: anndata, bioio, matplotlib, numpy, pandas, (requests), scipy, vtk
 + Date of origin original PhysiCell-Tools python-loader: 2019-09-02
 + Date of origin pcdl fork: 2022-08-30
 + Doi: https://doi.org/10.5281/ZENODO.8176399
@@ -28,12 +29,12 @@ The pcdl python3 library maintains three branches:
 + Source code: [https://github.com/elmbeech/physicelldataloader](https://github.com/elmbeech/physicelldataloader)
 
 
-## HowTo Guide:
+## &#x2728; HowTo Guide:
 
 + [installation and troubleshooting](https://github.com/elmbeech/physicelldataloader/tree/master/man/HOWTO.md)
 
 
-## Tutorial:
+## &#x2728; Tutorial:
 
 Basics Tutorials:
 
@@ -49,7 +50,7 @@ Extras tutorials python3 language:
 + [pcdl and python3 and graphs](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_graph.md)
 + [pcdl and python3 and matplotlib](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_matplotlib.md)
 + [pcdl and python3 and vtk](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_vtk.md)
-+ [pcdl and python3 and tiff, png, and jpeg](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_ometiff.md)
++ [pcdl and python3 and ome.tiff, tiff, png, and jpeg](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_ometiff.md)
 + [pcdl and python3 and napari](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_napari.md)
 
 Extras tutorials for other languages than python3:
@@ -62,16 +63,16 @@ Extras tutorials for GUI software:
 
 + [pcdl and paraview](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_paraview.md)
 + [pcdl and blender](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_blender.md)
-<!--
-+ [pcdl and neuroglancer](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_(python3)_neuroglancer.md)
--->
++ [pcdl and napari](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_napari.md)
++ [pcdl and fiji imagej, icy, qupath](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_fijiimagej.md)
++ [pcdl and neuroglancer](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_neuroglancer.md)
 
 Slides:
 
 + [presentations given](https://github.com/elmbeech/physicelldataloader/tree/master/man/lecture)
 
 
-## Reference Manual:
+## &#x2728; Reference Manual:
 
 + [API application interface](https://github.com/elmbeech/physicelldataloader/tree/master/man/REFERENCE.md)
 
@@ -93,11 +94,14 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
 + fork pcdl co-programmer: Furkan Kurtoglu, Jennifer Eng, Heber Rocha
 + fork pcdl continuous testing and feedbacks: Aneequa Sundus, John Metzcar
 + student prj on pcdl:
-  Benjamin Jacobs (make\_gml),
+  Benjamin Jacobs (make\_graph\_gml),
+  Jason Lu (render\_neuroglancer),
   Katie Pletz (beta testing),
+  Leena Sohail (beta testing),
   Marshal Gress (plot\_scatter),
   Nick Oldfather (unit test model),
-  Thierry-Pascal Fleurant (plot\_timeseries)
+  Thierry-Pascal Fleurant (plot\_timeseries),
+  Viviana Kwong (render\_neuroglancer)
 
 Developers, please make pull requests to the https://github.com/elmbeech/physicelldataloader/tree/development branch. Thanks!
 
@@ -118,11 +122,53 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 
 ## Road Map:
 
++ evt generate lineage tree graph output files.
+
 ## Release Notes:
-+ version 3.3.5 (2025-03-xx): elmbeech/physicelldataloader                      
-    + remove pyMCDS and pyMCDSts **make_ome_tiff** and pyCLI **pcdl_make_ome_tiff** removed to make pyMCS.py stand alone again.
-                                                                                
-+ version 3.3.4 (2025-03-07): elmbeech/physicelldataloader                      
++ version 4.0.3 (2025-07-20): elmbeech/physicelldataloader
+    + timestep and timeseries **plot_contour**, **plot_scatter**, and **plot_timeseries** handle now **kwargs** arguments.
+    + minor bugfixes.
+
++ version 4.0.2 (2025-06-29): elmbeech/physicelldataloader
+    + minor bugfixes.
+
++ version 4.0.1 (2025-06-24): elmbeech/physicelldataloader
+    + man updated.
+    + minor bugfixes.
+
++ version 4.0.0 (2025-05-13): elmbeech/physicelldataloader
+    + v4 was forked from v3.3.4!
+    + **mcds.data** struct was rewritten in more python less c++ way.
+    + pyMCDS.py and part of pyAnnData.py was fused to **timestep.py**.
+    + pyMCDSts.py and part of pyAnnData.py was fused to **timeseries.py**.
+    + pyCLI.py was renames to **commandline.py**.
+    + data\_timeseries.py was renamed to **output_data.py**.
+    + TimeStep function **get_concentration** was deprecated because pandas already has this functionlity.
+    + TimeStep function **get_concentration_at** was deprecated because pandas already has this functionlity.
+    + TimeStep function **get_cell_df_at** was deprecated because pandas already has this functionlity.
+    + **make_conc_vtk** and **make_cell_vtk** on the fly visualization was removed because paraview is good enough.
+    + new TimeStep **get_cell_attribute_list** function, to retrieve a list of all tracked cell attribute labels.
+    + new **pcdl_get_cell_attribute_list** function, to retrieve a list of all tracked cell attribute labels.
+    + new **render_neuroglancer** function, to render ome tiff image into neuroglancer.
+    + new **pcdl_render_neuroglancer** function, to render ome tiff images into neuroglancer.
+
++ version 3.3.8 (2025-07-23): elmbeech/physicelldataloader
+    + command line commands return error code 0 if the command runs successfully.
+
++ version 3.3.7 (2025-06-01): elmbeech/physicelldataloader
+    + compatible with current (non end-of-life cycle) python versions.
+    + minor bugfixes.
+
++ version 3.3.6 (2025-05-13): elmbeech/physicelldataloader
+    + compatible with numpy >= 2.0.0 and current (non end-of-life cycle) python versions.
+
++ version 3.3.5 (2025-05-13): elmbeech/physicelldataloader
+    + compatible with numpy < 2.0.0 and current (non end-of-life cycle) python versions.
+    + remove pyMCDS and pyMCDSts **make_ome_tiff** and pyCLI **pcdl_make_ome_tiff** to make pyMCS.py stand alone again.
+    + new TimeStep **get_cell_attribute_list** function, to retrieve a list of all tracked cell attribute labels.
+    + new **pcdl_get_cell_attribute_list** function, to retrieve a list of all tracked cell attribute labels.
+
++ version 3.3.4 (2025-03-07): elmbeech/physicelldataloader
     + replace the **aicsimageio** library dependency with its successor **bioio**. special thanks to Joel Eliason!
     + **make_ome_tiff** can now handel generated file names with > 255 characters. special thank to Genevieve Stein-O'Brien and DanielBergman!
     + **get_mesh_spacing** handels now an edge case correctly that would have resulted in a division by zero. special thanks to Randy Heiland!
