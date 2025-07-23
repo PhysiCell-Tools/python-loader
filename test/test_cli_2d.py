@@ -85,8 +85,8 @@ class TestPyCliUnitDict(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_unit.csv')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_unit_dict_timestep(self):
         o_result = subprocess.run(['pcdl_get_unit_dict', s_pathfile_2d], check=False, capture_output=True)
@@ -94,8 +94,8 @@ class TestPyCliUnitDict(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_unit.csv')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_unit_dict_timestep_microenv(self):
         o_result = subprocess.run(['pcdl_get_unit_dict', s_pathfile_2d, '--microenv', 'false'], check=False, capture_output=True)
@@ -103,8 +103,8 @@ class TestPyCliUnitDict(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_unit.csv')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_unit_dict_timestep_settingxmlfalse(self):
         o_result = subprocess.run(['pcdl_get_unit_dict', s_pathfile_2d, '--settingxml', 'false'], check=False, capture_output=True)
@@ -112,8 +112,8 @@ class TestPyCliUnitDict(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_unit.csv')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_unit_dict_timestep_settingxmlnone(self):
         o_result = subprocess.run(['pcdl_get_unit_dict', s_pathfile_2d, '--settingxml', 'none'], check=False, capture_output=True)
@@ -121,8 +121,8 @@ class TestPyCliUnitDict(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_unit.csv')
+        assert o_result.returncode == 0
 
 
 ##############################
@@ -170,8 +170,8 @@ class TestPyCliConcDfAttribute(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_conc_attribute_minmax.json')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_conc_attribute_timeseries_value(self):
         o_result = subprocess.run(['pcdl_get_conc_attribute', s_path_2d, '2'], check=False, capture_output=True)
@@ -179,8 +179,8 @@ class TestPyCliConcDfAttribute(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_conc_attribute_minmax.json')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_conc_attribute_timeseries_drop(self):
         o_result = subprocess.run(['pcdl_get_conc_attribute', s_path_2d, '--drop', 'conc_type', 'oxygen'], check=False, capture_output=True)
@@ -188,8 +188,8 @@ class TestPyCliConcDfAttribute(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_conc_attribute_minmax.json')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_conc_attribute_timeseries_keep(self):
         o_result = subprocess.run(['pcdl_get_conc_attribute', s_path_2d, '--keep', 'conc_type', 'oxygen'], check=False, capture_output=True)
@@ -197,8 +197,8 @@ class TestPyCliConcDfAttribute(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_conc_attribute_minmax.json')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_conc_attribute_timeseries_allvalues(self):
         o_result = subprocess.run(['pcdl_get_conc_attribute', s_path_2d, '--allvalues', 'true'], check=False, capture_output=True)
@@ -206,8 +206,8 @@ class TestPyCliConcDfAttribute(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_conc_attribute_all.json')
+        assert o_result.returncode == 0
 
 
 class TestPyCliConcDf(object):
@@ -228,8 +228,8 @@ class TestPyCliConcDf(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_conc.csv')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_conc_df_timeseries_collapsed(self):
         o_result = subprocess.run(['pcdl_get_conc_df', s_path_2d, '--collapse', 'false'], check=False, capture_output=True)
@@ -237,9 +237,9 @@ class TestPyCliConcDf(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         for i_step in range(25):
             os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_conc.csv')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_conc_df_timeseries_value(self):
         o_result = subprocess.run(['pcdl_get_conc_df', s_path_2d, '2'], check=False, capture_output=True)
@@ -247,8 +247,8 @@ class TestPyCliConcDf(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_conc.csv')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_conc_df_timeseries_drop(self):
         o_result = subprocess.run(['pcdl_get_conc_df', s_path_2d, '--drop', 'oxygen'], check=False, capture_output=True)
@@ -256,8 +256,8 @@ class TestPyCliConcDf(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_conc.csv')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_conc_df_timeseries_keep(self):
         o_result = subprocess.run(['pcdl_get_conc_df', s_path_2d, '--keep', 'oxygen'], check=False, capture_output=True)
@@ -265,8 +265,8 @@ class TestPyCliConcDf(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_conc.csv')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_conc_df_timestep(self):
         o_result = subprocess.run(['pcdl_get_conc_df', s_pathfile_2d], check=False, capture_output=True)
@@ -274,8 +274,8 @@ class TestPyCliConcDf(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_conc.csv')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_conc_df_timestep_value(self):
         o_result = subprocess.run(['pcdl_get_conc_df', s_pathfile_2d, '2'], check=False, capture_output=True)
@@ -283,8 +283,8 @@ class TestPyCliConcDf(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_conc.csv')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_conc_df_timestep_drop(self):
         o_result = subprocess.run(['pcdl_get_conc_df', s_pathfile_2d, '--drop', 'oxygen'], check=False, capture_output=True)
@@ -292,8 +292,8 @@ class TestPyCliConcDf(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_conc.csv')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_conc_df_timestep_keep(self):
         o_result = subprocess.run(['pcdl_get_conc_df', s_pathfile_2d, '--keep', 'oxygen'], check=False, capture_output=True)
@@ -301,8 +301,8 @@ class TestPyCliConcDf(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_conc.csv')
+        assert o_result.returncode == 0
 
 
 class TestPyCliPlotContour(object):
@@ -334,8 +334,8 @@ class TestPyCliPlotContour(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         shutil.rmtree(f'{s_path_2d}/conc_oxygen_z0.0/')
+        assert o_result.returncode == 0
 
     def test_pcdl_plot_contour_set(self):
         o_result = subprocess.run([
@@ -358,8 +358,8 @@ class TestPyCliPlotContour(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         shutil.rmtree(f'{s_path_2d}/conc_oxygen_z0.0/')
+        assert o_result.returncode == 0
 
 
 class TestPyCliConcVtk(object):
@@ -375,9 +375,9 @@ class TestPyCliConcVtk(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         for i_step in range(25):
             os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_conc.vtr')
+        assert o_result.returncode == 0
 
     def test_pcdl_make_conc_vtk_timestep_default(self):
         o_result = subprocess.run(['pcdl_make_conc_vtk', s_pathfile_2d], check=False, capture_output=True)
@@ -385,8 +385,8 @@ class TestPyCliConcVtk(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_conc.vtr')
+        assert o_result.returncode == 0
 
 
 ################################
@@ -438,8 +438,8 @@ class TestPyCliCellDfAttribute(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_cell_attribute_minmax.json')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_cell_attribute_timeseries_customtype(self):
         o_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--custom_data_type', 'sample:bool'], check=False, capture_output=True)
@@ -447,8 +447,8 @@ class TestPyCliCellDfAttribute(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_cell_attribute_minmax.json')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_cell_attribute_timeseries_microenv(self):
         o_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
@@ -456,8 +456,8 @@ class TestPyCliCellDfAttribute(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_cell_attribute_minmax.json')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_cell_attribute_timeseries_physiboss(self):
         o_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--physiboss', 'false'], check=False, capture_output=True)
@@ -465,8 +465,8 @@ class TestPyCliCellDfAttribute(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_cell_attribute_minmax.json')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_cell_attribute_timeseries_settingxmlfalse(self):
         o_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--settingxml', 'false'], check=False, capture_output=True)
@@ -474,8 +474,8 @@ class TestPyCliCellDfAttribute(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_cell_attribute_minmax.json')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_cell_attribute_timeseries_settingxmlnone(self):
         o_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--settingxml', 'none'], check=False, capture_output=True)
@@ -483,8 +483,8 @@ class TestPyCliCellDfAttribute(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_cell_attribute_minmax.json')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_cell_attribute_timeseries_value(self):
         o_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '2'], check=False, capture_output=True)
@@ -492,8 +492,8 @@ class TestPyCliCellDfAttribute(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_cell_attribute_minmax.json')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_cell_attribute_timeseries_drop(self):
         o_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--drop', 'cell_type', 'oxygen'], check=False, capture_output=True)
@@ -501,8 +501,8 @@ class TestPyCliCellDfAttribute(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_cell_attribute_minmax.json')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_cell_attribute_timeseries_keep(self):
         o_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--keep', 'cell_type', 'oxygen'], check=False, capture_output=True)
@@ -510,8 +510,8 @@ class TestPyCliCellDfAttribute(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_cell_attribute_minmax.json')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_cell_attribute_timeseries_allvalues(self):
         o_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--allvalues', 'true'], check=False, capture_output=True)
@@ -519,8 +519,8 @@ class TestPyCliCellDfAttribute(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_cell_attribute_all.json')
+        assert o_result.returncode == 0
 
 
 class TestPyCliCellAttributeList(object):
@@ -597,8 +597,8 @@ class TestPyCliCellDf(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_cell.csv')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_cell_df_timeseries_collapsed(self):
         o_result = subprocess.run(['pcdl_get_cell_df', s_path_2d, '--collapse', 'false'], check=False, capture_output=True)
@@ -606,9 +606,9 @@ class TestPyCliCellDf(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         for i_step in range(25):
             os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_cell.csv')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_cell_df_timeseries_microenv(self):
         o_result = subprocess.run(['pcdl_get_cell_df', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
@@ -616,8 +616,8 @@ class TestPyCliCellDf(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_cell.csv')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_cell_df_timeseries_physiboss(self):
         o_result = subprocess.run(['pcdl_get_cell_df', s_path_2d, '--physiboss', 'false'], check=False, capture_output=True)
@@ -625,8 +625,8 @@ class TestPyCliCellDf(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_cell.csv')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_cell_df_timeseries_settingxmlfalse(self):
         o_result = subprocess.run(['pcdl_get_cell_df', s_path_2d, '--settingxml', 'false'], check=False, capture_output=True)
@@ -634,8 +634,8 @@ class TestPyCliCellDf(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_cell.csv')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_cell_df_timeseries_settingxmlnone(self):
         o_result = subprocess.run(['pcdl_get_cell_df', s_path_2d, '--settingxml', 'none'], check=False, capture_output=True)
@@ -643,8 +643,8 @@ class TestPyCliCellDf(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_cell.csv')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_cell_df_timeseries_value(self):
         o_result = subprocess.run(['pcdl_get_cell_df', s_path_2d, '2'], check=False, capture_output=True)
@@ -652,8 +652,8 @@ class TestPyCliCellDf(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_cell.csv')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_cell_df_timeseries_drop(self):
         o_result = subprocess.run(['pcdl_get_cell_df', s_path_2d, '--drop', 'cell_type', 'oxygen'], check=False, capture_output=True)
@@ -661,8 +661,8 @@ class TestPyCliCellDf(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_cell.csv')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_cell_df_timeseries_keep(self):
         o_result = subprocess.run(['pcdl_get_cell_df', s_path_2d, '--keep', 'cell_type', 'oxygen'], check=False, capture_output=True)
@@ -670,15 +670,17 @@ class TestPyCliCellDf(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/timeseries_cell.csv')
         assert o_result.returncode == 0
+
     def test_pcdl_get_cell_df_timestep(self):
         o_result = subprocess.run(['pcdl_get_cell_df', s_pathfile_2d], check=False, capture_output=True)
         print(f'o_result: {o_result}\n')
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_cell.csv')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_cell_df_timestep_microenv(self):
         o_result = subprocess.run(['pcdl_get_cell_df', s_pathfile_2d, '--microenv', 'false'], check=False, capture_output=True)
@@ -686,8 +688,8 @@ class TestPyCliCellDf(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_cell.csv')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_cell_df_timestep_physiboss(self):
         o_result = subprocess.run(['pcdl_get_cell_df', s_pathfile_2d, '--physiboss', 'false'], check=False, capture_output=True)
@@ -695,8 +697,8 @@ class TestPyCliCellDf(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_cell.csv')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_cell_df_timestep_settingxmlfalse(self):
         o_result = subprocess.run(['pcdl_get_cell_df', s_pathfile_2d, '--settingxml', 'false'], check=False, capture_output=True)
@@ -704,8 +706,8 @@ class TestPyCliCellDf(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_cell.csv')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_cell_df_timestep_settingxmlnone(self):
         o_result = subprocess.run(['pcdl_get_cell_df', s_pathfile_2d, '--settingxml', 'none'], check=False, capture_output=True)
@@ -713,8 +715,8 @@ class TestPyCliCellDf(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_cell.csv')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_cell_df_timestep_value(self):
         o_result = subprocess.run(['pcdl_get_cell_df', s_pathfile_2d, '2'], check=False, capture_output=True)
@@ -722,8 +724,8 @@ class TestPyCliCellDf(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_cell.csv')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_cell_df_timestep_drop(self):
         o_result = subprocess.run(['pcdl_get_cell_df', s_pathfile_2d, '--drop', 'cell_type', 'oxygen'], check=False, capture_output=True)
@@ -731,8 +733,8 @@ class TestPyCliCellDf(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_cell.csv')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_cell_df_timestep_keep(self):
         o_result = subprocess.run(['pcdl_get_cell_df', s_pathfile_2d, '--keep', 'cell_type', 'oxygen'], check=False, capture_output=True)
@@ -740,8 +742,8 @@ class TestPyCliCellDf(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_cell.csv')
+        assert o_result.returncode == 0
 
 
 class TestPyCliAnndata(object):
@@ -770,8 +772,8 @@ class TestPyCliAnndata(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_cell_maxabs.h5ad')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_anndata_timeseries_collapsed(self):
         o_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--collapse', 'false'], check=False, capture_output=True)
@@ -779,9 +781,9 @@ class TestPyCliAnndata(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         for i_step in range(25):
             os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_cell_maxabs.h5ad')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_anndata_timeseries_customtype(self):
         o_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--custom_data_type', 'sample:bool'], check=False, capture_output=True)
@@ -789,8 +791,8 @@ class TestPyCliAnndata(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_cell_maxabs.h5ad')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_anndata_timeseries_microenv(self):
         o_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
@@ -798,8 +800,8 @@ class TestPyCliAnndata(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_cell_maxabs.h5ad')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_anndata_timeseries_graph(self):
         o_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--graph', 'false'], check=False, capture_output=True)
@@ -807,8 +809,8 @@ class TestPyCliAnndata(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_cell_maxabs.h5ad')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_anndata_timeseries_physiboss(self):
         o_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--physiboss', 'false'], check=False, capture_output=True)
@@ -816,8 +818,8 @@ class TestPyCliAnndata(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_cell_maxabs.h5ad')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_anndata_timeseries_settingxmlfalse(self):
         o_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--settingxml', 'false'], check=False, capture_output=True)
@@ -825,8 +827,8 @@ class TestPyCliAnndata(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_cell_maxabs.h5ad')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_anndata_timeseries_settingxmlnone(self):
         o_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--settingxml', 'none'], check=False, capture_output=True)
@@ -834,8 +836,8 @@ class TestPyCliAnndata(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_cell_maxabs.h5ad')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_anndata_timeseries_value(self):
         o_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '2'], check=False, capture_output=True)
@@ -843,8 +845,8 @@ class TestPyCliAnndata(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_cell_maxabs.h5ad')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_anndata_timeseries_drop(self):
         o_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--drop', 'cell_type', 'oxygen'], check=False, capture_output=True)
@@ -852,8 +854,8 @@ class TestPyCliAnndata(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_cell_maxabs.h5ad')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_anndata_timeseries_keep(self):
         o_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--keep', 'cell_type', 'oxygen'], check=False, capture_output=True)
@@ -861,8 +863,8 @@ class TestPyCliAnndata(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_cell_maxabs.h5ad')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_anndata_timeseries_scale(self):
         o_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--scale', 'std'], check=False, capture_output=True)
@@ -870,8 +872,8 @@ class TestPyCliAnndata(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_cell_std.h5ad')
+        assert o_result.returncode == 0
 
     # timestep
     def test_pcdl_get_anndata_timestep(self):
@@ -880,8 +882,8 @@ class TestPyCliAnndata(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_cell_maxabs.h5ad')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_anndata_timestep_microenv(self):
         o_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--microenv', 'false'], check=False, capture_output=True)
@@ -889,8 +891,8 @@ class TestPyCliAnndata(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_cell_maxabs.h5ad')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_anndata_timestep_graph(self):
         o_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--graph', 'false'], check=False, capture_output=True)
@@ -898,8 +900,8 @@ class TestPyCliAnndata(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_cell_maxabs.h5ad')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_anndata_timestep_physiboss(self):
         o_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--physiboss', 'false'], check=False, capture_output=True)
@@ -907,8 +909,8 @@ class TestPyCliAnndata(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_cell_maxabs.h5ad')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_anndata_timestep_settingxmlfalse(self):
         o_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--settingxml', 'false'], check=False, capture_output=True)
@@ -916,8 +918,8 @@ class TestPyCliAnndata(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_cell_maxabs.h5ad')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_anndata_timestep_settingxmlnone(self):
         o_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--settingxml', 'none'], check=False, capture_output=True)
@@ -925,8 +927,8 @@ class TestPyCliAnndata(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_cell_maxabs.h5ad')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_anndata_timestep_value(self):
         o_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '2'], check=False, capture_output=True)
@@ -934,8 +936,8 @@ class TestPyCliAnndata(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_cell_maxabs.h5ad')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_anndata_timestep_drop(self):
         o_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--drop', 'cell_type', 'oxygen'], check=False, capture_output=True)
@@ -943,8 +945,8 @@ class TestPyCliAnndata(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_cell_maxabs.h5ad')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_anndata_timestep_keep(self):
         o_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--keep', 'cell_type', 'oxygen'], check=False, capture_output=True)
@@ -952,8 +954,8 @@ class TestPyCliAnndata(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_cell_maxabs.h5ad')
+        assert o_result.returncode == 0
 
     def test_pcdl_get_anndata_timestep_scale(self):
         o_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--scale', 'std'], check=False, capture_output=True)
@@ -961,8 +963,8 @@ class TestPyCliAnndata(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_cell_std.h5ad')
+        assert o_result.returncode == 0
 
 
 class TestPyCliGraphGml(object):
@@ -985,9 +987,9 @@ class TestPyCliGraphGml(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         for i_step in range(25):
             os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_neighbor.gml')
+        assert o_result.returncode == 0
 
 
     def test_pcdl_make_graph_gml_timeseries_customtype_nodeattribute_one(self):
@@ -996,9 +998,9 @@ class TestPyCliGraphGml(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         for i_step in range(25):
             os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_neighbor.gml')
+        assert o_result.returncode == 0
 
     def test_pcdl_make_graph_gml_timeseries_microenv(self):
         o_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--microenv', 'false'], check=False, capture_output=True)
@@ -1006,9 +1008,9 @@ class TestPyCliGraphGml(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         for i_step in range(25):
             os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_neighbor.gml')
+        assert o_result.returncode == 0
 
     def test_pcdl_make_graph_gml_timeseries_physiboss(self):
         o_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--physiboss', 'false'], check=False, capture_output=True)
@@ -1016,9 +1018,9 @@ class TestPyCliGraphGml(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         for i_step in range(25):
             os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_neighbor.gml')
+        assert o_result.returncode == 0
 
     def test_pcdl_make_graph_gml_timeseries_settingxmlfalse_nodeattribute_one(self):
         o_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--settingxml', 'false', '--node_attribute', 'default_fusion_rates'], check=False, capture_output=True)
@@ -1026,9 +1028,9 @@ class TestPyCliGraphGml(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         for i_step in range(25):
             os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_neighbor.gml')
+        assert o_result.returncode == 0
 
     def test_pcdl_make_graph_gml_timeseries_settingxmlnone_nodeattribute_one(self):
         o_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--settingxml', 'none', '--node_attribute', 'default_fusion_rates'], check=False, capture_output=True)
@@ -1036,9 +1038,9 @@ class TestPyCliGraphGml(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         for i_step in range(25):
             os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_neighbor.gml')
+        assert o_result.returncode == 0
 
     def test_pcdl_make_graph_gml_timeseries_graph_type(self):
         o_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'attached'], check=False, capture_output=True)
@@ -1046,9 +1048,9 @@ class TestPyCliGraphGml(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         for i_step in range(25):
             os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_attached.gml')
+        assert o_result.returncode == 0
 
     def test_pcdl_make_graph_gml_timeseries_edge_attribute(self):
         o_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--edge_attribute', 'false'], check=False, capture_output=True)
@@ -1056,9 +1058,9 @@ class TestPyCliGraphGml(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         for i_step in range(25):
             os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_neighbor.gml')
+        assert o_result.returncode == 0
 
     def test_pcdl_make_graph_gml_timeseries_nodeattribute_one(self):
         o_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--node_attribute', 'cell_type'], check=False, capture_output=True)
@@ -1066,9 +1068,9 @@ class TestPyCliGraphGml(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         for i_step in range(25):
             os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_neighbor.gml')
+        assert o_result.returncode == 0
 
     def test_pcdl_make_graph_gml_timeseries_nodeattribute_many(self):
         o_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--node_attribute', 'cell_type', 'oxygen'], check=False, capture_output=True)
@@ -1076,9 +1078,9 @@ class TestPyCliGraphGml(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         for i_step in range(25):
             os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_neighbor.gml')
+        assert o_result.returncode == 0
 
     def test_pcdl_make_graph_gml_timestep_default(self):
         o_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor'], check=False, capture_output=True)
@@ -1086,8 +1088,8 @@ class TestPyCliGraphGml(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_neighbor.gml')
+        assert o_result.returncode == 0
 
     def test_pcdl_make_graph_gml_timestep_customtype_nodeattribute_one(self):
         o_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--custom_data_type', 'sample:bool', '--node_attribute', 'sample'], check=False, capture_output=True)
@@ -1095,8 +1097,8 @@ class TestPyCliGraphGml(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_neighbor.gml')
+        assert o_result.returncode == 0
 
     def test_pcdl_make_graph_gml_timestep_microenv(self):
         o_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--microenv', 'false'], check=False, capture_output=True)
@@ -1104,8 +1106,8 @@ class TestPyCliGraphGml(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_neighbor.gml')
+        assert o_result.returncode == 0
 
     def test_pcdl_make_graph_gml_timestep_physiboss(self):
         o_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--physiboss', 'false'], check=False, capture_output=True)
@@ -1113,8 +1115,8 @@ class TestPyCliGraphGml(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_neighbor.gml')
+        assert o_result.returncode == 0
 
     def test_pcdl_make_graph_gml_timestep_settingxmlfalse_nodeattribute_one(self):
         o_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--settingxml', 'false', '--node_attribute', 'default_fusion_rates'], check=False, capture_output=True)
@@ -1122,8 +1124,8 @@ class TestPyCliGraphGml(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_neighbor.gml')
+        assert o_result.returncode == 0
 
     def test_pcdl_make_graph_gml_timestep_settingxmlnone_nodeattribute_one(self):
         o_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--settingxml', 'none', '--node_attribute', 'default_fusion_rates'], check=False, capture_output=True)
@@ -1131,8 +1133,8 @@ class TestPyCliGraphGml(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_neighbor.gml')
+        assert o_result.returncode == 0
 
     def test_pcdl_make_graph_gml_timestep_graph_type(self):
         o_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'attached'], check=False, capture_output=True)
@@ -1140,8 +1142,8 @@ class TestPyCliGraphGml(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_attached.gml')
+        assert o_result.returncode == 0
 
     def test_pcdl_make_graph_gml_timestep_edge_attribute(self):
         o_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--edge_attribute', 'false'], check=False, capture_output=True)
@@ -1149,8 +1151,8 @@ class TestPyCliGraphGml(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_neighbor.gml')
+        assert o_result.returncode == 0
 
     def test_pcdl_make_graph_gml_timestep_node_attribute_one(self):
         o_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--node_attribute', 'cell_type'], check=False, capture_output=True)
@@ -1158,8 +1160,8 @@ class TestPyCliGraphGml(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_neighbor.gml')
+        assert o_result.returncode == 0
 
     def test_pcdl_make_graph_gml_timestep_node_attribute_many(self):
         o_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--node_attribute', 'cell_type', 'oxygen'], check=False, capture_output=True)
@@ -1167,8 +1169,8 @@ class TestPyCliGraphGml(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_neighbor.gml')
+        assert o_result.returncode == 0
 
 
 class TestPyCliPlotScatter(object):
@@ -1205,8 +1207,8 @@ class TestPyCliPlotScatter(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         shutil.rmtree(f'{s_path_2d}/cell_cell_type_z0.0/')
+        assert o_result.returncode == 0
 
     def test_pcdl_plot_scatter_set(self):
         o_result = subprocess.run([
@@ -1234,8 +1236,8 @@ class TestPyCliPlotScatter(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         shutil.rmtree(f'{s_path_2d}/cell_oxygen_z0.0/')
+        assert o_result.returncode == 0
 
 
 class TestPyCliCellVtk(object):
@@ -1256,9 +1258,9 @@ class TestPyCliCellVtk(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         for i_step in range(25):
             os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_cell.vtp')
+        assert o_result.returncode == 0
 
     def test_pcdl_make_cell_vtk_timeseries_customtype_attribute_one(self):
         o_result = subprocess.run(['pcdl_make_cell_vtk', s_path_2d, 'sample', '--custom_data_type', 'sample:bool'], check=False, capture_output=True)
@@ -1266,9 +1268,9 @@ class TestPyCliCellVtk(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         for i_step in range(25):
             os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_cell.vtp')
+        assert o_result.returncode == 0
 
     def test_pcdl_make_cell_vtk_timeseries_microenv(self):
         o_result = subprocess.run(['pcdl_make_cell_vtk', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
@@ -1276,9 +1278,9 @@ class TestPyCliCellVtk(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         for i_step in range(25):
             os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_cell.vtp')
+        assert o_result.returncode == 0
 
     def test_pcdl_make_cell_vtk_timeseries_physiboss(self):
         o_result = subprocess.run(['pcdl_make_cell_vtk', s_path_2d, '--physiboss', 'false'], check=False, capture_output=True)
@@ -1286,9 +1288,9 @@ class TestPyCliCellVtk(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         for i_step in range(25):
             os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_cell.vtp')
+        assert o_result.returncode == 0
 
     def test_pcdl_make_cell_vtk_timeseries_settingxmlfalse_attribute_one(self):
         o_result = subprocess.run(['pcdl_make_cell_vtk', s_path_2d, 'default_fusion_rates', '--settingxml', 'false'], check=False, capture_output=True)
@@ -1296,9 +1298,9 @@ class TestPyCliCellVtk(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         for i_step in range(25):
             os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_cell.vtp')
+        assert o_result.returncode == 0
 
     def test_pcdl_make_cell_vtk_timeseries_settingxmlnone_attribute_one(self):
         o_result = subprocess.run(['pcdl_make_cell_vtk', s_path_2d, 'default_fusion_rates', '--settingxml', 'none'], check=False, capture_output=True)
@@ -1306,9 +1308,9 @@ class TestPyCliCellVtk(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         for i_step in range(25):
             os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_cell.vtp')
+        assert o_result.returncode == 0
 
     def test_pcdl_make_cell_vtk_timeseries_attribute_many(self):
         o_result = subprocess.run(['pcdl_make_cell_vtk', s_path_2d, 'cell_type', 'oxygen'], check=False, capture_output=True)
@@ -1316,9 +1318,9 @@ class TestPyCliCellVtk(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         for i_step in range(25):
             os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_cell.vtp')
+        assert o_result.returncode == 0
 
     def test_pcdl_make_cell_vtk_timestep_default(self):
         o_result = subprocess.run(['pcdl_make_cell_vtk', s_pathfile_2d], check=False, capture_output=True)
@@ -1326,8 +1328,8 @@ class TestPyCliCellVtk(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_cell.vtp')
+        assert o_result.returncode == 0
 
     def test_pcdl_make_cell_vtk_timestep_customtype_attribute_one(self):
         o_result = subprocess.run(['pcdl_make_cell_vtk', s_pathfile_2d, 'sample', '--custom_data_type', 'sample:bool'], check=False, capture_output=True)
@@ -1335,8 +1337,8 @@ class TestPyCliCellVtk(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_cell.vtp')
+        assert o_result.returncode == 0
 
     def test_pcdl_make_cell_vtk_timestep_microenv(self):
         o_result = subprocess.run(['pcdl_make_cell_vtk', s_pathfile_2d, '--microenv', 'false'], check=False, capture_output=True)
@@ -1344,8 +1346,8 @@ class TestPyCliCellVtk(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_cell.vtp')
+        assert o_result.returncode == 0
 
     def test_pcdl_make_cell_vtk_timestep_physiboss(self):
         o_result = subprocess.run(['pcdl_make_cell_vtk', s_pathfile_2d, '--physiboss', 'false'], check=False, capture_output=True)
@@ -1353,8 +1355,8 @@ class TestPyCliCellVtk(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_cell.vtp')
+        assert o_result.returncode == 0
 
     def test_pcdl_make_cell_vtk_timestep_settingxmlfalse_attribute_one(self):
         o_result = subprocess.run(['pcdl_make_cell_vtk', s_pathfile_2d, 'default_fusion_rates', '--settingxml', 'false'], check=False, capture_output=True)
@@ -1362,8 +1364,8 @@ class TestPyCliCellVtk(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_cell.vtp')
+        assert o_result.returncode == 0
 
     def test_pcdl_make_cell_vtk_timestep_settingxmlnone_attribute_one(self):
         o_result = subprocess.run(['pcdl_make_cell_vtk', s_pathfile_2d, 'default_fusion_rates', '--settingxml', 'none'], check=False, capture_output=True)
@@ -1371,8 +1373,8 @@ class TestPyCliCellVtk(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_cell.vtp')
+        assert o_result.returncode == 0
 
     def test_pcdl_make_cell_vtk_timestep_attribute_many(self):
         o_result = subprocess.run(['pcdl_make_cell_vtk', s_pathfile_2d, 'cell_type', 'oxygen'], check=False, capture_output=True)
@@ -1380,8 +1382,8 @@ class TestPyCliCellVtk(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/output00000024_cell.vtp')
+        assert o_result.returncode == 0
 
 
 #######################################
@@ -1429,8 +1431,8 @@ class TestPyCliPlotTimeSeries(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_cell_total_count.jpeg')
+        assert o_result.returncode == 0
 
     def test_pcdl_plot_timeseries_set(self):
         o_result = subprocess.run([
@@ -1463,8 +1465,8 @@ class TestPyCliPlotTimeSeries(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         os.remove(f'{s_path_2d}/timeseries_conc_total_oxygen_entropy.tiff')
+        assert o_result.returncode == 0
 
 
 ###########################
@@ -1487,8 +1489,8 @@ class TestPyCliMakeGif(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         shutil.rmtree(s_path)
+        assert o_result.returncode == 0
 
     def test_pcdl_make_gif_timeseries_interface(self):
         o_path = subprocess.run(['pcdl_plot_contour', s_path_2d, 'oxygen', '--ext', 'tiff'], check=False, capture_output=True)
@@ -1499,8 +1501,8 @@ class TestPyCliMakeGif(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         shutil.rmtree(s_path)
+        assert o_result.returncode == 0
 
 
 class TestPyCliMakeMovie(object):
@@ -1520,8 +1522,8 @@ class TestPyCliMakeMovie(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         shutil.rmtree(s_path)
+        assert o_result.returncode == 0
 
     def test_pcdl_make_movie_timeseries_interface(self):
         o_path = subprocess.run(['pcdl_plot_contour', s_path_2d, 'oxygen', '--ext', 'tiff'], check=False, capture_output=True)
@@ -1532,8 +1534,8 @@ class TestPyCliMakeMovie(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         shutil.rmtree(s_path)
+        assert o_result.returncode == 0
 
     def test_pcdl_make_movie_timeseries_farme(self):
         o_path = subprocess.run(['pcdl_plot_contour', s_path_2d, 'oxygen', '--ext', 'jpeg'], check=False, capture_output=True)
@@ -1544,5 +1546,5 @@ class TestPyCliMakeMovie(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
         shutil.rmtree(s_path)
+        assert o_result.returncode == 0
