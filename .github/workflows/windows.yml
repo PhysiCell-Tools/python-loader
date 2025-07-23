@@ -7,7 +7,7 @@ run-name: ${{ github.actor }}::pytest pcdl library on windows os; the latest pyt
 
 on:
   push:
-    branches: ["v3"]  # ["master", "utest", "v4"]
+    branches: ["v3"]  # only!
 
 jobs:
   build-windows:

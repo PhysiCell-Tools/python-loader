@@ -7,7 +7,7 @@ run-name: ${{ github.actor }}::pytest pcdl library on mac os x; the latest pytho
 
 on:
   push:
-    branches: ["v3"]  # ["master", "utest", "v4"]
+    branches: ["v3"]  # only!
 
 jobs:
   build-macosx:
