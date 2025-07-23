@@ -3,7 +3,6 @@
 [Blender](https://www.blender.org/) is a modeling, rigging, animation, simulation, rendering, compositing,  motion tracking, video editing, and game creation software.
 Blender is free and open source.
 There exists a vtk nodes plugin, that lets us load <!-- vtk rectilinear grid data, -->vtk polynomial data files.
-And there exists a bioxel nodes plugin, that lets us load ome tiff files.
 
 
 ## &#x2728; Handle vtk files
@@ -62,33 +61,6 @@ but I would have to write such a converter.
 To learn more about Blender and BVTK Node plugin, please study the official documentation.
 + https://github.com/tkeskita/BVtkNodes/tree/master
 + https://docs.blender.org/manual/en/latest/
-
-
-## &#x2728; Handle ome tiff files
-
-The blender bioxel nodes plugin allows us load single time step ome tiff files into blender.
-
-### Generate ome tiff files from the command line
-
-```bash
-pcdl_make_ome_tiff output --collapse false
-```
-
-### Generate ome tiff files from within python
-
-```python
-import pcdl
-
-mcdsts = pcdl.TimeSeries('output/')
-mcdsts.make_ome_tiff(collapse=False)
-```
-
-### The blender bioxel nodes plugin
-
-Please follow the official bioxel nodes instructions for installation
-and to learn how to use the plugin.
-
-+ https://omoolab.github.io/BioxelNodes/latest/
 
 
 That's it! The rest is analysis within blender!

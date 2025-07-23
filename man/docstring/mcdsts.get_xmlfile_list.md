@@ -3,7 +3,7 @@
 
 ## input:
 ```
-            self: TimeSeries class instance.
+            self: pyMCDSts class instance.
 
 ```
 

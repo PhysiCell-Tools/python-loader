@@ -34,7 +34,8 @@ options:
                         empty string.
   --microenv MICROENV   should the microenvironment data be loaded? setting
                         microenv to False will use less memory and speed up
-                        processing. default is True.
+                        processing, similar to the original pyMCDS_cells.py
+                        script. default is True.
   --physiboss PHYSIBOSS
                         if found, should physiboss state data be extracted and
                         loaded into df_cell dataframe? default is True.

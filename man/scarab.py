@@ -99,13 +99,13 @@ if not os.path.exists('pcdl/output_2d/') or not os.path.exists('pcdl/output_3d/'
 # load data
 mcds = pcdl.TimeStep(
     'pcdl/output_2d/output00000000.xml',
-    #custom_data_type={'oncoprotein': str},
+    custom_data_type={'oncoprotein': str},
     verbose=False,
 )
 
 mcdsts = pcdl.TimeSeries(
     'pcdl/output_2d/',
-    #custom_data_type={'oncoprotein': str},
+    custom_data_type={'oncoprotein': str},
     verbose=False,
 )
 
@@ -121,7 +121,7 @@ docstring_md(
 )
 
 
-# write TimeStep initialize function makdown files
+# write pyMCDS initialize function makdown files
 docstring_md(
     s_function = 'mcds.__init__',
     ls_doc = pcdl.TimeStep.__init__.__doc__.split('\n'),
@@ -136,7 +136,7 @@ docstring_md(
     ls_doc = pcdl.TimeStep.set_verbose_true.__doc__.split('\n'),
 )
 
-# write TimeStep metadata function makdown files
+# write pyMCDS metadata function makdown files
 docstring_md(
     s_function = 'mcds.get_multicellds_version',
     ls_doc = pcdl.TimeStep.get_multicellds_version.__doc__.split('\n'),
@@ -163,7 +163,7 @@ docstring_md(
     ls_doc = pcdl.TimeStep.get_unit_dict.__doc__.split('\n'),
 )
 
-# write TimeStep mesh function markdown files
+# write pyMCDS mesh function markdown files
 # range and axis
 docstring_md(
     s_function = 'mcds.get_voxel_ijk_range',
@@ -224,7 +224,7 @@ docstring_md(
     ls_doc = pcdl.TimeStep.get_voxel_ijk.__doc__.split('\n'),
 )
 
-# write TimeStep microenv function markdown files
+# write pyMCDS microenv function markdown files
 docstring_md(
     s_function = 'mcds.get_substrate_list',
     ls_doc = pcdl.TimeStep.get_substrate_list.__doc__.split('\n'),
@@ -236,6 +236,14 @@ docstring_md(
 docstring_md(
     s_function = 'mcds.get_substrate_df',
     ls_doc = pcdl.TimeStep.get_substrate_df.__doc__.split('\n'),
+)
+docstring_md(
+    s_function = 'mcds.get_concentration',
+    ls_doc = pcdl.TimeStep.get_concentration.__doc__.split('\n'),
+)
+docstring_md(
+    s_function = 'mcds.get_concentration_at',
+    ls_doc = pcdl.TimeStep.get_concentration_at.__doc__.split('\n'),
 )
 docstring_md(
     s_function = 'mcds.get_conc_df',
@@ -250,7 +258,7 @@ docstring_md(
     ls_doc = pcdl.TimeStep.make_conc_vtk.__doc__.split('\n'),
 )
 
-# write TimeStep cell agent function markdown files
+# write pyMCDS cell agent function markdown files
 docstring_md(
     s_function = 'mcds.get_celltype_list',
     ls_doc = pcdl.TimeStep.get_celltype_list.__doc__.split('\n'),
@@ -264,8 +272,8 @@ docstring_md(
     ls_doc = pcdl.TimeStep.get_cell_df.__doc__.split('\n'),
 )
 docstring_md(
-    s_function = 'mcds.get_cell_attribute_list',
-    ls_doc = pcdl.TimeStep.get_cell_attribute_list.__doc__.split('\n'),
+    s_function = 'mcds.get_cell_df_at',
+    ls_doc = pcdl.TimeStep.get_cell_df_at.__doc__.split('\n'),
 )
 docstring_md(
     s_function = 'mcds.plot_scatter',
@@ -280,7 +288,7 @@ docstring_md(
     ls_doc = pcdl.TimeStep.get_anndata.__doc__.split('\n'),
 )
 
-# write TimeStep graph function markdown files
+# write pyMCDS graph function markdown files
 docstring_md(
     s_function = 'mcds.get_attached_graph_dict',
     ls_doc = pcdl.TimeStep.get_attached_graph_dict.__doc__.split('\n'),
@@ -290,27 +298,11 @@ docstring_md(
     ls_doc = pcdl.TimeStep.get_neighbor_graph_dict.__doc__.split('\n'),
 )
 docstring_md(
-    s_function = 'mcds.get_spring_graph_dict',
-    ls_doc = pcdl.TimeStep.get_spring_graph_dict.__doc__.split('\n'),
-)
-docstring_md(
     s_function = 'mcds.make_graph_gml',
     ls_doc = pcdl.TimeStep.make_graph_gml.__doc__.split('\n'),
 )
 
-# write TimeStep microenvironment and cells function markdown files
-docstring_md(
-    s_function = 'mcds.make_ome_tiff',
-    ls_doc = pcdl.TimeStep.make_ome_tiff.__doc__.split('\n'),
-)
-
-docstring_md(
-    s_function = 'pcdl.render_neuroglancer',
-    ls_doc = pcdl.render_neuroglancer.__doc__.split('\n'),
-    s_header = "mcds.render_neuroglancer('path/to/ome.tiff')"
-)
-
-# write TimeStep internal function makdown files
+# write pyMCDS internal function makdown files
 docstring_md(
     s_function = 'pcdl.scaler',
     ls_doc = pcdl.scaler.__doc__.split('\n'),
@@ -321,7 +313,7 @@ docstring_md(
 )
 
 
-# write TimeSeries initialize function makdown files
+# write pyMCDSts initialize function makdown files
 docstring_md(
     s_function = 'mcdsts.__init__',
     ls_doc = pcdl.TimeSeries.__init__.__doc__.split('\n'),
@@ -353,7 +345,7 @@ docstring_md(
     ls_doc = pcdl.TimeSeries.set_verbose_true.__doc__.split('\n'),
 )
 
-# write TimeSeries microenv function makdown files
+# write pyMCDSts microenv function makdown files
 docstring_md(
     s_function = 'mcdsts.get_conc_df',
     ls_doc = pcdl.TimeSeries.get_conc_df.__doc__.split('\n'),
@@ -371,7 +363,7 @@ docstring_md(
     ls_doc = pcdl.TimeSeries.make_conc_vtk.__doc__.split('\n'),
 )
 
-# write TimeSeries cell agent function makdown files
+# write pyMCDSts cell agent function makdown files
 docstring_md(
     s_function = 'mcdsts.get_cell_df',
     ls_doc = pcdl.TimeSeries.get_cell_df.__doc__.split('\n'),
@@ -393,28 +385,19 @@ docstring_md(
     ls_doc = pcdl.TimeSeries.get_anndata.__doc__.split('\n'),
 )
 
-# write TimeSeries graph function makdown files
+# write pyMCDSts graph function makdown files
 docstring_md(
     s_function = 'mcdsts.make_graph_gml',
     ls_doc = pcdl.TimeSeries.make_graph_gml.__doc__.split('\n'),
 )
 
-# write TimeSeries microenvironment and cells function makdown files
-docstring_md(
-    s_function = 'mcdsts.make_ome_tiff',
-    ls_doc = pcdl.TimeSeries.make_ome_tiff.__doc__.split('\n'),
-)
-docstring_md(
-    s_function = 'pcdl.render_neuroglancer',
-    ls_doc = pcdl.render_neuroglancer.__doc__.split('\n'),
-    s_header = "mcdsts.render_neuroglancer('path/to/ome.tiff')"
-)
+# write pyMCDSts microenvironment and cells function makdown files
 docstring_md(
     s_function = 'mcdsts.plot_timeseries',
     ls_doc = pcdl.TimeSeries.plot_timeseries.__doc__.split('\n'),
 )
 
-# write TimeSeries making movies function markdown files
+# write pyMCDSts making movies function markdown files
 docstring_md(
     s_function = 'pcdl.make_gif',
     ls_doc = pcdl.make_gif.__doc__.split('\n'),
@@ -439,7 +422,6 @@ help_md(s_command='pcdl_plot_contour')
 help_md(s_command='pcdl_make_conc_vtk')
 # cell agent
 help_md(s_command='pcdl_get_celltype_list')
-help_md(s_command='pcdl_get_cell_attribute_list')
 help_md(s_command='pcdl_get_cell_attribute')
 help_md(s_command='pcdl_get_cell_df')
 help_md(s_command='pcdl_get_anndata')
@@ -448,8 +430,6 @@ help_md(s_command='pcdl_plot_scatter')
 help_md(s_command='pcdl_make_cell_vtk')
 # substrate and cell agent
 help_md(s_command='pcdl_plot_timeseries')
-help_md(s_command='pcdl_make_ome_tiff')
-help_md(s_command='pcdl_render_neuroglancer')
 # making movies
 help_md(s_command='pcdl_make_gif')
 help_md(s_command='pcdl_make_movie')

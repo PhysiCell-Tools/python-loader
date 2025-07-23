@@ -3,7 +3,7 @@
 
 ## input:
 ```
-            self: TimeSeries class instance
+            self: pyMCDSts class instance
 
             focus_cat: string; default is None
                 categorical or boolean data column within dataframe specified under frame.
@@ -100,10 +100,6 @@
                 or white (jpeg, tiff).
                 figure background color.
                 only relevant if ext not is None.
-
-            **kwargs: possible additional keyword arguments input,
-                handled by the pandas series plot function.
-                + https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.plot.html
 
 ```
 

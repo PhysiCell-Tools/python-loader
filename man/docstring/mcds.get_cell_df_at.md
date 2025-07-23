@@ -1,9 +1,16 @@
-# mcdsts.get_conc_df()
+# mcds.get_cell_df_at()
 
 
 ## input:
 ```
-            self: pyMCDSts class instance.
+            x: floating point number
+                position x-coordinate.
+
+            y: floating point number
+                position y-coordinate.
+
+            z: floating point number; default is 0
+                position z-coordinate.
 
             values: integer; default is 1
                 minimal number of values a variable has to have to be outputted.
@@ -20,27 +27,21 @@
             keep: set of strings; default is an empty set
                 set of column labels to be kept in the dataframe.
                 set values=1 to be sure that all variables are kept.
-                don't worry: essential columns like ID, coordinates,
-                time and runtime (wall time) will always be kept.
-
-            collapse: boole; default True
-                should all mcds time steps from the time series be collapsed
-                into one pandas dataframe object, or a list of dataframe objects
-                for each time step?
+                don't worry: essential columns like ID, coordinates
+                and time will always be kept.
 
 ```
 
 ## output:
 ```
-            df_conc or ldf_conc: pandas dataframe or list of dataframe
-                dataframe stores all substrate concentrations in each voxel.
+            df_voxel: pandas dataframe
+                x, y, z voxel filtered cell dataframe.
 
 ```
 
 ## description:
 ```
-            function returns for the whole time series in one or many dataframes
-            with concentration values for all chemical species in all voxels.
-            additionally, this dataframe lists voxel and mesh center coordinates.
+            function returns the cell dataframe for the voxel
+            specified with the x, y, z position coordinate.
         
 ```

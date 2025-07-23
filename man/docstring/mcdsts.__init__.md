@@ -9,7 +9,7 @@
 
             custom_data_type: dictionary; default is {}
                 variable to specify custom_data variable types
-                other than float (int, bool, str) like this: {var: dtype, ...}.
+                besides float (int, bool, str) like this: {var: dtype, ...}.
                 downstream float and int will be handled as numeric,
                 bool as Boolean, and str as categorical data.
 
@@ -19,11 +19,13 @@
 
             microenv: boole; default True
                 should the microenvironment data be loaded?
-                setting microenv to False will use less memory and speed up processing.
+                setting microenv to False will use less memory and speed up
+                processing, similar to the original pyMCDS_cells.py script.
 
             graph: boole; default True
-                should the graphs, like cell_neighbor_graph.txt, be loaded?
-                setting graph to False will use less memory and speed up processing.
+                should neighbor garph, attached graph, and spring attached graph
+                be loaded? setting graph to False will use less memory and
+                speed up processing.
 
             physiboss: boole; default True
                 should physiboss state data be loaded, if found?
@@ -36,13 +38,13 @@
                 set to None or False if the xml file is missing!
 
             verbose: boole; default True
-                setting verbose to False for less text output, while processing.
+                setting verbose to False for less text output while processing.
 
 ```
 
 ## output:
 ```
-            mcdsts: TimeSeries class instance
+            mcdsts: pyMCDSts class instance
                 this instance offers functions to process all stored time steps
                 from a simulation.
 
@@ -50,7 +52,8 @@
 
 ## description:
 ```
-            TimeSeries.__init__ generates a class instance the instance offers
-            functions to process all time steps in the output_path directory.
+            TimeSeries.__init__ will call pyMCDSts.__init__ that generates a mcdsts
+            class instance. this instance offers functions to process all time steps
+            in the output_path directory.
         
 ```

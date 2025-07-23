@@ -1,4 +1,4 @@
-#####
+###
 # title: test_cli_2d.py
 #
 # language: python3
@@ -39,15 +39,15 @@ print("s_pathfile_2d", s_pathfile_2d)
 if not os.path.exists(s_path_2d):
     pcdl.install_data()
 
-print(f"process: pcdl command line interface functions from the command line...")
+print(f"process: pcdl pyCLI functions from the command line...")
 
 
 ##############################
 # metadata realted test code #
 ##############################
 
-class TestCommandLineInterfaceVersion(object):
-    ''' tests for one pcdl command line interface function. '''
+class TestPyCliVersion(object):
+    ''' tests for one pcdl.pyCli function. '''
 
     # timestep:
     # + path (pathfile, path) ok
@@ -70,8 +70,8 @@ class TestCommandLineInterfaceVersion(object):
         assert o_result.returncode == 0
 
 
-class TestCommandLineInterfaceUnitDict(object):
-    ''' tests for one  pcdl command line interface  function. '''
+class TestPyCliUnitDict(object):
+    ''' tests for one pcdl.pyCli function. '''
 
     # timestep:
     # + path (pathfile, path) ok
@@ -129,8 +129,8 @@ class TestCommandLineInterfaceUnitDict(object):
 # substarte relatd test code #
 ##############################
 
-class TestCommandLineInterfaceSubstrateList(object):
-    ''' tests for one  pcdl command line interface  function. '''
+class TestPyCliSubstrateList(object):
+    ''' tests for one pcdl.pyCli function. '''
 
     # timestep:
     # + path (pathfile, path) ok
@@ -153,8 +153,8 @@ class TestCommandLineInterfaceSubstrateList(object):
         assert o_result.returncode == 0
 
 
-class TestCommandLineInterfaceConcDfAttribute(object):
-    ''' tests for one  pcdl command line interface  function. '''
+class TestPyCliConcDfAttribute(object):
+    ''' tests for one pcdl.pyCli function. '''
 
     # timeseries collapsed:
     # + path (str) nop
@@ -210,8 +210,8 @@ class TestCommandLineInterfaceConcDfAttribute(object):
         assert o_result.returncode == 0
 
 
-class TestCommandLineInterfaceConcDf(object):
-    ''' tests for one  pcdl command line interface  function. '''
+class TestPyCliConcDf(object):
+    ''' tests for one pcdl.pyCli function. '''
 
     # timeseries
     # + collapse (true false) ok
@@ -305,8 +305,8 @@ class TestCommandLineInterfaceConcDf(object):
         assert o_result.returncode == 0
 
 
-class TestCommandLineInterfacePlotContour(object):
-    ''' tests for one  pcdl command line interface  function. '''
+class TestPyCliPlotContour(object):
+    ''' tests for one pcdl.pyCli function. '''
 
     # time series and time steps.
     # + path nop
@@ -362,8 +362,8 @@ class TestCommandLineInterfacePlotContour(object):
         assert o_result.returncode == 0
 
 
-class TestCommandLineInterfaceConcVtk(object):
-    ''' tests for one  pcdl command line interface  function. '''
+class TestPyCliConcVtk(object):
+    ''' tests for one pcdl.pyCli function. '''
 
     # timestep and timeseries:
     # + path nop
@@ -393,8 +393,8 @@ class TestCommandLineInterfaceConcVtk(object):
 # cell agent realted test code #
 ################################
 
-class TestCommandLineInterfaceCelltypeList(object):
-    ''' tests for one  pcdl command line interface  function. '''
+class TestPyCliCelltypeList(object):
+    ''' tests for one pcdl.pyCli function. '''
 
     # timestep:
     # + path (pathfile, path) ok
@@ -417,59 +417,8 @@ class TestCommandLineInterfaceCelltypeList(object):
         assert o_result.returncode == 0
 
 
-class TestCommandLineInterfaceCellAttributeList(object):
-    ''' tests for one  pcdl command line interface  function. '''
-
-    # timeseries collapsed:
-    # + path (str) nop
-    # + microenv (true, _false_) ok
-    # + physiboss (true, _false_)
-    # + settingxml (string, _none_, _false_) ok
-    # + verbose (true, _false_) nop
-
-    def test_pcdl_get_cell_attribute_list_timeseries(self):
-        o_result = subprocess.run(['pcdl_get_cell_attribute_list', s_path_2d], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
-
-    def test_pcdl_get_cell_attribute_list_timeseries_microenv(self):
-        o_result = subprocess.run(['pcdl_get_cell_attribute_list', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
-
-    def test_pcdl_get_cell_attribute_list_timeseries_physiboss(self):
-        o_result = subprocess.run(['pcdl_get_cell_attribute_list', s_path_2d, '--physiboss', 'false'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
-
-    def test_pcdl_get_cell_attribute_list_timeseries_settingxmlfalse(self):
-        o_result = subprocess.run(['pcdl_get_cell_attribute_list', s_path_2d, '--settingxml', 'false'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
-
-    def test_pcdl_get_cell_attribute_list_timeseries_settingxmlnone(self):
-        o_result = subprocess.run(['pcdl_get_cell_attribute_list', s_path_2d, '--settingxml', 'none'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
-
-
-class TestCommandLineInterfaceCellDfAttribute(object):
-    ''' tests for one  pcdl command line interface  function. '''
+class TestPyCliCellDfAttribute(object):
+    ''' tests for one pcdl.pyCli function. '''
 
     # timeseries collapsed:
     # + path (str) nop
@@ -574,8 +523,59 @@ class TestCommandLineInterfaceCellDfAttribute(object):
         assert o_result.returncode == 0
 
 
-class TestCommandLineInterfaceCellDf(object):
+class TestPyCliCellAttributeList(object):
     ''' tests for one  pcdl command line interface  function. '''
+
+    # timeseries collapsed:
+    # + path (str) nop
+    # + microenv (true, _false_) ok
+    # + physiboss (true, _false_)
+    # + settingxml (string, _none_, _false_) ok
+    # + verbose (true, _false_) nop
+
+    def test_pcdl_get_cell_attribute_list_timeseries(self):
+        o_result = subprocess.run(['pcdl_get_cell_attribute_list', s_path_2d], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_cell_attribute_list_timeseries_microenv(self):
+        o_result = subprocess.run(['pcdl_get_cell_attribute_list', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_cell_attribute_list_timeseries_physiboss(self):
+        o_result = subprocess.run(['pcdl_get_cell_attribute_list', s_path_2d, '--physiboss', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_cell_attribute_list_timeseries_settingxmlfalse(self):
+        o_result = subprocess.run(['pcdl_get_cell_attribute_list', s_path_2d, '--settingxml', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_cell_attribute_list_timeseries_settingxmlnone(self):
+        o_result = subprocess.run(['pcdl_get_cell_attribute_list', s_path_2d, '--settingxml', 'none'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        assert o_result.returncode == 0
+
+
+class TestPyCliCellDf(object):
+    ''' tests for one pcdl.pyCli function. '''
 
     # timeseries
     # + collapse (true false) ok
@@ -746,8 +746,8 @@ class TestCommandLineInterfaceCellDf(object):
         assert o_result.returncode == 0
 
 
-class TestCommandLineInterfaceAnndata(object):
-    ''' tests for one  pcdl command line interface  function. '''
+class TestPyCliAnndata(object):
+    ''' tests for one pcdl.pyCli function. '''
 
     # timeseries
     # + collapse (true false) ok
@@ -921,7 +921,6 @@ class TestCommandLineInterfaceAnndata(object):
         os.remove(f'{s_path_2d}/output00000024_cell_maxabs.h5ad')
         assert o_result.returncode == 0
 
-
     def test_pcdl_get_anndata_timestep_settingxmlnone(self):
         o_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--settingxml', 'none'], check=False, capture_output=True)
         print(f'o_result: {o_result}\n')
@@ -968,8 +967,8 @@ class TestCommandLineInterfaceAnndata(object):
         assert o_result.returncode == 0
 
 
-class TestCommandLineInterfaceGraphGml(object):
-    ''' tests for one  pcdl command line interface  function. '''
+class TestPyCliGraphGml(object):
+    ''' tests for one pcdl.pyCli function. '''
 
     # timestep and timeseries:
     # + path nop
@@ -991,6 +990,7 @@ class TestCommandLineInterfaceGraphGml(object):
         for i_step in range(25):
             os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_neighbor.gml')
         assert o_result.returncode == 0
+
 
     def test_pcdl_make_graph_gml_timeseries_customtype_nodeattribute_one(self):
         o_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--custom_data_type', 'sample:bool', '--node_attribute', 'sample'], check=False, capture_output=True)
@@ -1173,8 +1173,8 @@ class TestCommandLineInterfaceGraphGml(object):
         assert o_result.returncode == 0
 
 
-class TestCommandLineInterfacePlotScatter(object):
-    ''' tests for one  pcdl command line interface  function. '''
+class TestPyCliPlotScatter(object):
+    ''' tests for one pcdl.pyCli function. '''
 
     # time series and time steps.
     # + path nop
@@ -1240,8 +1240,8 @@ class TestCommandLineInterfacePlotScatter(object):
         assert o_result.returncode == 0
 
 
-class TestCommandLineInterfaceCellVtk(object):
-    ''' tests for one  pcdl command line interface  function. '''
+class TestPyCliCellVtk(object):
+    ''' tests for one pcdl.pyCli function. '''
 
     # timestep and timeseries:
     # + path nop
@@ -1390,8 +1390,8 @@ class TestCommandLineInterfaceCellVtk(object):
 # substrate and cell agenat test code #
 #######################################
 
-class TestCommandLineInterfacePlotTimeSeries(object):
-    ''' tests for one  pcdl command line interface  function. '''
+class TestPyCliPlotTimeSeries(object):
+    ''' tests for one pcdl.pyCli function. '''
 
     # time series.
     # + path nop
@@ -1469,198 +1469,12 @@ class TestCommandLineInterfacePlotTimeSeries(object):
         assert o_result.returncode == 0
 
 
-class TestCommandLineInterfaceOmeTiff(object):
-    ''' tests for one  pcdl command line interface  function. '''
-
-    # timestep and timeseries:
-    # + path nop
-    # + customtype nop (because bool int float might in the end be treated the same and str is recogniced)
-    # + microenv (true, false) ok
-    # + physiboss (true, _false_) ok
-    # + settingxml (string, _none_, _false_) ok
-    # + verbose (true, _false_) nop
-    # + cell_attribute (ID, _dead_, _cell_count_voxel_, _pressure_) ok
-    # + collapse (true, _false_) ok
-
-    def test_pcdl_make_ome_tiff_timeseries_default(self):
-        o_result = subprocess.run(['pcdl_make_ome_tiff', s_path_2d], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/timeseries_oxygen_water_default_blood_cells_ID.ome.tiff')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_ome_tiff_timeseries_microenv(self):
-        o_result = subprocess.run(['pcdl_make_ome_tiff', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/timeseries_default_blood_cells_ID.ome.tiff')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_ome_tiff_timeseries_physiboss(self):
-        o_result = subprocess.run(['pcdl_make_ome_tiff', s_path_2d, '--physiboss', 'false'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/timeseries_oxygen_water_default_blood_cells_ID.ome.tiff')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_ome_tiff_timeseries_settingxmlfalse(self):
-        o_result = subprocess.run(['pcdl_make_ome_tiff', s_path_2d, '--settingxml', 'false'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/timeseries_oxygen_water_default_blood_cells_ID.ome.tiff')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_ome_tiff_timeseries_settingxmlnone(self):
-        o_result = subprocess.run(['pcdl_make_ome_tiff', s_path_2d, '--settingxml', 'none'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/timeseries_oxygen_water_default_blood_cells_ID.ome.tiff')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_ome_tiff_timeseries_cellattribute_dead(self):
-        o_result = subprocess.run(['pcdl_make_ome_tiff', s_path_2d, 'dead'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/timeseries_oxygen_water_default_blood_cells_dead.ome.tiff')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_ome_tiff_timeseries_cellattribute_cellcountvoxel(self):
-        o_result = subprocess.run(['pcdl_make_ome_tiff', s_path_2d, 'cell_count_voxel'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/timeseries_oxygen_water_default_blood_cells_cell_count_voxel.ome.tiff')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_ome_tiff_timeseries_cellattribute_pressure(self):
-        o_result = subprocess.run(['pcdl_make_ome_tiff', s_path_2d, 'pressure'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/timeseries_oxygen_water_default_blood_cells_pressure.ome.tiff')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_ome_tiff_timeseries_conccutoff_oxygenminusone(self):
-        o_result = subprocess.run(['pcdl_make_ome_tiff', s_path_2d, '--conc_cutoff', 'oxygen:-1'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/timeseries_oxygen-1_water_default_blood_cells_ID.ome.tiff')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_ome_tiff_timeseries_focus_(self):
-        o_result = subprocess.run(['pcdl_make_ome_tiff', s_path_2d, '--focus', 'oxygen'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/timeseries_oxygen.ome.tiff')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_ome_tiff_timeseries_collapse_false(self):
-        o_result = subprocess.run(['pcdl_make_ome_tiff', s_path_2d, '--collapse', 'false'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        for i_step in range(25):
-            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_oxygen_water_default_blood_cells_ID.ome.tiff')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_ome_tiff_timestep_default(self):
-        o_result = subprocess.run(['pcdl_make_ome_tiff', s_pathfile_2d], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/output00000024_oxygen_water_default_blood_cells_ID.ome.tiff')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_ome_tiff_timestep_microenv(self):
-        o_result = subprocess.run(['pcdl_make_ome_tiff', s_pathfile_2d, '--microenv', 'false'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/output00000024_default_blood_cells_ID.ome.tiff')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_ome_tiff_timestep_physiboss(self):
-        o_result = subprocess.run(['pcdl_make_ome_tiff', s_pathfile_2d, '--physiboss', 'false'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/output00000024_oxygen_water_default_blood_cells_ID.ome.tiff')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_ome_tiff_timestep_settingxmlfalse(self):
-        o_result = subprocess.run(['pcdl_make_ome_tiff', s_pathfile_2d, '--settingxml', 'false'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/output00000024_oxygen_water_default_blood_cells_ID.ome.tiff')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_ome_tiff_timestep_settingxmlnone(self):
-        o_result = subprocess.run(['pcdl_make_ome_tiff', s_pathfile_2d, '--settingxml', 'none'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/output00000024_oxygen_water_default_blood_cells_ID.ome.tiff')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_ome_tiff_timestep_cellattribute_dead(self):
-        o_result = subprocess.run(['pcdl_make_ome_tiff', s_pathfile_2d, 'dead'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/output00000024_oxygen_water_default_blood_cells_dead.ome.tiff')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_ome_tiff_timestep_cellattribute_cellcountvoxel(self):
-        o_result = subprocess.run(['pcdl_make_ome_tiff', s_pathfile_2d, 'cell_count_voxel'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/output00000024_oxygen_water_default_blood_cells_cell_count_voxel.ome.tiff')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_ome_tiff_timestep_cellattribute_pressure(self):
-        o_result = subprocess.run(['pcdl_make_ome_tiff', s_pathfile_2d, 'pressure'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/output00000024_oxygen_water_default_blood_cells_pressure.ome.tiff')
-        assert o_result.returncode == 0
-
-
 ###########################
 # making movies test code #
 ###########################
 
-class TestCommandLineInterfaceMakeGif(object):
-    ''' tests for one  pcdl command line interface  function. '''
+class TestPyCliMakeGif(object):
+    ''' tests for one pcdl.pyCli function. '''
 
     # time series
     # + path nop
@@ -1668,6 +1482,7 @@ class TestCommandLineInterfaceMakeGif(object):
 
     def test_pcdl_make_gif_timeseries_default(self):
         o_path = subprocess.run(['pcdl_plot_scatter', s_path_2d], check=False, capture_output=True)
+        print(f'o_path: {o_path}\n')
         s_path = f'{s_path_2d}/cell_cell_type_z0.0/'
         o_result = subprocess.run(['pcdl_make_gif', s_path], check=False, capture_output=True)
         print(f'o_result: {o_result}\n')
@@ -1679,6 +1494,7 @@ class TestCommandLineInterfaceMakeGif(object):
 
     def test_pcdl_make_gif_timeseries_interface(self):
         o_path = subprocess.run(['pcdl_plot_contour', s_path_2d, 'oxygen', '--ext', 'tiff'], check=False, capture_output=True)
+        print(f'o_path: {o_path}\n')
         s_path = f'{s_path_2d}/conc_oxygen_z0.0/'
         o_result = subprocess.run(['pcdl_make_gif', s_path, 'tiff'], check=False, capture_output=True)
         print(f'o_result: {o_result}\n')
@@ -1689,8 +1505,8 @@ class TestCommandLineInterfaceMakeGif(object):
         assert o_result.returncode == 0
 
 
-class TestCommandLineInterfaceMakeMove(object):
-    ''' tests for one  pcdl command line interface  function. '''
+class TestPyCliMakeMovie(object):
+    ''' tests for one pcdl.pyCli function. '''
 
     # time series
     # + path nop
@@ -1699,6 +1515,7 @@ class TestCommandLineInterfaceMakeMove(object):
 
     def test_pcdl_make_movie_timeseries_default(self):
         o_path = subprocess.run(['pcdl_plot_scatter', s_path_2d], check=False, capture_output=True)
+        print(f'o_path: {o_path}\n')
         s_path = f'{s_path_2d}/cell_cell_type_z0.0/'
         o_result = subprocess.run(['pcdl_make_movie', s_path], check=False, capture_output=True)
         print(f'o_result: {o_result}\n')
@@ -1710,6 +1527,7 @@ class TestCommandLineInterfaceMakeMove(object):
 
     def test_pcdl_make_movie_timeseries_interface(self):
         o_path = subprocess.run(['pcdl_plot_contour', s_path_2d, 'oxygen', '--ext', 'tiff'], check=False, capture_output=True)
+        print(f'o_path: {o_path}\n')
         s_path = f'{s_path_2d}/conc_oxygen_z0.0/'
         o_result = subprocess.run(['pcdl_make_movie', s_path, 'tiff'], check=False, capture_output=True)
         print(f'o_result: {o_result}\n')
@@ -1721,6 +1539,7 @@ class TestCommandLineInterfaceMakeMove(object):
 
     def test_pcdl_make_movie_timeseries_farme(self):
         o_path = subprocess.run(['pcdl_plot_contour', s_path_2d, 'oxygen', '--ext', 'jpeg'], check=False, capture_output=True)
+        print(f'o_path: {o_path}\n')
         s_path = f'{s_path_2d}/conc_oxygen_z0.0/'
         o_result = subprocess.run(['pcdl_make_movie', s_path, '--framerate', '9'], check=False, capture_output=True)
         print(f'o_result: {o_result}\n')

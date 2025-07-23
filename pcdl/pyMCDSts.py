@@ -1,5 +1,5 @@
 #########
-# title: timeseries.py
+# title: pyMCDSts.py
 #
 # language: python3
 # date: 2022-08-22
@@ -7,25 +7,25 @@
 # authors: Patrick Wall, Randy Heiland, Paul Macklin, Elmar Bucher
 #
 # description:
-#     timeseries.py defines an object class, able to load and access
+#     pyMCDSts.py defines an object class, able to load and access
 #     within python a time series of mcds objects loaded from a single
-#     PhysiCell model output directory. timeseries.py was first forked from
+#     PhysiCell model output directory. pyMCDSts.py was first forked from
 #     PhysiCell-Tools python-loader, where it was implemented as
 #     pyMCDS_timeseries.py, then totally rewritten and further developed.
-####
+#
+#     the make_image and make_movie functions are cloned from the PhysiCell
+#     Makefile. note on difference image magick convert and mogrify:
+#     + https://graphicsmagick-tools.narkive.com/9Sowc4HF/gm-tools-mogrify-vs-convert
+#########
 
 
 # load libraries
-import anndata as ad
-import bioio_base
-from bioio.writers import OmeTiffWriter
 import glob
 import matplotlib.pyplot as plt
 import numpy as np
 import os
 import pandas as pd
-from pcdl import render_neuroglancer
-from pcdl.timestep import TimeStep, es_coor_cell, es_coor_conc, _anndextract
+from pcdl.pyMCDS import pyMCDS, es_coor_cell, es_coor_conc
 import platform
 import sys
 
@@ -80,15 +80,14 @@ def make_gif(path, interface='jpeg'):
     if path.endswith('/'): path = path[:-1]
     if not os.path.isdir(path):
         sys.exit(f'Error @ make_gif : {path} path does not exist.')
-    s_ofile = path.split('/')[-1]
-    if s_ofile.startswith('.'): s_ofile = s_ofile[1:]
-    if (len(s_ofile) == 0): s_ofile = 'movie'
-    s_ofile += f'_{interface}.gif'
-    s_ofile = s_ofile.replace(' ','_')
-    s_opathfile = path + '/' + s_ofile
+    s_file = path.split('/')[-1]
+    if s_file.startswith('.'): s_file = s_file[1:]
+    if (len(s_file) == 0): s_file = 'movie'
+    s_file += f'_{interface}.gif'
+    s_opathfile = f'{path}/{s_file}'
     s_ipathfiles = f'{path}/*.{interface}'
     # genaerate gif
-    s_cmd = f'{s_magick}convert "{s_ipathfiles}" "{s_opathfile}"'
+    s_cmd = f'{s_magick}convert {s_ipathfiles} {s_opathfile}'
     if (os.system(s_cmd) != 0):
         sys.exit("Error @ make_gif : imagemagick could not generatet the gif.")
 
@@ -134,7 +133,6 @@ def make_movie(path, interface='jpeg', framerate=12):
     if s_ofile.startswith('.'): s_ofile = s_ofile[1:]
     if (len(s_ofile) == 0): s_ofile = 'movie'
     s_ofile += f'_{interface}{framerate}.mp4'
-    s_ofile = s_ofile.replace(' ','_')
     s_opathfile = f'{s_path}/{s_ofile}'
 
     # generate input file list
@@ -146,7 +144,7 @@ def make_movie(path, interface='jpeg', framerate=12):
     f.close()
 
     # genearete movie
-    s_cmd = f'ffmpeg -y -r {framerate} -f concat -i ffmpeginput.txt -vcodec libx264 -pix_fmt yuv420p -strict -2 -tune animation -crf 15 -acodec none "{s_ofile}"'  # -safe 0
+    s_cmd = f'ffmpeg -y -r {framerate} -f concat -i ffmpeginput.txt -vcodec libx264 -pix_fmt yuv420p -strict -2 -tune animation -crf 15 -acodec none {s_ofile}'  # -safe 0
     if (os.system(s_cmd) != 0):
         sys.exit("Error @ make_movie : ffmpeg could not generatet the movie.")
     os.remove('ffmpeginput.txt')
@@ -160,7 +158,7 @@ def make_movie(path, interface='jpeg', framerate=12):
 # classes #
 ###########
 
-class TimeSeries:
+class pyMCDSts:
     def __init__(self, output_path='.', custom_data_type={}, load=True, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True):
         """
         input:
@@ -180,10 +178,11 @@ class TimeSeries:
 
             microenv: boole; default True
                 should the microenvironment data be loaded?
-                setting microenv to False will use less memory and speed up processing.
+                setting microenv to False will use less memory and speed up
+                processing, similar to the original pyMCDS_cells.py script.
 
             graph: boole; default True
-                should the graphs, like cell_neighbor_graph.txt, be loaded?
+                should the graphs be loaded?
                 setting graph to False will use less memory and speed up processing.
 
             physiboss: boole; default True
@@ -200,12 +199,12 @@ class TimeSeries:
                 setting verbose to False for less text output, while processing.
 
         output:
-            mcdsts: TimeSeries class instance
+            mcdsts: pyMCDSts class instance
                 this instance offers functions to process all stored time steps
                 from a simulation.
 
         description:
-            TimeSeries.__init__ generates a class instance the instance offers
+            pyMCDSts.__init__ generates a class instance the instance offers
             functions to process all time steps in the output_path directory.
         """
         output_path = output_path.replace('\\','/')
@@ -214,7 +213,7 @@ class TimeSeries:
         if (output_path.endswith('/')) and (len(output_path) > 1):
             output_path = output_path[:-1]
         if not os.path.isdir(output_path):
-            print(f'Error @ TimeSeries.__init__ : this is not a path! could not load {output_path}.')
+            print(f'Error @ pyMCDSts.__init__ : this is not a path! could not load {output_path}.')
         self.path = output_path
         self.ls_xmlfile = [s_pathfile.replace('\\','/').split('/')[-1] for s_pathfile in sorted(glob.glob(self.path + f'/output*.xml'))]  # bue 2022-10-22: is output*.xml always the correct pattern?
         self.custom_data_type = custom_data_type
@@ -227,7 +226,6 @@ class TimeSeries:
             self.read_mcds()
         else:
             self.l_mcds = None
-        self.l_annmcds = None
 
 
     def set_verbose_false(self):
@@ -259,8 +257,6 @@ class TimeSeries:
     def make_gif(self, path, interface='jpeg'):
         """
         help(pcdl.make_gif)
-        try: mcdsts.make_gif(mcdsts.plot_scatter())
-        try: mcdsts.make_gif(mcdsts.plot_contour('substrate'))
         """
         s_opathfile = make_gif(path=path, interface=interface)
         return s_opathfile
@@ -269,24 +265,9 @@ class TimeSeries:
     def make_movie(self, path, interface='jpeg', framerate=12):
         """
         help(pcdl.make_movie)
-        try: mcdsts.make_movie(mcdsts.plot_scatter())
-        try: mcdsts.make_movie(mcdsts.plot_contour('substrate'))
         """
         s_opathfile = make_movie(path=path, interface=interface, framerate=framerate)
         return s_opathfile
-
-
-    def render_neuroglancer(self, tiffpathfile, timestep=0, intensity_cmap='gray'):
-        """
-        help(pcdl.render_neuroglancer)
-        try: mcdsts.render_neuroglancer(mcdsts.make_ome_tiff(), 0)
-        """
-        o_viewer = render_neuroglancer(
-            tiffpathfile = tiffpathfile,
-            timestep = timestep,
-            intensity_cmap = intensity_cmap,
-        )
-        return o_viewer
 
 
     ## LOAD DATA ##
@@ -294,7 +275,7 @@ class TimeSeries:
     def get_xmlfile_list(self):
         """
         input:
-            self: TimeSeries class instance.
+            self: pyMCDSts class instance.
 
         output:
             xmlfile_list: list of strings
@@ -312,7 +293,7 @@ class TimeSeries:
     def read_mcds(self, xmlfile_list=None):
         """
         input:
-            self: TimeSeries class instance.
+            self: pyMCDSts class instance.
 
             xmlfile_list: list of strings; default None
                 list of physicell output*.xml strings.
@@ -322,7 +303,7 @@ class TimeSeries:
 
         description:
             the function returns a list of mcds objects loaded by
-            TimeStep calls.
+            pyMCDS calls.
         """
         # handle input
         if (xmlfile_list is None):
@@ -333,7 +314,7 @@ class TimeSeries:
         # load mcds objects into list
         l_mcds = []
         for s_xmlpathfile in ls_xmlpathfile:
-            mcds = TimeStep(
+            mcds = pyMCDS(
                 xmlfile = s_xmlpathfile,
                 custom_data_type = self.custom_data_type,
                 microenv = self.microenv,
@@ -355,7 +336,7 @@ class TimeSeries:
     def get_mcds_list(self):
         """
         input:
-            self: TimeSeries class instance.
+            self: pyMCDSts class instance.
 
         output:
             self.l_mcds: list of chronologically ordered mcds objects.
@@ -373,7 +354,7 @@ class TimeSeries:
     def get_conc_df(self, values=1, drop=set(), keep=set(), collapse=True):
         """
         input:
-            self: TimeSeries class instance.
+            self: pyMCDSts class instance.
 
             values: integer; default is 1
                 minimal number of values a variable has to have to be outputted.
@@ -458,7 +439,7 @@ class TimeSeries:
     def get_conc_attribute(self, values=1, drop=set(), keep=set(), allvalues=False):
         """
         input:
-            self: TimeSeries class instance.
+            self: pyMCDSts class instance.
 
             values: integer; default is 1
                 minimal number of values a variable has to have
@@ -521,10 +502,10 @@ class TimeSeries:
         return dlr_variable_range
 
 
-    def plot_contour(self, focus, z_slice=0.0, extrema=None, alpha=1, fill=True, cmap='viridis', title='', grid=True, xlim=None, ylim=None, xyequal=True, figsizepx=None, ext='jpeg', figbgcolor=None, **kwargs):
+    def plot_contour(self, focus, z_slice=0.0, extrema=None, alpha=1, fill=True, cmap='viridis', title='', grid=True, xlim=None, ylim=None, xyequal=True, figsizepx=None, directory=None, ext='jpeg', figbgcolor=None):
         """
         input:
-            self: TimeSeries class instance
+            self: pyMCDSts class instance
 
             focus: string
                 column name within conc dataframe, for example.
@@ -575,6 +556,11 @@ class TimeSeries:
                 None tries to take the values from the initial.svg file.
                 fall back setting is [640, 480].
 
+            directory: string; default None
+                if None, a meaningful output directory name will be generated,
+                based on focus and z_slice parameters, else the resulting plots
+                will be moved to the explicit name directory.
+
             ext: string; default is jpeg
                 output image format. possible formats are jpeg, png, and tiff.
                 None will return the matplotlib fig object.
@@ -582,11 +568,6 @@ class TimeSeries:
             figbgcolor: string; default is None which is transparent (png)
                 or white (jpeg, tiff).
                 figure background color.
-
-            **kwargs: possible additional keyword arguments input,
-                handled by the matplotlib contour and contourf function.
-                + https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.contour.html
-                + https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.contourf.html
 
         output:
             fig: matplotlib figures, depending on ext, either as files or as
@@ -656,9 +637,9 @@ class TimeSeries:
                 xyequal = xyequal,
                 ax = None,
                 figsizepx = figsizepx,
+                directory = directory,
                 ext = ext,
                 figbgcolor = figbgcolor,
-                **kwargs,
             )
             lo_output.append(o_output)
 
@@ -666,9 +647,11 @@ class TimeSeries:
         return lo_output
 
 
-    def make_conc_vtk(self):
+    def make_conc_vtk(self, visualize=True):
         """
         input:
+            visualize: boolean; default is False
+                additionally, visualize cells using vtk renderer.
 
         output:
             ls_vtkpathfile: one vtk file per mcds time step that contains
@@ -686,7 +669,7 @@ class TimeSeries:
         # processing
         ls_vtkpathfile = []
         for mcds in self.get_mcds_list():
-            s_vtkpathfile = mcds.make_conc_vtk()
+            s_vtkpathfile = mcds.make_conc_vtk(visualize=visualize)
             ls_vtkpathfile.append(s_vtkpathfile)
 
         # output
@@ -698,7 +681,7 @@ class TimeSeries:
     def get_cell_df(self, values=1, drop=set(), keep=set(), collapse=True):
         """
         input:
-            self: TimeSeries class instance.
+            self: pyMCDSts class instance.
 
             values: integer; default is 1
                 minimal number of values a variable has to have to be outputted.
@@ -786,7 +769,7 @@ class TimeSeries:
     def get_cell_attribute(self, values=1, drop=set(), keep=set(), allvalues=False):
         """
         input:
-            self: TimeSeries class instance.
+            self: pyMCDSts class instance.
 
             values: integer; default is 1
                 minimal number of values a variable has to have
@@ -851,10 +834,10 @@ class TimeSeries:
         return dl_variable_range
 
 
-    def plot_scatter(self, focus='cell_type', z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title='', grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=1.0, figsizepx=None, ext='jpeg', figbgcolor=None, **kwargs):
+    def plot_scatter(self, focus='cell_type', z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title='', grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=1.0, figsizepx=None, directory=None, ext='jpeg', figbgcolor=None):
         """
         input:
-            self: TimeSeries class instance
+            self: pyMCDSts class instance
 
             focus: string; default is 'cell_type'
                 column name within cell dataframe.
@@ -915,6 +898,11 @@ class TimeSeries:
                 None tries to take the values from the initial.svg file.
                 fall back setting is [640, 480].
 
+            directory: string; default None
+                if None, a meaningful output directory name will be generated,
+                based on focus and z_slice parameters, else the resulting plots
+                will be moved to the explicit name directory.
+
             ext: string; default is jpeg
                 output image format. possible formats are jpeg, png, and tiff.
                 None will return the matplotlib fig object.
@@ -922,10 +910,6 @@ class TimeSeries:
             figbgcolor: string; default is None which is transparent (png)
                 or white (jpeg, tiff).
                 figure background color.
-
-            **kwargs: possible additional keyword arguments input,
-                handled by the pandas dataframe plot function.
-                + https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame
 
         output:
             fig: matplotlib figures, depending on ext, either as files or
@@ -964,9 +948,9 @@ class TimeSeries:
                 s = s,
                 ax = None,
                 figsizepx = figsizepx,
+                directory = directory,
                 ext = ext,
                 figbgcolor = figbgcolor,
-                **kwargs,
             )
             lo_output.append(o_output)
 
@@ -974,11 +958,14 @@ class TimeSeries:
         return lo_output
 
 
-    def make_cell_vtk(self, attribute=['cell_type']):
+    def make_cell_vtk(self, attribute=['cell_type'], visualize=False):
         """
         input:
             attribute: list of strings; default is ['cell_type']
                 column name within cell dataframe.
+
+            visualize: boolean; default is False
+                additionally, visualize cells using vtk renderer.
 
         output:
             ls_vtkpathfile: one 3D glyph vtk file per mcds time step
@@ -997,6 +984,7 @@ class TimeSeries:
         for mcds in self.get_mcds_list():
             s_vtkpathfile = mcds.make_cell_vtk(
                 attribute = attribute,
+                visualize = visualize,
             )
             ls_vtkpathfile.append(s_vtkpathfile)
 
@@ -1004,147 +992,12 @@ class TimeSeries:
         return ls_vtkpathfile
 
 
-    ## OME TIFF RELATED FUNCTIONS ##
-
-    def make_ome_tiff(self, cell_attribute='ID', conc_cutoff={}, focus=None, file=True, collapse=True):
-        """
-        input:
-            cell_attribute: strings; default is 'ID', which will result in a
-                cell segmentation mask.
-                column name within the cell dataframe.
-                the column data type has to be numeric (bool, int, float)
-                and cannot be string.
-                the result will be stored as 32 bit float.
-
-            conc_cutoff: dictionary string to real; default is an empty dictionary.
-                if a contour from a substrate not should be cut by greater
-                than zero (shifted to integer 1), another cutoff value can be specified here.
-
-            focus: set of strings; default is a None
-                set of substrate and cell_type names to specify what will be
-                translated into ome tiff format.
-                if None, all substrates and cell types will be processed.
-
-            file: boolean; default True
-                if True, an ome tiff file is the output.
-                if False, a numpy array with shape tczyx is the output.
-
-            collapse: boole; default True
-                should all mcds time steps from the time series be collapsed
-                into one ome tiff file (numpy array),
-                or an ome tiff file (numpy array) for each time step?
-
-        output:
-            a_tczyx_img: numpy array or ome tiff file.
-
-
-        description:
-            function to transform chosen mcdsts output into an 1[um] spaced
-            tczyx (time, channel, z-axis, y-axis, x-axis) ome tiff file or numpy array,
-            one substrate or cell_type per channel.
-            a ome tiff file is more or less:
-            a numpy array, containing the image information
-            and a xml, containing the microscopy metadata information,
-            like the channel labels.
-            the ome tiff file format can for example be read by the napari
-            or fiji (imagej) software.
-
-            https://napari.org/stable/
-            https://fiji.sc/
-        """
-        # for each T time step
-        l_tczyx_img = []
-        for i, mcds in enumerate(self.get_mcds_list()):
-            # processing
-            b_file = True # 10
-            if (not file and not collapse) or (not file and collapse) or (file and collapse):  # 00, 01, 11
-                b_file = False
-            o_tczyx_img = mcds.make_ome_tiff(
-                cell_attribute = cell_attribute,
-                conc_cutoff = conc_cutoff,
-                focus = focus,
-                file = b_file
-            )
-            l_tczyx_img.append(o_tczyx_img)
-
-        # handle channels
-        ls_substrate = mcds.get_substrate_list()
-        ls_celltype = mcds.get_celltype_list()
-
-        if not (focus is None):
-            ls_substrate = [s_substrate for s_substrate in ls_substrate if s_substrate in set(focus)]
-            ls_celltype = [s_celltype for s_celltype in ls_celltype if s_celltype in set(focus)]
-            if (set(focus) != set(ls_substrate).union(set(ls_celltype))):
-                sys.exit(f'Error : {focus} not found in {ls_substrate} {ls_celltype}')
-
-        # output 00 list of numpy arrays
-        if (not file and not collapse):  # 00
-            if self.verbose:
-                print(f'la_tczyx_img shape: {len(l_tczyx_img)} * {l_tczyx_img[0].shape}')
-            return l_tczyx_img
-
-        # output 01 numpy array
-        elif (not file and collapse):  # 01
-            # numpy array
-            a_tczyx_img = np.array(l_tczyx_img)
-            if self.verbose:
-                print('a_tczyx_img shape:', a_tczyx_img.shape)
-            return a_tczyx_img
-
-        # output 10 list of pathfile strings
-        elif (file and not collapse):  # 10
-            return l_tczyx_img
-
-        # output 11 ometiff file
-        elif (file and collapse):  # 11
-            a_tczyx_img = np.array(l_tczyx_img)
-            if self.verbose:
-                print('a_tczyx_img shape:', a_tczyx_img.shape)
-
-            # generate filename
-            s_channel = ''
-            for s_substrate in ls_substrate:
-                try:
-                    r_value = conc_cutoff[s_substrate]
-                    s_channel += f'_{s_substrate}{r_value}'
-                except KeyError:
-                    s_channel += f'_{s_substrate}'
-            for s_celltype in ls_celltype:
-                s_channel += f'_{s_celltype}'
-            if len(ls_celltype) > 0:
-                s_channel += f'_{cell_attribute}'
-            s_tifffile = f"timeseries{s_channel.replace(' ','_')}.ome.tiff"
-            if (len(s_tifffile) > 255):
-                print(f"Warning: filename {len(s_tifffile)} > 255 character.")
-                s_tifffile = 'timeseries_channels.ome.tiff'
-                print(f"file name adjusted to {s_tifffile}.")
-            s_tiffpathfile = self.path + '/' + s_tifffile
-
-            # save to file
-            OmeTiffWriter.save(
-                a_tczyx_img,
-                s_tiffpathfile,
-                dim_order = 'TCZYX',
-                #ome_xml=x_img,
-                channel_names = ls_substrate + ls_celltype,
-                image_names = [f'timeseries_{cell_attribute}'],
-                physical_pixel_sizes = bioio_base.types.PhysicalPixelSizes(mcds.get_voxel_spacing()[2], 1.0, 1.0),  # z,y,x [um]
-                #channel_colors=,
-                #fs_kwargs={},
-            )
-            return s_tiffpathfile
-
-        # error case
-        else:
-            sys.exit(f'Error @ make_ome_tiff : {file} {collapse} strange file collapse combination.')
-
-
     ## TIME SERIES RELATED FUNCTIONS ##
 
-    def plot_timeseries(self, focus_cat=None, focus_num=None, aggregate_num=np.nanmean, frame='cell', z_slice=None, logy=False, ylim=None, secondary_y=None, subplots=False, sharex=False, sharey=False, linestyle='-', linewidth=None, cmap=None, color=None, grid=True, legend=True, yunit=None, title=None, ax=None, figsizepx=[640, 480], ext=None, figbgcolor=None, **kwargs):
+    def plot_timeseries(self, focus_cat=None, focus_num=None, aggregate_num=np.nanmean, frame='cell', z_slice=None, logy=False, ylim=None, secondary_y=None, subplots=False, sharex=False, sharey=False, linestyle='-', linewidth=None, cmap=None, color=None, grid=True, legend=True, yunit=None, title=None, ax=None, figsizepx=[640, 480], ext=None, figbgcolor=None):
         """
         input:
-            self: TimeSeries class instance
+            self: pyMCDSts class instance
 
             focus_cat: string; default is None
                 categorical or boolean data column within dataframe specified under frame.
@@ -1242,10 +1095,6 @@ class TimeSeries:
                 figure background color.
                 only relevant if ext not is None.
 
-            **kwargs: possible additional keyword arguments input,
-                handled by the pandas series plot function.
-                + https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.plot.html
-
         output:
             if ext is None: a fig matplotlib figure, containing the ax axis object, is returned.
             else: an image file is generated under the returned path.
@@ -1313,7 +1162,7 @@ class TimeSeries:
                 mcds.set_verbose_true()
             # error
             else:
-                sys.exit(f"Error @ TimeSeries.plot_timeseries : unknown frame {frame}. known are cell_df and conc_df.")
+                sys.exit(f"Error @ pyMCDSts.plot_timeseries : unknown frame {frame}. known are cell_df and conc_df.")
             # handle z_slize
             if not (z_slice is None):
                 df_frame = df_frame.loc[(df_frame.mesh_center_p == z_slice),:]
@@ -1328,7 +1177,7 @@ class TimeSeries:
                 df_aggregate = o_aggregate.loc[:,[focus_num]]
                 df_aggregate.columns = [r_time]
             else:
-                sys.exit(f'Error @ TimeSeries.plot_timeseries : {aggregate_num} calculation returns unexpected variable type {type(o_aggregate)}.\nthe expected type is a pandas Series or DataFrame.')
+                sys.exit(f'Error @ pyMCDSts.plot_timeseries : {aggregate_num} calculation returns unexpected variable type {type(o_aggregate)}.\nthe expected type is a pandas Series or DataFrame.')
             # store result
             if (df_series is None):
                 df_series = df_aggregate
@@ -1349,9 +1198,9 @@ class TimeSeries:
         elif (focus_num == 'count'):
             ylabel = f'focus_num [{yunit}]'
         elif (yunit is None):
-            ylabel = f"{aggregate_num.__name__.replace('nan','')} {focus_num}"
+            ylabel = f"{aggregate_num.__name__.replace('np.nan','')} {focus_num}"
         else:
-            ylabel = f"{aggregate_num.__name__.replace('nan','')} {focus_num} [{yunit}]"
+            ylabel = f"{aggregate_num.__name__.replace('np.nan','')} {focus_num} [{yunit}]"
 
         # generate series line plot
         if (ax is None):
@@ -1385,8 +1234,7 @@ class TimeSeries:
                 ylabel = ylabel,
                 xlabel = f"time [{mcds.get_unit_dict()['time']}]",
                 title = title,
-                ax = ax,
-                **kwargs,
+                ax = ax
             )
         else:
             # if color
@@ -1406,8 +1254,7 @@ class TimeSeries:
                 ylabel = ylabel,
                 xlabel = f"time [{mcds.get_unit_dict()['time']}]",
                 title = title,
-                ax = ax,
-                **kwargs,
+                ax = ax
             )
 
         # output
@@ -1415,10 +1262,9 @@ class TimeSeries:
             return fig
         else:
             if (focus_num == 'count'):
-                s_ofile = f'timeseries_{frame}_{focus_cat}_{focus_num}.{ext}'.replace(' ','_')
+                s_pathfile = self.path + f'/timeseries_{frame}_{focus_cat}_{focus_num}.{ext}'
             else:
-                s_ofile = f"timeseries_{frame}_{focus_cat}_{focus_num}_{aggregate_num.__name__.replace('np.nan','')}.{ext}".replace(' ','_')
-            s_pathfile = self.path + '/' + s_ofile
+                s_pathfile = self.path + f"/timeseries_{frame}_{focus_cat}_{focus_num}_{aggregate_num.__name__.replace('np.nan','')}.{ext}"
             if figbgcolor is None:
                 figbgcolor = 'auto'
             plt.tight_layout()
@@ -1432,7 +1278,7 @@ class TimeSeries:
     def make_graph_gml(self, graph_type, edge_attribute=True, node_attribute=[]):
         """
         input:
-            self: TimeSeries class instance.
+            self: pyMCDS class instance.
 
             graph_type: string
                 to specify which physicell output data should be processed.
@@ -1479,170 +1325,3 @@ class TimeSeries:
 
         # outout
         return ls_pathfile
-
-
-    ## ANNDATA RELATED FUNCTIONS ##
-
-    def get_anndata(self, values=1, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=True):
-        """
-        input:
-            values: integer; default is 1
-                minimal number of values a variable has to have to be outputted.
-                variables that have only 1 state carry no information.
-                None is a state too.
-
-            drop: set of strings; default is an empty set
-                set of column labels to be dropped for the dataframe.
-                don't worry: essential columns like ID, coordinates
-                and time will never be dropped.
-                Attention: when the keep parameter is given, then
-                the drop parameter has to be an empty set!
-
-            keep: set of strings; default is an empty set
-                set of column labels to be kept in the dataframe.
-                don't worry: essential columns like ID, coordinates
-                and time will always be kept.
-
-            scale: string; default 'maxabs'
-                specify how the data should be scaled.
-                possible values are None, maxabs, minmax, std.
-                for more input, check out: help(pcdl.scaler)
-
-            collapse: boole; default True
-                should all mcds time steps from the time series be collapsed
-                into one single anndata object, or a list of anndata objects
-                for each time step?
-
-            keep_mcds: boole; default True
-                should the loaded original mcds be kept in memory
-                after transformation?
-
-        output:
-            annmcds or self.l_annmcds: anndata object or list of anndata objects.
-                what is returned depends on the collapse setting.
-
-        description:
-            function to transform mcds time steps into one or many
-            anndata objects for downstream analysis.
-        """
-        # initialize vaiable
-        l_annmcds = []
-        df_anncount = None
-        df_annobs = None
-        ar_annobsm = None
-
-        # variable triage
-        if (values < 2):
-            ls_column = list(self.l_mcds[0].get_cell_df(drop=drop, keep=keep).columns)
-        else:
-            ls_column = sorted(es_coor_cell.difference({'ID'}))
-            ls_column.extend(sorted(self.get_cell_attribute(values=values, drop=drop, keep=keep, allvalues=False).keys()))
-
-        # collapse warning
-        if collapse and self.verbose:
-            print('Warning @ mcdsts.get_anndata : only df_cell data, but not graph data, can be collapsed.')
-
-        # processing
-        lann_mcds = []
-        i_mcds = len(self.l_mcds)
-        for i in range(i_mcds):
-            # fetch mcds
-            if keep_mcds:
-                mcds = self.l_mcds[i]
-            else:
-                mcds = self.l_mcds.pop(0)
-            # extract physicell version
-            s_physicellv = mcds.get_physicell_version(),
-            # extract time and dataframes
-            r_time = round(mcds.get_time(),9)
-            if self.verbose:
-                print(f'processing: {i+1}/{i_mcds} {r_time}[min] mcds into anndata obj.')
-            df_cell = mcds.get_cell_df()
-            df_cell = df_cell.loc[:,ls_column]
-
-            # pack collapsed
-            if collapse:
-                # extract
-                df_count, df_obs, d_obsm, d_obsp, d_uns = _anndextract(
-                    df_cell=df_cell,
-                    scale = scale,
-                    #graph_attached = {},
-                    #graph_neighbor = {},
-                    #graph_spring = {},
-                    #graph_method = s_physicellv,
-                )
-                # count
-                df_count.reset_index(inplace=True)
-                df_count.index = df_count.ID + f'id_{r_time}min'
-                df_count.index.name = 'id_time'
-                df_count.drop('ID', axis=1, inplace=True)
-                if df_anncount is None:
-                    df_anncount = df_count
-                else:
-                    df_anncount = pd.concat([df_anncount, df_count], axis=0)
-                # obs
-                df_obs.reset_index(inplace=True)
-                df_obs.index = df_obs.ID + f'id_{r_time}min'
-                df_obs.index.name = 'id_time'
-                if df_annobs is None:
-                    df_annobs = df_obs
-                else:
-                    df_annobs = pd.concat([df_annobs, df_obs], axis=0)
-                # obsm (spatial)
-                if ar_annobsm is None:
-                    ar_annobsm = d_obsm['spatial']
-                else:
-                    ar_annobsm = np.vstack([ar_annobsm, d_obsm['spatial']])
-                # obsp: nop (graph)
-                # uns: nop (graph)
-
-            # pack not collapsed
-            else:
-                # extract
-                df_count, df_obs, d_obsm, d_obsp, d_uns = _anndextract(
-                    df_cell=df_cell,
-                    scale = scale,
-                    graph_attached = mcds.get_attached_graph_dict(),
-                    graph_neighbor = mcds.get_neighbor_graph_dict(),
-                    graph_spring = mcds.get_spring_graph_dict(),
-                    graph_method = s_physicellv,
-                )
-                # annmcds
-                ann_mcds = ad.AnnData(
-                    X = df_count,
-                    obs = df_obs,
-                    obsm = d_obsm,
-                    obsp = d_obsp,
-                    uns = d_uns,
-                )
-                lann_mcds.append(ann_mcds)
-
-        # output
-        if collapse:
-            ann_mcdsts = ad.AnnData(
-                X = df_anncount,
-                obs = df_annobs,
-                obsm = {'spatial': ar_annobsm},
-                #obsp = d_obsp,
-                #uns = d_uns
-            )
-            return ann_mcdsts
-        else:
-            self.l_annmcds = lann_mcds
-            return self.l_annmcds
-
-
-    def get_annmcds_list(self):
-        """
-        input:
-            self: TimeSeries class instance.
-
-        output:
-            self.l_annmcds: list of chronologically ordered anndata mcds objects.
-                watch out, this is a pointer to the
-                self.l_annmcds list of anndata mcds objects, not a copy of self.l_annmcds!
-
-        description:
-            function returns a binding to the self.l_annmcds list of anndata mcds objects.
-        """
-        return self.l_annmcds

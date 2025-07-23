@@ -166,9 +166,9 @@ Please study the Muon and AnnData documentation to learn how to analyze this dat
 + https://github.com/scverse/anndata
 
 
-## &#x2728; Handle ome.tiff, tiff, png, and jpeg file format
+## &#x2728; Handle tiff, png, and jpeg file format
 
-### Save pcdl data structures as jpeg, png, tiff, and ome.tiff files from the command line
+### Save pcdl data structures as jpeg, png, and tiff files from the command line
 
 ```bash
 pcdl_plot_contour output/output00000021.xml oxygen --ext tiff
@@ -179,16 +179,10 @@ pcdl_plot_contour output/output00000021.xml oxygen
 ```bash
 pcdl_plot_scatter output/output00000021.xml
 ```
-```bash
-pcdl_make_ome_tiff('output/')
-```
 
-### Load jpeg, png, tiff, and ometiff files into a julia data structures
+### Load jpeg, png, and tiff files into a julia data structures
 
-&#x26A0; **bue 2024-09-04:** ome.tiff files currently cannot be loaded ( github issue: https://github.com/tlnagy/OMETIFF.jl/issues/112 ).
-
-We will use the [Images](https://github.com/JuliaImages/Images.jl) library, and it's [OMETIFF](https://github.com/tlnagy/OMETIFF.jl) extension,
-to load jpeg, png, tiff, and ome.tiff files
+We will use the [Images](https://github.com/JuliaImages/Images.jl) library to load jpeg, png, and tiff files
 
 Package installation.
 
@@ -196,7 +190,6 @@ Package installation.
 using Pkg
 Pkg.add("FileIO")
 Pkg.add("Images")
-Pkg.add("OMETIFF")
 ```
 
 Load image file.
@@ -204,9 +197,6 @@ Load image file.
 ```julia
 using FileIO
 using Images
-```
-```julia
-omeimg = load("output/timeseries_ID.ome.tiff")
 ```
 ```julia
 img = load("output/cell_cell_type_z0.0/output00000021_cell_type.jpeg")

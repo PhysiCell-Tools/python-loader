@@ -1,6 +1,6 @@
 # PhysiCell Data Loader Tutorial: pcdl and python and MCDS TimeSteps
 
-In this chapter, we will load the pcdl library and use its TimeStep class to load the data snapshot output/00000012, from the 2D time series test dataset (https://github.com/elmbeech/physicelldataloader/blob/master/output_2d.tar.gz).
+In this chapter, we will load the pcdl library and use its TimeStep class to load the data snapshot 00000012, from [data\_timeseries\_ 2d](https://github.com/elmbeech/physicelldataloader/tree/master/pcdl/output_2d) from the 2D time series test dataset.
 
 First, please install the latest version of physicelldataloader (pcdl),
 as described in the [HowTo](https://github.com/elmbeech/physicelldataloader/blob/master/man/HOWTO.md) chapter.
@@ -12,7 +12,7 @@ And, if not already done so, have a quick read through the pcdl [background](htt
 ## Preparation
 
 To runs this tutorial,
-you can either work with the data that is currently in your output folder,
+you can either work the data that is currently in your output folder,
 or you can install the 2D unit test dataset into your PhysiCell output folder,
 by executing the following command sequence.
 
@@ -53,7 +53,7 @@ print('pcdl version:', pcdl.__version__)  # it is easy to figure out which pcdl 
 mcds = pcdl.TimeStep(s_pathfile, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
 ```
 
-The verbosity for pcdl shell output you can tune, even after loading the data.
+The verbosity for pcdl output you can tune, even after loading the data.
 
 ```python3
 mcds.set_verbose_false()
@@ -74,34 +74,31 @@ Regarding the original python-loader, the structure has slightly changed.\
 
 Anyhow, let's take a look at what we actually have in here.
 
+![mcds.data dictionary blueprint](img/physicelldataloader_data_dictionary_v3.2.2.png)
+
 ```python
 # main data branches
-sorted(mcds.data.keys())  # metadata, mesh, substrate (microenvironment), cell (agent), and raw_substrate and raw_cell data.
+sorted(mcds.data.keys())  # metadata, mesh, substrate microenvironment (continuum_variables), and cell agent (discrete_cells)
 
 # metadata
-sorted(mcds.data['metadata'].keys())  # multicellds_version, physicell_version, simulation time (current_time), runtime (current_runtime), time stamp (created), time unit ('time_units', 'runtime_units'), spatial unit ('spatial_unit'), and all units specified (ds_unit).
+sorted(mcds.data['metadata'].keys())  # multicellds version, physicell version, simulation time, runtime, time stamp, time unit, spatial unit, and substrate and cell type ID label mappings
 
 # mesh
-sorted(mcds.data['mesh'].keys())  # voxel (ijk), mesh (mnp), and position (xyz) range, axis, spacing, voxel volume, coordinate, and grid.
+sorted(mcds.data['mesh'].keys())  # voxel (ijk), mesh (nmp), and position (xyz) range, axis, coordinate, grid objects, and voxel volume
 
 # microenvironment
-sorted(mcds.data['substrate'].keys())  # df_conc, df_substarte, ds_substrate, ls_substarte
-print(mcds.data['substrate']['ls_substarte'] # list of all processed substrates
-print(mcds.data['substrate']['ds_substrate'] # dictionary with substrate ID label mapping
-print(mcds.data['substrate']['df_substarte'] # pandas data frame with substrate decay_rate and diffusion_coefficient.
-print(mcds.data['substrate']['df_conc'] # pandas data frame with the actual substrate concentrations in each voxel.
+sorted(mcds.data['continuum_variables'].keys())  # list of all processed substrates, e.g. oxygen
+sorted(mcds.data['continuum_variables']['oxygen'].keys())  # substrate related data values, unit, diffusion coefficient, and decay rate
 
 # cell
-sorted(mcds.data['cell'].keys())  # dei_graph, df_cell, ds_celltype, ls_cellattr, ls_celltype
-print(mcds.data['cell']['ls_celltype'])  # list of all processed cell types
-print(mcds.data['cell']['ls_cellattr'])  # list of all outputted (df_cell) cell type related attributes
-print(mcds.data['cell']['ds_celltype'])  # dictionary with cell type ID label mapping
-print(mcds.data['cell']['df_cell'])  # pandas data frame with each cell's attribute values
-sorted(mcds.data['cell']['dei_graph'].keys())  # dictionary with neighbor_cells, attached_cells, and spring_attached_cells graph information.
+sorted(mcds.data['discrete_cells'].keys())  # data, units, and graph dictionaries
+sorted(mcds.data['discrete_cells']['data'].keys())  # all cell related, tracked data
+sorted(mcds.data['discrete_cells']['units'].keys())  # all units from the cell related, tracked data
+sorted(mcds.data['discrete_cells']['graph'].keys())  # neighbor_cells and attached_cells graph dictionaries
 ```
 
 **Once again, loud, for the ones in the back, in pcdl >= version 3, all data is accessible by functions.
-There should be no need to fetch data directly from the `mcds.data` dictionaries!**
+There should be no need to fetch data directly from the `mcds.data` dictionaries.**
 
 We will explore these functions in the upcoming sections.
 
@@ -200,6 +197,39 @@ df_conc.loc[(df_conc.voxel_i == 2) & (df_conc.voxel_j == 1) & (df_conc.voxel_k =
 Please have a look at [TUTORIAL_python3_pandas.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_pandas.md) to learn more.
 
 
+Additionally, there is a less often used function to retrieve substrate specific 3D or 2D meshgrid [numpy](https://numpy.org/) arrays.
+To get a 2D meshgrids you can slice though any z stack value, the function will always pick the closest mesh center coordinate, the smaller coordinate, if you hit the saddle point between two voxels.
+(This function might become deprecated in a future pcdl version.)
+
+```python
+# concentration meshgrid for a particular substrate
+oxygen_2d = mcds.get_concentration('oxygen', z_slice=0)
+oxygen_2d.shape  # (11, 11)
+```
+```python
+# concentration meshgrid for a particular substrate
+oxygen_3d = mcds.get_concentration('oxygen')
+oxygen_3d.shape  # (11, 11, 1)
+```
+
+
+Additionally, there is a less often used functions to retrieve a [numpy](https://numpy.org/) array of all substrate concentrations at a particular xyz coordinate, ordered alphabetically by substrate name, like the list retrieved by the get\_substrate\_names function.
+(This function might become deprecated in a future pcdl version.)
+
+```python
+# all concentration values at a particular coordinate
+mcds.get_concentration_at(x=0, y=0, z=0)  # array([34.4166271])
+```
+```python
+# all concentration values at a particular coordinate
+mcds.get_concentration_at(x=111, y=22, z=-5)  # array([18.80652216])
+```
+```python
+# all concentration values at a particular coordinate
+mcds.get_concentration_at(x=111, y=22, z=-5.1)  # None and Warning @ pyMCDS.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0)
+```
+
+
 ### &#x2728; Microenvironment Data Analysis with [Matplotlib](https://matplotlib.org/)
 
 For substrate concentration visualization, **matplotlib contour and contourf plots**,
@@ -250,12 +280,6 @@ We can retrieve a dictionary that maps cell type IDs to labels.
 mcds.get_celltype_dict()  # {'0': 'cancer_cell'}
 ```
 
-And we can retrieve an alphabetically ordered list with all cell agent attributes outputted by PhysiCell, loadable with mcds.get\_cell\_df().
-
-```python
-mcds.get_cell_attribute_list()  # ['apoptotic_phagocytosis_rate', ...]
-```
-
 
 ### &#x2728; Cell Data Analysis with [Pandas](https://pandas.pydata.org/)
 
@@ -291,6 +315,15 @@ df_cell.loc[(df_cell.voxel_i == 2) & (df_cell.voxel_j == 1) & (df_cell.voxel_k =
 Please have a look at [TUTORIAL_python3_pandas.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_pandas.md) to learn more.
 
 
+There exist an additional, less often used function,
+to filter for cells in xyz position plus minus (voxel spacing / 2).
+(This function might become deprecated in a future pcdl version.)
+
+```python
+mcds.get_cell_df_at(x=45, y=10, z=0)  # cells: 5, 7, 39
+```
+
+
 ### &#x2728; Cell Data Analysis within the [Scverse](https://scverse.org/)
 
 To be able to analyze cell agent data the same way as single cell RNA seq data is analyzed,
@@ -300,8 +333,8 @@ Anndata is the backbone of the scverse (single cell universe) project.
 
 ```python
 ann = mcds.get_anndata(values=2)
-print(ann)  # AnnData object with n_obs × n_vars = 81 × 50
-            #     obs: 'z_layer', 'time', 'cell_type', 'chemotaxis_index', 'current_phase', 'cycle_model'
+print(ann)  # AnnData object with n_obs × n_vars = 992 × 26
+            #     obs: 'z_layer', 'time', 'current_phase', 'cycle_model'
             #     uns: 'neighbor'
             #     obsm: 'spatial'
             #     obsp: 'physicell_neighbor_conectivities', 'physicell_neighbor_distances'
@@ -310,16 +343,16 @@ print(ann)  # AnnData object with n_obs × n_vars = 81 × 50
 variables:
 
 ```python
-ann.var_names  # numerical cell attributes:  Index(['attachment_rate', ...], dtype='object')
+ann.var_names  # numerical cell attributes:  Index(['cell_BM_repulsion_strength', ... , 'total_volume'], dtype='object')
 ```
 
 observation:
 
 ```python
-ann.obs_names  # cell IDs: Index(['10', ...], dtype='object', name='ID', length=992)
+ann.obs_names  # cell IDs: Index(['0', ..., '994'], dtype='object', name='ID', length=992)
 ```
 ```python
-ann.obs_keys()  # categorical cell attributes:  ['z_layer', 'time', 'cell_type', 'chemotaxis_index', 'current_phase', 'cycle_model']
+ann.obs_keys()  # categorical cell attributes:  ['z_layer', 'time', 'current_phase', 'cycle_model']
 ```
 ```python
 ann.obsm_keys()  # cell coordinates: ['spatial']
@@ -340,8 +373,8 @@ ann.uns_keys()  # ['neighbor']
 ann.uns['neighbor']  # metadata about the neighborhood graph.
 ```
 
-The output tells us that we have loaded a time step  with 81 cell agents and 50 numerical attributes (vars).
-Further, we have 6 categorical cell agent attributes (obs).
+The output tells us that we have loaded a time step  with 992 cell agents and 26 numerical attributes (vars).
+Further, we have 4 categorical cell agent attributes (obs).
 We have each cell agent's xy spatial coordinate information (obsm).
 And we have cell neighbor graph infromation (obsp, uns).
 
@@ -359,19 +392,13 @@ This file format can be read by graph libraries, like network and igraph, for do
 
 Cell neighbor touching graph
 ```python
-mcds.make_graph_gml('neighbor')
+mcds.make_graph_gml('touch')
 ```
 
 Cell neighbor attached graph
 ```python
 mcds.make_graph_gml('attached')
 ```
-
-Cell neighbor spring attached graph
-```python
-mcds.make_graph_gml('spring')
-```
-
 <!--
 Cell lineage tree
 ```python
@@ -420,44 +447,6 @@ help(mcds.make_cell_vtk)
 Please have a look at [TUTORIAL_paraview.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_paraview.md) to learn more.
 
 
-
-## Microenvironment and Cell Data Related Functions
-
-### &#x2728; PhysiCell Data Analysis with [Napari](https://napari.org/stable/), [Fiji Imagej](https://fiji.sc/), [Neuroglancer](https://research.google/blog/an-interactive-automated-3d-reconstruction-of-a-fly-brain/), and similar software.
-
-For substrate and cell agent visualization, data can be saved in open microscopy's [ome.tiff](https://www.openmicroscopy.org/ome-files/) file format.
-
-For cell agents, the default cell\_attribute outputted is the cell ID + 1, results in segmentation masks,
-although, any numerical (bool, int, float) cell\_attribute can be outputted.
-
-```python
-mcds.make_ome_tiff()  # mark by cell ID + 1.
-```
-```python
-mcds.make_ome_tiff('dead')  # mark dead and alive cells.
-```
-```python
-mcds.render_neuroglancer(mcds.make_ome_tiff())  # load generated ome.tiff files straigth into the WebGL-based Neuroglancer software.
-```
-```python
-help(mcds.make_ome_tiff)
-```
-```python
-help(mcds.render_neuroglancer)
-```
-
-The tiff and ome.tiff files can be loaded back in to python as [numpy](https://numpy.org/) arrays.
-Besides that, ome.tiff files enables us to study PhysiCell output the same way
-as commonly fluorescent microscopy data is analyzed by wetlab scientists.
-Please have a look at
-[TUTORIAL_python3_ometiff.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_ometiff.md),
-[TUTORIAL_python3_napari.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_napari.md),
-[TUTORIAL_fiji_imagej.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_fijiimagej.md),
-and [TUTORIAL_neuroglancer.md]((https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_neuroglancer.md)
-to learn more.
-
-
-
 ## Mesh Data Related Functions
 
 For data analysis, the functions related to the mesh are most probably the least one you have to deal with.
@@ -471,8 +460,12 @@ It is common, but not necessary, that the voxel's width, height, and depth is th
 In fact, in this test dataset, you will find that this is not the case.
 In the related `PhysiCell_settings.xml` file, the voxel was specified as 30[nm] high, 20[nm] wide, and 10[nm] deep.
 
+Retrieving voxel and mesh spacing from the loaded time step, you will notice that voxel and mesh spacing values differ.
+This is because this data set is from a 2D simulation. For that reason, the mesh depth is set to 1.\
+In 3D simulation data, voxel and mesh spacing will be the same because voxel and mesh depth is the same.
+
 ```python
-mcds.get_mesh_spacing()  # the same as get_voxel_spacing.
+mcds.get_mesh_spacing()  # [30.0, 20.0, 1]
 ```
 ```python
 mcds.get_voxel_spacing() # [30.0, 20.0, 10.0]
@@ -533,7 +526,7 @@ mcds.is_in_mesh(x=0, y=0, z=0)  # True
 mcds.is_in_mesh(x=111, y=22, z=-5)  # True
 ```
 ```python
-mcds.is_in_mesh(x=111, y=22, z=-5.1)  # False and Warning @ TimeStep.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0)
+mcds.is_in_mesh(x=111, y=22, z=-5.1)  # False and Warning @ pyMCDS.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0)
 ```
 
 Translate a xyz position coordinate into a ijk voxel coordinate:
@@ -544,7 +537,7 @@ mcds.get_voxel_ijk(x=0, y=0, z=0)  # [0,0,0]
 mcds.get_voxel_ijk(x=111, y=22, z=-5)  # [4, 2, 0]
 ```
 ```python
-mcds.get_voxel_ijk(x=111, y=22, z=-5.1)  # None and Warning @ TimeStep.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0)
+mcds.get_voxel_ijk(x=111, y=22, z=-5.1)  # None and Warning @ pyMCDS.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0)
 ```
 
 Translate a xyz position coordinate into a mnp mesh center coordinate:
@@ -556,7 +549,7 @@ mcds.get_mesh_mnp(x=0, y=0, z=0)  # [0,0,0]
 mcds.get_mesh_mnp(x=111, y=22, z=-5)  # [4, 2, 0]
 ```
 ```python
-mcds.get_mesh_mnp(x=111, y=22, z=-5.1)  # None and Warning @ TimeStep.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0)
+mcds.get_mesh_mnp(x=111, y=22, z=-5.1)  # None and Warning @ pyMCDS.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0)
 ```
 
 

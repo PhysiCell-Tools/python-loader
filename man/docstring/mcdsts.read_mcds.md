@@ -3,7 +3,7 @@
 
 ## input:
 ```
-            self: TimeSeries class instance.
+            self: pyMCDSts class instance.
 
             xmlfile_list: list of strings; default None
                 list of physicell output*.xml strings.
@@ -19,6 +19,6 @@
 ## description:
 ```
             the function returns a list of mcds objects loaded by
-            TimeStep calls.
+            pyMCDS calls.
         
 ```

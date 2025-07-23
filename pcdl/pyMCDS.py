@@ -1,5 +1,5 @@
 #########
-# title: timestep.py
+# title: pyMCDS.py
 #
 # language: python3
 # date: 2022-08-22
@@ -7,32 +7,25 @@
 # authors: Patrick Wall, Randy Heiland, Furkan Kurtoglu, Paul Macklin, Elmar Bucher
 #
 # description:
-#     timestep.py definds an object class, able to load and access
+#     pyMCDS.py definds an object class, able to load and access
 #     within python a single time step from the PhysiCell model output folder.
-#     timestep.py was forked from the original PhysiCell-Tools python-loader
+#     pyMCDS.py was forked from the original PhysiCell-Tools python-loader
 #     implementation and further developed.
 #########
 
 
 # load library
-import anndata as ad
-import bioio_base
-from bioio.writers import OmeTiffWriter
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib import colors
-import neuroglancer
+import matplotlib.patches as mpatches
 import numpy as np
 import os
 import pandas as pd
-from pcdl import imagine
-from pcdl import pdplt
-from pcdl import neuromancer
+import random
 from scipy import io
-from scipy import sparse
 import sys
 import vtk
-import warnings
 import xml.etree.ElementTree as etree
 from pcdl.VERSION import __version__
 
@@ -175,43 +168,73 @@ es_coor_cell = {
 
 
 # functions
-def render_neuroglancer(tiffpathfile, timestep=0, intensity_cmap='gray'):
-    """
+def df_label_to_color(df_abc, s_focus, es_label=None, s_nolabel='gray', s_cmap='viridis', b_shuffle=False):
+    '''
     input:
-        tiffpathfile: string.
-            path to ome tiff file.
-
-        timestep: integer, default is 0.
-            variable to specify the specific time step to render.
-            useful for time series ome.tiff files.
-            the default is compatible with single time step ome.tiff files.
-
-        intensity_cmap: string; default is 'gray'.
-            matlab color map label, used to display expression intensity values.
-            if None, no intensity layers will be generated.
-            + https://matplotlib.org/stable/users/explain/colors/colormaps.html
+        df_abc: dataframe to which the color column will be added.
+        s_focus: column name with sample labels for which a color column will be generated.
+        es_label: set of labels to color. if None, es_label will be extracted for the s_focus column.
+        s_nolabel: color for labels not defined in es_label.
+        s_cmap:  matplotlib color map label.
+            https://matplotlib.org/stable/tutorials/colors/colormaps.html
+        b_shuffle: should colors be given by alphabetical order,
+            or should the label color mapping order be random.
 
     output:
-        viewer: local url where the loaded, neuroglancer rendered ome tiff file
-            can be viewed.
+        df_abc: dataframe updated with color column.
+        ds_color: lable to hex color string mapping dictionary
 
     description:
-        function to load a time step from an ome tiff files, generated
-        with make_ome_tiff, into neuroglancer.
-    """
-    # start neuroglancer
-    viewer = neuroglancer.Viewer()
-    with viewer.txn() as state:
-        # render ometiff into neuroglancer
-        neuromancer.ometiff2neuro(
-            o_state = state,
-            s_pathfile_tiff = tiffpathfile,
-            i_timestep = timestep,
-            s_intensity_cmap = intensity_cmap,
-        )
+        function adds for the selected label column
+        a color column to the df_abc dataframe.
+    '''
+    if (es_label is None):
+        es_label = set(df_abc.loc[:,s_focus])
+    if b_shuffle:
+       ls_label = list(es_label)
+       random.shuffle(ls_label)
+    else:
+       ls_label = sorted(es_label)
+    a_color = plt.get_cmap(s_cmap)(np.linspace(0, 1, len(ls_label)))
+    do_color = dict(zip(ls_label, a_color))
+    df_abc[f'{s_focus}_color'] = s_nolabel
+    ds_color = {}
+    for s_category, o_color in do_color.items():
+        s_color = colors.to_hex(o_color)
+        ds_color.update({s_category : s_color})
+        df_abc.loc[(df_abc.loc[:,s_focus] == s_category), f'{s_focus}_color'] = s_color
+    # output
+    return(ds_color)
 
-    # print neuroglancer viewer url
-    return viewer
+
+def ax_colorlegend(ax, ds_color, s_loc='lower left', s_fontsize='small'):
+    '''
+    input:
+        ax: matplotlib axis object to which a color legend will be added.
+        ds_color: lables to color strings mapping dictionary
+        s_loc: the location of the legend.
+            possible strings are: best,
+            upper right, upper center, upper left, center left,
+            lower left, lower center, lower right, center right,
+            center.
+        s_fontsize: font size used for the legend. known are:
+            xx-small, x-small, small, medium, large, x-large, xx-large.
+
+    output:
+        ax: matplotlib axis object updated with color legend.
+
+    description:
+        function to add color legend to a figure.
+    '''
+    lo_patch = []
+    for s_label, s_color in sorted(ds_color.items()):
+        o_patch = mpatches.Patch(color=s_color, label=s_label)
+        lo_patch.append(o_patch)
+    ax.legend(
+        handles = lo_patch,
+        loc = s_loc,
+        fontsize = s_fontsize
+    )
 
 
 def graphfile_parser(s_pathfile):
@@ -244,239 +267,8 @@ def graphfile_parser(s_pathfile):
     return dei_graph
 
 
-def scaler(df_x, scale='maxabs'):
-    """
-    input:
-        df_x: pandas dataframe
-              one attribute per column, one sample per row.
-
-        scale: string; default 'maxabs'
-            None: no scaling. set scale to None if you would like to have
-                raw data or scale, transform, and normalize the data later.
-
-            maxabs: maximum absolute value distance scaler will linearly map
-                all values into a [-1, 1] interval. if the original data
-                has no negative values, the result will be the same as with
-                the minmax scaler (except with attributes with only one value).
-                if the attribute has only zeros, the value will be set to 0.
-
-            minmax: minimum maximum distance scaler will map all values
-                linearly into a [0, 1] interval.
-                if the attribute has only one value, the value will be set to 0.
-
-            std: standard deviation scaler will result in sigmas.
-                each attribute will be mean centered around 0.
-                ddof delta degree of freedom is set to 1 because it is assumed
-                that the values are samples out of the population
-                and not the entire population. it is incomprehensible to me
-                that the equivalent sklearn method has ddof set to 0.
-                if the attribute has only one value, the value will be set to 0.
-
-    output:
-        df_x: pandas dataframe
-            scaled df_x dataframe.
-
-    description:
-        inspired by scikit-learn's preprocessing scaling method, this function
-        offers a re-implementation of the linear re-scaling methods maxabs,
-        minmax, and scale.
-
-        the robust scaler methods (quantile based) found in scikit-learn are
-        missing. since we deal with simulated data, we don't expect heavy
-        outliers, and if they exist, then they are of interest.
-        the power and quantile based transformation methods and unit circle
-        based normalizer methods found there are missing too.
-        if you need to apply any such methods, you can do so to an anndata object
-        like this:
-
-        from sklearn import preprocessing
-        adata.obsm["X_scaled"] = preprocessing.scale(adata.X)
-
-    + https://scikit-learn.org/stable/auto_examples/preprocessing/plot_all_scaling.html
-    + https://scikit-learn.org/stable/modules/classes.html#module-sklearn.preprocessing
-    + https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.maxabs_scale.html
-    + https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.minmax_scale.html
-    + https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.scale.html
-    """
-    if scale is None:
-        pass
-    # -1,1
-    elif scale == 'maxabs':
-        a_x = df_x.values
-        warnings.filterwarnings('ignore', category=RuntimeWarning)
-        a_maxabs = a_x / abs(a_x).max(axis=0)
-        warnings.simplefilter('default')
-        a_maxabs[np.isnan(a_maxabs)] = 0  # fix if entier column is 0
-        df_x = pd.DataFrame(a_maxabs, columns=df_x.columns, index=df_x.index)
-    # 0,1
-    elif scale == 'minmax':
-        a_x = df_x.values
-        warnings.simplefilter("ignore")
-        warnings.filterwarnings('ignore', category=RuntimeWarning)
-        a_minmax = (a_x - a_x.min(axis=0)) / (a_x.max(axis=0) - a_x.min(axis=0))
-        warnings.simplefilter('default')
-        a_minmax[np.isnan(a_minmax)] = 0  # fix if entier column has same value
-        df_x = pd.DataFrame(a_minmax, columns=df_x.columns, index=df_x.index)
-    # sigma
-    elif scale == 'std':
-        a_x = df_x.values
-        warnings.filterwarnings('ignore', category=RuntimeWarning)
-        a_std = (a_x - a_x.mean(axis=0)) / a_x.std(axis=0, ddof=1)
-        warnings.simplefilter('default')
-        a_std[np.isnan(a_std)] = 0  # fix if entier column has same value
-        df_x = pd.DataFrame(a_std, columns=df_x.columns, index=df_x.index)
-    else:
-        raise ValueError(f"Error @ scaler : unknown scale algorithm {scale} detected. known are [None, 'maxabs', 'minmax', 'std'].")
-
-    return df_x
-
-
-def _anndextract(df_cell, scale='maxabs', graph_attached={}, graph_neighbor={}, graph_spring={}, graph_method='PhysiCell'):
-    """
-    input:
-        df_cell:  pandas dataframe
-            data frame retrieved with the mcds.get_cell_df function.
-
-        scale: string; default maxabs
-            specify how the data should be scaled.
-            possible values are None, maxabs, minmax, std.
-            for more input, check out: help(pcdl.scaler).
-
-        graph_attached: dict; default {}
-            attached graph dictionary, retrieved with
-            with the mcds.get_attched_graph() function.
-
-        graph_neighbor: dict; default {}
-            neighbor graph dictionary, retrieved
-            with the mcds.get_neighbor_graph() function.
-
-        graph_spring: dict; default {}
-            spring_attached graph dictionary, retrieved
-            with the mcds.get_spring_graph_dict() function.
-
-        graph_method: string; default PhysiCell
-            method how the graphs were generated.
-
-    output:
-        df_count, df_obs, d_obsm, d_obsp, d_uns dataframes and dictionaries,
-            ready to be backed into an anndata object.
-
-    description:
-        this function takes a pcdl df_cell pandas dataframe and re-formats
-        it into a set of two dataframes (df_count, df_obs),
-        two dictionary of numpy array (d_obsm, d_obsp),
-        and one dictionary of string (d_uns),
-        which downstream might be transformed into an anndata object.
-    """
-    # transform index to string
-    df_coor = df_cell.loc[:,['position_x','position_y','position_z']].copy()
-    df_cell.index = df_cell.index.astype(str)
-
-    # build obs anndata object (annotation of observations)
-    df_obs = df_cell.loc[:,['mesh_center_p','time']].copy()
-    df_obs.columns = ['z_layer', 'time']
-
-    # buil obsm anndata object spatial (multi-dimensional annotation of observations)
-    if (len(set(df_cell.position_z)) == 1):
-        df_obsm = df_cell.loc[:,['position_x','position_y']].copy()
-    else:
-        df_obsm = df_cell.loc[:,['position_x','position_y','position_z']].copy()
-    d_obsm = {"spatial": df_obsm.values}
-
-    # build obsp and uns anndata object graph (pairwise annotation of obeservation) and (unstructured data)
-    ####
-    # acknowledgement:
-    #   this code is inspired from the tysserand add_to_AnnData impelmentation
-    #   from Alexis Coullomb form the Pancaldi Lab.
-    #   https://github.com/VeraPancaldiLab/tysserand/blob/main/tysserand/tysserand.py#L1546
-    ####
-    # extract cell_id to index mapping (i always loved perl)
-    di_ididx = df_cell.reset_index().loc[:,'ID'].reset_index().astype(int).set_index('ID').squeeze().to_dict()
-    # transform cell id graph dict to index matrix and pack for anndata
-    d_obsp = {}  # pairwise annotation of obeservation
-    d_uns = {}  # unstructured data
-    for s_graph, dei_graph in [('neighbor', graph_neighbor), ('attached', graph_attached), ('spring', graph_spring)]:
-        lli_edge = []
-        lr_distance = []
-        for i_src, ei_dst in dei_graph.items():
-            for i_dst in ei_dst:
-                # extract edge
-                lli_edge.append([di_ididx[i_src], di_ididx[i_dst]])
-                r_distance = ((df_coor.loc[i_src,:].values -  df_coor.loc[i_dst,:].values)**2).sum()**(1/2)
-                lr_distance.append(r_distance)
-        # if there is a graph
-        if (len(lli_edge) > 0):
-            # handle edge data
-            ai_edge = np.array(lli_edge, dtype=np.uint)
-            # handle connection data
-            ai_conectivity = np.ones(ai_edge.shape[0], dtype=np.uint16)
-            ai_conectivity_sparse = sparse.csr_matrix(
-                (ai_conectivity, (ai_edge[:,0], ai_edge[:,1])),
-                shape = (df_cell.shape[0], df_cell.shape[0]),
-                dtype = np.uint
-            )
-            # handle distance data
-            ar_distance  = np.array(lr_distance, dtype=np.float64)
-            ar_distance_sparse = sparse.csr_matrix(
-                (ar_distance, (ai_edge[:,0], ai_edge[:,1])),
-                shape = (df_cell.shape[0], df_cell.shape[0]),
-                dtype = np.float64
-            )
-            # pack obsp
-            d_obsp.update({
-                f'physicell_{s_graph}_conectivities': ai_conectivity_sparse,
-                f'physicell_{s_graph}_distances': ar_distance_sparse,
-            })
-            # pack uns
-            d_uns.update({
-                s_graph : {
-                    'connectivities_key': f'physicell_{s_graph}_conectivities',
-                    'distances_key': f'physicell_{s_graph}_distances',
-                    'params': {
-                        'metric': 'euclidean',
-                        'method': graph_method,
-                    }
-                }
-            })
-
-    # extract discrete cell data
-    es_drop = set(df_cell.columns).intersection({
-        'voxel_i', 'voxel_j', 'voxel_k',
-        'mesh_center_m', 'mesh_center_n', 'mesh_center_p',
-        'position_x', 'position_y','position_z',
-        'time', 'runtime', 'xmlfile',
-    })
-    df_cell.drop(es_drop, axis=1, inplace=True)  # maybe obs?
-
-    # dectect variable types
-    des_type = {'float': set(), 'int': set(), 'bool': set(), 'str': set()}
-    for _, se_cell in df_cell.items():
-        if str(se_cell.dtype).startswith('float'):
-            des_type['float'].add(se_cell.name)
-        elif str(se_cell.dtype).startswith('int'):
-            des_type['int'].add(se_cell.name)
-        elif str(se_cell.dtype).startswith('bool'):
-            des_type['bool'].add(se_cell.name)
-        elif str(se_cell.dtype).startswith('object'):
-            des_type['str'].add(se_cell.name)
-        else:
-            print(f'Error @ TimeSeries.get_anndata : column {se_cell.name} detected with unknown dtype {str(se_cell.dtype)}.')
-
-    # build on obs and X anndata object
-    df_cat = df_cell.loc[:,sorted(des_type['str'])].copy()
-    df_obs = pd.merge(df_obs, df_cat, left_index=True, right_index=True)
-    es_num = des_type['float'].union(des_type['int'].union(des_type['bool']))
-    df_count = df_cell.loc[:,sorted(es_num)].copy()
-    for s_col in des_type['bool']:
-        df_count[s_col] = df_count[s_col].astype(int)
-    df_count = scaler(df_count, scale=scale)
-
-    # return
-    return(df_count, df_obs, d_obsm, d_obsp, d_uns)
-
-
 # object classes
-class TimeStep:
+class pyMCDS:
     def __init__(self, xmlfile, output_path='.', custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True):
         """
         input:
@@ -496,10 +288,11 @@ class TimeStep:
 
             microenv: boole; default True
                 should the microenvironment data be loaded?
-                setting microenv to False will use less memory and speed up processing.
+                setting microenv to False will use less memory and speed up
+                processing, similar to the original pyMCDS_cells.py script.
 
             graph: boole; default True
-                should the graphs, like cell_neighbor_graph.txt, be loaded?
+                should the graphs be loaded?
                 setting graph to False will use less memory and speed up processing.
 
             physiboss: boole; default True
@@ -516,11 +309,11 @@ class TimeStep:
                 setting verbose to False for less text output, while processing.
 
         output:
-            mcds: TimeStep class instance
+            mcds: pyMCDS class instance
                 all fetched content is stored at mcds.data.
 
         description:
-            TimeStep.__init__ will generate a class instance with a
+            pyMCDS.__init__ will generate a class instance with a
             dictionary of dictionaries data structure that contains all
             output from a single PhysiCell model time step. furthermore,
             this class, and as such it's instances, offers functions
@@ -541,7 +334,6 @@ class TimeStep:
         self.verbose = verbose
         self.data = self._read_xml(xmlfile, output_path)
 
-
     def set_verbose_false(self):
         """
         input:
@@ -554,7 +346,6 @@ class TimeStep:
         """
         self.verbose = False
         #print(f'pcdl: set mcds.verbose = False.')
-
 
     def set_verbose_true(self):
         """
@@ -662,7 +453,35 @@ class TimeStep:
             function returns a dictionary that stores all tracked variables
             and their units.
         """
-        return self.data['metadata']['ds_unit'].copy()
+        # extract data
+        ds_unit = {}
+        # units for metadata parameters
+        ds_unit.update({'time': self.data['metadata']['time_units']})
+        ds_unit.update({'runtime': self.data['metadata']['runtime_units']})
+        ds_unit.update({'spatial_unit': self.data['metadata']['spatial_units']})
+
+        # microenvironment
+        if self.microenv:
+            for s_substrate in self.get_substrate_list():
+                # unit from substrate parameters
+                s_unit = self.data['continuum_variables'][s_substrate]['units']
+                ds_unit.update({s_substrate: s_unit})
+
+                # units from microenvironment parameters
+                s_diffusion_key = f'{s_substrate}_diffusion_coefficient'
+                s_diffusion_unit = self.data['continuum_variables'][s_substrate]['diffusion_coefficient']['units']
+                ds_unit.update({s_diffusion_key: s_diffusion_unit})
+
+                s_decay_key = f'{s_substrate}_decay_rate'
+                s_decay_unit = self.data['continuum_variables'][s_substrate]['decay_rate']['units']
+                ds_unit.update({s_decay_key: s_decay_unit})
+
+        # units from cell parameters
+        ds_unit.update(self.data['discrete_cells']['units'])
+
+        # output
+        del ds_unit['ID']
+        return ds_unit
 
 
     ## MESH RELATED FUNCTIONS  ##
@@ -813,7 +632,26 @@ class TimeStep:
             function returns the distance in between mesh centers,
             in the spacial unit defined in the PhysiCell_settings.xml file.
         """
-        return self.data['mesh']['mnp_spacing'].copy()
+        tr_m_range, tr_n_range, tr_p_range = self.get_mesh_mnp_range()
+        ar_m_axis, ar_n_axis, ar_p_axis = self.get_mesh_mnp_axis()
+
+        # m axis
+        if (len(set(tr_m_range)) == 1):
+            dm = np.float64(1.0)
+        else:
+            dm = (tr_m_range[1] - tr_m_range[0]) / (ar_m_axis.shape[0] - 1)
+        # n axis
+        if (len(set(tr_n_range)) == 1):
+            dn = np.float64(1.0)
+        else:
+            dn = (tr_n_range[1] - tr_n_range[0]) / (ar_n_axis.shape[0] - 1)
+        # p axis
+        if (len(set(tr_p_range)) == 1):
+            dp = np.float64(1.0)
+        else:
+            dp = (tr_p_range[1] - tr_p_range[0]) / (ar_p_axis.shape[0] - 1)
+
+        return [dm, dn, dp]
 
 
     def is_in_mesh(self, x, y, z, halt=False):
@@ -849,15 +687,15 @@ class TimeStep:
 
         if (x < tr_x[0]) or (x > tr_x[1]):
             if self.verbose:
-                print(f'Warning @ TimeStep.is_in_mesh : x = {x} out of bounds: x-range is {tr_x}.')
+                print(f'Warning @ pyMCDS.is_in_mesh : x = {x} out of bounds: x-range is {tr_x}.')
             b_isinmesh = False
         elif (y < tr_y[0]) or (y > tr_y[1]):
             if self.verbose:
-                print(f'Warning @ TimeStep.is_in_mesh : y = {y} out of bounds: y-range is {tr_y}.')
+                print(f'Warning @ pyMCDS.is_in_mesh : y = {y} out of bounds: y-range is {tr_y}.')
             b_isinmesh = False
         elif (z < tr_z[0]) or (z > tr_z[1]):
             if self.verbose:
-                print(f'Warning @ TimeStep.is_in_mesh : z = {z} out of bounds: z-range is {tr_z}.')
+                print(f'Warning @ pyMCDS.is_in_mesh : z = {z} out of bounds: z-range is {tr_z}.')
             b_isinmesh = False
 
         # output
@@ -919,7 +757,10 @@ class TimeStep:
             function returns the voxel width, height, depth measurement,
             in the spacial unit defined in the PhysiCell_settings.xml file.
         """
-        return self.data['mesh']['mnp_spacing'].copy()
+        r_volume = self.get_voxel_volume()
+        dm, dn, _ = self.get_mesh_spacing()
+        dp  = r_volume / (dm * dn)
+        return [dm, dn, dp]
 
 
     def get_voxel_volume(self):
@@ -935,7 +776,11 @@ class TimeStep:
             function returns the volume value for a single voxel, related
             to the spacial unit defined in the PhysiCell_settings.xml file.
         """
-        return self.data['mesh']['volume']
+        ar_volume = np.unique(self.data['mesh']['volumes'])
+        if ar_volume.shape != (1,):
+            sys.exit(f'Error @ pyMCDS.get_voxel_volume : mesh is not built out of a unique voxel volume {ar_volume}.')
+        r_volume = ar_volume[0]
+        return r_volume
 
 
     def get_voxel_ijk(self, x, y, z, is_in_mesh=True):
@@ -996,7 +841,10 @@ class TimeStep:
             function returns all chemical species names, modeled
             in the microenvironment, ordered by chemical species ID.
         """
-        return self.data['substrate']['ls_substarte'].copy()
+        # get substrate listing
+        ds_substrate = self.get_substrate_dict()
+        ls_substrate = [ds_substrate[s_key] for s_key in sorted(ds_substrate, key=int)]
+        return ls_substrate
 
 
     def get_substrate_dict(self):
@@ -1012,7 +860,7 @@ class TimeStep:
             microenvironment_setup variables,
             specified in the PhysiCell_settings.xml file.
         """
-        return self.data['substrate']['ds_substrate'].copy()
+        return self.data['metadata']['substrate']
 
 
     def get_substrate_df(self):
@@ -1028,7 +876,114 @@ class TimeStep:
             function returns a dataframe with each substrate's
             decay_rate and difusion_coefficient.
         """
-        return self.data['substrate']['df_substarte'].copy()
+        # extract data
+        ls_column = ['substrate','decay_rate','diffusion_coefficient']
+        ll_sub = []
+        for s_substrate in self.get_substrate_list():
+            s_decay_value = self.data['continuum_variables'][s_substrate]['decay_rate']['value']
+            s_diffusion_value = self.data['continuum_variables'][s_substrate]['diffusion_coefficient']['value']
+            ll_sub.append([s_substrate, s_decay_value, s_diffusion_value])
+
+        # generate dataframe
+        df_substrate = pd.DataFrame(ll_sub, columns=ls_column)
+        df_substrate.set_index('substrate', inplace=True)
+        df_substrate.columns.name = 'attribute'
+
+        # output
+        return df_substrate
+
+
+    def get_concentration(self, substrate, z_slice=None, halt=False):
+        """
+        input:
+            substrate: string
+                substrate name.
+
+            z_slice: floating point number; default is None
+                z-axis position to slice a 2D xy-plain out of the
+                3D substrate concentration mesh. if None the
+                whole 3D mesh will be returned.
+
+            halt: boolean; default is False
+                should program execution break or just spit out a warning,
+                if z_slice position is not an exact mesh center coordinate?
+                if False, z_slice will be adjusted to the nearest
+                mesh center value, the smaller one, if the coordinate
+                lies on a saddle point.
+
+        output:
+            ar_conc: numpy array of floating point numbers
+                substrate concentration meshgrid or xy-plain slice
+                through the meshgrid.
+
+        description:
+            function returns the concentration meshgrid, or a xy-plain slice
+            out of the whole meshgrid, for the specified chemical species.
+        """
+        ar_conc = self.data['continuum_variables'][substrate]['data'].copy()
+
+        # check if z_slice is a mesh center or None
+        if not (z_slice is None):
+            _, _, ar_p_axis = self.get_mesh_mnp_axis()
+            if not (z_slice in ar_p_axis):
+                if self.verbose:
+                    print(f'Warning @ pyMCDS.get_concentration : specified z_slice {z_slice} is not an element of the z-axis mesh centers set {ar_p_axis}.')
+                if halt:
+                    sys.exit('Processing stopped!')
+                else:
+                    z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
+                    print(f'z_slice set to {z_slice}.')
+
+            # filter by z_slice
+            _, _, ar_p_grid = self.get_mesh()
+            mask = ar_p_grid == z_slice
+            ar_conc = ar_conc[mask].reshape((ar_p_grid.shape[0], ar_p_grid.shape[1]))
+
+        # output
+        return ar_conc
+
+
+    def get_concentration_at(self, x, y, z=0):
+        """
+        input:
+            x: floating point number
+                position x-coordinate.
+
+            y: floating point number
+                position y-coordinate.
+
+            z: floating point number; default is 0
+                position z-coordinate.
+
+        output:
+            ar_concs: numpy array of floating point numbers
+                array of substrate concentrations in the order
+                given by get_substrate_list().
+
+        description:
+            function return concentrations of each chemical species
+            inside a particular voxel that contains the point specified
+            in the arguments.
+        """
+        ar_concs = None
+
+        # is coordinate inside the domain?
+        b_calc = self.is_in_mesh(x=x, y=y, z=z, halt=False)
+        if b_calc:
+
+            # get voxel coordinate and substrate names
+            i, j, k = self.get_voxel_ijk(x, y, z, is_in_mesh=False)
+            ls_substrate = self.get_substrate_list()
+            ar_concs = np.zeros(len(ls_substrate))
+
+            # get substrate concentrations
+            for n, s_substrate in enumerate(ls_substrate):
+                ar_concs[n] = self.get_concentration(s_substrate)[j, i, k]
+                if self.verbose:
+                    print(f'pyMCD.get_concentration_at(x={x},y={y},z={z}) | jkl: [{i},{j},{k}] | substrate: {s_substrate} {ar_concs[n]}')
+
+        # output
+        return ar_concs
 
 
     def get_conc_df(self, z_slice=None, halt=False, values=1, drop=set(), keep=set()):
@@ -1075,22 +1030,55 @@ class TimeStep:
         """
         # check keep and drop
         if (len(keep) > 0) and (len(drop) > 0):
-            sys.exit(f"Error @ TimeStep.get_conc_df : when keep is given {keep}, then drop has to be an empty set {drop}!")
+            sys.exit(f"Error @ pyMCDS.get_conc_df : when keep is given {keep}, then drop has to be an empty set {drop}!")
 
         # check if z_slice is a mesh center or None
         if not (z_slice is None):
             _, _, ar_p_axis = self.get_mesh_mnp_axis()
             if not (z_slice in ar_p_axis):
                 if self.verbose:
-                    print(f'Warning @ TimeStep.get_conc_df : specified z_slice {z_slice} is not an element of the z-axis mesh centers set {ar_p_axis}.')
+                    print(f'Warning @ pyMCDS.get_conc_df : specified z_slice {z_slice} is not an element of the z-axis mesh centers set {ar_p_axis}.')
                 if halt:
                     sys.exit('Processing stopped!')
                 else:
                     z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
                     print(f'z_slice set to {z_slice}.')
 
-        # fetch dataframe
-        df_conc = self.data['substrate']['df_conc'].copy()
+        # flatten mesh coordnates
+        ar_m, ar_n, ar_p = self.get_mesh()
+        ar_m = ar_m.flatten(order='C')
+        ar_n = ar_n.flatten(order='C')
+        ar_p = ar_p.flatten(order='C')
+
+        # get mesh spacing
+        dm, dn, dp = self.get_voxel_spacing()
+
+        # get voxel coordinates
+        ai_i = ((ar_m - ar_m.min()) / dm)
+        ai_j = ((ar_n - ar_n.min()) / dn)
+        ai_k = ((ar_p - ar_p.min()) / dp)
+
+        # handle coordinates
+        ls_column = [
+            'voxel_i','voxel_j','voxel_k',
+            'mesh_center_m','mesh_center_n','mesh_center_p'
+        ]
+        la_data = [ai_i, ai_j, ai_k, ar_m, ar_n, ar_p]
+
+        # handle concentrations
+        for s_substrate in self.get_substrate_list():
+            ls_column.append(s_substrate)
+            ar_conc = self.get_concentration(substrate=s_substrate, z_slice=None)
+            la_data.append(ar_conc.flatten(order='C'))
+
+        # generate dataframe
+        aa_data  = np.array(la_data)
+        df_conc = pd.DataFrame(aa_data.T, columns=ls_column)
+        df_conc['time'] = self.get_time()
+        df_conc['runtime'] = self.get_runtime() / 60  # in min
+        df_conc['xmlfile'] = self.xmlfile
+        d_dtype = {'voxel_i': int, 'voxel_j': int, 'voxel_k': int}
+        df_conc = df_conc.astype(d_dtype)
 
         # filter z_slice
         if not (z_slice is None):
@@ -1118,7 +1106,7 @@ class TimeStep:
         return df_conc
 
 
-    def plot_contour(self, focus, z_slice=0.0, vmin=None, vmax=None, alpha=1, fill=True, cmap='viridis', title=None, grid=True, xlim=None, ylim=None, xyequal=True, ax=None, figsizepx=None, ext=None, figbgcolor=None, **kwargs):
+    def plot_contour(self, focus, z_slice=0.0, vmin=None, vmax=None, alpha=1, fill=True, cmap='viridis', title=None, grid=True, xlim=None, ylim=None, xyequal=True, ax=None, figsizepx=None, directory=None, ext=None, figbgcolor=None):
         """
         input:
             focus: string
@@ -1180,6 +1168,11 @@ class TimeStep:
                 None tries to take the values from the initial.svg file.
                 fall back setting is [640, 480].
 
+            directory: string; default None
+                if None, a meaningful output directory name will be generated,
+                based on focus and z_slice parameters, else the resulting plots
+                will be moved to the explicit name directory.
+
             ext: string; default is None
                 output image format. possible formats are jpeg, png, and tiff.
                 None will return the matplotlib fig object.
@@ -1187,11 +1180,6 @@ class TimeStep:
             figbgcolor: string; default is None which is transparent (png)
                 or white (jpeg, tiff).
                 figure background color.
-
-            **kwargs: possible additional keyword arguments input,
-                handled by the matplotlib contour and contourf function.
-                + https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.contour.html
-                + https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.contourf.html
 
         output:
             fig: matplotlib figure, depending on ext, either as object or as file.
@@ -1213,7 +1201,7 @@ class TimeStep:
                 figsizepx = [i_width, i_height]
             except FileNotFoundError:
                 if self.verbose:
-                    print(f'Warning @ TimeStep.plot_contour : could not load {s_pathfile} to auto detect figsizepx. take default.')
+                    print(f'Warning @ pyMCDS.plot_contour : could not load {s_pathfile} to auto detect figsizepx. take default.')
                 figsizepx = [640, 480]
 
         # handle figure size
@@ -1274,9 +1262,9 @@ class TimeStep:
 
         # get contour plot
         if fill:
-            ax.contourf(df_mesh.columns, df_mesh.index, df_mesh.values, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap, **kwargs)
+            ax.contourf(df_mesh.columns, df_mesh.index, df_mesh.values, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
         else:
-            ax.contour(df_mesh.columns, df_mesh.index, df_mesh.values, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap, **kwargs)
+            ax.contour(df_mesh.columns, df_mesh.index, df_mesh.values, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
 
         # set title
         if not (title is None):
@@ -1305,9 +1293,12 @@ class TimeStep:
 
         else:
             # handle output path and filename
-            s_path = self.path + f"/conc_{focus.replace(' ','_')}_z{round(z_slice,9)}/"
+            if (directory is None):
+                s_path = self.path + f'/conc_{focus}_z{round(z_slice,9)}/'
+            else:
+                s_path = f'{directory}/'
             os.makedirs(s_path, exist_ok=True)
-            s_file = self.xmlfile.replace('.xml', f"_{focus.replace(' ','_')}.{ext}")
+            s_file = self.xmlfile.replace('.xml', f'_{focus}.{ext}')
             s_pathfile = f'{s_path}{s_file}'
             # handle figure background color
             if figbgcolor is None:
@@ -1320,9 +1311,11 @@ class TimeStep:
             return s_pathfile
 
 
-    def make_conc_vtk(self):
+    def make_conc_vtk(self, visualize=True):
         """
         input:
+            visualize: boolean; default is True
+                additionally, visualize cells using vtk renderer.
 
         output:
             s_vtkpathfile: vtk rectilinear grid file that contains
@@ -1393,12 +1386,117 @@ class TimeStep:
                             (df_conc.loc[:,'voxel_k'] == k) & (df_conc.loc[:,'voxel_j'] == j) & (df_conc.loc[:,'voxel_i'] == i),
                             s_substrate
                         ].values[0]
+                        #vfa_value.InsertNextValue(r_conc)
                         vfa_value.SetValue(i_index, r_conc)
             if b_first:
+                #vrg_data.GetCellData().SetScalars(vfa_value)
                 vrg_data.GetPointData().SetScalars(vfa_value)
                 b_first = False
             else:
+                #vrg_data.GetCellData().AddArray(vfa_value)
                 vrg_data.GetPointData().AddArray(vfa_value)
+
+            # visualize on the fly
+            if (visualize):
+                # get scalar range
+                r_vmin = np.floor(df_conc.loc[:, s_substrate].min())
+                r_vmax = np.ceil(df_conc.loc[:, s_substrate].max())
+
+                # generate the structured grid.
+                vsp_data = vtk.vtkStructuredPoints()
+                vsp_data.SetDimensions(ti_dim[0]+1, ti_dim[1]+1, ti_dim[2]+1)
+                vsp_data.SetSpacing(
+                    self.get_voxel_spacing()[0],
+                    self.get_voxel_spacing()[1],
+                    self.get_voxel_spacing()[2],
+                )
+                vsp_data.SetOrigin(
+                    self.get_mesh_mnp_range()[0][0],
+                    self.get_mesh_mnp_range()[1][0],
+                    self.get_mesh_mnp_range()[2][0],
+                )  # lower-left-front point of domain bounding box
+
+                # mapp grid and values
+                vdsm_data = vtk.vtkDataSetMapper()
+                vsp_data.GetCellData().SetScalars(vfa_value)
+                vdsm_data.SetInputData(vsp_data)
+                vdsm_data.Update()
+                vdsm_data.SetScalarRange(r_vmin, r_vmax)
+                vdsm_data.SetScalarModeToUseCellData()
+
+                # build VTKLooktupTable (color scheme)
+                vlt_color = vtk.vtkLookupTable()
+                vlt_color.SetNumberOfTableValues(256)  # number of color shades
+                vlt_color.SetHueRange(9/12, 0/12)  # rainbow heat map
+                vlt_color.Build()
+
+                # generate xy cutting plane actor
+                vp_canvas = vtk.vtkPlane()
+                vp_canvas.SetOrigin(0, 0, 0) # xyz
+                vp_canvas.SetNormal(0, 0, 1)
+
+                vc_canvas = vtk.vtkCutter()
+                vc_canvas.SetInputData(vsp_data)
+                vc_canvas.SetCutFunction(vp_canvas)
+                vc_canvas.GeneratePolygons = 1
+
+                vpdm_canvas = vtk.vtkPolyDataMapper()
+                vpdm_canvas.SetInputConnection(vc_canvas.GetOutputPort())
+                vpdm_canvas.ScalarVisibilityOn()
+                vpdm_canvas.SetScalarRange(r_vmin, r_vmax)
+                vpdm_canvas.SetLookupTable(vlt_color)
+                vpdm_canvas.SetScalarModeToUseCellData()
+
+                va_canvas = vtk.vtkActor()
+                va_canvas.SetMapper(vpdm_canvas)
+                va_canvas.GetProperty().EdgeVisibilityOn()
+
+                # generate outline actor
+                vof_frame = vtk.vtkOutlineFilter()
+                vof_frame.SetInputData(vsp_data)
+
+                vpdm_frame = vtk.vtkPolyDataMapper()
+                vpdm_frame.SetInputConnection(vof_frame.GetOutputPort())
+
+                va_frame = vtk.vtkActor()
+                va_frame.SetMapper(vpdm_frame)
+                va_frame.GetProperty().SetColor(1, 1, 1)
+
+                # generate scalar bar actor
+                vsba_spectrum = vtk.vtkScalarBarActor()
+                vsba_spectrum.SetTitle(s_substrate)
+                vsba_spectrum.GetPositionCoordinate().SetCoordinateSystemToNormalizedViewport()
+                vsba_spectrum.GetPositionCoordinate().SetValue(0.1, 0.01)
+                vsba_spectrum.SetOrientationToHorizontal()
+                vsba_spectrum.SetWidth(0.8)
+                vsba_spectrum.SetHeight(0.1)
+                vsba_spectrum.GetProperty().SetColor(0, 0, 0)
+                vsba_spectrum.GetTitleTextProperty().SetColor(0, 0, 0)
+                vsba_spectrum.GetTitleTextProperty().SetFontSize(22)
+                vsba_spectrum.SetLookupTable(vpdm_canvas.GetLookupTable())
+
+                # do render setup
+                ren = vtk.vtkRenderer()
+                renWin = vtk.vtkRenderWindow()
+                renWin.AddRenderer(ren)
+                renWin.SetSize(800, 600)
+                iren = vtk.vtkRenderWindowInteractor()
+                iren.SetRenderWindow(renWin)
+
+                # add the actor to the renderer
+                #ren.ResetCamera()
+                ren.SetBackground(1/3, 1/3, 1/3) # gray
+                ren.AddActor(va_canvas)
+                ren.AddActor(va_frame)
+                ren.AddActor2D(vsba_spectrum)
+
+                # render
+                iren.Initialize()
+                renWin.Render()
+                iren.Start()
+
+            # free memory
+            #del vfa_value
 
         # save vtk file
         s_vtkpathfile = self.path + '/' + s_vtkfile
@@ -1424,7 +1522,9 @@ class TimeStep:
             function returns a list with all celltype labels,
             ordered by cell_type ID.
         """
-        return self.data['cell']['ls_celltype'].copy()
+        ds_celltype = self.get_celltype_dict()
+        ls_celltype = [ds_celltype[s_key] for s_key in sorted(ds_celltype, key=int)]
+        return ls_celltype
 
 
     def get_celltype_dict(self):
@@ -1439,7 +1539,7 @@ class TimeStep:
             function returns a dictionary that maps ID and name from all
             cell_definitions, specified in the PhysiCell_settings.xml file.
         """
-        return self.data['cell']['ds_celltype'].copy()
+        return self.data['metadata']['cell_type']
 
 
     def get_cell_df(self, values=1, drop=set(), keep=set()):
@@ -1477,10 +1577,124 @@ class TimeStep:
         """
         # check keep and drop
         if (len(keep) > 0) and (len(drop) > 0):
-            sys.exit(f"Error @ TimeStep.get_cell_df : when keep is given {keep}, then drop has to be an empty set {drop}!")
+            sys.exit(f"Error @ pyMCDS.get_cell_df : when keep is given {keep}, then drop has to be an empty set {drop}!")
 
-        # fetch data frame
-        df_cell = self.data['cell']['df_cell'].copy()
+        # get cell position and more
+        df_cell = pd.DataFrame(self.data['discrete_cells']['data'])
+        df_cell['time'] = self.get_time()
+        df_cell['runtime'] = self.get_runtime() / 60  # in min
+        df_cell['xmlfile'] = self.xmlfile
+        df_voxel = df_cell.loc[:,['position_x','position_y','position_z']].copy()
+
+        # get mesh spacing
+        dm, dn, dp = self.get_voxel_spacing()
+
+        # get mesh and voxel min max values
+        tr_m_range, tr_n_range, tr_p_range = self.get_mesh_mnp_range()
+        tr_i_range, tr_j_range, tr_k_range = self.get_voxel_ijk_range()
+
+        # get voxel for each cell
+        df_voxel.loc[:,'voxel_i'] = np.round((df_voxel.loc[:,'position_x'] - tr_m_range[0]) / dm).astype(int)
+        df_voxel.loc[:,'voxel_j'] = np.round((df_voxel.loc[:,'position_y'] - tr_n_range[0]) / dn).astype(int)
+        df_voxel.loc[:,'voxel_k'] = np.round((df_voxel.loc[:,'position_z'] - tr_p_range[0]) / dp).astype(int)
+        df_voxel.loc[(df_voxel.voxel_i > tr_i_range[1]), 'voxel_i'] = tr_i_range[1]  # i_max
+        df_voxel.loc[(df_voxel.voxel_i < tr_i_range[0]), 'voxel_i'] = tr_i_range[0]  # i_min
+        df_voxel.loc[(df_voxel.voxel_j > tr_j_range[1]), 'voxel_j'] = tr_j_range[1]  # j_max
+        df_voxel.loc[(df_voxel.voxel_j < tr_j_range[0]), 'voxel_j'] = tr_j_range[0]  # j_min
+        df_voxel.loc[(df_voxel.voxel_k > tr_k_range[1]), 'voxel_k'] = tr_k_range[1]  # k_max
+        df_voxel.loc[(df_voxel.voxel_k < tr_k_range[0]), 'voxel_k'] = tr_k_range[0]  # k_min
+
+        # merge voxel (inner join)
+        df_cell = pd.merge(df_cell, df_voxel, on=['position_x', 'position_y', 'position_z'])
+
+        # merge cell_density (left join)
+        df_cellcount = df_cell.loc[:,['voxel_i','voxel_j','voxel_k','ID']].groupby(['voxel_i','voxel_j','voxel_k']).count().reset_index()
+        ls_column = list(df_cellcount.columns)
+        ls_column[-1] = 'cell_count_voxel'
+        df_cellcount.columns = ls_column
+        s_density = f"cell_density_{self.data['metadata']['spatial_units']}3"
+        df_cellcount[s_density] = df_cellcount.loc[:,'cell_count_voxel'] / self.get_voxel_volume()
+        df_cell = pd.merge(
+            df_cell,
+            df_cellcount,
+            on = ['voxel_i', 'voxel_j', 'voxel_k'],
+            how = 'left',
+        )
+
+        # get column label set
+        es_column = set(df_cell.columns)
+
+        # get vector length
+        for s_var_spatial in es_var_spatial:
+            es_vector = es_column.intersection({f'{s_var_spatial}_x',f'{s_var_spatial}_y',f'{s_var_spatial}_z'})
+            if len(es_vector) > 0:
+                # linear algebra
+                #a_vector = df_cell.loc[:,ls_vector].values
+                #a_length = np.sqrt(np.diag(np.dot(a_vector, a_vector.T)))
+                # pythoagoras
+                a_length = None
+                for s_vector in es_vector:
+                    a_vectorsq = df_cell.loc[:,s_vector].values**2
+                    if (a_length is None):
+                        a_length = a_vectorsq
+                    else:
+                        a_length += a_vectorsq
+                a_length = a_length**(1/2)
+                # result
+                df_cell[f'{s_var_spatial}_vectorlength'] = a_length
+
+        # physicell
+        if not (self.data['discrete_cells']['physiboss'] is None):
+            df_cell = pd.merge(
+                df_cell,
+                self.data['discrete_cells']['physiboss'],
+                left_index = True,
+                right_index = True,
+                how = 'left',
+            )
+
+
+        # microenvironment
+        if self.microenv:
+            # merge substrate (left join)
+            df_sub = self.get_substrate_df()
+            for s_sub in df_sub.index:
+                 for s_rate in df_sub.columns:
+                     s_var = f'{s_sub}_{s_rate}'
+                     df_cell[s_var] = df_sub.loc[s_sub,s_rate]
+
+        # merge concentration (left join)
+        df_conc = self.get_conc_df(z_slice=None, values=1, drop=set(), keep=set())
+        df_conc.drop({'time', 'runtime','xmlfile'}, axis=1, inplace=True)
+        df_cell = pd.merge(
+            df_cell,
+            df_conc,
+            on = ['voxel_i', 'voxel_j', 'voxel_k'],
+            how = 'left',
+        )
+
+        # variable typing
+        do_type = {}
+        [do_type.update({k:v}) for k,v in do_var_type.items() if k in es_column]
+        do_type.update(self.custom_data_type)
+        do_int = do_type.copy()
+        [do_int.update({k:int}) for k in do_int.keys()]
+        ls_int = sorted(do_int.keys())
+        df_cell.loc[:,ls_int] = df_cell.loc[:,ls_int].round()
+        df_cell = df_cell.astype(do_int)
+        df_cell = df_cell.astype(do_type)
+
+        # categorical translation
+        try:  # bue 20240805: missing in MCDS version <= 0.5 (November 2021)
+            df_cell.loc[:,'current_death_model'] = df_cell.loc[:,'current_death_model'].replace(ds_death_model)  # bue 20230614: this column looks like an artefact to me
+        except KeyError:
+            pass
+        df_cell.loc[:,'cycle_model'] = df_cell.loc[:,'cycle_model'].replace(ds_cycle_model)
+        df_cell.loc[:,'cycle_model'] = df_cell.loc[:,'cycle_model'].replace(ds_death_model)
+        df_cell.loc[:,'current_phase'] = df_cell.loc[:,'current_phase'].replace(ds_cycle_phase)
+        df_cell.loc[:,'current_phase'] = df_cell.loc[:,'current_phase'].replace(ds_death_phase)
+        df_cell.loc[:,'cell_type'] = df_cell.loc[:,'cell_type'].replace(self.data['metadata']['cell_type'])
+        df_cell.loc[:,'chemotaxis_index'] = df_cell.loc[:,'chemotaxis_index'].replace(self.data['metadata']['substrate'])
 
         # filter
         es_attribute = set(df_cell.columns).difference(es_coor_cell)
@@ -1500,7 +1714,79 @@ class TimeStep:
         # output
         df_cell = df_cell.loc[:,sorted(df_cell.columns)]
         df_cell.sort_values('ID', axis=0, inplace=True)
+        df_cell.set_index('ID', inplace=True)
+        df_cell = df_cell.copy()
         return df_cell
+
+
+    def get_cell_df_at(self, x, y, z=0, values=1, drop=set(), keep=set()):
+        """
+        input:
+            x: floating point number
+                position x-coordinate.
+
+            y: floating point number
+                position y-coordinate.
+
+            z: floating point number; default is 0
+                position z-coordinate.
+
+            values: integer; default is 1
+                minimal number of values a variable has to have to be outputted.
+                variables that have only 1 state carry no information.
+                None is a state too.
+
+            drop: set of strings; default is an empty set
+                set of column labels to be dropped for the dataframe.
+                don't worry: essential columns like ID, coordinates
+                and time will never be dropped.
+                Attention: when the keep parameter is given, then
+                the drop parameter has to be an empty set!
+
+            keep: set of strings; default is an empty set
+                set of column labels to be kept in the dataframe.
+                set values=1 to be sure that all variables are kept.
+                don't worry: essential columns like ID, coordinates
+                and time will always be kept.
+
+        output:
+            df_voxel: pandas dataframe
+                x, y, z voxel filtered cell dataframe.
+
+        description:
+            function returns the cell dataframe for the voxel
+            specified with the x, y, z position coordinate.
+        """
+        df_voxel = None
+
+        # is coordinate inside the domain?
+        b_calc = self.is_in_mesh(x=x, y=y, z=z, halt=False)
+        if b_calc:
+
+            # get mesh and mesh spacing
+            dm, dn, dp = self.get_voxel_spacing()
+            ar_m, ar_n, ar_p = self.get_mesh()
+
+            # get voxel coordinate
+            i, j, k = self.get_voxel_ijk(x, y, z, is_in_mesh=False)
+            m = ar_m[j, i, k]
+            n = ar_n[j, i, k]
+            p = ar_p[j, i, k]
+
+            # get voxel
+            df_cell = self.get_cell_df(values=values, drop=drop, keep=keep)
+            inside_voxel = (
+                (df_cell['position_x'] <= m + dm / 2) &
+                (df_cell['position_x'] >= m - dm / 2) &
+                (df_cell['position_y'] <= n + dn / 2) &
+                (df_cell['position_y'] >= n - dn / 2) &
+                (df_cell['position_z'] <= p + dp / 2) &
+                (df_cell['position_z'] >= p - dp / 2)
+            )
+            df_voxel = df_cell[inside_voxel]
+
+        # output
+        return df_voxel
 
 
     def get_cell_attribute_list(self):
@@ -1515,10 +1801,12 @@ class TimeStep:
             function returns a list with all cell attribute labels,
             alphabetically ordered.
         """
-        return self.data['cell']['ls_cellattr'].copy()
+        df_cell = self.get_cell_df()
+        ls_cellattr = sorted(set(df_cell.columns).difference(es_coor_cell))
+        return ls_cellattr
 
 
-    def plot_scatter(self, focus='cell_type', z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title=None, grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=1.0, ax=None, figsizepx=None, ext=None, figbgcolor=None, **kwargs):
+    def plot_scatter(self, focus='cell_type', z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title=None, grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=1.0, ax=None, figsizepx=None, directory=None, ext=None, figbgcolor=None):
         """
         input:
             focus: string; default is 'cell_type'
@@ -1536,7 +1824,7 @@ class TimeStep:
                depending on the focus column variable dtype, default extracts
                labels or min and max values from data.
 
-            alpha: floating point number; default is 1.0
+            alpha: floating point number; default is 1
                 alpha channel transparency value
                 between 1 (not transparent at all) and 0 (totally transparent).
 
@@ -1585,6 +1873,11 @@ class TimeStep:
                 None tries to take the values from the initial.svg file.
                 fall back setting is [640, 480].
 
+            directory: string; default None
+                if None, a meaningful output directory name will be generated,
+                based on focus and z_slice parameters, else the resulting plots
+                will be moved to the explicit name directory.
+
             ext: string; default is None
                 output image format. possible formats are jpeg, png, and tiff.
                 None will return the matplotlib fig object.
@@ -1592,10 +1885,6 @@ class TimeStep:
             figbgcolor: string; default is None which is transparent (png)
                 or white (jpeg, tiff).
                 figure background color.
-
-            **kwargs: possible additional keyword arguments input,
-                handled by the pandas dataframe plot function.
-                + https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.plot.html
 
         output:
             fig: matplotlib figure, depending on ext, either as object or as file.
@@ -1625,7 +1914,7 @@ class TimeStep:
                 figsizepx = [i_width, i_height]
             except FileNotFoundError:
                 if self.verbose:
-                    print(f'Warning @ TimeStepts.plot_scatter : could not load {s_pathfile}.')
+                    print(f'Warning @ pyMCDSts.plot_scatter : could not load {s_pathfile}.')
                 figsizepx = [640, 480]
 
         # handle figure size
@@ -1713,7 +2002,7 @@ class TimeStep:
                     df_cell.loc[(df_cell.loc[:,focus] == s_category), s_focus_color] = s_color
             # generate category color dictionary
             else:
-                ds_color = pdplt.df_label_to_color(
+                ds_color = df_label_to_color(
                     df_abc = df_cell,
                     s_focus = focus,
                     es_label = es_category,
@@ -1746,12 +2035,11 @@ class TimeStep:
             s = 's',
             grid = grid,
             ax = ax,
-            **kwargs,
         )
 
         # plot categorical data legen
         if not (es_category is None):
-            pdplt.ax_colorlegend(
+            ax_colorlegend(
                 ax = ax,
                 ds_color = ds_color,
                 s_loc = legend_loc,
@@ -1765,9 +2053,12 @@ class TimeStep:
 
         else:
             # handle output path and filename
-            s_path = self.path + f"/cell_{focus.replace(' ','_')}_z{round(z_slice,9)}/"
+            if (directory is None):
+                s_path = self.path + f'/cell_{focus}_z{round(z_slice,9)}/'
+            else:
+                s_path = f'{directory}/'
             os.makedirs(s_path, exist_ok=True)
-            s_file = self.xmlfile.replace('.xml', f"_{focus.replace(' ','_')}.{ext}")
+            s_file = self.xmlfile.replace('.xml', f'_{focus}.{ext}')
             s_pathfile = f'{s_path}{s_file}'
             # handle figure background color
             if figbgcolor is None:
@@ -1783,11 +2074,14 @@ class TimeStep:
         return fig
 
 
-    def make_cell_vtk(self, attribute=['cell_type']):
+    def make_cell_vtk(self, attribute=['cell_type'], visualize=True):
         """
         input:
             attribute: list of strings; default is ['cell_type']
                 column name within cell dataframe.
+
+            visualize: boolean; default is True
+                additionally, visualize cells using vtk renderer.
 
         output:
             s_vtkpathfile: vtk 3D glyph polynomial data file that contains cells.
@@ -1839,18 +2133,15 @@ class TimeStep:
         # fill this grid with given attributes
         for s_attribute in attribute:
             b_bool = False
-            if pd.api.types.is_bool_dtype(df_cell.loc[:, s_attribute].dtype):
+            if (df_cell.loc[:, s_attribute].dtype == bool):  #in {bool, np.bool_, np.bool}):
                 b_bool = True
                 voa_data = vtk.vtkStringArray()
-                print(f'boole: {s_attribute}')
-            elif pd.api.types.is_string_dtype(df_cell.loc[:, s_attribute].dtype):
+            elif (df_cell.loc[:, s_attribute].dtype == str) or  (df_cell.loc[:, s_attribute].dtype == np.object_):  # in {str, np.str_, np.object_}):
                 voa_data = vtk.vtkStringArray()
-                print(f'string: {s_attribute}')
-            elif  pd.api.types.is_integer_dtype(df_cell.loc[:, s_attribute].dtype) or pd.api.types.is_float_dtype(df_cell.loc[:, s_attribute].dtype):
+            elif (df_cell.loc[:, s_attribute].dtype == int) or (df_cell.loc[:, s_attribute].dtype == float):  # in {int, np.int_, np.int8, np.int16, np.int32, np.int64, float, np.float16, np.float32, np.float64, np.float128}):
                 voa_data = vtk.vtkFloatArray()
-                print(f'numeric: {s_attribute}')
             else:
-                sys.exit(f'Error @ TimeStep.make_cell_vtk : {s_attribute} {df_cell.loc[:, s_attribute].dtype} unknown df_cell column data type.')
+                sys.exit(f'Error @ pyMCDS.make_cell_vtk : {s_attribute} {df_cell.loc[:, s_attribute].dtype} unknown df_cell column data type.')
 
             voa_data.SetName(s_attribute)
             for i in df_cell.index:
@@ -1863,6 +2154,8 @@ class TimeStep:
                     voa_data.InsertNextValue(df_cell.loc[i, s_attribute])
 
             vug_data.GetPointData().AddArray(voa_data)
+            # free memory
+            #del voa_data
 
         # generate sphere source
         vss_data = vtk.vtkSphereSource()
@@ -1882,6 +2175,49 @@ class TimeStep:
         vg_data.SetColorModeToColorByScalar()
         vg_data.Update()
 
+        # visualize
+        if (visualize):
+            # select first attribute
+            s_attribute = attribute[0]
+
+            # build VTKLooktupTable (color scheme)
+            vlt_color = vtk.vtkLookupTable()
+            i_element = df_cell.loc[:, s_attribute].unique().shape[0]
+            if (i_element > 256):
+                i_element = 256
+            vlt_color.SetNumberOfTableValues(i_element)
+            vlt_color.SetHueRange(9/12, 0/12)  # rainbow heat map
+            vlt_color.Build()
+
+            # set up the mapper
+            vpdm_data = vtk.vtkPolyDataMapper()
+            vpdm_data.SetInputConnection(vg_data.GetOutputPort())
+            vpdm_data.ScalarVisibilityOn()
+            vpdm_data.SetLookupTable(vlt_color)
+            vpdm_data.ColorByArrayComponent(s_attribute, 1)
+
+            # set up the actor
+            actor = vtk.vtkActor()
+            actor.SetMapper(vpdm_data)
+
+            # do renderer setup
+            ren = vtk.vtkRenderer()
+            renWin = vtk.vtkRenderWindow()
+            renWin.AddRenderer(ren)
+            renWin.SetSize(800, 600)
+            iren = vtk.vtkRenderWindowInteractor()
+            iren.SetRenderWindow(renWin)
+
+            # add the actor to the renderer
+            #ren.ResetCamera()
+            ren.SetBackground(1/3, 1/3, 1/3) # gray
+            ren.AddActor(actor)
+
+            # render
+            iren.Initialize()
+            renWin.Render()
+            iren.Start()
+
         # write VTK
         s_vtkpathfile = self.path + '/' + s_vtkfile
         vw_writer = vtk.vtkXMLPolyDataWriter()
@@ -1890,246 +2226,6 @@ class TimeStep:
         vw_writer.Write()
 
         return s_vtkpathfile
-
-
-    ## MICROENVIRONMENT AND CELL AGENT RELATED FUNCTIONS ##
-
-    def make_ome_tiff(self, cell_attribute='ID', conc_cutoff={}, focus=None, file=True):
-        """
-        input:
-            cell_attribute: strings; default is 'ID', which will result in a
-                cell segmentation mask.
-                column name within the cell dataframe.
-                the column data type has to be numeric (bool, int, float)
-                and cannot be string.
-                the result will be stored as 32 bit float.
-
-            conc_cutoff: dictionary string to real; default is an empty dictionary.
-                if a contour from a substrate not should be cut by greater
-                than zero (shifted to integer 1), another cutoff value can be
-                specified here.
-
-            focus: set of strings; default is a None
-                set of substrate and cell_type names to specify what will be
-                translated into ome tiff format.
-                if None, all substrates and cell types will be processed.
-
-            file: boolean; default True
-                if True, an ome tiff file is the output.
-                if False, a numpy array with shape czyx is the output.
-
-        output:
-            a_tczyx_img: numpy array or ome tiff file.
-
-        description:
-            function to transform chosen mcds output into an 1[um] spaced
-            czyx (channel, z-axis, y-axis, x-axis) ome tiff file or numpy array,
-            one substrate or cell_type per channel.
-            an ome tiff file is more or less:
-            a numpy array, containing the image information
-            and a xml, containing the microscopy metadata information,
-            like the channel labels.
-            the ome tiff file format can for example be read by the napari
-            or fiji (imagej) software.
-
-            https://napari.org/stable/
-            https://fiji.sc/
-        """
-        # handle channels
-        ls_substrate = self.get_substrate_list()
-        ls_celltype = self.get_celltype_list()
-
-        if not (focus is None):
-            ls_substrate = [s_substrate for s_substrate in ls_substrate if s_substrate in set(focus)]
-            ls_celltype = [s_celltype for s_celltype in ls_celltype if s_celltype in set(focus)]
-            if (set(focus) != set(ls_substrate).union(set(ls_celltype))):
-                sys.exit(f'Error : {focus} not found in {ls_substrate} {ls_celltype}')
-
-        # const
-        ls_coor_mnp = ['mesh_center_m', 'mesh_center_n', 'mesh_center_p'] # xyz
-        ls_coor_xyz = ['position_x', 'position_y', 'position_z'] # xyz
-        ls_coor = ['voxel_x', 'voxel_y', 'voxel_z']
-
-        # time step tensor
-        i_time = int(self.get_time())
-
-        # get xy coordinate dataframe
-        lr_axis_z  = list(self.get_mesh_mnp_axis()[2] - self.get_voxel_spacing()[2] / 2)
-        lr_axis_z.append(self.get_mesh_mnp_axis()[2][-1] + self.get_voxel_spacing()[2] / 2)
-        lll_coor = []
-        for i_x in range(int(round(self.get_voxel_ijk_range()[0][1] * self.get_voxel_spacing()[0]))):
-            for i_y in range(int(round(self.get_voxel_ijk_range()[1][1] * self.get_voxel_spacing()[1]))):
-                lll_coor.append([i_x, i_y])
-        df_coor = pd.DataFrame(lll_coor, columns=ls_coor[:2])
-        lr_axis_z[-1] += 1
-
-        # extract voxel radius
-        di_grow = {}
-        for s_substarte in ls_substrate:
-            di_grow.update({
-                s_substarte : int(np.round(np.mean(self.get_voxel_spacing()[:2])) - 1)
-            })
-
-        # get and shift substrate xy data
-        df_conc = self.get_conc_df()
-        df_conc = df_conc.loc[:, ls_coor_mnp + ls_substrate]
-        df_conc.loc[:, 'mesh_center_m'] = (df_conc.loc[:, 'mesh_center_m'] - self.get_xyz_range()[0][0]).round()
-        df_conc.loc[:, 'mesh_center_n'] = (df_conc.loc[:, 'mesh_center_n'] - self.get_xyz_range()[1][0]).round()
-        df_conc.rename({'mesh_center_m':'voxel_x', 'mesh_center_n':'voxel_y', 'mesh_center_p':'voxel_z'}, axis=1, inplace=True)
-        df_conc = df_conc.astype({'voxel_x': int, 'voxel_y': int, 'voxel_z': float})
-        # level the cake
-        for s_channel in conc_cutoff.keys():
-            try:
-                df_conc.loc[:, s_channel] = df_conc.loc[:, s_channel] - conc_cutoff[s_channel]  + 1  # positive values starting at > 0
-                df_conc.loc[(df_conc.loc[:, s_channel] <= conc_cutoff[s_channel]), s_channel] = 0
-            except KeyError:
-                pass
-
-
-        # get cell data
-        df_cell = self.get_cell_df().reset_index()
-
-        # extract cell radius
-        for s_celltype in ls_celltype:
-            try:
-                i_cell_grow = int(round(df_cell.loc[(df_cell.cell_type == s_celltype), 'radius'].mean()) - 1)
-            except:
-                i_cell_grow = 0
-            di_grow.update({s_celltype : i_cell_grow})
-
-        # filter and shift
-        df_cell = df_cell.loc[:, ls_coor_xyz + ['cell_type', cell_attribute]]
-        if (cell_attribute == 'cell_type'):
-            sys.exit(f'Error @ TimeStep.make_ome_tiff : cell_attribute cannot be cell_type.')
-        elif (df_cell.loc[:, cell_attribute].dtype == str) or (df_cell.loc[:, cell_attribute].dtype == np.object_):  # in {str, np.str_, np.object_}):
-            sys.exit(f'Error @ TimeStep.make_ome_tiff : {cell_attribute} {df_cell.loc[:, cell_attribute].dtype} cell_attribute cannot be string or object. cell_attribute has to be boolean, integer, or float.')
-        elif (df_cell.loc[:, cell_attribute].dtype == bool): # in {bool, np.bool_, np.bool}):
-            df_cell = df_cell.astype({cell_attribute: int})
-        df_cell.loc[:, 'position_x'] = (df_cell.loc[:, 'position_x'] - self.get_xyz_range()[0][0]).round()
-        df_cell.loc[:, 'position_y'] = (df_cell.loc[:, 'position_y'] - self.get_xyz_range()[1][0]).round()
-        df_cell.rename({'position_x':'voxel_x', 'position_y':'voxel_y', 'position_z':'voxel_z'}, axis=1, inplace=True)
-        df_cell = df_cell.astype({'voxel_x': int, 'voxel_y': int, 'voxel_z': float})
-        # level the cake
-        df_cell.loc[:, cell_attribute] = df_cell.loc[:, cell_attribute] -  df_cell.loc[:, cell_attribute].min()  + 1  # positive values starting at > 0
-
-        # check for duplicates: two cell at exactelly the same xyz position.
-        #if self.verbose and df_cell.loc[:,['voxel_x', 'voxel_y', 'voxel_z']].duplicated().any():
-        #    df_duplicate = df_cell.loc[(df_cell.loc[:, ['voxel_x', 'voxel_y', 'voxel_z']].duplicated()), :]
-        #    sys.exit(f"Error @ TimeStep.make_ome_tiff : {df_duplicate} cells at exactely the same xyz voxel position detected. cannot pivot!")
-
-        # pivot cell_type
-        df_cell = df_cell.pivot_table(index=ls_coor, columns='cell_type', values=cell_attribute, aggfunc='sum').reset_index()  # fill_value is na
-        for s_celltype in ls_celltype:
-            if not s_celltype in set(df_cell.columns):
-               df_cell[s_celltype] = 0
-
-        # each C channel - time step tensors
-        la_czyx_img = []
-        ls_channel = ls_substrate + ls_celltype
-        for s_channel in ls_channel:
-
-            # get channel dataframe
-            if s_channel in set(ls_substrate):
-                df_channel = df_conc.loc[:, ls_coor + [s_channel]]
-            elif s_channel in set(ls_celltype):
-                df_channel = df_cell.loc[:, ls_coor + [s_channel]]
-            else:
-                sys.exit(f'Error @ TimeStep.make_ome_tiff : {s_channel} unknown channel detected. not in substrate and cell type list {ls_substrate} {ls_celltype}!')
-
-            # each z axis
-            la_zyx_img = []
-            for i_zaxis in range(len(lr_axis_z)):
-                if (i_zaxis < (len(lr_axis_z) - 1)):
-                    print(f'processing: {i_time} [min]  {s_channel} [channel]  {i_zaxis} [z_axis] ...')
-                    # extract z layer
-                    df_yxchannel = df_channel.loc[
-                        ((df_channel.loc[:, ls_coor[2]] >= lr_axis_z[i_zaxis]) & (df_channel.loc[:, ls_coor[2]] < lr_axis_z[i_zaxis + 1])),
-                        ls_coor[:2] + [s_channel]
-                    ]
-
-                    # drop row with na and duplicate entries
-                    df_yxchannel = df_yxchannel.dropna(axis=0)
-                    df_yxchannel = df_yxchannel.drop_duplicates()
-
-                    # merge with coooridnates and get image
-                    # bue 20240811: df_coor left side merge will cut off reset cell that are out of the xyz domain range, which is what we want.
-                    df_yxchannel = pd.merge(df_coor, df_yxchannel, on=ls_coor[:2], how='left').replace({np.nan: 0})
-                    try:
-                        df_yxchannel = df_yxchannel.pivot(columns=ls_coor[0], index=ls_coor[1], values=s_channel)
-                    except ValueError:  # two cells from the same cell type very close to each other detetced.
-                        if self.verbose:
-                            df_duplicate = df_cell.loc[(df_yxchannel.loc[:, ['voxel_x', 'voxel_y']].duplicated()), :]
-                            print(f'Warning: {s_channel} {df_duplicate} cells within 1[um] distance form each detected. cannot pivot. erase cell type from this timestep.')
-                        df_yxchannel.loc[:,s_channel] = 0  # erase cells
-                        df_yxchannel = df_yxchannel.drop_duplicates()
-                        df_yxchannel = df_yxchannel.pivot(columns=ls_coor[0], index=ls_coor[1], values=s_channel)
-                    a_yx_img = df_yxchannel.values
-
-                    # grow
-                    a_yx_img = imagine.grow_seed(a_yx_img, i_step=di_grow[s_channel], b_verbose=False)
-
-                    # update output
-                    la_zyx_img.append(a_yx_img)
-            a_zyx_img = np.array(la_zyx_img, np.float32)
-            la_czyx_img.append(np.array(a_zyx_img, np.float32))
-
-        # output
-        a_czyx_img = np.array(la_czyx_img, dtype=np.float32)
-
-        # numpy array
-        if not file:
-            return a_czyx_img
-
-        # write to file
-        else:
-            if self.verbose:
-                print('a_czyx_img shape:', a_czyx_img.shape)
-            # generate filename
-            s_channel = ''
-            for s_substrate in ls_substrate:
-                try:
-                    r_value = conc_cutoff[s_substrate]
-                    s_channel += f'_{s_substrate}{r_value}'
-                except KeyError:
-                    s_channel += f'_{s_substrate}'
-            for s_celltype in ls_celltype:
-                s_channel += f'_{s_celltype}'
-            if len(ls_celltype) > 0:
-                s_channel += f'_{cell_attribute}'
-            s_tifffile = self.xmlfile.replace('.xml', f'{s_channel}.ome.tiff')
-            s_tifffile = s_tifffile.replace(' ','_')
-            if (len(s_tifffile) > 255):
-                print(f"Warning: filename {len(s_tifffile)} > 255 character.")
-                s_tifffile = self.xmlfile.replace('.xml', f'_channels.ome.tiff')
-                print(f"file name adjusted to {s_tifffile}.")
-            s_tiffpathfile = self.path + '/' + s_tifffile
-
-            # save to file
-            OmeTiffWriter.save(
-                a_czyx_img,
-                s_tiffpathfile,
-                dim_order = 'CZYX',
-                #ome_xml=x_img,
-                channel_names = ls_channel,
-                image_names = [s_tifffile.replace('.ome.tiff','')],
-                physical_pixel_sizes = bioio_base.types.PhysicalPixelSizes(self.get_voxel_spacing()[2], 1.0, 1.0),  # z,y,x [um]
-                #channel_colors=,
-                #fs_kwargs={},
-            )
-            return s_tiffpathfile
-
-
-    def render_neuroglancer(self, tiffpathfile, timestep=0, intensity_cmap='gray'):
-        """
-        help(pcdl.render_neuroglancer)
-        try: mcds.render_neuroglancer(mcds.make_ome_tiff())
-        """
-        o_viewer = render_neuroglancer(
-            tiffpathfile = tiffpathfile,
-            timestep = timestep,
-            intensity_cmap = intensity_cmap,
-        )
-        return o_viewer
 
 
     ## GRAPH RELATED FUNCTIONS ##
@@ -2145,7 +2241,7 @@ class TimeStep:
         description:
             function returns the attached cell graph as a dictionary object.
         """
-        return self.data['cell']['dei_graph']['attached_cells'].copy()
+        return self.data['discrete_cells']['graph']['attached_cells']
 
 
     def get_neighbor_graph_dict(self):
@@ -2159,7 +2255,7 @@ class TimeStep:
         description:
             function returns the cell neighbor graph as a dictionary object.
         """
-        return self.data['cell']['dei_graph']['neighbor_cells'].copy()
+        return self.data['discrete_cells']['graph']['neighbor_cells']
 
 
     def get_spring_graph_dict(self):
@@ -2173,7 +2269,7 @@ class TimeStep:
         description:
             function returns the attached spring cell graph as a dictionary object.
         """
-        return self.data['cell']['dei_graph']['spring_attached_cells'].copy()
+        return self.data['discrete_cells']['graph']['spring_attached_cells']
 
 
     def make_graph_gml(self, graph_type, edge_attribute=True, node_attribute=[]):
@@ -2248,7 +2344,7 @@ class TimeStep:
                 elif (o_attribute.dtype == float):  #in {float, np.float16, np.float32, np.float64, np.float128}):
                     f.write(f'    {s_attribute} {o_attribute}\n')
                 else:
-                    sys.exit(f'Error @ TimeStep.make_graph_gml : attribute {o_attribute}; type {o_attribute.dtype}; type seems not to be bool, int, float, or string.')
+                    sys.exit(f'Error @ pyMCDS.make_graph_gml : attribute {o_attribute}; type {o_attribute.dtype}; type seems not to be bool, int, float, or string.')
             f.write(f'  ]\n')
             # edge
             for i_dst in ei_dst:
@@ -2273,70 +2369,12 @@ class TimeStep:
         return s_gmlpathfile
 
 
-    ## ANNDATA RELATED FUNCTIONS ##
-
-    def get_anndata(self, values=1, drop=set(), keep=set(), scale='maxabs'):
-        """
-        input:
-            values: integer; default is 1
-                minimal number of values a variable has to have to be outputted.
-                variables that have only 1 state carry no information.
-                None is a state too.
-
-            drop: set of strings; default is an empty set
-                set of column labels to be dropped for the dataframe.
-                don't worry: essential columns like ID, coordinates
-                and time will never be dropped.
-                Attention: when the keep parameter is given, then
-                the drop parameter has to be an empty set!
-
-            keep: set of strings; default is an empty set
-                set of column labels to be kept in the dataframe.
-                set values=1 to be sure that all variables are kept.
-                don't worry: essential columns like ID, coordinates
-                and time will always be kept.
-
-            scale: string; default 'maxabs'
-                specify how the data should be scaled.
-                possible values are None, maxabs, minmax, std.
-                for more input, check out: help(pcdl.scaler)
-
-        output:
-            annmcds: anndata object
-                for this one time step.
-
-        description:
-            function to transform a mcds time step into an anndata object
-            for downstream analysis.
-        """
-        # processing
-        if self.verbose:
-            print(f'processing: 1/1 {round(self.get_time(),9)}[min] mcds into anndata obj.')
-        df_cell = self.get_cell_df(values=values, drop=drop, keep=keep)
-        df_count, df_obs, d_obsm, d_obsp, d_uns = _anndextract(
-            df_cell = df_cell,
-            scale = scale,
-            graph_attached = self.get_attached_graph_dict(),
-            graph_neighbor = self.get_neighbor_graph_dict(),
-            graph_method = self.get_physicell_version(),
-        )
-        annmcds = ad.AnnData(
-            X = df_count,
-            obs = df_obs,
-            obsm = d_obsm,
-            obsp = d_obsp,
-            uns = d_uns
-        )
-        # output
-        return annmcds
-
-
     ## LOAD DATA  ##
 
     def _read_xml(self, xmlfile, output_path='.'):
         """
         input:
-            self: TimeStep class instance.
+            self: pyMCDS class instance.
 
             xmlfile: string
                 name of the xml file with or without path
@@ -2347,11 +2385,11 @@ class TimeStep:
                 the PhysiCell output files are stored.
 
         output:
-            self: TimeStep class instance with loaded data.
+            self: pyMCDS class instance with loaded data.
 
         description:
             internal function to load the data from the PhysiCell output files
-            into the TimeStep instance.
+            into the pyMCDS instance.
         """
         #####################
         # path and filename #
@@ -2374,26 +2412,19 @@ class TimeStep:
         b_celltype = False
 
         # generate output dictionary
-        d_mcds = {
-           'metadata': {},
-           'mesh': {},
-           'substrate': {
-               'ds_substrate': {},
-           },
-           'metadata': {},
-           'cell': {
-               'ds_celltype': {},
-           },
-           'raw_substrate': {},
-           'raw_cell': {
-               'units': {},
-           },
-        }
+        d_mcds = {}
+        d_mcds['metadata'] = {}
+        d_mcds['metadata']['substrate'] = {}
+        d_mcds['metadata']['cell_type'] = {}
+        d_mcds['mesh'] = {}
+        d_mcds['continuum_variables'] = {}
+        d_mcds['discrete_cells'] = {}
+        d_mcds['discrete_cells']['units'] = {}
+
 
         ###############################
         # read PhysiCell_settings.xml #
         ###############################
-        ## get celltype dict
         # bue: used for cell_type label:id mapping for data generated with physicell versions < 3.15.
 
         if not ((self.settingxml is None) or (self.settingxml is False)):
@@ -2408,9 +2439,8 @@ class TimeStep:
             for x_celltype in self.x_settingxml.find('cell_definitions').findall('cell_definition'):
                 # <cell_definition>
                 s_id = str(x_celltype.get('ID'))
-                # I don't like spaces in cell type names!
-                s_celltype = x_celltype.get('name') #.replace(' ','_') # ROH
-                d_mcds['cell']['ds_celltype'].update({s_id : s_celltype})
+                s_celltype = x_celltype.get('name').replace(' ', '_')
+                d_mcds['metadata']['cell_type'].update({s_id : s_celltype})
             b_celltype = True
 
         #######################################
@@ -2434,25 +2464,25 @@ class TimeStep:
         ### find the metadata node ###
         x_metadata = x_root.find('metadata')
 
-        ## get multicellds xml version
+        # get multicellds xml version
         d_mcds['metadata']['multicellds_version'] = f"MultiCellDS_{x_root.get('version')}"
 
-        ## get physicell software version
+        # get physicell software version
         x_software = x_metadata.find('software')
         x_physicelln = x_software.find('name')
         x_physicellv = x_software.find('version')
         d_mcds['metadata']['physicell_version'] = f'{x_physicelln.text}_{x_physicellv.text}'
 
-        ## get timestamp
+        # get timestamp
         x_time = x_metadata.find('created')
         d_mcds['metadata']['created'] = x_time.text
 
-        ## get current simulated time
+        # get current simulated time
         x_time = x_metadata.find('current_time')
         d_mcds['metadata']['current_time'] = float(x_time.text)
         d_mcds['metadata']['time_units'] = x_time.get('units')
 
-        ## get current runtime
+        # get current runtime
         x_time = x_metadata.find('current_runtime')
         d_mcds['metadata']['current_runtime'] = float(x_time.text)
         d_mcds['metadata']['runtime_units'] = x_time.get('units')
@@ -2468,7 +2498,7 @@ class TimeStep:
         ### find the mesh node ###
         x_microenv = x_root.find('microenvironment').find('domain')  # find the microenvironment node
         x_mesh = x_microenv.find('mesh')
-        d_mcds['metadata']['spatial_unit'] = x_mesh.get('units')
+        d_mcds['metadata']['spatial_units'] = x_mesh.get('units')
 
         # while we're at it, find the mesh
         s_x_coor = x_mesh.find('x_coordinates').text
@@ -2483,38 +2513,38 @@ class TimeStep:
         s_delim = x_mesh.find('z_coordinates').get('delimiter')
         ar_z_coor = np.array(s_z_coor.split(s_delim), dtype=np.float64)
 
-        ## get mesh grid
+        # reshape into a meshgrid
         d_mcds['mesh']['mnp_grid'] = np.array(np.meshgrid(ar_x_coor, ar_y_coor, ar_z_coor, indexing='xy'))
 
-        ## get mesh center axis
+        # get mesh center axis
         d_mcds['mesh']['mnp_axis'] = [
             np.unique(ar_x_coor),
             np.unique(ar_y_coor),
             np.unique(ar_z_coor),
         ]
 
-        ## get mesh center range
+        # get mesh center range
         d_mcds['mesh']['mnp_range'] = [
            (d_mcds['mesh']['mnp_axis'][0].min(), d_mcds['mesh']['mnp_axis'][0].max()),
            (d_mcds['mesh']['mnp_axis'][1].min(), d_mcds['mesh']['mnp_axis'][1].max()),
            (d_mcds['mesh']['mnp_axis'][2].min(), d_mcds['mesh']['mnp_axis'][2].max()),
         ]
 
-        ## get voxel range
+        # get voxel range
         d_mcds['mesh']['ijk_range'] = [
             (0, len(d_mcds['mesh']['mnp_axis'][0]) - 1),
             (0, len(d_mcds['mesh']['mnp_axis'][1]) - 1),
             (0, len(d_mcds['mesh']['mnp_axis'][2]) - 1),
         ]
 
-        ## get voxel axis
+        # get voxel axis
         d_mcds['mesh']['ijk_axis'] = [
             np.array(range(d_mcds['mesh']['ijk_range'][0][1] + 1)),
             np.array(range(d_mcds['mesh']['ijk_range'][1][1] + 1)),
             np.array(range(d_mcds['mesh']['ijk_range'][2][1] + 1)),
         ]
 
-        ## get mesh bounding box range [xmin, ymin, zmin, xmax, ymax, zmax]
+        # get mesh bounding box range [xmin, ymin, zmin, xmax, ymax, zmax]
         s_bboxcoor = x_mesh.find('bounding_box').text
         s_delim = x_mesh.find('bounding_box').get('delimiter')
         ar_bboxcoor = np.array(s_bboxcoor.split(s_delim), dtype=np.float64)
@@ -2531,34 +2561,10 @@ class TimeStep:
         if self.verbose:
             print(f'reading: {s_voxelpathfile}')
 
-        ## get voxle coordinates
         # center of voxel specified by first three rows [ x, y, z ]
-        d_mcds['mesh']['mnp_coordinate'] = ar_mesh_initial[:3, :]
-
-        ## get voxel volume
         # volume specified by fourth row
-        ar_volume = ar_mesh_initial[3, :]
-        if (len(set(ar_volume)) != 1):
-            sys.exit(f'Error @ TimeStep._read_xml : mesh is not built out of a unique voxel volume {ar_volume}.')
-        d_mcds['mesh']['volume'] = ar_volume[0]
-
-        ## get mesh voxel spacing
-        tr_m_range, tr_n_range, tr_p_range = d_mcds['mesh']['mnp_range']
-        ar_m_axis, ar_n_axis, ar_p_axis = d_mcds['mesh']['mnp_axis']
-
-        if (len(set(tr_m_range)) == 1):  # m axis
-            dm = np.float64(1.0)
-        else:
-            dm = (tr_m_range[1] - tr_m_range[0]) / (ar_m_axis.shape[0] - 1)
-
-        if (len(set(tr_n_range)) == 1):  # n axis
-            dn = np.float64(1.0)
-        else:
-            dn = (tr_n_range[1] - tr_n_range[0]) / (ar_n_axis.shape[0] - 1)
-
-        dp  = d_mcds['mesh']['volume'] / (dm * dn)  # p axis
-
-        d_mcds['mesh']['mnp_spacing'] = [dm, dn, dp]
+        d_mcds['mesh']['mnp_coordinate'] = ar_mesh_initial[:3, :]
+        d_mcds['mesh']['volumes'] = ar_mesh_initial[3, :]
 
 
         ################################
@@ -2578,37 +2584,37 @@ class TimeStep:
             if self.verbose:
                 print(f'reading: {s_microenvpathfile}')
 
-            # raw_substrate, unlike in the matlab version the individual chemical
+            # continuum_variables, unlike in the matlab version the individual chemical
             # species will be primarily accessed through their names e.g.
-            # d_mcds['raw_substrate']['oxygen']['units']
-            # d_mcds['raw_substrate']['glucose']['data']
+            # d_mcds['continuum_variables']['oxygen']['units']
+            # d_mcds['continuum_variables']['glucose']['data']
 
             # substrate loop
             for i_s, x_substrate in enumerate(x_microenv.find('variables').findall('variable')):
                 # i don't like spaces in species names!
-                s_substrate = x_substrate.get('name') #.replace(' ','_') # ROH
+                s_substrate = x_substrate.get('name').replace(' ', '_')
 
-                d_mcds['raw_substrate'][s_substrate] = {}
-                d_mcds['raw_substrate'][s_substrate]['units'] = x_substrate.get('units')
+                d_mcds['continuum_variables'][s_substrate] = {}
+                d_mcds['continuum_variables'][s_substrate]['units'] = x_substrate.get('units')
 
                 if self.verbose:
                     print(f'parsing: {s_substrate} data')
 
                 # update metadata substrate ID label dictionary
-                d_mcds['substrate']['ds_substrate'].update({str(i_s) : s_substrate})
+                d_mcds['metadata']['substrate'].update({str(i_s) : s_substrate})
 
                 # initialize meshgrid shaped array for concentration data
-                d_mcds['raw_substrate'][s_substrate]['data'] = np.zeros(d_mcds['mesh']['mnp_grid'][0].shape)
+                d_mcds['continuum_variables'][s_substrate]['data'] = np.zeros(d_mcds['mesh']['mnp_grid'][0].shape)
 
                 # diffusion data for each species
-                d_mcds['raw_substrate'][s_substrate]['diffusion_coefficient'] = {}
-                d_mcds['raw_substrate'][s_substrate]['diffusion_coefficient']['value'] = float(x_substrate.find('physical_parameter_set').find('diffusion_coefficient').text)
-                d_mcds['raw_substrate'][s_substrate]['diffusion_coefficient']['units'] = x_substrate.find('physical_parameter_set').find('diffusion_coefficient').get('units')
+                d_mcds['continuum_variables'][s_substrate]['diffusion_coefficient'] = {}
+                d_mcds['continuum_variables'][s_substrate]['diffusion_coefficient']['value'] = float(x_substrate.find('physical_parameter_set').find('diffusion_coefficient').text)
+                d_mcds['continuum_variables'][s_substrate]['diffusion_coefficient']['units'] = x_substrate.find('physical_parameter_set').find('diffusion_coefficient').get('units')
 
                 # decay data for each species
-                d_mcds['raw_substrate'][s_substrate]['decay_rate'] = {}
-                d_mcds['raw_substrate'][s_substrate]['decay_rate']['value']  = float(x_substrate.find('physical_parameter_set').find('decay_rate').text)
-                d_mcds['raw_substrate'][s_substrate]['decay_rate']['units']  = x_substrate.find('physical_parameter_set').find('decay_rate').get('units')
+                d_mcds['continuum_variables'][s_substrate]['decay_rate'] = {}
+                d_mcds['continuum_variables'][s_substrate]['decay_rate']['value']  = float(x_substrate.find('physical_parameter_set').find('decay_rate').text)
+                d_mcds['continuum_variables'][s_substrate]['decay_rate']['units']  = x_substrate.find('physical_parameter_set').find('decay_rate').get('units')
 
                 # store data from microenvironment file as numpy array
                 # iterate over each voxel
@@ -2622,70 +2628,13 @@ class TimeStep:
                     k = np.where(np.abs(ar_center[2] - d_mcds['mesh']['mnp_axis'][2]) < 1e-10)[0][0]
 
                     # store value
-                    d_mcds['raw_substrate'][s_substrate]['data'][j, i, k] = ar_microenv[4+i_s, i_voxel]
-
-        ## get substrate listing
-        ds_substrate =  d_mcds['substrate']['ds_substrate']
-        ls_substrate = [ds_substrate[s_key] for s_key in sorted(ds_substrate, key=int)]
-        # store values
-        d_mcds['substrate']['ls_substarte'] = ls_substrate
-
-        ## get substrate df
-        # extract data
-        ls_column = ['substrate','decay_rate','diffusion_coefficient']
-        ll_sub = []
-        for s_substrate in d_mcds['substrate']['ls_substarte']:
-            s_decay_value = d_mcds['raw_substrate'][s_substrate]['decay_rate']['value']
-            s_diffusion_value = d_mcds['raw_substrate'][s_substrate]['diffusion_coefficient']['value']
-            ll_sub.append([s_substrate, s_decay_value, s_diffusion_value])
-        # generate dataframe
-        df_substrate = pd.DataFrame(ll_sub, columns=ls_column)
-        df_substrate.set_index('substrate', inplace=True)
-        df_substrate.columns.name = 'attribute'
-        # store values
-        d_mcds['substrate']['df_substarte'] = df_substrate
-
-        ## get conc df
-        # flatten mesh coordnates
-        ar_m, ar_n, ar_p = d_mcds['mesh']['mnp_grid']
-        ar_m = ar_m.flatten(order='C')
-        ar_n = ar_n.flatten(order='C')
-        ar_p = ar_p.flatten(order='C')
-        # get mesh spacing
-        dm, dn, dp = d_mcds['mesh']['mnp_spacing']
-        # get voxel coordinates
-        ai_i = ((ar_m - ar_m.min()) / dm)
-        ai_j = ((ar_n - ar_n.min()) / dn)
-        ai_k = ((ar_p - ar_p.min()) / dp)
-        # handle coordinates
-        ls_column = [
-            'voxel_i','voxel_j','voxel_k',
-            'mesh_center_m','mesh_center_n','mesh_center_p'
-        ]
-        la_data = [ai_i, ai_j, ai_k, ar_m, ar_n, ar_p]
-        # handle concentrations
-        for s_substrate in d_mcds['substrate']['ls_substarte']:
-            ls_column.append(s_substrate)
-            ar_conc = d_mcds['raw_substrate'][s_substrate]['data'].copy()
-            la_data.append(ar_conc.flatten(order='C'))
-        # generate dataframe
-        aa_data  = np.array(la_data)
-        df_conc = pd.DataFrame(aa_data.T, columns=ls_column)
-        df_conc['time'] = d_mcds['metadata']['current_time']
-        df_conc['runtime'] = d_mcds['metadata']['current_runtime'] / 60  # in min
-        df_conc['xmlfile'] = self.xmlfile
-        d_dtype = {'voxel_i': int, 'voxel_j': int, 'voxel_k': int}
-        df_conc = df_conc.astype(d_dtype)
-        # store values
-        df_conc.sort_values(['voxel_i', 'voxel_j', 'voxel_k', 'time'], axis=0, inplace=True)
-        df_conc.reset_index(drop=True, inplace=True)
-        df_conc.index.name = 'index'
-        d_mcds['substrate']['df_conc'] = df_conc
+                    d_mcds['continuum_variables'][s_substrate]['data'][j, i, k] = ar_microenv[4+i_s, i_voxel]
 
 
         ####################
         # handle cell data #
         ####################
+
         if self.verbose:
             print('working on discrete cell data ...')
 
@@ -2703,9 +2652,8 @@ class TimeStep:
         try:
             for x_celltype in x_celldata.find('cell_types').findall('type'):
                 s_id = str(x_celltype.get('ID'))
-                # I don't like spaces in cell type names!
-                s_celltype = x_celltype.text #.replace(' ','_')  # ROH
-                d_mcds['cell']['ds_celltype'].update({s_id : s_celltype})
+                s_celltype = (x_celltype.text).replace(' ', '_')
+                d_mcds['metadata']['cell_type'].update({s_id : s_celltype})
             b_celltype = True
         except AttributeError:
             pass
@@ -2713,67 +2661,66 @@ class TimeStep:
         # metadata cell_type label:id mapping detection ~ label information lost (silver quality)
         if not b_celltype:
             for x_label in x_celldata.find('labels').findall('label'):
-                # I don't like spaces in cell type names!
-                s_variable = x_label.tex #.replace(' ','_')  # ROH
+                s_variable = x_label.text.replace(' ', '_')
                 if s_variable in es_var_cell:
                     for i_id in range(int(x_label.get('size'))):
                         s_id = str(i_id)
-                        d_mcds['cell']['ds_celltype'].update({s_id : s_id})
+                        d_mcds['metadata']['cell_type'].update({s_id : s_id})
                     b_celltype = True
 
         # iterate over labels which are children of labels these will be used to label data arrays
         ls_variable = []
         for x_label in x_celldata.find('labels').findall('label'):
             # I don't like spaces in my dictionary keys!
-            s_variable = x_label.text #.replace(' ','_')  # ROH
+            s_variable = x_label.text.replace(' ', '_')
             i_variable = int(x_label.get('size'))
             s_unit = x_label.get('units')
 
             # variable unique for each celltype substrate combination
             if s_variable in es_var_subs:
-                if (len(d_mcds['substrate']['ds_substrate']) > 0):
+                if (len(d_mcds['metadata']['substrate']) > 0):
                     # continuum_variable id label sorting (becaus this is an id label mapping dict)
-                    ls_substrate = [d_mcds['substrate']['ds_substrate'][o_key] for o_key in sorted(d_mcds['substrate']['ds_substrate'].keys(), key=int)]
+                    ls_substrate = [d_mcds['metadata']['substrate'][o_key] for o_key in sorted(d_mcds['metadata']['substrate'].keys(), key=int)]
                     for s_substrate in ls_substrate:
                         s_variable_subs = s_substrate + '_' + s_variable
                         ls_variable.append(s_variable_subs)
-                        d_mcds['raw_cell']['units'].update({s_variable_subs : s_unit})
+                        d_mcds['discrete_cells']['units'].update({s_variable_subs : s_unit})
                 else:
                     ls_substrate = [str(i_substrate) for i_substrate in range(i_variable)]
                     for s_substrate in ls_substrate:
                         s_variable_subs = s_variable + '_' + s_substrate
                         ls_variable.append(s_variable_subs)
-                        d_mcds['raw_cell']['units'].update({s_variable_subs : s_unit})
+                        d_mcds['discrete_cells']['units'].update({s_variable_subs : s_unit})
 
             # variable unique for each celltype celltype combination
             elif s_variable in es_var_cell:
-                if (len(d_mcds['cell']['ds_celltype']) > 0):
-                    # raw_cell id label sorting (becaus this is an id label mapping dict)
-                    ls_celltype = [d_mcds['cell']['ds_celltype'][o_key] for o_key in sorted(d_mcds['cell']['ds_celltype'].keys(), key=int)]
+                if (len(d_mcds['metadata']['cell_type']) > 0):
+                    # discrete_cells id label sorting (becaus this is an id label mapping dict)
+                    ls_celltype = [d_mcds['metadata']['cell_type'][o_key] for o_key in sorted(d_mcds['metadata']['cell_type'].keys(), key=int)]
                     for s_celltype in ls_celltype:
                         s_variable_celltype = s_celltype + '_' + s_variable
                         ls_variable.append(s_variable_celltype)
-                        d_mcds['raw_cell']['units'].update({s_variable_celltype : s_unit})
+                        d_mcds['discrete_cells']['units'].update({s_variable_celltype : s_unit})
                 else:
                     ls_celltype = [str(i_celltype) for i_celltype in range(i_variable)]
                     for s_celltype in ls_celltype:
                         s_variable_celltype = s_variable + '_' + s_celltype
                         ls_variable.append(s_variable_celltype)
-                        d_mcds['raw_cell']['units'].update({s_variable_celltype : s_unit})
+                        d_mcds['discrete_cells']['units'].update({s_variable_celltype : s_unit})
 
             # variable unique for each dead model
             elif s_variable in es_var_death:
                 for i_deathrate in range(i_variable):
                     s_variable_deathrate = s_variable + '_' + str(i_deathrate)
                     ls_variable.append(s_variable_deathrate)
-                    d_mcds['raw_cell']['units'].update({s_variable_deathrate : s_unit})
+                    d_mcds['discrete_cells']['units'].update({s_variable_deathrate : s_unit})
 
             # spatial variable
             elif s_variable in es_var_spatial:
                 for s_axis in ['_x','_y','_z']:
                     s_variable_spatial = s_variable + s_axis
                     ls_variable.append(s_variable_spatial)
-                    d_mcds['raw_cell']['units'].update({s_variable_spatial: s_unit})
+                    d_mcds['discrete_cells']['units'].update({s_variable_spatial: s_unit})
 
             # simple variable and vectors
             else:
@@ -2782,7 +2729,7 @@ class TimeStep:
                         ls_variable.append(f'{s_variable}_{str(i_n).zfill(3)}')
                 else:
                     ls_variable.append(s_variable)
-                d_mcds['raw_cell']['units'].update({s_variable : s_unit})
+                d_mcds['discrete_cells']['units'].update({s_variable : s_unit})
 
         # load the file
         s_cellpathfile = self.path + '/' + x_celldata.find('filename').text
@@ -2792,99 +2739,76 @@ class TimeStep:
                 print(f'reading: {s_cellpathfile}')
         except ValueError:  # hack: some old PhysiCell versions generates a corrupt cells.mat file, if there are zero cells.
             if self.verbose:
-                print(f'Warning @ TimeStep._read_xml : corrupt {s_cellpathfile} detected!\nassuming time step with zero cells because of a known bug in PhysiCell MultiCellDS version 0.5 output.')
+                print(f'Warning @ pyMCDS._read_xml : corrupt {s_cellpathfile} detected!\nassuming time step with zero cells because of a known bug in PhysiCell MultiCellDS version 0.5 output.')
             ar_cell = np.empty([len(ls_variable),0])
 
         # check for column label mapping error (as good as it gets)
         if (ar_cell.shape[0] != len(ls_variable)):
-            sys.exit(f'Error @ TimeStep._read_xml : extracted column label list leng {len(ls_variable)} and data array shape {ar_cell.shape} are incompatible!')
+            sys.exit(f'Error @ pyMCDS._read_xml : extracted column label list leng {len(ls_variable)} and data array shape {ar_cell.shape} are incompatible!')
 
         # metadata cell_type label:id mapping detection ~ label information lost (bronze quality)
         if not b_celltype:
             for r_celltype in set(ar_cell[ls_variable.index('cell_type'),:]):
                 s_celltype = str(int(r_celltype))
-                d_mcds['cell']['ds_celltype'].update({s_celltype : s_celltype})
+                d_mcds['metadata']['cell_type'].update({s_celltype : s_celltype})
             b_celltype = True
 
         # store data
-        d_mcds['raw_cell']['data'] = {}
+        d_mcds['discrete_cells']['data'] = {}
         for i_col in range(len(ls_variable)):
-            d_mcds['raw_cell']['data'].update({ls_variable[i_col]: ar_cell[i_col,:]})
+            d_mcds['discrete_cells']['data'].update({ls_variable[i_col]: ar_cell[i_col,:]})
 
 
-        ## get celltype list
-        ds_celltype = d_mcds['cell']['ds_celltype']
-        ls_celltype = [ds_celltype[s_key] for s_key in sorted(ds_celltype, key=int)]
-        # store values
-        d_mcds['cell']['ls_celltype'] = ls_celltype
+        #####################
+        # handle graph data #
+        #####################
+
+        d_mcds['discrete_cells']['graph'] = {}
+        d_mcds['discrete_cells']['graph'].update({'neighbor_cells': {}})
+        d_mcds['discrete_cells']['graph'].update({'attached_cells': {}})
+        d_mcds['discrete_cells']['graph'].update({'spring_attached_cells': {}})
+
+        if self.graph:
+            if self.verbose:
+                print('working on graph data ...')
+
+            # neighborhood cell graph
+            s_cellpathfile = self.path + '/' + x_cell.find('neighbor_graph').find('filename').text
+            dei_graph = graphfile_parser(s_pathfile=s_cellpathfile)
+            if self.verbose:
+                print(f'reading: {s_cellpathfile}')
+
+            # store data
+            d_mcds['discrete_cells']['graph'].update({'neighbor_cells': dei_graph})
+
+            # attached cell graph
+            s_cellpathfile = self.path + '/' + x_cell.find('attached_cells_graph').find('filename').text
+            dei_graph = graphfile_parser(s_pathfile=s_cellpathfile)
+            if self.verbose:
+                print(f'reading: {s_cellpathfile}')
+
+            # store data
+            d_mcds['discrete_cells']['graph'].update({'attached_cells': dei_graph})
+
+            # spring attached cell graph
+            try:
+                s_cellpathfile = self.path + '/' + x_cell.find('spring_attached_cells_graph').find('filename').text
+                dei_graph = graphfile_parser(s_pathfile=s_cellpathfile)
+                if self.verbose:
+                    print(f'reading: {s_cellpathfile}')
+
+                # store data
+                d_mcds['discrete_cells']['graph'].update({'spring_attached_cells': dei_graph})
+            except AttributeError:
+                pass
 
 
-        ## get cell df
-        # get cell position and more
-        df_cell = pd.DataFrame(d_mcds['raw_cell']['data'])
-        df_cell['time'] = d_mcds['metadata']['current_time']
-        df_cell['runtime'] = d_mcds['metadata']['current_runtime'] / 60  # in min
-        df_cell['xmlfile'] = self.xmlfile
-        df_voxel = df_cell.loc[:,['position_x','position_y','position_z']].copy()
+        #########################
+        # handle physiboss data #
+        #########################
 
-        # get mesh spacing
-        dm, dn, dp = d_mcds['mesh']['mnp_spacing']
+        d_mcds['discrete_cells']['physiboss'] = None
 
-        # get mesh and voxel min max values
-        tr_m_range, tr_n_range, tr_p_range = d_mcds['mesh']['mnp_range']
-        tr_i_range, tr_j_range, tr_k_range = d_mcds['mesh']['ijk_range']
-
-        # get voxel for each cell
-        df_voxel.loc[:,'voxel_i'] = np.round((df_voxel.loc[:,'position_x'] - tr_m_range[0]) / dm).astype(int)
-        df_voxel.loc[:,'voxel_j'] = np.round((df_voxel.loc[:,'position_y'] - tr_n_range[0]) / dn).astype(int)
-        df_voxel.loc[:,'voxel_k'] = np.round((df_voxel.loc[:,'position_z'] - tr_p_range[0]) / dp).astype(int)
-        df_voxel.loc[(df_voxel.voxel_i > tr_i_range[1]), 'voxel_i'] = tr_i_range[1]  # i_max
-        df_voxel.loc[(df_voxel.voxel_i < tr_i_range[0]), 'voxel_i'] = tr_i_range[0]  # i_min
-        df_voxel.loc[(df_voxel.voxel_j > tr_j_range[1]), 'voxel_j'] = tr_j_range[1]  # j_max
-        df_voxel.loc[(df_voxel.voxel_j < tr_j_range[0]), 'voxel_j'] = tr_j_range[0]  # j_min
-        df_voxel.loc[(df_voxel.voxel_k > tr_k_range[1]), 'voxel_k'] = tr_k_range[1]  # k_max
-        df_voxel.loc[(df_voxel.voxel_k < tr_k_range[0]), 'voxel_k'] = tr_k_range[0]  # k_min
-
-        # merge voxel (inner join)
-        df_cell = pd.merge(df_cell, df_voxel, on=['position_x', 'position_y', 'position_z'])
-
-        # merge cell_density (left join)
-        df_cellcount = df_cell.loc[:,['voxel_i','voxel_j','voxel_k','ID']].groupby(['voxel_i','voxel_j','voxel_k']).count().reset_index()
-        ls_column = list(df_cellcount.columns)
-        ls_column[-1] = 'cell_count_voxel'
-        df_cellcount.columns = ls_column
-        s_density = f"cell_density_{d_mcds['metadata']['spatial_unit']}3"
-        df_cellcount[s_density] = df_cellcount.loc[:,'cell_count_voxel'] / d_mcds['mesh']['volume']
-        df_cell = pd.merge(
-            df_cell,
-            df_cellcount,
-            on = ['voxel_i', 'voxel_j', 'voxel_k'],
-            how = 'left',
-        )
-
-        # get column label set
-        es_column = set(df_cell.columns)
-
-        # get vector length
-        for s_var_spatial in es_var_spatial:
-            es_vector = es_column.intersection({f'{s_var_spatial}_x',f'{s_var_spatial}_y',f'{s_var_spatial}_z'})
-            if len(es_vector) > 0:
-                # linear algebra
-                #a_vector = df_cell.loc[:,ls_vector].values
-                #a_length = np.sqrt(np.diag(np.dot(a_vector, a_vector.T)))
-                # pythoagoras
-                a_length = None
-                for s_vector in es_vector:
-                    a_vectorsq = df_cell.loc[:,s_vector].values**2
-                    if (a_length is None):
-                        a_length = a_vectorsq
-                    else:
-                        a_length += a_vectorsq
-                a_length = a_length**(1/2)
-                # result
-                df_cell[f'{s_var_spatial}_vectorlength'] = a_length
-
-        # physiboss
         if self.physiboss:
             if self.verbose:
                 print('working on physiboss data ...')
@@ -2908,155 +2832,14 @@ class TimeStep:
                 for s_node in sorted(es_node):
                     df_physiboss[f'node_{s_node}'] = df_physiboss.state.str.find(s_node) > -1
 
-                # store data
-                df_cell = pd.merge(
-                    df_cell,
-                    df_physiboss,
-                    left_index = True,
-                    right_index = True,
-                    how = 'left',
-                )
-
             elif self.verbose:
-                print(f'Warning @ TimeStep._read_xml : physiboss file missing {s_intracellpathfile}.')
+                print(f'Warning @ pyMCDS._read_xml : physiboss file missing {s_intracellpathfile}.')
 
             else:
                 pass
 
-
-        # microenvironment
-        if self.microenv:
-            # merge substrate (left join)
-            df_sub = d_mcds['substrate']['df_substarte']
-            for s_sub in df_sub.index:
-                 for s_rate in df_sub.columns:
-                     s_var = f'{s_sub}_{s_rate}'
-                     df_cell[s_var] = df_sub.loc[s_sub,s_rate]
-
-        # merge concentration (left join)
-        df_conc = d_mcds['substrate']['df_conc'].copy()  # voxel and mesh coordinates
-        df_conc.drop({'time', 'runtime','xmlfile'}, axis=1, inplace=True)
-        df_cell = pd.merge(
-            df_cell,
-            df_conc,
-            on = ['voxel_i', 'voxel_j', 'voxel_k'],
-            how = 'left',
-        )
-
-        # variable typing
-        do_type = {}
-        [do_type.update({k:v}) for k,v in do_var_type.items() if k in es_column]
-        do_type.update(self.custom_data_type)
-        do_int = do_type.copy()
-        [do_int.update({k:int}) for k in do_int.keys()]
-        ls_int = sorted(do_int.keys())
-        df_cell.loc[:,ls_int] = df_cell.loc[:,ls_int].round()
-        df_cell = df_cell.astype(do_int)
-        df_cell = df_cell.astype(do_type)
-
-        # categorical translation
-        try:  # bue 20240805: missing in MCDS version <= 0.5 (November 2021)
-            df_cell.loc[:,'current_death_model'] = df_cell.loc[:,'current_death_model'].replace(ds_death_model)  # bue 20230614: this column looks like an artefact to me
-        except KeyError:
-            pass
-        df_cell.loc[:,'cycle_model'] = df_cell.loc[:,'cycle_model'].replace(ds_cycle_model)
-        df_cell.loc[:,'cycle_model'] = df_cell.loc[:,'cycle_model'].replace(ds_death_model)
-        df_cell.loc[:,'current_phase'] = df_cell.loc[:,'current_phase'].replace(ds_cycle_phase)
-        df_cell.loc[:,'current_phase'] = df_cell.loc[:,'current_phase'].replace(ds_death_phase)
-        df_cell.loc[:,'cell_type'] = df_cell.loc[:,'cell_type'].replace(d_mcds['cell']['ds_celltype'])
-        df_cell.loc[:,'chemotaxis_index'] = df_cell.loc[:,'chemotaxis_index'].replace(d_mcds['substrate']['ds_substrate'])
-
-        # store
-        df_cell = df_cell.loc[:,sorted(df_cell.columns)]
-        df_cell.sort_values('ID', axis=0, inplace=True)
-        df_cell.set_index('ID', inplace=True)
-        d_mcds['cell']['df_cell'] = df_cell.copy()
-
-        ## get cell attribute list
-        d_mcds['cell']['ls_cellattr'] = sorted(set(d_mcds['cell']['df_cell'].columns).difference(es_coor_cell))
-
-
-        ####################
-        # handle unit data #
-        ####################
-
-        if self.verbose:
-            print('working on unit data ...')
-
-        # extract data
-        ds_unit = {}
-
-        # units for metadata parameters
-        ds_unit.update({'time': d_mcds['metadata']['time_units']})
-        ds_unit.update({'runtime': d_mcds['metadata']['runtime_units']})
-        ds_unit.update({'spatial_unit': d_mcds['metadata']['spatial_unit']})
-
-        # microenvironment
-        if self.microenv:
-            for s_substrate in d_mcds['substrate']['ls_substarte']:
-                # unit from substrate parameters
-                s_unit = d_mcds['raw_substrate'][s_substrate]['units']
-                ds_unit.update({s_substrate: s_unit})
-
-                # units from microenvironment parameters
-                s_diffusion_key = f'{s_substrate}_diffusion_coefficient'
-                s_diffusion_unit = d_mcds['raw_substrate'][s_substrate]['diffusion_coefficient']['units']
-                ds_unit.update({s_diffusion_key: s_diffusion_unit})
-
-                s_decay_key = f'{s_substrate}_decay_rate'
-                s_decay_unit = d_mcds['raw_substrate'][s_substrate]['decay_rate']['units']
-                ds_unit.update({s_decay_key: s_decay_unit})
-
-        # units from cell parameters
-        ds_unit.update(d_mcds['raw_cell']['units'])
-
-        # output
-        del ds_unit['ID']
-        d_mcds['metadata']['ds_unit'] = ds_unit
-
-
-        #####################
-        # handle graph data #
-        #####################
-
-        d_mcds['cell']['dei_graph'] = {}
-        d_mcds['cell']['dei_graph'].update({'neighbor_cells': {}})
-        d_mcds['cell']['dei_graph'].update({'attached_cells': {}})
-        d_mcds['cell']['dei_graph'].update({'spring_attached_cells': {}})
-
-        if self.graph:
-            if self.verbose:
-                print('working on graph data ...')
-
-            # neighborhood cell graph
-            s_cellpathfile = self.path + '/' + x_cell.find('neighbor_graph').find('filename').text
-            dei_graph = graphfile_parser(s_pathfile=s_cellpathfile)
-            if self.verbose:
-                print(f'reading: {s_cellpathfile}')
-
             # store data
-            d_mcds['cell']['dei_graph'].update({'neighbor_cells': dei_graph})
-
-            # attached cell graph
-            s_cellpathfile = self.path + '/' + x_cell.find('attached_cells_graph').find('filename').text
-            dei_graph = graphfile_parser(s_pathfile=s_cellpathfile)
-            if self.verbose:
-                print(f'reading: {s_cellpathfile}')
-
-            # store data
-            d_mcds['cell']['dei_graph'].update({'attached_cells': dei_graph})
-
-            # spring attached cell graph
-            try:
-                s_cellpathfile = self.path + '/' + x_cell.find('spring_attached_cells_graph').find('filename').text
-                dei_graph = graphfile_parser(s_pathfile=s_cellpathfile)
-                if self.verbose:
-                    print(f'reading: {s_cellpathfile}')
-
-                # store data
-                d_mcds['cell']['dei_graph'].update({'spring_attached_cells': dei_graph})
-            except AttributeError:
-                pass
+            d_mcds['discrete_cells']['physiboss'] = df_physiboss
 
 
         ##########

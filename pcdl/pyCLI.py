@@ -1,5 +1,5 @@
 ###
-# title: commandline.py
+# title: pyCLI.py
 #
 # language: python3
 # date: 2024-02-21
@@ -7,7 +7,7 @@
 # author: Elmar Bucher
 #
 # description:
-#     commandline.py provides command line interface commands for appropriate pcdl functions.
+#     pyCLI.py provides command line interface commands for appropriate pcdl functions.
 #     all clis mirror the related python function interface as close as possible.
 #     i like to thank Miguel Ponce-de-Leon for making me aware of the
 #     entry point implementation technic which makes all of this possible.
@@ -23,10 +23,8 @@ import json
 import numpy as np
 import os
 import pandas as pd
-import pathlib
 import pcdl
 from scipy import stats
-import subprocess
 import sys
 
 
@@ -83,10 +81,10 @@ def get_version():
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
     if not os.path.exists(s_pathfile):
-        sys.exit(f'Error @ pcdl_get_version : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
+        sys.exit(f'Error @ pyCLI.get_version : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
     # run
-    mcds = pcdl.TimeStep(
+    mcds = pcdl.pyMCDS(
         xmlfile = s_pathfile,
         output_path = '.',
         #custom_data_type,
@@ -123,7 +121,7 @@ def get_unit_dict():
     parser.add_argument(
         '--microenv',
         default = 'true',
-        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing. default is True.',
+        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.',
     )
     # TimeSeries graph False
     # TimeSeries physiboss False
@@ -156,10 +154,10 @@ def get_unit_dict():
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
     if not os.path.exists(s_pathfile):
-        sys.exit(f'Error @ pcdl_get_unit_dict : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
+        sys.exit(f'Error @ pyCLI.get_unit_dict : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
     # run
-    mcds = pcdl.TimeStep(
+    mcds = pcdl.pyMCDS(
         xmlfile = s_pathfile,
         output_path = '.',
         #custom_data_type,
@@ -228,10 +226,10 @@ def get_substrate_list():
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
     if not os.path.exists(s_pathfile):
-        sys.exit(f'Error @ pcdl_get_substrate_list : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
+        sys.exit(f'Error @ pyCLI.get_substrate_list : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
     # run
-    mcds = pcdl.TimeStep(
+    mcds = pcdl.pyMCDS(
         xmlfile = s_pathfile,
         output_path = '.',
         #custom_data_type,
@@ -318,10 +316,10 @@ def get_conc_attribute():
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
     if not os.path.exists(s_pathfile):
-        sys.exit(f'Error @ pcdl_get_conc_attribute : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
+        sys.exit(f'Error @ pyCLI.pyCLI.get_conc_attribute : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
     # run
-    mcdsts = pcdl.TimeSeries(
+    mcdsts = pcdl.pyMCDSts(
         output_path = s_path,
         #custom_data_type,
         load = True,
@@ -341,8 +339,7 @@ def get_conc_attribute():
         keep = set(args.keep),
         allvalues = b_allvalues,
     )
-    s_ofile = f"timeseries_conc_attribute_{s_values.replace(' ','_')}.json"
-    s_opathfile = s_path + '/' + s_ofile
+    s_opathfile = f'{s_path}/timeseries_conc_attribute_{s_values}.json'
     json.dump(dl_variable, open(s_opathfile, 'w'), sort_keys=True)
     # going home
     print(s_opathfile)
@@ -421,11 +418,11 @@ def get_conc_df():
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
     if not os.path.exists(s_pathfile):
-        sys.exit(f'Error @ pcdl_get_conc_df : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
+        sys.exit(f'Error @ pyCLI.get_conc_df : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
     # run
     if os.path.isfile(args.path):
-        mcds = pcdl.TimeStep(
+        mcds = pcdl.pyMCDS(
             xmlfile = s_pathfile,
             output_path = '.',
             #custom_data_type,
@@ -446,7 +443,7 @@ def get_conc_df():
         print(s_opathfile)
 
     else:
-        mcdsts = pcdl.TimeSeries(
+        mcdsts = pcdl.pyMCDSts(
             output_path = s_path,
             #custom_data_type,
             load = True,
@@ -474,7 +471,6 @@ def get_conc_df():
             for i, df_conc in enumerate(ldf_conc):
                 df_conc.to_csv(ls_opathfile[i])
             print(ls_opathfile)
-
     # going home
     return 0
 
@@ -585,6 +581,12 @@ def plot_contour():
         default = ['none'],
         help = 'size of the figure in pixels (integer), x y. the given x and y will be rounded to the nearest even number, to be able to generate movies from the images. None tries to take the values from the initial.svg file. fall back setting is 640 480. default is None.',
     )
+    # plot_contour directory
+    parser.add_argument(
+        '--directory',
+        default = 'none',
+        help = 'if none, a meaningful output directory name will be generated, based on focus and z_slice parameters, else the resulting plots will be moved to the explicit name directory.',
+    )
     # plot_contour ext
     parser.add_argument(
         '--ext',
@@ -614,15 +616,15 @@ def plot_contour():
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
     if not os.path.exists(s_pathfile):
-        sys.exit(f'Error @ pcdl_plot_contour : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
+        sys.exit(f'Error @ pyCLI.plot_contour : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
     # focus
     if (args.focus == None):
-        sys.exit(f'Error @ pcdl_plot_contour : input for positional argument focus is missung! this has to be a column name from the conc dataframe.')
+        sys.exit(f'Error @ pyCLI.plot_contour : input for positional argument focus is missung! this has to be a column name from the conc dataframe.')
 
     # run
     if os.path.isfile(args.path):
-        mcds = pcdl.TimeStep(
+        mcds = pcdl.pyMCDS(
             xmlfile = s_pathfile,
             output_path = '.',
             #custom_data_type,
@@ -658,6 +660,7 @@ def plot_contour():
             xyequal = False if args.xyequal.lower().startswith('f') else True,
             ax = None,
             figsizepx = None if (args.figsizepx[0].lower() == 'none') else [int(n) for n in args.figsizepx],
+            directory = None if (args.directory.lower() == 'none') else args.directory,
             ext = args.ext,
             figbgcolor = None if (args.figbgcolor.lower() == 'none') else args.figbgcolor,
         )
@@ -665,7 +668,7 @@ def plot_contour():
         print(s_opathfile)
 
     else:
-        mcdsts = pcdl.TimeSeries(
+        mcdsts = pcdl.pyMCDSts(
             output_path = s_path,
             #custom_data_type,
             load = True,
@@ -689,13 +692,13 @@ def plot_contour():
             ylim = None if (args.ylim[0].lower() == 'none') else args.ylim,
             xyequal = False if args.xyequal.lower().startswith('f') else True,
             figsizepx = None if (args.figsizepx[0].lower() == 'none') else [int(n) for n in args.figsizepx],
+            directory = None if (args.directory.lower() == 'none') else args.directory,
             ext = args.ext,
             figbgcolor = None if (args.figbgcolor.lower() == 'none') else args.figbgcolor,
         )
         # going home
         s_opath = '/'.join(ls_opathfile[0].split('/')[:-1])
         print(s_opath)
-
     # going home
     return 0
 
@@ -744,11 +747,11 @@ def make_conc_vtk():
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
     if not os.path.exists(s_pathfile):
-        sys.exit(f'Error @ pcdl_make_conc_vtk : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
+        sys.exit(f'Error @ pyCLI.make_conc_vtk : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
     # run
     if os.path.isfile(args.path):
-        mcds = pcdl.TimeStep(
+        mcds = pcdl.pyMCDS(
             xmlfile = s_pathfile,
             output_path = '.',
             custom_data_type = {},
@@ -758,12 +761,14 @@ def make_conc_vtk():
             settingxml = None,
             verbose = False if args.verbose.lower().startswith('f') else True
         )
-        s_opathfile = mcds.make_conc_vtk()
+        s_opathfile = mcds.make_conc_vtk(
+            visualize = False,
+        )
         # going home
         print(s_opathfile)
 
     else:
-        mcdsts = pcdl.TimeSeries(
+        mcdsts = pcdl.pyMCDSts(
             output_path = s_path,
             custom_data_type = {},
             load = True,
@@ -773,12 +778,14 @@ def make_conc_vtk():
             settingxml = None,
             verbose = False if args.verbose.lower().startswith('f') else True,
         )
-        ls_opathfile = mcdsts.make_conc_vtk()
+        ls_opathfile = mcdsts.make_conc_vtk(
+            visualize = False,
+        )
         # going home
         print(ls_opathfile)
-
     # going home
     return 0
+
 
 ############################################
 # cell agent relatd command line functions #
@@ -833,10 +840,10 @@ def get_celltype_list():
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
     if not os.path.exists(s_pathfile):
-        sys.exit(f'Error @ pcdl_get_celltype_list : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
+        sys.exit(f'Error @ pyCLI.get_celltype_list : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
     # run
-    mcds = pcdl.TimeStep(
+    mcds = pcdl.pyMCDS(
         xmlfile = s_pathfile,
         output_path = '.',
         #custom_data_type,
@@ -926,6 +933,7 @@ def get_cell_attribute_list():
 
     # going home
     print(mcds.get_cell_attribute_list())
+    return 0
 
 
 def get_cell_attribute():
@@ -955,7 +963,7 @@ def get_cell_attribute():
     parser.add_argument(
         '--microenv',
         default = 'true',
-        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing. default is True.',
+        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.',
     )
     # TimeSeries graph False
     # TimeSeries physiboss
@@ -1021,7 +1029,7 @@ def get_cell_attribute():
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
     if not os.path.exists(s_pathfile):
-        sys.exit(f'Error @ pcdl_get_cell_attribute : {s_pathfile} path does not look like a physicell output directory ({s_path}/initial.xml is missing).')
+        sys.exit(f'Error @ pyCLI.get_cell_attribute : {s_pathfile} path does not look like a physicell output directory ({s_path}/initial.xml is missing).')
 
     # custom_data_type
     d_vartype = {}
@@ -1032,12 +1040,12 @@ def get_cell_attribute():
         elif s_type in {'float'}: o_type = float
         elif s_type in {'str'}: o_type = str
         else:
-            sys.exit(f'Error @ pcdl_get_cell_attribute : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.')
+            sys.exit(f'Error @ pyCLI.get_cell_attribute : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.')
         d_vartype.update({s_var : o_type})
 
     # run
     if os.path.isfile(args.path):
-        mcds = pcdl.TimeStep(
+        mcds = pcdl.pyMCDS(
             xmlfile = s_pathfile,
             output_path = '.',
             custom_data_type = d_vartype,
@@ -1052,10 +1060,10 @@ def get_cell_attribute():
         b_allvalues = True if args.allvalues.lower().startswith('t') else False
         if b_allvalues:
             s_values = 'all'
-        s_opathfile = f"{s_pathfile.replace('.xml','')}_{s_values.replace(' ','_')}.json"
+        s_opathfile = f"{s_pathfile.replace('.xml','')}_{s_values}.json"
 
     else:
-        mcdsts = pcdl.TimeSeries(
+        mcdsts = pcdl.pyMCDSts(
             output_path = s_path,
             custom_data_type = d_vartype,
             load = True,
@@ -1070,8 +1078,7 @@ def get_cell_attribute():
         b_allvalues = True if args.allvalues.lower().startswith('t') else False
         if b_allvalues:
             s_values = 'all'
-        s_ofile = f"timeseries_cell_attribute_{s_values.replace(' ','_')}.json"
-        s_opathfile = s_path + '/' + s_ofile
+        s_opathfile = f'{s_path}/timeseries_cell_attribute_{s_values}.json'
 
     # going home
     dl_variable = mcdsts.get_cell_attribute(
@@ -1106,7 +1113,7 @@ def get_cell_df():
     parser.add_argument(
         '--microenv',
         default = 'true',
-        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing. default is True.'
+        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.'
     )
     # TimeSeries graph False
     # TimeSeries physiboss
@@ -1172,11 +1179,11 @@ def get_cell_df():
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
     if not os.path.exists(s_pathfile):
-        sys.exit(f'Error @ pcdl_get_cell_df : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
+        sys.exit(f'Error @ pyCLI.get_cell_df : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
     # run
     if os.path.isfile(args.path):
-        mcds = pcdl.TimeStep(
+        mcds = pcdl.pyMCDS(
             xmlfile = s_pathfile,
             output_path = '.',
             #custom_data_type,
@@ -1197,7 +1204,7 @@ def get_cell_df():
         print(s_opathfile)
 
     else:
-        mcdsts = pcdl.TimeSeries(
+        mcdsts = pcdl.pyMCDSts(
             output_path = s_path,
             #custom_data_type,
             load = True,
@@ -1225,7 +1232,6 @@ def get_cell_df():
             for i, df_cell in enumerate(ldf_cell):
                 df_cell.to_csv(ls_opathfile[i])
             print(ls_opathfile)
-
     # going home
     return 0
 
@@ -1257,7 +1263,7 @@ def get_anndata():
     parser.add_argument(
         '--microenv',
         default = 'true',
-        help = 'should the microenvironment be extracted and loaded into the anndata object? setting microenv to False will use less memory and speed up processing. default is True.'
+        help = 'should the microenvironment be extracted and loaded into the anndata object? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.'
     )
     # TimeSeries graph
     parser.add_argument(
@@ -1334,7 +1340,7 @@ def get_anndata():
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
     if not os.path.exists(s_pathfile):
-        sys.exit(f'Error @ pcdl_get_anndata : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
+        sys.exit(f'Error @ pyCLI.get_anndata : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
     # custom_data_type
     d_vartype = {}
@@ -1345,7 +1351,7 @@ def get_anndata():
         elif s_type in {'float'}: o_type = float
         elif s_type in {'str'}: o_type = str
         else:
-            sys.exit(f'Error @ pcdl_get_anndata : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.')
+            sys.exit(f'Error @ pyCLI.get_anndata : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.')
         d_vartype.update({s_var : o_type})
 
     # run
@@ -1393,15 +1399,14 @@ def get_anndata():
         )
         # going home
         if b_collapse :
-            s_opathfile = f'{s_path}/timeseries_cell_{args.scale}.h5ad'
+            s_opathfile = f'{s_path}/timeseries_cell_{args.scale.lower()}.h5ad'
             ann_mcdsts.write_h5ad(s_opathfile)
             print(s_opathfile)
         else:
-            ls_opathfile = [f"{s_path}/{s_xmlfile.replace('.xml', '_cell_{}.h5ad'.format(args.scale))}" for s_xmlfile in mcdsts.get_xmlfile_list()]
+            ls_opathfile = [f"{s_path}/{s_xmlfile.replace('.xml', '_cell_{}.h5ad'.format(args.scale.lower()))}" for s_xmlfile in mcdsts.get_xmlfile_list()]
             for i, ann_mcds in enumerate(ann_mcdsts):
                 ann_mcds.write_h5ad(ls_opathfile[i])
             print(ls_opathfile)
-
     # going home
     return 0
 
@@ -1433,7 +1438,7 @@ def make_graph_gml():
     parser.add_argument(
         '--microenv',
         default = 'true',
-        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing. default is True.'
+        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.'
     )
     # TimeSeries graph True
     # TimeSeries physiboss
@@ -1490,7 +1495,7 @@ def make_graph_gml():
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
     if not os.path.exists(s_pathfile):
-        sys.exit(f'Error @ pcdl_make_graph_gml : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
+        sys.exit(f'Error @ pyCLI.make_graph_gml : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
     # custom_data_type
     d_vartype = {}
@@ -1501,12 +1506,12 @@ def make_graph_gml():
         elif s_type in {'float'}: o_type = float
         elif s_type in {'str'}: o_type = str
         else:
-            sys.exit(f'Error @ pcdl_make_graph_gml : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.')
+            sys.exit(f'Error @ pyCLI.make_graph_gml : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.')
         d_vartype.update({s_var : o_type})
 
     # run
     if os.path.isfile(args.path):
-        mcds = pcdl.TimeStep(
+        mcds = pcdl.pyMCDS(
             xmlfile = s_pathfile,
             output_path = '.',
             custom_data_type = d_vartype,
@@ -1525,7 +1530,7 @@ def make_graph_gml():
         print(s_opathfile)
 
     else:
-        mcdsts = pcdl.TimeSeries(
+        mcdsts = pcdl.pyMCDSts(
             output_path = s_path,
             custom_data_type = d_vartype,
             load = True,
@@ -1542,10 +1547,8 @@ def make_graph_gml():
         )
         # going home
         print(ls_opathfile)
-
     # going home
     return 0
-
 
 def plot_scatter():
     # argv
@@ -1574,7 +1577,7 @@ def plot_scatter():
     parser.add_argument(
         '--microenv',
         default = 'true',
-        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing. default is True.',
+        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.',
     )
     # TimeSeries graph False
     # TimeSeries physiboss
@@ -1682,6 +1685,12 @@ def plot_scatter():
         default = ['none'],
         help = 'size of the figure in pixels (integer), x y. the given x and y will be rounded to the nearest even number, to be able to generate movies from the images. None tries to take the values from the initial.svg file. fall back setting is 640 480. default is None.',
     )
+    # plot_scatter directory
+    parser.add_argument(
+        '--directory',
+        default = 'none',
+        help = 'if none, a meaningful output directory name will be generated, based on focus and z_slice parameters, else the resulting plots will be moved to the explicit name directory.',
+    )
     # plot_scatter ext
     parser.add_argument(
         '--ext',
@@ -1711,7 +1720,7 @@ def plot_scatter():
     else:
         s_path = '/'.join(s_pathfile.split('/')[:-1])
     if not os.path.exists(s_pathfile):
-        sys.exit(f'Error @ pcdl_plot_scatter : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
+        sys.exit(f'Error @ pyCLI.plot_scatter : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
     # custom_data_type
     d_vartype = {}
@@ -1722,12 +1731,12 @@ def plot_scatter():
         elif s_type in {'float'}: o_type = float
         elif s_type in {'str'}: o_type = str
         else:
-            sys.exit(f'Error @ pcdl_plot_scatter : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.')
+            sys.exit(f'Error @ pyCLI.plot_scatter : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.')
         d_vartype.update({s_var : o_type})
 
     # run
     if os.path.isfile(args.path):
-        mcds = pcdl.TimeStep(
+        mcds = pcdl.pyMCDS(
             xmlfile = s_pathfile,
             output_path = '.',
             custom_data_type = d_vartype,
@@ -1753,6 +1762,7 @@ def plot_scatter():
             s = args.s,
             ax = None,
             figsizepx = None if (args.figsizepx[0].lower() == 'none') else [int(i) for i in args.figsizepx],
+            directory = None if (args.directory.lower() == 'none') else args.directory,
             ext = args.ext,
             figbgcolor = None if (args.figbgcolor.lower() == 'none') else args.figbgcolor,
         )
@@ -1760,7 +1770,7 @@ def plot_scatter():
         print(s_opathfile)
 
     else:
-        mcdsts = pcdl.TimeSeries(
+        mcdsts = pcdl.pyMCDSts(
             output_path = s_path,
             custom_data_type = d_vartype,
             load = True,
@@ -1785,13 +1795,13 @@ def plot_scatter():
             xyequal = False if args.xyequal.lower().startswith('f') else True,
             s = args.s,
             figsizepx = None if (args.figsizepx[0].lower() == 'none') else [int(i) for i in args.figsizepx],
+            directory = None if (args.directory.lower() == 'none') else args.directory,
             ext = args.ext,
             figbgcolor = None if (args.figbgcolor.lower() == 'none') else args.figbgcolor,
         )
         # going home
-        s_opath = '/'.join(ls_opathfile[0].split('/')[:-1])
-        print(s_opath)
-
+        s_opathfile = '/'.join(ls_opathfile[0].split('/')[:-1])
+        print(s_opathfile)
     # going home
     return 0
 
@@ -1823,7 +1833,7 @@ def make_cell_vtk():
     parser.add_argument(
         '--microenv',
         default = 'true',
-        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing. default is True.',
+        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.',
     )
     # TimeSeries graph False
     # TimeSeries physiboss
@@ -1868,7 +1878,7 @@ def make_cell_vtk():
     else:
         s_path = '/'.join(s_pathfile.split('/')[:-1])
     if not os.path.exists(s_pathfile):
-        sys.exit(f'Error @ pcdl_make_cell_vtk : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
+        sys.exit(f'Error @ pyCLI.make_cell_vtk : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
     # custom_data_type
     d_vartype = {}
@@ -1879,12 +1889,12 @@ def make_cell_vtk():
         elif s_type in {'float'}: o_type = float
         elif s_type in {'str'}: o_type = str
         else:
-            sys.exit(f'Error @ pcdl_make_cell_vtk : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.')
+            sys.exit(f'Error @ pyCLI.make_cell_vtk : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.')
         d_vartype.update({s_var : o_type})
 
     # run
     if os.path.isfile(args.path):
-        mcds = pcdl.TimeStep(
+        mcds = pcdl.pyMCDS(
             xmlfile = s_pathfile,
             output_path = '.',
             custom_data_type = d_vartype,
@@ -1896,12 +1906,13 @@ def make_cell_vtk():
         )
         s_opathfile = mcds.make_cell_vtk(
             attribute = args.attribute,
+            visualize = False,
         )
         # going home
         print(s_opathfile)
 
     else:
-        mcdsts = pcdl.TimeSeries(
+        mcdsts = pcdl.pyMCDSts(
             output_path = s_path,
             custom_data_type = d_vartype,
             load = True,
@@ -1913,10 +1924,10 @@ def make_cell_vtk():
         )
         ls_opathfile = mcdsts.make_cell_vtk(
             attribute = args.attribute,
+            visualize = False,
         )
         # going home
         print(ls_opathfile)
-
     # going home
     return 0
 
@@ -1951,7 +1962,7 @@ def plot_timeseries():
     parser.add_argument(
         '--microenv',
         default = 'true',
-        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing. default is True.',
+        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing, similar to the original pyMCDS_cells.py script. default is True.',
     )
     # TimeSeries graph
     # nop
@@ -2132,7 +2143,7 @@ def plot_timeseries():
 
     # path
     if not os.path.exists(args.path + '/initial.xml'):
-        sys.exit(f'Error @ pcdl_plot_timeseries : path does not look like a physicell output directory ({args.path}/initial.xml is missing).')
+        sys.exit(f'Error @ pyCLI.plot_timeseries : path does not look like a physicell output directory ({args.path}/initial.xml is missing).')
 
     # custom_data_type
     d_vartype = {}
@@ -2143,7 +2154,7 @@ def plot_timeseries():
         elif s_type in {'float'}: o_type = float
         elif s_type in {'str'}: o_type = str
         else:
-            sys.exit(f'Error @ pcdl_plot_timeseries : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.')
+            sys.exit(f'Error @ pyCLI.plot_timeseries : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.')
         d_vartype.update({s_var : o_type})
 
     # aggregate_num
@@ -2154,7 +2165,7 @@ def plot_timeseries():
     elif (args.aggregate_num == 'min'): o_aggregate_num = np.nanmin
     elif (args.aggregate_num == 'std'): o_aggregate_num = np.nanstd
     elif (args.aggregate_num == 'var'): o_aggregate_num = np.nanvar
-    else: sys.exit(f'Error @ pcdl_plot_timeseries : unknowen aggregate_num {args.aggregate_num}. knowen are entropy, max, mean, median, min, std, var.')
+    else: sys.exit(f'Error @ pyCLI.plot_timeseries : unknowen aggregate_num {args.aggregate_num}. knowen are entropy, max, mean, median, min, std, var.')
 
     # secondary_y
     if (args.secondary_y[0].lower() == 'false'): ls_secondary_y = False
@@ -2167,7 +2178,7 @@ def plot_timeseries():
     else: b_legend = True
 
     # run
-    mcdsts = pcdl.TimeSeries(
+    mcdsts = pcdl.pyMCDSts(
         output_path = args.path,
         custom_data_type = d_vartype,
         load = True,
@@ -2205,203 +2216,6 @@ def plot_timeseries():
     # going home
     print(s_pathfile)
     return 0
-
-
-def make_ome_tiff():
-    # argv
-    parser = argparse.ArgumentParser(
-        prog = 'pcdl_make_ome_tiff',
-        description = 'function to transform chosen mcdsts output into an 1[um] spaced tczyx (time, channel, z-axis, y-axis, x-axis) ome tiff file, one substrate or cell_type per channel. the ome tiff file format can for example be read by the napari (https://napari.org/stable/) or fiji imagej (https://fiji.sc/) software.',
-        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
-    )
-
-    # TimeSeries path
-    parser.add_argument(
-        'path',
-        nargs = '?',
-        default = '.',
-        help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .',
-    )
-    # TimeSeries output_path '.'
-    # TimeSeries custom_data_type {}
-    # TimeSeries microenv
-    parser.add_argument(
-        '--microenv',
-        default = 'true',
-        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing. default is True.'
-    )
-    # TimeSeries graph False
-    # TimeSeries physiboss
-    parser.add_argument(
-        '--physiboss',
-        default = 'true',
-        help = 'if found, should physiboss state data be extracted and loaded into the df_cell dataframe? default is True.'
-    )
-    # TimeSeries settingxml
-    parser.add_argument(
-        '--settingxml',
-        default = 'PhysiCell_settings.xml',
-        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
-    )
-    # TimeSeries verbose
-    parser.add_argument(
-        '-v', '--verbose',
-        default = 'true',
-        help = 'setting verbose to False for less text output, while processing. default is True.',
-    )
-    # make_ome_tiff cell_attribute
-    parser.add_argument(
-        'cell_attribute',
-        nargs = '?',
-        default = 'ID',
-        help = 'mcds.get_cell_df dataframe column, used for cell_attribute. the column data type has to be numeric (bool, int, float) and cannot be string. the result will be stored as 32 bit float. default is ID, with will result in a segmentation mask.',
-    )
-    # make_ome_tiff conc_cutoff
-    parser.add_argument(
-        '--conc_cutoff',
-        nargs = '*',
-        default = [],
-        help = 'if a contour from a substrate not should be cut by greater than zero (shifted to integer 1), another cutoff value can be specified here like this: substarte:value substrate:value substarte:value . default is and empty string.',
-    )
-    # make_ome_tiff focus
-    parser.add_argument(
-        '--focus',
-        nargs = '+',
-        default = ['none'],
-        help = 'set of substrate and cell_type names to specify what will be translated into ome tiff format. if None, all substrates and cell types will be processed. default is a None.',
-    )
-    # make_ome_tiff file True
-    # make_ome_tiff collapse
-    parser.add_argument(
-        '--collapse',
-        default = 'true',
-        help = 'should all mcds time steps from the time series be collapsed into one big ome.tiff, or a many ome.tiff, one ome.tiff for each time step?, default is True.'
-    )
-
-    # parse arguments
-    args = parser.parse_args()
-    print(args)
-
-    # path
-    s_path = args.path
-    while (s_path.find('//') > -1):
-        s_path = s_path.replace('//','/')
-    if (s_path.endswith('/')) and (len(s_path) > 1):
-        s_path = s_path[:-1]
-    s_pathfile = s_path
-    if not s_pathfile.endswith('.xml'):
-        s_pathfile = s_pathfile + '/initial.xml'
-    else:
-        s_path = '/'.join(s_pathfile.split('/')[:-1])
-    if not os.path.exists(s_pathfile):
-        sys.exit(f'Error @ pcdl_make_ome_tiff : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
-
-    # conc_cutoff
-    d_conccutoff = {}
-    for s_conccutoff in args.conc_cutoff:
-        s_substrate, s_value = s_conccutoff.split(':')
-        if (s_value.find('.') > -1):
-            o_value = float(s_value)
-        else:
-            o_value = int(s_value)
-        d_conccutoff.update({s_substrate : o_value})
-
-    # focus
-    if (args.focus[0].lower() == 'none'):
-        es_focus = None
-    else:
-        es_focus = set( args.focus)
-
-    # run
-    if os.path.isfile(args.path):
-        mcds = pcdl.TimeStep(
-            xmlfile = s_pathfile,
-            output_path = '.',
-            custom_data_type = {},
-            microenv = False if args.microenv.lower().startswith('f') else True,
-            graph = False,
-            physiboss = False if args.physiboss.lower().startswith('f') else True,
-            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
-            verbose = False if args.verbose.lower().startswith('f') else True
-        )
-        s_opathfile = mcds.make_ome_tiff(
-            cell_attribute = args.cell_attribute,
-            conc_cutoff = d_conccutoff,
-            focus = es_focus,
-            file = True,
-        )
-        # going home
-        print(s_opathfile)
-
-    else:
-        mcdsts = pcdl.TimeSeries(
-            output_path = s_path,
-            custom_data_type = {},
-            load = True,
-            microenv = False if args.microenv.lower().startswith('f') else True,
-            graph = False,
-            physiboss = False if args.physiboss.lower().startswith('f') else True,
-            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
-            verbose = False if args.verbose.lower().startswith('f') else True,
-        )
-        o_opathfile = mcdsts.make_ome_tiff(
-            cell_attribute = args.cell_attribute,
-            conc_cutoff = d_conccutoff,
-            focus = es_focus,
-            file = True,
-            collapse = False if args.collapse.lower().startswith('f') else True,
-        )
-        # going home
-        print(o_opathfile)
-
-    # going home
-    return 0
-
-
-#######################
-# render neuroglancer #
-#######################
-
-def render_neuroglancer():
-    # argv
-    parser = argparse.ArgumentParser(
-        prog = 'pcdl_render_neuroglancer',
-        description = 'function to load a time step from an ome tiff files, generated with make_ome_tiff, into neuroglancer.',
-        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
-    )
-    # ome tiff path file
-    parser.add_argument(
-        'tiffpathfile',
-        nargs = '?',
-        default = '.',
-        help = 'path to ome tiff file.',
-    )
-    # time step
-    parser.add_argument(
-        'timestep',
-        nargs = '?',
-        default = 0,
-        type = int,
-        help = 'time step, within a possibly collapsed ome tiff file, to render. the default will work with single time step ome tiff files.',
-    )
-    # intensity colormap
-    parser.add_argument(
-        '--intensity_cmap',
-        default = 'gray',
-        help = 'matlab color map label, used to display expression intensity values. if None, no intensity layers will be generated. https://matplotlib.org/stable/users/explain/colors/colormaps.html',
-    )
-
-    # parse arguments
-    args = parser.parse_args()
-    print(args)
-
-    # process arguments
-    s_neuromancerpath = str(pathlib.Path(pcdl.__file__).parent).replace('\\','/') + '/'
-    s_tiffpathfile = args.tiffpathfile.replace('\\','/')
-
-    # run
-    # bue 20250623: use subprocess to run python3 in interactive mode to run the neuromancer script, which is needed to keep the neuroglancer web gl server running.
-    subprocess.run(['python3', '-i', f'{s_neuromancerpath}neuromancer.py', s_tiffpathfile, '--timestep', str(args.timestep), '--intensity_cmap', args.intensity_cmap])
 
 
 #################
