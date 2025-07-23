@@ -1668,7 +1668,7 @@ class TestCommandLineInterfaceMakeGif(object):
 
     def test_pcdl_make_gif_timeseries_default(self):
         o_path = subprocess.run(['pcdl_plot_scatter', s_path_2d], check=False, capture_output=True)
-        s_path = f'{s_path_2d}/cell_cell_type_z0.0/' 
+        s_path = f'{s_path_2d}/cell_cell_type_z0.0/'
         o_result = subprocess.run(['pcdl_make_gif', s_path], check=False, capture_output=True)
         print(f'o_result: {o_result}\n')
         print(f'o_result.returncode: {o_result.returncode}\n')
