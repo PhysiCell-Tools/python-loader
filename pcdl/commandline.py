@@ -130,8 +130,8 @@ def get_unit_dict():
     # TimeSeries settingxml
     parser.add_argument(
         '--settingxml',
-        default = 'PhysiCell_settings.xml',
-        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+        default = 'false',
+        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is False.',
     )
     # TimeSeries verbose
     parser.add_argument(
@@ -807,8 +807,8 @@ def get_celltype_list():
     # TimeSeries settingxml
     parser.add_argument(
         '--settingxml',
-        default = 'PhysiCell_settings.xml',
-        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+        default = 'false',
+        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is False.',
     )
     # TimeSeries verbose
     parser.add_argument(
@@ -884,8 +884,8 @@ def get_cell_attribute_list():
     # TimeSeries settingxml
     parser.add_argument(
         '--settingxml',
-        default = 'PhysiCell_settings.xml',
-        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+        default = 'false',
+        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is False.',
     )
     # TimeSeries verbose
     parser.add_argument(
@@ -967,8 +967,8 @@ def get_cell_attribute():
     # TimeSeries settingxml
     parser.add_argument(
         '--settingxml',
-        default = 'PhysiCell_settings.xml',
-        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+        default = 'false',
+        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is False.',
     )
     # TimeSeries verbose
     parser.add_argument(
@@ -1118,8 +1118,8 @@ def get_cell_df():
     # TimeSeries settingxml
     parser.add_argument(
         '--settingxml',
-        default = 'PhysiCell_settings.xml',
-        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+        default = 'false',
+        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is False.',
     )
     # TimeSeries verbose
     parser.add_argument(
@@ -1274,8 +1274,8 @@ def get_anndata():
     # TimeSeries settingxml
     parser.add_argument(
         '--settingxml',
-        default = 'PhysiCell_settings.xml',
-        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+        default = 'false',
+        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is False.',
     )
     # TimeSeries verbose
     parser.add_argument(
@@ -1445,8 +1445,8 @@ def make_graph_gml():
     # TimeSeries settingxml
     parser.add_argument(
         '--settingxml',
-        default = 'PhysiCell_settings.xml',
-        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+        default = 'false',
+        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is False.',
     )
     # TimeSeries verbose
     parser.add_argument(
@@ -1586,8 +1586,8 @@ def plot_scatter():
     # TimeSeries settingxml
     parser.add_argument(
         '--settingxml',
-        default = 'PhysiCell_settings.xml',
-        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+        default = 'false',
+        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is False.',
     )
     # TimeSeries verbose
     parser.add_argument(
@@ -1835,8 +1835,8 @@ def make_cell_vtk():
     # TimeSeries settingxml
     parser.add_argument(
         '--settingxml',
-        default = 'PhysiCell_settings.xml',
-        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+        default = 'false',
+        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is False.',
     )
     # TimeSeries verbose
     parser.add_argument(
@@ -1964,8 +1964,8 @@ def plot_timeseries():
     # TimeSeries settingxml
     parser.add_argument(
         '--settingxml',
-        default = 'PhysiCell_settings.xml',
-        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+        default = 'false',
+        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is False.',
     )
     # TimeSeries verbose
     parser.add_argument(
@@ -2240,8 +2240,8 @@ def make_ome_tiff():
     # TimeSeries settingxml
     parser.add_argument(
         '--settingxml',
-        default = 'PhysiCell_settings.xml',
-        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is PhysiCell_settings.xml.',
+        default = 'false',
+        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is False.',
     )
     # TimeSeries verbose
     parser.add_argument(

@@ -161,7 +161,7 @@ def make_movie(path, interface='jpeg', framerate=12):
 ###########
 
 class TimeSeries:
-    def __init__(self, output_path='.', custom_data_type={}, load=True, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True):
+    def __init__(self, output_path='.', custom_data_type={}, load=True, microenv=True, graph=True, physiboss=True, settingxml=False, verbose=True):
         """
         input:
             output_path: string, default '.'
@@ -190,7 +190,7 @@ class TimeSeries:
                 should physiboss state data be loaded, if found?
                 setting physiboss to False will use less memory and speed up processing.
 
-            settingxml: string; default PhysiCell_settings.xml
+            settingxml: string; default False
                 the settings.xml that is loaded, from which the cell type ID
                 label mapping, is extracted, if this information is not found
                 in the output xml file.

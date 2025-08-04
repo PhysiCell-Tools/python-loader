@@ -477,7 +477,7 @@ def _anndextract(df_cell, scale='maxabs', graph_attached={}, graph_neighbor={}, 
 
 # object classes
 class TimeStep:
-    def __init__(self, xmlfile, output_path='.', custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True):
+    def __init__(self, xmlfile, output_path='.', custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml=False, verbose=True):
         """
         input:
             xmlfile: string
@@ -506,7 +506,7 @@ class TimeStep:
                 should physiboss state data be loaded, if found?
                 setting physiboss to False will use less memory and speed up processing.
 
-            settingxml: string; default PhysiCell_settings.xml
+            settingxml: string; default False
                 the settings.xml that is loaded, from which the cell type ID
                 label mapping, is extracted, if this information is not found
                 in the output xml file.
@@ -2699,7 +2699,7 @@ class TimeStep:
                 break
 
         # update cell_type ID label dictionar
-        # metadata cell_type label:id mapping detection ~ physicell version >= 3.15 (gold quality)
+        # metadata cell_type label:id mapping detection ~ physicell version >= 1.13 (gold quality)
         try:
             for x_celltype in x_celldata.find('cell_types').findall('type'):
                 s_id = str(x_celltype.get('ID'))
