@@ -1412,7 +1412,7 @@ class TestCommandLineInterfacePlotTimeSeries(object):
     # + sharex (false, _true_)
     # + sharey (false, _true_)
     # + linestyle ('-', '-.')
-    # + linewidth ('none', 9)
+    # + linewidth ('none', 9.0)
     # + cmap ('none', 'magma')
     # + color ('none', 'maroon')
     # + grid (true, _false_)
@@ -1450,7 +1450,7 @@ class TestCommandLineInterfacePlotTimeSeries(object):
             '--sharex', 'true',
             '--sharey', 'true',
             '--linestyle', ':',
-            '--linewidth', '9',
+            '--linewidth', '9.0',
             '--cmap', 'magma',
             '--color', 'maroon', 'orange', 'yellow',
             '--grid', 'false',

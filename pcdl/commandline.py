@@ -2055,7 +2055,7 @@ def plot_timeseries():
     parser.add_argument(
         '--linewidth',
         default = 'none',
-        help = 'line width in points, integer. default is None.',
+        help = 'line width in points, float. default is None.',
     )
     # plot_timeseries cmap
     parser.add_argument(
@@ -2190,7 +2190,7 @@ def plot_timeseries():
         sharex = True if args.sharex.lower().startswith('t') else False,
         sharey = True if args.sharey.lower().startswith('t') else False,
         linestyle = args.linestyle,
-        linewidth = None if (args.linewidth.lower() == 'none') else int(args.linewidth),
+        linewidth = None if (args.linewidth.lower() == 'none') else float(args.linewidth),
         cmap = None if (args.cmap.lower() == 'none') else args.cmap,
         color = None if (args.color[0].lower() == 'none') else args.color,
         grid = False if args.grid.lower().startswith('f') else True,
