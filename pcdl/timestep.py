@@ -1518,11 +1518,21 @@ class TimeStep:
         return self.data['cell']['ls_cellattr'].copy()
 
 
-    def plot_scatter(self, focus='cell_type', z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title=None, grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=1.0, ax=None, figsizepx=None, ext=None, figbgcolor=None, **kwargs):
+    def plot_scatter(self, focus='cell_type', cat_drop=set(), cat_keep=set(), z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title=None, grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=1.0, ax=None, figsizepx=None, ext=None, figbgcolor=None, **kwargs):
         """
         input:
             focus: string; default is 'cell_type'
                 column name within cell dataframe.
+
+            cat_drop: set of strings; default is an empty set
+                if focus is a categorical attribute,
+                set of category labels to be dropped for the dataframe.
+                Attention: when the cat_keep parameter is given, then
+                the cat_drop parameter has to be an empty set!
+
+            cat_keep: set of strings; default is an empty set
+                if focus is a categorical attribute,
+                set of category labels to be kept in the dataframe.
 
             z_slice: floating point number; default is 0.0
                 z-axis position to slice a 2D xy-plain out of the
@@ -1721,6 +1731,13 @@ class TimeStep:
                     s_cmap = cmap,
                     b_shuffle = False,
                 )
+            # filter categories
+            es_cat = set()
+            if (len(cat_keep) > 0):
+                es_cat = es_category.intersection(cat_keep)
+            else:
+                es_cat = es_category.difference(cat_drop)
+            df_cell= df_cell.loc[df_cell.loc[:,focus].isin(es_cat),:]
             # generate color list
             c = list(df_cell.loc[:, s_focus_color].values)
             s_cmap = None

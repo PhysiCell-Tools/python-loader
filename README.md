@@ -125,6 +125,12 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 + evt generate lineage tree graph output files.
 
 ## Release Notes:
++ version 4.0.5 (2025-08-22): elmbeech/physicelldataloader
+    spellcheck!
+    + **settingxml** default is now set to False, because the cell\_type id label mapping can in recent PhysiCell output be retrieved from output\*.xml too.
+    + **plot_scatter** and **plot_timeseries** have now additionally a cat\_drop and cat\_keep argument, to filter categorical data.
+    + **plot_timeseries(frame=conc)** plots now by default all substrat concentrations over time.
+
 + version 4.0.4 (2025-07-23): elmbeech/physicelldataloader
     + command line commands now return **error code 0** if the command runs successfully.
 

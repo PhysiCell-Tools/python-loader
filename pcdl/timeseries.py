@@ -851,13 +851,23 @@ class TimeSeries:
         return dl_variable_range
 
 
-    def plot_scatter(self, focus='cell_type', z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title='', grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=1.0, figsizepx=None, ext='jpeg', figbgcolor=None, **kwargs):
+    def plot_scatter(self, focus='cell_type', cat_drop=set(), cat_keep=set(), z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title='', grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=1.0, figsizepx=None, ext='jpeg', figbgcolor=None, **kwargs):
         """
         input:
             self: TimeSeries class instance
 
             focus: string; default is 'cell_type'
                 column name within cell dataframe.
+
+            cat_drop: set of strings; default is an empty set
+                if focus is a categorical attribute,
+                set of category labels to be dropped for the dataframe.
+                Attention: when the cat_keep parameter is given, then
+                the cat_drop parameter has to be an empty set!
+
+            cat_keep: set of strings; default is an empty set
+                if focus is a categorical attribute,
+                set of category labels to be kept in the dataframe.
 
             z_slice: floating point number; default is 0.0
                 z-axis position to slice a 2D xy-plain out of the 3D mesh.
@@ -951,6 +961,8 @@ class TimeSeries:
             df_cell = mcds.get_cell_df()
             o_output = mcds.plot_scatter(
                 focus = focus,
+                cat_drop = cat_drop,
+                cat_keep = cat_keep,
                 z_slice = z_slice,
                 z_axis = z_axis,
                 alpha = alpha,
@@ -1141,7 +1153,7 @@ class TimeSeries:
 
     ## TIME SERIES RELATED FUNCTIONS ##
 
-    def plot_timeseries(self, focus_cat=None, focus_num=None, aggregate_num=np.nanmean, frame='cell', z_slice=None, logy=False, ylim=None, secondary_y=None, subplots=False, sharex=False, sharey=False, linestyle='-', linewidth=None, cmap=None, color=None, grid=True, legend=True, yunit=None, title=None, ax=None, figsizepx=[640, 480], ext=None, figbgcolor=None, **kwargs):
+    def plot_timeseries(self, focus_cat=None, focus_num=None, aggregate_num=np.nanmean, frame='cell', cat_drop=set(), cat_keep=(), z_slice=None, logy=False, ylim=None, secondary_y=None, subplots=False, sharex=False, sharey=False, linestyle='-', linewidth=None, cmap=None, color=None, grid=True, legend=True, yunit=None, title=None, ax=None, figsizepx=[640, 480], ext=None, figbgcolor=None, **kwargs):
         """
         input:
             self: TimeSeries class instance
@@ -1161,6 +1173,16 @@ class TimeSeries:
                 to specifies the data dataframe.
                 cell: dataframe will be retrieved through the mcds.get_cell_df function.
                 conc: dataframe will be retrieved through the mcds.get_conc_df function.
+
+            cat_drop: set of strings; default is an empty set
+                if focus is a categorical attribute,
+                set of category labels to be dropped for the dataframe.
+                Attention: when the cat_keep parameter is given, then
+                the cat_drop parameter has to be an empty set!
+
+            cat_keep: set of strings; default is an empty set
+                if focus is a categorical attribute,
+                set of category labels to be kept in the dataframe.
 
             z_slice: floating point number; default is None
                 z-axis position to slice a 2D xy-plain out of the 3D mesh.
@@ -1261,13 +1283,6 @@ class TimeSeries:
             https://en.wikipedia.org/wiki/Portable_Network_Graphics
             https://en.wikipedia.org/wiki/TIFF
         """
-        # handle focus
-        if focus_cat is None:
-            focus_cat  = 'total'
-        if focus_num is None:
-            focus_num = 'count'
-            aggregate_num = len
-
         # handle z_slice
         if not (z_slice is None):
             _, _, ar_p_axis = self.get_mcds_list()[0].get_mesh_mnp_axis()
@@ -1279,8 +1294,20 @@ class TimeSeries:
         # generate series dataframe
         df_series = None
         for mcds in self.get_mcds_list():
-            # fetch cell timestep dataframe
+
+            # cell agent
             if frame in {'cell', 'df_cell', 'cell_df', 'get_cell_df'}:
+
+                # handle focus
+                if focus_cat is None:
+                    focus_cat  = 'total'
+
+                if focus_num is None:
+                    focus_num = 'count'
+                    aggregate_num = len
+
+                # fetch timestep dataframe
+                b_verbose = mcds.verbose
                 mcds.set_verbose_false()
                 if (focus_cat == 'total') and (focus_num == 'count'):
                     df_frame = mcds.get_cell_df(values=1, keep={'time'})
@@ -1295,28 +1322,48 @@ class TimeSeries:
                 else:
                     df_frame = mcds.get_cell_df(values=1, keep={focus_cat,focus_num})
                 mcds.set_verbose_true()
-            # fetch conc timestep dataframe
+                mcds.verbose = b_verbose
+
+            # conc substrate
             elif frame in {'conc', 'df_conc', 'conc_df', 'get_conc_df'}:
+
+                # handle focus
+                if focus_cat is None:
+                    focus_cat  = 'substrate'
+
+                if focus_num is None:
+                    focus_num = 'value'
+
+                # fetch time step dataframe
+                b_verbose = mcds.verbose
                 mcds.set_verbose_false()
-                if (focus_cat == 'total') and (focus_num == 'count'):
-                    df_frame = mcds.get_conc_df(values=1, keep={'time'})
-                    df_frame['total'] = 'total'
-                    df_frame['count'] = 1
-                elif (focus_cat == 'total'):
-                    df_frame = mcds.get_conc_df(values=1, keep={focus_num})
-                    df_frame['total'] = 'total'
-                elif (focus_num == 'count'):
-                    df_frame = mcds.get_conc_df(values=1, keep={focus_cat})
-                    df_frame['count'] = 1
+                if (focus_cat == 'substrate'):  # and (focus_num == 'value'):
+                    df_frame = mcds.get_conc_df(values=1).melt(
+                        id_vars = es_coor_conc.difference({'ID'}),
+                        var_name = 'substrate',
+                    )
+
                 else:
                     df_frame = mcds.get_conc_df(values=1, keep={focus_cat,focus_num})
                 mcds.set_verbose_true()
+                mcds.verbose = b_verbose
+
             # error
             else:
                 sys.exit(f"Error @ TimeSeries.plot_timeseries : unknown frame {frame}. known are cell_df and conc_df.")
+
+            # filter categories
+            es_category = set(df_frame.loc[:, focus_cat])
+            if (len(cat_keep) > 0):
+                es_category = es_category.intersection(cat_keep)
+            else:
+                es_category = es_category.difference(cat_drop)
+            df_frame = df_frame.loc[df_frame.loc[:, focus_cat].isin(es_category),:]
+
             # handle z_slize
             if not (z_slice is None):
                 df_frame = df_frame.loc[(df_frame.mesh_center_p == z_slice),:]
+
             # calculate focus_num aggregate per focus_cat
             r_time = mcds.get_time()
             df_frame = df_frame.loc[:,[focus_cat, focus_num]]
@@ -1329,6 +1376,7 @@ class TimeSeries:
                 df_aggregate.columns = [r_time]
             else:
                 sys.exit(f'Error @ TimeSeries.plot_timeseries : {aggregate_num} calculation returns unexpected variable type {type(o_aggregate)}.\nthe expected type is a pandas Series or DataFrame.')
+
             # store result
             if (df_series is None):
                 df_series = df_aggregate
@@ -1340,6 +1388,7 @@ class TimeSeries:
                     right_index=True,
                     how='outer'
                 )
+
         # transpose dataframe
         df_series = df_series.T
 
