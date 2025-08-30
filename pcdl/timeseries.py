@@ -146,7 +146,9 @@ def make_movie(path, interface='jpeg', framerate=12):
     f.close()
 
     # genearete movie
-    s_cmd = f'ffmpeg -y -r {framerate} -f concat -i ffmpeginput.txt -vcodec libx264 -pix_fmt yuv420p -strict -2 -tune animation -crf 15 -acodec none "{s_ofile}"'  # -safe 0
+    s_cmd = f'ffmpeg -y -r {framerate} -f image2 -i ffmpeginput.txt -vcodec libx264 -pix_fmt yuv420p -strict -2 -tune animation -crf 15 -acodec none "{s_ofile}"'  # -safe 0
+    #s_cmd = f'ffmpeg -y -r {framerate} -f concat -i ffmpeginput.txt -vcodec libx264 -pix_fmt yuv420p -strict -2 -tune animation -crf 15 -acodec none "{s_ofile}"'  # -safe 0
+    #ffmpeg -r $(FRAMERATE) -f image2 -i $(OUTPUT)/snapshot%08d.jpg -vcodec libx264 -pix_fmt yuv420p -strict -2 -tune animation -crf 15 -acodec none $(OUTPUT)/out.mp4
     if (os.system(s_cmd) != 0):
         sys.exit("Error @ make_movie : ffmpeg could not generatet the movie.")
     os.remove('ffmpeginput.txt')
