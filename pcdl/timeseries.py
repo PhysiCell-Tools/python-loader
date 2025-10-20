@@ -1255,14 +1255,16 @@ class TimeSeries:
                 to be able to generate movies from the images.
 
             ext: string; default is None
-                output image format. possible formats are None, jpeg, png, and tiff.
-                if None then the matplotlib figure is returned by the function
-                and not written to file.
+                output format.
+                possible image formats are jpeg, jpg, png, tif, and tiff.
+                for retrieving a datafarme file use csv.
+                any other string or a number returns a pandas dataframe object.
+                None returnes a matplotlib figure object.
 
             figbgcolor: string; default is None which is transparent (png)
                 or white (jpeg, tiff).
                 figure background color.
-                only relevant if ext not is None.
+                only relevant if ext specifies an image file.
 
             **kwargs: possible additional keyword arguments input,
                 handled by the pandas series plot function.
@@ -1392,88 +1394,102 @@ class TimeSeries:
         # transpose dataframe
         df_series = df_series.T
 
-        # handle ylabel
-        if (focus_num == 'count') and (yunit is None):
-            ylabel = focus_num
-        elif (focus_num == 'count'):
-            ylabel = f'focus_num [{yunit}]'
-        elif (yunit is None):
-            ylabel = f"{aggregate_num.__name__.replace('nan','')} {focus_num}"
+        # generate file name
+        if (focus_num == 'count'):
+            s_ofile = f'timeseries_{frame}_{focus_cat}_{focus_num}.{ext}'.replace(' ','_')
         else:
-            ylabel = f"{aggregate_num.__name__.replace('nan','')} {focus_num} [{yunit}]"
+            s_ofile = f"timeseries_{frame}_{focus_cat}_{focus_num}_{aggregate_num.__name__.replace('np.nan','')}.{ext}".replace(' ','_')
+        s_pathfile = self.path + '/' + s_ofile
 
-        # generate series line plot
-        if (ax is None):
-            # handle figure size
-            figsizepx[0] = figsizepx[0] - (figsizepx[0] % 2)  # enforce even pixel number
-            figsizepx[1] = figsizepx[1] - (figsizepx[1] % 2)
-            r_px = 1 / plt.rcParams['figure.dpi']  # translate px to inch
-            figsize = [None, None]
-            figsize[0] = figsizepx[0] * r_px
-            figsize[1] = figsizepx[1] * r_px
-            if self.verbose:
-                print(f'inch figure size set to {figsize}.')
-            fig, ax = plt.subplots(figsize=figsize)
-        else:
-            fig = plt.gcf()
-        if not (cmap is None):
-            # if cmap
-            df_series.plot(
-                kind = 'line',
-                logy = logy,
-                ylim = ylim,
-                secondary_y = secondary_y,
-                subplots = subplots,
-                sharex = sharex,
-                sharey = sharey,
-                linestyle = linestyle,
-                linewidth = linewidth,
-                cmap = cmap,
-                grid = grid,
-                legend = legend,
-                ylabel = ylabel,
-                xlabel = f"time [{mcds.get_unit_dict()['time']}]",
-                title = title,
-                ax = ax,
-                **kwargs,
-            )
-        else:
-            # if color
-            df_series.plot(
-                kind = 'line',
-                logy = logy,
-                ylim = ylim,
-                secondary_y = secondary_y,
-                subplots = subplots,
-                sharex = sharex,
-                sharey = sharey,
-                linestyle = linestyle,
-                linewidth = linewidth,
-                color = color,
-                grid = grid,
-                legend = legend,
-                ylabel = ylabel,
-                xlabel = f"time [{mcds.get_unit_dict()['time']}]",
-                title = title,
-                ax = ax,
-                **kwargs,
-            )
+        # output dataframe object
+	    if (ext not in {'csv', 'jpeg', 'jpg', 'png', 'tiff', 'tif', None}):
+            return df_series
 
-        # output
-        if (ext is None):
-            return fig
-        else:
-            if (focus_num == 'count'):
-                s_ofile = f'timeseries_{frame}_{focus_cat}_{focus_num}.{ext}'.replace(' ','_')
+        # output dataframe file
+        elif (ext == 'csv'):
+            df_series.to_csv(s_pathfile)
+            return s_pathfile
+
+        # output image file
+	    elif (ext in {'jpeg','jpg','png','tiff','tif'}):
+            # handle ylabel
+            if (focus_num == 'count') and (yunit is None):
+                ylabel = focus_num
+            elif (focus_num == 'count'):
+                ylabel = f'focus_num [{yunit}]'
+            elif (yunit is None):
+                ylabel = f"{aggregate_num.__name__.replace('nan','')} {focus_num}"
             else:
-                s_ofile = f"timeseries_{frame}_{focus_cat}_{focus_num}_{aggregate_num.__name__.replace('np.nan','')}.{ext}".replace(' ','_')
-            s_pathfile = self.path + '/' + s_ofile
+                ylabel = f"{aggregate_num.__name__.replace('nan','')} {focus_num} [{yunit}]"
+
+            # generate series line plot
+            if (ax is None):
+                # handle figure size
+                figsizepx[0] = figsizepx[0] - (figsizepx[0] % 2)  # enforce even pixel number
+                figsizepx[1] = figsizepx[1] - (figsizepx[1] % 2)
+                r_px = 1 / plt.rcParams['figure.dpi']  # translate px to inch
+                figsize = [None, None]
+                figsize[0] = figsizepx[0] * r_px
+                figsize[1] = figsizepx[1] * r_px
+                if self.verbose:
+                    print(f'inch figure size set to {figsize}.')
+                fig, ax = plt.subplots(figsize=figsize)
+            else:
+                fig = plt.gcf()
+            if not (cmap is None):
+                # if cmap
+                df_series.plot(
+                    kind = 'line',
+                    logy = logy,
+                    ylim = ylim,
+                    secondary_y = secondary_y,
+                    subplots = subplots,
+                    sharex = sharex,
+                    sharey = sharey,
+                    linestyle = linestyle,
+                    linewidth = linewidth,
+                    cmap = cmap,
+                    grid = grid,
+                    legend = legend,
+                    ylabel = ylabel,
+                    xlabel = f"time [{mcds.get_unit_dict()['time']}]",
+                    title = title,
+                    ax = ax,
+                    **kwargs,
+                )
+            else:
+                # if color
+                df_series.plot(
+                    kind = 'line',
+                    logy = logy,
+                    ylim = ylim,
+                    secondary_y = secondary_y,
+                    subplots = subplots,
+                    sharex = sharex,
+                    sharey = sharey,
+                    linestyle = linestyle,
+                    linewidth = linewidth,
+                    color = color,
+                    grid = grid,
+                    legend = legend,
+                    ylabel = ylabel,
+                    xlabel = f"time [{mcds.get_unit_dict()['time']}]",
+                    title = title,
+                    ax = ax,
+                    **kwargs,
+                )
+
+            # save fig to file
             if figbgcolor is None:
                 figbgcolor = 'auto'
             plt.tight_layout()
             fig.savefig(s_pathfile, facecolor=figbgcolor)
             plt.close(fig)
             return s_pathfile
+
+        # output matplotlib fig object
+        else:  # None
+            return fig
 
 
     ## GRAPH RELATED FUNCTIONS ##
