@@ -214,9 +214,12 @@ class TimeSeries:
         if (output_path.endswith('/')) and (len(output_path) > 1):
             output_path = output_path[:-1]
         if not os.path.isdir(output_path):
-            print(f'Error @ TimeSeries.__init__ : this is not a path! could not load {output_path}.')
+            sys.exit(f'Error @ TimeSeries.__init__ : this is not a path! could not load {output_path}.')
         self.path = output_path
-        self.ls_xmlfile = [s_pathfile.replace('\\','/').split('/')[-1] for s_pathfile in sorted(glob.glob(self.path + f'/output*.xml'))]  # bue 2022-10-22: is output*.xml always the correct pattern?
+        # bue 2022-10-22: is output*.xml always the correct pattern? i could add initial or final step.
+        self.ls_xmlfile = [s_pathfile.replace('\\','/').split('/')[-1] for s_pathfile in sorted(glob.glob(self.path + f'/output*.xml'))]
+        if (len(self.ls_xmlfile) == 0):
+            sys.exit(f'Error @ TimeSeries.__init__ : could not detect any output*.xml! is the given output_path correct? {output_path}')
         self.custom_data_type = custom_data_type
         self.microenv = microenv
         self.graph = graph
@@ -1393,6 +1396,7 @@ class TimeSeries:
 
         # transpose dataframe
         df_series = df_series.T
+        df_series.index.name = 'time_min'
 
         # generate file name
         if (focus_num == 'count'):
@@ -1402,7 +1406,7 @@ class TimeSeries:
         s_pathfile = self.path + '/' + s_ofile
 
         # output dataframe object
-	    if (ext not in {'csv', 'jpeg', 'jpg', 'png', 'tiff', 'tif', None}):
+        if not (ext in {'csv', 'jpeg', 'jpg', 'png', 'tiff', 'tif', None}):
             return df_series
 
         # output dataframe file
@@ -1411,7 +1415,7 @@ class TimeSeries:
             return s_pathfile
 
         # output image file
-	    elif (ext in {'jpeg','jpg','png','tiff','tif'}):
+        elif (ext in {'jpeg','jpg','png','tiff','tif', None}):
             # handle ylabel
             if (focus_num == 'count') and (yunit is None):
                 ylabel = focus_num
@@ -1479,17 +1483,19 @@ class TimeSeries:
                     **kwargs,
                 )
 
-            # save fig to file
-            if figbgcolor is None:
-                figbgcolor = 'auto'
-            plt.tight_layout()
-            fig.savefig(s_pathfile, facecolor=figbgcolor)
-            plt.close(fig)
-            return s_pathfile
 
-        # output matplotlib fig object
-        else:  # None
-            return fig
+            # save fig to file
+            if not (ext is None):
+                if figbgcolor is None:
+                    figbgcolor = 'auto'
+                plt.tight_layout()
+                fig.savefig(s_pathfile, facecolor=figbgcolor)
+                plt.close(fig)
+                return s_pathfile
+
+            # output matplotlib fig object
+            else:
+                return fig
 
 
     ## GRAPH RELATED FUNCTIONS ##

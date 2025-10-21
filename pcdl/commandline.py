@@ -2000,6 +2000,21 @@ def plot_timeseries():
         default = 'cell',
         help = 'to specifies the data dataframe. cell: dataframe will be retrieved through the mcds.get_cell_df function. conc: dataframe will be retrieved through the mcds.get_conc_df function. default is cell.',
     )
+
+    # plot_timeseries cat_drop
+    parser.add_argument(
+        '--cat_drop',
+        nargs = '*',
+        default = [],
+        help = "if focus is a categorical attribute, set of category labels to be dropped for the dataframe. Attention: when the cat_keep parameter is given, then the cat_drop parameter has to be an empty string! default is an empty string.",
+    )
+    # plot_timeseries cat_keep
+    parser.add_argument(
+        '--cat_keep',
+        nargs = '*',
+        default = [],
+        help = "if focus is a categorical attribute, set of category labels to be kept in the dataframe. default is an empty string.",
+    )
     # plot_timeseries z_slice
     parser.add_argument(
         '--z_slice',
@@ -2109,7 +2124,7 @@ def plot_timeseries():
     parser.add_argument(
         '--ext',
         default = 'jpeg',
-        help = 'output image format. possible formats are jpeg, png, and tiff. default is jpeg.',
+        help = 'output format. possible image formats are jpeg, jpg, png, tif, and tiff. for retrieving a datafarme file use csv. default is jpeg.',
     )
     # plot_timeseries figbgcolor
     parser.add_argument(
@@ -2182,6 +2197,8 @@ def plot_timeseries():
         focus_num = None if (args.focus_num.lower() == 'none') else args.focus_num,
         aggregate_num = o_aggregate_num,
         frame = args.frame,
+        cat_drop = set(args.cat_drop),
+        cat_keep = set(args.cat_keep),
         z_slice = None if (args.z_slice.lower() == 'none') else float(args.z_slice),
         logy = True if args.logy.lower().startswith('t') else False,
         ylim = None if (args.ylim[0].lower() == 'none') else [float(y) for y in args.ylim],
