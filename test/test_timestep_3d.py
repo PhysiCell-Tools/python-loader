@@ -368,6 +368,8 @@ class TestTimeStep3dCellWorkhorse(object):
         fig, ax = plt.subplots()
         fig = mcds.plot_scatter(
             focus='cell_type',  # case categorical
+            cat_drop = set(),  # {set(), {'blood_cells'}}
+            cat_keep = set(),  # {set(), {'default'}}
             z_slice = -3.333,   # test if
             z_axis = None,  # test if case categorical
             #alpha = 1,  # matplotlib
@@ -391,10 +393,12 @@ class TestTimeStep3dCellWorkhorse(object):
     def test_mcds_plot_scatter_cat_else1(self, mcds=mcds):
         s_pathfile = mcds.plot_scatter(
             focus='cell_type',  # case categorical
+            cat_drop = {'blood_cells'},  # set(), {'blood_cells'}}
+            cat_keep = set(),  # {set(), {'default'}}
             z_slice = 0,  # jump over if
-            z_axis = {'cancer_cell'},  # test else case categorical
+            z_axis = {'default'},  # test else case categorical
             #alpha = 1,  # matplotlib
-            cmap = {'cancer_cell': 'maroon'},  # test if case es_categorical
+            cmap = {'default': 'maroon'},  # test if case es_categorical
             title ='test_mcds_plot_scatter_else',  # matplotlib
             #grid = True,  # matplotlib
             #legend_loc = 'lower left',  # matplotlib
@@ -417,8 +421,10 @@ class TestTimeStep3dCellWorkhorse(object):
         fig, ax = plt.subplots()
         mcds.plot_scatter(
             focus='cell_type',  # case categorical
+            cat_drop = set(),  # {set(), {'blood_cells'}}
+            cat_keep = {'default'},  # {set(), {'default'}}
             z_slice = 0,  # jump over if
-            z_axis = {'cancer_cell'},  # test else case categorical
+            z_axis = {'default'},  # test else case categorical
             #alpha = 1,  # matplotlib
             cmap = 'viridis',  # test else case es_categorical
             title ='test_mcds_plot_scatter_else2',  # matplotlib
@@ -441,6 +447,8 @@ class TestTimeStep3dCellWorkhorse(object):
     def test_mcds_plot_scatter_num_if(self, mcds=mcds):
         fig = mcds.plot_scatter(
             focus='oxygen',  # case numeric
+            cat_drop = set(),  # {set(), {'blood_cells'}}
+            cat_keep = set(),  # {set(), {'default'}}
             z_slice = -3.333,   # test if
             z_axis = None,  # test if numeric
             #alpha = 1,  # matplotlib
@@ -464,6 +472,8 @@ class TestTimeStep3dCellWorkhorse(object):
     def test_mcds_plot_scatter_num_else(self, mcds=mcds):
         fig = mcds.plot_scatter(
             focus='oxygen',  # case numeric
+            cat_drop = set(),  # {set(), {'blood_cells'}}
+            cat_keep = set(),  # {set(), {'default'}}
             z_slice = 0,   # jump over if
             z_axis = [0, 38],  # test else numeric
             #alpha = 1,  # matplotlib

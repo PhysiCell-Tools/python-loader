@@ -146,7 +146,7 @@ def make_movie(path, interface='jpeg', framerate=12):
     f.close()
 
     # genearete movie
-    s_cmd = f'ffmpeg -f image2 -i ffmpeginput.txt -y -r {framerate} -pix_fmt yuv420p -strict -2 -codec:v libx264 -tune animation -crf 15 -codec:a none -o "{s_ofile}"'  # -safe 0
+    s_cmd = f'ffmpeg -f concat -i ffmpeginput.txt -y -r {framerate} -pix_fmt yuv420p -strict -2 -codec:v h264 -tune animation -crf 15 -codec:a none "{s_ofile}"'  # -safe 0
     if (os.system(s_cmd) != 0):
         sys.exit("Error @ make_movie : ffmpeg could not generatet the movie.")
     os.remove('ffmpeginput.txt')
@@ -1336,20 +1336,21 @@ class TimeSeries:
                 if focus_cat is None:
                     focus_cat  = 'substrate'
 
-                if focus_num is None:
-                    focus_num = 'value'
-
                 # fetch time step dataframe
                 b_verbose = mcds.verbose
                 mcds.set_verbose_false()
                 if (focus_cat == 'substrate'):  # and (focus_num == 'value'):
+                    if focus_num is None:
+                        focus_num = 'value'
                     df_frame = mcds.get_conc_df(values=1).melt(
                         id_vars = es_coor_conc.difference({'ID'}),
                         var_name = 'substrate',
                     )
 
                 else:
-                    df_frame = mcds.get_conc_df(values=1, keep={focus_cat,focus_num})
+                    if focus_num is None:
+                        sys.exit(f"Error @ TimeSeries.plot_timeseries : with --frame cons and focus_cat set, you have to set focus_num too. for example, choose a substrate.")
+                    df_frame = mcds.get_conc_df(values=1, keep={focus_num}) # focus_num
                 mcds.set_verbose_true()
                 mcds.verbose = b_verbose
 

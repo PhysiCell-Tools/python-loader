@@ -29,7 +29,7 @@
                 should physiboss state data be loaded, if found?
                 setting physiboss to False will use less memory and speed up processing.
 
-            settingxml: string; default PhysiCell_settings.xml
+            settingxml: string; default False
                 the settings.xml that is loaded, from which the cell type ID
                 label mapping, is extracted, if this information is not found
                 in the output xml file.

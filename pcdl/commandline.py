@@ -1602,6 +1602,20 @@ def plot_scatter():
         default = 'cell_type',
         help = 'column name within conc dataframe. default is cell_type.',
     )
+    # plot_scatter cat_drop
+    parser.add_argument(
+        '--cat_drop',
+        nargs = '*',
+        default = [],
+        help = "if focus is a categorical attribute, set of category labels, strings separated by space, to be dropped for the dataframe. Attention: when the cat_keep parameter is given, then the cat_drop parameter has to be an empty string! default is an empty string.",
+    )
+    # plot_scatter cat_keep
+    parser.add_argument(
+        '--cat_keep',
+        nargs = '*',
+        default = [],
+        help = "if focus is a categorical attribute, set of category labels, strings separated by space, to be kept in the dataframe. default is an empty string.",
+    )
     # plot_scatter z_slice
     parser.add_argument(
         '--z_slice',
@@ -1740,6 +1754,8 @@ def plot_scatter():
         # plot
         s_opathfile = mcds.plot_scatter(
             focus = args.focus,
+            cat_drop = set(args.cat_drop),
+            cat_keep = set(args.cat_keep),
             z_slice = args.z_slice,
             z_axis = None if (args.z_axis[0].lower() == 'none') else args.z_axis,
             alpha = args.alpha,
@@ -1773,6 +1789,8 @@ def plot_scatter():
         # plot
         ls_opathfile = mcdsts.plot_scatter(
             focus = args.focus,
+            cat_drop = set(args.cat_drop),
+            cat_keep = set(args.cat_keep),
             z_slice = args.z_slice,
             z_axis = None if (args.z_axis[0].lower() == 'none') else args.z_axis,
             alpha = args.alpha,
