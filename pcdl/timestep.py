@@ -477,7 +477,7 @@ def _anndextract(df_cell, scale='maxabs', graph_attached={}, graph_neighbor={}, 
 
 # object classes
 class TimeStep:
-    def __init__(self, xmlfile, output_path='.', custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True):
+    def __init__(self, xmlfile, output_path='.', custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml=False, verbose=True):
         """
         input:
             xmlfile: string
@@ -506,7 +506,7 @@ class TimeStep:
                 should physiboss state data be loaded, if found?
                 setting physiboss to False will use less memory and speed up processing.
 
-            settingxml: string; default PhysiCell_settings.xml
+            settingxml: string; default False
                 the settings.xml that is loaded, from which the cell type ID
                 label mapping, is extracted, if this information is not found
                 in the output xml file.
@@ -1518,11 +1518,21 @@ class TimeStep:
         return self.data['cell']['ls_cellattr'].copy()
 
 
-    def plot_scatter(self, focus='cell_type', z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title=None, grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=1.0, ax=None, figsizepx=None, ext=None, figbgcolor=None, **kwargs):
+    def plot_scatter(self, focus='cell_type', cat_drop=set(), cat_keep=set(), z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title=None, grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=1.0, ax=None, figsizepx=None, ext=None, figbgcolor=None, **kwargs):
         """
         input:
             focus: string; default is 'cell_type'
                 column name within cell dataframe.
+
+            cat_drop: set of strings; default is an empty set
+                if focus is a categorical attribute,
+                set of category labels to be dropped for the dataframe.
+                Attention: when the cat_keep parameter is given, then
+                the cat_drop parameter has to be an empty set!
+
+            cat_keep: set of strings; default is an empty set
+                if focus is a categorical attribute,
+                set of category labels to be kept in the dataframe.
 
             z_slice: floating point number; default is 0.0
                 z-axis position to slice a 2D xy-plain out of the
@@ -1721,6 +1731,13 @@ class TimeStep:
                     s_cmap = cmap,
                     b_shuffle = False,
                 )
+            # filter categories
+            es_cat = set()
+            if (len(cat_keep) > 0):
+                es_cat = es_category.intersection(cat_keep)
+            else:
+                es_cat = es_category.difference(cat_drop)
+            df_cell= df_cell.loc[df_cell.loc[:,focus].isin(es_cat),:]
             # generate color list
             c = list(df_cell.loc[:, s_focus_color].values)
             s_cmap = None
@@ -2699,7 +2716,7 @@ class TimeStep:
                 break
 
         # update cell_type ID label dictionar
-        # metadata cell_type label:id mapping detection ~ physicell version >= 3.15 (gold quality)
+        # metadata cell_type label:id mapping detection ~ physicell version >= 1.13 (gold quality)
         try:
             for x_celltype in x_celldata.find('cell_types').findall('type'):
                 s_id = str(x_celltype.get('ID'))

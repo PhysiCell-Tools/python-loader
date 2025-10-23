@@ -1217,6 +1217,8 @@ class TestCommandLineInterfacePlotScatter(object):
             '--microenv', 'True',
             '--physiboss', 'false',
             '--settingxml', 'false',
+            '--cat_drop', '',
+            '--cat_keep', '',
             '--z_slice', '1.1',
             '--z_axis', '0.0', '40.0',
             '--alpha', '0.5',
@@ -1403,6 +1405,8 @@ class TestCommandLineInterfacePlotTimeSeries(object):
     # + focus_cat ('none', _cell_type_) ok
     # + focus_num ('none', _oxygen_) ok
     # + aggregate_num ('mean', 'entropy') ok
+    # + cat_drop ('', '1 2 3 4')
+    # + cat_keep ('', '1 2 3 4')
     # + frame ('cell', 'conc')
     # + z_slice ('none', _1.1_) ok
     # + logy (false, _true_)
@@ -1412,7 +1416,7 @@ class TestCommandLineInterfacePlotTimeSeries(object):
     # + sharex (false, _true_)
     # + sharey (false, _true_)
     # + linestyle ('-', '-.')
-    # + linewidth ('none', 9)
+    # + linewidth ('none', 9.0)
     # + cmap ('none', 'magma')
     # + color ('none', 'maroon')
     # + grid (true, _false_)
@@ -1420,7 +1424,7 @@ class TestCommandLineInterfacePlotTimeSeries(object):
     # + yunit ('none', 'myunit')
     # + title ('none', 'my title')
     # + figsizepx (none, _[641, 481]_)
-    # + ext (jpeg, _tiff_)
+    # + ext (csv, jpeg, png, _tiff_)
     # + figbgcolor (none, _yellow_)
 
     def test_pcdl_plot_timeseries_default(self):
@@ -1436,12 +1440,14 @@ class TestCommandLineInterfacePlotTimeSeries(object):
 
     def test_pcdl_plot_timeseries_set(self):
         o_result = subprocess.run([
-            'pcdl_plot_timeseries', s_path_2d, 'None', 'oxygen', 'entropy', '-v', 'false',
+            'pcdl_plot_timeseries', s_path_2d, 'None', 'None', 'entropy', '-v', 'false',
             '--custom_data_type', 'sample:bool',
-            '--microenv', 'True',
+            '--microenv', 'true',
             '--physiboss', 'false',
             '--settingxml', 'false',
             '--frame', 'conc',
+            '--cat_drop',
+            '--cat_keep',
             '--z_slice', '1.1',
             '--logy', 'true',
             '--ylim', '6.0', '7.0',
@@ -1450,7 +1456,7 @@ class TestCommandLineInterfacePlotTimeSeries(object):
             '--sharex', 'true',
             '--sharey', 'true',
             '--linestyle', ':',
-            '--linewidth', '9',
+            '--linewidth', '9.0',
             '--cmap', 'magma',
             '--color', 'maroon', 'orange', 'yellow',
             '--grid', 'false',
@@ -1465,7 +1471,7 @@ class TestCommandLineInterfacePlotTimeSeries(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/timeseries_conc_total_oxygen_entropy.tiff')
+        os.remove(f'{s_path_2d}/timeseries_conc_substrate_value_entropy.tiff')
         assert o_result.returncode == 0
 
 

@@ -241,13 +241,13 @@ We can retrieve a list of all cell types processed in the simulation,
 ordered by cell type ID.
 
 ```python
-mcds.get_celltype_list()  # ['cancer_cell']
+mcds.get_celltype_list()  # ['default']
 ```
 
 We can retrieve a dictionary that maps cell type IDs to labels.
 
 ```python
-mcds.get_celltype_dict()  # {'0': 'cancer_cell'}
+mcds.get_celltype_dict()  # {'0': 'default'}
 ```
 
 And we can retrieve an alphabetically ordered list with all cell agent attributes outputted by PhysiCell, loadable with mcds.get\_cell\_df().
