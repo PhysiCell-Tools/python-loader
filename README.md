@@ -2,9 +2,12 @@
 
 ## Abstract:
 
-physicelldataloader (pcdl) provides a platform independent, python3 based, [pip](https://en.wikipedia.org/wiki/Pip_(package_manager)) installable interface
+physicelldataloader (pcdl) provides a platform-independent (Windows, MacOSX, Linux), python3 based, [pip](https://en.wikipedia.org/wiki/Pip_(package_manager))-installable set of commands
 to load output, generated with the [PhysiCell](https://github.com/MathCancer/PhysiCell) agent-based modeling and diffusion solver framework,
-into [python3](https://en.wikipedia.org/wiki/Python_(programming_language)).
+into [python3](https://en.wikipedia.org/wiki/Python_(programming_language)) or transform PhysiCell output into more widely used data formats.
+pcdl can be loaded as a python3 module or run straight from the command line.
+
+![pcdl concept](man/img/pcdl_concept_v4.0.0.jpg)
 
 pcdl was forked from the original [PhysiCell-Tools](https://github.com/PhysiCell-Tools) [python-loader](https://github.com/PhysiCell-Tools/python-loader) implementation.
 
@@ -20,7 +23,7 @@ The pcdl python3 library maintains four branches:
 ## Header:
 
 + Language: python [>= 3.10](https://devguide.python.org/versions/)
-+ Library dependencies: anndata, bioio, matplotlib, numpy, pandas, (requests), scipy, vtk
++ Library dependencies: anndata, bioio, matplotlib, neuroglancer, numpy, pandas, (requests), scikit-image, scipy, vtk
 + Date of origin original PhysiCell-Tools python-loader: 2019-09-02
 + Date of origin pcdl fork: 2022-08-30
 + Doi: https://doi.org/10.5281/ZENODO.8176399
