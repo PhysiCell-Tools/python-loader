@@ -231,6 +231,7 @@ class TimeSeries:
         else:
             self.l_mcds = None
         self.l_annmcds = None
+        self.l_sdmcds = None
 
 
     def set_verbose_false(self):
@@ -1718,3 +1719,92 @@ class TimeSeries:
             function returns a binding to the self.l_annmcds list of anndata mcds objects.
         """
         return self.l_annmcds
+
+
+    def get_spatialdata(self, points={'subs'}, shapes={'cell'}, values=1, drop=set(), keep=set(), scale='maxabs', keep_mcds=True):
+        """
+        input:
+            values: integer; default is 1
+                minimal number of values a variable has to have to be outputted.
+                variables that have only 1 state carry no information.
+                None is a state too.
+
+            drop: set of strings; default is an empty set
+                set of column labels to be dropped for the dataframe.
+                don't worry: essential columns like ID, coordinates
+                and time will never be dropped.
+                Attention: when the keep parameter is given, then
+                the drop parameter has to be an empty set!
+
+            keep: set of strings; default is an empty set
+                set of column labels to be kept in the dataframe.
+                don't worry: essential columns like ID, coordinates
+                and time will always be kept.
+
+            scale: string; default 'maxabs'
+                specify how the data should be scaled.
+                possible values are None, maxabs, minmax, std.
+                for more input, check out: help(pcdl.scaler)
+
+            keep_mcds: boole; default True
+                should the loaded original mcds be kept in memory
+                after transformation?
+
+        output:
+            sdmcds or self.l_sdmcds: spatialdata object or list of spatialdata objects.
+                what is returned depends on the collapse setting.
+
+        description:
+            function to transform mcds time steps into one or many
+            spatialdata objects for downstream analysis.
+        """
+        # variable triage
+        es_keep = set(self.get_cell_attribute(values=values, drop=drop, keep=keep, allvalues=False).keys())
+
+        # processing
+        lsd_mcds = []
+        i_mcds = len(self.l_mcds)
+        for i in range(i_mcds):
+            # fetch mcds
+            if keep_mcds:
+                mcds = self.l_mcds[i]
+            else:
+                mcds = self.l_mcds.pop(0)
+
+            # extract time and dataframes
+            r_time = round(mcds.get_time(),9)
+            if self.verbose:
+                print(f'\nprocessing: {i+1}/{i_mcds} {r_time}[min] mcds into spatialdata obj.')
+
+            # get spatialdata object
+            sd_mcds = mcds.get_spatialdata(
+                points = points,
+                shapes = shapes,
+                #values = 1,
+                #drop = set(),
+                keep = es_keep,
+                scale = scale,
+            )
+            lsd_mcds.append(sd_mcds)
+
+        # output
+        self.l_sdmcds = lsd_mcds
+        return self.l_sdmcds
+
+
+
+    def get_sdmcds_list(self):
+        """
+        input:
+            self: TimeSeries class instance.
+
+        output:
+            self.l_sdmcds: list of chronologically ordered spatialdata mcds objects.
+                watch out, this is a pointer to the
+                self.l_sdmcds list of spdata mcds objects, not a copy of self.l_sdmcds!
+
+        description:
+            function returns a binding to the self.l_sdmcds list of spdata mcds objects.
+        """
+        return self.l_sdmcds
+

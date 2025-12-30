@@ -30,8 +30,8 @@ using PyCall
 pcdl = pyimport("pcdl")  # import the pcdl module.
 mcdsts = pcdl.TimeSeries("path/to/PhysiCell/output/")  # load an mcds time series.
 
-df = mcdsts.get_cell_df()  # retrieve a cell dataframe.
-?mcdsts.get_cell_df()  # retrieve the function's docstring.
+?mcdsts.get_cell_df()  # retrieve a function's docstring.
+df = mcdsts.get_cell_df()  # retrieve the cell dataframe.
 ```
 
 ## &#x2728; Handle csv files

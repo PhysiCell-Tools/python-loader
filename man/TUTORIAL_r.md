@@ -30,7 +30,8 @@ library("reticulate")
 pcdl <- import("pcdl")  # import the pcdl module.
 mcdsts <- pcdl$TimeSeries("path/to/PhysiCell/output/")  # load an mcds time series.
 
-df <- mcdsts$get_cell_df()  # retrieve a cell dataframe.
+py_help(mcdsts$get_cell_df)  # retrieve a function's docstring.
+df <- mcdsts$get_cell_df()  # retrieve the cell dataframe.
 str(df)
 ```
 

@@ -23,7 +23,7 @@ The pcdl python3 library maintains four branches:
 ## Header:
 
 + Language: python [>= 3.10](https://devguide.python.org/versions/)
-+ Library dependencies: anndata, bioio, matplotlib, neuroglancer, numpy, pandas, (requests), scikit-image, scipy, vtk
++ Library dependencies: anndata, bioio, geopandas, matplotlib, neuroglancer, numpy, pandas, (requests), scikit-image, scipy, shapely, spatialdata, vtk
 + Date of origin original PhysiCell-Tools python-loader: 2019-09-02
 + Date of origin pcdl fork: 2022-08-30
 + Doi: https://doi.org/10.5281/ZENODO.8176399
@@ -126,10 +126,12 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 ## Road Map:
 
 + evt generate lineage tree graph output files.
-+ add spatialdata parameter to the get\_anndata function.
-  https://spatialdata.scverse.org/en/latest/tutorials/notebooks/notebooks/examples/intro.html
+
 
 ## Release Notes:
++ version 4.1.0 (2025-12-xx): elmbeech/physicelldataloader
+    + new TimeStep class and TimeSeris class function **get_spatialdata** and command line command **pcdl_get_spatialdata**.
+
 + version 4.0.5 (2025-10-22): elmbeech/physicelldataloader
     + **settingxml** default is now set to False, because the cell\_type id label mapping can, in recent PhysiCell output, be retrieved from output\*.xml too.
     + **plot_scatter** and **plot_timeseries** now additionally have a cat\_drop and cat\_keep argument to filter categorical data.
@@ -140,7 +142,7 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
     + command line commands now return **error code 0** if the command runs successfully.
 
 + version 4.0.3 (2025-07-20): elmbeech/physicelldataloader
-    + timestep and timeseries **plot_contour**, **plot_scatter**, and **plot_timeseries** handle now **kwargs** arguments.
+    + TimeStep and TimeSeris **plot_contour**, **plot_scatter**, and **plot_timeseries** handle now **kwargs** arguments.
     + minor bugfixes.
 
 + version 4.0.2 (2025-06-29): elmbeech/physicelldataloader

@@ -1943,6 +1943,186 @@ def make_cell_vtk():
 # substrate and cell agent command line function #
 ###################################################
 
+def get_spatialdata():
+    # argv
+    parser = argparse.ArgumentParser(
+        prog = 'pcdl_get_spatialdata',
+        description = 'function to transform mcds time steps into one or many spatialdata objects for downstream analysis.',
+        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
+    )
+
+    # TimeSeries path
+    parser.add_argument(
+        'path',
+        nargs = '?',
+        default = '.',
+        help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .'
+    )
+    # TimeSeries output_path '.'
+    # TimeSeries custom_data_type
+    parser.add_argument(
+        '--custom_data_type',
+        nargs = '*',
+        default = [],
+        help = 'parameter to specify custom_data variable types other than float (namely: int, bool, str) like this var:dtype myint:int mybool:bool mystr:str . downstream float and int will be handled as numeric, bool as Boolean, and str as categorical data. default is an empty string.',
+    )
+    # TimeSeries microenv
+    parser.add_argument(
+        '--microenv',
+        default = 'true',
+        help = 'should the microenvironment be extracted and loaded into the spatialdata object? setting microenv to False will use less memory and speed up processing. default is True.'
+    )
+    # TimeSeries graph
+    parser.add_argument(
+        '--graph',
+        default = 'true',
+        help = 'should neighbor graph, attach graph, and attached spring graph be extracted and loaded into the spatialdata object? default is True.'
+    )
+    # TimeSeries physiboss
+    parser.add_argument(
+        '--physiboss',
+        default = 'true',
+        help = 'if found, should physiboss state data be extracted and loaded into the spatialdata object? default is True.'
+    )
+    # TimeSeries settingxml
+    parser.add_argument(
+        '--settingxml',
+        default = 'false',
+        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is False.',
+    )
+    # TimeSeries verbose
+    parser.add_argument(
+        '-v', '--verbose',
+        default = 'true',
+        help = 'setting verbose to False for less text output, while processing. default is True.',
+    )
+    # get_spatialdata points
+    parser.add_argument(
+        '--points',
+        nargs = '*',
+        default = ['subs'],
+        help = ""
+    )
+    # get_spatialdata shapes
+    parser.add_argument(
+        '--shapes',
+        nargs = '*',
+        default = ['cell'],
+        help = ""
+    )
+    # get_spatialdata values
+    parser.add_argument(
+        'values',
+        nargs = '?',
+        default = 1,
+        type = int,
+        help = 'minimal number of values a variable has to have in any of the mcds time steps to be outputted. variables that have only 1 state carry no information. None is a state too. default is 1.'
+    )
+    # get_spatialdata drop
+    parser.add_argument(
+        '--drop',
+        nargs = '*',
+        default = [],
+        help = "set of column labels to be dropped for the dataframe. don't worry: essential columns like ID, coordinates and time will never be dropped. Attention: when the keep parameter is given, then the drop parameter has to be an empty string! default is an empty string."
+    )
+    # get_spatialdata keep
+    parser.add_argument(
+        '--keep',
+        nargs = '*',
+        default = [],
+        help = "set of column labels to be kept in the dataframe. set values=1 to be sure that all variables are kept. don't worry: essential columns like ID, coordinates and time will always be kept. default is an empty string."
+    )
+    # get_spatialata scale
+    parser.add_argument(
+        '--scale',
+        default = 'maxabs',
+        help = "specify how the data should be scaled. possible values are None, maxabs, minmax, std. None: no scaling. set scale to None if you would like to have raw data or entirely scale, transform, and normalize the data later. maxabs: maximum absolute value distance scaler will linearly map all values into a [-1, 1] interval. if the original data has no negative values, the result will be the same as with the minmax scaler (except with attributes with only one value). if the attribute has only zeros, the value will be set to 0. minmax: minimum maximum distance scaler will map all values linearly into a [0, 1] interval. if the attribute has only one value, the value will be set to 0. std: standard deviation scaler will result in sigmas. each attribute will be mean centered around 0. ddof delta degree of freedom is set to 1 because it is assumed that the values are samples out of the population and not the entire population. it is incomprehensible to me that the equivalent sklearn method has ddof set to 0. if the attribute has only one value, the value will be set to 0. default is maxabs"
+    )
+
+    # parse arguments
+    args = parser.parse_args()
+    print(args)
+
+    # process arguments
+    s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
+    s_pathfile = s_path
+    if not s_pathfile.endswith('.xml'):
+        s_pathfile = s_pathfile + '/initial.xml'
+    else:
+        s_path = '/'.join(s_path.split('/')[:-1])
+    if not os.path.exists(s_pathfile):
+        sys.exit(f'Error @ pcdl_get_spatialdata : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
+
+    # custom_data_type
+    d_vartype = {}
+    for vartype in args.custom_data_type:
+        s_var, s_type = vartype.split(':')
+        if s_type in {'bool'}: o_type = bool
+        elif s_type in {'int'}: o_type = int
+        elif s_type in {'float'}: o_type = float
+        elif s_type in {'str'}: o_type = str
+        else:
+            sys.exit(f'Error @ pcdl_get_spatialdata : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.')
+        d_vartype.update({s_var : o_type})
+
+    # run
+    if os.path.isfile(args.path):
+        mcds = pcdl.TimeStep(
+            xmlfile = s_pathfile,
+            output_path = '.',
+            custom_data_type = d_vartype,
+            microenv = False if args.microenv.lower().startswith('f') else True,
+            graph = False if args.graph.lower().startswith('f') else True,
+            physiboss = False if args.physiboss.lower().startswith('f') else True,
+            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
+            verbose = False if args.verbose.lower().startswith('f') else True
+        )
+        sd_mcds = mcds.get_spatialdata(
+            points = set(args.points),
+            shapes = set(args.shapes),
+            values = args.values,
+            drop = set(args.drop),
+            keep = set(args.keep),
+            scale = None if (args.scale.lower() == 'none') else args.scale,
+        )
+        # going home
+        s_opathfile = s_pathfile.replace('.xml', f'_{args.scale}.zarr')
+        sd_mcds.write(s_opathfile)
+        print(s_opathfile)
+
+    else:
+        mcdsts = pcdl.TimeSeries(
+            output_path = s_path,
+            custom_data_type = d_vartype,
+            load = True,
+            microenv = False if args.microenv.lower().startswith('f') else True,
+            graph = False,
+            physiboss = False if args.physiboss.lower().startswith('f') else True,
+            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
+            verbose = False if args.verbose.lower().startswith('f') else True,
+        )
+        sd_mcdsts = mcdsts.get_spatialdata(
+            points = set(args.points),
+            shapes = set(args.shapes),
+            values = args.values,
+            drop = set(args.drop),
+            keep = set(args.keep),
+            scale = None if (args.scale.lower() == 'none') else args.scale,
+        )
+        # going home
+        ls_opathfile = [f"{s_path}/{s_xmlfile.replace('.xml', '_{}.zarr'.format(args.scale))}" for s_xmlfile in mcdsts.get_xmlfile_list()]
+        for i, sd_mcds in enumerate(sd_mcdsts):
+            sd_mcds.write(ls_opathfile[i])
+        print(ls_opathfile)
+
+    # going home
+    return 0
+
+
 def plot_timeseries():
     # argv
     parser = argparse.ArgumentParser(

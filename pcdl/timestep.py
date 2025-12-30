@@ -18,6 +18,7 @@
 import anndata as ad
 import bioio_base
 from bioio.writers import OmeTiffWriter
+import geopandas as gpd
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib import colors
@@ -30,6 +31,8 @@ from pcdl import pdplt
 from pcdl import neuromancer
 from scipy import io
 from scipy import sparse
+import shapely
+import spatialdata as sd
 import sys
 import vtk
 import warnings
@@ -460,7 +463,7 @@ def _anndextract(df_cell, scale='maxabs', graph_attached={}, graph_neighbor={}, 
         elif str(se_cell.dtype).startswith('object'):
             des_type['str'].add(se_cell.name)
         else:
-            print(f'Error @ TimeSeries.get_anndata : column {se_cell.name} detected with unknown dtype {str(se_cell.dtype)}.')
+            print(f'Error @ TimeSeries._anndextract : column {se_cell.name} detected with unknown dtype {str(se_cell.dtype)}.')
 
     # build on obs and X anndata object
     df_cat = df_cell.loc[:,sorted(des_type['str'])].copy()
@@ -2346,6 +2349,195 @@ class TimeStep:
         )
         # output
         return annmcds
+
+
+    def get_spatialdata(self, points={'subs'}, shapes={'cell'}, values=1, drop=set(), keep=set(), scale='maxabs'):
+
+        # set table spatial element links
+        s_region_subs = None
+        s_region_cell = None
+
+        # check input
+        if len(points.intersection(shapes)) > 0:
+            sys.exit(f'Error @ : TimeStep.get_spatialdata : {sorted(points.intersection(shapes))} can only be on, either point or shape element.')
+
+        # handle substrate
+        b_subs = len(self.get_substrate_list()) > 0
+
+        # handle domain dimension
+        b_2d = False
+        if len(self.get_voxel_ijk_axis()[2]) == 1:
+            b_2d = True
+
+        # images
+        dax_image={}
+        if b_subs:
+            s_element = 'subs_image'
+            if self.verbose:
+                print(f'processing: {s_element} ...')
+            # get image
+            a_image = self.make_ome_tiff(focus=self.get_substrate_list(), file=False)
+            # processing model
+            if b_2d :
+                ax_image = sd.models.Image2DModel.parse(
+                    data=a_image[:,0,:,:], # a_cyx
+                    dims=['c','y','x'],
+                    c_coords=self.get_substrate_list(),
+                    scale_factors=None,
+                )
+            else:
+                ax_image = sd.models.Image3DModel.parse(
+                    data=a_image, # a_czyx
+                    dims=['c','z','y','x'],
+                    c_coords=self.get_substrate_list(),
+                    scale_factors=None,
+                )
+            # update output
+            dax_image.update({s_element:  ax_image})
+
+        # labels
+        dax_label = {}
+
+        # points
+        ddfd_point = {}
+        for s_point in points:
+            s_element = f'{s_point}_point'
+            if self.verbose:
+                print(f'processing: {s_element} ...')
+            # substrat
+            if (s_point in {'subs'}) and b_subs:
+                s_region_subs = s_element
+                #df_point = self.get_conc_df().loc[:,['mesh_center_m','mesh_center_n','mesh_center_p']].reset_index().rename({'index':'subs_idx'}, axis=1)
+                df_point = self.get_conc_df().loc[:,['mesh_center_m','mesh_center_n','mesh_center_p']]
+                df_point.index.name = 'subs_idx'
+                df_point.loc[:, 'mesh_center_m'] = (df_point.loc[:, 'mesh_center_m'] - self.get_xyz_range()[0][0])
+                df_point.loc[:, 'mesh_center_n'] = (df_point.loc[:, 'mesh_center_n'] - self.get_xyz_range()[1][0])
+                # proceeing model
+                if b_2d :
+                    dfd_point = sd.models.PointsModel.parse(
+                        df_point.loc[:,['mesh_center_m','mesh_center_n']],  # subs_idx
+                        coordinates={'x':'mesh_center_m', 'y':'mesh_center_n'}
+                    )
+                else:
+                    dfd_point = sd.models.PointsModel.parse(
+                        df_point,
+                        coordinates={'x':'mesh_center_m', 'y':'mesh_center_n', 'z':'mesh_center_p'}
+                    )
+            # cell
+            elif s_point in {'cell'}:
+                s_region_cell = s_element
+                #df_point = self.get_cell_df().loc[:,['position_x','position_y','position_z']].reset_index().rename({'ID':'cell_idx'}, axis=1)
+                df_point = self.get_cell_df().loc[:,['position_x','position_y','position_z']]
+                df_point.index.name = 'cell_idx'
+                df_point.loc[:, 'position_x'] = (df_point.loc[:, 'position_x'] - self.get_xyz_range()[0][0])
+                df_point.loc[:, 'position_y'] = (df_point.loc[:, 'position_y'] - self.get_xyz_range()[1][0])
+                # proceeing model
+                if b_2d :
+                    dfd_point = sd.models.PointsModel.parse(
+                        df_point.loc[:,['position_x','position_y']],  # cell_idx
+                        coordinates={'x':'position_x', 'y':'position_y'}
+                    )
+                else:
+                    dfd_point = sd.models.PointsModel.parse(
+                        df_point,
+                        coordinates={'x':'position_x', 'y':'position_y', 'z':'position_z'}
+                    )
+            # error
+            else:
+                sys.exit(f'Error @ TimeStep.get_spatialdata : {s_point} cannot be transforme to a point element.')
+            # update output
+            ddfd_point.update({s_element: dfd_point})
+
+        # shapes
+        ddfg_shape = {}
+        for s_shape in shapes:
+            s_element = f'{s_shape}_shape'
+            if self.verbose:
+                print(f'processing: {s_element} ...')
+            # cell center transcript location
+            if s_shape in {'cell'}:
+                #df_shape = self.get_cell_df().loc[:,['position_x','position_y','position_z','radius']].reset_index().rename({'ID':'cell_idx'}, axis=1)
+                df_shape = self.get_cell_df().loc[:,['position_x','position_y','position_z','radius']]
+                df_shape.index.name = 'cell_idx'
+                df_shape.loc[:, 'position_x'] = (df_shape.loc[:, 'position_x'] - self.get_xyz_range()[0][0])
+                df_shape.loc[:, 'position_y'] = (df_shape.loc[:, 'position_y'] - self.get_xyz_range()[1][0])
+                if b_2d :
+                    lo_point = [shapely.geometry.Point(row.position_x, row.position_y) for row in df_shape.itertuples()]
+                else:
+                    lo_point = [shapely.geometry.Point(row.position_x, row.position_y, row.position_z) for row in df_shape.itertuples()]
+                df_shape.drop({'position_x','position_y','position_z'}, axis=1, inplace=True)
+                gdf_shape = gpd.GeoDataFrame(df_shape, geometry=lo_point)
+                s_region_cell = s_element
+            # error
+            else:
+                sys.exit(f'Error @ TimeStep.get_spatialdata : {s_shape} cannot be transforme to a shape element.')
+            # processing model
+            gdf_shape = sd.models.ShapesModel.parse(gdf_shape)
+            # update output
+            ddfg_shape.update({s_element: gdf_shape})
+
+        # tables
+        dad_table = {}
+        # substrate
+        if b_subs:
+            s_element = 'subs_table'
+            if self.verbose:
+                print(f'processing: {s_element} ...')
+            # generate anndata object
+            df_subs = self.get_conc_df().reset_index().rename({'index':'subs_idx'}, axis=1)  # index
+            df_subs['region'] = pd.Categorical([s_region_subs] * df_subs.shape[0])
+            df_count = df_subs.loc[:,self.get_substrate_list()]
+            df_count.index = df_count.index.astype(str)
+            df_obs = df_subs.drop(self.get_substrate_list(), axis=1)
+            df_obs.index = df_obs.index.astype(str)
+            # link to spatial elelment
+            ad_subs = ad.AnnData(df_count, obs=df_obs)
+            if not (s_region_subs is None):
+                ad_subs.uns['spatialdata_attrs'] = {
+                    'region': s_region_subs,  # name of the linked elemenat
+                    'region_key': 'region',  # column in obs that links element and observations.
+                    'instance_key': 'subs_idx',  # column in obs the links element index and observations.
+                }
+            # parse model
+            ad_subs = sd.models.TableModel.parse(adata=ad_subs)
+            dad_table.update({s_element: ad_subs})
+
+        # cell
+        s_element = 'cell_table'
+        if self.verbose:
+            print(f'processing: {s_element} ...')
+        # generate anndata object
+        ad_cell = self.get_anndata(values=values, drop=drop, keep=keep, scale=scale)
+        ls_position = ['position_x','position_y','position_z']
+        for i_position in range(ad_cell.obsm['spatial'].shape[1]):
+            ad_cell.obs[ls_position[i_position]] = ad_cell.obsm['spatial'][:,i_position]
+        del ad_cell.obsm['spatial']
+        # link to spatial element
+        ad_cell.obs['region'] = pd.Categorical([s_region_cell] * ad_cell.shape[0])
+        ad_cell.obs['cell_idx'] = ad_cell.obs_names.astype(int)
+        if not (s_region_cell is None):
+            ad_cell.uns['spatialdata_attrs'] = {
+                'region': s_region_cell,  # name of the linked elemenat
+                'region_key': 'region',  # column in obs that links element and observations.
+                'instance_key': 'cell_idx',  # column in obs the links element index and observations.
+            }
+        # parse model
+        ad_cell = sd.models.TableModel.parse(adata=ad_cell)
+        dad_table.update({s_element: ad_cell})
+
+        # glue output together
+        if self.verbose:
+            print(f'processing: glue spatialdata object together ...')
+        sdata = sd.SpatialData(
+            images=dax_image, # glue by xyz coordinates
+            labels=dax_label,  # glue by xyz coordinates
+            points=ddfd_point,  # glue by index to anndata
+            shapes=ddfg_shape,  # glue by index to anndata
+            tables=dad_table,  # anndata
+        )
+        if self.verbose:
+            print('done!')
+        return sdata
 
 
     ## LOAD DATA  ##
