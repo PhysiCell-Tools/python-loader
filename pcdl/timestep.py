@@ -2405,24 +2405,29 @@ class TimeStep:
             if self.verbose:
                 print(f'processing: {s_element} ...')
             # substrat
-            if (s_point in {'subs'}) and b_subs:
-                s_region_subs = s_element
-                #df_point = self.get_conc_df().loc[:,['mesh_center_m','mesh_center_n','mesh_center_p']].reset_index().rename({'index':'subs_idx'}, axis=1)
-                df_point = self.get_conc_df().loc[:,['mesh_center_m','mesh_center_n','mesh_center_p']]
-                df_point.index.name = 'subs_idx'
-                df_point.loc[:, 'mesh_center_m'] = (df_point.loc[:, 'mesh_center_m'] - self.get_xyz_range()[0][0])
-                df_point.loc[:, 'mesh_center_n'] = (df_point.loc[:, 'mesh_center_n'] - self.get_xyz_range()[1][0])
-                # proceeing model
-                if b_2d :
-                    dfd_point = sd.models.PointsModel.parse(
-                        df_point.loc[:,['mesh_center_m','mesh_center_n']],  # subs_idx
-                        coordinates={'x':'mesh_center_m', 'y':'mesh_center_n'}
-                    )
+            if (s_point in {'subs'}):
+                if not b_subs:
+                    pass # microenv not loaded
                 else:
-                    dfd_point = sd.models.PointsModel.parse(
-                        df_point,
-                        coordinates={'x':'mesh_center_m', 'y':'mesh_center_n', 'z':'mesh_center_p'}
-                    )
+                    s_region_subs = s_element
+                    #df_point = self.get_conc_df().loc[:,['mesh_center_m','mesh_center_n','mesh_center_p']].reset_index().rename({'index':'subs_idx'}, axis=1)
+                    df_point = self.get_conc_df().loc[:,['mesh_center_m','mesh_center_n','mesh_center_p']]
+                    df_point.index.name = 'subs_idx'
+                    df_point.loc[:, 'mesh_center_m'] = (df_point.loc[:, 'mesh_center_m'] - self.get_xyz_range()[0][0])
+                    df_point.loc[:, 'mesh_center_n'] = (df_point.loc[:, 'mesh_center_n'] - self.get_xyz_range()[1][0])
+                    # proceeing model
+                    if b_2d :
+                        dfd_point = sd.models.PointsModel.parse(
+                            df_point.loc[:,['mesh_center_m','mesh_center_n']],  # subs_idx
+                            coordinates={'x':'mesh_center_m', 'y':'mesh_center_n'}
+                        )
+                    else:
+                        dfd_point = sd.models.PointsModel.parse(
+                            df_point,
+                            coordinates={'x':'mesh_center_m', 'y':'mesh_center_n', 'z':'mesh_center_p'}
+                        )
+                    # update output
+                    ddfd_point.update({s_element: dfd_point})
             # cell
             elif s_point in {'cell'}:
                 s_region_cell = s_element
@@ -2442,11 +2447,11 @@ class TimeStep:
                         df_point,
                         coordinates={'x':'position_x', 'y':'position_y', 'z':'position_z'}
                     )
+                # update output
+                ddfd_point.update({s_element: dfd_point})
             # error
             else:
-                sys.exit(f'Error @ TimeStep.get_spatialdata : {s_point} cannot be transforme to a point element.')
-            # update output
-            ddfd_point.update({s_element: dfd_point})
+                sys.exit(f'Error @ TimeStep.get_spatialdata : {s_point} cannot be transformed to a point element.')
 
         # shapes
         ddfg_shape = {}
@@ -2470,7 +2475,7 @@ class TimeStep:
                 s_region_cell = s_element
             # error
             else:
-                sys.exit(f'Error @ TimeStep.get_spatialdata : {s_shape} cannot be transforme to a shape element.')
+                sys.exit(f'Error @ TimeStep.get_spatialdata : {s_shape} cannot be transformed to a shape element.')
             # processing model
             gdf_shape = sd.models.ShapesModel.parse(gdf_shape)
             # update output
