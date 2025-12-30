@@ -983,3 +983,35 @@ class TestTimeSeriesAnnData(object):
               (ann.var.shape == (105, 0)) and \
               (len(ann.uns) == 0)
 
+
+## spatialdata time seris related functions ##
+class TestTimeSeriesSpatialData(object):
+    ''' test for pcdl.TestSeries class. '''
+
+    # get_sdmcds_list {integrated}
+    # get_cell_attributes ok
+    # get_get_spatialdata ok
+    # keep_mcds {True, _False_}
+
+    def test_mcdsts_get_spatialdata_default(self):
+        mcdsts = pcdl.TimeSeries(s_path_2d, verbose=True)
+        lo_sdmcds_output = mcdsts.get_spatialdata(points={'subs'}, shapes={'cell'}, values=1, drop=set(), keep=set(), scale='maxabs', keep_mcds=True)
+        lo_sdmcds_memory = mcdsts.get_sdmcds_list()
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+              (len(mcdsts.l_mcds) == 25) and \
+              (len(mcdsts.l_sdmcds) == 25) and \
+              (lo_sdmcds_output == mcdsts.l_sdmcds) and \
+              (lo_sdmcds_output == lo_sdmcds_memory) and \
+              (str(type(lo_sdmcds_output[8])) == "<class 'spatialdata._core.spatialdata.SpatialData'>")
+
+    def test_mcdsts_get_spatialdata_keepmcdsfalse(self):
+        mcdsts = pcdl.TimeSeries(s_path_2d, verbose=True)
+        lo_sdmcds_output = mcdsts.get_spatialdata(points={'subs'}, shapes={'cell'}, values=1, drop=set(), keep=set(), scale='maxabs', keep_mcds=False)
+        lo_sdmcds_memory = mcdsts.get_sdmcds_list()
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+              (len(mcdsts.l_mcds) == 0) and \
+              (len(mcdsts.l_sdmcds) == 25) and \
+              (lo_sdmcds_output == mcdsts.l_sdmcds) and \
+              (lo_sdmcds_output == lo_sdmcds_memory) and \
+              (str(type(lo_sdmcds_output[8])) == "<class 'spatialdata._core.spatialdata.SpatialData'>")
+

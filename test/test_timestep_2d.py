@@ -1089,7 +1089,7 @@ class TestTimeStepSpatialData(object):
     ## get_spatialdata command ##
     def test_mcds_get_spatialdata_default(self):
         mcds = pcdl.TimeStep(s_pathfile_2d, verbose=False)
-        sdata = mcds.get_spatialdata( points={'subs'}, shapes={'cell'}, values=1, drop=set(), keep=set(), scale='maxabs')
+        sdata = mcds.get_spatialdata(points={'subs'}, shapes={'cell'}, values=1, drop=set(), keep=set(), scale='maxabs')
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(sdata)) == "<class 'spatialdata._core.spatialdata.SpatialData'>") and \
               (str(type(sdata['subs_image'])) == "<class 'xarray.core.dataarray.DataArray'>") and \
@@ -1112,7 +1112,7 @@ class TestTimeStepSpatialData(object):
 
     def test_mcds_get_spatialdata_points(self):
         mcds = pcdl.TimeStep(s_pathfile_2d, verbose=False)
-        sdata = mcds.get_spatialdata( points={'subs','cell'}, shapes=set(), values=1, drop=set(), keep=set(), scale='maxabs')
+        sdata = mcds.get_spatialdata(points={'subs','cell'}, shapes=set(), values=1, drop=set(), keep=set(), scale='maxabs')
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(sdata)) == "<class 'spatialdata._core.spatialdata.SpatialData'>") and \
               (str(type(sdata['subs_image'])) == "<class 'xarray.core.dataarray.DataArray'>") and \
@@ -1135,7 +1135,7 @@ class TestTimeStepSpatialData(object):
 
     def test_mcds_get_spatialdata_none(self):
         mcds = pcdl.TimeStep(s_pathfile_2d, verbose=False)
-        sdata = mcds.get_spatialdata( points=set(), shapes=set(), values=1, drop=set(), keep=set(), scale='maxabs')
+        sdata = mcds.get_spatialdata(points=set(), shapes=set(), values=1, drop=set(), keep=set(), scale='maxabs')
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(sdata)) == "<class 'spatialdata._core.spatialdata.SpatialData'>") and \
               (str(type(sdata['subs_image'])) == "<class 'xarray.core.dataarray.DataArray'>") and \

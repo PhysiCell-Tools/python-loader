@@ -670,3 +670,71 @@ class TestTimeStep3dAnnData(object):
               (ann.var.shape == (105, 0)) and \
               (len(ann.uns) == 1)
 
+
+## spatialdata time step related functions ##
+class TestTimeStepSpatialData(object):
+    ''' test for pcdl.TimeStep class. '''
+
+    ## get_spatialdata command ##
+    def test_mcds_get_spatialdata_default(self):
+        mcds = pcdl.TimeStep(s_pathfile_3d, verbose=False)
+        sdata = mcds.get_spatialdata(points={'subs'}, shapes={'cell'}, values=1, drop=set(), keep=set(), scale='maxabs')
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+              (str(type(sdata)) == "<class 'spatialdata._core.spatialdata.SpatialData'>") and \
+              (str(type(sdata['subs_image'])) == "<class 'xarray.core.dataarray.DataArray'>") and \
+              (sdata['subs_image'].shape == (2,11,200,300)) and \
+              (str(type(sdata['subs_point'])) == "<class 'dask.dataframe.core.DataFrame'>") and \
+              (sdata['subs_point'].compute().shape[0] > 9) and \
+              (sdata['subs_point'].compute().shape[1] == 3) and \
+              (str(type(sdata['cell_shape'])) == "<class 'geopandas.geodataframe.GeoDataFrame'>") and \
+              (sdata['cell_shape'].shape[0] > 9) and \
+              (sdata['cell_shape'].shape[1] == 2) and \
+              (str(type(sdata['cell_table'])) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (sdata['cell_table'].shape[0] > 9) and \
+              (sdata['cell_table'].shape[1] > 9) and \
+              (str(type(sdata['subs_table'])) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (sdata['subs_table'].shape[0] > 9) and \
+              (sdata['subs_table'].shape[1] == 2) and \
+              (sdata['subs_table'].obs.shape[0] > 9) and \
+              (sdata['subs_table'].obs.shape[1] == 11) and \
+              (len(sdata['subs_table'].uns) == 1)
+
+    def test_mcds_get_spatialdata_points(self):
+        mcds = pcdl.TimeStep(s_pathfile_3d, verbose=False)
+        sdata = mcds.get_spatialdata(points={'subs','cell'}, shapes=set(), values=1, drop=set(), keep=set(), scale='maxabs')
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+              (str(type(sdata)) == "<class 'spatialdata._core.spatialdata.SpatialData'>") and \
+              (str(type(sdata['subs_image'])) == "<class 'xarray.core.dataarray.DataArray'>") and \
+              (sdata['subs_image'].shape == (2,11,200,300)) and \
+              (str(type(sdata['subs_point'])) == "<class 'dask.dataframe.core.DataFrame'>") and \
+              (sdata['subs_point'].compute().shape[0] > 9) and \
+              (sdata['subs_point'].compute().shape[1] == 3) and \
+              (str(type(sdata['cell_point'])) == "<class 'dask.dataframe.core.DataFrame'>") and \
+              (sdata['cell_point'].compute().shape[0] > 9) and \
+              (sdata['cell_point'].compute().shape[1] == 3) and \
+              (str(type(sdata['cell_table'])) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (sdata['cell_table'].shape[0] > 9) and \
+              (sdata['cell_table'].shape[1] > 9) and \
+              (str(type(sdata['subs_table'])) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (sdata['subs_table'].shape[0] > 9) and \
+              (sdata['subs_table'].shape[1] == 2) and \
+              (sdata['subs_table'].obs.shape[0] > 9) and \
+              (sdata['subs_table'].obs.shape[1] == 11) and \
+              (len(sdata['subs_table'].uns) == 1)
+
+    def test_mcds_get_spatialdata_none(self):
+        mcds = pcdl.TimeStep(s_pathfile_3d, verbose=False)
+        sdata = mcds.get_spatialdata(points=set(), shapes=set(), values=1, drop=set(), keep=set(), scale='maxabs')
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+              (str(type(sdata)) == "<class 'spatialdata._core.spatialdata.SpatialData'>") and \
+              (str(type(sdata['subs_image'])) == "<class 'xarray.core.dataarray.DataArray'>") and \
+              (sdata['subs_image'].shape == (2,11,200,300)) and \
+              (str(type(sdata['cell_table'])) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (sdata['cell_table'].shape[0] > 9) and \
+              (sdata['cell_table'].shape[1] > 9) and \
+              (str(type(sdata['subs_table'])) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (sdata['subs_table'].shape[0] > 9) and \
+              (sdata['subs_table'].shape[1] ==2) and \
+              (sdata['subs_table'].obs.shape[0] > 9) and \
+              (sdata['subs_table'].obs.shape[1] == 11)
+
