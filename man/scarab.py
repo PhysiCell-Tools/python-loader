@@ -300,6 +300,11 @@ docstring_md(
 
 # write TimeStep microenvironment and cells function markdown files
 docstring_md(
+    s_function = 'mcds.get_spatialdata',
+    ls_doc = pcdl.TimeStep.get_spatialdata.__doc__.split('\n'),
+)
+
+docstring_md(
     s_function = 'mcds.make_ome_tiff',
     ls_doc = pcdl.TimeStep.make_ome_tiff.__doc__.split('\n'),
 )
@@ -401,6 +406,10 @@ docstring_md(
 
 # write TimeSeries microenvironment and cells function makdown files
 docstring_md(
+    s_function = 'mcdsts.get_spatialdata',
+    ls_doc = pcdl.TimeSeries.get_spatialdata.__doc__.split('\n'),
+)
+docstring_md(
     s_function = 'mcdsts.make_ome_tiff',
     ls_doc = pcdl.TimeSeries.make_ome_tiff.__doc__.split('\n'),
 )
@@ -447,6 +456,7 @@ help_md(s_command='pcdl_make_graph_gml')
 help_md(s_command='pcdl_plot_scatter')
 help_md(s_command='pcdl_make_cell_vtk')
 # substrate and cell agent
+help_md(s_command='pcdl_get_spatialdata')
 help_md(s_command='pcdl_plot_timeseries')
 help_md(s_command='pcdl_make_ome_tiff')
 help_md(s_command='pcdl_render_neuroglancer')
