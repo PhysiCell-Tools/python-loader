@@ -885,6 +885,15 @@ class TestCommandLineInterfaceAnndata(object):
         os.remove(f'{s_path_2d}/output00000024_cell_maxabs.h5ad')
         assert o_result.returncode == 0
 
+    def test_pcdl_get_anndata_timestep_customtype(self):
+        o_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--custom_data_type', 'sample:bool'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/output00000024_cell_maxabs.h5ad')
+        assert o_result.returncode == 0
+
     def test_pcdl_get_anndata_timestep_microenv(self):
         o_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--microenv', 'false'], check=False, capture_output=True)
         print(f'o_result: {o_result}\n')
@@ -1544,6 +1553,15 @@ class TestCommandLineInterfaceSpatialdata(object):
     # timestep
     def test_pcdl_get_spatialdata_timestep(self):
         o_result = subprocess.run(['pcdl_get_spatialdata', s_pathfile_2d], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        shutil.rmtree(f'{s_path_2d}/output00000024_maxabs.zarr')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timestep_customtype(self):
+        o_result = subprocess.run(['pcdl_get_spatialdata', s_pathfile_2d, '--custom_data_type', 'sample:bool'], check=False, capture_output=True)
         print(f'o_result: {o_result}\n')
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
