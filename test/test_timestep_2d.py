@@ -1089,7 +1089,7 @@ class TestTimeStepSpatialData(object):
     ## get_spatialdata command ##
     def test_mcds_get_spatialdata_default(self):
         mcds = pcdl.TimeStep(s_pathfile_2d, verbose=False)
-        sdata = mcds.get_spatialdata(points={'subs'}, shapes={'cell'}, values=1, drop=set(), keep=set(), scale='maxabs')
+        sdata = mcds.get_spatialdata(images={'subs'}, labels=set(), points={'subs'}, shapes={'cell'}, values=1, drop=set(), keep=set(), scale='maxabs')
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(sdata)) == "<class 'spatialdata._core.spatialdata.SpatialData'>") and \
               (str(type(sdata['subs_image'])) == "<class 'xarray.core.dataarray.DataArray'>") and \
@@ -1112,7 +1112,7 @@ class TestTimeStepSpatialData(object):
 
     def test_mcds_get_spatialdata_points(self):
         mcds = pcdl.TimeStep(s_pathfile_2d, verbose=False)
-        sdata = mcds.get_spatialdata(points={'subs','cell'}, shapes=set(), values=1, drop=set(), keep=set(), scale='maxabs')
+        sdata = mcds.get_spatialdata(images={'subs'}, labels={}, points={'subs','cell'}, shapes=set(), values=1, drop=set(), keep=set(), scale='maxabs')
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(sdata)) == "<class 'spatialdata._core.spatialdata.SpatialData'>") and \
               (str(type(sdata['subs_image'])) == "<class 'xarray.core.dataarray.DataArray'>") and \
@@ -1135,11 +1135,9 @@ class TestTimeStepSpatialData(object):
 
     def test_mcds_get_spatialdata_none(self):
         mcds = pcdl.TimeStep(s_pathfile_2d, verbose=False)
-        sdata = mcds.get_spatialdata(points=set(), shapes=set(), values=1, drop=set(), keep=set(), scale='maxabs')
+        sdata = mcds.get_spatialdata(images=set(), labels=set(), points=set(), shapes=set(), values=1, drop=set(), keep=set(), scale='maxabs')
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(sdata)) == "<class 'spatialdata._core.spatialdata.SpatialData'>") and \
-              (str(type(sdata['subs_image'])) == "<class 'xarray.core.dataarray.DataArray'>") and \
-              (sdata['subs_image'].shape == (2, 200, 300)) and \
               (str(type(sdata['cell_table'])) == "<class 'anndata._core.anndata.AnnData'>") and \
               (sdata['cell_table'].shape[0] > 9) and \
               (sdata['cell_table'].shape[1] > 9) and \

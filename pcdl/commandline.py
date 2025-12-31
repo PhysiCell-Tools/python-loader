@@ -1947,7 +1947,7 @@ def get_spatialdata():
     # argv
     parser = argparse.ArgumentParser(
         prog = 'pcdl_get_spatialdata',
-        description = 'function to transform mcds time steps into one or many spatialdata objects for downstream analysis.',
+        description = 'function to transform mcds time steps into spatialdata objects for downstream analysis.',
         epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
     )
 
@@ -1998,17 +1998,31 @@ def get_spatialdata():
     )
     # get_spatialdata points
     parser.add_argument(
+        '--images',
+        nargs = '*',
+        default = ['subs'],
+        help = 'specify if from the subs or cell dataset a multichannel image should be generate. so far, only the subs image element is implemented.'
+    )
+    # get_spatialdata points
+    parser.add_argument(
+        '--labels',
+        nargs = '*',
+        default = [],
+        help = 'specify if from the subs or cell dataset a label element should be generated. so far, neither subs nor cell label elements are implemented.'
+    )
+    # get_spatialdata points
+    parser.add_argument(
         '--points',
         nargs = '*',
         default = ['subs'],
-        help = ""
+        help = 'specify if from the subs or cell dataset a points element should be generated. both, subs and cell point elements, are implemented.'
     )
     # get_spatialdata shapes
     parser.add_argument(
         '--shapes',
         nargs = '*',
         default = ['cell'],
-        help = ""
+        help = 'specify if from the subs or cell dataset a shape element should be generated. so far, only the cell shape element is implemented.'
     )
     # get_spatialdata values
     parser.add_argument(
@@ -2082,6 +2096,8 @@ def get_spatialdata():
             verbose = False if args.verbose.lower().startswith('f') else True
         )
         sd_mcds = mcds.get_spatialdata(
+            images = set(args.images),
+            labels = set(args.labels),
             points = set(args.points),
             shapes = set(args.shapes),
             values = args.values,
@@ -2106,6 +2122,8 @@ def get_spatialdata():
             verbose = False if args.verbose.lower().startswith('f') else True,
         )
         sd_mcdsts = mcdsts.get_spatialdata(
+            images = set(args.images),
+            labels = set(args.labels),
             points = set(args.points),
             shapes = set(args.shapes),
             values = args.values,

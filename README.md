@@ -95,7 +95,7 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
 + original PhysiCell-Tools python-loader implementation: Patrick Wall, Randy Heiland, Paul Macklin
 + fork pcdl implementation: Elmar Bucher
 + fork pcdl co-programmer: Furkan Kurtoglu, Heber Rocha, Jennifer Eng
-+ fork pcdl continuous testing and feedbacks: Aneequa Sundus, John Metzcar
++ fork pcdl continuous testing and feedbacks: Aneequa Sundus (python), John Metzcar (python), Raquel Arroya (matlab)
 + student prj on pcdl:
   Benjamin Jacobs (make\_graph\_gml),
   Jason Lu (render\_neuroglancer),
@@ -113,7 +113,7 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 
 ```bibtex
 @Misc{bucher2023,
-  author    = {Bucher, Elmar and Wall, Patrick and Rocha, Heber and Kurtoglu, Furkan and Eng, Jennifer and Sundus, Aneequa, and Metzcar, John and Heiland, Randy and Macklin, Paul},
+  author    = {Bucher, Elmar and Wall, Patrick and Rocha, Heber and Kurtoglu, Furkan and Eng, Jennifer and Sundus, Aneequa, and Metzcar, John and Arroya, Raquel and Heiland, Randy and Macklin, Paul},
   title     = {elmbeech/physicelldataloader: pcdl platform-independent, pip-installable interface to load PhysiCell agent-based modeling framework output into python3.},
   year      = {2023},
   copyright = {Open Access},
@@ -129,7 +129,7 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 
 
 ## Release Notes:
-+ version 4.1.0 (2025-12-xx): elmbeech/physicelldataloader
++ version 4.1.0 (2025-12-31): elmbeech/physicelldataloader
     + new TimeStep class and TimeSeris class function **get_spatialdata** and command line command **pcdl_get_spatialdata**.
 
 + version 4.0.5 (2025-10-22): elmbeech/physicelldataloader

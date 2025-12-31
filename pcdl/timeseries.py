@@ -1721,9 +1721,29 @@ class TimeSeries:
         return self.l_annmcds
 
 
-    def get_spatialdata(self, points={'subs'}, shapes={'cell'}, values=1, drop=set(), keep=set(), scale='maxabs', keep_mcds=True):
+    def get_spatialdata(self, images={'subs'}, labels=set(), points={'subs'}, shapes={'cell'}, values=1, drop=set(), keep=set(), scale='maxabs', keep_mcds=True):
         """
         input:
+            images: set of string; default {'subs'}
+                specify if from the subs or cell dataset
+                a multichannel image should be generate.
+                so far, only the subs image element is implemented.
+
+            labels: set of strings; default is an empty set
+                specify if from the subs or cell dataset
+                a label element should be generated.
+                so far, neither subs nor cell label elements are implemented.
+
+            points: set of string; default {'subs'}
+                specify if from the subs or cell dataset
+                a points element should be generated.
+                both, subs and cell point elements, are implemented.
+
+            shapes: set of string; default {'cell'}
+                specify if from the subs or cell dataset
+                a shape element should be generated.
+                so far, only the cell shape element is implemented.
+
             values: integer; default is 1
                 minimal number of values a variable has to have to be outputted.
                 variables that have only 1 state carry no information.
@@ -1751,11 +1771,10 @@ class TimeSeries:
                 after transformation?
 
         output:
-            sdmcds or self.l_sdmcds: spatialdata object or list of spatialdata objects.
-                what is returned depends on the collapse setting.
+            self.l_sdmcds: list of spatialdata objects.
 
         description:
-            function to transform mcds time steps into one or many
+            function to transform mcds time steps into
             spatialdata objects for downstream analysis.
         """
         # variable triage

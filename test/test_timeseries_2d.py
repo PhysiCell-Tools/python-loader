@@ -995,7 +995,7 @@ class TestTimeSeriesSpatialData(object):
 
     def test_mcdsts_get_spatialdata_default(self):
         mcdsts = pcdl.TimeSeries(s_path_2d, verbose=True)
-        lo_sdmcds_output = mcdsts.get_spatialdata(points={'subs'}, shapes={'cell'}, values=1, drop=set(), keep=set(), scale='maxabs', keep_mcds=True)
+        lo_sdmcds_output = mcdsts.get_spatialdata(images={'subs'}, labels=set(), points={'subs'}, shapes={'cell'}, values=1, drop=set(), keep=set(), scale='maxabs', keep_mcds=True)
         lo_sdmcds_memory = mcdsts.get_sdmcds_list()
         assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
               (len(mcdsts.l_mcds) == 25) and \
@@ -1006,7 +1006,7 @@ class TestTimeSeriesSpatialData(object):
 
     def test_mcdsts_get_spatialdata_keepmcdsfalse(self):
         mcdsts = pcdl.TimeSeries(s_path_2d, verbose=True)
-        lo_sdmcds_output = mcdsts.get_spatialdata(points={'subs'}, shapes={'cell'}, values=1, drop=set(), keep=set(), scale='maxabs', keep_mcds=False)
+        lo_sdmcds_output = mcdsts.get_spatialdata(images={'subs'}, labels=set(), points={'subs'}, shapes={'cell'}, values=1, drop=set(), keep=set(), scale='maxabs', keep_mcds=False)
         lo_sdmcds_memory = mcdsts.get_sdmcds_list()
         assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
               (len(mcdsts.l_mcds) == 0) and \

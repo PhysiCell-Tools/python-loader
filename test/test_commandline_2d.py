@@ -1490,8 +1490,8 @@ class TestCommandLineInterfaceSpatialdata(object):
             shutil.rmtree(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_maxabs.zarr')
         assert o_result.returncode == 0
 
-    def test_pcdl_get_spatialdata_timeseries_points_subscell(self):
-        o_result = subprocess.run(['pcdl_get_spatialdata', s_path_2d, '--points', 'subs', 'cell', '--shapes'], check=False, capture_output=True)
+    def test_pcdl_get_spatialdata_timeseries_imageslabelspointsshapes_default(self):
+        o_result = subprocess.run(['pcdl_get_spatialdata', s_path_2d, '--images', 'subs', '--labels', '--points', 'subs', '--shapes', 'cell'], check=False, capture_output=True)
         print(f'o_result: {o_result}\n')
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
@@ -1500,8 +1500,8 @@ class TestCommandLineInterfaceSpatialdata(object):
             shutil.rmtree(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_maxabs.zarr')
         assert o_result.returncode == 0
 
-    def test_pcdl_get_spatialdata_timeseries_pointsshapes_none(self):
-        o_result = subprocess.run(['pcdl_get_spatialdata', s_path_2d, '--points', '--shapes'], check=False, capture_output=True)
+    def test_pcdl_get_spatialdata_timeseries_imageslabelspointsshapes_none(self):
+        o_result = subprocess.run(['pcdl_get_spatialdata', s_path_2d, '--images', '--labels', '--points', '--shapes'], check=False, capture_output=True)
         print(f'o_result: {o_result}\n')
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
@@ -1615,8 +1615,8 @@ class TestCommandLineInterfaceSpatialdata(object):
         shutil.rmtree(f'{s_path_2d}/output00000024_maxabs.zarr')
         assert o_result.returncode == 0
 
-    def test_pcdl_get_spatialdata_timestep_points_subscell(self):
-        o_result = subprocess.run(['pcdl_get_spatialdata', s_pathfile_2d, '--points', 'subs', 'cell', '--shapes'], check=False, capture_output=True)
+    def test_pcdl_get_spatialdata_timestep_imageslabelspointsshapes_default(self):
+        o_result = subprocess.run(['pcdl_get_spatialdata', s_pathfile_2d, '--images', 'subs', '--labels', '--points', 'subs', '--shapes', 'cell'], check=False, capture_output=True)
         print(f'o_result: {o_result}\n')
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
@@ -1624,8 +1624,8 @@ class TestCommandLineInterfaceSpatialdata(object):
         shutil.rmtree(f'{s_path_2d}/output00000024_maxabs.zarr')
         assert o_result.returncode == 0
 
-    def test_pcdl_get_spatialdata_timestep_pointsshapes_none(self):
-        o_result = subprocess.run(['pcdl_get_spatialdata', s_pathfile_2d, '--points', '--shapes'], check=False, capture_output=True)
+    def test_pcdl_get_spatialdata_timestep_imageslabelspointsshapes_none(self):
+        o_result = subprocess.run(['pcdl_get_spatialdata', s_pathfile_2d, '--images', '--labels', '--points', '--shapes'], check=False, capture_output=True)
         print(f'o_result: {o_result}\n')
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')

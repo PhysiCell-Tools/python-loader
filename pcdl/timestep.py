@@ -2351,8 +2351,58 @@ class TimeStep:
         return annmcds
 
 
-    def get_spatialdata(self, points={'subs'}, shapes={'cell'}, values=1, drop=set(), keep=set(), scale='maxabs'):
+    def get_spatialdata(self, images={'subs'}, labels={}, points={'subs'}, shapes={'cell'}, values=1, drop=set(), keep=set(), scale='maxabs'):
+        """
+        input:
+            images: set of string; default {'subs'}
+                specify if from the subs or cell dataset
+                a multichannel image should be generate.
+                so far, only the subs image element is implemented.
 
+            labels: set of strings; default is an empty set
+                specify if from the subs or cell dataset
+                a label element should be generated.
+                so far, neither subs nor cell label elements are implemented.
+
+            points: set of string; default {'subs'}
+                specify if from the subs or cell dataset
+                a points element should be generated.
+                both, subs and cell point elements, are implemented.
+
+            shapes: set of string; default {'cell'}
+                specify if from the subs or cell dataset
+                a shape element should be generated.
+                so far, only the cell shape element is implemented.
+
+            values: integer; default is 1
+                minimal number of values a variable has to have to be outputted.
+                variables that have only 1 state carry no information.
+                None is a state too.
+
+            drop: set of strings; default is an empty set
+                set of column labels to be dropped for the dataframe.
+                don't worry: essential columns like ID, coordinates
+                and time will never be dropped.
+                Attention: when the keep parameter is given, then
+                the drop parameter has to be an empty set!
+
+            keep: set of strings; default is an empty set
+                set of column labels to be kept in the dataframe.
+                don't worry: essential columns like ID, coordinates
+                and time will always be kept.
+
+            scale: string; default 'maxabs'
+                specify how the data should be scaled.
+                possible values are None, maxabs, minmax, std.
+                for more input, check out: help(pcdl.scaler)
+
+        output:
+            self.l_sdmcds: list of spatialdata objects.
+
+        description:
+            function to transform a mcds time step into
+            a spatialdata object for downstream analysis.
+        """
         # set table spatial element links
         s_region_subs = None
         s_region_cell = None
@@ -2371,32 +2421,43 @@ class TimeStep:
 
         # images
         dax_image={}
-        if b_subs:
-            s_element = 'subs_image'
+        for s_image in images:
+            s_element = f'{s_image}_image'
             if self.verbose:
                 print(f'processing: {s_element} ...')
-            # get image
-            a_image = self.make_ome_tiff(focus=self.get_substrate_list(), file=False)
-            # processing model
-            if b_2d :
-                ax_image = sd.models.Image2DModel.parse(
-                    data=a_image[:,0,:,:], # a_cyx
-                    dims=['c','y','x'],
-                    c_coords=self.get_substrate_list(),
-                    scale_factors=None,
-                )
+            # substrate
+            if (s_image in {'subs'}):
+                if not b_subs:
+                    pass # microenv not loaded
+                else:
+                    # get image
+                    a_image = self.make_ome_tiff(focus=self.get_substrate_list(), file=False)
+                    # processing model
+                    if b_2d :
+                        ax_image = sd.models.Image2DModel.parse(
+                            data=a_image[:,0,:,:], # a_cyx
+                            dims=['c','y','x'],
+                            c_coords=self.get_substrate_list(),
+                            scale_factors=None,
+                        )
+                    else:
+                        ax_image = sd.models.Image3DModel.parse(
+                           data=a_image, # a_czyx
+                           dims=['c','z','y','x'],
+                            c_coords=self.get_substrate_list(),
+                            scale_factors=None,
+                        )
+                    # update output
+                    dax_image.update({s_element:  ax_image})
+            # error
             else:
-                ax_image = sd.models.Image3DModel.parse(
-                    data=a_image, # a_czyx
-                    dims=['c','z','y','x'],
-                    c_coords=self.get_substrate_list(),
-                    scale_factors=None,
-                )
-            # update output
-            dax_image.update({s_element:  ax_image})
+                sys.exit(f'Error @ TimeStep.get_spatialdata : {s_image} cannot be transformed to an image element.')
 
         # labels
         dax_label = {}
+        for s_label in labels:
+            # error
+            sys.exit(f'Error @ TimeStep.get_spatialdata : {s_label} cannot be transformed to a label element.')
 
         # points
         ddfd_point = {}
