@@ -2,9 +2,12 @@
 
 ## Abstract:
 
-physicelldataloader (pcdl) provides a platform independent, python3 based, [pip](https://en.wikipedia.org/wiki/Pip_(package_manager)) installable interface
+physicelldataloader (pcdl) provides a platform-independent (Windows, MacOSX, Linux), python3 based, [pip](https://en.wikipedia.org/wiki/Pip_(package_manager))-installable set of commands
 to load output, generated with the [PhysiCell](https://github.com/MathCancer/PhysiCell) agent-based modeling and diffusion solver framework,
-into [python3](https://en.wikipedia.org/wiki/Python_(programming_language)).
+into [python3](https://en.wikipedia.org/wiki/Python_(programming_language)) or transform PhysiCell output into more widely used data formats.
+pcdl can be loaded as a python3 module or run straight from the command line.
+
+![pcdl concept](man/img/physicelldataloader_concept_v4.0.0.png)
 
 pcdl was forked from the original [PhysiCell-Tools](https://github.com/PhysiCell-Tools) [python-loader](https://github.com/PhysiCell-Tools/python-loader) implementation.
 
@@ -19,8 +22,8 @@ The pcdl python3 library maintains four branches:
 
 ## Header:
 
-+ Language: python [>= 3.10](https://devguide.python.org/versions/)
-+ Library dependencies: anndata, bioio, matplotlib, numpy, pandas, (requests), scipy, vtk
++ Language: python [>= 3.11](https://devguide.python.org/versions/)
++ Library dependencies: anndata, bioio, geopandas, matplotlib, neuroglancer, numpy, pandas, (requests), scikit-image, scipy, shapely, spatialdata, vtk
 + Date of origin original PhysiCell-Tools python-loader: 2019-09-02
 + Date of origin pcdl fork: 2022-08-30
 + Doi: https://doi.org/10.5281/ZENODO.8176399
@@ -92,7 +95,7 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
 + original PhysiCell-Tools python-loader implementation: Patrick Wall, Randy Heiland, Paul Macklin
 + fork pcdl implementation: Elmar Bucher
 + fork pcdl co-programmer: Furkan Kurtoglu, Heber Rocha, Jennifer Eng
-+ fork pcdl continuous testing and feedbacks: Aneequa Sundus, John Metzcar
++ fork pcdl continuous testing and feedbacks: Aneequa Sundus (python), John Metzcar (python), Raquel Arroya (matlab)
 + student prj on pcdl:
   Benjamin Jacobs (make\_graph\_gml),
   Jason Lu (render\_neuroglancer),
@@ -110,7 +113,7 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 
 ```bibtex
 @Misc{bucher2023,
-  author    = {Bucher, Elmar and Wall, Patrick and Rocha, Heber and Kurtoglu, Furkan and Eng, Jennifer and Sundus, Aneequa, and Metzcar, John and Heiland, Randy and Macklin, Paul},
+  author    = {Bucher, Elmar and Wall, Patrick and Rocha, Heber and Kurtoglu, Furkan and Eng, Jennifer and Sundus, Aneequa, and Metzcar, John and Arroya, Raquel and Heiland, Randy and Macklin, Paul},
   title     = {elmbeech/physicelldataloader: pcdl platform-independent, pip-installable interface to load PhysiCell agent-based modeling framework output into python3.},
   year      = {2023},
   copyright = {Open Access},
@@ -124,7 +127,11 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 
 + evt generate lineage tree graph output files.
 
+
 ## Release Notes:
++ version 4.1.0 (2025-12-31): elmbeech/physicelldataloader
+    + new TimeStep class and TimeSeris class function **get_spatialdata** and command line command **pcdl_get_spatialdata**.
+
 + version 4.0.5 (2025-10-22): elmbeech/physicelldataloader
     + **settingxml** default is now set to False, because the cell\_type id label mapping can, in recent PhysiCell output, be retrieved from output\*.xml too.
     + **plot_scatter** and **plot_timeseries** now additionally have a cat\_drop and cat\_keep argument to filter categorical data.
@@ -135,7 +142,7 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
     + command line commands now return **error code 0** if the command runs successfully.
 
 + version 4.0.3 (2025-07-20): elmbeech/physicelldataloader
-    + timestep and timeseries **plot_contour**, **plot_scatter**, and **plot_timeseries** handle now **kwargs** arguments.
+    + TimeStep and TimeSeris **plot_contour**, **plot_scatter**, and **plot_timeseries** handle now **kwargs** arguments.
     + minor bugfixes.
 
 + version 4.0.2 (2025-06-29): elmbeech/physicelldataloader

@@ -885,6 +885,15 @@ class TestCommandLineInterfaceAnndata(object):
         os.remove(f'{s_path_2d}/output00000024_cell_maxabs.h5ad')
         assert o_result.returncode == 0
 
+    def test_pcdl_get_anndata_timestep_customtype(self):
+        o_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--custom_data_type', 'sample:bool'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/output00000024_cell_maxabs.h5ad')
+        assert o_result.returncode == 0
+
     def test_pcdl_get_anndata_timestep_microenv(self):
         o_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--microenv', 'false'], check=False, capture_output=True)
         print(f'o_result: {o_result}\n')
@@ -1392,6 +1401,275 @@ class TestCommandLineInterfaceCellVtk(object):
 # substrate and cell agenat test code #
 #######################################
 
+class TestCommandLineInterfaceSpatialdata(object):
+    ''' tests for one  pcdl command line interface  function. '''
+
+    # timestep and timeseries:
+    # + path nop
+    # + customtype ([], _sample:bool_) ok
+    # + microenv (true, _false_) ok
+    # + graph (true, _false_) ok
+    # + physiboss (true, _false_) ok
+    # + settingxml (string, _none_, _false_) ok
+    # + verbose (true, _false_) nop
+    # + points (subs cell) ok
+    # + shapes (cell) ok
+    # + values (int) ok
+    # + drop (cell_type oxygen) ok
+    # + keep (cell_type oxygen) ok
+    # + scale (maxabs, _std_) ok
+
+    # timeseries
+    def test_pcdl_get_spatialdata_timeseries(self):
+        o_result = subprocess.run(['pcdl_get_spatialdata', s_path_2d], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            shutil.rmtree(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_maxabs.zarr')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timeseries_customtype(self):
+        o_result = subprocess.run(['pcdl_get_spatialdata', s_path_2d, '--custom_data_type', 'sample:bool'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            shutil.rmtree(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_maxabs.zarr')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timeseries_microenv(self):
+        o_result = subprocess.run(['pcdl_get_spatialdata', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            shutil.rmtree(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_maxabs.zarr')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timeseries_graph(self):
+        o_result = subprocess.run(['pcdl_get_spatialdata', s_path_2d, '--graph', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            shutil.rmtree(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_maxabs.zarr')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timeseries_physiboss(self):
+        o_result = subprocess.run(['pcdl_get_spatialdata', s_path_2d, '--physiboss', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            shutil.rmtree(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_maxabs.zarr')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timeseries_settingxmlfalse(self):
+        o_result = subprocess.run(['pcdl_get_spatialdata', s_path_2d, '--settingxml', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            shutil.rmtree(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_maxabs.zarr')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timeseries_settingxmlnone(self):
+        o_result = subprocess.run(['pcdl_get_spatialdata', s_path_2d, '--settingxml', 'none'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            shutil.rmtree(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_maxabs.zarr')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timeseries_imageslabelspointsshapes_default(self):
+        o_result = subprocess.run(['pcdl_get_spatialdata', s_path_2d, '--images', 'subs', '--labels', '--points', 'subs', '--shapes', 'cell'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            shutil.rmtree(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_maxabs.zarr')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timeseries_imageslabelspointsshapes_none(self):
+        o_result = subprocess.run(['pcdl_get_spatialdata', s_path_2d, '--images', '--labels', '--points', '--shapes'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            shutil.rmtree(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_maxabs.zarr')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timeseries_value(self):
+        o_result = subprocess.run(['pcdl_get_spatialdata', s_path_2d, '2'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            shutil.rmtree(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_maxabs.zarr')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timeseries_drop(self):
+        o_result = subprocess.run(['pcdl_get_spatialdata', s_path_2d, '--drop', 'cell_type', 'oxygen'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            shutil.rmtree(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_maxabs.zarr')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timeseries_keep(self):
+        o_result = subprocess.run(['pcdl_get_spatialdata', s_path_2d, '--keep', 'cell_type', 'oxygen'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            shutil.rmtree(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_maxabs.zarr')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timeseries_scale(self):
+        o_result = subprocess.run(['pcdl_get_spatialdata', s_path_2d, '--scale', 'std'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            shutil.rmtree(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_std.zarr')
+        assert o_result.returncode == 0
+
+    # timestep
+    def test_pcdl_get_spatialdata_timestep(self):
+        o_result = subprocess.run(['pcdl_get_spatialdata', s_pathfile_2d], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        shutil.rmtree(f'{s_path_2d}/output00000024_maxabs.zarr')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timestep_customtype(self):
+        o_result = subprocess.run(['pcdl_get_spatialdata', s_pathfile_2d, '--custom_data_type', 'sample:bool'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        shutil.rmtree(f'{s_path_2d}/output00000024_maxabs.zarr')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timestep_microenv(self):
+        o_result = subprocess.run(['pcdl_get_spatialdata', s_pathfile_2d, '--microenv', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        shutil.rmtree(f'{s_path_2d}/output00000024_maxabs.zarr')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timestep_graph(self):
+        o_result = subprocess.run(['pcdl_get_spatialdata', s_pathfile_2d, '--graph', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        shutil.rmtree(f'{s_path_2d}/output00000024_maxabs.zarr')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timestep_physiboss(self):
+        o_result = subprocess.run(['pcdl_get_spatialdata', s_pathfile_2d, '--physiboss', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        shutil.rmtree(f'{s_path_2d}/output00000024_maxabs.zarr')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timestep_settingxmlfalse(self):
+        o_result = subprocess.run(['pcdl_get_spatialdata', s_pathfile_2d, '--settingxml', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        shutil.rmtree(f'{s_path_2d}/output00000024_maxabs.zarr')
+        assert o_result.returncode == 0
+
+
+    def test_pcdl_get_spatialdata_timestep_settingxmlnone(self):
+        o_result = subprocess.run(['pcdl_get_spatialdata', s_pathfile_2d, '--settingxml', 'none'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        shutil.rmtree(f'{s_path_2d}/output00000024_maxabs.zarr')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timestep_imageslabelspointsshapes_default(self):
+        o_result = subprocess.run(['pcdl_get_spatialdata', s_pathfile_2d, '--images', 'subs', '--labels', '--points', 'subs', '--shapes', 'cell'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        shutil.rmtree(f'{s_path_2d}/output00000024_maxabs.zarr')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timestep_imageslabelspointsshapes_none(self):
+        o_result = subprocess.run(['pcdl_get_spatialdata', s_pathfile_2d, '--images', '--labels', '--points', '--shapes'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        shutil.rmtree(f'{s_path_2d}/output00000024_maxabs.zarr')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timestep_value(self):
+        o_result = subprocess.run(['pcdl_get_spatialdata', s_pathfile_2d, '2'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        shutil.rmtree(f'{s_path_2d}/output00000024_maxabs.zarr')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timestep_drop(self):
+        o_result = subprocess.run(['pcdl_get_spatialdata', s_pathfile_2d, '--drop', 'cell_type', 'oxygen'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        shutil.rmtree(f'{s_path_2d}/output00000024_maxabs.zarr')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timestep_keep(self):
+        o_result = subprocess.run(['pcdl_get_spatialdata', s_pathfile_2d, '--keep', 'cell_type', 'oxygen'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        shutil.rmtree(f'{s_path_2d}/output00000024_maxabs.zarr')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timestep_scale(self):
+        o_result = subprocess.run(['pcdl_get_spatialdata', s_pathfile_2d, '--scale', 'std'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        shutil.rmtree(f'{s_path_2d}/output00000024_std.zarr')
+        assert o_result.returncode == 0
+
+
 class TestCommandLineInterfacePlotTimeSeries(object):
     ''' tests for one  pcdl command line interface  function. '''
 
@@ -1569,7 +1847,7 @@ class TestCommandLineInterfaceOmeTiff(object):
         os.remove(f'{s_path_2d}/timeseries_oxygen-1_water_default_blood_cells_ID.ome.tiff')
         assert o_result.returncode == 0
 
-    def test_pcdl_make_ome_tiff_timeseries_focus_(self):
+    def test_pcdl_make_ome_tiff_timeseries_focus_oxygen(self):
         o_result = subprocess.run(['pcdl_make_ome_tiff', s_path_2d, '--focus', 'oxygen'], check=False, capture_output=True)
         print(f'o_result: {o_result}\n')
         print(f'o_result.returncode: {o_result.returncode}\n')
