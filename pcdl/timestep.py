@@ -481,7 +481,7 @@ def _anndextract(df_cell, scale='maxabs', graph_attached={}, graph_neighbor={}, 
             des_type['int'].add(se_cell.name)
         elif str(se_cell.dtype).startswith('bool'):
             des_type['bool'].add(se_cell.name)
-        elif str(se_cell.dtype).startswith('object'):
+        elif str(se_cell.dtype).startswith('object') or str(se_cell.dtype).startswith('str'):
             des_type['str'].add(se_cell.name)
         else:
             sys.exit(f'Error @ TimeStep._anndextract : column {se_cell.name} detected with unknown dtype {str(se_cell.dtype)}.')
@@ -2815,7 +2815,7 @@ class TimeStep:
                     des_type['int'].add(se_zcell.name)
                 elif str(se_zcell.dtype).startswith('bool'):
                     des_type['bool'].add(se_zcell.name)
-                elif str(se_zcell.dtype).startswith('object'):
+                elif str(se_zcell.dtype).startswith('object') in str(se_zcell.dtype).startswith('str'):
                     des_type['str'].add(se_zcell.name)
                 else:
                     sys.exit(f'Error @ TimeStep.get_muspa : column {se_zcell.name} detected with unknown dtype {str(se_zcell.dtype)}.')
