@@ -131,7 +131,7 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 
 ## Release Notes:
 
-+ version 4.1.6 (2026-08-22): elmbeech/physicelldataloader
++ version 4.1.6 (2026-08-20): elmbeech/physicelldataloader
     + pcdl installs now by default lightweight with only the core dependencies; users are prompted to install optional libraries if necessary. special thanks to Heber Rocha!
 
 + version 4.1.5 (2026-04-05): elmbeech/physicelldataloader
