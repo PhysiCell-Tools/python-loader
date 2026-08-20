@@ -130,15 +130,19 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 
 
 ## Release Notes:
-+ version 4.1.5 (2026-04-05)
+
++ version 4.1.6 (2026-08-22): elmbeech/physicelldataloader
+    + pcdl installs now by default lightweight with only the core dependencies; users are prompted to install optional libraries if necessary. special thanks to Heber Rocha!
+
++ version 4.1.5 (2026-04-05): elmbeech/physicelldataloader
     + bugfix library dependencies and library versions.
 
-+ version 4.1.4 (2026-04-04)
++ version 4.1.4 (2026-04-04): elmbeech/physicelldataloader
     + pyMCDSts **mcdsts.make_contour** extrema parameter is replaced by vmin and vmax to be compatible with mcds.make\_contour and plt.contour.
     + **make_cell_vtk** and **make_conc_vtk** now offer an ext parameter, allowing to manually specify the exact file extension. special thanks to Danyon Gedris!
     + new **make_muspan** TimeStep class and TimeSeris class function and **pcdl_get_muspan** command line command. special thanks to Joshua Moore and Joshua Bull!
 
-+ version 4.1.3 (2026-03-21):
++ version 4.1.3 (2026-03-21): elmbeech/physicelldataloader
     + new **pcdl.pccmap** color map. this is an adaptation of the physicell pathology paint by number color map.
     + new TimeStep **get_pcdl_version** function.
 

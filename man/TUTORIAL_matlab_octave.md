@@ -33,7 +33,7 @@ pcdl_get_cell_df output
 df_conc = readtable("output/timeseries_conc.csv")
 ```
 ```matlab
-df_cell = readtable("output/timeseries_conc.csv")
+df_cell = readtable("output/timeseries_cell.csv")
 ```
 
 
