@@ -8,6 +8,14 @@ Below you will find information about how to install, load, update, uninstall, a
 ```bash
 pip3 install pcdl
 ```
+This installs pcdl light weight: only the libraries needed to load PhysiCell output into pandas dataframes and to render basic contour and scatter plots (matplotlib, numpy, pandas, scipy).
+A handful of pcdl functions (e.g. get\_anndata) rely on other libraryes (anndata).
+If you call such a function and a necessary library is missing, the function will prompt you to install it.
+
+To install pcdl with all optional dependencies at once, run:
+```bash
+pip3 install pcdl[full]
+```
 
 
 ## How to load the pcdl library?

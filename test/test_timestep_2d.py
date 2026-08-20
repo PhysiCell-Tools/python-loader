@@ -1124,6 +1124,9 @@ class TestTimeStepMuspan(object):
         except ModuleNotFoundError:
             print('Warning @ pytest TestTimeStepMuspan : muspan module not installed.')
             assert True
+        except SystemExit:
+            print('Warning @ pytest TestTimeStepMuspan : muspan module not installed.')
+            assert True
 
     def test_mcds_get_muspan_zslice(self):
         try:
@@ -1139,6 +1142,9 @@ class TestTimeStepMuspan(object):
                   (len(do_domain[s_key].networks) == 3) and \
                   (len(do_domain[s_key].objects) > 9)
         except ModuleNotFoundError:
+            print('Warning @ pytest TestTimeStepMuspan : muspan module not installed.')
+            assert True
+        except SystemExit:
             print('Warning @ pytest TestTimeStepMuspan : muspan module not installed.')
             assert True
 

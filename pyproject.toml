@@ -69,23 +69,33 @@ classifiers = [
 ]
 
 # bue 2024-12-06: enforcing some versions
+# light weight
 dependencies = [
-    "anndata>=0.10.8",
+    "matplotlib",
+    "numpy",
+    "pandas>=2.2.2",  # numpy 2.0 comatible
+    "scipy>=1.13.0",  # numpy 2.0 compatible
+]
+
+[project.optional-dependencies]
+# bioconda galaxy
+jakku = [
+    "anndata>=0.10.8",  # numpy 2.0 compatible
+    "requests",
+    "vtk",
+]
+# heavy weight
+full = [
+    "pcdl[jakku]",
     "bioio>=2.0.0",
     "bioio-ome-tiff",
-    "geopandas>=0.14",  # spatialdata
-    "matplotlib",
+    "geopandas>=0.14",  # spatialdata 0.7.3 compatible
     "networkx",
     "neuroglancer",
-    "numpy",
-    "pandas>=2.2.2",
-    "requests",
     "scikit-image>=0.24.0",
-    "scipy>=1.13.0",
-    "shapely>=2.0.1",  # spatialdata
-    "spatialdata>=0.7.2",
-    "vtk",
-    "ome-zarr<0.14.0", # bue 20260405: bugfix for spatialdata 0.7.2
+    "shapely>=2.0.1",  # spatialdata 0.7.3 compatible
+    "spatialdata>=0.7.3",
+    #"ome-zarr<0.14.0",  # bue 20260405: bugfix for spatialdata 0.7.2
 ]
 
 

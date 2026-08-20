@@ -19,7 +19,7 @@ This is why the ext parameter explicitly has to be set.
 pcdl_make_conc_vtk output
 ```
 ```bash
-pcdl_make_cell_vtk output --ext .vtp  # blender bvtk nodes compatible filename and extension.
+pcdl_make_cell_vtk output --ext .vtp  # generate blender bvtk nodes compatible filename and extension!
 ```
 
 ### Generate vtk files from within python
@@ -29,7 +29,7 @@ import pcdl
 
 mcdsts = pcdl.TimeSeries('output/')
 mcdsts.make_conc_vtk()
-mcdsts.make_cell_vtk(ext='.vtp')  # blender bvtk nodes compatible filename and extension.
+mcdsts.make_cell_vtk(ext='.vtp')  # generate blender bvtk nodes compatible filename and extension!
 ```
 
 ### Blender vtk nodes plugin installation
@@ -48,6 +48,21 @@ including workspace setup.
 4. Connect tkXMLPolyDataReader output with input VTKtoBlenerMesh
 5. tkXMLPolyDataReader FileName: path/to/output00000000.vtp
 6. VTKtoBlenderMesh: click Update Node
+
+### Load vtk polynomial data vtk files as a time course
+
+Special thank to Danyon Gedris from the Stein-O'Brien Lab, who figuring all of this out!
+
+1. In the BVTK Node Tree Workspace from the previous section, right click Add / Custom / TimeSelector.
+2. Connect vtkXMLPolyDataReader output with input TimeSelector.
+3. Connect TimeSelector output with input VTKtoBlenderMesh.
+4. In the BVTK Node Editor, press N to open the sidebar.
+5. Select the Inspect tab and change: Update Mode → Update All Automatically.
+6. Click update node on each element in the BVTK Node Editor and force update upstream on VTKtoBlenderMesh.
+7. Set your scene frame range to:
++ Start = 1 (this selects output00000000.vtp).
++ End = # of .vtp files in the sequence (the last output file number plus 1).
+8. Press play on the animation.
 
 ### Load rectilinear grid vtk files
 

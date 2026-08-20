@@ -39,13 +39,17 @@
 
 # library
 import argparse
-from bioio import BioImage
 import matplotlib as mpl
-import neuroglancer
-import neuroglancer.cli
 import numpy as np
-from skimage import exposure, util
 import sys
+
+# lazy loading heavyweight: bioio, neuroglancer, and scikit-image
+from pcdl.dependency import optional_import
+BioImage = optional_import('bioio', s_attr='BioImage', s_pip='bioio', s_caller='pcdl.render_neuroglancer')
+neuroglancer = optional_import('neuroglancer', s_caller='pcdl.render_neuroglancer')
+optional_import('neuroglancer.cli', s_caller='pcdl.render_neuroglancer')  # binds neuroglancer.cli as attribute
+exposure = optional_import('skimage.exposure', s_pip='scikit-image', s_caller='pcdl.render_neuroglancer')
+util = optional_import('skimage.util', s_pip='scikit-image', s_caller='pcdl.render_neuroglancer')
 
 
 # functions
