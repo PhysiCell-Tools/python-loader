@@ -200,7 +200,7 @@ class TestTimeSeriesMicroenv(object):
         ldf_conc = mcdsts.get_conc_df(values=2, drop=set(), keep=set(), collapse=False)
         assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
               (str(type(ldf_conc)) == "<class 'list'>") and \
-              (str(type(ldf_conc[0])) == "<class 'pandas.core.frame.DataFrame'>") and \
+              (str(type(ldf_conc[0])) == "<class 'pandas.DataFrame'>") and \
               (ldf_conc[0].shape == (121, 9)) and \
               (ldf_conc[-1].shape == (121, 11)) and \
               (len(ldf_conc) == 25)
@@ -208,7 +208,7 @@ class TestTimeSeriesMicroenv(object):
     def test_mcdsts_get_conc_df_collapse(self, mcdsts=mcdsts):
         df_conc = mcdsts.get_conc_df(values=2, drop=set(), keep=set(), collapse=True)
         assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
-              (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
+              (str(type(df_conc)) == "<class 'pandas.DataFrame'>") and \
               (df_conc.shape == (3025, 11))
 
     def test_mcdsts_get_conc_attribute(self, mcdsts=mcdsts):
@@ -317,7 +317,7 @@ class TestTimeSeriesCell(object):
         ldf_cell = mcdsts.get_cell_df(values=2, drop=set(), keep=set(), collapse=False)
         assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
               (str(type(ldf_cell)) == "<class 'list'>") and \
-              (str(type(ldf_cell[0])) == "<class 'pandas.core.frame.DataFrame'>") and \
+              (str(type(ldf_cell[0])) == "<class 'pandas.DataFrame'>") and \
               (ldf_cell[0].shape[0] > 9) and \
               (ldf_cell[0].shape[1] == 36) and \
               (ldf_cell[-1].shape[0] > 9) and \
@@ -327,7 +327,7 @@ class TestTimeSeriesCell(object):
     def test_mcdsts_get_cell_df_collapse(self, mcdsts=mcdsts):
         df_cell = mcdsts.get_cell_df(values=2, drop=set(), keep=set(), collapse=True)
         assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
-              (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
+              (str(type(df_cell)) == "<class 'pandas.DataFrame'>") and \
               (df_cell.shape[0] > 9) and \
               (df_cell.shape[1] == 67)
 
@@ -676,7 +676,7 @@ class TestTimeSeriesTimeseries(object):
             figbgcolor = None  # test if
         )
         assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
-              (str(type(df)) == "<class 'pandas.core.frame.DataFrame'>")
+              (str(type(df)) == "<class 'pandas.DataFrame'>")
         plt.close()
 
     def test_mcdsts_plot_timeseries_none_num_yunit_cell_fig(self, mcdsts=mcdsts):
@@ -872,7 +872,7 @@ class TestTimeSeriesTimeseries(object):
             figbgcolor = None  # test if
         )
         assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
-              (str(type(df)) == "<class 'pandas.core.frame.DataFrame'>")
+              (str(type(df)) == "<class 'pandas.DataFrame'>")
         plt.close()
 
     def test_mcdsts_plot_timeseries_none_none_yunit_conc_fig(self, mcdsts=mcdsts):
@@ -928,7 +928,7 @@ class TestTimeSeriesAnnData(object):
               (len(mcdsts.l_mcds) == 25) and \
               (l_annmcds == mcdsts.l_annmcds) and \
               (mcdsts.l_annmcds is None) and \
-              (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (str(type(ann)) == "<class 'anndata.AnnData'>") and \
               (ann.X.shape[0] > 9) and \
               (ann.X.shape[1] == 105) and \
               (ann.obs.shape[0] > 9) and \
@@ -947,7 +947,7 @@ class TestTimeSeriesAnnData(object):
               (len(mcdsts.l_mcds) == 25) and \
               (l_annmcds == mcdsts.l_annmcds) and \
               (mcdsts.l_annmcds is None) and \
-              (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (str(type(ann)) == "<class 'anndata.AnnData'>") and \
               (ann.X.shape[0] > 9) and \
               (ann.X.shape[1] == 50) and \
               (ann.obs.shape[0] > 9) and \
@@ -967,7 +967,7 @@ class TestTimeSeriesAnnData(object):
               (l_annmcds == mcdsts.l_annmcds) and \
               (str(type(mcdsts.l_annmcds)) == "<class 'list'>") and \
               (len(mcdsts.l_annmcds) == 25) and \
-              (all([str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>" for ann in mcdsts.l_annmcds])) and \
+              (all([str(type(ann)) == "<class 'anndata.AnnData'>" for ann in mcdsts.l_annmcds])) and \
               (mcdsts.l_annmcds[24].X.shape[0] > 9) and \
               (mcdsts.l_annmcds[24].X.shape[1] == 105) and \
               (mcdsts.l_annmcds[24].obs.shape[0] > 9) and \
@@ -986,7 +986,7 @@ class TestTimeSeriesAnnData(object):
               (len(mcdsts.l_mcds) == 0) and \
               (l_annmcds == mcdsts.l_annmcds) and \
               (mcdsts.l_annmcds is None) and \
-              (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (str(type(ann)) == "<class 'anndata.AnnData'>") and \
               (ann.X.shape[0] > 9) and \
               (ann.X.shape[1] == 105) and \
               (ann.obs.shape[0] > 9) and \

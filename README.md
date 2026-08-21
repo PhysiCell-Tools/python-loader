@@ -131,6 +131,9 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 
 ## Release Notes:
 
++ version 4.1.7 (2026-08-21): elmbeech/physicelldataloader
+    + compatible with pandas v3.0.0.
+
 + version 4.1.6 (2026-08-20): elmbeech/physicelldataloader
     + pcdl installs now by default lightweight with only the core dependencies; users are prompted to install optional libraries if necessary. special thanks to Heber Rocha!
 

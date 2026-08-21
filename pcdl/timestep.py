@@ -1731,7 +1731,7 @@ class TimeStep:
         df_cell.loc[:,'s'] = ((6 * df_cell.total_volume) / np.pi)**(2/3) * s # diamter of a sphere times s
 
         # handle z_axis categorical cases
-        if (str(df_cell.loc[:,focus].dtype) in {'bool', 'object'}):
+        if (str(df_cell.loc[:,focus].dtype) in {'bool', 'str', 'object'}):
             vmin = None
             vmax = None
             if (z_axis is None):

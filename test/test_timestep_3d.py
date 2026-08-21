@@ -69,7 +69,7 @@ class TestTimeStepInit(object):
     df_cell = mcds.get_cell_df()
     def test_mcds_init_microenv(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
+              (str(type(df_cell)) == "<class 'pandas.DataFrame'>") and \
               (df_cell.shape[0] > 9) and \
               (df_cell.shape[1] == 122)
 
@@ -86,7 +86,7 @@ class TestTimeStepInit(object):
 
     def test_mcds_init_settingxml(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
+              (str(type(df_cell)) == "<class 'pandas.DataFrame'>") and \
               (set(df_cell.columns).issuperset({'default_fusion_rates'})) and \
               (df_cell.shape[0] > 9) and \
               (df_cell.shape[1] == 122)
@@ -98,7 +98,7 @@ class TestTimeStepInitMicroenvFalse(object):
     df_cell = mcds.get_cell_df()
     def test_mcds_init_microenv(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
+              (str(type(df_cell)) == "<class 'pandas.DataFrame'>") and \
               (df_cell.shape[0] > 9) and \
               (df_cell.shape[1] == 116)
 
@@ -115,7 +115,7 @@ class TestTimeStepInitMicroenvFalse(object):
 
     def test_mcds_init_settingxml(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
+              (str(type(df_cell)) == "<class 'pandas.DataFrame'>") and \
               (set(df_cell.columns).issuperset({'default_fusion_rates'})) and \
               (df_cell.shape[0] > 9) and \
               (df_cell.shape[1] == 116)
@@ -127,7 +127,7 @@ class TestTimeStepInitGraphFalse(object):
     df_cell = mcds.get_cell_df()
     def test_mcds_init_microenv(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
+              (str(type(df_cell)) == "<class 'pandas.DataFrame'>") and \
               (df_cell.shape[0] > 9) and \
               (df_cell.shape[1] == 122)
 
@@ -144,7 +144,7 @@ class TestTimeStepInitGraphFalse(object):
 
     def test_mcds_init_settingxml(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
+              (str(type(df_cell)) == "<class 'pandas.DataFrame'>") and \
               (set(df_cell.columns).issuperset({'default_fusion_rates'})) and \
               (df_cell.shape[0] > 9) and \
               (df_cell.shape[1] == 122)
@@ -156,7 +156,7 @@ class TestTimeStepInitPhysibossFalse(object):
     df_cell = mcds.get_cell_df()
     def test_mcds_init_microenv(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
+              (str(type(df_cell)) == "<class 'pandas.DataFrame'>") and \
               (df_cell.shape[0] > 9) and \
               (df_cell.shape[1] == 122)
 
@@ -173,7 +173,7 @@ class TestTimeStepInitPhysibossFalse(object):
 
     def test_mcds_init_settingxml(self, mcds=mcds, df_cell=df_cell):
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
+              (str(type(df_cell)) == "<class 'pandas.DataFrame'>") and \
               (set(df_cell.columns).issuperset({'default_fusion_rates'})) and \
               (df_cell.shape[0] > 9) and \
               (df_cell.shape[1] == 122)
@@ -237,7 +237,7 @@ class TestTimeStep3dMicroenvWorkhorse(object):
     def test_mcds_get_conc_df(self, mcds=mcds):
         df_conc = mcds.get_conc_df(z_slice=None, halt=False, values=1, drop=set(), keep=set())
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
+              (str(type(df_conc)) == "<class 'pandas.DataFrame'>") and \
               (df_conc.shape == (1331, 11))
               #(df_conc.shape[0] > 9) and \
               #(df_conc.shape[1] == 122)
@@ -245,31 +245,31 @@ class TestTimeStep3dMicroenvWorkhorse(object):
     def test_mcds_get_conc_df_zslice_center(self, mcds=mcds):
         df_conc = mcds.get_conc_df(z_slice=0, halt=False, values=1, drop=set(), keep=set())
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
+              (str(type(df_conc)) == "<class 'pandas.DataFrame'>") and \
               (df_conc.shape == (121, 11))
 
     def test_mcds_get_conc_df_zslice_outofcenter(self, mcds=mcds):
         df_conc = mcds.get_conc_df(z_slice=-6, halt=False, values=1, drop=set(), keep=set())
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
+              (str(type(df_conc)) == "<class 'pandas.DataFrame'>") and \
               (df_conc.shape == (121, 11))
 
     def test_mcds_get_conc_df_values(self, mcds=mcds):
         df_conc = mcds.get_conc_df(z_slice=None, halt=False, values=2, drop=set(), keep=set())
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
+              (str(type(df_conc)) == "<class 'pandas.DataFrame'>") and \
               (df_conc.shape == (1331, 11))
 
     def test_mcds_get_conc_df_drop(self, mcds=mcds):
         df_conc = mcds.get_conc_df(z_slice=None, halt=False, values=1, drop={'oxygen'}, keep=set())
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
+              (str(type(df_conc)) == "<class 'pandas.DataFrame'>") and \
               (df_conc.shape == (1331, 10))
 
     def test_mcds_get_conc_df_keep(self, mcds=mcds):
         df_conc = mcds.get_conc_df(z_slice=None, halt=False, values=1, drop=set(), keep={'oxygen'})
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(df_conc)) == "<class 'pandas.core.frame.DataFrame'>") and \
+              (str(type(df_conc)) == "<class 'pandas.DataFrame'>") and \
               (df_conc.shape == (1331, 10))
 
     def test_mcds_plot_contour(self, mcds=mcds):
@@ -338,28 +338,28 @@ class TestTimeStep3dCellWorkhorse(object):
     def test_mcds_get_cell_df(self, mcds=mcds):
         df_cell = mcds.get_cell_df(values=1, drop=set(), keep=set())
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
+              (str(type(df_cell)) == "<class 'pandas.DataFrame'>") and \
               (df_cell.shape[0] > 9) and \
               (df_cell.shape[1] == 122)
 
     def test_mcds_get_cell_df_values(self, mcds=mcds):
         df_cell = mcds.get_cell_df(values=2, drop=set(), keep=set())
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
+              (str(type(df_cell)) == "<class 'pandas.DataFrame'>") and \
               (df_cell.shape[0] > 9) and \
               (df_cell.shape[1] == 72)
 
     def test_mcds_get_cell_df_drop(self, mcds=mcds):
         df_cell = mcds.get_cell_df(values=1, drop={'oxygen'}, keep=set())
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
+              (str(type(df_cell)) == "<class 'pandas.DataFrame'>") and \
               (df_cell.shape[0] > 9) and \
               (df_cell.shape[1] == 121)
 
     def test_mcds_get_cell_df_keep(self, mcds=mcds):
         df_cell = mcds.get_cell_df(values=1, drop=set(), keep={'oxygen'})
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(df_cell)) == "<class 'pandas.core.frame.DataFrame'>") and \
+              (str(type(df_cell)) == "<class 'pandas.DataFrame'>") and \
               (df_cell.shape[0] > 9) and \
               (df_cell.shape[1] == 13)
 
@@ -664,7 +664,7 @@ class TestTimeStep3dAnnData(object):
         mcds = pcdl.TimeStep(s_pathfile_3d, verbose=False)
         ann = mcds.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs')
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(ann)) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (str(type(ann)) == "<class 'anndata.AnnData'>") and \
               (ann.X.shape[0] > 9) and \
               (ann.X.shape[1] == 105) and \
               (ann.obs.shape[0] > 9) and \
@@ -740,10 +740,10 @@ class TestTimeStepSpatialData(object):
               (str(type(sdata['cell_shape'])) == "<class 'geopandas.geodataframe.GeoDataFrame'>") and \
               (sdata['cell_shape'].shape[0] > 9) and \
               (sdata['cell_shape'].shape[1] == 2) and \
-              (str(type(sdata['cell_table'])) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (str(type(sdata['cell_table'])) == "<class 'anndata.AnnData'>") and \
               (sdata['cell_table'].shape[0] > 9) and \
               (sdata['cell_table'].shape[1] > 9) and \
-              (str(type(sdata['subs_table'])) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (str(type(sdata['subs_table'])) == "<class 'anndata.AnnData'>") and \
               (sdata['subs_table'].shape[0] > 9) and \
               (sdata['subs_table'].shape[1] == 2) and \
               (sdata['subs_table'].obs.shape[0] > 9) and \
@@ -763,10 +763,10 @@ class TestTimeStepSpatialData(object):
               (str(type(sdata['cell_point'])) == "<class 'dask.dataframe.dask_expr._collection.DataFrame'>") and \
               (sdata['cell_point'].compute().shape[0] > 9) and \
               (sdata['cell_point'].compute().shape[1] == 3) and \
-              (str(type(sdata['cell_table'])) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (str(type(sdata['cell_table'])) == "<class 'anndata.AnnData'>") and \
               (sdata['cell_table'].shape[0] > 9) and \
               (sdata['cell_table'].shape[1] > 9) and \
-              (str(type(sdata['subs_table'])) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (str(type(sdata['subs_table'])) == "<class 'anndata.AnnData'>") and \
               (sdata['subs_table'].shape[0] > 9) and \
               (sdata['subs_table'].shape[1] == 2) and \
               (sdata['subs_table'].obs.shape[0] > 9) and \
@@ -778,10 +778,10 @@ class TestTimeStepSpatialData(object):
         sdata = mcds.get_spatialdata(images=set(), labels=set(), points=set(), shapes=set(), values=1, drop=set(), keep=set(), scale='maxabs')
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(sdata)) == "<class 'spatialdata._core.spatialdata.SpatialData'>") and \
-              (str(type(sdata['cell_table'])) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (str(type(sdata['cell_table'])) == "<class 'anndata.AnnData'>") and \
               (sdata['cell_table'].shape[0] > 9) and \
               (sdata['cell_table'].shape[1] > 9) and \
-              (str(type(sdata['subs_table'])) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (str(type(sdata['subs_table'])) == "<class 'anndata.AnnData'>") and \
               (sdata['subs_table'].shape[0] > 9) and \
               (sdata['subs_table'].shape[1] ==2) and \
               (sdata['subs_table'].obs.shape[0] > 9) and \

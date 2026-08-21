@@ -95,7 +95,6 @@ full = [
     "scikit-image>=0.24.0",
     "shapely>=2.0.1",  # spatialdata 0.7.3 compatible
     "spatialdata>=0.7.3",
-    #"ome-zarr<0.14.0",  # bue 20260405: bugfix for spatialdata 0.7.2
 ]
 
 
