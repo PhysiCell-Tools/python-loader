@@ -33,7 +33,7 @@ options:
                         information is not found in the output xml file. set
                         to None or False if the xml file is missing! default
                         is False.
-  -v VERBOSE, --verbose VERBOSE
+  -v, --verbose VERBOSE
                         setting verbose to False for less text output, while
                         processing. default is True.
   --conc_cutoff [CONC_CUTOFF ...]

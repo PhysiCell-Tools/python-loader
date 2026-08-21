@@ -8,12 +8,12 @@
 
 ## output:
 ```
-            set verbose false.
+    set verbose false.
 
 ```
 
 ## description:
 ```
-            function to set verbosity.
-        
+    function to set verbosity.
+
 ```

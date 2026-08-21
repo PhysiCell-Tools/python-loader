@@ -8,14 +8,14 @@
 
 ## output:
 ```
-            s_version : sting
-                PhysiCell version that generated the data.
+    s_version : sting
+        PhysiCell version that generated the data.
 
 ```
 
 ## description:
 ```
-            function returns as a string the PhysiCell version
-            that was used to generate this data.
-        
+    function returns as a string the PhysiCell version
+    that was used to generate this data.
+
 ```

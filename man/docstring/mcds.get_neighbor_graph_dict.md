@@ -8,13 +8,13 @@
 
 ## output:
 ```
-            dei_graph: dictionary of sets of integers
-                maps each cell ID to the connected neighbor cell IDs.
+    dei_graph: dictionary of sets of integers
+        maps each cell ID to the connected neighbor cell IDs.
 
 ```
 
 ## description:
 ```
-            function returns the cell neighbor graph as a dictionary object.
-        
+    function returns the cell neighbor graph as a dictionary object.
+
 ```

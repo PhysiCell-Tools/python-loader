@@ -10,7 +10,7 @@ positional arguments:
 
 options:
   -h, --help            show this help message and exit
-  -v VERBOSE, --verbose VERBOSE
+  -v, --verbose VERBOSE
                         setting verbose to True for more text output, while
                         processing. default is False.
 
