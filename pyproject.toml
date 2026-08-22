@@ -23,6 +23,22 @@
 # 10. twine upload dist/* --verbose
 # 11. git push origin
 # 12. git push --tag
+#
+# releasing a next version on bioconda
+# 13. vim bioconda-recipes/recipes/pcdl/meta.yaml  # update version and content
+# 14. git bioconda-recipes pull request
+# 15. cp -r ../bioconda-recipes/recipes/pcdl jakku/bioconda_recipes/
+# 16. git add jakku/bioconda_recipes/pcdl/meta.yaml
+# 17. git commit -m'@ jakku : bioconda next release.'
+# 18. git push origin
+#
+# releasing a next version on galaxy
+# 19. vim tools-iuc/tools/pcdl/pcdl_macros.xml  # update version
+# 20. git tools-iuc pull request
+# 21. cp -r ../tools-iuc/tools/pcdl jakku/toolsiuc_tools/
+# 22. git add jakku/toolsiuc_tools/pcdl/pcdl_macros.xml
+# 23. git commit -m'@ jakku : galaxy next release.'
+# 24. git push origin
 #####
 
 
