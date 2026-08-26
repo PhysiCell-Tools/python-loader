@@ -353,6 +353,7 @@ class TestCommandLineInterfacePlotContour(object):
             '--ylim', '-30', '300',
             '--xyequal', 'false',
             '--figsizepx', '842', '531',
+            '--directory', f'{s_path_2d}/jakku',
             '--ext', 'tiff',
             '--figbgcolor', 'yellow',
         ], check=False, capture_output=True)
@@ -360,7 +361,7 @@ class TestCommandLineInterfacePlotContour(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        shutil.rmtree(f'{s_path_2d}/conc_oxygen_z0.0/')
+        shutil.rmtree(f'{s_path_2d}/jakku/')
         assert o_result.returncode == 0
 
 
@@ -1295,6 +1296,7 @@ class TestCommandLineInterfacePlotScatter(object):
             '--xyequal', 'false',
             '--s', '74',
             '--figsizepx', '842', '531',
+            '--directory', f'{s_path_2d}/jakku',
             '--ext', 'tiff',
             '--figbgcolor', 'yellow',
         ], check=False, capture_output=True)
@@ -1302,7 +1304,7 @@ class TestCommandLineInterfacePlotScatter(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        shutil.rmtree(f'{s_path_2d}/cell_oxygen_z0.0/')
+        shutil.rmtree(f'{s_path_2d}/jakku/')
         assert o_result.returncode == 0
 
 

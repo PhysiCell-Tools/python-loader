@@ -289,6 +289,7 @@ class TestTimeStep3dMicroenvWorkhorse(object):
             xyequal = True, # test if
             ax = ax,  # use axis from existing matplotlib figure
             figsizepx = [641, 481],  # test if
+            directory = None,  # not at file
             ext = None, # test fig case
             figbgcolor = None,  # not at file
         )
@@ -312,6 +313,8 @@ class TestTimeStep3dMicroenvWorkhorse(object):
             xyequal = True,  # test if
             ax = None,  # generate fig ax case
             figsizepx = None,  # test if
+            directory = None,  # test if
+            #directory = f'{s_path_3d}/jakku',  # test else
             ext = 'tiff', # test file case
             figbgcolor = 'orange',  # jump over if
         )
@@ -320,6 +323,7 @@ class TestTimeStep3dMicroenvWorkhorse(object):
               (os.path.exists(s_pathfile)) and \
               (os.path.getsize(s_pathfile) > 2**10)
         os.remove(s_pathfile)
+        #os.remove(f'{s_path_3d}/jakku')
 
     def test_mcds_make_conc_vtk(self, mcds=mcds):
         s_pathfile = mcds.make_conc_vtk()  # test default ext parameter
@@ -383,6 +387,7 @@ class TestTimeStep3dCellWorkhorse(object):
             #s = None,  # matplotlib
             ax = ax,  # use axis from existing matplotlib figure
             figsizepx = [701, 501],  # jump over if case ax none
+            directory = None,  # not a file
             ext = None,  # test fig case
             figbgcolor = None,  # not a file
         )
@@ -408,6 +413,8 @@ class TestTimeStep3dCellWorkhorse(object):
             #s = None,  # matplotlib
             ax = None,  # generate matplotlib figure
             figsizepx = None,  # test if case ax none
+            directory = None,  # test if
+            #directory = f'{s_path_3d}/jakku',  # test else
             ext = 'tiff',  # test file case
             figbgcolor = 'lime',  # jump over if
         )
@@ -416,6 +423,7 @@ class TestTimeStep3dCellWorkhorse(object):
               (os.path.exists(s_pathfile)) and \
               (os.path.getsize(s_pathfile) > 2**10)
         os.remove(s_pathfile)
+        #os.remove(f'{s_path_3d}/jakku')
 
     def test_mcds_plot_scatter_cat_else2(self, mcds=mcds):
         fig, ax = plt.subplots()
@@ -436,6 +444,7 @@ class TestTimeStep3dCellWorkhorse(object):
             #s = None,  # matplotlib
             ax = ax,  # use axis from existing matplotlib figure
             #figsizepx = None,  # test case ax ax
+            directory = None,  # not a file
             ext = None,  # test fig case
             figbgcolor = None,  # not a file
         )
@@ -462,6 +471,7 @@ class TestTimeStep3dCellWorkhorse(object):
             #s = None,  # matplotlib
             #ax = None,  # generate matplotlib figure
             #figsizepx = None,  # test if case
+            directory = None,  # not a file
             ext = None,  # test fig case
             figbgcolor = None,  # not a file
         )
@@ -487,6 +497,7 @@ class TestTimeStep3dCellWorkhorse(object):
             #s = None,  # matplotlib
             #ax = None,  # generate matplotlib figure
             #figsizepx = None,  # if case
+            directory = None,  # not a file
             ext = None,  # test fig case
             figbgcolor = None,  # not a file
         )
@@ -668,7 +679,7 @@ class TestTimeStep3dAnnData(object):
               (ann.X.shape[0] > 9) and \
               (ann.X.shape[1] == 105) and \
               (ann.obs.shape[0] > 9) and \
-              (ann.obs.shape[1] == 7) and \
+              (ann.obs.shape[1] == 8) and \
               (ann.obsm['spatial'].shape[0] > 9) and \
               (ann.obsm['spatial'].shape[1] == 3) and \
               (len(ann.obsp) == 4) and \

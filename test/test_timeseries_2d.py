@@ -254,6 +254,8 @@ class TestTimeSeriesMicroenv(object):
             ylim = None,  # test if
             #xyequal = True,  # pyMCD
             figsizepx = None,  # test if
+            directory = None,  # test if
+            #directory = f'{s_path_2d}/jakku',  # test else
             ext = 'jpeg',  # test file case
             figbgcolor = None,  # test if
         )
@@ -267,6 +269,7 @@ class TestTimeSeriesMicroenv(object):
               (len(ls_pathfile) == 25)
         for s_pathfile in ls_pathfile:
             os.remove(s_pathfile)
+        #shutil.rmtree(f'{s_path_2d}/jakku')
 
     @pytest.mark.filterwarnings("ignore:More than 20 figures have been opened.")
     def test_mcdsts_plot_contour_else(self, mcdsts=mcdsts):
@@ -284,6 +287,7 @@ class TestTimeSeriesMicroenv(object):
             ylim = [-21, 201],  # jump over if
             #xyequal = True,  # TimeStep
             figsizepx = [641, 481],  # test non even pixel
+            directory = None,  # not a file
             ext = None,  # test fig case
             figbgcolor = 'yellow',  # not a file
         )
@@ -391,6 +395,8 @@ class TestTimeSeriesCell(object):
             #xyequal = True,  # TimeStep
             s = 0.9,  # test calculation
             figsizepx = None,  # case extract from initial.svg
+            directory = None,  # test if
+            #directory = f'{s_path_2d}/jakku',  # test else
             ext = 'jpeg',  # generate file case
             figbgcolor = None,  # test if
         )
@@ -404,6 +410,8 @@ class TestTimeSeriesCell(object):
               (len(ls_pathfile) == 25)
         for s_pathfile in ls_pathfile:
             os.remove(s_pathfile)
+        #shutil.rmtree(f'{s_path_2d}/jakku')
+
 
     def test_mcdsts_plot_scatter_cat(self, mcdsts=mcdsts):
         l_fig = mcdsts.plot_scatter(
@@ -422,6 +430,7 @@ class TestTimeSeriesCell(object):
             #xyequal = True,  # TimeStep
             #s = 1.0,  # test calculation
             figsizepx = [641, 481],  # test case non even pixel number
+            directory = None,  # not a file
             ext = None,  # test fig case
             figbgcolor = None,  # not a file
         )
@@ -932,7 +941,7 @@ class TestTimeSeriesAnnData(object):
               (ann.X.shape[0] > 9) and \
               (ann.X.shape[1] == 105) and \
               (ann.obs.shape[0] > 9) and \
-              (ann.obs.shape[1] == 7) and \
+              (ann.obs.shape[1] == 8) and \
               (ann.obsm['spatial'].shape[0] > 9) and \
               (ann.obsm['spatial'].shape[1] == 2) and \
               (len(ann.obsp) == 0) and \
@@ -951,7 +960,7 @@ class TestTimeSeriesAnnData(object):
               (ann.X.shape[0] > 9) and \
               (ann.X.shape[1] == 50) and \
               (ann.obs.shape[0] > 9) and \
-              (ann.obs.shape[1] == 6) and \
+              (ann.obs.shape[1] == 7) and \
               (ann.obsm['spatial'].shape[0] > 9) and \
               (ann.obsm['spatial'].shape[1] == 2) and \
               (len(ann.obsp) == 0) and \
@@ -971,7 +980,7 @@ class TestTimeSeriesAnnData(object):
               (mcdsts.l_annmcds[24].X.shape[0] > 9) and \
               (mcdsts.l_annmcds[24].X.shape[1] == 105) and \
               (mcdsts.l_annmcds[24].obs.shape[0] > 9) and \
-              (mcdsts.l_annmcds[24].obs.shape[1] == 7) and \
+              (mcdsts.l_annmcds[24].obs.shape[1] == 8) and \
               (mcdsts.l_annmcds[24].obsm['spatial'].shape[0] > 9) and \
               (mcdsts.l_annmcds[24].obsm['spatial'].shape[1] == 2) and \
               (len(mcdsts.l_annmcds[24].obsp) == 4) and \
@@ -990,7 +999,7 @@ class TestTimeSeriesAnnData(object):
               (ann.X.shape[0] > 9) and \
               (ann.X.shape[1] == 105) and \
               (ann.obs.shape[0] > 9) and \
-              (ann.obs.shape[1] == 7) and \
+              (ann.obs.shape[1] == 8) and \
               (ann.obsm['spatial'].shape[0] > 9) and \
               (ann.obsm['spatial'].shape[1] == 2) and \
               (len(ann.obsp) == 0) and \

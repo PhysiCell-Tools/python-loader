@@ -181,6 +181,8 @@ class TestTimeSeries3dMicroenv(object):
             ylim = None,  # test if
             #xyequal = True,  # TimeStep
             figsizepx = None,  # test if
+            directory = None,  # test if
+            #directory = '{s_path_3d}/jakku',  # test else
             ext = 'jpeg',
             figbgcolor = None,  # test if
         )
@@ -194,6 +196,7 @@ class TestTimeSeries3dMicroenv(object):
               (len(ls_pathfile) == 25)
         for s_pathfile in ls_pathfile:
             os.remove(s_pathfile)
+        #shutil.rmtree(f'{s_path_3d}/jakku')
 
     def test_mcdsts_plot_contour_else(self, mcdsts=mcdsts):
         l_fig = mcdsts.plot_contour(
@@ -210,6 +213,7 @@ class TestTimeSeries3dMicroenv(object):
             ylim = [-21, 201],  # jump over if
             #xyequal = True,  # TimeStep
             figsizepx = [641, 481],  # test non even pixel
+            directory = None,  # jump over if
             ext = None,
             figbgcolor = 'yellow',  # jump over if
         )
@@ -318,6 +322,8 @@ class TestTimeSeries3dCell(object):
             #xyequal = True,  # TimeStep
             s = 0.1,  # test calculation
             figsizepx = None,  # case extract from initial.svg
+            directory = None,  # test if
+            #directory = '{s_path_3d}/jakku',  # test else
             ext = 'jpeg',
             figbgcolor = None,  # test if
         )
@@ -331,6 +337,7 @@ class TestTimeSeries3dCell(object):
               (len(ls_pathfile) == 25)
         for s_pathfile in ls_pathfile:
             os.remove(s_pathfile)
+        #shutil.rmtree('{s_path_3d}/jakku')
 
     def test_mcdsts_plot_scatter_cat(self, mcdsts=mcdsts):
         l_fig = mcdsts.plot_scatter(
@@ -349,6 +356,7 @@ class TestTimeSeries3dCell(object):
             #xyequal = True,  # TimeStep
             #s = 1.0,  # test calculation
             figsizepx = [641, 481],  # test case non even pixel number
+            directory = None,  # jump over if
             ext = None,
             figbgcolor = 'cyan',  # jump over if
         )
@@ -795,7 +803,7 @@ class TestTimeSeries3dAnnData(object):
               (ann.X.shape[0] > 9) and \
               (ann.X.shape[1] == 105) and \
               (ann.obs.shape[0] > 9) and \
-              (ann.obs.shape[1] == 7) and \
+              (ann.obs.shape[1] == 8) and \
               (ann.obsm['spatial'].shape[0] > 9) and \
               (ann.obsm['spatial'].shape[1] == 3) and \
               (len(ann.obsp) == 0) and \
@@ -814,7 +822,7 @@ class TestTimeSeries3dAnnData(object):
               (ann.X.shape[0] > 9) and \
               (ann.X.shape[1] == 56) and \
               (ann.obs.shape[0] > 9) and \
-              (ann.obs.shape[1] == 6) and \
+              (ann.obs.shape[1] == 7) and \
               (ann.obsm['spatial'].shape[0] > 9) and \
               (ann.obsm['spatial'].shape[1] == 3) and \
               (len(ann.obsp) == 0) and \
@@ -834,7 +842,7 @@ class TestTimeSeries3dAnnData(object):
               (mcdsts.l_annmcds[24].X.shape[0] > 9) and \
               (mcdsts.l_annmcds[24].X.shape[1] == 105) and \
               (mcdsts.l_annmcds[24].obs.shape[0] > 9) and \
-              (mcdsts.l_annmcds[24].obs.shape[1] == 7) and \
+              (mcdsts.l_annmcds[24].obs.shape[1] == 8) and \
               (mcdsts.l_annmcds[24].obsm['spatial'].shape[0] > 9) and \
               (mcdsts.l_annmcds[24].obsm['spatial'].shape[1] == 3) and \
               (len(mcdsts.l_annmcds[24].obsp) == 4) and \
@@ -853,7 +861,7 @@ class TestTimeSeries3dAnnData(object):
               (ann.X.shape[0] > 9) and \
               (ann.X.shape[1] == 105) and \
               (ann.obs.shape[0] > 9) and \
-              (ann.obs.shape[1] == 7) and \
+              (ann.obs.shape[1] == 8) and \
               (ann.obsm['spatial'].shape[0] > 9) and \
               (ann.obsm['spatial'].shape[1] == 3) and \
               (len(ann.obsp) == 0) and \

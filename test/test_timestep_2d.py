@@ -33,17 +33,6 @@ s_file_2d = 'output00000024.xml'
 s_pathfile_2d = f'{s_path_2d}/{s_file_2d}'
 
 
-## download test dataset ##
-if not os.path.exists(s_path_2d):
-    pcdl.install_data()
-
-
-# const
-s_path_2d = str(pathlib.Path(pcdl.__file__).parent.resolve()/'output_2d')
-s_file_2d = 'output00000024.xml'
-s_pathfile_2d = f'{s_path_2d}/{s_file_2d}'
-
-
 # test data
 if not os.path.exists(s_path_2d):
     pcdl.install_data()
@@ -546,6 +535,7 @@ class TestTimeStepMicroenv(object):
             xyequal = True, # test if
             ax = None,  # ok
             figsizepx = None,  # test if
+            directory = None,  # test if
             ext = None, # test fig case
             figbgcolor = None,  # not at file
         )
@@ -570,6 +560,8 @@ class TestTimeStepMicroenv(object):
             xyequal = True,  # test if
             ax = ax,  # use axis from existing matplotlib figure
             figsizepx = [641, 481],  # test non even pixel
+            directory = None,  # test if
+            #directory = f'{s_path_2d}/jakku',  # test else
             ext = 'tiff',  # test file case
             figbgcolor = 'yellow',  # jump over if
         )
@@ -578,6 +570,7 @@ class TestTimeStepMicroenv(object):
               (os.path.exists(s_pathfile)) and \
               (os.path.getsize(s_pathfile) > 2**10)
         os.remove(s_pathfile)
+        #os.remove(f'{s_path_2d}/jakku')
 
     def test_mcds_make_conc_vtk(self, mcds=mcds):
         s_pathfile = mcds.make_conc_vtk(ext='.vtr')  # test set ext parameter.
@@ -661,6 +654,7 @@ class TestTimeStepCell(object):
             s = 1.1,  # test calculation
             ax = None,  # generate matplotlib figure
             figsizepx = None,  # test if case ax none
+            directory = None,  # test if
             ext = None,  # test fig case
             figbgcolor = None,  # not a file
         )
@@ -686,6 +680,8 @@ class TestTimeStepCell(object):
             #s = 1.0,  # test calculation
             ax = None,  # use axis from existing matplotlib figure
             figsizepx = [701, 501],  # jump over if case ax none
+            directory = None,  # test else
+            #directory = f'{s_path_2d}/jakku',  # test else
             ext = 'tiff',  # test file case
             figbgcolor = 'cyan',  # jump over if
         )
@@ -694,6 +690,7 @@ class TestTimeStepCell(object):
               (os.path.exists(s_pathfile)) and \
               (os.path.getsize(s_pathfile) > 2**10)
         os.remove(s_pathfile)
+        #os.remove(f'{s_path_2d}/jakku')
 
     def test_mcds_plot_scatter_cat_else2(self, mcds=mcds):
         fig, ax = plt.subplots()
@@ -714,6 +711,7 @@ class TestTimeStepCell(object):
             #s = 1.0,  # test calculation
             ax = ax,  # use axis from existing matplotlib figure
             #figsizepx = None,  # test case ax ax
+            #directory = None,  # test if
             #ext = None,  # test fig case
             #figbgcolor = None,  # not a file
         )
@@ -740,6 +738,7 @@ class TestTimeStepCell(object):
             #s = 1.0,  # matplotlib
             #ax = None,  # generate matplotlib figure
             #figsizepx = None,  # test if
+            #directory = None,  # test if
             #ext = None,  # test fig case
             #figbgcolor = None,  # not a file
         )
@@ -765,6 +764,7 @@ class TestTimeStepCell(object):
             #s = None,  # matplotlib
             #ax = None,  # generate matplotlib figure
             #figsizepx = None,  # test if
+            #directory = None,  # test if
             #ext = None,  # test fig case
             #figbgcolor = None,  # not a file
         )
@@ -1095,7 +1095,7 @@ class TestTimeStepAnnData(object):
               (ann.X.shape[0] > 9) and \
               (ann.X.shape[1] == 105) and \
               (ann.obs.shape[0] > 9) and \
-              (ann.obs.shape[1] == 7) and \
+              (ann.obs.shape[1] == 8) and \
               (ann.obsm['spatial'].shape[0] > 9) and \
               (ann.obsm['spatial'].shape[1] == 2) and \
               (len(ann.obsp) == 4) and \
