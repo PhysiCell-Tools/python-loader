@@ -3,22 +3,22 @@
 
 ## input:
 ```
-            self: TimeSeries class instance.
+    self: TimeSeries class instance.
 
-            xmlfile_list: list of strings; default None
-                list of physicell output*.xml strings.
+    xmlfile_list: list of strings; default None
+        list of physicell output*.xml strings.
 
 ```
 
 ## output:
 ```
-            self.l_mcds: list of mcds objects
+    self.l_mcds: list of mcds objects
 
 ```
 
 ## description:
 ```
-            the function returns a list of mcds objects loaded by
-            TimeStep calls.
-        
+    the function returns a list of mcds objects loaded by
+    TimeStep calls.
+
 ```

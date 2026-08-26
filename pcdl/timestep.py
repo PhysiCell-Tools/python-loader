@@ -391,13 +391,21 @@ def _anndextract(df_cell, scale='maxabs', graph_attached={}, graph_neighbor={}, 
     # make a copy of the input
     df_cell = df_cell.copy()
 
-    # transform index to string
+    # extract spatial coordinates
+    # bue: to be done before index as str manipulation
     df_coor = df_cell.loc[:,['position_x','position_y','position_z']]
+
+    # mainipulate index
+    if df_cell.index.name == 'ID':
+        df_cell.reset_index(inplace=True)
+        df_cell.index = df_cell.ID
+        df_cell.index.name = 'index'
     df_cell.index = df_cell.index.astype(str)
 
+
     # build obs anndata object (annotation of observations)
-    df_obs = df_cell.loc[:,['mesh_center_p','time']]
-    df_obs.columns = ['z_layer', 'time']
+    df_obs = df_cell.loc[:,['mesh_center_p','time','ID']]
+    df_obs.columns = ['z_layer','time','ID']
 
     # buil obsm anndata object spatial (multi-dimensional annotation of observations)
     if (len(set(df_cell.position_z)) == 1):
@@ -414,7 +422,7 @@ def _anndextract(df_cell, scale='maxabs', graph_attached={}, graph_neighbor={}, 
     #   https://github.com/VeraPancaldiLab/tysserand/blob/main/tysserand/tysserand.py#L1546
     ####
     # extract cell_id to index mapping (i always loved perl)
-    di_ididx = df_cell.reset_index().loc[:,'ID'].reset_index().astype(int).set_index('ID').squeeze().to_dict()
+    di_ididx = df_cell.reset_index().loc[:,'ID'].reset_index().set_index('ID').squeeze().to_dict()
     # transform cell id graph dict to index matrix and pack for anndata
     d_obsp = {}  # pairwise annotation of obeservation
     d_uns = {}  # unstructured data
@@ -462,7 +470,8 @@ def _anndextract(df_cell, scale='maxabs', graph_attached={}, graph_neighbor={}, 
                 }
             })
 
-    # extract discrete cell data
+    # extract non discrete cell data
+    # bue 2060826: maybe obs? (voxel ijk, mesh_center mn, runtime, xmlfile)
     es_drop = set(df_cell.columns).intersection({
         'ID',
         'voxel_i', 'voxel_j', 'voxel_k',
@@ -470,7 +479,7 @@ def _anndextract(df_cell, scale='maxabs', graph_attached={}, graph_neighbor={}, 
         'position_x', 'position_y','position_z',
         'time', 'runtime', 'xmlfile',
     })
-    df_cell.drop(es_drop, axis=1, inplace=True)  # maybe obs?
+    df_cell.drop(es_drop, axis=1, inplace=True)
 
     # dectect variable types
     des_type = {'float': set(), 'int': set(), 'bool': set(), 'str': set()}
@@ -481,7 +490,7 @@ def _anndextract(df_cell, scale='maxabs', graph_attached={}, graph_neighbor={}, 
             des_type['int'].add(se_cell.name)
         elif str(se_cell.dtype).startswith('bool'):
             des_type['bool'].add(se_cell.name)
-        elif str(se_cell.dtype).startswith('object'):
+        elif str(se_cell.dtype).startswith('object') or str(se_cell.dtype).startswith('str'):
             des_type['str'].add(se_cell.name)
         else:
             sys.exit(f'Error @ TimeStep._anndextract : column {se_cell.name} detected with unknown dtype {str(se_cell.dtype)}.')
@@ -1180,7 +1189,7 @@ class TimeStep:
         return df_conc
 
 
-    def plot_contour(self, focus, z_slice=0.0, vmin=None, vmax=None, alpha=1, fill=True, cmap='viridis', title=None, grid=True, xlim=None, ylim=None, xyequal=True, ax=None, figsizepx=None, ext=None, figbgcolor=None, **kwargs):
+    def plot_contour(self, focus, z_slice=0.0, vmin=None, vmax=None, alpha=1, fill=True, cmap='viridis', title=None, grid=True, xlim=None, ylim=None, xyequal=True, ax=None, figsizepx=None, directory=None, ext=None, figbgcolor=None, **kwargs):
         """
         input:
             focus: string
@@ -1241,6 +1250,11 @@ class TimeStep:
                 to be able to generate movies from the images.
                 None tries to take the values from the initial.svg file.
                 fall back setting is [640, 480].
+
+            directory: string; default None
+                if None, a meaningful output directory name will be generated,
+                based on focus and z_slice parameters, else the resulting plots
+                will be moved to the explicit name directory.
 
             ext: string; default is None
                 output image format. possible formats are jpeg, png, and tiff.
@@ -1367,7 +1381,10 @@ class TimeStep:
 
         else:
             # handle output path and filename
-            s_path = self.path + f"/conc_{focus.replace(' ','_')}_z{round(z_slice,9)}/"
+            if (directory is None):
+                s_path = self.path + f"/conc_{focus.replace(' ','_')}_z{round(z_slice,9)}/"
+            else:
+                s_path = f'{directory}/'
             os.makedirs(s_path, exist_ok=True)
             s_file = self.xmlfile.replace('.xml', f"_{focus.replace(' ','_')}.{ext}")
             s_pathfile = f'{s_path}{s_file}'
@@ -1585,7 +1602,7 @@ class TimeStep:
         return self.data['cell']['ls_cellattr'].copy()
 
 
-    def plot_scatter(self, focus='cell_type', cat_drop=set(), cat_keep=set(), z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title=None, grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=1.0, ax=None, figsizepx=None, ext=None, figbgcolor=None, **kwargs):
+    def plot_scatter(self, focus='cell_type', cat_drop=set(), cat_keep=set(), z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title=None, grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=1.0, ax=None, figsizepx=None,  directory=None, ext=None, figbgcolor=None, **kwargs):
         """
         input:
             focus: string; default is 'cell_type'
@@ -1660,7 +1677,12 @@ class TimeStep:
                 the given x and y will be rounded to the nearest even number,
                 to be able to generate movies from the images.
                 None tries to take the values from the initial.svg file.
-                fall back setting is [640, 480].
+                fall back setting is [640, 480].\
+
+            directory: string; default None
+                if None, a meaningful output directory name will be generated,
+                based on focus and z_slice parameters, else the resulting plots
+                will be moved to the explicit name directory.
 
             ext: string; default is None
                 output image format. possible formats are jpeg, png, and tiff.
@@ -1731,7 +1753,7 @@ class TimeStep:
         df_cell.loc[:,'s'] = ((6 * df_cell.total_volume) / np.pi)**(2/3) * s # diamter of a sphere times s
 
         # handle z_axis categorical cases
-        if (str(df_cell.loc[:,focus].dtype) in {'bool', 'object'}):
+        if (str(df_cell.loc[:,focus].dtype) in {'bool', 'str', 'object'}):
             vmin = None
             vmax = None
             if (z_axis is None):
@@ -1856,7 +1878,10 @@ class TimeStep:
 
         else:
             # handle output path and filename
-            s_path = self.path + f"/cell_{focus.replace(' ','_')}_z{round(z_slice,9)}/"
+            if (directory is None):
+                s_path = self.path + f"/cell_{focus.replace(' ','_')}_z{round(z_slice,9)}/"
+            else:
+                s_path = f'{directory}/'
             os.makedirs(s_path, exist_ok=True)
             s_file = self.xmlfile.replace('.xml', f"_{focus.replace(' ','_')}.{ext}")
             s_pathfile = f'{s_path}{s_file}'
@@ -2815,7 +2840,7 @@ class TimeStep:
                     des_type['int'].add(se_zcell.name)
                 elif str(se_zcell.dtype).startswith('bool'):
                     des_type['bool'].add(se_zcell.name)
-                elif str(se_zcell.dtype).startswith('object'):
+                elif str(se_zcell.dtype).startswith('object') in str(se_zcell.dtype).startswith('str'):
                     des_type['str'].add(se_zcell.name)
                 else:
                     sys.exit(f'Error @ TimeStep.get_muspa : column {se_zcell.name} detected with unknown dtype {str(se_zcell.dtype)}.')

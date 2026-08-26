@@ -8,14 +8,14 @@
 
 ## output:
 ```
-            ls_substrate: list of stings
-                by ID ordered list of all tracked substrates.
+    ls_substrate: list of stings
+        by ID ordered list of all tracked substrates.
 
 ```
 
 ## description:
 ```
-            function returns all chemical species names, modeled
-            in the microenvironment, ordered by chemical species ID.
-        
+    function returns all chemical species names, modeled
+    in the microenvironment, ordered by chemical species ID.
+
 ```

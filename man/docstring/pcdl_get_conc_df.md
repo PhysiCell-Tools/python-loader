@@ -17,7 +17,7 @@ positional arguments:
 
 options:
   -h, --help            show this help message and exit
-  -v VERBOSE, --verbose VERBOSE
+  -v, --verbose VERBOSE
                         setting verbose to False for less text output, while
                         processing. default is True.
   --drop [DROP ...]     set of column labels to be dropped for the dataframe.

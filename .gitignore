@@ -18,3 +18,6 @@ pcdl.egg-info/
 
 # jupyter
 **/.ipynb_checkpoints/
+
+# galaxy
+tool_test_output*
