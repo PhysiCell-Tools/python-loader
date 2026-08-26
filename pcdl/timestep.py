@@ -391,13 +391,21 @@ def _anndextract(df_cell, scale='maxabs', graph_attached={}, graph_neighbor={}, 
     # make a copy of the input
     df_cell = df_cell.copy()
 
-    # transform index to string
+    # extract spatial coordinates
+    # bue: to be done before index as str manipulation
     df_coor = df_cell.loc[:,['position_x','position_y','position_z']]
+
+    # mainipulate index
+    if df_cell.index.name == 'ID':
+        df_cell.reset_index(inplace=True)
+        df_cell.index = df_cell.ID
+        df_cell.index.name = 'index'
     df_cell.index = df_cell.index.astype(str)
 
+
     # build obs anndata object (annotation of observations)
-    df_obs = df_cell.loc[:,['mesh_center_p','time']]
-    df_obs.columns = ['z_layer', 'time']
+    df_obs = df_cell.loc[:,['mesh_center_p','time','ID']]
+    df_obs.columns = ['z_layer','time','ID']
 
     # buil obsm anndata object spatial (multi-dimensional annotation of observations)
     if (len(set(df_cell.position_z)) == 1):
@@ -414,7 +422,7 @@ def _anndextract(df_cell, scale='maxabs', graph_attached={}, graph_neighbor={}, 
     #   https://github.com/VeraPancaldiLab/tysserand/blob/main/tysserand/tysserand.py#L1546
     ####
     # extract cell_id to index mapping (i always loved perl)
-    di_ididx = df_cell.reset_index().loc[:,'ID'].reset_index().astype(int).set_index('ID').squeeze().to_dict()
+    di_ididx = df_cell.reset_index().loc[:,'ID'].reset_index().set_index('ID').squeeze().to_dict()
     # transform cell id graph dict to index matrix and pack for anndata
     d_obsp = {}  # pairwise annotation of obeservation
     d_uns = {}  # unstructured data
@@ -462,7 +470,8 @@ def _anndextract(df_cell, scale='maxabs', graph_attached={}, graph_neighbor={}, 
                 }
             })
 
-    # extract discrete cell data
+    # extract non discrete cell data
+    # bue 2060826: maybe obs? (voxel ijk, mesh_center mn, runtime, xmlfile)
     es_drop = set(df_cell.columns).intersection({
         'ID',
         'voxel_i', 'voxel_j', 'voxel_k',
@@ -470,7 +479,7 @@ def _anndextract(df_cell, scale='maxabs', graph_attached={}, graph_neighbor={}, 
         'position_x', 'position_y','position_z',
         'time', 'runtime', 'xmlfile',
     })
-    df_cell.drop(es_drop, axis=1, inplace=True)  # maybe obs?
+    df_cell.drop(es_drop, axis=1, inplace=True)
 
     # dectect variable types
     des_type = {'float': set(), 'int': set(), 'bool': set(), 'str': set()}

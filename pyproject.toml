@@ -24,7 +24,7 @@
 # 11. git push origin
 # 12. git push --tag
 #
-# releasing a next version on bioconda
+# releasing a next version on bioconda:
 # 13. vim bioconda-recipes/recipes/pcdl/meta.yaml  # update version and content
 # 14. git bioconda-recipes pull request
 # 15. cp -r ../bioconda-recipes/recipes/pcdl jakku/bioconda_recipes/
@@ -32,7 +32,14 @@
 # 17. git commit -m'@ jakku : bioconda next release.'
 # 18. git push origin
 #
-# releasing a next version on galaxy
+# releasing a next version on galaxy:
+# https://planemo.readthedocs.io/en/latest/index.html
+# https://docs.galaxyproject.org/en/latest/dev/schema.html
+# cd tools-iuc/tools/pcdl/
+# planemo lint
+# planemo test
+# planemo serve
+#
 # 19. vim tools-iuc/tools/pcdl/pcdl_macros.xml  # update version
 # 20. git tools-iuc pull request
 # 21. cp -r ../tools-iuc/tools/pcdl jakku/toolsiuc_tools/

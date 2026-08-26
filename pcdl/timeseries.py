@@ -1223,7 +1223,7 @@ class TimeSeries:
 
     ## TIME SERIES RELATED FUNCTIONS ##
 
-    def plot_timeseries(self, focus_cat=None, focus_num=None, aggregate_num=np.nanmean, frame='cell', cat_drop=set(), cat_keep=(), z_slice=None, logy=False, ylim=None, secondary_y=None, subplots=False, sharex=False, sharey=False, linestyle='-', linewidth=None, cmap=None, color=None, grid=True, legend=True, yunit=None, title=None, ax=None, figsizepx=[640, 480], ext=None, figbgcolor=None, **kwargs):
+    def plot_timeseries(self, focus_cat=None, focus_num=None, aggregate_num=np.nanmean, frame='cell', cat_drop=set(), cat_keep=set(), z_slice=None, logy=False, ylim=None, secondary_y=None, subplots=False, sharex=False, sharey=False, linestyle='-', linewidth=None, cmap=None, color=None, grid=True, legend=True, yunit=None, title=None, ax=None, figsizepx=[640, 480], ext=None, figbgcolor=None, **kwargs):
         """
         input:
             self: TimeSeries class instance
@@ -1681,12 +1681,14 @@ class TimeSeries:
             ls_column.extend(sorted(self.get_cell_attribute(values=values, drop=drop, keep=keep, allvalues=False).keys()))
 
         # package collapse
-        if collapse and self.verbose:
+        if collapse:
+
             # warning
-            print('Warning @ mcdsts.get_anndata : only df_cell data, but not graph data, can be collapsed.')
-            df_cell = self.get_cell_df(values=values, drop=drop, keep=keep, collapse=True)
+            if self.verbose:
+                print('Warning @ mcdsts.get_anndata : only df_cell data, but not graph data, can be collapsed.')
 
             # extract
+            df_cell = self.get_cell_df(values=values, drop=drop, keep=keep, collapse=True)
             df_count, df_obs, d_obsm, d_obsp, d_uns = _anndextract(
                 df_cell=df_cell,
                 scale = scale,
