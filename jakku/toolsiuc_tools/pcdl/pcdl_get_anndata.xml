@@ -63,7 +63,7 @@
                     <assert_contents>
                         <has_h5_keys keys="X"/>
                         <has_h5_keys keys="layers"/>
-                        <has_h5_keys keys="obs/ID, obs/cell_type, obs/chemotaxis_index, obs/current_death_model, obs/current_phase, obs/cycle_model, obs/id_time, obs/time, obs/z_layer"/>
+                        <has_h5_keys keys="obs/z_layer, obs/time, obs/ID, obs/cell_type, obs/chemotaxis_index, obs/current_death_model, obs/current_phase, obs/cycle_model"/>
                         <has_h5_keys keys="obsm/spatial"/>
                         <has_h5_keys keys="uns"/>
                         <has_h5_keys keys="var/_index"/>
@@ -88,7 +88,7 @@
                     <assert_contents>
                         <has_h5_keys keys="X"/>
                         <has_h5_keys keys="layers"/>
-                        <has_h5_keys keys="obs/ID, obs/cell_type, obs/chemotaxis_index, obs/current_death_model, obs/current_phase, obs/cycle_model, obs/time, obs/z_layer"/>
+                        <has_h5_keys keys="obs/z_layer, obs/time, obs/ID, obs/cell_type, obs/chemotaxis_index, obs/current_death_model, obs/current_phase, obs/cycle_model"/>
                         <has_h5_keys keys="obsm/spatial"/>
                         <has_h5_keys keys="uns"/>
                         <has_h5_keys keys="var/_index"/>
@@ -100,7 +100,7 @@
                     <assert_contents>
                         <has_h5_keys keys="X"/>
                         <has_h5_keys keys="layers"/>
-                        <has_h5_keys keys="obs/ID, obs/cell_type, obs/chemotaxis_index, obs/current_death_model, obs/current_phase, obs/cycle_model, obs/time, obs/z_layer"/>
+                        <has_h5_keys keys="obs/z_layer, obs/time, obs/ID, obs/cell_type, obs/chemotaxis_index, obs/current_death_model, obs/current_phase, obs/cycle_model"/>
                         <has_h5_keys keys="obsm/spatial"/>
                         <has_h5_keys keys="uns"/>
                         <has_h5_keys keys="var/_index"/>
