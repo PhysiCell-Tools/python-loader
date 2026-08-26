@@ -27,8 +27,8 @@
 # releasing a next version on bioconda:
 # 13. vim bioconda-recipes/recipes/pcdl/meta.yaml  # update version and content
 # 14. git bioconda-recipes pull request
-# 15. cp -r ../bioconda-recipes/recipes/pcdl jakku/bioconda_recipes/
-# 16. git add jakku/bioconda_recipes/pcdl/meta.yaml
+# 15. cp -r ../bioconda-recipes/recipes/pcdl jakku/biocondarecipes_recipes/
+# 16. git add jakku/biocondarecipes_recipes/pcdl/meta.yaml
 # 17. git commit -m'@ jakku : bioconda next release.'
 # 18. git push origin
 #
