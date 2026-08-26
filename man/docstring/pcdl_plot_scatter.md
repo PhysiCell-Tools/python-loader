@@ -8,7 +8,8 @@ usage: pcdl_plot_scatter [-h] [--custom_data_type [CUSTOM_DATA_TYPE ...]]
                          [--cmap CMAP] [--title TITLE] [--grid GRID]
                          [--legend_loc LEGEND_LOC] [--xlim XLIM [XLIM ...]]
                          [--ylim YLIM [YLIM ...]] [--xyequal XYEQUAL] [--s S]
-                         [--figsizepx FIGSIZEPX [FIGSIZEPX ...]] [--ext EXT]
+                         [--figsizepx FIGSIZEPX [FIGSIZEPX ...]]
+                         [--directory DIRECTORY] [--ext EXT]
                          [--figbgcolor FIGBGCOLOR]
                          [path] [focus]
 
@@ -95,6 +96,11 @@ options:
                         be able to generate movies from the images. None tries
                         to take the values from the initial.svg file. fall
                         back setting is 640 480. default is None.
+  --directory DIRECTORY
+                        if none, a meaningful output directory name will be
+                        generated, based on focus and z_slice parameters, else
+                        the resulting plots will be moved to the explicit name
+                        directory.
   --ext EXT             output image format. possible formats are jpeg, png,
                         and tiff. default is jpeg.
   --figbgcolor FIGBGCOLOR

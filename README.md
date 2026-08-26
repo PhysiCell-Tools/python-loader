@@ -131,6 +131,9 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 
 ## Release Notes:
 
++ version 4.1.8 (2026-08-26): elmbeech/physicelldataloader
+    + branch v4 compatible with bioconda and galaxy.
+
 + version 4.1.7 (2026-08-21): elmbeech/physicelldataloader
     + compatible with pandas v3.0.0.
 
