@@ -119,7 +119,7 @@ help(pcdl.TimeStep._anndextract)
 Basically, there are four types of functions:
 + set_ : set a python3 variable.
 + get_ : recall a python3 variable.
-+ make_ : make functions generate file output (gif, gml, mp4, ome.tiff, vtk).
++ make_ : make functions generate file output (gif, gml, mp4, ome.tiff, simularium, vtk).
 + plot_ : plot functions generate a matplotlib figure, or axis object, or file output (jpeg, png, tiff), depending on your parameter settings.
 
 ### TimeSeries initialization
@@ -143,6 +143,7 @@ Basically, there are four types of functions:
 + [help(mcdsts.get_cell_attribute)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_cell_attribute.md)  #! workhorse function
 + [help(mcdsts.plot_scatter)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.plot_scatter.md)  # !workhorse function
 + [help(mcdsts.make_cell_vtk)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.make_cell_vtk.md)  #! workhorse function
++ [help(mcdsts.make_simularium)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.make_simularium.md)  #! workhorse function
 + [help(mcdsts.get_anndata)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_anndata.md)  #! workhorse function
 
 ### TimeSeries cell graph
@@ -191,11 +192,13 @@ The command line interface functions mimic the name and parameter arguments as c
 
 ### Command line cells
 + [pcdl_get_celltype_list --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_celltype_list.md)  #! workhorse function
++ [pcdl_get_cell_attribute_list --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_cell_attribute_list.md)  #! workhorse function
 + [pcdl_get_cell_attribute --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_cell_attribute.md)  #! workhorse function
 + [pcdl_get_cell_df --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_cell_df.md)  #! workhorse function
 + [pcdl_get_anndata --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_anndata.md)  #! workhorse function
 + [pcdl_plot_scatter --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_plot_scatter.md)  #! workhorse function
 + [pcdl_make_cell_vtk --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_make_cell_vtk.md)  #! workhorse function
++ [pcdl_make_simularium --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_make_simularium.md)  #! workhorse function
 
 ### Command line cell graph
 + [pcdl_make_graph_gml --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_make_graph_gml.md)  #! workhorse function

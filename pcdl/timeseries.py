@@ -1947,3 +1947,112 @@ class TimeSeries:
 
         # output
         return do_domain
+
+
+    ## SIMULARIUM RELATED FUNCTIONS ##
+
+    def make_simularium(self, focus_cat=['cell_type','current_phase'],  trajectory_title='timeseries', scale_factor=None, camera_defaults=None, model_meta_data=None):
+        """
+        input:
+            focus_cat: list of 1 or 2 string; default is ['cell_type','current_phase']
+                specify 1 or 2 categorical column labels, to be found
+                in mcdsts.get_cell_df().
+
+            trajectory_title: string; default 'timeseries'
+                the trajectory_title will be used as
+                <trajectory_title>.simularium file name and displayed
+                in the simulation.
+
+            scale_factor: float number; default is None
+                A multiplier for the scene, use if visualization is
+                too large or small. If None is provided, one will
+                be calculated based on the position data.
+                bue 20260822: does not seem to work in current simularium 1.13.0.
+
+            camera_defaults: simulariumio.CameraData object; default is None
+                camera's initial settings which it also returns to
+                when reset.
+
+            model_meta_data: simulariumio.ModelMetaData; default is None
+                Metadata for the model that produced this
+                trajectory.
+
+        output:
+            <trajectory_title>.simularium file
+
+        description:
+            function returns a simularium trajectory file that can be run with the
+            online Simularium Viewer.
+            + https://simularium.allencell.org/
+        """
+        # library
+        sim = optional_import(s_module='simulariumio', s_caller='TimeSeries.make_simularium')
+
+        # handle input
+        model_meta_data=sim.ModelMetaData() if model_meta_data is None else model_meta_data
+        camera_defaults=sim.CameraData() if camera_defaults is None else camera_defaults
+
+        # here we go
+        if self.verbose:
+            print(f'generating {trajectory_title}.simularium file ...')
+
+        # extract box from mcdsts
+        ltr_domain = self.get_mcds_list()[0].get_mesh_mnp_range()
+        lr_space = self.get_mcds_list()[0].get_mesh_spacing()
+        lr_box = np.array([
+            ltr_domain[0][1] - ltr_domain[0][0],
+            ltr_domain[1][1] - ltr_domain[1][0],
+            ltr_domain[2][1] - ltr_domain[2][0],
+        ])
+        lr_box[0] = lr_box[0] if lr_box[0] != 0.0 else lr_space[0]
+        lr_box[1] = lr_box[1] if lr_box[1] != 0.0 else lr_space[1]
+        lr_box[2] = lr_box[2] if lr_box[2] != 0.0 else lr_space[2]
+        ar_box = np.array(lr_box)
+
+        # extract cell dataframe from mcdsts
+        df_cell = self.get_cell_df()
+
+        # handle agent annotation
+        se_type = df_cell.loc[:, focus_cat].astype(str).agg('#'.join, axis=1)
+
+        # extract units from mcdsts
+        ds_unit = self.get_mcds_list()[0].get_unit_dict()
+
+        # generate simularium dataframe
+        with pd.option_context('future.infer_string', False):
+            df_sim = pd.DataFrame({
+                'time': df_cell.loc[:, 'time'].to_numpy(dtype=float),
+                'unique_id': df_cell.loc[:, 'ID'].to_numpy(dtype=int),
+                'type': se_type.to_numpy(dtype=object),
+                'positionX': df_cell.loc[:, 'position_x'].to_numpy(dtype=float),
+                'positionY': df_cell.loc[:, 'position_y'].to_numpy(dtype=float),
+                'positionZ': df_cell.loc[:, 'position_z'].to_numpy(dtype=float),
+                'radius': df_cell.loc[:, 'radius'].to_numpy(dtype=float),
+                'rotationX': np.zeros(df_cell.shape[0], dtype=float),
+                'rotationY': np.zeros(df_cell.shape[0], dtype=float),
+                'rotationZ': np.zeros(df_cell.shape[0], dtype=float),
+            })
+        df_sim.sort_values(['time', 'unique_id'], inplace=True)
+        # SimulariumIO 1.13.0 AgentData.from_dataframe expects traj.loc[0, ...]
+        # to select the whole trajectory, so all rows need the same index label.
+        df_sim.index = np.zeros(df_sim.shape[0], dtype=int)
+
+        # generate simmularium trajectorydata object
+        o_sim = sim.TrajectoryData(
+            meta_data = sim.MetaData(
+                box_size=ar_box,
+                camera_defaults=camera_defaults,
+                scale_factor=scale_factor,
+                trajectory_title=trajectory_title,
+                model_meta_data=model_meta_data,
+            ),
+            agent_data = sim.AgentData.from_dataframe(df_sim),
+            time_units = sim.UnitData(ds_unit['time']),
+            spatial_units = sim.UnitData(ds_unit['spatial_unit']),
+            #plots=,
+        )
+
+        # transform data and save trajectorydata object to simularium file
+        sim.TrajectoryConverter(o_sim).save(trajectory_title)
+        if self.verbose:
+            print(f'simularium viewer at: https://simularium.allencell.org/')

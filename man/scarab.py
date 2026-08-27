@@ -410,6 +410,10 @@ docstring_md(
     ls_doc = pcdl.TimeSeries.make_cell_vtk.__doc__.split('\n'),
 )
 docstring_md(
+    s_function = 'mcdsts.make_simularium',
+    ls_doc = pcdl.TimeSeries.make_simularium.__doc__.split('\n'),
+)
+docstring_md(
     s_function = 'mcdsts.get_anndata',
     ls_doc = pcdl.TimeSeries.get_anndata.__doc__.split('\n'),
 )
@@ -475,8 +479,10 @@ help_md(s_command='pcdl_get_anndata')
 help_md(s_command='pcdl_make_graph_gml')
 help_md(s_command='pcdl_plot_scatter')
 help_md(s_command='pcdl_make_cell_vtk')
+help_md(s_command='pcdl_make_simularium')
 # substrate and cell agent
 help_md(s_command='pcdl_get_spatialdata')
+help_md(s_command='pcdl_get_muspan')
 help_md(s_command='pcdl_plot_timeseries')
 help_md(s_command='pcdl_make_ome_tiff')
 help_md(s_command='pcdl_render_neuroglancer')

@@ -141,6 +141,7 @@ pcdl_get_anndata = "pcdl.commandline:get_anndata"
 pcdl_make_graph_gml = "pcdl.commandline:make_graph_gml"
 pcdl_plot_scatter = "pcdl.commandline:plot_scatter"
 pcdl_make_cell_vtk = "pcdl.commandline:make_cell_vtk"
+pcdl_make_simularium = "pcdl.commandline:make_simularium"
 # substrate and cell agent
 pcdl_get_muspan = "pcdl.commandline:get_muspan"
 pcdl_get_spatialdata = "pcdl.commandline:get_spatialdata"

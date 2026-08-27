@@ -2007,6 +2007,123 @@ def make_cell_vtk():
     return 0
 
 
+def make_simularium():
+    # argv
+    parser = argparse.ArgumentParser(
+        prog = 'pcdl_make_simularium',
+        description = 'function returns a simularium trajectory file which can be viewed with the simularium viewer (https://simularium.allencell.org/).',
+        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
+    )
+
+    # TimeSeries path
+    parser.add_argument(
+        'path',
+        nargs = '?',
+        default = '.',
+        help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .',
+    )
+    # TimeSeries output_path '.'
+    # TimeSeries custom_data_type
+    parser.add_argument(
+        '--custom_data_type',
+        nargs = '*',
+        default = [],
+        help = 'parameter to specify custom_data variable types other than float (namely: int, bool, str) like this var:dtype myint:int mybool:bool mystr:str . downstream float and int will be handled as numeric, bool as Boolean, and str as categorical data. default is an empty string.',
+    )
+    # TimeSeries microenv
+    # TimeSeries graph False
+    # TimeSeries physiboss
+    parser.add_argument(
+        '--physiboss',
+        default = 'true',
+        help = 'if found, should physiboss state data be extracted and loaded into the df_cell dataframe? default is True.',
+    )
+    # TimeSeries settingxml
+    parser.add_argument(
+        '--settingxml',
+        default = 'false',
+        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is False.',
+    )
+    # TimeSeries verbose
+    parser.add_argument(
+        '-v', '--verbose',
+        default = 'true',
+        help = 'setting verbose to False for less text output, while processing. default is True.',
+    )
+    # make_simularium focus_cat
+    parser.add_argument(
+        'focus_cat',
+        nargs = '*',
+        default = ['cell_type','current_phase'],
+        help = 'one or two categorical mcds.get_cell_df dataframe column names, used for cell attributes. default is cell_type current_phase.',
+    )
+    # make_simularium trajectory_title
+    parser.add_argument(
+        '--trajectory_title', '--tt',
+        default = 'timeseries',
+        help = 'the trajectory_title will be used for <trajectory_title>.simularium file name and displayed in the simulation.',
+    )
+    # make_simularium scale_factor
+    parser.add_argument(
+        '--scale_factor', '--sf',
+        nargs = '?',
+        default = 'none',
+        help = 'a multiplier for the scene, use if visualization is too large or small. if none is provided, one will be calculated based on the position data. bue 20260822: does not seem to work in current simularium 1.13.0.',
+    )
+
+    # parse arguments
+    args = parser.parse_args()
+    print(args)
+
+    # process arguments
+    s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
+    s_pathfile = s_path
+    if not s_pathfile.endswith('.xml'):
+        s_pathfile = s_pathfile + '/initial.xml'
+    else:
+        s_path = '/'.join(s_pathfile.split('/')[:-1])
+    if not os.path.exists(s_pathfile):
+        sys.exit(f'Error @ pcdl_make_cell_vtk : {s_pathfile} path does not look like a physicell output directory ({s_path}/initial.xml is missing).')
+
+    # custom_data_type
+    d_vartype = {}
+    for vartype in args.custom_data_type:
+        s_var, s_type = vartype.split(':')
+        if s_type in {'bool'}: o_type = bool
+        elif s_type in {'int'}: o_type = int
+        elif s_type in {'float'}: o_type = float
+        elif s_type in {'str'}: o_type = str
+        else:
+            sys.exit(f'Error @ pcdl_make_cell_vtk : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.')
+        d_vartype.update({s_var : o_type})
+
+    # run
+    mcdsts = pcdl.TimeSeries(
+        output_path = s_path,
+        custom_data_type = d_vartype,
+        load = True,
+        microenv = False,
+        graph = False,
+        physiboss = False if args.physiboss.lower().startswith('f') else True,
+        settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
+        verbose = False if args.verbose.lower().startswith('f') else True,
+    )
+    mcdsts.make_simularium(
+        focus_cat = args.focus_cat,
+        trajectory_title = args.trajectory_title,
+        scale_factor = None if (args.scale_factor.lower() == 'none') else float(args.scale_factor),
+        camera_defaults=None,
+        model_meta_data=None,
+    )
+
+    # going home
+    return 0
+
+
 ###################################################
 # substrate and cell agent command line function #
 ###################################################
