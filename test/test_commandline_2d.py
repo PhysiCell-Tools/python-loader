@@ -1474,6 +1474,75 @@ class TestCommandLineInterfaceCellVtk(object):
         assert o_result.returncode == 0
 
 
+class TestCommandLineInterfaceSimularium(object):
+    ''' tests for one  pcdl command line interface  function. '''
+
+    # timeseries (there is no timestep function):
+    # + path nop
+    # + customtype ([], _sample:bool_) ok
+    # + microenv nop
+    # + physiboss (true, _false_) ok
+    # + settingxml (string, _none_, _false_) ok
+    # + verbose (true, _false_) nop
+    # + focus_cat (['cell_type','current_phase'], _['current_phase','cell_type']_) ok
+    # + trajectory_title (timeseries, _zeitreihe_) ok
+    # + scale_factor (None, 1.0) ok
+
+    def test_pcdl_make_simularium_timeseries_default(self):
+        o_result = subprocess.run(['pcdl_make_simularium', s_path_2d], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/timeseries.simularium')
+        assert o_result.returncode == 0
+
+    def test_pcdl_make_simularium_timeseries_customtype_attribute_one(self):
+        o_result = subprocess.run(['pcdl_make_simularium', s_path_2d, 'sample', '--custom_data_type', 'sample:bool'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/timeseries.simularium')
+        assert o_result.returncode == 0
+
+    def test_pcdl_make_simularium_timeseries_physiboss(self):
+        o_result = subprocess.run(['pcdl_make_simularium', s_path_2d, '--physiboss', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/timeseries.simularium')
+        assert o_result.returncode == 0
+
+    def test_pcdl_make_simularium_timeseries_settingxmlfalse_attribute_one(self):
+        o_result = subprocess.run(['pcdl_make_simularium', s_path_2d, 'default_fusion_rates', '--settingxml', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/timeseries.simularium')
+        assert o_result.returncode == 0
+
+    def test_pcdl_make_simularium_timeseries_settingxmlnone_attribute_one(self):
+        o_result = subprocess.run(['pcdl_make_simularium', s_path_2d, 'default_fusion_rates', '--settingxml', 'none'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/timeseries.simularium')
+        assert o_result.returncode == 0
+
+    def test_pcdl_make_simularium_timeseries_attribute_many(self):
+        o_result = subprocess.run(['pcdl_make_simularium', s_path_2d, 'current_phase', 'cell_type', '--trajectory_title', 'zeitreihe', '--scale_factor', '1.0'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/zeitreihe.simularium')
+        assert o_result.returncode == 0
+
+
 #######################################
 # substrate and cell agenat test code #
 #######################################

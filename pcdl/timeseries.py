@@ -2053,6 +2053,11 @@ class TimeSeries:
         )
 
         # transform data and save trajectorydata object to simularium file
-        sim.TrajectoryConverter(o_sim).save(trajectory_title)
+        s_save = self.path + '/' + trajectory_title
+        s_pathfile = s_save + '.simularium'
+        sim.TrajectoryConverter(o_sim).save(s_save)
         if self.verbose:
             print(f'simularium viewer at: https://simularium.allencell.org/')
+
+        # return error code
+        return s_pathfile

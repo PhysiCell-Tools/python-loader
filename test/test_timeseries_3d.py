@@ -946,3 +946,26 @@ class TestTimeSeriesSpatialData(object):
               (lo_sdmcds_output == lo_sdmcds_memory) and \
               (str(type(lo_sdmcds_output[8])) == "<class 'spatialdata._core.spatialdata.SpatialData'>")
 
+
+## simularium time series related functions ##
+class TestTimeSeriesSimularium(object):
+    ''' test for pcdl.TimeSeries class. '''
+
+    ## get_simularium command ##
+    def test_mcdsts_get_simularium_default(self):
+        import simulariumio as sim
+        mcdsts = pcdl.TimeSeries(s_path_3d, verbose=False)
+        s_pathfile = mcdsts.make_simularium(focus_cat=['cell_type','current_phase'], trajectory_title='timeseries', scale_factor=None, camera_defaults=None, model_meta_data=None)
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+              (s_pathfile.endswith('/pcdl/output_3d/timeseries.simularium')) and \
+              (os.path.exists(s_pathfile))
+        os.remove(s_pathfile)
+
+    def test_mcdsts_get_simularium_nondefault(self):
+        import simulariumio as sim
+        mcdsts = pcdl.TimeSeries(s_path_3d, verbose=False)
+        s_pathfile = mcdsts.make_simularium(focus_cat=['current_phase', 'dead'], trajectory_title='zeitreihe', scale_factor=0.1, camera_defaults=sim.CameraData(), model_meta_data=sim.ModelMetaData())
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+              (s_pathfile.endswith('/pcdl/output_3d/zeitreihe.simularium')) and \
+              (os.path.exists(s_pathfile))
+        os.remove(s_pathfile)

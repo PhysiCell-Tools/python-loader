@@ -2087,7 +2087,7 @@ def make_simularium():
     else:
         s_path = '/'.join(s_pathfile.split('/')[:-1])
     if not os.path.exists(s_pathfile):
-        sys.exit(f'Error @ pcdl_make_cell_vtk : {s_pathfile} path does not look like a physicell output directory ({s_path}/initial.xml is missing).')
+        sys.exit(f'Error @ pcdl_simularium : {s_pathfile} path does not look like a physicell output directory ({s_path}/initial.xml is missing).')
 
     # custom_data_type
     d_vartype = {}
@@ -2098,7 +2098,7 @@ def make_simularium():
         elif s_type in {'float'}: o_type = float
         elif s_type in {'str'}: o_type = str
         else:
-            sys.exit(f'Error @ pcdl_make_cell_vtk : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.')
+            sys.exit(f'Error @ pcdl_simularium : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.')
         d_vartype.update({s_var : o_type})
 
     # run

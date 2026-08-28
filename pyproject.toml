@@ -117,6 +117,7 @@ full = [
     "neuroglancer",
     "scikit-image>=0.24.0",
     "shapely>=2.0.1",  # spatialdata 0.7.3 compatible
+    "simulariumio",
     "spatialdata>=0.7.3",
 ]
 

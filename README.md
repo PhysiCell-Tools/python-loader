@@ -16,14 +16,15 @@ The pcdl python3 library maintains four branches:
 + **Branch version 1** is the original PhysiCell-Tools/python-loader code.
 + **Branch version 2** will be strictly compatible with the original PhysiCell-Tools/python-loader code, although pip installable.
 + **Branch version 3** might break with old habits, although tries to be as much downward compatible as possible.
-  The aim of the v3 branch is to get a very lean and agile python3 physicell output interface for the ones coming from the python3 world.
+  The aim of the v3 branch was to get a very lean and agile python3 physicell output interface for the ones coming from the python3 world.
 + Finally, **Branch version 4** reimplemented the backend in a more python3, less C++ like manner.
 
 
 ## Header:
 
 + Language: python [>= 3.11](https://devguide.python.org/versions/)
-+ Library dependencies: anndata, bioio, geopandas, matplotlib, networkx, neuroglancer, numpy, pandas, (requests), scikit-image, scipy, shapely, spatialdata, vtk
++ Library core dependencies: matplotlib, numpy, pandas, scipy
++ Library optional dependencies: anndata, bioio, geopandas, networkx, neuroglancer, requests, scikit-image, shapely, simulariumio, spatialdata, vtk
 + Date of origin original PhysiCell-Tools python-loader: 2019-09-02
 + Date of origin pcdl fork: 2022-08-30
 + Doi: https://doi.org/10.5281/ZENODO.8176399
@@ -131,8 +132,13 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 
 ## Release Notes:
 
++ branch v4: active feature development, bug fixes, and security maintenance.
+
++ version 4.1.9 (2026-08-28): elmbeech/physicelldataloader
+    + new TimeSeries **make_simularium** and **pcdl_make_simularium** function. special thanks to Randy Heiland!
+
 + version 4.1.8 (2026-08-26): elmbeech/physicelldataloader
-    + branch v4 compatible with bioconda and galaxy.
+    + branch v4 compatible with bioconda and galaxy. special thanks to Björn Grüning!
 
 + version 4.1.7 (2026-08-21): elmbeech/physicelldataloader
     + compatible with pandas v3.0.0.
@@ -144,9 +150,9 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
     + bugfix library dependencies and library versions.
 
 + version 4.1.4 (2026-04-04): elmbeech/physicelldataloader
-    + pyMCDSts **mcdsts.make_contour** extrema parameter is replaced by vmin and vmax to be compatible with mcds.make\_contour and plt.contour.
+    + TimeSeries **mcdsts.make_contour** extrema parameter is replaced by vmin and vmax to be compatible with mcds.make\_contour and plt.contour.
     + **make_cell_vtk** and **make_conc_vtk** now offer an ext parameter, allowing to manually specify the exact file extension. special thanks to Danyon Gedris!
-    + new **make_muspan** TimeStep class and TimeSeris class function and **pcdl_get_muspan** command line command. special thanks to Joshua Moore and Joshua Bull!
+    + new **make_muspan** TimeStep class and TimeSeries class function and **pcdl_get_muspan** command line command. special thanks to Joshua Moore and Joshua Bull!
 
 + version 4.1.3 (2026-03-21): elmbeech/physicelldataloader
     + new **pcdl.pccmap** color map. this is an adaptation of the physicell pathology paint by number color map.
@@ -160,7 +166,7 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
     + reduced memory footprint.
 
 + version 4.1.0 (2025-12-31): elmbeech/physicelldataloader
-    + new **get_spatialdata** TimeStep class and TimeSeris class function and **pcdl_get_spatialdata** command line command. special thanks to Luca Marconato!
+    + new **get_spatialdata** TimeStep class and TimeSeries class function and **pcdl_get_spatialdata** command line command. special thanks to Luca Marconato!
     + with this release, pcdl officially became an [scverse ecosystem](https://scverse.org/packages/#ecosystem) package.
 
 + version 4.0.5 (2025-10-22): elmbeech/physicelldataloader
@@ -173,7 +179,7 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
     + command line commands now return **error code 0** if the command runs successfully.
 
 + version 4.0.3 (2025-07-20): elmbeech/physicelldataloader
-    + TimeStep and TimeSeris **plot_contour**, **plot_scatter**, and **plot_timeseries** handle now **kwargs** arguments.
+    + TimeStep and TimeSeries **plot_contour**, **plot_scatter**, and **plot_timeseries** handle now **kwargs** arguments.
     + minor bugfixes.
 
 + version 4.0.2 (2025-06-29): elmbeech/physicelldataloader
@@ -198,6 +204,9 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
     + new **pcdl_get_cell_attribute_list** function, to retrieve a list of all tracked cell attribute labels.
     + new **render_neuroglancer** function, to render ome tiff image into neuroglancer.
     + new **pcdl_render_neuroglancer** function, to render ome tiff images into neuroglancer.
+
+
++ branch v3: end-of-life reached.
 
 + version 3.3.8 (2025-07-23): elmbeech/physicelldataloader
     + command line commands now return **error code 0** if the command runs successfully.
@@ -405,10 +414,16 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
     + the underling [mcds object data dictionary structure](https://github.com/elmbeech/physicelldataloader/tree/master/man/img/physicelldataloader_data_dictionary_v3.0.0.png) has changed.
     + [pytest](https://en.wikipedia.org/wiki/Pytest) unit tests exist now for all pyMCDS and pyMCDSts functions.
 
+
++ branch v2: end-of-life reached.
+
 + version 2.0.3 (2023-06-16): elmbeech/physicelldataloader pypa odyssey is coming to an end.
 + version 2.0.2 (2023-01-06): elmbeech/physicelldataloader reset patch voxel spacing bugfix, so that branch2 is full compatible with branch1 again. use branch3 for a bugfixed version!
 + version 2.0.1 (2022-11-08): elmbeech/physicelldataloader beta release patch voxel spacing bugfix.
 + version 2.0.0 (2022-08-30): elmbeech/physicelldataloader pip installable release, derived from and compatible with PhysiCell-Tools/python-loader release 1.1.0 (2022-07-20).
+
+
++ branch v1: end-of-life reached.
 
 + version 1.1.1 (2022-07-01): elmbeech/physicelldataloader deprecated np.float replaced with np.float64.
 + version 1.1.0 (2022-05-09): Physicell-Tools/python-loader release compatible with pre-v1.10.x of PhysiCell.
