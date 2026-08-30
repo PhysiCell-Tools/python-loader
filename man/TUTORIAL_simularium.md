@@ -47,7 +47,7 @@ help(mcdsts.make_simularium())
 ### &#x2728; simularium viewer
 
 1. Open the simularium viewer web page: https://simularium.allencell.org/
-2. On the top right corner, click the "Load models" dropdown menu and choose "Simularium file".
+2. Near the top right corner, click the "Load models" dropdown menu and choose "Simularium file".
 3. In the popup window choose "From your device" "Select File".
 4. Select the simularium file and click "Open".
 5. Click "Load".
