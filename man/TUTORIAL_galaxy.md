@@ -44,9 +44,9 @@ Special thanks to Björn Grüning, who helped me to port pcdl into Galaxy!
 2. Optionally, log into your user account. Create one if you do not already have one.
 3. Upload or generate PhysiCell output as described above.
 4. Near the top left corner, click "Tools".
-5. Near the left-side top corner, in the "Tools" serach bar type "pcdl".
-6. Chosse one of the pcdl_ tools (e.g. pcdl\_get\_version).
-7. Mouse drag and drop the uploaded or generated PhysiCell output data collecton in the left-side history panel into the "essential:"  "data collection" field in the middle panel.
+5. Near the left-side top corner, in the "Tools" search bar, type "pcdl".
+6. Choose one of the pcdl_ tools (e.g. pcdl\_get\_version).
+7. Mouse drag and drop the uploaded or generated PhysiCell output data collection in the left-side history panel into the "essential:"  "data collection" field in the middle panel.
 8. Optionally, tweak the "essential" and "advanced:" parameters.
 9. Click "Run Tool".
 10. After a while, the result file(s) should appear in the left-side history panel.
