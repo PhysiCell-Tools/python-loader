@@ -124,24 +124,25 @@ full = [
 
 [project.scripts]
 # special thanks to Miguel Ponce-de-Leon who introduced me to entry point scripts!
+# initialize
 # metadata
 pcdl_get_version = "pcdl.commandline:get_version"
 pcdl_get_unit_dict = "pcdl.commandline:get_unit_dict"
 # substrate
 pcdl_get_substrate_list = "pcdl.commandline:get_substrate_list"
-pcdl_get_conc_attribute = "pcdl.commandline:get_conc_attribute"
 pcdl_get_conc_df = "pcdl.commandline:get_conc_df"
+pcdl_get_conc_attribute = "pcdl.commandline:get_conc_attribute"
 pcdl_plot_contour = "pcdl.commandline:plot_contour"
 pcdl_make_conc_vtk = "pcdl.commandline:make_conc_vtk"
 # cell agent
 pcdl_get_celltype_list = "pcdl.commandline:get_celltype_list"
-pcdl_get_cell_attribute_list = "pcdl.commandline:get_cell_attribute_list"
-pcdl_get_cell_attribute = "pcdl.commandline:get_cell_attribute"
 pcdl_get_cell_df = "pcdl.commandline:get_cell_df"
+pcdl_get_cell_attribute = "pcdl.commandline:get_cell_attribute"
+pcdl_get_cell_attribute_list = "pcdl.commandline:get_cell_attribute_list"
 pcdl_get_anndata = "pcdl.commandline:get_anndata"
-pcdl_make_graph_gml = "pcdl.commandline:make_graph_gml"
 pcdl_plot_scatter = "pcdl.commandline:plot_scatter"
 pcdl_make_cell_vtk = "pcdl.commandline:make_cell_vtk"
+pcdl_make_graph_gml = "pcdl.commandline:make_graph_gml"
 pcdl_make_simularium = "pcdl.commandline:make_simularium"
 # substrate and cell agent
 pcdl_get_muspan = "pcdl.commandline:get_muspan"

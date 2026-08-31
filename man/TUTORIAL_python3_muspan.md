@@ -21,9 +21,9 @@ import muspan as ms
 
 mcdsts = pcdl.TimeSeries('output/')
 do_domain = mcdsts.get_muspan()  # translate the mcds time seris into a dictionary of muspan domain objects.
-ls_domain =  sorted(do_domain.keys())  # generate an orderes list of domain names
+ls_domain = sorted(do_domain.keys())  # generate an orderes list of domain names
 
-print(ls_domain)   # print a list of domain names
+print(ls_domain)  # print a list of domain names
 print(do_domain[ls_domain[0]])  # take a look at the first domain in the ls_domain list.
 ```
 

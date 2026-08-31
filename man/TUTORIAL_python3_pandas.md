@@ -19,8 +19,8 @@ I recommend working through the pandas cookbook from Julia Evens:
 The pandas library as such is very well documented.
 Please spend some time to familiarize yourself with the homepage, the users guides, and the API reference.
 + https://pandas.pydata.org/
-+ http://pandas.pydata.org/pandas-docs/stable/user_guide/index.html
-+ http://pandas.pydata.org/pandas-docs/stable/reference/index.html
++ https://pandas.pydata.org/pandas-docs/stable/user_guide/index.html
++ https://pandas.pydata.org/pandas-docs/stable/reference/index.html
 
 
 ## Dump pcdl data construct from the command line into a csv file

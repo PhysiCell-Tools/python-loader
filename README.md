@@ -48,15 +48,16 @@ Basics Tutorials:
 1. [pcdl from the command line](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_commandline.md)
 
 Extras tutorials python3 language:
+
++ [pcdl and python3 and graphs](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_graph.md)
 + [pcdl and python3 and json](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_json.md)
++ [pcdl and python3 and matplotlib](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_matplotlib.md)
++ [pcdl and python3 and muspan](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_muspan.md)
++ [pcdl and python3 and napari](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_napari.md)
++ [pcdl and python3 and ome.tiff, tiff, png, and jpeg](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_ometiff.md)
 + [pcdl and python3 and pandas](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_pandas.md)
 + [pcdl and python3 and scanpy and squidpy](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_scverse.md)
-+ [pcdl and python3 and muspan](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_muspan.md)
-+ [pcdl and python3 and graphs](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_graph.md)
-+ [pcdl and python3 and matplotlib](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_matplotlib.md)
 + [pcdl and python3 and vtk](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_vtk.md)
-+ [pcdl and python3 and ome.tiff, tiff, png, and jpeg](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_ometiff.md)
-+ [pcdl and python3 and napari](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_napari.md)
 
 Extras tutorials for other languages than python3:
 
@@ -67,10 +68,13 @@ Extras tutorials for other languages than python3:
 Extras tutorials for GUI software:
 
 + [pcdl and paraview](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_paraview.md)
+
 + [pcdl and blender](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_blender.md)
-+ [pcdl and napari](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_napari.md)
 + [pcdl and fiji imagej, icy, qupath](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_fijiimagej.md)
++ [pcdl and galaxy](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_galaxy.md)
++ [pcdl and napari](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_napari.md)
 + [pcdl and neuroglancer](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_neuroglancer.md)
++ [pcdl and simularium](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_simularium.md)
 
 Slides:
 
@@ -127,6 +131,7 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 
 ## Road Map:
 
++ downcast, to\file, and read function.
 + evt generate lineage tree graph output files.
 
 

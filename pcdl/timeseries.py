@@ -421,7 +421,7 @@ class TimeSeries:
         return self.l_mcds
 
 
-    ## MICROENVIRONMENT RELATED FUNCTIONS ##
+    ## SUBSTRATE RELATED FUNCTIONS ##
 
     def get_conc_df(self, values=1, drop=set(), keep=set(), collapse=True):
         """
@@ -918,6 +918,160 @@ class TimeSeries:
         return dl_variable_range
 
 
+    def get_anndata(self, values=1, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=True):
+        """
+        input:
+            values: integer; default is 1
+                minimal number of values a variable has to have to be outputted.
+                variables that have only 1 state carry no information.
+                None is a state too.
+
+            drop: set of strings; default is an empty set
+                set of column labels to be dropped for the dataframe.
+                don't worry: essential columns like ID, coordinates
+                and time will never be dropped.
+                Attention: when the keep parameter is given, then
+                the drop parameter has to be an empty set!
+
+            keep: set of strings; default is an empty set
+                set of column labels to be kept in the dataframe.
+                don't worry: essential columns like ID, coordinates
+                and time will always be kept.
+
+            scale: string; default 'maxabs'
+                specify how the data should be scaled.
+                possible values are None, maxabs, minmax, std.
+                for more input, check out: help(pcdl.scaler)
+
+            collapse: boole; default True
+                should all mcds time steps from the time series be collapsed
+                into one single anndata object, or a list of anndata objects
+                for each time step?
+
+            keep_mcds: boole; default True
+                should the loaded original mcds be kept in memory
+                after transformation?
+
+        output:
+            annmcds or self.l_annmcds: anndata object or list of anndata objects.
+                what is returned depends on the collapse setting.
+
+        description:
+            function to transform mcds time steps into one or many
+            anndata objects for downstream analysis.
+        """
+        # load optional dependency
+        ad = optional_import('anndata', s_caller='TimeSeries.get_anndata')
+
+        # initialize vaiable
+        l_annmcds = []
+        df_anncount = None
+        df_annobs = None
+        ar_annobsm = None
+
+        # variable triage
+        if (values < 2):
+            ls_column = list(self.l_mcds[0].get_cell_df(drop=drop, keep=keep).columns)
+        else:
+            ls_column = sorted(es_coor_cell.difference({'ID'}))
+            ls_column.extend(sorted(self.get_cell_attribute(values=values, drop=drop, keep=keep, allvalues=False).keys()))
+
+        # package collapse
+        if collapse:
+
+            # warning
+            if self.verbose:
+                print('Warning @ mcdsts.get_anndata : only df_cell data, but not graph data, can be collapsed.')
+
+            # extract
+            df_cell = self.get_cell_df(values=values, drop=drop, keep=keep, collapse=True)
+            df_count, df_obs, d_obsm, d_obsp, d_uns = _anndextract(
+                df_cell=df_cell,
+                scale = scale,
+                #graph_attached = {},
+                #graph_neighbor = {},
+                #graph_spring = {},
+                #graph_method = s_physicellv,
+            )
+
+            # fuse to anndata object
+            ann_mcdsts = ad.AnnData(
+                X = df_count,
+                obs = df_obs,
+                obsm = d_obsm,
+                #obsp = d_obsp,  # nop (graph)
+                #uns = d_uns,  # nop (graph)
+            )
+
+            # mcds
+            if not keep_mcds:
+                self.l_mcds = []
+
+            # output
+            return ann_mcdsts
+
+        # pack not collapsed
+        else:
+            # processing
+            lann_mcds = []
+            i_mcds = len(self.l_mcds)
+            for i in range(i_mcds):
+                # fetch mcds
+                if keep_mcds:
+                    mcds = self.l_mcds[i]
+                else:
+                    mcds = self.l_mcds.pop(0)
+
+                # extract physicell version
+                s_physicellv = mcds.get_physicell_version(),
+
+                # extract time and dataframes
+                if self.verbose:
+                    print(f'processing: {i+1}/{i_mcds} {mcds.get_time()}[min] mcds into anndata obj.')
+                df_cell = mcds.get_cell_df()
+                df_cell = df_cell.loc[:,ls_column]
+
+                # extract
+                df_count, df_obs, d_obsm, d_obsp, d_uns = _anndextract(
+                    df_cell=df_cell,
+                    scale = scale,
+                    graph_attached = mcds.get_attached_graph_dict(),
+                    graph_neighbor = mcds.get_neighbor_graph_dict(),
+                    graph_spring = mcds.get_spring_graph_dict(),
+                    graph_method = s_physicellv,
+                )
+
+                # annmcds
+                ann_mcds = ad.AnnData(
+                    X = df_count,
+                    obs = df_obs,
+                    obsm = d_obsm,
+                    obsp = d_obsp,
+                    uns = d_uns,
+                )
+                lann_mcds.append(ann_mcds)
+
+            # output
+            self.l_annmcds = lann_mcds
+            return self.l_annmcds
+
+
+    def get_annmcds_list(self):
+        """
+        input:
+            self: TimeSeries class instance.
+
+        output:
+            self.l_annmcds: list of chronologically ordered anndata mcds objects.
+                watch out, this is a pointer to the
+                self.l_annmcds list of anndata mcds objects, not a copy of self.l_annmcds!
+
+        description:
+            function returns a binding to the self.l_annmcds list of anndata mcds objects.
+        """
+        return self.l_annmcds
+
+
     def plot_scatter(self, focus='cell_type', cat_drop=set(), cat_keep=set(), z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title='', grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=1.0, figsizepx=None, directory=None, ext='jpeg', figbgcolor=None, **kwargs):
         """
         input:
@@ -1093,147 +1247,330 @@ class TimeSeries:
         return ls_vtkpathfile
 
 
-    ## OME TIFF RELATED FUNCTIONS ##
-
-    def make_ome_tiff(self, cell_attribute='ID', conc_cutoff={}, focus=None, file=True, collapse=True):
+    def make_graph_gml(self, graph_type, edge_attribute=True, node_attribute=[]):
         """
         input:
-            cell_attribute: strings; default is 'ID', which will result in a
-                cell segmentation mask.
-                column name within the cell dataframe.
-                the column data type has to be numeric (bool, int, float)
-                and cannot be string.
-                the result will be stored as 32 bit float.
+            self: TimeSeries class instance.
 
-            conc_cutoff: dictionary string to real; default is an empty dictionary.
-                if a contour from a substrate not should be cut by greater
-                than zero (shifted to integer 1), another cutoff value can be specified here.
+            graph_type: string
+                to specify which physicell output data should be processed.
+                attached, touch: processes mcds.get_attached_graph_dict dictionary.
+                neighbor: processes mcds.get_neighbor_graph_dict dictionary.
+                spring: processes mcds.get_spring_graph_dict dictionary.
 
-            focus: set of strings; default is a None
-                set of substrate and cell_type names to specify what will be
-                translated into ome tiff format.
-                if None, all substrates and cell types will be processed.
+            edge_attribute: boolean; default True
+                specifies if the spatial Euclidean distance is used for
+                edge attribute, to generate a weighted graph.
 
-            file: boolean; default True
-                if True, an ome tiff file is the output.
-                if False, a numpy array with shape tczyx is the output.
-
-            collapse: boole; default True
-                should all mcds time steps from the time series be collapsed
-                into one ome tiff file (numpy array),
-                or an ome tiff file (numpy array) for each time step?
+            node_attribute: list of strings; default is empty list
+                list of mcds.get_cell_df dataframe columns, used for
+                node attributes.
 
         output:
-            a_tczyx_img: numpy array or ome tiff file.
-
+            gml file for each time step.
+                path and filenames are printed to the standard output.
 
         description:
-            function to transform chosen mcdsts output into an 1[um] spaced
-            tczyx (time, channel, z-axis, y-axis, x-axis) ome tiff file or numpy array,
-            one substrate or cell_type per channel.
-            a ome tiff file is more or less:
-            a numpy array, containing the image information
-            and a xml, containing the microscopy metadata information,
-            like the channel labels.
-            the ome tiff file format can for example be read by the napari
-            or fiji (imagej) software.
+            function to generate graph files in the gml graph modelling language
+            standard format.
 
-            https://napari.org/stable/
-            https://fiji.sc/
+            gml was the outcome of an initiative that started at
+            the international symposium on graph drawing 1995 in Passau
+            and ended at Graph Drawing 1996 in Berkeley. the networkx python
+            and igraph C and python libraries for graph analysis are
+            gml compatible and can as such read and write this file format.
+
+            https://en.wikipedia.org/wiki/Graph_Modelling_Language
+            https://github.com/elmbeech/physicelldataloader/blob/master/man/publication/himsolt1996gml_a_portable_graph_file_format.pdf
+            https://networkx.org/
+            https://igraph.org/
         """
-        # for each time step
-        l_tczyx_img = []
+        # processing
+        ls_pathfile = []
         for mcds in self.get_mcds_list():
-            # processing
-            b_file = True # 10
-            if (not file and not collapse) or (not file and collapse) or (file and collapse):  # 00, 01, 11
-                b_file = False
-            o_tczyx_img = mcds.make_ome_tiff(
-                cell_attribute = cell_attribute,
-                conc_cutoff = conc_cutoff,
-                focus = focus,
-                file = b_file
+            s_pathfile = mcds.make_graph_gml(
+                graph_type = graph_type,
+                edge_attribute = edge_attribute,
+                node_attribute = node_attribute,
             )
-            l_tczyx_img.append(o_tczyx_img)
+            ls_pathfile.append(s_pathfile)
 
-        # handle channels
-        ls_substrate = mcds.get_substrate_list()
-        ls_celltype = mcds.get_celltype_list()
+        # outout
+        return ls_pathfile
 
-        if not (focus is None):
-            ls_substrate = [s_substrate for s_substrate in ls_substrate if s_substrate in set(focus)]
-            ls_celltype = [s_celltype for s_celltype in ls_celltype if s_celltype in set(focus)]
-            if (set(focus) != set(ls_substrate).union(set(ls_celltype))):
-                sys.exit(f'Error : {focus} not found in {ls_substrate} {ls_celltype}')
 
-        # output 00 list of numpy arrays
-        if (not file and not collapse):  # 00
-            if self.verbose:
-                print(f'la_tczyx_img shape: {len(l_tczyx_img)} * {l_tczyx_img[0].shape}')
-            return l_tczyx_img
+    def make_simularium(self, focus_cat=['cell_type','current_phase'],  trajectory_title='timeseries', scale_factor=None, camera_defaults=None, model_meta_data=None):
+        """
+        input:
+            focus_cat: list of 1 or 2 string; default is ['cell_type','current_phase']
+                specify 1 or 2 categorical column labels, to be found
+                in mcdsts.get_cell_df().
 
-        # output 01 numpy array
-        elif (not file and collapse):  # 01
-            # numpy array
-            a_tczyx_img = np.array(l_tczyx_img)
-            if self.verbose:
-                print('a_tczyx_img shape:', a_tczyx_img.shape)
-            return a_tczyx_img
+            trajectory_title: string; default 'timeseries'
+                the trajectory_title will be used as
+                <trajectory_title>.simularium file name and displayed
+                in the simulation.
 
-        # output 10 list of pathfile strings
-        elif (file and not collapse):  # 10
-            return l_tczyx_img
+            scale_factor: float number; default is None
+                A multiplier for the scene, use if visualization is
+                too large or small. If None is provided, one will
+                be calculated based on the position data.
+                bue 20260822: does not seem to work in current simularium 1.13.0.
 
-        # output 11 ometiff file
-        elif (file and collapse):  # 11
-            # load optional dependency
-            OmeTiffWriter = optional_import('bioio.writers', s_attr='OmeTiffWriter', s_pip='bioio', s_caller='TimeSeries.make_ome_tiff')
-            bioio_base = optional_import('bioio_base', s_pip='bioio', s_caller='TimeSeries.make_ome_tiff')
+            camera_defaults: simulariumio.CameraData object; default is None
+                camera's initial settings which it also returns to
+                when reset.
 
-            # numpy array
-            a_tczyx_img = np.array(l_tczyx_img)
-            if self.verbose:
-                print('a_tczyx_img shape:', a_tczyx_img.shape)
+            model_meta_data: simulariumio.ModelMetaData; default is None
+                Metadata for the model that produced this
+                trajectory.
 
-            # generate filename
-            s_channel = ''
-            for s_substrate in ls_substrate:
-                try:
-                    r_value = conc_cutoff[s_substrate]
-                    s_channel += f'_{s_substrate}{r_value}'
-                except KeyError:
-                    s_channel += f'_{s_substrate}'
-            for s_celltype in ls_celltype:
-                s_channel += f'_{s_celltype}'
-            if len(ls_celltype) > 0:
-                s_channel += f'_{cell_attribute}'
-            s_tifffile = f"timeseries{s_channel.replace(' ','_')}.ome.tiff"
-            if (len(s_tifffile) > 255):
-                print(f"Warning: filename {len(s_tifffile)} > 255 character.")
-                s_tifffile = 'timeseries_channels.ome.tiff'
-                print(f"file name adjusted to {s_tifffile}.")
-            s_tiffpathfile = self.path + '/' + s_tifffile
+        output:
+            <trajectory_title>.simularium file
 
-            # save to file
-            OmeTiffWriter.save(
-                a_tczyx_img,
-                s_tiffpathfile,
-                dim_order = 'TCZYX',
-                #ome_xml=x_img,
-                channel_names = ls_substrate + ls_celltype,
-                image_names = [f'timeseries_{cell_attribute}'],
-                physical_pixel_sizes = bioio_base.types.PhysicalPixelSizes(mcds.get_voxel_spacing()[2], 1.0, 1.0),  # z,y,x [um]
-                #channel_colors=,
-                #fs_kwargs={},
+        description:
+            function returns a simularium trajectory file that can be run with the
+            online Simularium Viewer.
+            + https://simularium.allencell.org/
+        """
+        # library
+        sim = optional_import(s_module='simulariumio', s_caller='TimeSeries.make_simularium')
+
+        # handle input
+        model_meta_data=sim.ModelMetaData() if model_meta_data is None else model_meta_data
+        camera_defaults=sim.CameraData() if camera_defaults is None else camera_defaults
+
+        # here we go
+        if self.verbose:
+            print(f'generating {trajectory_title}.simularium file ...')
+
+        # extract box from mcdsts
+        ltr_domain = self.get_mcds_list()[0].get_mesh_mnp_range()
+        lr_space = self.get_mcds_list()[0].get_mesh_spacing()
+        lr_box = np.array([
+            ltr_domain[0][1] - ltr_domain[0][0],
+            ltr_domain[1][1] - ltr_domain[1][0],
+            ltr_domain[2][1] - ltr_domain[2][0],
+        ])
+        lr_box[0] = lr_box[0] if lr_box[0] != 0.0 else lr_space[0]
+        lr_box[1] = lr_box[1] if lr_box[1] != 0.0 else lr_space[1]
+        lr_box[2] = lr_box[2] if lr_box[2] != 0.0 else lr_space[2]
+        ar_box = np.array(lr_box)
+
+        # extract cell dataframe from mcdsts
+        df_cell = self.get_cell_df()
+
+        # handle agent annotation
+        se_type = df_cell.loc[:, focus_cat].astype(str).agg('#'.join, axis=1)
+
+        # extract units from mcdsts
+        ds_unit = self.get_mcds_list()[0].get_unit_dict()
+
+        # generate simularium dataframe
+        with pd.option_context('future.infer_string', False):
+            df_sim = pd.DataFrame({
+                'time': df_cell.loc[:, 'time'].to_numpy(dtype=float),
+                'unique_id': df_cell.loc[:, 'ID'].to_numpy(dtype=int),
+                'type': se_type.to_numpy(dtype=object),
+                'positionX': df_cell.loc[:, 'position_x'].to_numpy(dtype=float),
+                'positionY': df_cell.loc[:, 'position_y'].to_numpy(dtype=float),
+                'positionZ': df_cell.loc[:, 'position_z'].to_numpy(dtype=float),
+                'radius': df_cell.loc[:, 'radius'].to_numpy(dtype=float),
+                'rotationX': np.zeros(df_cell.shape[0], dtype=float),
+                'rotationY': np.zeros(df_cell.shape[0], dtype=float),
+                'rotationZ': np.zeros(df_cell.shape[0], dtype=float),
+            })
+        df_sim.sort_values(['time', 'unique_id'], inplace=True)
+        # SimulariumIO 1.13.0 AgentData.from_dataframe expects traj.loc[0, ...]
+        # to select the whole trajectory, so all rows need the same index label.
+        df_sim.index = np.zeros(df_sim.shape[0], dtype=int)
+
+        # generate simmularium trajectorydata object
+        o_sim = sim.TrajectoryData(
+            meta_data = sim.MetaData(
+                box_size=ar_box,
+                camera_defaults=camera_defaults,
+                scale_factor=scale_factor,
+                trajectory_title=trajectory_title,
+                model_meta_data=model_meta_data,
+            ),
+            agent_data = sim.AgentData.from_dataframe(df_sim),
+            time_units = sim.UnitData(ds_unit['time']),
+            spatial_units = sim.UnitData(ds_unit['spatial_unit']),
+            #plots=,
+        )
+
+        # transform data and save trajectorydata object to simularium file
+        s_save = self.path + '/' + trajectory_title
+        s_pathfile = s_save + '.simularium'
+        sim.TrajectoryConverter(o_sim).save(s_save)
+        if self.verbose:
+            print(f'simularium viewer at: https://simularium.allencell.org/')
+
+        # return error code
+        return s_pathfile
+
+
+    ## SUBSTRATE AND CELL RELATED FUNCTIONS ##
+
+    def get_muspan(self, z_slice=None, values=1, drop=set(), keep=set()):
+        """
+        input:
+            z_slice: floating point number; default is None
+                z-axis position to slice a 2D xy-plain out of the
+                3D mesh. if None the whole 3D mesh will be returned.
+
+            values: integer; default is 1
+                minimal number of values a variable has to have to be outputted.
+                variables that have only 1 state carry no information.
+                None is a state too.
+
+            drop: set of strings; default is an empty set
+                set of column labels to be dropped for the dataframe.
+                don't worry: essential columns like ID, coordinates
+                and time will never be dropped.
+                Attention: when the keep parameter is given, then
+                the drop parameter has to be an empty set!
+
+            keep: set of strings; default is an empty set
+                set of column labels to be kept in the dataframe.
+                set values=1 to be sure that all variables are kept.
+                don't worry: essential columns like ID, coordinates
+                and time will always be kept.
+
+        output:
+            do_domain:  dictionary of muspa domains, one for each time step z-layer.
+
+        description:
+            function returns a dictionary of muspa domains, containg a
+            cell and subs collection with disrcete and continuous labels
+            and all the graph as networks.
+            + https://www.muspan.co.uk
+            + https://docs.muspan.co.uk/latest/Documentation.html
+        """
+        # variable triage
+        es_keep = set(self.get_cell_attribute(values=values, drop=drop, keep=keep, allvalues=False).keys())
+
+        # processing
+        do_domain = {}
+        for mcds in self.get_mcds_list():
+            do_domain.update(
+                mcds.get_muspan(
+                    z_slice = z_slice,
+                    #values = 1,
+                    #drop = set(),
+                    keep = es_keep,
+                )
             )
-            return s_tiffpathfile
 
-        # error case
-        else:
-            sys.exit(f'Error @ make_ome_tiff : {file} {collapse} strange file collapse combination.')
+        # output
+        return do_domain
 
 
-    ## TIME SERIES RELATED FUNCTIONS ##
+    def get_spatialdata(self, images={'subs'}, labels=set(), points={'subs'}, shapes={'cell'}, values=1, drop=set(), keep=set(), scale='maxabs', keep_mcds=True):
+        """
+        input:
+            images: set of string; default {'subs'}
+                specify if from the subs or cell dataset
+                a multichannel image should be generate.
+                so far, only the subs image element is implemented.
+
+            labels: set of strings; default is an empty set
+                specify if from the subs or cell dataset
+                a label element should be generated.
+                so far, neither subs nor cell label elements are implemented.
+
+            points: set of string; default {'subs'}
+                specify if from the subs or cell dataset
+                a points element should be generated.
+                both, subs and cell point elements, are implemented.
+
+            shapes: set of string; default {'cell'}
+                specify if from the subs or cell dataset
+                a shape element should be generated.
+                so far, only the cell shape element is implemented.
+
+            values: integer; default is 1
+                minimal number of values a variable has to have to be outputted.
+                variables that have only 1 state carry no information.
+                None is a state too.
+
+            drop: set of strings; default is an empty set
+                set of column labels to be dropped for the dataframe.
+                don't worry: essential columns like ID, coordinates
+                and time will never be dropped.
+                Attention: when the keep parameter is given, then
+                the drop parameter has to be an empty set!
+
+            keep: set of strings; default is an empty set
+                set of column labels to be kept in the dataframe.
+                don't worry: essential columns like ID, coordinates
+                and time will always be kept.
+
+            scale: string; default 'maxabs'
+                specify how the data should be scaled.
+                possible values are None, maxabs, minmax, std.
+                for more input, check out: help(pcdl.scaler)
+
+            keep_mcds: boole; default True
+                should the loaded original mcds be kept in memory
+                after transformation?
+
+        output:
+            self.l_sdmcds: list of spatialdata objects.
+
+        description:
+            function to transform mcds time steps into
+            spatialdata objects for downstream analysis.
+        """
+        # variable triage
+        es_keep = set(self.get_cell_attribute(values=values, drop=drop, keep=keep, allvalues=False).keys())
+
+        # processing
+        lsd_mcds = []
+        i_mcds = len(self.l_mcds)
+        for i in range(i_mcds):
+            # fetch mcds
+            if keep_mcds:
+                mcds = self.l_mcds[i]
+            else:
+                mcds = self.l_mcds.pop(0)
+
+            # extract time and dataframes
+            if self.verbose:
+                print(f'\nprocessing: {i+1}/{i_mcds} {mcds.get_time()}[min] mcds into spatialdata obj.')
+
+            # get spatialdata object
+            sd_mcds = mcds.get_spatialdata(
+                points = points,
+                shapes = shapes,
+                #values = 1,
+                #drop = set(),
+                keep = es_keep,
+                scale = scale,
+            )
+            lsd_mcds.append(sd_mcds)
+
+        # output
+        self.l_sdmcds = lsd_mcds
+        return self.l_sdmcds
+
+
+    def get_sdmcds_list(self):
+        """
+        input:
+            self: TimeSeries class instance.
+
+        output:
+            self.l_sdmcds: list of chronologically ordered spatialdata mcds objects.
+                watch out, this is a pointer to the
+                self.l_sdmcds list of spdata mcds objects, not a copy of self.l_sdmcds!
+
+        description:
+            function returns a binding to the self.l_sdmcds list of spdata mcds objects.
+        """
+        return self.l_sdmcds
+
 
     def plot_timeseries(self, focus_cat=None, focus_num=None, aggregate_num=np.nanmean, frame='cell', cat_drop=set(), cat_keep=set(), z_slice=None, logy=False, ylim=None, secondary_y=None, subplots=False, sharex=False, sharey=False, linestyle='-', linewidth=None, cmap=None, color=None, grid=True, legend=True, yunit=None, title=None, ax=None, figsizepx=[640, 480], ext=None, figbgcolor=None, **kwargs):
         """
@@ -1578,486 +1915,139 @@ class TimeSeries:
                 return fig
 
 
-    ## GRAPH RELATED FUNCTIONS ##
-
-    def make_graph_gml(self, graph_type, edge_attribute=True, node_attribute=[]):
+    def make_ome_tiff(self, cell_attribute='ID', conc_cutoff={}, focus=None, file=True, collapse=True):
         """
         input:
-            self: TimeSeries class instance.
+            cell_attribute: strings; default is 'ID', which will result in a
+                cell segmentation mask.
+                column name within the cell dataframe.
+                the column data type has to be numeric (bool, int, float)
+                and cannot be string.
+                the result will be stored as 32 bit float.
 
-            graph_type: string
-                to specify which physicell output data should be processed.
-                attached, touch: processes mcds.get_attached_graph_dict dictionary.
-                neighbor: processes mcds.get_neighbor_graph_dict dictionary.
-                spring: processes mcds.get_spring_graph_dict dictionary.
+            conc_cutoff: dictionary string to real; default is an empty dictionary.
+                if a contour from a substrate not should be cut by greater
+                than zero (shifted to integer 1), another cutoff value can be specified here.
 
-            edge_attribute: boolean; default True
-                specifies if the spatial Euclidean distance is used for
-                edge attribute, to generate a weighted graph.
+            focus: set of strings; default is a None
+                set of substrate and cell_type names to specify what will be
+                translated into ome tiff format.
+                if None, all substrates and cell types will be processed.
 
-            node_attribute: list of strings; default is empty list
-                list of mcds.get_cell_df dataframe columns, used for
-                node attributes.
-
-        output:
-            gml file for each time step.
-                path and filenames are printed to the standard output.
-
-        description:
-            function to generate graph files in the gml graph modelling language
-            standard format.
-
-            gml was the outcome of an initiative that started at
-            the international symposium on graph drawing 1995 in Passau
-            and ended at Graph Drawing 1996 in Berkeley. the networkx python
-            and igraph C and python libraries for graph analysis are
-            gml compatible and can as such read and write this file format.
-
-            https://en.wikipedia.org/wiki/Graph_Modelling_Language
-            https://github.com/elmbeech/physicelldataloader/blob/master/man/publication/himsolt1996gml_a_portable_graph_file_format.pdf
-            https://networkx.org/
-            https://igraph.org/
-        """
-        # processing
-        ls_pathfile = []
-        for mcds in self.get_mcds_list():
-            s_pathfile = mcds.make_graph_gml(
-                graph_type = graph_type,
-                edge_attribute = edge_attribute,
-                node_attribute = node_attribute,
-            )
-            ls_pathfile.append(s_pathfile)
-
-        # outout
-        return ls_pathfile
-
-
-    ## ANNDATA RELATED FUNCTIONS ##
-
-    def get_anndata(self, values=1, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=True):
-        """
-        input:
-            values: integer; default is 1
-                minimal number of values a variable has to have to be outputted.
-                variables that have only 1 state carry no information.
-                None is a state too.
-
-            drop: set of strings; default is an empty set
-                set of column labels to be dropped for the dataframe.
-                don't worry: essential columns like ID, coordinates
-                and time will never be dropped.
-                Attention: when the keep parameter is given, then
-                the drop parameter has to be an empty set!
-
-            keep: set of strings; default is an empty set
-                set of column labels to be kept in the dataframe.
-                don't worry: essential columns like ID, coordinates
-                and time will always be kept.
-
-            scale: string; default 'maxabs'
-                specify how the data should be scaled.
-                possible values are None, maxabs, minmax, std.
-                for more input, check out: help(pcdl.scaler)
+            file: boolean; default True
+                if True, an ome tiff file is the output.
+                if False, a numpy array with shape tczyx is the output.
 
             collapse: boole; default True
                 should all mcds time steps from the time series be collapsed
-                into one single anndata object, or a list of anndata objects
-                for each time step?
-
-            keep_mcds: boole; default True
-                should the loaded original mcds be kept in memory
-                after transformation?
+                into one ome tiff file (numpy array),
+                or an ome tiff file (numpy array) for each time step?
 
         output:
-            annmcds or self.l_annmcds: anndata object or list of anndata objects.
-                what is returned depends on the collapse setting.
+            a_tczyx_img: numpy array or ome tiff file.
+
 
         description:
-            function to transform mcds time steps into one or many
-            anndata objects for downstream analysis.
+            function to transform chosen mcdsts output into an 1[um] spaced
+            tczyx (time, channel, z-axis, y-axis, x-axis) ome tiff file or numpy array,
+            one substrate or cell_type per channel.
+            a ome tiff file is more or less:
+            a numpy array, containing the image information
+            and a xml, containing the microscopy metadata information,
+            like the channel labels.
+            the ome tiff file format can for example be read by the napari
+            or fiji (imagej) software.
+
+            https://napari.org/stable/
+            https://fiji.sc/
         """
-        # load optional dependency
-        ad = optional_import('anndata', s_caller='TimeSeries.get_anndata')
-
-        # initialize vaiable
-        l_annmcds = []
-        df_anncount = None
-        df_annobs = None
-        ar_annobsm = None
-
-        # variable triage
-        if (values < 2):
-            ls_column = list(self.l_mcds[0].get_cell_df(drop=drop, keep=keep).columns)
-        else:
-            ls_column = sorted(es_coor_cell.difference({'ID'}))
-            ls_column.extend(sorted(self.get_cell_attribute(values=values, drop=drop, keep=keep, allvalues=False).keys()))
-
-        # package collapse
-        if collapse:
-
-            # warning
-            if self.verbose:
-                print('Warning @ mcdsts.get_anndata : only df_cell data, but not graph data, can be collapsed.')
-
-            # extract
-            df_cell = self.get_cell_df(values=values, drop=drop, keep=keep, collapse=True)
-            df_count, df_obs, d_obsm, d_obsp, d_uns = _anndextract(
-                df_cell=df_cell,
-                scale = scale,
-                #graph_attached = {},
-                #graph_neighbor = {},
-                #graph_spring = {},
-                #graph_method = s_physicellv,
-            )
-
-            # fuse to anndata object
-            ann_mcdsts = ad.AnnData(
-                X = df_count,
-                obs = df_obs,
-                obsm = d_obsm,
-                #obsp = d_obsp,  # nop (graph)
-                #uns = d_uns,  # nop (graph)
-            )
-
-            # mcds
-            if not keep_mcds:
-                self.l_mcds = []
-
-            # output
-            return ann_mcdsts
-
-        # pack not collapsed
-        else:
-            # processing
-            lann_mcds = []
-            i_mcds = len(self.l_mcds)
-            for i in range(i_mcds):
-                # fetch mcds
-                if keep_mcds:
-                    mcds = self.l_mcds[i]
-                else:
-                    mcds = self.l_mcds.pop(0)
-
-                # extract physicell version
-                s_physicellv = mcds.get_physicell_version(),
-
-                # extract time and dataframes
-                if self.verbose:
-                    print(f'processing: {i+1}/{i_mcds} {mcds.get_time()}[min] mcds into anndata obj.')
-                df_cell = mcds.get_cell_df()
-                df_cell = df_cell.loc[:,ls_column]
-
-                # extract
-                df_count, df_obs, d_obsm, d_obsp, d_uns = _anndextract(
-                    df_cell=df_cell,
-                    scale = scale,
-                    graph_attached = mcds.get_attached_graph_dict(),
-                    graph_neighbor = mcds.get_neighbor_graph_dict(),
-                    graph_spring = mcds.get_spring_graph_dict(),
-                    graph_method = s_physicellv,
-                )
-
-                # annmcds
-                ann_mcds = ad.AnnData(
-                    X = df_count,
-                    obs = df_obs,
-                    obsm = d_obsm,
-                    obsp = d_obsp,
-                    uns = d_uns,
-                )
-                lann_mcds.append(ann_mcds)
-
-            # output
-            self.l_annmcds = lann_mcds
-            return self.l_annmcds
-
-    def get_annmcds_list(self):
-        """
-        input:
-            self: TimeSeries class instance.
-
-        output:
-            self.l_annmcds: list of chronologically ordered anndata mcds objects.
-                watch out, this is a pointer to the
-                self.l_annmcds list of anndata mcds objects, not a copy of self.l_annmcds!
-
-        description:
-            function returns a binding to the self.l_annmcds list of anndata mcds objects.
-        """
-        return self.l_annmcds
-
-
-    def get_spatialdata(self, images={'subs'}, labels=set(), points={'subs'}, shapes={'cell'}, values=1, drop=set(), keep=set(), scale='maxabs', keep_mcds=True):
-        """
-        input:
-            images: set of string; default {'subs'}
-                specify if from the subs or cell dataset
-                a multichannel image should be generate.
-                so far, only the subs image element is implemented.
-
-            labels: set of strings; default is an empty set
-                specify if from the subs or cell dataset
-                a label element should be generated.
-                so far, neither subs nor cell label elements are implemented.
-
-            points: set of string; default {'subs'}
-                specify if from the subs or cell dataset
-                a points element should be generated.
-                both, subs and cell point elements, are implemented.
-
-            shapes: set of string; default {'cell'}
-                specify if from the subs or cell dataset
-                a shape element should be generated.
-                so far, only the cell shape element is implemented.
-
-            values: integer; default is 1
-                minimal number of values a variable has to have to be outputted.
-                variables that have only 1 state carry no information.
-                None is a state too.
-
-            drop: set of strings; default is an empty set
-                set of column labels to be dropped for the dataframe.
-                don't worry: essential columns like ID, coordinates
-                and time will never be dropped.
-                Attention: when the keep parameter is given, then
-                the drop parameter has to be an empty set!
-
-            keep: set of strings; default is an empty set
-                set of column labels to be kept in the dataframe.
-                don't worry: essential columns like ID, coordinates
-                and time will always be kept.
-
-            scale: string; default 'maxabs'
-                specify how the data should be scaled.
-                possible values are None, maxabs, minmax, std.
-                for more input, check out: help(pcdl.scaler)
-
-            keep_mcds: boole; default True
-                should the loaded original mcds be kept in memory
-                after transformation?
-
-        output:
-            self.l_sdmcds: list of spatialdata objects.
-
-        description:
-            function to transform mcds time steps into
-            spatialdata objects for downstream analysis.
-        """
-        # variable triage
-        es_keep = set(self.get_cell_attribute(values=values, drop=drop, keep=keep, allvalues=False).keys())
-
-        # processing
-        lsd_mcds = []
-        i_mcds = len(self.l_mcds)
-        for i in range(i_mcds):
-            # fetch mcds
-            if keep_mcds:
-                mcds = self.l_mcds[i]
-            else:
-                mcds = self.l_mcds.pop(0)
-
-            # extract time and dataframes
-            if self.verbose:
-                print(f'\nprocessing: {i+1}/{i_mcds} {mcds.get_time()}[min] mcds into spatialdata obj.')
-
-            # get spatialdata object
-            sd_mcds = mcds.get_spatialdata(
-                points = points,
-                shapes = shapes,
-                #values = 1,
-                #drop = set(),
-                keep = es_keep,
-                scale = scale,
-            )
-            lsd_mcds.append(sd_mcds)
-
-        # output
-        self.l_sdmcds = lsd_mcds
-        return self.l_sdmcds
-
-
-    def get_sdmcds_list(self):
-        """
-        input:
-            self: TimeSeries class instance.
-
-        output:
-            self.l_sdmcds: list of chronologically ordered spatialdata mcds objects.
-                watch out, this is a pointer to the
-                self.l_sdmcds list of spdata mcds objects, not a copy of self.l_sdmcds!
-
-        description:
-            function returns a binding to the self.l_sdmcds list of spdata mcds objects.
-        """
-        return self.l_sdmcds
-
-
-
-    ## MUSPAN RELATED FUNCTIONS ##
-
-    def get_muspan(self, z_slice=None, values=1, drop=set(), keep=set()):
-        """
-        input:
-            z_slice: floating point number; default is None
-                z-axis position to slice a 2D xy-plain out of the
-                3D mesh. if None the whole 3D mesh will be returned.
-
-            values: integer; default is 1
-                minimal number of values a variable has to have to be outputted.
-                variables that have only 1 state carry no information.
-                None is a state too.
-
-            drop: set of strings; default is an empty set
-                set of column labels to be dropped for the dataframe.
-                don't worry: essential columns like ID, coordinates
-                and time will never be dropped.
-                Attention: when the keep parameter is given, then
-                the drop parameter has to be an empty set!
-
-            keep: set of strings; default is an empty set
-                set of column labels to be kept in the dataframe.
-                set values=1 to be sure that all variables are kept.
-                don't worry: essential columns like ID, coordinates
-                and time will always be kept.
-
-        output:
-            do_domain:  dictionary of muspa domains, one for each time step z-layer.
-
-        description:
-            function returns a dictionary of muspa domains, containg a
-            cell and subs collection with disrcete and continuous labels
-            and all the graph as networks.
-            + https://www.muspan.co.uk
-            + https://docs.muspan.co.uk/latest/Documentation.html
-        """
-        # variable triage
-        es_keep = set(self.get_cell_attribute(values=values, drop=drop, keep=keep, allvalues=False).keys())
-
-        # processing
-        do_domain = {}
+        # for each time step
+        l_tczyx_img = []
         for mcds in self.get_mcds_list():
-            do_domain.update(
-                mcds.get_muspan(
-                    z_slice = z_slice,
-                    #values = 1,
-                    #drop = set(),
-                    keep = es_keep,
-                )
+            # processing
+            b_file = True # 10
+            if (not file and not collapse) or (not file and collapse) or (file and collapse):  # 00, 01, 11
+                b_file = False
+            o_tczyx_img = mcds.make_ome_tiff(
+                cell_attribute = cell_attribute,
+                conc_cutoff = conc_cutoff,
+                focus = focus,
+                file = b_file
             )
+            l_tczyx_img.append(o_tczyx_img)
 
-        # output
-        return do_domain
+        # handle channels
+        ls_substrate = mcds.get_substrate_list()
+        ls_celltype = mcds.get_celltype_list()
 
+        if not (focus is None):
+            ls_substrate = [s_substrate for s_substrate in ls_substrate if s_substrate in set(focus)]
+            ls_celltype = [s_celltype for s_celltype in ls_celltype if s_celltype in set(focus)]
+            if (set(focus) != set(ls_substrate).union(set(ls_celltype))):
+                sys.exit(f'Error : {focus} not found in {ls_substrate} {ls_celltype}')
 
-    ## SIMULARIUM RELATED FUNCTIONS ##
+        # output 00 list of numpy arrays
+        if (not file and not collapse):  # 00
+            if self.verbose:
+                print(f'la_tczyx_img shape: {len(l_tczyx_img)} * {l_tczyx_img[0].shape}')
+            return l_tczyx_img
 
-    def make_simularium(self, focus_cat=['cell_type','current_phase'],  trajectory_title='timeseries', scale_factor=None, camera_defaults=None, model_meta_data=None):
-        """
-        input:
-            focus_cat: list of 1 or 2 string; default is ['cell_type','current_phase']
-                specify 1 or 2 categorical column labels, to be found
-                in mcdsts.get_cell_df().
+        # output 01 numpy array
+        elif (not file and collapse):  # 01
+            # numpy array
+            a_tczyx_img = np.array(l_tczyx_img)
+            if self.verbose:
+                print('a_tczyx_img shape:', a_tczyx_img.shape)
+            return a_tczyx_img
 
-            trajectory_title: string; default 'timeseries'
-                the trajectory_title will be used as
-                <trajectory_title>.simularium file name and displayed
-                in the simulation.
+        # output 10 list of pathfile strings
+        elif (file and not collapse):  # 10
+            return l_tczyx_img
 
-            scale_factor: float number; default is None
-                A multiplier for the scene, use if visualization is
-                too large or small. If None is provided, one will
-                be calculated based on the position data.
-                bue 20260822: does not seem to work in current simularium 1.13.0.
+        # output 11 ometiff file
+        elif (file and collapse):  # 11
+            # load optional dependency
+            OmeTiffWriter = optional_import('bioio.writers', s_attr='OmeTiffWriter', s_pip='bioio', s_caller='TimeSeries.make_ome_tiff')
+            bioio_base = optional_import('bioio_base', s_pip='bioio', s_caller='TimeSeries.make_ome_tiff')
 
-            camera_defaults: simulariumio.CameraData object; default is None
-                camera's initial settings which it also returns to
-                when reset.
+            # numpy array
+            a_tczyx_img = np.array(l_tczyx_img)
+            if self.verbose:
+                print('a_tczyx_img shape:', a_tczyx_img.shape)
 
-            model_meta_data: simulariumio.ModelMetaData; default is None
-                Metadata for the model that produced this
-                trajectory.
+            # generate filename
+            s_channel = ''
+            for s_substrate in ls_substrate:
+                try:
+                    r_value = conc_cutoff[s_substrate]
+                    s_channel += f'_{s_substrate}{r_value}'
+                except KeyError:
+                    s_channel += f'_{s_substrate}'
+            for s_celltype in ls_celltype:
+                s_channel += f'_{s_celltype}'
+            if len(ls_celltype) > 0:
+                s_channel += f'_{cell_attribute}'
+            s_tifffile = f"timeseries{s_channel.replace(' ','_')}.ome.tiff"
+            if (len(s_tifffile) > 255):
+                print(f"Warning: filename {len(s_tifffile)} > 255 character.")
+                s_tifffile = 'timeseries_channels.ome.tiff'
+                print(f"file name adjusted to {s_tifffile}.")
+            s_tiffpathfile = self.path + '/' + s_tifffile
 
-        output:
-            <trajectory_title>.simularium file
+            # save to file
+            OmeTiffWriter.save(
+                a_tczyx_img,
+                s_tiffpathfile,
+                dim_order = 'TCZYX',
+                #ome_xml=x_img,
+                channel_names = ls_substrate + ls_celltype,
+                image_names = [f'timeseries_{cell_attribute}'],
+                physical_pixel_sizes = bioio_base.types.PhysicalPixelSizes(mcds.get_voxel_spacing()[2], 1.0, 1.0),  # z,y,x [um]
+                #channel_colors=,
+                #fs_kwargs={},
+            )
+            return s_tiffpathfile
 
-        description:
-            function returns a simularium trajectory file that can be run with the
-            online Simularium Viewer.
-            + https://simularium.allencell.org/
-        """
-        # library
-        sim = optional_import(s_module='simulariumio', s_caller='TimeSeries.make_simularium')
-
-        # handle input
-        model_meta_data=sim.ModelMetaData() if model_meta_data is None else model_meta_data
-        camera_defaults=sim.CameraData() if camera_defaults is None else camera_defaults
-
-        # here we go
-        if self.verbose:
-            print(f'generating {trajectory_title}.simularium file ...')
-
-        # extract box from mcdsts
-        ltr_domain = self.get_mcds_list()[0].get_mesh_mnp_range()
-        lr_space = self.get_mcds_list()[0].get_mesh_spacing()
-        lr_box = np.array([
-            ltr_domain[0][1] - ltr_domain[0][0],
-            ltr_domain[1][1] - ltr_domain[1][0],
-            ltr_domain[2][1] - ltr_domain[2][0],
-        ])
-        lr_box[0] = lr_box[0] if lr_box[0] != 0.0 else lr_space[0]
-        lr_box[1] = lr_box[1] if lr_box[1] != 0.0 else lr_space[1]
-        lr_box[2] = lr_box[2] if lr_box[2] != 0.0 else lr_space[2]
-        ar_box = np.array(lr_box)
-
-        # extract cell dataframe from mcdsts
-        df_cell = self.get_cell_df()
-
-        # handle agent annotation
-        se_type = df_cell.loc[:, focus_cat].astype(str).agg('#'.join, axis=1)
-
-        # extract units from mcdsts
-        ds_unit = self.get_mcds_list()[0].get_unit_dict()
-
-        # generate simularium dataframe
-        with pd.option_context('future.infer_string', False):
-            df_sim = pd.DataFrame({
-                'time': df_cell.loc[:, 'time'].to_numpy(dtype=float),
-                'unique_id': df_cell.loc[:, 'ID'].to_numpy(dtype=int),
-                'type': se_type.to_numpy(dtype=object),
-                'positionX': df_cell.loc[:, 'position_x'].to_numpy(dtype=float),
-                'positionY': df_cell.loc[:, 'position_y'].to_numpy(dtype=float),
-                'positionZ': df_cell.loc[:, 'position_z'].to_numpy(dtype=float),
-                'radius': df_cell.loc[:, 'radius'].to_numpy(dtype=float),
-                'rotationX': np.zeros(df_cell.shape[0], dtype=float),
-                'rotationY': np.zeros(df_cell.shape[0], dtype=float),
-                'rotationZ': np.zeros(df_cell.shape[0], dtype=float),
-            })
-        df_sim.sort_values(['time', 'unique_id'], inplace=True)
-        # SimulariumIO 1.13.0 AgentData.from_dataframe expects traj.loc[0, ...]
-        # to select the whole trajectory, so all rows need the same index label.
-        df_sim.index = np.zeros(df_sim.shape[0], dtype=int)
-
-        # generate simmularium trajectorydata object
-        o_sim = sim.TrajectoryData(
-            meta_data = sim.MetaData(
-                box_size=ar_box,
-                camera_defaults=camera_defaults,
-                scale_factor=scale_factor,
-                trajectory_title=trajectory_title,
-                model_meta_data=model_meta_data,
-            ),
-            agent_data = sim.AgentData.from_dataframe(df_sim),
-            time_units = sim.UnitData(ds_unit['time']),
-            spatial_units = sim.UnitData(ds_unit['spatial_unit']),
-            #plots=,
-        )
-
-        # transform data and save trajectorydata object to simularium file
-        s_save = self.path + '/' + trajectory_title
-        s_pathfile = s_save + '.simularium'
-        sim.TrajectoryConverter(o_sim).save(s_save)
-        if self.verbose:
-            print(f'simularium viewer at: https://simularium.allencell.org/')
-
-        # return error code
-        return s_pathfile
+        # error case
+        else:
+            sys.exit(f'Error @ make_ome_tiff : {file} {collapse} strange file collapse combination.')
