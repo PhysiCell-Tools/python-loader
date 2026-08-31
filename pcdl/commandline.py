@@ -250,109 +250,6 @@ def get_substrate_list():
     return 0
 
 
-def get_conc_attribute():
-    # argv
-    parser = argparse.ArgumentParser(
-        prog = 'pcdl_get_conc_attribute',
-        description = 'function to detect informative substrate concentration variables in a time series. this function detects even variables which have less than the minimal state count in each time step, but different values from time step to time step. the output is a json file with an entry of all non-coordinate column names that, at least in one of the time steps or in between time steps, reach the given minimal value count. key is the column name, mapped is a list of all values (bool, str, and, if allvalues is True, int and float) or a list with minimum and maximum values (int, float).',
-        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
-    )
-
-    # TimeSeries path
-    parser.add_argument(
-        'path',
-        nargs = '?',
-        default = '.',
-        help = 'path to the PhysiCell output directory. default is . .',
-    )
-    # TimeSeries output_path '.'
-    # TimeSeries custom_data_type nop
-    # TimeSeries microenv True
-    # TimeSeries graph False
-    # TimeSeries physiboss False
-    # TimeSeries settingxml None
-    # TimeSeries verbose
-    parser.add_argument(
-        '-v', '--verbose',
-        default = 'true',
-        help = 'setting verbose to False for less text output, while processing. default is True.',
-    )
-    # get_conc_attribute values
-    parser.add_argument(
-        'values',
-        nargs = '?',
-        default = 1,
-        type = int,
-        help = 'minimal number of values a variable has to have in any of the mcds time steps to be outputted. variables that have only 1 state carry no information. None is a state too. default is 1.',
-    )
-    # get_conc_attribute drop
-    parser.add_argument(
-        '--drop',
-        nargs = '*',
-        default = [],
-        help = "set of column labels to be dropped for the dataframe. don't worry: essential columns like ID, coordinates and time will never be dropped. Attention: when the keep parameter is given, then the drop parameter has to be an empty string! default is an empty string.",
-    )
-    # get_conc_attribute keep
-    parser.add_argument(
-        '--keep',
-        nargs = '*',
-        default = [],
-        help = "set of column labels to be kept in the dataframe. set values=1 to be sure that all variables are kept. don't worry: essential columns like ID, coordinates and time will always be kept. default is an empty string.",
-    )
-    # get_conc_attribute allvalues
-    parser.add_argument(
-        '--allvalues',
-        default = 'false',
-        help = 'for numeric data, should only the min and max values or all values be returned? default is false.',
-    )
-
-    # parse arguments
-    args = parser.parse_args()
-    print(args)
-
-    # process arguments
-    s_path = args.path.replace('\\','/')
-    while (s_path.find('//') > -1):
-        s_path = s_path.replace('//','/')
-    if (s_path.endswith('/')) and (len(s_path) > 1):
-        s_path = s_path[:-1]
-    s_pathfile = s_path
-    if not s_pathfile.endswith('.xml'):
-        s_pathfile = s_pathfile + '/initial.xml'
-    else:
-        s_path = '/'.join(s_path.split('/')[:-1])
-    if not os.path.exists(s_pathfile):
-        sys.exit(f'Error @ pcdl_get_conc_attribute : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
-
-    # run
-    mcdsts = pcdl.TimeSeries(
-        output_path = s_path,
-        #custom_data_type,
-        load = True,
-        microenv = True,
-        graph = False,
-        physiboss = False,
-        settingxml = None,
-        verbose = False if args.verbose.lower().startswith('f') else True,
-    )
-    s_values = 'minmax'
-    b_allvalues = True if args.allvalues.lower().startswith('t') else False
-    if b_allvalues:
-        s_values = 'all'
-    dl_variable = mcdsts.get_conc_attribute(
-        values = args.values,
-        drop = set(args.drop),
-        keep = set(args.keep),
-        allvalues = b_allvalues,
-    )
-    s_ofile = f"timeseries_conc_attribute_{s_values.replace(' ','_')}.json"
-    s_opathfile = s_path + '/' + s_ofile
-    json.dump(dl_variable, open(s_opathfile, 'w'), sort_keys=True)
-    # going home
-    print(s_opathfile)
-    return 0
-
-
 def get_conc_df():
     # argv
     parser = argparse.ArgumentParser(
@@ -480,6 +377,109 @@ def get_conc_df():
             print(ls_opathfile)
 
     # going home
+    return 0
+
+
+def get_conc_attribute():
+    # argv
+    parser = argparse.ArgumentParser(
+        prog = 'pcdl_get_conc_attribute',
+        description = 'function to detect informative substrate concentration variables in a time series. this function detects even variables which have less than the minimal state count in each time step, but different values from time step to time step. the output is a json file with an entry of all non-coordinate column names that, at least in one of the time steps or in between time steps, reach the given minimal value count. key is the column name, mapped is a list of all values (bool, str, and, if allvalues is True, int and float) or a list with minimum and maximum values (int, float).',
+        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
+    )
+
+    # TimeSeries path
+    parser.add_argument(
+        'path',
+        nargs = '?',
+        default = '.',
+        help = 'path to the PhysiCell output directory. default is . .',
+    )
+    # TimeSeries output_path '.'
+    # TimeSeries custom_data_type nop
+    # TimeSeries microenv True
+    # TimeSeries graph False
+    # TimeSeries physiboss False
+    # TimeSeries settingxml None
+    # TimeSeries verbose
+    parser.add_argument(
+        '-v', '--verbose',
+        default = 'true',
+        help = 'setting verbose to False for less text output, while processing. default is True.',
+    )
+    # get_conc_attribute values
+    parser.add_argument(
+        'values',
+        nargs = '?',
+        default = 1,
+        type = int,
+        help = 'minimal number of values a variable has to have in any of the mcds time steps to be outputted. variables that have only 1 state carry no information. None is a state too. default is 1.',
+    )
+    # get_conc_attribute drop
+    parser.add_argument(
+        '--drop',
+        nargs = '*',
+        default = [],
+        help = "set of column labels to be dropped for the dataframe. don't worry: essential columns like ID, coordinates and time will never be dropped. Attention: when the keep parameter is given, then the drop parameter has to be an empty string! default is an empty string.",
+    )
+    # get_conc_attribute keep
+    parser.add_argument(
+        '--keep',
+        nargs = '*',
+        default = [],
+        help = "set of column labels to be kept in the dataframe. set values=1 to be sure that all variables are kept. don't worry: essential columns like ID, coordinates and time will always be kept. default is an empty string.",
+    )
+    # get_conc_attribute allvalues
+    parser.add_argument(
+        '--allvalues',
+        default = 'false',
+        help = 'for numeric data, should only the min and max values or all values be returned? default is false.',
+    )
+
+    # parse arguments
+    args = parser.parse_args()
+    print(args)
+
+    # process arguments
+    s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
+    s_pathfile = s_path
+    if not s_pathfile.endswith('.xml'):
+        s_pathfile = s_pathfile + '/initial.xml'
+    else:
+        s_path = '/'.join(s_path.split('/')[:-1])
+    if not os.path.exists(s_pathfile):
+        sys.exit(f'Error @ pcdl_get_conc_attribute : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
+
+    # run
+    mcdsts = pcdl.TimeSeries(
+        output_path = s_path,
+        #custom_data_type,
+        load = True,
+        microenv = True,
+        graph = False,
+        physiboss = False,
+        settingxml = None,
+        verbose = False if args.verbose.lower().startswith('f') else True,
+    )
+    s_values = 'minmax'
+    b_allvalues = True if args.allvalues.lower().startswith('t') else False
+    if b_allvalues:
+        s_values = 'all'
+    dl_variable = mcdsts.get_conc_attribute(
+        values = args.values,
+        drop = set(args.drop),
+        keep = set(args.keep),
+        allvalues = b_allvalues,
+    )
+    s_ofile = f"timeseries_conc_attribute_{s_values.replace(' ','_')}.json"
+    s_opathfile = s_path + '/' + s_ofile
+    json.dump(dl_variable, open(s_opathfile, 'w'), sort_keys=True)
+    # going home
+    print(s_opathfile)
     return 0
 
 
@@ -832,6 +832,7 @@ def make_conc_vtk():
     # going home
     return 0
 
+
 ############################################
 # cell agent relatd command line functions #
 ############################################
@@ -903,11 +904,11 @@ def get_celltype_list():
     return 0
 
 
-def get_cell_attribute_list():
+def get_cell_df():
     # argv
     parser = argparse.ArgumentParser(
-        prog = 'pcdl_get_cell_attribute_list',
-        description = 'this function is returns a list with all cell attribute labels, alphabetically ordered.',
+        prog = 'pcdl_get_cell_df',
+        description = 'this function extracts dataframes with a cell centric view of the simulation and saves them as csv files.',
         epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
     )
 
@@ -916,22 +917,22 @@ def get_cell_attribute_list():
         'path',
         nargs = '?',
         default = '.',
-        help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .',
+        help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .'
     )
     # TimeSeries output_path '.'
-    # TimeSeries custom_data_type nop
+    # TimeSeries custom_data_type nop (because datafarme is straightaway saved as csv)
     # TimeSeries microenv
     parser.add_argument(
         '--microenv',
         default = 'true',
-        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing. default is True.',
+        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing. default is True.'
     )
     # TimeSeries graph False
     # TimeSeries physiboss
     parser.add_argument(
         '--physiboss',
         default = 'true',
-        help = 'if found, should physiboss state data be extracted and loaded into df_cell dataframe? default is True.'
+        help = 'if found, should physiboss state data be extracted and loaded into the df_cell dataframe? default is True.'
     )
     # TimeSeries settingxml
     parser.add_argument(
@@ -942,8 +943,36 @@ def get_cell_attribute_list():
     # TimeSeries verbose
     parser.add_argument(
         '-v', '--verbose',
-        default = 'false',
-        help = 'setting verbose to True for more text output, while processing. default is False.',
+        default = 'true',
+        help = 'setting verbose to False for less text output, while processing. default is True.'
+    )
+    # get_cell_df values
+    parser.add_argument(
+        'values',
+        nargs = '?',
+        default = 1,
+        type = int,
+        help = 'minimal number of values a variable has to have in any of the mcds time steps to be outputted. variables that have only 1 state carry no information. None is a state too. default is 1.'
+    )
+    # get_cell_df drop
+    parser.add_argument(
+        '--drop',
+        nargs = '*',
+        default = [],
+        help = "set of column labels to be dropped for the dataframe. don't worry: essential columns like ID, coordinates and time will never be dropped. Attention: when the keep parameter is given, then the drop parameter has to be an empty string! default is an empty string."
+    )
+    # get_cell_df keep
+    parser.add_argument(
+        '--keep',
+        nargs = '*',
+        default = [],
+        help = "set of column labels to be kept in the dataframe. set values=1 to be sure that all variables are kept. don't worry: essential columns like ID, coordinates and time will always be kept. default is an empty string."
+    )
+    # get_cell_df collapse
+    parser.add_argument(
+        '--collapse',
+        default = 'true',
+        help = 'should all mcds time steps from the time series be collapsed into one big csv, or a many csv, one csv for each time step?, default is True.'
     )
 
     # parse arguments
@@ -962,22 +991,62 @@ def get_cell_attribute_list():
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
     if not os.path.exists(s_pathfile):
-        sys.exit(f'Error @ pcdl_get_cell_attribute_list : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
+        sys.exit(f'Error @ pcdl_get_cell_df : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
     # run
-    mcds = pcdl.TimeStep(
-        xmlfile = s_pathfile,
-        output_path = '.',
-        #custom_data_type,
-        microenv = False if args.microenv.lower().startswith('f') else True,
-        graph = False,
-        physiboss = False if args.physiboss.lower().startswith('f') else True,
-        settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
-        verbose = True if args.verbose.lower().startswith('t') else False
-    )
+    if os.path.isfile(args.path):
+        mcds = pcdl.TimeStep(
+            xmlfile = s_pathfile,
+            output_path = '.',
+            #custom_data_type,
+            microenv = False if args.microenv.lower().startswith('f') else True,
+            graph = False,
+            physiboss = False if args.physiboss.lower().startswith('f') else True,
+            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
+            verbose = False if args.verbose.lower().startswith('f') else True
+        )
+        df_cell = mcds.get_cell_df(
+            values = args.values,
+            drop = set(args.drop),
+            keep = set(args.keep),
+        )
+        # going home
+        s_opathfile = s_pathfile.replace('.xml','_cell.csv')
+        df_cell.to_csv(s_opathfile)
+        print(s_opathfile)
+
+    else:
+        mcdsts = pcdl.TimeSeries(
+            output_path = s_path,
+            #custom_data_type,
+            load = True,
+            microenv = False if args.microenv.lower().startswith('f') else True,
+            graph = False,
+            physiboss = False if args.physiboss.lower().startswith('f') else True,
+            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
+            verbose = False if args.verbose.lower().startswith('f') else True,
+        )
+        # handle collaps
+        b_collapse = False if args.collapse.lower().startswith('f') else True
+        ldf_cell = mcdsts.get_cell_df(
+            values = args.values,
+            drop = set(args.drop),
+            keep = set(args.keep),
+            collapse = b_collapse,
+        )
+        # going home
+        if b_collapse:
+            s_opathfile = f'{s_path}/timeseries_cell.csv'
+            ldf_cell.to_csv(s_opathfile)
+            print(s_opathfile)
+        else:
+            ls_opathfile = [f"{s_path}/{s_xmlfile.replace('.xml','_cell.csv')}" for s_xmlfile in mcdsts.get_xmlfile_list()]
+            for i, df_cell in enumerate(ldf_cell):
+                df_cell.to_csv(ls_opathfile[i])
+            print(ls_opathfile)
 
     # going home
-    print(mcds.get_cell_attribute_list())
+    return 0
 
 
 def get_cell_attribute():
@@ -1137,11 +1206,11 @@ def get_cell_attribute():
     return 0
 
 
-def get_cell_df():
+def get_cell_attribute_list():
     # argv
     parser = argparse.ArgumentParser(
-        prog = 'pcdl_get_cell_df',
-        description = 'this function extracts dataframes with a cell centric view of the simulation and saves them as csv files.',
+        prog = 'pcdl_get_cell_attribute_list',
+        description = 'this function is returns a list with all cell attribute labels, alphabetically ordered.',
         epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
     )
 
@@ -1150,22 +1219,22 @@ def get_cell_df():
         'path',
         nargs = '?',
         default = '.',
-        help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .'
+        help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .',
     )
     # TimeSeries output_path '.'
-    # TimeSeries custom_data_type nop (because datafarme is straightaway saved as csv)
+    # TimeSeries custom_data_type nop
     # TimeSeries microenv
     parser.add_argument(
         '--microenv',
         default = 'true',
-        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing. default is True.'
+        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing. default is True.',
     )
     # TimeSeries graph False
     # TimeSeries physiboss
     parser.add_argument(
         '--physiboss',
         default = 'true',
-        help = 'if found, should physiboss state data be extracted and loaded into the df_cell dataframe? default is True.'
+        help = 'if found, should physiboss state data be extracted and loaded into df_cell dataframe? default is True.'
     )
     # TimeSeries settingxml
     parser.add_argument(
@@ -1176,36 +1245,8 @@ def get_cell_df():
     # TimeSeries verbose
     parser.add_argument(
         '-v', '--verbose',
-        default = 'true',
-        help = 'setting verbose to False for less text output, while processing. default is True.'
-    )
-    # get_cell_df values
-    parser.add_argument(
-        'values',
-        nargs = '?',
-        default = 1,
-        type = int,
-        help = 'minimal number of values a variable has to have in any of the mcds time steps to be outputted. variables that have only 1 state carry no information. None is a state too. default is 1.'
-    )
-    # get_cell_df drop
-    parser.add_argument(
-        '--drop',
-        nargs = '*',
-        default = [],
-        help = "set of column labels to be dropped for the dataframe. don't worry: essential columns like ID, coordinates and time will never be dropped. Attention: when the keep parameter is given, then the drop parameter has to be an empty string! default is an empty string."
-    )
-    # get_cell_df keep
-    parser.add_argument(
-        '--keep',
-        nargs = '*',
-        default = [],
-        help = "set of column labels to be kept in the dataframe. set values=1 to be sure that all variables are kept. don't worry: essential columns like ID, coordinates and time will always be kept. default is an empty string."
-    )
-    # get_cell_df collapse
-    parser.add_argument(
-        '--collapse',
-        default = 'true',
-        help = 'should all mcds time steps from the time series be collapsed into one big csv, or a many csv, one csv for each time step?, default is True.'
+        default = 'false',
+        help = 'setting verbose to True for more text output, while processing. default is False.',
     )
 
     # parse arguments
@@ -1224,62 +1265,22 @@ def get_cell_df():
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
     if not os.path.exists(s_pathfile):
-        sys.exit(f'Error @ pcdl_get_cell_df : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
+        sys.exit(f'Error @ pcdl_get_cell_attribute_list : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
     # run
-    if os.path.isfile(args.path):
-        mcds = pcdl.TimeStep(
-            xmlfile = s_pathfile,
-            output_path = '.',
-            #custom_data_type,
-            microenv = False if args.microenv.lower().startswith('f') else True,
-            graph = False,
-            physiboss = False if args.physiboss.lower().startswith('f') else True,
-            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
-            verbose = False if args.verbose.lower().startswith('f') else True
-        )
-        df_cell = mcds.get_cell_df(
-            values = args.values,
-            drop = set(args.drop),
-            keep = set(args.keep),
-        )
-        # going home
-        s_opathfile = s_pathfile.replace('.xml','_cell.csv')
-        df_cell.to_csv(s_opathfile)
-        print(s_opathfile)
-
-    else:
-        mcdsts = pcdl.TimeSeries(
-            output_path = s_path,
-            #custom_data_type,
-            load = True,
-            microenv = False if args.microenv.lower().startswith('f') else True,
-            graph = False,
-            physiboss = False if args.physiboss.lower().startswith('f') else True,
-            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
-            verbose = False if args.verbose.lower().startswith('f') else True,
-        )
-        # handle collaps
-        b_collapse = False if args.collapse.lower().startswith('f') else True
-        ldf_cell = mcdsts.get_cell_df(
-            values = args.values,
-            drop = set(args.drop),
-            keep = set(args.keep),
-            collapse = b_collapse,
-        )
-        # going home
-        if b_collapse:
-            s_opathfile = f'{s_path}/timeseries_cell.csv'
-            ldf_cell.to_csv(s_opathfile)
-            print(s_opathfile)
-        else:
-            ls_opathfile = [f"{s_path}/{s_xmlfile.replace('.xml','_cell.csv')}" for s_xmlfile in mcdsts.get_xmlfile_list()]
-            for i, df_cell in enumerate(ldf_cell):
-                df_cell.to_csv(ls_opathfile[i])
-            print(ls_opathfile)
+    mcds = pcdl.TimeStep(
+        xmlfile = s_pathfile,
+        output_path = '.',
+        #custom_data_type,
+        microenv = False if args.microenv.lower().startswith('f') else True,
+        graph = False,
+        physiboss = False if args.physiboss.lower().startswith('f') else True,
+        settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
+        verbose = True if args.verbose.lower().startswith('t') else False
+    )
 
     # going home
-    return 0
+    print(mcds.get_cell_attribute_list())
 
 
 def get_anndata():
@@ -1453,147 +1454,6 @@ def get_anndata():
             for i, ann_mcds in enumerate(ann_mcdsts):
                 ann_mcds.write_h5ad(ls_opathfile[i])
             print(ls_opathfile)
-
-    # going home
-    return 0
-
-
-def make_graph_gml():
-    # argv
-    parser = argparse.ArgumentParser(
-        prog = 'pcdl_make_graph_gml',
-        description = 'function to generate graph files in the gml graph modelling language standard format. gml was the outcome of an initiative that started at the international symposium on graph drawing 1995 in Passau and ended at Graph Drawing 1996 in Berkeley. the networkx python library (https://networkx.org/) and igraph C and python libraries (https://igraph.org/) for graph analysis are gml compatible and can as such read and write this file format.',
-        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
-    )
-
-    # TimeSeries path
-    parser.add_argument(
-        'path',
-        nargs = '?',
-        default = '.',
-        help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .',
-    )
-    # TimeSeries output_path '.'
-    # TimeSeries custom_data_type
-    parser.add_argument(
-        '--custom_data_type',
-        nargs = '*',
-        default = [],
-        help = 'parameter to specify custom_data variable types other than float (namely: int, bool, str) like this var:dtype myint:int mybool:bool mystr:str . downstream float and int will be handled as numeric, bool as Boolean, and str as categorical data. default is an empty string.',
-    )
-    # TimeSeries microenv
-    parser.add_argument(
-        '--microenv',
-        default = 'true',
-        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing. default is True.'
-    )
-    # TimeSeries graph True
-    # TimeSeries physiboss
-    parser.add_argument(
-        '--physiboss',
-        default = 'true',
-        help = 'if found, should physiboss state data be extracted and loaded into the df_cell dataframe? default is True.'
-    )
-    # TimeSeries settingxml
-    parser.add_argument(
-        '--settingxml',
-        default = 'false',
-        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is False.',
-    )
-    # TimeSeries verbose
-    parser.add_argument(
-        '-v', '--verbose',
-        default = 'true',
-        help = 'setting verbose to False for less text output, while processing. default is True.',
-    )
-    # make_graph_gml graph_type
-    parser.add_argument(
-        'graph_type',
-        nargs = '?',
-        help = 'to specify which physicell output data should be processed. attached: processes mcds.get_attached_graph_dict dictionary. neighbor: processes mcds.get_neighbor_graph_dict dictionary spring: processes mcds.get_spring_graph_dict dictionary.',
-    )
-    # make_graph_gml edge_attribute
-    parser.add_argument(
-        '--edge_attribute',
-        default = 'true',
-        help = 'specifies if the spatial Euclidean distance is used for edge attribute, to generate a weighted graph. default is True.',
-    )
-    # make_graph_gml node_attrributes
-    parser.add_argument(
-        '--node_attribute',
-        nargs = '*',
-        default = [],
-        help = 'listing of mcds.get_cell_df dataframe columns, used for node attributes. default is and empty list.',
-    )
-
-    # parse arguments
-    args = parser.parse_args()
-    print(args)
-
-    # process arguments
-    s_path = args.path.replace('\\','/')
-    while (s_path.find('//') > -1):
-        s_path = s_path.replace('//','/')
-    if (s_path.endswith('/')) and (len(s_path) > 1):
-        s_path = s_path[:-1]
-    s_pathfile = s_path
-    if not s_pathfile.endswith('.xml'):
-        s_pathfile = s_pathfile + '/initial.xml'
-    else:
-        s_path = '/'.join(s_path.split('/')[:-1])
-    if not os.path.exists(s_pathfile):
-        sys.exit(f'Error @ pcdl_make_graph_gml : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
-
-    # custom_data_type
-    d_vartype = {}
-    for vartype in args.custom_data_type:
-        s_var, s_type = vartype.split(':')
-        if s_type in {'bool'}: o_type = bool
-        elif s_type in {'int'}: o_type = int
-        elif s_type in {'float'}: o_type = float
-        elif s_type in {'str'}: o_type = str
-        else:
-            sys.exit(f'Error @ pcdl_make_graph_gml : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.')
-        d_vartype.update({s_var : o_type})
-
-    # run
-    if os.path.isfile(args.path):
-        mcds = pcdl.TimeStep(
-            xmlfile = s_pathfile,
-            output_path = '.',
-            custom_data_type = d_vartype,
-            microenv = False if args.microenv.lower().startswith('f') else True,
-            graph = True,
-            physiboss = False if args.physiboss.lower().startswith('f') else True,
-            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
-            verbose = False if args.verbose.lower().startswith('f') else True
-        )
-        s_opathfile = mcds.make_graph_gml(
-            graph_type = args.graph_type,
-            edge_attribute = False if args.edge_attribute.lower().startswith('f') else True,
-            node_attribute = args.node_attribute,
-        )
-        # going home
-        print(s_opathfile)
-
-    else:
-        mcdsts = pcdl.TimeSeries(
-            output_path = s_path,
-            custom_data_type = d_vartype,
-            load = True,
-            microenv = False if args.microenv.lower().startswith('f') else True,
-            graph = True,
-            physiboss = False if args.physiboss.lower().startswith('f') else True,
-            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
-            verbose = False if args.verbose.lower().startswith('f') else True,
-        )
-        ls_opathfile = mcdsts.make_graph_gml(
-            graph_type = args.graph_type,
-            edge_attribute = False if args.edge_attribute.lower().startswith('f') else True,
-            node_attribute = args.node_attribute,
-        )
-        # going home
-        print(ls_opathfile)
 
     # going home
     return 0
@@ -2007,6 +1867,147 @@ def make_cell_vtk():
     return 0
 
 
+def make_graph_gml():
+    # argv
+    parser = argparse.ArgumentParser(
+        prog = 'pcdl_make_graph_gml',
+        description = 'function to generate graph files in the gml graph modelling language standard format. gml was the outcome of an initiative that started at the international symposium on graph drawing 1995 in Passau and ended at Graph Drawing 1996 in Berkeley. the networkx python library (https://networkx.org/) and igraph C and python libraries (https://igraph.org/) for graph analysis are gml compatible and can as such read and write this file format.',
+        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
+    )
+
+    # TimeSeries path
+    parser.add_argument(
+        'path',
+        nargs = '?',
+        default = '.',
+        help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .',
+    )
+    # TimeSeries output_path '.'
+    # TimeSeries custom_data_type
+    parser.add_argument(
+        '--custom_data_type',
+        nargs = '*',
+        default = [],
+        help = 'parameter to specify custom_data variable types other than float (namely: int, bool, str) like this var:dtype myint:int mybool:bool mystr:str . downstream float and int will be handled as numeric, bool as Boolean, and str as categorical data. default is an empty string.',
+    )
+    # TimeSeries microenv
+    parser.add_argument(
+        '--microenv',
+        default = 'true',
+        help = 'should the microenvironment data be loaded? setting microenv to False will use less memory and speed up processing. default is True.'
+    )
+    # TimeSeries graph True
+    # TimeSeries physiboss
+    parser.add_argument(
+        '--physiboss',
+        default = 'true',
+        help = 'if found, should physiboss state data be extracted and loaded into the df_cell dataframe? default is True.'
+    )
+    # TimeSeries settingxml
+    parser.add_argument(
+        '--settingxml',
+        default = 'false',
+        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is False.',
+    )
+    # TimeSeries verbose
+    parser.add_argument(
+        '-v', '--verbose',
+        default = 'true',
+        help = 'setting verbose to False for less text output, while processing. default is True.',
+    )
+    # make_graph_gml graph_type
+    parser.add_argument(
+        'graph_type',
+        nargs = '?',
+        help = 'to specify which physicell output data should be processed. attached: processes mcds.get_attached_graph_dict dictionary. neighbor: processes mcds.get_neighbor_graph_dict dictionary spring: processes mcds.get_spring_graph_dict dictionary.',
+    )
+    # make_graph_gml edge_attribute
+    parser.add_argument(
+        '--edge_attribute',
+        default = 'true',
+        help = 'specifies if the spatial Euclidean distance is used for edge attribute, to generate a weighted graph. default is True.',
+    )
+    # make_graph_gml node_attrributes
+    parser.add_argument(
+        '--node_attribute',
+        nargs = '*',
+        default = [],
+        help = 'listing of mcds.get_cell_df dataframe columns, used for node attributes. default is and empty list.',
+    )
+
+    # parse arguments
+    args = parser.parse_args()
+    print(args)
+
+    # process arguments
+    s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
+    s_pathfile = s_path
+    if not s_pathfile.endswith('.xml'):
+        s_pathfile = s_pathfile + '/initial.xml'
+    else:
+        s_path = '/'.join(s_path.split('/')[:-1])
+    if not os.path.exists(s_pathfile):
+        sys.exit(f'Error @ pcdl_make_graph_gml : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
+
+    # custom_data_type
+    d_vartype = {}
+    for vartype in args.custom_data_type:
+        s_var, s_type = vartype.split(':')
+        if s_type in {'bool'}: o_type = bool
+        elif s_type in {'int'}: o_type = int
+        elif s_type in {'float'}: o_type = float
+        elif s_type in {'str'}: o_type = str
+        else:
+            sys.exit(f'Error @ pcdl_make_graph_gml : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.')
+        d_vartype.update({s_var : o_type})
+
+    # run
+    if os.path.isfile(args.path):
+        mcds = pcdl.TimeStep(
+            xmlfile = s_pathfile,
+            output_path = '.',
+            custom_data_type = d_vartype,
+            microenv = False if args.microenv.lower().startswith('f') else True,
+            graph = True,
+            physiboss = False if args.physiboss.lower().startswith('f') else True,
+            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
+            verbose = False if args.verbose.lower().startswith('f') else True
+        )
+        s_opathfile = mcds.make_graph_gml(
+            graph_type = args.graph_type,
+            edge_attribute = False if args.edge_attribute.lower().startswith('f') else True,
+            node_attribute = args.node_attribute,
+        )
+        # going home
+        print(s_opathfile)
+
+    else:
+        mcdsts = pcdl.TimeSeries(
+            output_path = s_path,
+            custom_data_type = d_vartype,
+            load = True,
+            microenv = False if args.microenv.lower().startswith('f') else True,
+            graph = True,
+            physiboss = False if args.physiboss.lower().startswith('f') else True,
+            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
+            verbose = False if args.verbose.lower().startswith('f') else True,
+        )
+        ls_opathfile = mcdsts.make_graph_gml(
+            graph_type = args.graph_type,
+            edge_attribute = False if args.edge_attribute.lower().startswith('f') else True,
+            node_attribute = args.node_attribute,
+        )
+        # going home
+        print(ls_opathfile)
+
+    # going home
+    return 0
+
+
 def make_simularium():
     # argv
     parser = argparse.ArgumentParser(
@@ -2291,6 +2292,7 @@ def get_muspan():
     # going home
     return 0
 
+
 def get_spatialdata():
     # argv
     parser = argparse.ArgumentParser(
@@ -2564,7 +2566,6 @@ def plot_timeseries():
         default = 'cell',
         help = 'to specifies the data dataframe. cell: dataframe will be retrieved through the mcds.get_cell_df function. conc: dataframe will be retrieved through the mcds.get_conc_df function. default is cell.',
     )
-
     # plot_timeseries cat_drop
     parser.add_argument(
         '--cat_drop',
@@ -2938,10 +2939,6 @@ def make_ome_tiff():
     # going home
     return 0
 
-
-#######################
-# render neuroglancer #
-#######################
 
 def render_neuroglancer():
     # argv
