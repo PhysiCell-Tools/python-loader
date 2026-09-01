@@ -5,9 +5,9 @@ The [simularium](https://simularium.allencell.org/) viewer was developed to shar
 Simularium files can easily be generated from mcds time series.
 
 
-### &#x2728; command line
+## &#x2728; command line
 
-#### command line time series
+### command line time series
 
 Generate a simularium trajectory file.
 
@@ -15,16 +15,16 @@ Generate a simularium trajectory file.
 pcdl_make_simularium output_2d/
 ```
 
-#### command line man page
+### command line man page
 
 ```bash
 pcdl_make_simularium -h
 ```
 
 
-### &#x2728; python
+## &#x2728; python
 
-#### python time series
+### python time series
 
 Load a time series and generate a simularium trajectory file.
 
@@ -35,7 +35,7 @@ mcdsts = pcdl.TimeSeries('output_2d/')
 mcdsts.make_simularium()
 ```
 
-#### python docstrings
+### python docstrings
 
 ```python
 import pcdl
@@ -44,7 +44,7 @@ mcdsts = pcdl.TimeSeries('output_2d/')
 help(mcdsts.make_simularium())
 ```
 
-### &#x2728; simularium viewer
+## &#x2728; simularium viewer
 
 1. Open the simularium viewer web page: https://simularium.allencell.org/
 1. Near the top right corner, click the "Load models" dropdown menu and choose "Simularium file".
@@ -54,7 +54,7 @@ help(mcdsts.make_simularium())
 1. Explore the loaded file.
 
 
-### &#x2728; Further readings'
+## &#x2728; Further readings'
 
 Please work through the official documentation to learn more about how simularium software.
 

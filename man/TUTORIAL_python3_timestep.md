@@ -413,40 +413,45 @@ Cell neighbor spring attached graph
 ```python
 mcds.make_graph_gml('spring')
 ```
-
 <!--
 Cell lineage tree
 ```python
 mcds.make_graph_gml('lineage')
 ```
-
-BUE 20260831 missing:
-```python
-mcds.get_attached_graph_dict()
-mcds.get_neighbor_graph_dict()
-mcds.get_spring_graph_dict()
-```
 -->
 
-Please have a look at [TUTORIAL_python3_graph.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_graph.md) to learn more.
+Furthermore, there are functions to recall the graph dictionary for each of the tracked graphs.
+```python
+mcds.get_neighbor_graph_dict()
+```
+```python
+mcds.get_attached_graph_dict()
+```
+```python
+mcds.get_spring_graph_dict()
+```
+
+Please have a look at
+[TUTORIAL_python3_graph.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_graph.md) to learn more.
+
 
 
 ## Microenvironment and Cell Data Related Functions
 
-<!--
-BUE 20260831 missing:
-```python
-mcds.get_muspan()
-```
--->
+### &#x2728; Substrate and Cell Data Analysis within the [MuSpAn](https://www.muspan.co.uk/) and [Scverse](https://scverse.org/)
 
-
-<!--
-BUE 20260831 missing:
+For bioinformatics, substrate and cell agent data can be saved in the University of Oxford's multi spatial analysis [MuSpAn](https://www.muspan.co.uk/) or scverse's [SpatiaData](https://spatialdata.scverse.org/en/stable/) format.
 ```python
-mcds.get_spatialdata()
+do_domain = mcds.get_muspan()
 ```
--->
+```python
+sdata = mcds.get_spatialdata()
+```
+
+Please have a look at
+[TUTORIAL_python3_muspan.md](TUTORIAL_python3_muspan.md)
+[TUTORIAL_python3_scverse.md](TUTORIAL_python3_scverse.md)
+to learn more.
 
 
 ### &#x2728; PhysiCell Data Analysis with [Napari](https://napari.org/stable/), [Fiji Imagej](https://fiji.sc/), [Neuroglancer](https://research.google/blog/an-interactive-automated-3d-reconstruction-of-a-fly-brain/), and similar software.
@@ -481,7 +486,6 @@ Please have a look at
 [TUTORIAL_fiji_imagej.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_fijiimagej.md),
 and [TUTORIAL_neuroglancer.md]((https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_neuroglancer.md)
 to learn more.
-
 
 
 ## Mesh Data Related Functions

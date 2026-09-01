@@ -38,15 +38,18 @@ Basically, there are four types of functions:
 + plot_ : plot functions generate a matplotlib figure, or axis object, or file output (jpeg, png, tiff), depending on your parameter settings.
 
 ### TimeStep initialize
+
 + [help(pcdl.TimeStep.\_\_init\_\_)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.__init__.md)  #! workhorse function
 + [help(mcds.custom_data_astype)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.custom_data_astype.md)  #! workhorse function
 + [help(mcds.set_verbose_false)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.set_verbose_false.md)  #! workhorse function
 + [help(mcds.set_verbose_true)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.set_verbose_true.md)  #! workhorse function
++ [help(mcds.render_neuroglancer)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.render_neuroglancer.md)
 
 ### TimeStep medata
+
 *version*
 + [help(mcds.get_multicellds_version)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_multicellds_version.md)  #! workhorse function
-+ [help(mcds.get_pcdl_version)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_pcdl_version.md)  #! workhorse function
++ [help(mcds.get_pcdl_version)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_pcdl_version.md)
 + [help(mcds.get_physicell_version)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_physicell_version.md)  #! workhorse function
 
 *time*
@@ -58,6 +61,7 @@ Basically, there are four types of functions:
 + [help(mcds.get_unit_dict)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_unit_dict.md)
 
 ### TimeStep mesh
+
 *range and axis*
 + [help(mcds.get_voxel_ijk_range)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_voxel_ijk_range.md)
 + [help(mcds.get_mesh_mnp_range)](https://github.com/elmbeech/physicelldataloader/blob/master/man/docstring/mcds.get_mesh_mnp_range.md)
@@ -78,7 +82,8 @@ Basically, there are four types of functions:
 + [help(mcds.get_voxel_volume)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_voxel_volume.md)
 + [help(mcds.get_voxel_ijk)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_voxel_ijk.md)
 
-### TimeStep microenvironment
+### TimeStep substarte
+
 + [help(mcds.get_substrate_list)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_substrate_list.md)  #! workhorse function
 + [help(mcds.get_substrate_dict)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_substrate_dict.md)
 + [help(mcds.get_substrate_df)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_substrate_df.md)
@@ -87,30 +92,30 @@ Basically, there are four types of functions:
 + [help(mcds.make_conc_vtk)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.make_conc_vtk.md)  #! workhorse function
 
 ### TimeStep cells
+
 + [help(mcds.get_celltype_list)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_celltype_list.md)  #! workhorse function
 + [help(mcds.get_celltype_dict)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_celltype_dict.md)
 + [help(mcds.get_cell_df)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_cell_df.md)  #! workhorse function
-+ [help(mcds.plot_scatter)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.plot_scatter.md)  #! workhorse function
-+ [help(mcds.make_cell_vtk)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.make_cell_vtk.md)  #! workhorse function
++ [help(mcds.get_cell_attribute_list)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_cell_attribute_list.md)  #! workhorse function
 + [help(mcds.get_anndata)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_anndata.md)  #! workhorse function
-
-### TimeStep cell graph
 + [help(mcds.get_attached_graph_dict)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_attached_graph_dict.md)
 + [help(mcds.get_neighbor_graph_dict)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_neighbor_graph_dict.md)
++ [help(mcds.get_spring_graph_dict)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_spring_graph_dict.md)
++ [help(mcds.plot_scatter)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.plot_scatter.md)  #! workhorse function
++ [help(mcds.make_cell_vtk)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.make_cell_vtk.md)  #! workhorse function
 + [help(mcds.make_graph_gml)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.make_graph_gml.md)  #! workhose function
 
-### TimeStep microenvironment and cells
+### TimeStep substarte and cells
+
 + [help(mcds.get_muspan)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_muspan.md)  #! workhose function
 + [help(mcds.get_spatialdata)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_spatialdata.md)  #! workhose function
 + [help(mcds.make_ome_tiff)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.make_ome_tiff.md)  #! workhose function
-+ [help(mcds.make_neuroglancer)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.make_neuroglancer.md)  #! workhose function
 
 ### TimeStep internal functions
-+ [help(pcdl.scaler)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.scaler.md)  # anndata
-+ [help(pcdl.graphfile_parser)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.graphfile_parser.md)  # mcds
+
 ```python3
-help(pcdl.TimeStep._read_xml)
 help(pcdl.TimeStep._anndextract)
+help(pcdl.TimeStep._read_xml)
 ```
 
 
@@ -124,52 +129,63 @@ Basically, there are four types of functions:
 
 ### TimeSeries initialization
 + [help(pcdl.TimeSeries.\_\_init\_\_)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.__init__.md)  #! workhosefunction
-+ [help(mcdsts.get_xmlfile_list)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_xmlfile_list.md)  #! workhosefunction
-+ [help(mcdsts.read_mcds)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.read_mcds.md)
-+ [help(mcdsts.get_mcds_list)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_mcds_list.md)  #! workhose function
-+ [help(mcdsts.get_annmcds_list)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_annmcds_list.md)  #! workhose function
 + [help(mcdsts.custom_data_astype)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.custom_data_astype.md)  #! workhorse function
 + [help(mcdsts.set_verbose_false)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.set_verbose_false.md)  #! workhorse function
 + [help(mcdsts.set_verbose_true)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.set_verbose_true.md)  #! workhorse function
++ [help(mcdsts.render_neuroglancer)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.render_neuroglancer.md)
 
-### TimeSeries microenvironment
+### TimeSeries load data
+
++ [help(mcdsts.get_xmlfile_list)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_xmlfile_list.md)  #! workhosefunction
++ [help(mcdsts.read_mcds)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.read_mcds.md)
++ [help(mcdsts.get_mcds_list)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_mcds_list.md)  #! workhose function
+
+### TimeSeries substrate
+
 + [help(mcdsts.get_conc_df)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_conc_df.md)  #! workhorse function
 + [help(mcdsts.get_conc_attribute)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_conc_attribute.md)  #! workhorse function
 + [help(mcdsts.plot_contour)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.plot_contour.md)  # !workhorse function
 + [help(mcdsts.make_conc_vtk)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.make_conc_vtk.md)  #! workhorse function
 
 ### TimeSeries cells
+
 + [help(mcdsts.get_cell_df)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_cell_df.md)  #! workhorse function
 + [help(mcdsts.get_cell_attribute)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_cell_attribute.md)  #! workhorse function
++ [help(mcdsts.get_anndata)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_anndata.md)  #! workhorse function
++ [help(mcdsts.get_annmcds_list)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_annmcds_list.md)  #! workhose function
 + [help(mcdsts.plot_scatter)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.plot_scatter.md)  # !workhorse function
 + [help(mcdsts.make_cell_vtk)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.make_cell_vtk.md)  #! workhorse function
-+ [help(mcdsts.make_simularium)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.make_simularium.md)  #! workhorse function
-+ [help(mcdsts.get_anndata)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_anndata.md)  #! workhorse function
++ [help(mcdsts.make_graph_gml)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.make_graph_gml.md)  #! workhose function
++ [help(mcdsts.make_simularium)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.make_simularium.md)
 
-### TimeSeries cell graph
-+ [help(mcdsts.get_graph_gml)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.make_graph_gml.md)  #! workhose function
+### TimeSteries substrate and cells
 
-### TimeSteries microenvironment and cells
 + [help(mcdsts.get_muspan)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_muspan.md)  #! workhose function
 + [help(mcdsts.get_spatialdata)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_spatialdata.md)  #! workhose function
-+ [help(mcdsts.make_ome_tiff)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.make_ome_tiff.md)  #! workhose function
-+ [help(mcdsts.make_neuroglancer)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.make_neuroglancer.md)  #! workhose function
-
-### Timeseries timeseries
++ [help(mcdsts.get_sdmcds_list)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_sdmcds_list.md)  #! workhose function
 + [help(mcdsts.plot_timeseries)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.plot_timeseries.md)  #! workhorse function
++ [help(mcdsts.make_ome_tiff)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.make_ome_tiff.md)  #! workhose function
 
 ### TimeSeries making movies
-+ [help(pcdl.make_gif)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.make_gif.md)  # ! workhorse function
-+ [help(pcdl.make_movie)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.make_movie.md)  # ! workhorse function
-+ [help(mcdsts.make_gif)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.make_gif.md)  # ! workhorse function
-+ [help(mcdsts.make_movie)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.make_movie.md)  # ! workhorse function
+
++ [help(mcdsts.make_gif)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.make_gif.md)  # physicell basics
++ [help(mcdsts.make_movie)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.make_movie.md)  # physicell basics
 
 ### TimeSeries internal functions
-+ [help(pcdl.scaler)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.scaler.md)  # anndata
 ```python3
 help(pcdl.TimeSeries._handle_magick)
-help(pcdl.TimeSeries._anndextract)
 ```
+
+
+### pcdl module level ###
+
++ pcdl.\_\_version\_\_  # loaded pcdl version
++ [help(pcdl.graphfile_parser)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.graphfile_parser.md)  # mcds
++ [help(pcdl.make_gif)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.make_gif.md)  # physicell basics
++ [help(pcdl.make_movie)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.make_movie.md)  # physicell basics
++ pcdl.pccmap  # officical PhysiCell color map
++ [help(pcdl.render_neuroglancer)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/ocdl.render_neuroglancer.md)
++ [help(pcdl.scaler)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl.scaler.md)  # anndata
 
 
 # Command line
@@ -177,6 +193,7 @@ help(pcdl.TimeSeries._anndextract)
 The command line interface functions mimic the name and parameter arguments as closely as possible to the related python3 functions.
 
 ### Command line metadata
+
 *version*
 + [pcdl_get_version --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_version.md)  #! workhorse function
 
@@ -184,35 +201,35 @@ The command line interface functions mimic the name and parameter arguments as c
 + [pcdl_get_unit_dict --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_unit_dict.md)
 
 ### Command line microenvironment
+
 + [pcdl_get_substrate_list --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_substrate_list.md)  #! workhorse function
-+ [pcdl_get_conc_attribute --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_conc_attribute.md)  #! workhorse function
 + [pcdl_get_conc_df --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_conc_df.md)  #! workhorse function
++ [pcdl_get_conc_attribute --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_conc_attribute.md)  #! workhorse function
 + [pcdl_plot_contour --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_plot_contour.md)  #! workhorse function
 + [pcdl_make_conc_vtk --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_make_conc_vtk.md)  #! workhorse function
 
 ### Command line cells
+
 + [pcdl_get_celltype_list --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_celltype_list.md)  #! workhorse function
-+ [pcdl_get_cell_attribute_list --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_cell_attribute_list.md)  #! workhorse function
-+ [pcdl_get_cell_attribute --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_cell_attribute.md)  #! workhorse function
 + [pcdl_get_cell_df --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_cell_df.md)  #! workhorse function
++ [pcdl_get_cell_attribute --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_cell_attribute.md)  #! workhorse function
++ [pcdl_get_cell_attribute_list --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_cell_attribute_list.md)  #! workhorse function
 + [pcdl_get_anndata --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_anndata.md)  #! workhorse function
 + [pcdl_plot_scatter --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_plot_scatter.md)  #! workhorse function
 + [pcdl_make_cell_vtk --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_make_cell_vtk.md)  #! workhorse function
-+ [pcdl_make_simularium --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_make_simularium.md)  #! workhorse function
-
-### Command line cell graph
 + [pcdl_make_graph_gml --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_make_graph_gml.md)  #! workhorse function
++ [pcdl_make_simularium --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_make_simularium.md)
 
 ### Command line cells and microenvironment
+
 + [pcdl_get_muspan --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_muspan.md)  #! workhorse function
 + [pcdl_get_spatialdata --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_spatialdata.md)  #! workhorse function
-+ [pcdl_make_ome_tiff --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_make_ome_tiff.md)  #! workhorse function
-+ [pcdl_make_neuroglancer --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_make_neuroglancer.md)  #! workhorse function
-
-### Command line timeseries
 + [pcdl_plot_timeseries --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_plot_timeseries.md)  #! workhorse function
++ [pcdl_make_ome_tiff --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_make_ome_tiff.md)  #! workhorse function
 
 ### Command line making movies
-+ [pcdl_make_gif --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_make_gif.md)  #! workhorse function
-+ [pcdl_make_movie --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_make_movie.md)  #! workhorse function
+
++ [pcdl_make_gif --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_make_gif.md)  #! physicell basics
++ [pcdl_make_movie --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_make_movie.md)  #! physicell basics
++ [pcdl_render_neuroglancer --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_render_neuroglancer.md)
 

@@ -2940,48 +2940,6 @@ def make_ome_tiff():
     return 0
 
 
-def render_neuroglancer():
-    # argv
-    parser = argparse.ArgumentParser(
-        prog = 'pcdl_render_neuroglancer',
-        description = 'function to load a time step from an ome tiff files, generated with make_ome_tiff, into neuroglancer.',
-        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
-    )
-    # ome tiff path file
-    parser.add_argument(
-        'tiffpathfile',
-        nargs = '?',
-        default = '.',
-        help = 'path to ome tiff file.',
-    )
-    # time step
-    parser.add_argument(
-        'timestep',
-        nargs = '?',
-        default = 0,
-        type = int,
-        help = 'time step, within a possibly collapsed ome tiff file, to render. the default will work with single time step ome tiff files.',
-    )
-    # intensity colormap
-    parser.add_argument(
-        '--intensity_cmap',
-        default = 'gray',
-        help = 'matlab color map label, used to display expression intensity values. if None, no intensity layers will be generated. https://matplotlib.org/stable/users/explain/colors/colormaps.html',
-    )
-
-    # parse arguments
-    args = parser.parse_args()
-    print(args)
-
-    # process arguments
-    s_neuromancerpath = str(pathlib.Path(pcdl.__file__).parent).replace('\\','/') + '/'
-    s_tiffpathfile = args.tiffpathfile.replace('\\','/')
-
-    # run
-    # bue 20250623: use subprocess to run python3 in interactive mode to run the neuromancer script, which is needed to keep the neuroglancer web gl server running.
-    subprocess.run(['python3', '-i', f'{s_neuromancerpath}neuromancer.py', s_tiffpathfile, '--timestep', str(args.timestep), '--intensity_cmap', args.intensity_cmap])
-
-
 #################
 # making movies #
 #################
@@ -3082,3 +3040,45 @@ def make_movie():
     # going home
     print(s_opathfile)
     return 0
+
+
+def render_neuroglancer():
+    # argv
+    parser = argparse.ArgumentParser(
+        prog = 'pcdl_render_neuroglancer',
+        description = 'function to load a time step from an ome tiff files, generated with make_ome_tiff, into neuroglancer.',
+        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
+    )
+    # ome tiff path file
+    parser.add_argument(
+        'tiffpathfile',
+        nargs = '?',
+        default = '.',
+        help = 'path to ome tiff file.',
+    )
+    # time step
+    parser.add_argument(
+        'timestep',
+        nargs = '?',
+        default = 0,
+        type = int,
+        help = 'time step, within a possibly collapsed ome tiff file, to render. the default will work with single time step ome tiff files.',
+    )
+    # intensity colormap
+    parser.add_argument(
+        '--intensity_cmap',
+        default = 'gray',
+        help = 'matlab color map label, used to display expression intensity values. if None, no intensity layers will be generated. https://matplotlib.org/stable/users/explain/colors/colormaps.html',
+    )
+
+    # parse arguments
+    args = parser.parse_args()
+    print(args)
+
+    # process arguments
+    s_neuromancerpath = str(pathlib.Path(pcdl.__file__).parent).replace('\\','/') + '/'
+    s_tiffpathfile = args.tiffpathfile.replace('\\','/')
+
+    # run
+    # bue 20250623: use subprocess to run python3 in interactive mode to run the neuromancer script, which is needed to keep the neuroglancer web gl server running.
+    subprocess.run(['python3', '-i', f'{s_neuromancerpath}neuromancer.py', s_tiffpathfile, '--timestep', str(args.timestep), '--intensity_cmap', args.intensity_cmap])

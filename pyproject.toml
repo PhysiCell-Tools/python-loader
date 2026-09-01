@@ -150,9 +150,9 @@ pcdl_get_spatialdata = "pcdl.commandline:get_spatialdata"
 pcdl_plot_timeseries = "pcdl.commandline:plot_timeseries"
 pcdl_make_ome_tiff = "pcdl.commandline:make_ome_tiff"
 # making movies
-pcdl_render_neuroglancer = "pcdl.commandline:render_neuroglancer"
 pcdl_make_gif = "pcdl.commandline:make_gif"
 pcdl_make_movie = "pcdl.commandline:make_movie"
+pcdl_render_neuroglancer = "pcdl.commandline:render_neuroglancer"
 
 
 [project.urls]
