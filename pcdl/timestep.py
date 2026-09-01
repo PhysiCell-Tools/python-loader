@@ -625,6 +625,19 @@ class TimeStep:
         #print(f'pcdl: set mcds.verbose = True.')
 
 
+    def render_neuroglancer(self, tiffpathfile, timestep=0, intensity_cmap='gray'):
+        """
+        help(pcdl.render_neuroglancer)
+        try: mcds.render_neuroglancer(mcds.make_ome_tiff())
+        """
+        o_viewer = render_neuroglancer(
+            tiffpathfile = tiffpathfile,
+            timestep = timestep,
+            intensity_cmap = intensity_cmap,
+        )
+        return o_viewer
+
+
     ## METADATA RELATED FUNCTIONS ##
 
     def get_multicellds_version(self):
@@ -2881,19 +2894,6 @@ class TimeStep:
                 #fs_kwargs={},
             )
             return s_tiffpathfile
-
-
-    def render_neuroglancer(self, tiffpathfile, timestep=0, intensity_cmap='gray'):
-        """
-        help(pcdl.render_neuroglancer)
-        try: mcds.render_neuroglancer(mcds.make_ome_tiff())
-        """
-        o_viewer = render_neuroglancer(
-            tiffpathfile = tiffpathfile,
-            timestep = timestep,
-            intensity_cmap = intensity_cmap,
-        )
-        return o_viewer
 
 
     ## LOAD DATA  ##
