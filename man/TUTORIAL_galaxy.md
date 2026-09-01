@@ -8,21 +8,27 @@ We here focus on [the European instance of Galaxy](https://usegalaxy.eu/) since 
 Special thanks to Björn Grüning, who helped me to port pcdl into Galaxy!
 
 
-## Run PhysiCell Studio on Galaxy
+## &#x2728; Run PhysiCell Studio on Galaxy
 
 1. In your web browser, open the European instance of Galaxy: https://usegalaxy.eu/
-1. Optionally, log into your user account. Create one if you do not already have one.
-1. Near the top left corner, click "Tools".
+1. Required, log into your user account. Create one if you do not already have one.
+1. One the left side pannel, click "Interactive Tools".
 1. Near the left-side top corner, in the "Tools" search bar, type "PhysiCell Studio".
 1. Choose "PhysiCell Studio".
-1. Choose "Run Tool" (center panel or top right).
+1. On the center pannel under additional option flip the switch "Email notification" to Yes. 
+1. On the center pannel click on one of the "Run Tool" buttons.
+1. On the left-side pannel, after a while, "Active Interactive Tools" should pop up.
+1. Under "Active Interactive Tools" click "PhysiCell Studio". 
 1. How to load, develop, or run a PhysiCell model in the studio can be learned here:
    + https://physicell-studio.readthedocs.io/en/latest/index.html
    + https://github.com/PhysiCell-Tools/PhysiCell-Studio
+1. In the left side "History" pannel do NOT DELETE the "PhysiCell Studio on : all reults archive."
+1. Run simmulation.
 1. [TKBue]
 
 
-## Upload local PhysiCell output to Galaxy
+
+## &#x2728; Upload local PhysiCell output to Galaxy
 
 1. In your web browser, open the European instance of Galaxy: https://usegalaxy.eu/
 1. Optionally, log into your user account. Create one if you do not already have one.
@@ -38,7 +44,7 @@ Special thanks to Björn Grüning, who helped me to port pcdl into Galaxy!
 1. After a while, the uploaded data collection should appear in the history in the right-side panel.
 
 
-## The pcdl tools on Galaxy
+## &#x2728; The pcdl tools on Galaxy
 
 1. In your web browser, open the European instance of Galaxy: https://usegalaxy.eu/
 1. Optionally, log into your user account. Create one if you do not already have one.
@@ -52,7 +58,7 @@ Special thanks to Björn Grüning, who helped me to port pcdl into Galaxy!
 1. After a while, the result file(s) should appear in the left-side history panel.
 
 
-### &#x2728; Further readings
+## &#x2728; Further readings
 
 You can learn more about Galaxy here:
 + https://galaxyproject.org/tutorials/g101/
