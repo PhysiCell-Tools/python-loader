@@ -153,63 +153,6 @@ class TestCommandLineInterfaceSubstrateList(object):
         assert o_result.returncode == 0
 
 
-class TestCommandLineInterfaceConcDfAttribute(object):
-    ''' tests for one  pcdl command line interface  function. '''
-
-    # timeseries collapsed:
-    # + path (str) nop
-    # + verbose (true, _false_) nop
-    # + values (int) ok
-    # + drop (oxygen) ok
-    # + keep (oxygen) ok
-    # + allvalues (false _true_) ok
-
-    def test_pcdl_get_conc_attribute_timeseries(self):
-        o_result = subprocess.run(['pcdl_get_conc_attribute', s_path_2d], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/timeseries_conc_attribute_minmax.json')
-        assert o_result.returncode == 0
-
-    def test_pcdl_get_conc_attribute_timeseries_value(self):
-        o_result = subprocess.run(['pcdl_get_conc_attribute', s_path_2d, '2'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/timeseries_conc_attribute_minmax.json')
-        assert o_result.returncode == 0
-
-    def test_pcdl_get_conc_attribute_timeseries_drop(self):
-        o_result = subprocess.run(['pcdl_get_conc_attribute', s_path_2d, '--drop', 'conc_type', 'oxygen'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/timeseries_conc_attribute_minmax.json')
-        assert o_result.returncode == 0
-
-    def test_pcdl_get_conc_attribute_timeseries_keep(self):
-        o_result = subprocess.run(['pcdl_get_conc_attribute', s_path_2d, '--keep', 'conc_type', 'oxygen'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/timeseries_conc_attribute_minmax.json')
-        assert o_result.returncode == 0
-
-    def test_pcdl_get_conc_attribute_timeseries_allvalues(self):
-        o_result = subprocess.run(['pcdl_get_conc_attribute', s_path_2d, '--allvalues', 'true'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/timeseries_conc_attribute_all.json')
-        assert o_result.returncode == 0
-
-
 class TestCommandLineInterfaceConcDf(object):
     ''' tests for one  pcdl command line interface  function. '''
 
@@ -302,6 +245,63 @@ class TestCommandLineInterfaceConcDf(object):
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
         os.remove(f'{s_path_2d}/output00000024_conc.csv')
+        assert o_result.returncode == 0
+
+
+class TestCommandLineInterfaceConcDfAttribute(object):
+    ''' tests for one  pcdl command line interface  function. '''
+
+    # timeseries collapsed:
+    # + path (str) nop
+    # + verbose (true, _false_) nop
+    # + values (int) ok
+    # + drop (oxygen) ok
+    # + keep (oxygen) ok
+    # + allvalues (false _true_) ok
+
+    def test_pcdl_get_conc_attribute_timeseries(self):
+        o_result = subprocess.run(['pcdl_get_conc_attribute', s_path_2d], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/timeseries_conc_attribute_minmax.json')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_conc_attribute_timeseries_value(self):
+        o_result = subprocess.run(['pcdl_get_conc_attribute', s_path_2d, '2'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/timeseries_conc_attribute_minmax.json')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_conc_attribute_timeseries_drop(self):
+        o_result = subprocess.run(['pcdl_get_conc_attribute', s_path_2d, '--drop', 'conc_type', 'oxygen'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/timeseries_conc_attribute_minmax.json')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_conc_attribute_timeseries_keep(self):
+        o_result = subprocess.run(['pcdl_get_conc_attribute', s_path_2d, '--keep', 'conc_type', 'oxygen'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/timeseries_conc_attribute_minmax.json')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_conc_attribute_timeseries_allvalues(self):
+        o_result = subprocess.run(['pcdl_get_conc_attribute', s_path_2d, '--allvalues', 'true'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/timeseries_conc_attribute_all.json')
         assert o_result.returncode == 0
 
 
@@ -470,163 +470,6 @@ class TestCommandLineInterfaceCelltypeList(object):
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
-
-
-class TestCommandLineInterfaceCellAttributeList(object):
-    ''' tests for one  pcdl command line interface  function. '''
-
-    # timeseries collapsed:
-    # + path (str) nop
-    # + microenv (true, _false_) ok
-    # + physiboss (true, _false_) ok
-    # + settingxml (string, _none_, _false_) ok
-    # + verbose (true, _false_) nop
-
-    def test_pcdl_get_cell_attribute_list_timeseries(self):
-        o_result = subprocess.run(['pcdl_get_cell_attribute_list', s_path_2d], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
-
-    def test_pcdl_get_cell_attribute_list_timeseries_microenv(self):
-        o_result = subprocess.run(['pcdl_get_cell_attribute_list', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
-
-    def test_pcdl_get_cell_attribute_list_timeseries_physiboss(self):
-        o_result = subprocess.run(['pcdl_get_cell_attribute_list', s_path_2d, '--physiboss', 'false'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
-
-    def test_pcdl_get_cell_attribute_list_timeseries_settingxmlfalse(self):
-        o_result = subprocess.run(['pcdl_get_cell_attribute_list', s_path_2d, '--settingxml', 'false'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
-
-    def test_pcdl_get_cell_attribute_list_timeseries_settingxmlnone(self):
-        o_result = subprocess.run(['pcdl_get_cell_attribute_list', s_path_2d, '--settingxml', 'none'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        assert o_result.returncode == 0
-
-
-class TestCommandLineInterfaceCellDfAttribute(object):
-    ''' tests for one  pcdl command line interface  function. '''
-
-    # timeseries collapsed:
-    # + path (str) nop
-    # + customtype ([], _sample:bool_) ok
-    # + microenv (true, _false_) ok
-    # + physiboss (true, _false_)
-    # + settingxml (string, _none_, _false_) ok
-    # + verbose (true, _false_) nop
-    # + values (int) ok
-    # + drop (cell_type oxygen) ok
-    # + keep (cell_type oxygen) ok
-    # + allvalues (false _true_) ok
-
-    def test_pcdl_get_cell_attribute_timeseries(self):
-        o_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/timeseries_cell_attribute_minmax.json')
-        assert o_result.returncode == 0
-
-    def test_pcdl_get_cell_attribute_timeseries_customtype(self):
-        o_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--custom_data_type', 'sample:bool'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/timeseries_cell_attribute_minmax.json')
-        assert o_result.returncode == 0
-
-    def test_pcdl_get_cell_attribute_timeseries_microenv(self):
-        o_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/timeseries_cell_attribute_minmax.json')
-        assert o_result.returncode == 0
-
-    def test_pcdl_get_cell_attribute_timeseries_physiboss(self):
-        o_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--physiboss', 'false'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/timeseries_cell_attribute_minmax.json')
-        assert o_result.returncode == 0
-
-    def test_pcdl_get_cell_attribute_timeseries_settingxmlfalse(self):
-        o_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--settingxml', 'false'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/timeseries_cell_attribute_minmax.json')
-        assert o_result.returncode == 0
-
-    def test_pcdl_get_cell_attribute_timeseries_settingxmlnone(self):
-        o_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--settingxml', 'none'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/timeseries_cell_attribute_minmax.json')
-        assert o_result.returncode == 0
-
-    def test_pcdl_get_cell_attribute_timeseries_value(self):
-        o_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '2'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/timeseries_cell_attribute_minmax.json')
-        assert o_result.returncode == 0
-
-    def test_pcdl_get_cell_attribute_timeseries_drop(self):
-        o_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--drop', 'cell_type', 'oxygen'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/timeseries_cell_attribute_minmax.json')
-        assert o_result.returncode == 0
-
-    def test_pcdl_get_cell_attribute_timeseries_keep(self):
-        o_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--keep', 'cell_type', 'oxygen'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/timeseries_cell_attribute_minmax.json')
-        assert o_result.returncode == 0
-
-    def test_pcdl_get_cell_attribute_timeseries_allvalues(self):
-        o_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--allvalues', 'true'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/timeseries_cell_attribute_all.json')
         assert o_result.returncode == 0
 
 
@@ -799,6 +642,163 @@ class TestCommandLineInterfaceCellDf(object):
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
         os.remove(f'{s_path_2d}/output00000024_cell.csv')
+        assert o_result.returncode == 0
+
+
+class TestCommandLineInterfaceCellDfAttribute(object):
+    ''' tests for one  pcdl command line interface  function. '''
+
+    # timeseries collapsed:
+    # + path (str) nop
+    # + customtype ([], _sample:bool_) ok
+    # + microenv (true, _false_) ok
+    # + physiboss (true, _false_)
+    # + settingxml (string, _none_, _false_) ok
+    # + verbose (true, _false_) nop
+    # + values (int) ok
+    # + drop (cell_type oxygen) ok
+    # + keep (cell_type oxygen) ok
+    # + allvalues (false _true_) ok
+
+    def test_pcdl_get_cell_attribute_timeseries(self):
+        o_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/timeseries_cell_attribute_minmax.json')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_cell_attribute_timeseries_customtype(self):
+        o_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--custom_data_type', 'sample:bool'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/timeseries_cell_attribute_minmax.json')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_cell_attribute_timeseries_microenv(self):
+        o_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/timeseries_cell_attribute_minmax.json')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_cell_attribute_timeseries_physiboss(self):
+        o_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--physiboss', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/timeseries_cell_attribute_minmax.json')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_cell_attribute_timeseries_settingxmlfalse(self):
+        o_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--settingxml', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/timeseries_cell_attribute_minmax.json')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_cell_attribute_timeseries_settingxmlnone(self):
+        o_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--settingxml', 'none'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/timeseries_cell_attribute_minmax.json')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_cell_attribute_timeseries_value(self):
+        o_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '2'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/timeseries_cell_attribute_minmax.json')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_cell_attribute_timeseries_drop(self):
+        o_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--drop', 'cell_type', 'oxygen'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/timeseries_cell_attribute_minmax.json')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_cell_attribute_timeseries_keep(self):
+        o_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--keep', 'cell_type', 'oxygen'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/timeseries_cell_attribute_minmax.json')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_cell_attribute_timeseries_allvalues(self):
+        o_result = subprocess.run(['pcdl_get_cell_attribute', s_path_2d, '--allvalues', 'true'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/timeseries_cell_attribute_all.json')
+        assert o_result.returncode == 0
+
+
+class TestCommandLineInterfaceCellAttributeList(object):
+    ''' tests for one  pcdl command line interface  function. '''
+
+    # timeseries collapsed:
+    # + path (str) nop
+    # + microenv (true, _false_) ok
+    # + physiboss (true, _false_) ok
+    # + settingxml (string, _none_, _false_) ok
+    # + verbose (true, _false_) nop
+
+    def test_pcdl_get_cell_attribute_list_timeseries(self):
+        o_result = subprocess.run(['pcdl_get_cell_attribute_list', s_path_2d], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_cell_attribute_list_timeseries_microenv(self):
+        o_result = subprocess.run(['pcdl_get_cell_attribute_list', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_cell_attribute_list_timeseries_physiboss(self):
+        o_result = subprocess.run(['pcdl_get_cell_attribute_list', s_path_2d, '--physiboss', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_cell_attribute_list_timeseries_settingxmlfalse(self):
+        o_result = subprocess.run(['pcdl_get_cell_attribute_list', s_path_2d, '--settingxml', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_cell_attribute_list_timeseries_settingxmlnone(self):
+        o_result = subprocess.run(['pcdl_get_cell_attribute_list', s_path_2d, '--settingxml', 'none'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
         assert o_result.returncode == 0
 
 
@@ -1030,211 +1030,6 @@ class TestCommandLineInterfaceAnndata(object):
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
         os.remove(f'{s_path_2d}/output00000024_cell_std.h5ad')
-        assert o_result.returncode == 0
-
-
-class TestCommandLineInterfaceGraphGml(object):
-    ''' tests for one  pcdl command line interface  function. '''
-
-    # timestep and timeseries:
-    # + path nop
-    # + customtype ([], _sample:bool_) ok
-    # + microenv (true, false) ok
-    # + physiboss (true, _false_) ok
-    # + settingxml (string, _none_, _false_) ok
-    # + verbose (true, _false_) nop
-    # + graph_type (neighbor, _attached_) ok
-    # + edge_attribute (true, _false_) ok
-    # + node_attribute (cell_type oxygen) ok
-
-    def test_pcdl_make_graph_gml_timeseries_default(self):
-        o_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        for i_step in range(25):
-            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_neighbor.gml')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_graph_gml_timeseries_customtype_nodeattribute_one(self):
-        o_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--custom_data_type', 'sample:bool', '--node_attribute', 'sample'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        for i_step in range(25):
-            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_neighbor.gml')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_graph_gml_timeseries_microenv(self):
-        o_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--microenv', 'false'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        for i_step in range(25):
-            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_neighbor.gml')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_graph_gml_timeseries_physiboss(self):
-        o_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--physiboss', 'false'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        for i_step in range(25):
-            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_neighbor.gml')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_graph_gml_timeseries_settingxmlfalse_nodeattribute_one(self):
-        o_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--settingxml', 'false', '--node_attribute', 'default_fusion_rates'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        for i_step in range(25):
-            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_neighbor.gml')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_graph_gml_timeseries_settingxmlnone_nodeattribute_one(self):
-        o_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--settingxml', 'none', '--node_attribute', 'default_fusion_rates'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        for i_step in range(25):
-            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_neighbor.gml')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_graph_gml_timeseries_graph_type(self):
-        o_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'attached'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        for i_step in range(25):
-            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_attached.gml')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_graph_gml_timeseries_edge_attribute(self):
-        o_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--edge_attribute', 'false'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        for i_step in range(25):
-            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_neighbor.gml')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_graph_gml_timeseries_nodeattribute_one(self):
-        o_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--node_attribute', 'cell_type'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        for i_step in range(25):
-            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_neighbor.gml')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_graph_gml_timeseries_nodeattribute_many(self):
-        o_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--node_attribute', 'cell_type', 'oxygen'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        for i_step in range(25):
-            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_neighbor.gml')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_graph_gml_timestep_default(self):
-        o_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/output00000024_neighbor.gml')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_graph_gml_timestep_customtype_nodeattribute_one(self):
-        o_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--custom_data_type', 'sample:bool', '--node_attribute', 'sample'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/output00000024_neighbor.gml')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_graph_gml_timestep_microenv(self):
-        o_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--microenv', 'false'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/output00000024_neighbor.gml')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_graph_gml_timestep_physiboss(self):
-        o_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--physiboss', 'false'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/output00000024_neighbor.gml')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_graph_gml_timestep_settingxmlfalse_nodeattribute_one(self):
-        o_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--settingxml', 'false', '--node_attribute', 'default_fusion_rates'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/output00000024_neighbor.gml')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_graph_gml_timestep_settingxmlnone_nodeattribute_one(self):
-        o_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--settingxml', 'none', '--node_attribute', 'default_fusion_rates'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/output00000024_neighbor.gml')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_graph_gml_timestep_graph_type(self):
-        o_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'attached'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/output00000024_attached.gml')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_graph_gml_timestep_edge_attribute(self):
-        o_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--edge_attribute', 'false'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/output00000024_neighbor.gml')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_graph_gml_timestep_node_attribute_one(self):
-        o_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--node_attribute', 'cell_type'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/output00000024_neighbor.gml')
-        assert o_result.returncode == 0
-
-    def test_pcdl_make_graph_gml_timestep_node_attribute_many(self):
-        o_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--node_attribute', 'cell_type', 'oxygen'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/output00000024_neighbor.gml')
         assert o_result.returncode == 0
 
 
@@ -1471,6 +1266,211 @@ class TestCommandLineInterfaceCellVtk(object):
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
         os.remove(f'{s_path_2d}/output00000024.vtp')
+        assert o_result.returncode == 0
+
+
+class TestCommandLineInterfaceGraphGml(object):
+    ''' tests for one  pcdl command line interface  function. '''
+
+    # timestep and timeseries:
+    # + path nop
+    # + customtype ([], _sample:bool_) ok
+    # + microenv (true, false) ok
+    # + physiboss (true, _false_) ok
+    # + settingxml (string, _none_, _false_) ok
+    # + verbose (true, _false_) nop
+    # + graph_type (neighbor, _attached_) ok
+    # + edge_attribute (true, _false_) ok
+    # + node_attribute (cell_type oxygen) ok
+
+    def test_pcdl_make_graph_gml_timeseries_default(self):
+        o_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_neighbor.gml')
+        assert o_result.returncode == 0
+
+    def test_pcdl_make_graph_gml_timeseries_customtype_nodeattribute_one(self):
+        o_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--custom_data_type', 'sample:bool', '--node_attribute', 'sample'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_neighbor.gml')
+        assert o_result.returncode == 0
+
+    def test_pcdl_make_graph_gml_timeseries_microenv(self):
+        o_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--microenv', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_neighbor.gml')
+        assert o_result.returncode == 0
+
+    def test_pcdl_make_graph_gml_timeseries_physiboss(self):
+        o_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--physiboss', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_neighbor.gml')
+        assert o_result.returncode == 0
+
+    def test_pcdl_make_graph_gml_timeseries_settingxmlfalse_nodeattribute_one(self):
+        o_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--settingxml', 'false', '--node_attribute', 'default_fusion_rates'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_neighbor.gml')
+        assert o_result.returncode == 0
+
+    def test_pcdl_make_graph_gml_timeseries_settingxmlnone_nodeattribute_one(self):
+        o_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--settingxml', 'none', '--node_attribute', 'default_fusion_rates'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_neighbor.gml')
+        assert o_result.returncode == 0
+
+    def test_pcdl_make_graph_gml_timeseries_graph_type(self):
+        o_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'attached'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_attached.gml')
+        assert o_result.returncode == 0
+
+    def test_pcdl_make_graph_gml_timeseries_edge_attribute(self):
+        o_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--edge_attribute', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_neighbor.gml')
+        assert o_result.returncode == 0
+
+    def test_pcdl_make_graph_gml_timeseries_nodeattribute_one(self):
+        o_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--node_attribute', 'cell_type'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_neighbor.gml')
+        assert o_result.returncode == 0
+
+    def test_pcdl_make_graph_gml_timeseries_nodeattribute_many(self):
+        o_result = subprocess.run(['pcdl_make_graph_gml', s_path_2d, 'neighbor', '--node_attribute', 'cell_type', 'oxygen'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_neighbor.gml')
+        assert o_result.returncode == 0
+
+    def test_pcdl_make_graph_gml_timestep_default(self):
+        o_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/output00000024_neighbor.gml')
+        assert o_result.returncode == 0
+
+    def test_pcdl_make_graph_gml_timestep_customtype_nodeattribute_one(self):
+        o_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--custom_data_type', 'sample:bool', '--node_attribute', 'sample'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/output00000024_neighbor.gml')
+        assert o_result.returncode == 0
+
+    def test_pcdl_make_graph_gml_timestep_microenv(self):
+        o_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--microenv', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/output00000024_neighbor.gml')
+        assert o_result.returncode == 0
+
+    def test_pcdl_make_graph_gml_timestep_physiboss(self):
+        o_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--physiboss', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/output00000024_neighbor.gml')
+        assert o_result.returncode == 0
+
+    def test_pcdl_make_graph_gml_timestep_settingxmlfalse_nodeattribute_one(self):
+        o_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--settingxml', 'false', '--node_attribute', 'default_fusion_rates'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/output00000024_neighbor.gml')
+        assert o_result.returncode == 0
+
+    def test_pcdl_make_graph_gml_timestep_settingxmlnone_nodeattribute_one(self):
+        o_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--settingxml', 'none', '--node_attribute', 'default_fusion_rates'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/output00000024_neighbor.gml')
+        assert o_result.returncode == 0
+
+    def test_pcdl_make_graph_gml_timestep_graph_type(self):
+        o_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'attached'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/output00000024_attached.gml')
+        assert o_result.returncode == 0
+
+    def test_pcdl_make_graph_gml_timestep_edge_attribute(self):
+        o_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--edge_attribute', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/output00000024_neighbor.gml')
+        assert o_result.returncode == 0
+
+    def test_pcdl_make_graph_gml_timestep_node_attribute_one(self):
+        o_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--node_attribute', 'cell_type'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/output00000024_neighbor.gml')
+        assert o_result.returncode == 0
+
+    def test_pcdl_make_graph_gml_timestep_node_attribute_many(self):
+        o_result = subprocess.run(['pcdl_make_graph_gml', s_pathfile_2d, 'neighbor', '--node_attribute', 'cell_type', 'oxygen'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/output00000024_neighbor.gml')
         assert o_result.returncode == 0
 
 
