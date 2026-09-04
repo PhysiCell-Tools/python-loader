@@ -127,6 +127,7 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
 
 ## Develoment:
 
-+ [Road Map and Release Notes](https://github.com/elmbeech/physicelldataloader/tree/master/man/RELEASENOTES.md)
++ [Road Map](https://github.com/elmbeech/physicelldataloader/tree/master/man/ROADMAP.md)
++ [Release Notes](https://github.com/elmbeech/physicelldataloader/tree/master/man/RELEASENOTES.md)
 
 Developers, please make pull requests to the https://github.com/elmbeech/physicelldataloader/tree/development branch. Thanks!
