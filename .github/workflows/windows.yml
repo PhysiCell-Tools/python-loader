@@ -22,7 +22,7 @@ jobs:
 
     env:
       MPLBACKEND: Agg  # https://github.com/orgs/community/discussions/26434
-      PYTHONPATH: D:\a\physicelldataloader\physicelldataloader
+      PYTHONPATH: ${{ github.workspace }}
 
     steps:
     - uses: actions/checkout@main
@@ -35,7 +35,7 @@ jobs:
         choco install ffmpeg imagemagick
         python -m pip install --upgrade pip
         python -m pip install flake8 pytest anndata bioio bioio-ome-tiff geopandas matplotlib networkx neuroglancer numpy pandas requests scikit-image scipy shapely simulariumio spatialdata vtk
-        python -m pip install D:\a\physicelldataloader\physicelldataloader -v
+        python -m pip install . -v
         #echo 'set PYTHONPATH=D:\a\physicelldataloader\physicelldataloader' >> $GITHUB_ENV
         #if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: lint with flake8

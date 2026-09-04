@@ -1,0 +1,305 @@
+## Road Map:
+
++ [issue #12](https://github.com/elmbeech/physicelldataloader/issues/12): downcast, read, and save to\_pcd functions.
++ [issue #16](https://github.com/elmbeech/physicelldataloader/issues/16): lineage tree graph output files.
+
+
+## Release Notes:
+
++ branch v4: active feature development, bug fixes, and security maintenance.
+
++ version 4.1.9 (2026-08-28): elmbeech/physicelldataloader
+    + new TimeSeries **make_simularium** and **pcdl_make_simularium** function. special thanks to Randy Heiland!
+
++ version 4.1.8 (2026-08-26): elmbeech/physicelldataloader
+    + branch v4 compatible with bioconda and galaxy. special thanks to Björn Grüning!
+
++ version 4.1.7 (2026-08-21): elmbeech/physicelldataloader
+    + compatible with pandas v3.0.0.
+
++ version 4.1.6 (2026-08-20): elmbeech/physicelldataloader
+    + pcdl installs now by default lightweight with only the core dependencies; users are prompted to install optional libraries if necessary. special thanks to Heber Rocha!
+
++ version 4.1.5 (2026-04-05): elmbeech/physicelldataloader
+    + bugfix library dependencies and library versions.
+
++ version 4.1.4 (2026-04-04): elmbeech/physicelldataloader
+    + TimeSeries **mcdsts.make_contour** extrema parameter is replaced by vmin and vmax to be compatible with mcds.make\_contour and plt.contour.
+    + **make_cell_vtk** and **make_conc_vtk** now offer an ext parameter, allowing to manually specify the exact file extension. special thanks to Danyon Gedris!
+    + new **make_muspan** TimeStep class and TimeSeries class function and **pcdl_get_muspan** command line command. special thanks to Joshua Moore and Joshua Bull!
+
++ version 4.1.3 (2026-03-21): elmbeech/physicelldataloader
+    + new **pcdl.pccmap** color map. this is an adaptation of the physicell pathology paint by number color map.
+    + new TimeStep **get_pcdl_version** function.
+
++ version 4.1.2 (2026-03-06): elmbeech/physicelldataloader
+    + new  **custom_data_astype** TimeStep class and TimeSeries class function to set the dtype of custom\_data variables even after the timestep or timeseries is loaded.
+    + TimeSeries \_\_init\_\_ function can now handle a list of TimeStep objects as input instead of a path.
+
++ version 4.1.1 (2026-02-28): elmbeech/physicelldataloader
+    + reduced memory footprint.
+
++ version 4.1.0 (2025-12-31): elmbeech/physicelldataloader
+    + new **get_spatialdata** TimeStep class and TimeSeries class function and **pcdl_get_spatialdata** command line command. special thanks to Luca Marconato!
+    + with this release, pcdl officially became an [scverse ecosystem](https://scverse.org/packages/#ecosystem) package.
+
++ version 4.0.5 (2025-10-22): elmbeech/physicelldataloader
+    + **settingxml** default is now set to False, because the cell\_type id label mapping can, in recent PhysiCell output, be retrieved from output\*.xml too.
+    + **plot_scatter** and **plot_timeseries** now additionally have a cat\_drop and cat\_keep argument to filter categorical data.
+    + **plot_timeseries(frame=conc)** now plots by default all substrate concentrations over time.
+    + **plot_timeseries(ext=)** parameter offers to return a dataframe object, dafaframe csv file, image file, or a matplotlib fig object. special thanks to John Nardini and Edward Young!
+
++ version 4.0.4 (2025-07-23): elmbeech/physicelldataloader
+    + command line commands now return **error code 0** if the command runs successfully.
+
++ version 4.0.3 (2025-07-20): elmbeech/physicelldataloader
+    + TimeStep and TimeSeries **plot_contour**, **plot_scatter**, and **plot_timeseries** handle now **kwargs** arguments.
+    + minor bugfixes.
+
++ version 4.0.2 (2025-06-29): elmbeech/physicelldataloader
+    + minor bugfixes.
+
++ version 4.0.1 (2025-06-24): elmbeech/physicelldataloader
+    + man updated.
+    + minor bugfixes.
+
++ version 4.0.0 (2025-05-13): elmbeech/physicelldataloader
+    + v4 was forked from v3.3.4!
+    + **mcds.data** struct was rewritten in more python less c++ way.
+    + pyMCDS.py and part of pyAnnData.py was fused to **timestep.py**.
+    + pyMCDSts.py and part of pyAnnData.py was fused to **timeseries.py**.
+    + pyCLI.py was renames to **commandline.py**.
+    + data\_timeseries.py was renamed to **output_data.py**.
+    + TimeStep function **get_concentration** was deprecated because pandas already has this functionlity.
+    + TimeStep function **get_concentration_at** was deprecated because pandas already has this functionlity.
+    + TimeStep function **get_cell_df_at** was deprecated because pandas already has this functionlity.
+    + **make_conc_vtk** and **make_cell_vtk** on the fly visualization was removed because paraview is good enough.
+    + new TimeStep **get_cell_attribute_list** function, to retrieve a list of all tracked cell attribute labels.
+    + new **pcdl_get_cell_attribute_list** function, to retrieve a list of all tracked cell attribute labels.
+    + new **render_neuroglancer** function, to render ome tiff image into neuroglancer.
+    + new **pcdl_render_neuroglancer** function, to render ome tiff images into neuroglancer.
+
+
++ branch v3: end-of-life reached.
+
++ version 3.3.8 (2025-07-23): elmbeech/physicelldataloader
+    + command line commands now return **error code 0** if the command runs successfully.
+
++ version 3.3.7 (2025-06-01): elmbeech/physicelldataloader
+    + compatible with current (non end-of-life cycle) python versions.
+    + minor bugfixes.
+
++ version 3.3.6 (2025-05-13): elmbeech/physicelldataloader
+    + compatible with numpy >= 2.0.0 and current (non end-of-life cycle) python versions.
+
++ version 3.3.5 (2025-05-13): elmbeech/physicelldataloader
+    + compatible with numpy < 2.0.0 and current (non end-of-life cycle) python versions.
+    + remove pyMCDS and pyMCDSts **make_ome_tiff** and pyCLI **pcdl_make_ome_tiff** to make pyMCS.py stand alone again.
+    + new TimeStep **get_cell_attribute_list** function, to retrieve a list of all tracked cell attribute labels.
+    + new **pcdl_get_cell_attribute_list** function, to retrieve a list of all tracked cell attribute labels.
+
++ version 3.3.4 (2025-03-07): elmbeech/physicelldataloader
+    + replace the **aicsimageio** library dependency with its successor **bioio**. special thanks to Joel Eliason!
+    + **make_ome_tiff** can now handel generated file names with > 255 characters. special thank to Genevieve Stein-O'Brien and DanielBergman!
+    + **get_mesh_spacing** handels now an edge case correctly that would have resulted in a division by zero. special thanks to Randy Heiland!
+
++ version 3.3.3 (2025-01-10): elmbeech/physicelldataloader
+    + bug fix **plot_contour** plot orientation. special thanks to Marco Ruscone!
+    + add test data for new improved **unittest physicell model**. special thanks to Nick Oldfather!
+    + add pyMCDS **make_conc_vtk** on the fly visualization. special thanks to Randy Heiland and Nick Oldfather!
+    + pyMCDS and pyMCDSts **make_graph_gml** and pyAnnData **get_anndata** handles now spring\_attached\_cells graph too.
+
++ version 3.3.2 (2024-11-24): elmbeech/physicelldataloader
+    + **Warnings** will no longer be piped to standard output if verbose is set to False.
+    + pyMCDS **make_ome_tiff** function rewriten to be less RAM hungry and more versatile.
+
++ version 3.3.1 (2024-09-22): elmbeech/physicelldataloader
+    + bugfix pyMCDS custom vectors loading.
+
++ version 3.3.0 (2024-08-22): elmbeech/physicelldataloader
+    + **pip install pcdl**: will again install all library dependencies. The fine-tuned version was too confssing.
+    + pyMCDS handels now intracellular **physinboss** data too; data is stored in cell\_df.
+    + rename pyMCDS get\_cell\_variables to **get_celltype_list** for conciseness and order list by ID.
+    + rename pyMCDS get\_substrate\_names to **get_substrate_list** for conciseness and order list by ID.
+    + rename pyMCDS get\_scatter to **plot_scatter** for conciseness.
+    + rename pyMCDS get\_contour to **plot_contour** for conciseness.
+    + rename pyMCDSts make\_imgcell to **plot_scatter** for conciseness.
+    + rename pyMCDSts make\_imgconc to **plot_contour** for conciseness.
+    + rename pyMCDSts get\_cell\_df\_states to **get_cell_attribute** for conciseness.
+    + rename pyMCDSts get\_conc\_df\_states to **get_conc_attribute** for conciseness.
+    + rewrite pyMCDS mcds.get\_unit\_se into **mcds.get_unit_dict**.
+    + new pyCLI **pcdl_get_anndata** command line interface function.
+    + new pyCLI **pcdl_get_celltype_list** command line interface function.
+    + new pyCLI **pcdl_get_cell_attribute** command line interface function.
+    + new pyCLI **pcdl_get_cell_df** command line interface function.
+    + new pyCLI **pcdl_get_substrate_list** command line interface function.
+    + new pyCLI **pcdl_get_conc_attribute** command line interface function.
+    + new pyCLI **pcdl_get_conc_df** command line interface function.
+    + new pyCLI **pcdl_get_graph_gml** command line interface function.
+    + new pyCLI **pcdl_get_unit_dict** command line interface function.
+    + new pyCLI **pcdl_get_version** command line interface function.
+    + new pyCLI **pcdl_make_cell_vtk** command line interface function.
+    + new pyCLI **pcdl_make_conc_vtk** command line interface function.
+    + new pyCLI **pcdl_make_gif** command line interface function.
+    + new pyCLI **pcdl_make_movie** command line interface function.
+    + new pyCLI **pcdl_make_ome_tiff** command line interface function.
+    + new pyCLI **pcdl_plot_contour** command line interface function.
+    + new pyCLI **pcdl_plot_scatter** command line interface function.
+    + new pyCLI **pcdl_plot_timeseries** command line interface function.
+    + new pyMCDS **mcds.get_mesh_mnp** function, the mesh version from mcds.get\_voxel\_ijk.
+    + new pyMCDS **make_conc_vtk** function, to save substrate data as rectilinear grid vtk file.
+    + new pyMCDS **make_cell_vtk** function, to save cell data as glyph vtk file.
+    + new pyMCDS **make_graph_gml** function, to save graphs in a networkx and igraph compatible file format.
+    + new pyMCDS **make_ome_tiff** function, to save the output data in ome tiff file format.
+    + new pyMCDS **set_verbosity_true** function, to complete pcdl.TimeStep(verbosity=True/False) experience.
+    + new pyMCDS **set_verbosity_false** function, to complete pcdl.TimeStep(verbosity=True/False) experience.
+    + new pyMCDSts **get_cell_df** function, to extract one big dataframe or a list of dataframes from the whole time series.
+    + new pyMCDSts **get_conc_df** function, to extract one big dataframe or a list of dataframes from the whole time series.
+    + new pyMCDSts **make_cell_vtk** function, to save substrate data as rectilinear grid vtk files. special thanks to Furkan Kurtoglu!
+    + new pyMCDSts **make_conc_vtk** function, to save cell data as glyph vtk files. special thanks to Furkan Kurtoglu!
+    + new pyMCDSts **make_graph_gml** function, to save graphs in a networkx and igraph compatible files format. special thanks to Benjamin Jacobs!
+    + new pyMCDSts **make_ome_tiff** function, to save the output data in ome tiff file format.
+    + new pyMCDSts **plot_timeseries** function, to plot time series. special thanks to Thierry-Pascal Fleurant!
+    + new pyMCDSts **set_verbosity_true** function, to complete the pcdl.TimeSeries(verbosity=True/False) experience.
+    + new pyMCDSts **set_verbosity_false** function to complete the pcdl.TimeSeries(verbosity=True/False) experience.
+
++ version 3.2.13 (2023-09-18): elmbeech/physicelldataloader
+    + rename pyMCDSts make\_imgsubs to **make_imgconc** for consistency.
+    + add **man/lecture/20230917_pcdl_repl_programming_analysis_plots.pdf** slide deck.
+
++ version 3.2.12 (2023-08-12): elmbeech/physicelldataloader
+    + add **man/jupyter/pcdl_repl_programming.ipynb** : Jupyter notebook to give an idea about how to work with pcdl in a python3 REPL.
+    + add **man/lecture/20230808_pcws2023_session07_pcdl.pdf** slide deck.
+    + add github **continuous integration** for all supported python3 versions, all supported operating systems.
+
++ version 3.2.11 (2023-08-08): elmbeech/physicelldataloader
+    + **pip install pcdl**: will only install the bare minimum library dependencies.
+    + **pip install pcdl[data]**: will install the minimum dependencies plus the dependencies to download the test dataset.
+    + **pip install pcdl[scverse]**: will install the minimum dependencies plus the dependencies needed to generate an anndata object.
+    + **pip install pcdl[all]**: will always install all dependencies.
+    + new TimeSeries **get_annmcds_list** function, which points to the self.l\_annmcds object.
+    + new pyMCDS **get_scatter** function is split off from pyMCDSts make\_imgcell.
+    + pyMCDSts **make_imgcell** and **make_imgsubs** bug fixes.
+    + TimeStep and TimeSeries **get_anndata** evolution.
+
++ version 3.2.10 (2023-07-24): elmbeech/physicelldataloader
+    + rename pyMCDSts get\_cell\_df\_columns\_states to **get_cell_df_states** for conciseness.
+    + rename pyMCDSts get\_conc\_df\_columns\_states to **get_conc_df_states** for conciseness.
+
++ version 3.2.9 (2023-07-23): elmbeech/physicelldataloader
+    + new class **TimeStep** can do everything pyMCDS can do and more.
+    + new class **TimeSeries** can do everything pyMCDSts can do and more.
+    + new TimeStep **get_anndata** function to transform physicell output into [AnnData](https://anndata.readthedocs.io/en/latest/) objects.
+    + new TimeSeries **get_anndata** function to transform physicell output into [AnnData](https://anndata.readthedocs.io/en/latest/) objects.
+    + internal pyAnnData **scaler** function.
+    + internal pyAnnData **\_anndextract** function.
+    + pyMCDS **_\_init__** seetingxml parameter changed from boolean to string to accept other PhysiCell\_settings.xml filenames than the default.
+    + pyMCDS **get_cell_df** drop and keep parameters to declare a set of columns to be dropped or kept.
+    + pyMCDS **get_conc_df** drop and keep parameters to declare a set of columns to be dropped or kept.
+    + new pyMCDS **get_conc_df** shorthand for get\_concentration\_df.
+    + pyMCDSts get\_cell\_minstate\_col reimplementation as **get_cell_df_columns_states** function.
+    + pyMCDSts get\_concentartion\_minstate\_col reimplementation as **get_conc_df_columns_states** function.
+    + new pyMCDSts **get_mcds_list** function which points to the self.l\_mcds object.
+
++ version 3.2.8 (2023-06-21): elmbeech/physicelldataloader
+    + pyMCDS **get_concentration_df** states parameter to filter out non-informative variables.
+    + pyMCDS **get_cell_df** states parameter to filter out non-informative variables.
+    + pyMCDSts **_\_init__** load parameter to specify if the whole time series data straight at object initialization should be loaded.
+    + new pyMCDSts **get_cell_minstate_col** function to scan the whole time series for informative attributes.
+    + new pyMCDSts **get_concentartion_minstate_col** function to scan the whole time series for informative attributes.
+
++ version 3.2.7 (2023-06-20): elmbeech/physicelldataloader
+    + pyMCDS and pyMCDSts **_\_init__** custom\_type parameter to specify other custom\_data variable types (int, bool, str) then the generic float.
+
++ version 3.2.5 (2023-06-19): elmbeech/physicelldataloader
+    + pyMCDS resolves incompatibility with earlier PhysiCell and MultiCellDS versions.
+
++ version 3.2.4 (2023-06-17): elmbeech/physicelldataloader
+    + pyMCDS **_\_init__** seetingxml parameter for cases where in the output folder no PhysiCell\_settings.xml can be found.
+    + pyMCDSts **mcdsts.make_imgcell** extrema parameter is replaced by the z\_axis parameter to account for numerical and categorical variable types.
+
++ version 3.2.2 (2023-06-16): elmbeech/physicelldataloader
+    + pyMCDS **mcds.get_cell_df** sets distinct boolean, categorical, integer number, and real number variable types. categorical number codes are translated. for all spatial variables, the vector length value is calculated and added automatically.
+    + new pyMCDS **mcds.get_celltype_dict** function.
+    + new pyMCDS **mcds.get_substrate_dict** function.
+    + pyMCDSts **mcdsts.make_imgcell** and **mcdsts.make_imgsubs** functions improved.
+
++ version 3.2.1 (2023-06-12): elmbeech/physicelldataloader
+    + pypa odyssey is coming to an end.
+    + change build system from setuptools to hatching.
+    + change the library name from pcDataLoader to pcdl.
+    + to make the library installation more lightweight, test data was excluded from the basic installation.
+      given the computer is connected to the internet, test data can easily be installed and removed with the **pcdl.install_data()** and **pcdl.uninstall_data()** functions now.
+
++ version 3.0.7 (2023-06-08): elmbeech/physicelldataloader
+    + pyMCDSts: replaces the svg dependent **mcdsts.make_jpeg**, **mcdsts.make_png**, and **mcdsts.make_tiff** with **mcdsts.make_imgcell** and **mcdsts.make_imgsubs** which generate images straight out of the loaded data. the **mcdsts.make_gif** and **mcdsts.make_movie** functions were adjusted accordingly. special thanks to Marshal Gress!
+    + pyMCDSts: **mcdsts.read_mcds** loads now automatically all mcds snapshots if no xmlfile\_list is provided (default).
+
++ version 3.0.6 (2023-04-29): elmbeech/physicelldataloader
+    + pyMCDS **\_read_xml** is now able to load time steps with zero cells.
+    + pyMCDS **mcds.get_contour** can handle more input parameters.
+
++ version 3.0.5 (2023-02-26): elmbeech/physicelldataloader pyMCDS **mcds.get_contour**  plots span now the whole domain and not only to the border voxel centers.
++ version 3.0.4 (2023-02-21): elmbeech/physicelldataloader pyMCDS **mcds.get_contour** function, to easily generate for substrates matplotlib contourf and contour plots because they do not exist as pandas plots.
++ version 3.0.3 (2023-02-19): elmbeech/physicelldataloader branch 3 has no longer anndata and, as such, hdf5 dependency.
++ version 3.0.2 (2023-01-06): elmbeech/physicelldataloader bugfix installing package data.
++ version 3.0.0 (2023-01-06): elmbeech/physicelldataloader
+    + **pyMCDS** parameter **xml_file** can now handle path/file.xml (unix) or path\file.xml (dos) input, as long output_path is the default.
+    + **pyMCDS** has a new additional boolean **microenv** parameter, to specify if the microenvironment (substrates) should be read (for completeness) or not (for speed increase and less memory usage).
+    + **pyMCDS** has a new additional boolean **graph** parameter, to specify if the attached and neighbor graph should be read.
+    + **pyMCDS** has a new additional boolean **verbose** parameter, to specify if there should be text output while processing.
+    + pyMCDS **mcds.get_2D_mesh** was renamed to **mcds.get_mesh_2D** for consistency.
+    + pyMCDS **mcds.get_linear_voxels** was renamed to **mcds.get_mesh_coordinate** for consistency.
+    + pyMCDS **mcds.get_containing_voxel_ijk** was renamed to **mcds.get_voxel_ijk** for briefness.
+    + pyMCDS **mcds.get_voxel_spacing** returns now 3 specific values, one for x, y, and z, instead of 1 general value.
+    + pyMCDS **mcds.get_concentrations** was renamed to **mcds.get_concentration** for consistency
+    + pyMCDS **mcds.get_concentrations_at** was renamed to **mcds.get_concentration_at** for consistency
+    + pyMCDS **mcds.get_concentration_at** if z_slice is not a mesh center value, the function will by default adjust to the nearest and no longer break.
+    + pyMCDS **mcds.get_cell_variables** and **mcds.get_substrate_names** return now a strictly alphabetically ordered list.
+    + pyMCDS **mcds.get_cell_df** returns now a pandas dataframe with the cell IDs as the index and not as a column.
+      additionally, this dataframe contains now voxel, mesh_center, substrate parameter, substrate concentration, and cell density information too.
+    + new pyMCDS **mcds.get_concentration_df** function.
+    + new pyMCDS **mcds.get_substrate_df** function.
+    + new pyMCDS **mcds.get_unit_se** function.
+    + new pyMCDS **mcds.get_multicellds_version** function.
+    + new pyMCDS **mcds.get_physicell_version** function.
+    + new pyMCDS **mcds.get_runtime** function.
+    + new pyMCDS **mcds.get_timestamp** function.
+    + new pyMCDS **mcds.get_voxel_ijk_range** function.
+    + new pyMCDS **mcds.get_voxel_ijk_axis** function.
+    + new pyMCDS **mcds.get_voxel_spacing** function.
+    + new pyMCDS **mcds.get_voxel_volume** function.
+    + new pyMCDS **mcds.get_mesh_mnp_range** function.
+    + new pyMCDS **mcds.get_mesh_mnp_axis** function.
+    + new pyMCDS **mcds.get_xyz_range** function.
+    + new pyMCDS **mcds.is_in_mesh** function.
+    + new pyMCDS **mcds.get_attached_graph_dict** function.
+    + new pyMCDS **mcds.get_neigbor_graph_dict** function.
+    + class **pyMCDS_timeseries** was renamed to **pyMCDSts** and completely rewritten.
+    + new pyMCDSts **get_xmlfile_list** function.
+    + new pyMCDSts **read_mcds** function.
+    + new pyMCDSts **make_jpeg** function.
+    + new pyMCDSts **make_png** function.
+    + new pyMCDSts **make_tiff** function.
+    + new pyMCDSts **make_gif** function.
+    + new pyMCDSts **make_movie** function.
+    + all **plotting** functions were removed because pcdl only focuses on making the raw data in python3 easy to access for in-depth analysis.
+    + cell position coordinates are now constantly labeled as **x,y,z**, mesh center coordinates as **m,n,p**, and voxel coordinates as **i,j,k**.
+    + the underling [mcds object data dictionary structure](https://github.com/elmbeech/physicelldataloader/tree/master/man/img/physicelldataloader_data_dictionary_v3.0.0.png) has changed.
+    + [pytest](https://en.wikipedia.org/wiki/Pytest) unit tests exist now for all pyMCDS and pyMCDSts functions.
+
+
++ branch v2: end-of-life reached.
+
++ version 2.0.3 (2023-06-16): elmbeech/physicelldataloader pypa odyssey is coming to an end.
++ version 2.0.2 (2023-01-06): elmbeech/physicelldataloader reset patch voxel spacing bugfix, so that branch2 is full compatible with branch1 again. use branch3 for a bugfixed version!
++ version 2.0.1 (2022-11-08): elmbeech/physicelldataloader beta release patch voxel spacing bugfix.
++ version 2.0.0 (2022-08-30): elmbeech/physicelldataloader pip installable release, derived from and compatible with PhysiCell-Tools/python-loader release 1.1.0 (2022-07-20).
+
+
++ branch v1: end-of-life reached.
+
++ version 1.1.1 (2022-07-01): elmbeech/physicelldataloader deprecated np.float replaced with np.float64.
++ version 1.1.0 (2022-05-09): Physicell-Tools/python-loader release compatible with pre-v1.10.x of PhysiCell.
++ version 1.0.1 (2020-01-25): Physicell-Tools/python-loader time-series related bug fix.
++ version 1.0.0 (2019-09-28): Physicell-Tools/python-loader first public release!
