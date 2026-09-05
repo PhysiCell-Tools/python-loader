@@ -139,6 +139,10 @@ docstring_md(
     s_function = 'mcds.set_verbose_true',
     ls_doc = pcdl.TimeStep.set_verbose_true.__doc__.split('\n'),
 )
+docstring_md(
+    s_function = 'mcds.render_neuroglancer',
+    ls_doc = pcdl.TimeStep.render_neuroglancer.__doc__.split('\n'),
+)
 
 # write TimeStep metadata function makdown files
 docstring_md(
@@ -232,7 +236,7 @@ docstring_md(
     ls_doc = pcdl.TimeStep.get_voxel_ijk.__doc__.split('\n'),
 )
 
-# write TimeStep microenv function markdown files
+# write TimeStep substrate function markdown files
 docstring_md(
     s_function = 'mcds.get_substrate_list',
     ls_doc = pcdl.TimeStep.get_substrate_list.__doc__.split('\n'),
@@ -276,19 +280,9 @@ docstring_md(
     ls_doc = pcdl.TimeStep.get_cell_attribute_list.__doc__.split('\n'),
 )
 docstring_md(
-    s_function = 'mcds.plot_scatter',
-    ls_doc = pcdl.TimeStep.plot_scatter.__doc__.split('\n'),
-)
-docstring_md(
-    s_function = 'mcds.make_cell_vtk',
-    ls_doc = pcdl.TimeStep.make_cell_vtk.__doc__.split('\n'),
-)
-docstring_md(
     s_function = 'mcds.get_anndata',
     ls_doc = pcdl.TimeStep.get_anndata.__doc__.split('\n'),
 )
-
-# write TimeStep graph function markdown files
 docstring_md(
     s_function = 'mcds.get_attached_graph_dict',
     ls_doc = pcdl.TimeStep.get_attached_graph_dict.__doc__.split('\n'),
@@ -302,11 +296,19 @@ docstring_md(
     ls_doc = pcdl.TimeStep.get_spring_graph_dict.__doc__.split('\n'),
 )
 docstring_md(
+    s_function = 'mcds.plot_scatter',
+    ls_doc = pcdl.TimeStep.plot_scatter.__doc__.split('\n'),
+)
+docstring_md(
+    s_function = 'mcds.make_cell_vtk',
+    ls_doc = pcdl.TimeStep.make_cell_vtk.__doc__.split('\n'),
+)
+docstring_md(
     s_function = 'mcds.make_graph_gml',
     ls_doc = pcdl.TimeStep.make_graph_gml.__doc__.split('\n'),
 )
 
-# write TimeStep microenvironment and cells function markdown files
+# write TimeStep substarte and cells function markdown files
 docstring_md(
     s_function = 'mcds.get_muspan',
     ls_doc = pcdl.TimeStep.get_muspan.__doc__.split('\n'),
@@ -321,20 +323,14 @@ docstring_md(
     ls_doc = pcdl.TimeStep.make_ome_tiff.__doc__.split('\n'),
 )
 
-docstring_md(
-    s_function = 'pcdl.render_neuroglancer',
-    ls_doc = pcdl.render_neuroglancer.__doc__.split('\n'),
-    s_header = "mcds.render_neuroglancer('path/to/ome.tiff')"
-)
-
 # write TimeStep internal function makdown files
-docstring_md(
-    s_function = 'pcdl.scaler',
-    ls_doc = pcdl.scaler.__doc__.split('\n'),
-)
 docstring_md(
     s_function = 'pcdl.graphfile_parser',
     ls_doc = pcdl.graphfile_parser.__doc__.split('\n'),
+)
+docstring_md(
+    s_function = 'pcdl.scaler',
+    ls_doc = pcdl.scaler.__doc__.split('\n'),
 )
 
 
@@ -349,6 +345,28 @@ docstring_md(
     ls_doc = pcdl.TimeSeries.custom_data_astype.__doc__.split('\n'),
 )
 docstring_md(
+    s_function = 'mcdsts.set_verbose_false',
+    ls_doc = pcdl.TimeSeries.set_verbose_false.__doc__.split('\n'),
+)
+docstring_md(
+    s_function = 'mcdsts.set_verbose_true',
+    ls_doc = pcdl.TimeSeries.set_verbose_true.__doc__.split('\n'),
+)
+docstring_md(
+    s_function = 'mcdsts.make_gif',
+    ls_doc = pcdl.TimeSeries.make_gif.__doc__.split('\n'),
+)
+docstring_md(
+    s_function = 'mcdsts.make_movie',
+    ls_doc = pcdl.TimeSeries.make_movie.__doc__.split('\n'),
+)
+docstring_md(
+    s_function = 'mcdsts.render_neuroglancer',
+    ls_doc = pcdl.TimeSeries.render_neuroglancer.__doc__.split('\n'),
+)
+
+# write TimeSeries load function makdown files
+docstring_md(
     s_function = 'mcdsts.get_xmlfile_list',
     ls_doc = pcdl.TimeSeries.get_xmlfile_list.__doc__.split('\n'),
 )
@@ -360,21 +378,8 @@ docstring_md(
     s_function = 'mcdsts.get_mcds_list',
     ls_doc = pcdl.TimeSeries.get_mcds_list.__doc__.split('\n'),
 )
-docstring_md(
-    s_function = 'mcdsts.get_annmcds_list',
-    ls_doc = pcdl.TimeSeries.get_annmcds_list.__doc__.split('\n'),
-)
 
-docstring_md(
-    s_function = 'mcdsts.set_verbose_false',
-    ls_doc = pcdl.TimeSeries.set_verbose_false.__doc__.split('\n'),
-)
-docstring_md(
-    s_function = 'mcdsts.set_verbose_true',
-    ls_doc = pcdl.TimeSeries.set_verbose_true.__doc__.split('\n'),
-)
-
-# write TimeSeries microenv function makdown files
+# write TimeSeries substrate function makdown files
 docstring_md(
     s_function = 'mcdsts.get_conc_df',
     ls_doc = pcdl.TimeSeries.get_conc_df.__doc__.split('\n'),
@@ -402,6 +407,14 @@ docstring_md(
     ls_doc = pcdl.TimeSeries.get_cell_attribute.__doc__.split('\n'),
 )
 docstring_md(
+    s_function = 'mcdsts.get_anndata',
+    ls_doc = pcdl.TimeSeries.get_anndata.__doc__.split('\n'),
+)
+docstring_md(
+    s_function = 'mcdsts.get_annmcds_list',
+    ls_doc = pcdl.TimeSeries.get_annmcds_list.__doc__.split('\n'),
+)
+docstring_md(
     s_function = 'mcdsts.plot_scatter',
     ls_doc = pcdl.TimeSeries.plot_scatter.__doc__.split('\n'),
 )
@@ -410,14 +423,12 @@ docstring_md(
     ls_doc = pcdl.TimeSeries.make_cell_vtk.__doc__.split('\n'),
 )
 docstring_md(
-    s_function = 'mcdsts.get_anndata',
-    ls_doc = pcdl.TimeSeries.get_anndata.__doc__.split('\n'),
-)
-
-# write TimeSeries graph function makdown files
-docstring_md(
     s_function = 'mcdsts.make_graph_gml',
     ls_doc = pcdl.TimeSeries.make_graph_gml.__doc__.split('\n'),
+)
+docstring_md(
+    s_function = 'mcdsts.make_simularium',
+    ls_doc = pcdl.TimeSeries.make_simularium.__doc__.split('\n'),
 )
 
 # write TimeSeries microenvironment and cells function makdown files
@@ -430,20 +441,25 @@ docstring_md(
     ls_doc = pcdl.TimeSeries.get_spatialdata.__doc__.split('\n'),
 )
 docstring_md(
-    s_function = 'mcdsts.make_ome_tiff',
-    ls_doc = pcdl.TimeSeries.make_ome_tiff.__doc__.split('\n'),
-)
-docstring_md(
-    s_function = 'pcdl.render_neuroglancer',
-    ls_doc = pcdl.render_neuroglancer.__doc__.split('\n'),
-    s_header = "mcdsts.render_neuroglancer('path/to/ome.tiff')"
+    s_function = 'mcdsts.get_sdmcds_list',
+    ls_doc = pcdl.TimeSeries.get_sdmcds_list.__doc__.split('\n'),
 )
 docstring_md(
     s_function = 'mcdsts.plot_timeseries',
     ls_doc = pcdl.TimeSeries.plot_timeseries.__doc__.split('\n'),
 )
+docstring_md(
+    s_function = 'mcdsts.make_ome_tiff',
+    ls_doc = pcdl.TimeSeries.make_ome_tiff.__doc__.split('\n'),
+)
 
-# write TimeSeries making movies function markdown files
+
+# write pcdl making movies function markdown files
+docstring_md(
+    s_function = 'pcdl.render_neuroglancer',
+    ls_doc = pcdl.render_neuroglancer.__doc__.split('\n'),
+    s_header = "mcdsts.render_neuroglancer('path/to/ome.tiff')"
+)
 docstring_md(
     s_function = 'pcdl.make_gif',
     ls_doc = pcdl.make_gif.__doc__.split('\n'),
@@ -462,25 +478,27 @@ help_md(s_command='pcdl_get_version')
 help_md(s_command='pcdl_get_unit_dict')
 # substrate
 help_md(s_command='pcdl_get_substrate_list')
-help_md(s_command='pcdl_get_conc_attribute')
 help_md(s_command='pcdl_get_conc_df')
+help_md(s_command='pcdl_get_conc_attribute')
 help_md(s_command='pcdl_plot_contour')
 help_md(s_command='pcdl_make_conc_vtk')
 # cell agent
 help_md(s_command='pcdl_get_celltype_list')
-help_md(s_command='pcdl_get_cell_attribute_list')
-help_md(s_command='pcdl_get_cell_attribute')
 help_md(s_command='pcdl_get_cell_df')
+help_md(s_command='pcdl_get_cell_attribute')
+help_md(s_command='pcdl_get_cell_attribute_list')
 help_md(s_command='pcdl_get_anndata')
-help_md(s_command='pcdl_make_graph_gml')
 help_md(s_command='pcdl_plot_scatter')
 help_md(s_command='pcdl_make_cell_vtk')
+help_md(s_command='pcdl_make_graph_gml')
+help_md(s_command='pcdl_make_simularium')
 # substrate and cell agent
+help_md(s_command='pcdl_get_muspan')
 help_md(s_command='pcdl_get_spatialdata')
 help_md(s_command='pcdl_plot_timeseries')
 help_md(s_command='pcdl_make_ome_tiff')
-help_md(s_command='pcdl_render_neuroglancer')
 # making movies
+help_md(s_command='pcdl_render_neuroglancer')
 help_md(s_command='pcdl_make_gif')
 help_md(s_command='pcdl_make_movie')
 

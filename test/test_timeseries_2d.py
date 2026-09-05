@@ -39,7 +39,7 @@ if not os.path.exists(s_path_2d):
 
 ## making movies related functions ##
 
-class TestTimeSeriesMovies(object):
+class TestTimeSeries2dMovies(object):
     ''' tests for loading a pcdl.TimeSeries data set. '''
     mcdsts = pcdl.TimeSeries(s_path_2d, verbose=True)
 
@@ -114,9 +114,48 @@ class TestTimeSeriesMovies(object):
         shutil.rmtree(s_opath)
 
 
+class TestTimeSeries2dNeuroglancer(object):
+    ''' tests for loading a pcdl.TimeSeries data set. '''
+    mcdsts = pcdl.TimeSeries(s_path_2d, verbose=True)
+
+    ## make_gif and magick ommand ##
+    def test_mcdsts_render_neuroglancer_default(self, mcdsts=mcdsts):
+        s_tiffpathfile = mcdsts.make_ome_tiff()
+        o_viewer = mcdsts.render_neuroglancer(
+            tiffpathfile = s_tiffpathfile,
+            #timestep = 0,
+            #intensity_cmap='gray',
+        )
+        assert(str(type(o_viewer)) == "<class 'neuroglancer.viewer.Viewer'>") and \
+              (str(o_viewer).startswith('http://127.0.0.1:'))
+        os.remove(s_tiffpathfile)
+
+    def test_mcdsts_render_neuroglancer_timestep(self, mcdsts=mcdsts):
+        s_tiffpathfile = mcdsts.make_ome_tiff()
+        o_viewer = mcdsts.render_neuroglancer(
+            tiffpathfile = s_tiffpathfile,
+            timestep = 12,
+            intensity_cmap='gray',
+        )
+        assert(str(type(o_viewer)) == "<class 'neuroglancer.viewer.Viewer'>") and \
+              (str(o_viewer).startswith('http://127.0.0.1:'))
+        os.remove(s_tiffpathfile)
+
+    def test_mcdsts_render_neuroglancer_cmap(self, mcdsts=mcdsts):
+        s_tiffpathfile = mcdsts.make_ome_tiff()
+        o_viewer = mcdsts.render_neuroglancer(
+            tiffpathfile = s_tiffpathfile,
+            timestep = 0,
+            intensity_cmap='magma',
+        )
+        assert(str(type(o_viewer)) == "<class 'neuroglancer.viewer.Viewer'>") and \
+              (str(o_viewer).startswith('http://127.0.0.1:'))
+        os.remove(s_tiffpathfile)
+
+
 ## data loading related functions ##
 
-class TestTimeSeriesInit(object):
+class TestTimeSeries2dInit(object):
     ''' tests for loading a pcdl.TimeSeries data set. '''
 
     def test_mcdsts_custom_data_astype(self):
@@ -137,6 +176,10 @@ class TestTimeSeriesInit(object):
         assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
               (not mcdsts.verbose)
 
+    # test_make_gif double command
+    # test_make_movie double command
+    # test_render_neuroglancer double command
+
     ## get_xmlfile and read_mcds command and get_mcds_list ##
     def test_mcdsts_get_xmlfile_list(self):
         mcdsts = pcdl.TimeSeries(s_path_2d, load=False, verbose=True)
@@ -145,17 +188,6 @@ class TestTimeSeriesInit(object):
               (ls_xmlfile[0] == 'output00000000.xml') and \
               (ls_xmlfile[-1] == 'output00000024.xml') and \
               (len(ls_xmlfile) == 25)
-
-    def test_mcdsts_get_mcds_list(self):
-        mcdsts = pcdl.TimeSeries(s_path_2d, load=True, verbose=True)
-        l_mcds = mcdsts.get_mcds_list()
-        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
-              (str(type(mcdsts.l_mcds[0])) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(mcdsts.l_mcds[-1])) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (mcdsts.l_mcds[0].get_time() == 0) and \
-              (mcdsts.l_mcds[-1].get_time() == 1440) and \
-              (len(mcdsts.l_mcds) == 25) and \
-              (mcdsts.l_mcds == l_mcds)
 
     def test_mcdsts_read_mcds(self):
         mcdsts = pcdl.TimeSeries(s_path_2d, load=False, verbose=True)
@@ -168,6 +200,18 @@ class TestTimeSeriesInit(object):
               (mcdsts.l_mcds[-1].get_time() == 1440) and \
               (len(mcdsts.l_mcds) == 25) and \
               (l_mcds_loadfalse is None)
+
+    def test_mcdsts_get_mcds_list(self):
+        mcdsts = pcdl.TimeSeries(s_path_2d, load=True, verbose=True)
+        l_mcds = mcdsts.get_mcds_list()
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+              (str(type(mcdsts.l_mcds[0])) == "<class 'pcdl.timestep.TimeStep'>") and \
+              (str(type(mcdsts.l_mcds[-1])) == "<class 'pcdl.timestep.TimeStep'>") and \
+              (mcdsts.l_mcds[0].get_time() == 0) and \
+              (mcdsts.l_mcds[-1].get_time() == 1440) and \
+              (len(mcdsts.l_mcds) == 25) and \
+              (mcdsts.l_mcds == l_mcds)
+
 
     def test_mcdsts_read_mcds_xmlfilelist(self):
         mcdsts = pcdl.TimeSeries(s_path_2d, load=False, verbose=True)
@@ -192,7 +236,7 @@ class TestTimeSeriesInit(object):
 
 ## micro environment related functions ##
 
-class TestTimeSeriesMicroenv(object):
+class TestTimeSeries2dMicroenv(object):
     ''' tests for pcdl.TimeSeriesmicro environment related functions. '''
     mcdsts = pcdl.TimeSeries(s_path_2d, verbose=True)
 
@@ -313,7 +357,7 @@ class TestTimeSeriesMicroenv(object):
 
 ## cell related functions ##
 
-class TestTimeSeriesCell(object):
+class TestTimeSeries2dCell(object):
     ''' tests for pcdl.TimeSeries cell related functions. '''
     mcdsts = pcdl.TimeSeries(s_path_2d, verbose=False)
 
@@ -454,9 +498,99 @@ class TestTimeSeriesCell(object):
             os.remove(s_pathfile)
 
 
+## anndata time series related functions ##
+
+class TestTimeSeries2dAnnData(object):
+    ''' test for pcdl.TestSeries class. '''
+
+    # get_anndata
+    # get_annmcds_list {integrated}
+    # value {1, _2_}
+    # collaps {True, _False_}
+    # keep_mcds {True, _False_}
+
+    ## get_anndata command ##
+    def test_mcdsts_get_anndata(self):
+        mcdsts = pcdl.TimeSeries(s_path_2d, verbose=True)
+        ann = mcdsts.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=True)
+        l_annmcds = mcdsts.get_annmcds_list()
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+              (len(mcdsts.l_mcds) == 25) and \
+              (l_annmcds == mcdsts.l_annmcds) and \
+              (mcdsts.l_annmcds is None) and \
+              (str(type(ann)) == "<class 'anndata.AnnData'>") and \
+              (ann.X.shape[0] > 9) and \
+              (ann.X.shape[1] == 105) and \
+              (ann.obs.shape[0] > 9) and \
+              (ann.obs.shape[1] == 8) and \
+              (ann.obsm['spatial'].shape[0] > 9) and \
+              (ann.obsm['spatial'].shape[1] == 2) and \
+              (len(ann.obsp) == 0) and \
+              (ann.var.shape == (105, 0)) and \
+              (len(ann.uns) == 0)
+
+    def test_mcdsts_get_anndata_value(self):
+        mcdsts = pcdl.TimeSeries(s_path_2d, verbose=True)
+        ann = mcdsts.get_anndata(values=2, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=True)
+        l_annmcds = mcdsts.get_annmcds_list()
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+              (len(mcdsts.l_mcds) == 25) and \
+              (l_annmcds == mcdsts.l_annmcds) and \
+              (mcdsts.l_annmcds is None) and \
+              (str(type(ann)) == "<class 'anndata.AnnData'>") and \
+              (ann.X.shape[0] > 9) and \
+              (ann.X.shape[1] == 50) and \
+              (ann.obs.shape[0] > 9) and \
+              (ann.obs.shape[1] == 7) and \
+              (ann.obsm['spatial'].shape[0] > 9) and \
+              (ann.obsm['spatial'].shape[1] == 2) and \
+              (len(ann.obsp) == 0) and \
+              (ann.var.shape == (50, 0)) and \
+              (len(ann.uns) == 0)
+
+    def test_mcdsts_get_anndata_collapsefalse(self):
+        mcdsts = pcdl.TimeSeries(s_path_2d, verbose=True)
+        ann = mcdsts.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs', collapse=False, keep_mcds=True)
+        l_annmcds = mcdsts.get_annmcds_list()
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+              (len(mcdsts.l_mcds) == 25) and \
+              (l_annmcds == mcdsts.l_annmcds) and \
+              (str(type(mcdsts.l_annmcds)) == "<class 'list'>") and \
+              (len(mcdsts.l_annmcds) == 25) and \
+              (all([str(type(ann)) == "<class 'anndata.AnnData'>" for ann in mcdsts.l_annmcds])) and \
+              (mcdsts.l_annmcds[24].X.shape[0] > 9) and \
+              (mcdsts.l_annmcds[24].X.shape[1] == 105) and \
+              (mcdsts.l_annmcds[24].obs.shape[0] > 9) and \
+              (mcdsts.l_annmcds[24].obs.shape[1] == 8) and \
+              (mcdsts.l_annmcds[24].obsm['spatial'].shape[0] > 9) and \
+              (mcdsts.l_annmcds[24].obsm['spatial'].shape[1] == 2) and \
+              (len(mcdsts.l_annmcds[24].obsp) == 4) and \
+              (mcdsts.l_annmcds[24].var.shape == (105, 0)) and \
+              (len(mcdsts.l_annmcds[24].uns) == 2)
+
+    def test_mcdsts_get_anndata_keepmcdsfalse(self):
+        mcdsts = pcdl.TimeSeries(s_path_2d, verbose=True)
+        ann = mcdsts.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=False)
+        l_annmcds = mcdsts.get_annmcds_list()
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+              (len(mcdsts.l_mcds) == 0) and \
+              (l_annmcds == mcdsts.l_annmcds) and \
+              (mcdsts.l_annmcds is None) and \
+              (str(type(ann)) == "<class 'anndata.AnnData'>") and \
+              (ann.X.shape[0] > 9) and \
+              (ann.X.shape[1] == 105) and \
+              (ann.obs.shape[0] > 9) and \
+              (ann.obs.shape[1] == 8) and \
+              (ann.obsm['spatial'].shape[0] > 9) and \
+              (ann.obsm['spatial'].shape[1] == 2) and \
+              (len(ann.obsp) == 0) and \
+              (ann.var.shape == (105, 0)) and \
+              (len(ann.uns) == 0)
+
+
 ## graph related functions ##
 
-class TestTimeSeriesGraph(object):
+class TestTimeSeries2dGraph(object):
     ''' tests for pcdl.TimeSeries graph related functions. '''
     mcdsts = pcdl.TimeSeries(s_path_2d, verbose=False)
 
@@ -495,96 +629,113 @@ class TestTimeSeriesGraph(object):
             os.remove(s_pathfile)
 
 
-## ome tiff related functions ##
+## simularium time series related functions ##
 
-class TestTimeSeriesOmeTiff(object):
-    ''' tests for pcdl.TimeSeries ome tiff related functions. '''
-    mcdsts = pcdl.TimeSeries(s_path_2d, verbose=False)
+class TestTimeSeries2dSimularium(object):
+    ''' test for pcdl.TimeSeries class. '''
 
-    ## ome tiff related functions ##
-    def test_mcdsts_make_ome_tiff_defaultattr_00(self, mcdsts=mcdsts):
-        la_ometiff = mcdsts.make_ome_tiff(cell_attribute='ID', conc_cutoff={}, focus=None, file=False, collapse=False)
+    ## get_simularium command ##
+    def test_mcdsts_get_simularium_default(self):
+        import simulariumio as sim
+        mcdsts = pcdl.TimeSeries(s_path_2d, verbose=False)
+        s_pathfile = mcdsts.make_simularium(focus_cat=['cell_type','current_phase'], trajectory_title='timeseries', scale_factor=None, camera_defaults=None, model_meta_data=None)
         assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
-              (type(la_ometiff) is list) and \
-              (type(la_ometiff[0]) is np.ndarray) and \
-              (type(la_ometiff[-1]) is np.ndarray) and \
-              (la_ometiff[0].dtype == np.float32) and \
-              (la_ometiff[-1].dtype == np.float32) and \
-              (la_ometiff[0].shape == (4, 1, 200, 300)) and \
-              (la_ometiff[-1].shape ==  (4, 1, 200, 300)) and \
-              (len(la_ometiff) == 25)
+              (s_pathfile.endswith('/pcdl/output_2d/timeseries.simularium')) and \
+              (os.path.exists(s_pathfile))
+        os.remove(s_pathfile)
 
-    def test_mcdsts_make_ome_tiff_defaultattr_01(self, mcdsts=mcdsts):
-        a_ometiff = mcdsts.make_ome_tiff(cell_attribute='ID', conc_cutoff={}, focus=None, file=False, collapse=True)
+    def test_mcdsts_get_simularium_nondefault(self):
+        import simulariumio as sim
+        mcdsts = pcdl.TimeSeries(s_path_2d, verbose=False)
+        s_pathfile = mcdsts.make_simularium(focus_cat=['current_phase', 'dead'], trajectory_title='zeitreihe', scale_factor=0.1, camera_defaults=sim.CameraData(), model_meta_data=sim.ModelMetaData())
         assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
-              (type(a_ometiff) is np.ndarray) and \
-              (a_ometiff.dtype == np.float32) and \
-              (a_ometiff.shape == (25, 4, 1, 200, 300))
-
-    def test_mcdsts_make_ome_tiff_defaultattr_10(self, mcdsts=mcdsts):
-        ls_pathfile = mcdsts.make_ome_tiff(cell_attribute='ID', conc_cutoff={}, focus=None, file=True, collapse=False)
-        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
-              (ls_pathfile[0].endswith('pcdl/output_2d/output00000000_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
-              (ls_pathfile[-1].endswith('pcdl/output_2d/output00000024_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
-              (os.path.exists(ls_pathfile[0])) and \
-              (os.path.exists(ls_pathfile[-1])) and \
-              (os.path.getsize(ls_pathfile[0]) > 2**10) and\
-              (os.path.getsize(ls_pathfile[-1]) > 2**10) and\
-              (len(ls_pathfile) == 25)
-        for s_pathfile in ls_pathfile:
-            os.remove(s_pathfile)
-
-    def test_mcdsts_make_ome_tiff_defaultattr_11(self, mcdsts=mcdsts):
-        s_pathfile = mcdsts.make_ome_tiff(cell_attribute='ID', conc_cutoff={}, focus=None, file=True, collapse=True)
-        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
-              (s_pathfile.endswith('pcdl/output_2d/timeseries_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
-              (os.path.exists(s_pathfile)) and \
-              (os.path.getsize(s_pathfile) > 2**10 )
+              (s_pathfile.endswith('/pcdl/output_2d/zeitreihe.simularium')) and \
+              (os.path.exists(s_pathfile))
         os.remove(s_pathfile)
 
 
-class TestTimeSeriesNeuroglancer(object):
-    ''' tests for loading a pcdl.TimeSeries data set. '''
-    mcdsts = pcdl.TimeSeries(s_path_2d, verbose=True)
+## muspan time series related functions ##
+class TestTimeSeries2dMuspan(object):
+    ''' test for pcdl.TimeSeries class. '''
 
-    ## make_gif and magick ommand ##
-    def test_mcdsts_render_neuroglancer_default(self, mcdsts=mcdsts):
-        s_tiffpathfile = mcdsts.make_ome_tiff()
-        o_viewer = mcdsts.render_neuroglancer(
-            tiffpathfile = s_tiffpathfile,
-            #timestep = 0,
-            #intensity_cmap='gray',
-        )
-        assert(str(type(o_viewer)) == "<class 'neuroglancer.viewer.Viewer'>") and \
-              (str(o_viewer).startswith('http://127.0.0.1:'))
-        os.remove(s_tiffpathfile)
+    ## get_muspan command ##
+    def test_mcdsts_get_muspan_default(self):
+        try:
+            import muspan as ms
+            mcdsts = pcdl.TimeSeries(s_path_2d, verbose=False)
+            do_domain = mcdsts.get_muspan(z_slice=None, values=1, drop=set(), keep=set())
+            s_key = sorted(do_domain.keys())[-1]
+            assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+                  (type(do_domain) == dict) and \
+                  (len(do_domain) == 25) and \
+                  (str(type(do_domain[s_key])) == "<class 'muspan.domain.domain'>") and \
+                  (len(do_domain[s_key].collections) == 2) and \
+                  (len(do_domain[s_key].networks) == 3) and \
+                  (len(do_domain[s_key].objects) > 9)
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestTimeSeries2dMuspan : muspan module not installed.')
+            assert True
+        except SystemExit:
+            print('Warning @ pytest TestTimeSeries2dMuspan : muspan module not installed.')
+            assert True
 
-    def test_mcdsts_render_neuroglancer_timestep(self, mcdsts=mcdsts):
-        s_tiffpathfile = mcdsts.make_ome_tiff()
-        o_viewer = mcdsts.render_neuroglancer(
-            tiffpathfile = s_tiffpathfile,
-            timestep = 12,
-            intensity_cmap='gray',
-        )
-        assert(str(type(o_viewer)) == "<class 'neuroglancer.viewer.Viewer'>") and \
-              (str(o_viewer).startswith('http://127.0.0.1:'))
-        os.remove(s_tiffpathfile)
+    def test_mcdsts_get_muspan_zslice(self):
+        try:
+            import muspan as ms
+            mcdsts = pcdl.TimeSeries(s_path_2d, verbose=False)
+            do_domain = mcdsts.get_muspan(z_slice=0.0, values=1, drop=set(), keep=set())
+            s_key = sorted(do_domain.keys())[-1]
+            assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+                  (type(do_domain) == dict) and \
+                  (len(do_domain) == 25) and \
+                  (str(type(do_domain[s_key])) == "<class 'muspan.domain.domain'>") and \
+                  (len(do_domain[s_key].collections) == 2) and \
+                  (len(do_domain[s_key].networks) == 3) and \
+                  (len(do_domain[s_key].objects) > 9)
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestTimeSeries2dMuspan : muspan module not installed.')
+            assert True
+        except SystemExit:
+            print('Warning @ pytest TestTimeSeries2dMuspan : muspan module not installed.')
+            assert True
 
-    def test_mcdsts_render_neuroglancer_cmap(self, mcdsts=mcdsts):
-        s_tiffpathfile = mcdsts.make_ome_tiff()
-        o_viewer = mcdsts.render_neuroglancer(
-            tiffpathfile = s_tiffpathfile,
-            timestep = 0,
-            intensity_cmap='magma',
-        )
-        assert(str(type(o_viewer)) == "<class 'neuroglancer.viewer.Viewer'>") and \
-              (str(o_viewer).startswith('http://127.0.0.1:'))
-        os.remove(s_tiffpathfile)
+
+## spatialdata time seris related functions ##
+
+class TestTimeSeries2dSpatialData(object):
+    ''' test for pcdl.TestSeries class. '''
+
+    # get_sdmcds_list {integrated}
+    # get_cell_attributes ok
+    # get_get_spatialdata ok
+    # keep_mcds {True, _False_}
+
+    def test_mcdsts_get_spatialdata_default(self):
+        mcdsts = pcdl.TimeSeries(s_path_2d, verbose=True)
+        lo_sdmcds_output = mcdsts.get_spatialdata(images={'subs'}, labels=set(), points={'subs'}, shapes={'cell'}, values=1, drop=set(), keep=set(), scale='maxabs', keep_mcds=True)
+        lo_sdmcds_memory = mcdsts.get_sdmcds_list()
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+              (len(mcdsts.l_mcds) == 25) and \
+              (len(mcdsts.l_sdmcds) == 25) and \
+              (lo_sdmcds_output == mcdsts.l_sdmcds) and \
+              (lo_sdmcds_output == lo_sdmcds_memory) and \
+              (str(type(lo_sdmcds_output[8])) == "<class 'spatialdata._core.spatialdata.SpatialData'>")
+
+    def test_mcdsts_get_spatialdata_keepmcdsfalse(self):
+        mcdsts = pcdl.TimeSeries(s_path_2d, verbose=True)
+        lo_sdmcds_output = mcdsts.get_spatialdata(images={'subs'}, labels=set(), points={'subs'}, shapes={'cell'}, values=1, drop=set(), keep=set(), scale='maxabs', keep_mcds=False)
+        lo_sdmcds_memory = mcdsts.get_sdmcds_list()
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+              (len(mcdsts.l_mcds) == 0) and \
+              (len(mcdsts.l_sdmcds) == 25) and \
+              (lo_sdmcds_output == mcdsts.l_sdmcds) and \
+              (lo_sdmcds_output == lo_sdmcds_memory) and \
+              (str(type(lo_sdmcds_output[8])) == "<class 'spatialdata._core.spatialdata.SpatialData'>")
 
 
 ## time series related functions ##
 
-class TestTimeSeriesTimeseries(object):
+class TestTimeSeries2dTimeseries(object):
     ''' tests for pcdl.TimeSeries graph related functions. '''
     mcdsts = pcdl.TimeSeries(s_path_2d, verbose=False)
 
@@ -917,170 +1068,49 @@ class TestTimeSeriesTimeseries(object):
         plt.close()
 
 
-## anndata time series related functions ##
+## ome tiff related functions ##
 
-class TestTimeSeriesAnnData(object):
-    ''' test for pcdl.TestSeries class. '''
+class TestTimeSeries2dOmeTiff(object):
+    ''' tests for pcdl.TimeSeries ome tiff related functions. '''
+    mcdsts = pcdl.TimeSeries(s_path_2d, verbose=False)
 
-    # get_anndata
-    # get_annmcds_list {integrated}
-    # value {1, _2_}
-    # collaps {True, _False_}
-    # keep_mcds {True, _False_}
-
-    ## get_anndata command ##
-    def test_mcdsts_get_anndata(self):
-        mcdsts = pcdl.TimeSeries(s_path_2d, verbose=True)
-        ann = mcdsts.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=True)
-        l_annmcds = mcdsts.get_annmcds_list()
+    ## ome tiff related functions ##
+    def test_mcdsts_make_ome_tiff_defaultattr_00(self, mcdsts=mcdsts):
+        la_ometiff = mcdsts.make_ome_tiff(cell_attribute='ID', conc_cutoff={}, focus=None, file=False, collapse=False)
         assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
-              (len(mcdsts.l_mcds) == 25) and \
-              (l_annmcds == mcdsts.l_annmcds) and \
-              (mcdsts.l_annmcds is None) and \
-              (str(type(ann)) == "<class 'anndata.AnnData'>") and \
-              (ann.X.shape[0] > 9) and \
-              (ann.X.shape[1] == 105) and \
-              (ann.obs.shape[0] > 9) and \
-              (ann.obs.shape[1] == 8) and \
-              (ann.obsm['spatial'].shape[0] > 9) and \
-              (ann.obsm['spatial'].shape[1] == 2) and \
-              (len(ann.obsp) == 0) and \
-              (ann.var.shape == (105, 0)) and \
-              (len(ann.uns) == 0)
+              (type(la_ometiff) is list) and \
+              (type(la_ometiff[0]) is np.ndarray) and \
+              (type(la_ometiff[-1]) is np.ndarray) and \
+              (la_ometiff[0].dtype == np.float32) and \
+              (la_ometiff[-1].dtype == np.float32) and \
+              (la_ometiff[0].shape == (4, 1, 200, 300)) and \
+              (la_ometiff[-1].shape ==  (4, 1, 200, 300)) and \
+              (len(la_ometiff) == 25)
 
-    def test_mcdsts_get_anndata_value(self):
-        mcdsts = pcdl.TimeSeries(s_path_2d, verbose=True)
-        ann = mcdsts.get_anndata(values=2, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=True)
-        l_annmcds = mcdsts.get_annmcds_list()
+    def test_mcdsts_make_ome_tiff_defaultattr_01(self, mcdsts=mcdsts):
+        a_ometiff = mcdsts.make_ome_tiff(cell_attribute='ID', conc_cutoff={}, focus=None, file=False, collapse=True)
         assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
-              (len(mcdsts.l_mcds) == 25) and \
-              (l_annmcds == mcdsts.l_annmcds) and \
-              (mcdsts.l_annmcds is None) and \
-              (str(type(ann)) == "<class 'anndata.AnnData'>") and \
-              (ann.X.shape[0] > 9) and \
-              (ann.X.shape[1] == 50) and \
-              (ann.obs.shape[0] > 9) and \
-              (ann.obs.shape[1] == 7) and \
-              (ann.obsm['spatial'].shape[0] > 9) and \
-              (ann.obsm['spatial'].shape[1] == 2) and \
-              (len(ann.obsp) == 0) and \
-              (ann.var.shape == (50, 0)) and \
-              (len(ann.uns) == 0)
+              (type(a_ometiff) is np.ndarray) and \
+              (a_ometiff.dtype == np.float32) and \
+              (a_ometiff.shape == (25, 4, 1, 200, 300))
 
-    def test_mcdsts_get_anndata_collapsefalse(self):
-        mcdsts = pcdl.TimeSeries(s_path_2d, verbose=True)
-        ann = mcdsts.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs', collapse=False, keep_mcds=True)
-        l_annmcds = mcdsts.get_annmcds_list()
+    def test_mcdsts_make_ome_tiff_defaultattr_10(self, mcdsts=mcdsts):
+        ls_pathfile = mcdsts.make_ome_tiff(cell_attribute='ID', conc_cutoff={}, focus=None, file=True, collapse=False)
         assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
-              (len(mcdsts.l_mcds) == 25) and \
-              (l_annmcds == mcdsts.l_annmcds) and \
-              (str(type(mcdsts.l_annmcds)) == "<class 'list'>") and \
-              (len(mcdsts.l_annmcds) == 25) and \
-              (all([str(type(ann)) == "<class 'anndata.AnnData'>" for ann in mcdsts.l_annmcds])) and \
-              (mcdsts.l_annmcds[24].X.shape[0] > 9) and \
-              (mcdsts.l_annmcds[24].X.shape[1] == 105) and \
-              (mcdsts.l_annmcds[24].obs.shape[0] > 9) and \
-              (mcdsts.l_annmcds[24].obs.shape[1] == 8) and \
-              (mcdsts.l_annmcds[24].obsm['spatial'].shape[0] > 9) and \
-              (mcdsts.l_annmcds[24].obsm['spatial'].shape[1] == 2) and \
-              (len(mcdsts.l_annmcds[24].obsp) == 4) and \
-              (mcdsts.l_annmcds[24].var.shape == (105, 0)) and \
-              (len(mcdsts.l_annmcds[24].uns) == 2)
+              (ls_pathfile[0].endswith('pcdl/output_2d/output00000000_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
+              (ls_pathfile[-1].endswith('pcdl/output_2d/output00000024_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
+              (os.path.exists(ls_pathfile[0])) and \
+              (os.path.exists(ls_pathfile[-1])) and \
+              (os.path.getsize(ls_pathfile[0]) > 2**10) and\
+              (os.path.getsize(ls_pathfile[-1]) > 2**10) and\
+              (len(ls_pathfile) == 25)
+        for s_pathfile in ls_pathfile:
+            os.remove(s_pathfile)
 
-    def test_mcdsts_get_anndata_keepmcdsfalse(self):
-        mcdsts = pcdl.TimeSeries(s_path_2d, verbose=True)
-        ann = mcdsts.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs', collapse=True, keep_mcds=False)
-        l_annmcds = mcdsts.get_annmcds_list()
+    def test_mcdsts_make_ome_tiff_defaultattr_11(self, mcdsts=mcdsts):
+        s_pathfile = mcdsts.make_ome_tiff(cell_attribute='ID', conc_cutoff={}, focus=None, file=True, collapse=True)
         assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
-              (len(mcdsts.l_mcds) == 0) and \
-              (l_annmcds == mcdsts.l_annmcds) and \
-              (mcdsts.l_annmcds is None) and \
-              (str(type(ann)) == "<class 'anndata.AnnData'>") and \
-              (ann.X.shape[0] > 9) and \
-              (ann.X.shape[1] == 105) and \
-              (ann.obs.shape[0] > 9) and \
-              (ann.obs.shape[1] == 8) and \
-              (ann.obsm['spatial'].shape[0] > 9) and \
-              (ann.obsm['spatial'].shape[1] == 2) and \
-              (len(ann.obsp) == 0) and \
-              (ann.var.shape == (105, 0)) and \
-              (len(ann.uns) == 0)
-
-
-## muspan time series related functions ##
-class TestTimeSeriesMuspan(object):
-    ''' test for pcdl.TimeSeries class. '''
-
-    ## get_muspan command ##
-    def test_mcdsts_get_muspan_default(self):
-        try:
-            import muspan as ms
-            mcdsts = pcdl.TimeSeries(s_path_2d, verbose=False)
-            do_domain = mcdsts.get_muspan(z_slice=None, values=1, drop=set(), keep=set())
-            s_key = sorted(do_domain.keys())[-1]
-            assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
-                  (type(do_domain) == dict) and \
-                  (len(do_domain) == 25) and \
-                  (str(type(do_domain[s_key])) == "<class 'muspan.domain.domain'>") and \
-                  (len(do_domain[s_key].collections) == 2) and \
-                  (len(do_domain[s_key].networks) == 3) and \
-                  (len(do_domain[s_key].objects) > 9)
-        except ModuleNotFoundError:
-            print('Warning @ pytest TestTimeSeriesMuspan : muspan module not installed.')
-            assert True
-        except SystemExit:
-            print('Warning @ pytest TestTimeSeriesMuspan : muspan module not installed.')
-            assert True
-
-    def test_mcdsts_get_muspan_zslice(self):
-        try:
-            import muspan as ms
-            mcdsts = pcdl.TimeSeries(s_path_2d, verbose=False)
-            do_domain = mcdsts.get_muspan(z_slice=0.0, values=1, drop=set(), keep=set())
-            s_key = sorted(do_domain.keys())[-1]
-            assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
-                  (type(do_domain) == dict) and \
-                  (len(do_domain) == 25) and \
-                  (str(type(do_domain[s_key])) == "<class 'muspan.domain.domain'>") and \
-                  (len(do_domain[s_key].collections) == 2) and \
-                  (len(do_domain[s_key].networks) == 3) and \
-                  (len(do_domain[s_key].objects) > 9)
-        except ModuleNotFoundError:
-            print('Warning @ pytest TestTimeSeriesMuspan : muspan module not installed.')
-            assert True
-        except SystemExit:
-            print('Warning @ pytest TestTimeSeriesMuspan : muspan module not installed.')
-            assert True
-
-
-## spatialdata time seris related functions ##
-class TestTimeSeriesSpatialData(object):
-    ''' test for pcdl.TestSeries class. '''
-
-    # get_sdmcds_list {integrated}
-    # get_cell_attributes ok
-    # get_get_spatialdata ok
-    # keep_mcds {True, _False_}
-
-    def test_mcdsts_get_spatialdata_default(self):
-        mcdsts = pcdl.TimeSeries(s_path_2d, verbose=True)
-        lo_sdmcds_output = mcdsts.get_spatialdata(images={'subs'}, labels=set(), points={'subs'}, shapes={'cell'}, values=1, drop=set(), keep=set(), scale='maxabs', keep_mcds=True)
-        lo_sdmcds_memory = mcdsts.get_sdmcds_list()
-        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
-              (len(mcdsts.l_mcds) == 25) and \
-              (len(mcdsts.l_sdmcds) == 25) and \
-              (lo_sdmcds_output == mcdsts.l_sdmcds) and \
-              (lo_sdmcds_output == lo_sdmcds_memory) and \
-              (str(type(lo_sdmcds_output[8])) == "<class 'spatialdata._core.spatialdata.SpatialData'>")
-
-    def test_mcdsts_get_spatialdata_keepmcdsfalse(self):
-        mcdsts = pcdl.TimeSeries(s_path_2d, verbose=True)
-        lo_sdmcds_output = mcdsts.get_spatialdata(images={'subs'}, labels=set(), points={'subs'}, shapes={'cell'}, values=1, drop=set(), keep=set(), scale='maxabs', keep_mcds=False)
-        lo_sdmcds_memory = mcdsts.get_sdmcds_list()
-        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
-              (len(mcdsts.l_mcds) == 0) and \
-              (len(mcdsts.l_sdmcds) == 25) and \
-              (lo_sdmcds_output == mcdsts.l_sdmcds) and \
-              (lo_sdmcds_output == lo_sdmcds_memory) and \
-              (str(type(lo_sdmcds_output[8])) == "<class 'spatialdata._core.spatialdata.SpatialData'>")
-
+              (s_pathfile.endswith('pcdl/output_2d/timeseries_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
+              (os.path.exists(s_pathfile)) and \
+              (os.path.getsize(s_pathfile) > 2**10 )
+        os.remove(s_pathfile)

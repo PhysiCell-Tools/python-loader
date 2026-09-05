@@ -63,7 +63,9 @@ class TestTimeStep3dOnly(object):
 # test workhorse for speed #
 ############################
 
-class TestTimeStepInit(object):
+## data loading related functions ##
+
+class TestTimeStep3dInit(object):
     ''' tests for loading a pcdl.TimeStep data set. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_3d, output_path=s_path_3d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
     df_cell = mcds.get_cell_df()
@@ -92,7 +94,7 @@ class TestTimeStepInit(object):
               (df_cell.shape[1] == 122)
 
 
-class TestTimeStepInitMicroenvFalse(object):
+class TestTimeStep3dInitMicroenvFalse(object):
     ''' tests for loading a pcdl.TimeStep data set with microenv false. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_3d, output_path=s_path_3d, custom_data_type={}, microenv=False, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
     df_cell = mcds.get_cell_df()
@@ -121,7 +123,7 @@ class TestTimeStepInitMicroenvFalse(object):
               (df_cell.shape[1] == 116)
 
 
-class TestTimeStepInitGraphFalse(object):
+class TestTimeStep3dInitGraphFalse(object):
     ''' tests for loading a pcdl.TimeStep data set with graph false. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_3d, output_path=s_path_3d, custom_data_type={}, microenv=True, graph=False, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
     df_cell = mcds.get_cell_df()
@@ -150,7 +152,7 @@ class TestTimeStepInitGraphFalse(object):
               (df_cell.shape[1] == 122)
 
 
-class TestTimeStepInitPhysibossFalse(object):
+class TestTimeStep3dInitPhysibossFalse(object):
     ''' tests for loading a pcdl.TimeStep data set with physiboss false. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_3d, output_path=s_path_3d, custom_data_type={}, microenv=True, graph=True, physiboss=False, settingxml='PhysiCell_settings.xml', verbose=True)
     df_cell = mcds.get_cell_df()
@@ -179,17 +181,17 @@ class TestTimeStepInitPhysibossFalse(object):
               (df_cell.shape[1] == 122)
 
 
-#class TestTimeStepInitSettingxmlFalse(object):
+#class TestTimeStep3dInitSettingxmlFalse(object):
 #    ''' tests for loading a pcdl.TimeStep data set with settingxml false. '''
 #     NOP PhysiCell >= v1.14.0
 
 
-#class TestTimeStepInitSettingxmlNone(object):
+#class TestTimeStep3dInitSettingxmlNone(object):
 #    ''' tests for loading a pcdl.TimeStep data set with settingxml none. '''
 #     NOP PhysiCell >= v1.14.0
 
 
-class TestTimeStepInitVerboseTrue(object):
+class TestTimeStep3dInitVerboseTrue(object):
     ''' tests for loading a pcdl.TimeStep data set and set_verbose_false function. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_3d, output_path=s_path_3d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
@@ -203,7 +205,7 @@ class TestTimeStepInitVerboseTrue(object):
               (not mcds.verbose)
 
 
-class TestTimeStepInitVerboseFalse(object):
+class TestTimeStep3dInitVerboseFalse(object):
     ''' tests for loading a pcdl.TimeStep data set and set_verbose_true function. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_3d, output_path=s_path_3d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=False)
 
@@ -217,7 +219,9 @@ class TestTimeStepInitVerboseFalse(object):
               (mcds.verbose)
 
 
-class TestTimeStep3dSettingWorkhorse(object):
+## parameter setting related functions ##
+
+class TestTimeStep3dUnitdictWorkhorse(object):
     ''' tests on 3D data set, for speed, for pcdl.TimeStep unit related workhorse functions. '''
     mcds = pcdl.TimeStep(xmlfile=s_pathfile_3d)  # custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True
 
@@ -228,6 +232,8 @@ class TestTimeStep3dSettingWorkhorse(object):
               (len(ds_unit) > 9) and \
               (ds_unit['oxygen'] == 'dimensionless')
 
+
+## metadata related functions ##
 
 class TestTimeStep3dMicroenvWorkhorse(object):
     ''' tests on 3D data set, for speed, for pcdl.TimeStep microenvironment related workhorse functions. '''
@@ -333,6 +339,8 @@ class TestTimeStep3dMicroenvWorkhorse(object):
               (os.path.getsize(s_pathfile) > 2**10)
         os.remove(s_pathfile)
 
+
+## cell agent related functions ##
 
 class TestTimeStep3dCellWorkhorse(object):
     ''' tests on 3D data set, for speed, for pcdl.TimeStep cell related workhorse functions. '''
@@ -539,6 +547,30 @@ class TestTimeStep3dCellWorkhorse(object):
         os.remove(s_pathfile)
 
 
+## anndata time step related functions ##
+
+class TestTimeStep3dAnnData(object):
+    ''' test for pcdl.TimeStep class. '''
+
+    ## get_anndata command ##
+    def test_mcds_get_anndata(self):
+        mcds = pcdl.TimeStep(s_pathfile_3d, verbose=False)
+        ann = mcds.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs')
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+              (str(type(ann)) == "<class 'anndata.AnnData'>") and \
+              (ann.X.shape[0] > 9) and \
+              (ann.X.shape[1] == 105) and \
+              (ann.obs.shape[0] > 9) and \
+              (ann.obs.shape[1] == 8) and \
+              (ann.obsm['spatial'].shape[0] > 9) and \
+              (ann.obsm['spatial'].shape[1] == 3) and \
+              (len(ann.obsp) == 4) and \
+              (ann.var.shape == (105, 0)) and \
+              (len(ann.uns) == 2)
+
+
+## graph related functions ##
+
 class TestTimeStep3dGraphWorkhorse(object):
     ''' tests on 3D data set, for speed, for pcdl.TimeStep graph related workhorse functions. '''
     mcds = pcdl.TimeStep(xmlfile=s_pathfile_3d)  # custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True
@@ -645,50 +677,9 @@ class TestTimeStep3dGraphWorkhorse(object):
         os.remove(s_pathfile)
 
 
-class TestTimeStep3dOmeTiffWorkhorse(object):
-    ''' tests on 3D data set, for speed, for pcdl.TimeStep ome tiff related workhorse functions. '''
-    mcds = pcdl.TimeStep(xmlfile=s_pathfile_3d)  # custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True
-
-    ## ome tiff related functions ##
-    def test_mcds_make_ome_tiff_default(self, mcds=mcds):
-        s_pathfile = mcds.make_ome_tiff(cell_attribute='ID', conc_cutoff={}, focus=None, file=True)
-        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (s_pathfile.replace('\\','/').endswith('pcdl/output_3d/output00000024_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
-              (os.path.exists(s_pathfile)) and \
-              (os.path.getsize(s_pathfile) > 2**10)
-        os.remove(s_pathfile)
-
-    def test_mcds_make_ome_tiff_nofile(self, mcds=mcds):
-        a_ometiff = mcds.make_ome_tiff(cell_attribute='ID', conc_cutoff={}, focus=None, file=False)
-        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(a_ometiff)) == "<class 'numpy.ndarray'>") and \
-              (a_ometiff.dtype == np.float32) and \
-              (a_ometiff.shape == (4, 11, 200, 300))
-
-
-## anndata time step related functions ##
-class TestTimeStep3dAnnData(object):
-    ''' test for pcdl.TimeStep class. '''
-
-    ## get_anndata command ##
-    def test_mcds_get_anndata(self):
-        mcds = pcdl.TimeStep(s_pathfile_3d, verbose=False)
-        ann = mcds.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs')
-        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(ann)) == "<class 'anndata.AnnData'>") and \
-              (ann.X.shape[0] > 9) and \
-              (ann.X.shape[1] == 105) and \
-              (ann.obs.shape[0] > 9) and \
-              (ann.obs.shape[1] == 8) and \
-              (ann.obsm['spatial'].shape[0] > 9) and \
-              (ann.obsm['spatial'].shape[1] == 3) and \
-              (len(ann.obsp) == 4) and \
-              (ann.var.shape == (105, 0)) and \
-              (len(ann.uns) == 2)
-
-
 ## muspan time step related functions ##
-class TestTimeStepMuspan(object):
+
+class TestTimeStep3dMuspan(object):
     ''' test for pcdl.TimeStep class. '''
 
     ## get_muspan command ##
@@ -734,7 +725,8 @@ class TestTimeStepMuspan(object):
 
 
 ## spatialdata time step related functions ##
-class TestTimeStepSpatialData(object):
+
+class TestTimeStep3dSpatialData(object):
     ''' test for pcdl.TimeStep class. '''
 
     ## get_spatialdata command ##
@@ -798,3 +790,25 @@ class TestTimeStepSpatialData(object):
               (sdata['subs_table'].obs.shape[0] > 9) and \
               (sdata['subs_table'].obs.shape[1] == 11)
 
+
+## ome tiff related functions ##
+
+class TestTimeStep3dOmeTiffWorkhorse(object):
+    ''' tests on 3D data set, for speed, for pcdl.TimeStep ome tiff related workhorse functions. '''
+    mcds = pcdl.TimeStep(xmlfile=s_pathfile_3d)  # custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True
+
+    ## ome tiff related functions ##
+    def test_mcds_make_ome_tiff_default(self, mcds=mcds):
+        s_pathfile = mcds.make_ome_tiff(cell_attribute='ID', conc_cutoff={}, focus=None, file=True)
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+              (s_pathfile.replace('\\','/').endswith('pcdl/output_3d/output00000024_oxygen_water_default_blood_cells_ID.ome.tiff')) and \
+              (os.path.exists(s_pathfile)) and \
+              (os.path.getsize(s_pathfile) > 2**10)
+        os.remove(s_pathfile)
+
+    def test_mcds_make_ome_tiff_nofile(self, mcds=mcds):
+        a_ometiff = mcds.make_ome_tiff(cell_attribute='ID', conc_cutoff={}, focus=None, file=False)
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+              (str(type(a_ometiff)) == "<class 'numpy.ndarray'>") and \
+              (a_ometiff.dtype == np.float32) and \
+              (a_ometiff.shape == (4, 11, 200, 300))

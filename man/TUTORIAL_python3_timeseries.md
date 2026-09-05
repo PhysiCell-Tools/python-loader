@@ -6,7 +6,7 @@ And perhaps, work thorough the [TUTORIAL_python3_timestep.md](https://github.com
 
 
 An exciting thing about modeling is to have time series data.
-Pcdl's TimeSeries class is here to make the handling of a time series of MCD snapshots easy.
+Pcdl's TimeSeries class is here to make the handling of a time series of MCDS snapshots easy.
 
 All analysis functions available for TimeStep are available for TimeSeries too,
 and we will not further discuss them here.
@@ -38,16 +38,22 @@ mcdsts.get_cell_df()
 mcdsts.get_anndata()
 ```
 ```python
-mcdsts.make_graph_gml()
-```
-```python
 mcdsts.plot_scatter()
 ```
 ```python
 mcdsts.make_cell_vtk()
 ```
+```python
+mcdsts.make_graph_gml()
+```
 
 For microenvironment and cell data, these are the functions:
+```python
+mcdsts.get_muspan()
+```
+```python
+mcdsts.get_spatialdata()
+```
 ```python
 mcdsts.make_ome_tiff()
 ```
@@ -69,13 +75,15 @@ For microenvironment data, this is the function:
 
 For cell data, this is the function:
 + `mcdsts.get_cell_attribute()`
++ `mcdsts.make_simularium()`
 
 For microenvironment and cell data, this is the function:
++ `mcdsts.get_sdmcds_list()`
 + `mcdsts.plot_timeseries()`
 
 Besides, there are functions to render a set of jpeg, png, or tiff images into a movie.
-+ `mcdsts.make_movie()` and `pcdl.make_movie()`
 + `mcdsts.make_gif()` and `pcdl.make_gif()`
++ `mcdsts.make_movie()` and `pcdl.make_movie()`
 
 
 
@@ -102,8 +110,8 @@ python3 -c"import pathlib, pcdl, shutil; pcdl.install_data(); s_ipath=str(pathli
 
 
 Like in the TimeStep class, for memory consumption and processing speed control,
-we can specify if we want to load microenvironment data and graph data from the snapshots we later on analyze.
-Additionally, we can specify, if for first even want to load data at all,
+we can specify if we want to load microenvironment data, graph data, and possible physiboss data from the snapshots we later on analyze.
+Additionally, we can specify, if we for first even want to load data at all,
 or if we only would like to load the output xml file list, which we will see, can be manipulated before actual data is loaded.
 
 By default, all data from all snapshots is loaded.
@@ -117,13 +125,13 @@ mcdsts = pcdl.TimeSeries('output/')
 ```
 
 Fine tuned what data from a time step will be loaded
-Here we only load cell data, not even information about cell type ID:label mapping.
+Here we only load cell data.
 
 ```python
 import pcdl  # the physicell data loader library,
 print('pcdl version:', pcdl.__version__)  # it is easy to figure out which pcdl version you run
 
-mcdsts = pcdl.TimeSeries(s_path, custom_data_type={}, load=True, microenv=False, graph=False, settingxml=None)
+mcdsts = pcdl.TimeSeries(s_path, custom_data_type={}, load=True, microenv=False, graph=False, physiboss=False)
 ```
 
 Fine tuned which time steps are loaded.
@@ -167,7 +175,7 @@ mcdsts.read_mcds(ls_xml_even)
 len(mcdsts.get_mcds_list())  # 13
 ```
 
-Single snapshots can now be accessed by indexing.
+Single snapshots can be accessed by indexing.
 With a single snapshot, you may work exactly in the same way as with an object loaded by TimeStep.
 
 ```python
@@ -181,14 +189,18 @@ for mcds in mcdsts.get_mcds_list():
     print(mcds.get_mcds_list().get_time())
 ```
 
-If you translate your time series into [anndata]((https://anndata.readthedocs.io/en/latest/) Objects,
-using the collapse=False argument, you will endup with a similar list for anndata objects.
+If you translate your time series into [anndata]((https://anndata.readthedocs.io/en/latest/) objects,
+using the collapse=False argument,
+or into [spatialdata](https://spatialdata.scverse.org/en/stable/) objects,
+you will endup with a similar list for anndata or spatialdata objects, respective.
 
 ```python
 mcdsts.get_anndata(values=2, scale='maxabs', collapse=False)
 mcdsts.get_annmcds_list()  # [AnnData object with n_obs × n_vars ..., ..., ...]
 ```
-
+```python
+mcdsts.get_spatialdata(values=2, scale='maxabs', collapse=False)
+mcdsts.get_sdmcds_list()  # [SpatialData object ..., ..., ...]
 
 
 ## Microenvironment Data Related Functions (Continuum Variables)
@@ -267,6 +279,19 @@ len(dl_cell['pressure'])
 ```python
 help(mcdsts.get_cell_attribute)
 ```
+
+
+### &#x2728; Cell Data Analysis with [Simularium](https://simularium.allencell.org/)
+
+For cell agent trajectory visualization in 3D a **simularium file** can be retrieved.\
+This file can be analyzed with the online simularium viewer.
++ https://simularium.allencell.org/
+
+```python
+mcdsts.make_simularium()
+```
+
+Please have a look at [TUTORIAL_simularium.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_simularium.md) to learn more.
 
 
 

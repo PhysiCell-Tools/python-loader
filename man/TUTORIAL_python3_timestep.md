@@ -32,7 +32,7 @@ python3 -c"import pathlib, pcdl, shutil; pcdl.install_data(); s_ipath=str(pathli
 
 By default, all data related to the snapshot is loaded.
 For speed and less memory usage, it is however possible to only load the essential (output xml and cell mat data),
-and exclude microenvironment, graph data, PhysiBoss data, and the PhysiCell\_settings.xml cell type ID label mapping. \
+and exclude microenvironment data, graph data, and possible PhysiBoss data. \
 For custom\_data variables it is possible to specify data types, apart from the generic float type, namely: int, bool, and str.
 This can be done too, after the data is loaded, using the mcds.custom\_data\_astype function. \
 For paths, in general, unix (slash) and windows (backslash) notation will work.
@@ -134,7 +134,7 @@ mcds.get_runtime()  # will return a float value like 15.596373
 mcds.get_timestamp()  # will return a sting like 2022-10-19T01:12:01Z
 ```
 
-Finally, it is possible to retrieve a dictionary that lists all units from all tracked variables, from metadata, mesh, continuum\_variables, and discrete\_cells.
+Finally, it is possible to retrieve a dictionary that lists all units from all tracked variables, from metadata, mesh, substrate, and cells.
 
 ```python
 mcds.get_unit_dict()  # will return a dictionary, which maps the variables to the units specified in the setting.xml.
@@ -232,7 +232,7 @@ This file can be analyzed, for example with the [Paraview](https://en.wikipedia.
 mcds.make_conc_vtk()
 ```
 
-Please have a look at [TUTORIAL_paraview.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_paraview.md) to learn more.
+Please have a look at [pcdl and python3 and vtk](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_vtk.md) and [TUTORIAL_paraview.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_paraview.md) to learn more.
 
 
 
@@ -352,40 +352,6 @@ And we have cell neighbor graph infromation (obsp, uns).
 Please have a look at [TUTORIAL_python3_scverse.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_scverse.md) to learn more.
 
 
-### &#x2728; Cell Data Analysis within the [Networkx](https://networkx.org/) and [Igraph](https://igraph.org/)
-
-Fore each cell, PhysiCell tracks the cell neighborhood (if cells touch each other, if cells are attached to each other).
-<!-- Moreover, to be able to generate lineage trees, PhysiCell tracks each cell's parent ID, time of birth, and time of death. -->
-
-All this information can be represented as a graph (as in graph theory).
-Pcld has a function to dump this information as [gml](https://github.com/elmbeech/physicelldataloader/blob/master/man/publication/himsolt1996gml_a_portable_graph_file_format.pdf) (graph model language) files.
-This file format can be read by graph libraries, like network and igraph, for downstream analysis.
-
-Cell neighbor touching graph
-```python
-mcds.make_graph_gml('neighbor')
-```
-
-Cell neighbor attached graph
-```python
-mcds.make_graph_gml('attached')
-```
-
-Cell neighbor spring attached graph
-```python
-mcds.make_graph_gml('spring')
-```
-
-<!--
-Cell lineage tree
-```python
-mcds.make_graph_gml('lineage')
-```
--->
-
-Please have a look at [TUTORIAL_python3_graph.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_graph.md) to learn more.
-
-
 ### &#x2728; Cell Data Analysis with [Matplotlib](https://matplotlib.org/)
 
 For cell agent visualization **matplotlib scatter plots**,
@@ -421,11 +387,72 @@ mcds.make_cell_vtk()
 help(mcds.make_cell_vtk)
 ```
 
-Please have a look at [TUTORIAL_paraview.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_paraview.md) to learn more.
+Please have a look at [pcdl and python3 and vtk](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_vtk.md) and [TUTORIAL_paraview.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_paraview.md) to learn more.
+
+
+### &#x2728; Cell Data Analysis within the [Networkx](https://networkx.org/) and [Igraph](https://igraph.org/)
+
+Fore each cell, PhysiCell tracks the cell neighborhood (if cells touch each other, if cells are attached to each other).
+<!-- Moreover, to be able to generate lineage trees, PhysiCell tracks each cell's parent ID, time of birth, and time of death. -->
+
+All this information can be represented as a graph (as in graph theory).
+Pcld has a function to dump this information as [gml](https://github.com/elmbeech/physicelldataloader/blob/master/man/publication/himsolt1996gml_a_portable_graph_file_format.pdf) (graph model language) files.
+This file format can be read by graph libraries, like network and igraph, for downstream analysis.
+
+Cell neighbor touching graph
+```python
+mcds.make_graph_gml('neighbor')
+```
+
+Cell neighbor attached graph
+```python
+mcds.make_graph_gml('attached')
+```
+
+Cell neighbor spring attached graph
+```python
+mcds.make_graph_gml('spring')
+```
+<!--
+Cell lineage tree
+```python
+mcds.make_graph_gml('lineage')
+```
+-->
+
+Furthermore, there are functions to recall the graph dictionary for each of the tracked graphs.
+```python
+mcds.get_neighbor_graph_dict()
+```
+```python
+mcds.get_attached_graph_dict()
+```
+```python
+mcds.get_spring_graph_dict()
+```
+
+Please have a look at
+[TUTORIAL_python3_graph.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_graph.md) to learn more.
 
 
 
 ## Microenvironment and Cell Data Related Functions
+
+### &#x2728; Substrate and Cell Data Analysis within the [MuSpAn](https://www.muspan.co.uk/) and [Scverse](https://scverse.org/)
+
+For bioinformatics, substrate and cell agent data can be saved in the University of Oxford's multi spatial analysis [MuSpAn](https://www.muspan.co.uk/) or scverse's [SpatiaData](https://spatialdata.scverse.org/en/stable/) format.
+```python
+do_domain = mcds.get_muspan()
+```
+```python
+sdata = mcds.get_spatialdata()
+```
+
+Please have a look at
+[TUTORIAL_python3_muspan.md](TUTORIAL_python3_muspan.md)
+[TUTORIAL_python3_scverse.md](TUTORIAL_python3_scverse.md)
+to learn more.
+
 
 ### &#x2728; PhysiCell Data Analysis with [Napari](https://napari.org/stable/), [Fiji Imagej](https://fiji.sc/), [Neuroglancer](https://research.google/blog/an-interactive-automated-3d-reconstruction-of-a-fly-brain/), and similar software.
 
@@ -459,7 +486,6 @@ Please have a look at
 [TUTORIAL_fiji_imagej.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_fijiimagej.md),
 and [TUTORIAL_neuroglancer.md]((https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_neuroglancer.md)
 to learn more.
-
 
 
 ## Mesh Data Related Functions

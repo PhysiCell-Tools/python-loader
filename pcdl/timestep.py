@@ -625,6 +625,19 @@ class TimeStep:
         #print(f'pcdl: set mcds.verbose = True.')
 
 
+    def render_neuroglancer(self, tiffpathfile, timestep=0, intensity_cmap='gray'):
+        """
+        help(pcdl.render_neuroglancer)
+        try: mcds.render_neuroglancer(mcds.make_ome_tiff())
+        """
+        o_viewer = render_neuroglancer(
+            tiffpathfile = tiffpathfile,
+            timestep = timestep,
+            intensity_cmap = intensity_cmap,
+        )
+        return o_viewer
+
+
     ## METADATA RELATED FUNCTIONS ##
 
     def get_multicellds_version(self):
@@ -1053,7 +1066,7 @@ class TimeStep:
         return li_ijk
 
 
-    ## MICROENVIRONMENT RELATED FUNCTIONS ##
+    ## SUBSTRATE RELATED FUNCTIONS ##
 
     def get_substrate_list(self):
         """
@@ -1602,6 +1615,108 @@ class TimeStep:
         return self.data['cell']['ls_cellattr'].copy()
 
 
+    def get_anndata(self, values=1, drop=set(), keep=set(), scale='maxabs'):
+        """
+        input:
+            values: integer; default is 1
+                minimal number of values a variable has to have to be outputted.
+                variables that have only 1 state carry no information.
+                None is a state too.
+
+            drop: set of strings; default is an empty set
+                set of column labels to be dropped for the dataframe.
+                don't worry: essential columns like ID, coordinates
+                and time will never be dropped.
+                Attention: when the keep parameter is given, then
+                the drop parameter has to be an empty set!
+
+            keep: set of strings; default is an empty set
+                set of column labels to be kept in the dataframe.
+                set values=1 to be sure that all variables are kept.
+                don't worry: essential columns like ID, coordinates
+                and time will always be kept.
+
+            scale: string; default 'maxabs'
+                specify how the data should be scaled.
+                possible values are None, maxabs, minmax, std.
+                for more input, check out: help(pcdl.scaler)
+
+        output:
+            annmcds: anndata object
+                for this one time step.
+
+        description:
+            function to transform a mcds time step into an anndata object
+            for downstream analysis.
+        """
+        # load optional dependency
+        ad = optional_import('anndata', s_caller='TimeStep.get_anndata')
+
+        # processing
+        if self.verbose:
+            print(f'processing: 1/1 {round(self.get_time(),9)}[min] mcds into anndata obj.')
+        df_cell = self.get_cell_df(values=values, drop=drop, keep=keep)
+        df_count, df_obs, d_obsm, d_obsp, d_uns = _anndextract(
+            df_cell = df_cell,
+            scale = scale,
+            graph_attached = self.get_attached_graph_dict(),
+            graph_neighbor = self.get_neighbor_graph_dict(),
+            graph_spring = self.get_spring_graph_dict(),
+            graph_method = self.get_physicell_version(),
+        )
+        annmcds = ad.AnnData(
+            X = df_count,
+            obs = df_obs,
+            obsm = d_obsm,
+            obsp = d_obsp,
+            uns = d_uns
+        )
+        # output
+        return annmcds
+
+
+    def get_attached_graph_dict(self):
+        """
+        input:
+
+        output:
+            dei_graph: dictionary of sets of integers
+                maps each cell ID to the attached connected cell IDs.
+
+        description:
+            function returns the attached cell graph as a dictionary object.
+        """
+        return self.data['cell']['dei_graph']['attached_cells'].copy()
+
+
+    def get_neighbor_graph_dict(self):
+        """
+        input:
+
+        output:
+            dei_graph: dictionary of sets of integers
+                maps each cell ID to the connected neighbor cell IDs.
+
+        description:
+            function returns the cell neighbor graph as a dictionary object.
+        """
+        return self.data['cell']['dei_graph']['neighbor_cells'].copy()
+
+
+    def get_spring_graph_dict(self):
+        """
+        input:
+
+        output:
+            dei_graph: dictionary of sets of integers
+                maps each cell ID to the attached connected cell IDs.
+
+        description:
+            function returns the attached spring cell graph as a dictionary object.
+        """
+        return self.data['cell']['dei_graph']['spring_attached_cells'].copy()
+
+
     def plot_scatter(self, focus='cell_type', cat_drop=set(), cat_keep=set(), z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title=None, grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=1.0, ax=None, figsizepx=None,  directory=None, ext=None, figbgcolor=None, **kwargs):
         """
         input:
@@ -2014,294 +2129,6 @@ class TimeStep:
         return s_vtkpathfile
 
 
-    ## MICROENVIRONMENT AND CELL AGENT RELATED FUNCTIONS ##
-
-    def make_ome_tiff(self, cell_attribute='ID', conc_cutoff={}, focus=None, file=True):
-        """
-        input:
-            cell_attribute: strings; default is 'ID', which will result in a
-                cell segmentation mask.
-                column name within the cell dataframe.
-                the column data type has to be numeric (bool, int, float)
-                and cannot be string.
-                the result will be stored as 32 bit float.
-
-            conc_cutoff: dictionary string to real; default is an empty dictionary.
-                if a contour from a substrate not should be cut by greater
-                than zero (shifted to integer 1), another cutoff value can be
-                specified here.
-
-            focus: set of strings; default is a None
-                set of substrate and cell_type names to specify what will be
-                translated into ome tiff format.
-                if None, all substrates and cell types will be processed.
-
-            file: boolean; default True
-                if True, an ome tiff file is the output.
-                if False, a numpy array with shape czyx is the output.
-
-        output:
-            a_tczyx_img: numpy array or ome tiff file.
-
-        description:
-            function to transform chosen mcds output into an 1[um] spaced
-            czyx (channel, z-axis, y-axis, x-axis) ome tiff file or numpy array,
-            one substrate or cell_type per channel.
-            an ome tiff file is more or less:
-            a numpy array, containing the image information
-            and a xml, containing the microscopy metadata information,
-            like the channel labels.
-            the ome tiff file format can for example be read by the napari
-            or fiji (imagej) software.
-
-            https://napari.org/stable/
-            https://fiji.sc/
-        """
-        # load optional dependencies
-        if file:
-            OmeTiffWriter = optional_import('bioio.writers', s_attr='OmeTiffWriter', s_pip='bioio', s_caller='TimeStep.make_ome_tiff')
-            bioio_base = optional_import('bioio_base', s_pip='bioio', s_caller='TimeStep.make_ome_tiff')
-
-        # handle channels
-        ls_substrate = self.get_substrate_list()
-        ls_celltype = self.get_celltype_list()
-
-        if not (focus is None):
-            ls_substrate = [s_substrate for s_substrate in ls_substrate if s_substrate in set(focus)]
-            ls_celltype = [s_celltype for s_celltype in ls_celltype if s_celltype in set(focus)]
-            if (set(focus) != set(ls_substrate).union(set(ls_celltype))):
-                sys.exit(f'Error : {focus} not found in {ls_substrate} {ls_celltype}')
-
-        # const
-        ls_coor_mnp = ['mesh_center_m', 'mesh_center_n', 'mesh_center_p'] # xyz
-        ls_coor_xyz = ['position_x', 'position_y', 'position_z'] # xyz
-        ls_coor = ['voxel_x', 'voxel_y', 'voxel_z']
-
-        # time step tensor
-        i_time = int(self.get_time())
-
-        # get xy coordinate dataframe
-        lr_axis_z  = list(self.get_mesh_mnp_axis()[2] - self.get_voxel_spacing()[2] / 2)
-        lr_axis_z.append(self.get_mesh_mnp_axis()[2][-1] + self.get_voxel_spacing()[2] / 2)
-        lll_coor = []
-        for i_x in range(int(round(self.get_voxel_ijk_range()[0][1] * self.get_voxel_spacing()[0]))):
-            for i_y in range(int(round(self.get_voxel_ijk_range()[1][1] * self.get_voxel_spacing()[1]))):
-                lll_coor.append([i_x, i_y])
-        df_coor = pd.DataFrame(lll_coor, columns=ls_coor[:2])
-        lr_axis_z[-1] += 1
-
-        # extract voxel radius
-        di_grow = {}
-        for s_substarte in ls_substrate:
-            di_grow.update({
-                s_substarte : int(np.round(np.mean(self.get_voxel_spacing()[:2])) - 1)
-            })
-
-        # get and shift substrate xy data
-        df_conc = self.get_conc_df()
-        df_conc = df_conc.loc[:, ls_coor_mnp + ls_substrate]
-        df_conc.loc[:, 'mesh_center_m'] = (df_conc.loc[:, 'mesh_center_m'] - self.get_xyz_range()[0][0]).round()
-        df_conc.loc[:, 'mesh_center_n'] = (df_conc.loc[:, 'mesh_center_n'] - self.get_xyz_range()[1][0]).round()
-        df_conc.rename({'mesh_center_m':'voxel_x', 'mesh_center_n':'voxel_y', 'mesh_center_p':'voxel_z'}, axis=1, inplace=True)
-        df_conc = df_conc.astype({'voxel_x': int, 'voxel_y': int, 'voxel_z': float})
-        # level the cake
-        for s_channel in conc_cutoff.keys():
-            try:
-                df_conc.loc[:, s_channel] = df_conc.loc[:, s_channel] - conc_cutoff[s_channel]  + 1  # positive values starting at > 0
-                df_conc.loc[(df_conc.loc[:, s_channel] <= conc_cutoff[s_channel]), s_channel] = 0
-            except KeyError:
-                pass
-
-        # get cell data
-        df_cell = self.get_cell_df().reset_index()
-
-        # extract cell radius
-        for s_celltype in ls_celltype:
-            try:
-                i_cell_grow = int(round(df_cell.loc[(df_cell.cell_type == s_celltype), 'radius'].mean()) - 1)
-            except:
-                i_cell_grow = 0
-            di_grow.update({s_celltype : i_cell_grow})
-
-        # filter and shift
-        df_cell = df_cell.loc[:, ls_coor_xyz + ['cell_type', cell_attribute]]
-        if (cell_attribute == 'cell_type'):
-            sys.exit(f'Error @ TimeStep.make_ome_tiff : cell_attribute cannot be cell_type.')
-        elif (df_cell.loc[:, cell_attribute].dtype == str) or (df_cell.loc[:, cell_attribute].dtype == np.object_):  # in {str, np.str_, np.object_}):
-            sys.exit(f'Error @ TimeStep.make_ome_tiff : {cell_attribute} {df_cell.loc[:, cell_attribute].dtype} cell_attribute cannot be string or object. cell_attribute has to be boolean, integer, or float.')
-        elif (df_cell.loc[:, cell_attribute].dtype == bool): # in {bool, np.bool_, np.bool}):
-            df_cell = df_cell.astype({cell_attribute: int})
-        df_cell.loc[:, 'position_x'] = (df_cell.loc[:, 'position_x'] - self.get_xyz_range()[0][0]).round()
-        df_cell.loc[:, 'position_y'] = (df_cell.loc[:, 'position_y'] - self.get_xyz_range()[1][0]).round()
-        df_cell.rename({'position_x':'voxel_x', 'position_y':'voxel_y', 'position_z':'voxel_z'}, axis=1, inplace=True)
-        df_cell = df_cell.astype({'voxel_x': int, 'voxel_y': int, 'voxel_z': float})
-        # level the cake
-        df_cell.loc[:, cell_attribute] = df_cell.loc[:, cell_attribute] -  df_cell.loc[:, cell_attribute].min()  + 1  # positive values starting at > 0
-
-        # check for duplicates: two cell at exactelly the same xyz position.
-        #if self.verbose and df_cell.loc[:,['voxel_x', 'voxel_y', 'voxel_z']].duplicated().any():
-        #    df_duplicate = df_cell.loc[(df_cell.loc[:, ['voxel_x', 'voxel_y', 'voxel_z']].duplicated()), :]
-        #    sys.exit(f"Error @ TimeStep.make_ome_tiff : {df_duplicate} cells at exactely the same xyz voxel position detected. cannot pivot!")
-
-        # pivot cell_type
-        df_cell = df_cell.pivot_table(index=ls_coor, columns='cell_type', values=cell_attribute, aggfunc='sum').reset_index()  # fill_value is na
-        for s_celltype in ls_celltype:
-            if not s_celltype in set(df_cell.columns):
-               df_cell[s_celltype] = 0
-
-        # each C channel - time step tensors
-        la_czyx_img = []
-        ls_channel = ls_substrate + ls_celltype
-        for s_channel in ls_channel:
-
-            # get channel dataframe
-            if s_channel in set(ls_substrate):
-                df_channel = df_conc.loc[:, ls_coor + [s_channel]]
-            elif s_channel in set(ls_celltype):
-                df_channel = df_cell.loc[:, ls_coor + [s_channel]]
-            else:
-                sys.exit(f'Error @ TimeStep.make_ome_tiff : {s_channel} unknown channel detected. not in substrate and cell type list {ls_substrate} {ls_celltype}!')
-
-            # each z axis
-            la_zyx_img = []
-            for i_zaxis in range(len(lr_axis_z)):
-                if (i_zaxis < (len(lr_axis_z) - 1)):
-                    print(f'processing: {i_time} [min]  {s_channel} [channel]  {i_zaxis} [z_axis] ...')
-                    # extract z layer
-                    df_yxchannel = df_channel.loc[
-                        ((df_channel.loc[:, ls_coor[2]] >= lr_axis_z[i_zaxis]) & (df_channel.loc[:, ls_coor[2]] < lr_axis_z[i_zaxis + 1])),
-                        ls_coor[:2] + [s_channel]
-                    ]
-
-                    # drop row with na and duplicate entries
-                    df_yxchannel = df_yxchannel.dropna(axis=0)
-                    df_yxchannel = df_yxchannel.drop_duplicates()
-
-                    # merge with coooridnates and get image
-                    # bue 20240811: df_coor left side merge will cut off reset cell that are out of the xyz domain range, which is what we want.
-                    df_yxchannel = pd.merge(df_coor, df_yxchannel, on=ls_coor[:2], how='left').replace({np.nan: 0})
-                    try:
-                        df_yxchannel = df_yxchannel.pivot(columns=ls_coor[0], index=ls_coor[1], values=s_channel)
-                    except ValueError:  # two cells from the same cell type very close to each other detetced.
-                        if self.verbose:
-                            df_duplicate = df_cell.loc[(df_yxchannel.loc[:, ['voxel_x', 'voxel_y']].duplicated()), :]
-                            print(f'Warning: {s_channel} {df_duplicate} cells within 1[um] distance form each detected. cannot pivot. erase cell type from this timestep.')
-                        df_yxchannel.loc[:,s_channel] = 0  # erase cells
-                        df_yxchannel = df_yxchannel.drop_duplicates()
-                        df_yxchannel = df_yxchannel.pivot(columns=ls_coor[0], index=ls_coor[1], values=s_channel)
-                    a_yx_img = df_yxchannel.values
-
-                    # grow
-                    a_yx_img = imagine.grow_seed(a_yx_img, i_step=di_grow[s_channel], b_verbose=False)
-
-                    # update output
-                    la_zyx_img.append(a_yx_img)
-            a_zyx_img = np.array(la_zyx_img, np.float32)
-            la_czyx_img.append(np.array(a_zyx_img, np.float32))
-
-        # output
-        a_czyx_img = np.array(la_czyx_img, dtype=np.float32)
-
-        # numpy array
-        if not file:
-            return a_czyx_img
-
-        # write to file
-        else:
-            if self.verbose:
-                print('a_czyx_img shape:', a_czyx_img.shape)
-            # generate filename
-            s_channel = ''
-            for s_substrate in ls_substrate:
-                try:
-                    r_value = conc_cutoff[s_substrate]
-                    s_channel += f'_{s_substrate}{r_value}'
-                except KeyError:
-                    s_channel += f'_{s_substrate}'
-            for s_celltype in ls_celltype:
-                s_channel += f'_{s_celltype}'
-            if len(ls_celltype) > 0:
-                s_channel += f'_{cell_attribute}'
-            s_tifffile = self.xmlfile.replace('.xml', f'{s_channel}.ome.tiff')
-            s_tifffile = s_tifffile.replace(' ','_')
-            if (len(s_tifffile) > 255):
-                print(f"Warning: filename {len(s_tifffile)} > 255 character.")
-                s_tifffile = self.xmlfile.replace('.xml', f'_channels.ome.tiff')
-                print(f"file name adjusted to {s_tifffile}.")
-            s_tiffpathfile = self.path + '/' + s_tifffile
-
-            # save to file
-            OmeTiffWriter.save(
-                a_czyx_img,
-                s_tiffpathfile,
-                dim_order = 'CZYX',
-                #ome_xml=x_img,
-                channel_names = ls_channel,
-                image_names = [s_tifffile.replace('.ome.tiff','')],
-                physical_pixel_sizes = bioio_base.types.PhysicalPixelSizes(self.get_voxel_spacing()[2], 1.0, 1.0),  # z,y,x [um]
-                #channel_colors=,
-                #fs_kwargs={},
-            )
-            return s_tiffpathfile
-
-
-    def render_neuroglancer(self, tiffpathfile, timestep=0, intensity_cmap='gray'):
-        """
-        help(pcdl.render_neuroglancer)
-        try: mcds.render_neuroglancer(mcds.make_ome_tiff())
-        """
-        o_viewer = render_neuroglancer(
-            tiffpathfile = tiffpathfile,
-            timestep = timestep,
-            intensity_cmap = intensity_cmap,
-        )
-        return o_viewer
-
-
-    ## GRAPH RELATED FUNCTIONS ##
-
-    def get_attached_graph_dict(self):
-        """
-        input:
-
-        output:
-            dei_graph: dictionary of sets of integers
-                maps each cell ID to the attached connected cell IDs.
-
-        description:
-            function returns the attached cell graph as a dictionary object.
-        """
-        return self.data['cell']['dei_graph']['attached_cells'].copy()
-
-
-    def get_neighbor_graph_dict(self):
-        """
-        input:
-
-        output:
-            dei_graph: dictionary of sets of integers
-                maps each cell ID to the connected neighbor cell IDs.
-
-        description:
-            function returns the cell neighbor graph as a dictionary object.
-        """
-        return self.data['cell']['dei_graph']['neighbor_cells'].copy()
-
-
-    def get_spring_graph_dict(self):
-        """
-        input:
-
-        output:
-            dei_graph: dictionary of sets of integers
-                maps each cell ID to the attached connected cell IDs.
-
-        description:
-            function returns the attached spring cell graph as a dictionary object.
-        """
-        return self.data['cell']['dei_graph']['spring_attached_cells'].copy()
-
-
     def make_graph_gml(self, graph_type, edge_attribute=True, node_attribute=[]):
         """
         input:
@@ -2399,11 +2226,15 @@ class TimeStep:
         return s_gmlpathfile
 
 
-    ## ANNDATA RELATED FUNCTIONS ##
+    ## SUBSTRATE AND CELL AGENT RELATED FUNCTIONS ##
 
-    def get_anndata(self, values=1, drop=set(), keep=set(), scale='maxabs'):
+    def get_muspan(self, z_slice=None, values=1, drop=set(), keep=set()):
         """
         input:
+            z_slice: floating point number; default is None
+                z-axis position to slice a 2D xy-plain out of the
+                3D mesh. if None the whole 3D mesh will be returned.
+
             values: integer; default is 1
                 minimal number of values a variable has to have to be outputted.
                 variables that have only 1 state carry no information.
@@ -2422,43 +2253,157 @@ class TimeStep:
                 don't worry: essential columns like ID, coordinates
                 and time will always be kept.
 
-            scale: string; default 'maxabs'
-                specify how the data should be scaled.
-                possible values are None, maxabs, minmax, std.
-                for more input, check out: help(pcdl.scaler)
-
         output:
-            annmcds: anndata object
-                for this one time step.
+            do_domain:  dictionary of muspa domains, one for each z-layer.
 
         description:
-            function to transform a mcds time step into an anndata object
-            for downstream analysis.
+            function returns a dictionary of muspa domains, containg a
+            cell and subs collection with disrcete and continuous labels
+            and all the graph as networks.
+            + https://www.muspan.co.uk
+            + https://docs.muspan.co.uk/latest/Documentation.html
         """
-        # load optional dependency
-        ad = optional_import('anndata', s_caller='TimeStep.get_anndata')
+        # check if muspan library is installed
+        if (ms is None) or (ms.__file__ is None):
+            sys.exit(f'Error @ TimeStep.get_muspa : the muspan Multi Spatial Analysis python3 library is not installed!\nfor instructions check out : https://www.muspan.co.uk/')
 
-        # processing
-        if self.verbose:
-            print(f'processing: 1/1 {round(self.get_time(),9)}[min] mcds into anndata obj.')
+        # load optional dependency
+        nx = optional_import('networkx', s_caller='TimeStep.get_muspan')
+
+        # get conc and cell dataframe
+        df_conc = self.get_conc_df(values=values, drop=drop, keep=keep)
         df_cell = self.get_cell_df(values=values, drop=drop, keep=keep)
-        df_count, df_obs, d_obsm, d_obsp, d_uns = _anndextract(
-            df_cell = df_cell,
-            scale = scale,
-            graph_attached = self.get_attached_graph_dict(),
-            graph_neighbor = self.get_neighbor_graph_dict(),
-            graph_spring = self.get_spring_graph_dict(),
-            graph_method = self.get_physicell_version(),
-        )
-        annmcds = ad.AnnData(
-            X = df_count,
-            obs = df_obs,
-            obsm = d_obsm,
-            obsp = d_obsp,
-            uns = d_uns
-        )
+        i_kmax = df_conc.voxel_k.max()
+        i_kdigit = len(str(i_kmax))
+        if (z_slice is None):
+            li_klayer = sorted(df_conc.voxel_k.unique())
+        else:
+            li_klayer = [self.get_voxel_ijk(x=0,y=0, z=z_slice)[2]]
+
+        # for each z layer generate a muspa domain
+        do_domain = {}
+        for i_klayer in li_klayer:
+
+            # processing
+            if self.verbose:
+                print(f'processing: {self.xmlfile} mcds {i_klayer + 1}/{i_kmax + 1} z-stack layer to muspan obj.')
+
+            ## generate muspan domain
+            s_domain = f"{self.xmlfile.replace('.xml','')}_z{str(i_klayer).zfill(i_kdigit)}"
+            o_domain = ms.domain(
+                name = s_domain,
+                unit_of_length = 'um',
+            )
+
+            ## handle subs collection
+            df_zconc = df_conc.loc[df_conc.voxel_k == i_klayer,:]
+            o_domain.add_points(
+                points = df_zconc.loc[:,['mesh_center_m','mesh_center_n']].values,
+                collection_name = 'subs'
+            )
+            # drop this data
+            es_drop = set(df_zconc.columns).intersection({
+                'voxel_i', 'voxel_j', 'voxel_k',
+                'mesh_center_m', 'mesh_center_n', 'mesh_center_p',
+                'time', 'runtime', 'xmlfile',
+            })
+            df_zconc = df_zconc.drop(es_drop, axis=1)
+            # add numerical data (no scaling)
+            for s_num in sorted(df_zconc.columns):
+                o_domain.add_labels(
+                    label_name = s_num,
+                    labels = df_zconc.loc[:,s_num],
+                    add_labels_to = 'subs',
+                    label_type = 'continuous',
+                )
+
+            ## handle cell collection
+            df_zcell = df_cell.loc[df_cell.voxel_k == i_klayer,:]
+            o_domain.add_points(
+                points = df_zcell.loc[:,['position_x','position_y']].values,
+                collection_name = 'cell'
+            )
+            # get a physicell cell_id to muspan object id mapping
+            df_coor = df_zcell.loc[:,['position_x', 'position_y','position_z']]
+            df_coor['muspan_id'] = o_domain.collections['cell']['objects']
+            di_cellid = df_coor['muspan_id'].to_dict()
+            # drop this data
+            es_drop = set(df_zcell.columns).intersection({
+                'voxel_i', 'voxel_j', 'voxel_k',
+                'mesh_center_m', 'mesh_center_n', 'mesh_center_p',
+                'position_x', 'position_y','position_z',
+                'time', 'runtime', 'xmlfile',
+            })
+            df_zcell = df_zcell.drop(es_drop, axis=1)
+            # dectect variable types
+            des_type = {'float': set(), 'int': set(), 'bool': set(), 'str': set()}
+            for _, se_zcell in df_zcell.items():
+                if str(se_zcell.dtype).startswith('float'):
+                    des_type['float'].add(se_zcell.name)
+                elif str(se_zcell.dtype).startswith('int'):
+                    des_type['int'].add(se_zcell.name)
+                elif str(se_zcell.dtype).startswith('bool'):
+                    des_type['bool'].add(se_zcell.name)
+                elif str(se_zcell.dtype).startswith('object') in str(se_zcell.dtype).startswith('str'):
+                    des_type['str'].add(se_zcell.name)
+                else:
+                    sys.exit(f'Error @ TimeStep.get_muspa : column {se_zcell.name} detected with unknown dtype {str(se_zcell.dtype)}.')
+            # add categorical data
+            for s_cat in sorted(des_type['str'].union(des_type['bool'])):
+                o_domain.add_labels(
+                    label_name = s_cat,
+                    labels = df_zcell.loc[:,s_cat],
+                    add_labels_to = 'cell',
+                    label_type = 'categorical',
+                )
+            # add numerical data (no scaling)
+            for s_num in sorted(des_type['float'].union(des_type['int'])):
+                o_domain.add_labels(
+                    label_name = s_num,
+                    labels = df_zcell.loc[:,s_num],
+                    add_labels_to = 'cell',
+                    label_type = 'continuous',
+                )
+            ## add graphs
+            ei_pccellid = set(df_zcell.index)
+            for s_graph, dei_graph in [
+                    ('neighbor', self.get_neighbor_graph_dict()),
+                    ('attached', self.get_attached_graph_dict()),
+                    ('spring', self.get_spring_graph_dict()),
+                ]:
+                # transform graph dict into weighted edge list
+                lt_wedge = []
+                for i_src, ei_dst in sorted(dei_graph.items()):
+                    for i_dst in ei_dst:
+                        if (i_src in ei_pccellid) and (i_dst in ei_pccellid):
+                            r_distance = ((df_coor.loc[i_src, ['position_x','position_y','position_z']].values -  df_coor.loc[i_dst, ['position_x','position_y','position_z']].values)**2).sum()**(1/2)
+                            lt_wedge.append((di_cellid[i_src], di_cellid[i_dst], r_distance))
+                # generate graph
+                G = nx.Graph()
+                # dump the edges into the network
+                G.add_weighted_edges_from(lt_wedge, weight='Distance')
+                G.add_weighted_edges_from(lt_wedge, weight='Inverse Distance')
+                # add the network to the dictionary of networks
+                o_domain.networks[s_graph] = G
+            # clean up the domain
+            ms.helpers.clean_up(o_domain)
+
+            ## set domain boundary (have to be done last!)
+            o_domain.estimate_boundary(
+                method='specify',
+                specify_boundary_coords=(
+                    (self.get_xyz_range()[0][0], self.get_xyz_range()[1][0]),
+                    (self.get_xyz_range()[0][0], self.get_xyz_range()[1][1]),
+                    (self.get_xyz_range()[0][1], self.get_xyz_range()[1][1]),
+                    (self.get_xyz_range()[0][1], self.get_xyz_range()[1][0])
+                )
+            )
+
+            # update output
+            do_domain.update({s_domain : o_domain})
+
         # output
-        return annmcds
+        return do_domain
 
 
     def get_spatialdata(self, images={'subs'}, labels={}, points={'subs'}, shapes={'cell'}, values=1, drop=set(), keep=set(), scale='maxabs'):
@@ -2722,184 +2667,233 @@ class TimeStep:
         return sdata
 
 
-    ## MUSPAN RELATED FUNCTIONS ##
-
-    def get_muspan(self, z_slice=None, values=1, drop=set(), keep=set()):
+    def make_ome_tiff(self, cell_attribute='ID', conc_cutoff={}, focus=None, file=True):
         """
         input:
-            z_slice: floating point number; default is None
-                z-axis position to slice a 2D xy-plain out of the
-                3D mesh. if None the whole 3D mesh will be returned.
+            cell_attribute: strings; default is 'ID', which will result in a
+                cell segmentation mask.
+                column name within the cell dataframe.
+                the column data type has to be numeric (bool, int, float)
+                and cannot be string.
+                the result will be stored as 32 bit float.
 
-            values: integer; default is 1
-                minimal number of values a variable has to have to be outputted.
-                variables that have only 1 state carry no information.
-                None is a state too.
+            conc_cutoff: dictionary string to real; default is an empty dictionary.
+                if a contour from a substrate not should be cut by greater
+                than zero (shifted to integer 1), another cutoff value can be
+                specified here.
 
-            drop: set of strings; default is an empty set
-                set of column labels to be dropped for the dataframe.
-                don't worry: essential columns like ID, coordinates
-                and time will never be dropped.
-                Attention: when the keep parameter is given, then
-                the drop parameter has to be an empty set!
+            focus: set of strings; default is a None
+                set of substrate and cell_type names to specify what will be
+                translated into ome tiff format.
+                if None, all substrates and cell types will be processed.
 
-            keep: set of strings; default is an empty set
-                set of column labels to be kept in the dataframe.
-                set values=1 to be sure that all variables are kept.
-                don't worry: essential columns like ID, coordinates
-                and time will always be kept.
+            file: boolean; default True
+                if True, an ome tiff file is the output.
+                if False, a numpy array with shape czyx is the output.
 
         output:
-            do_domain:  dictionary of muspa domains, one for each z-layer.
+            a_tczyx_img: numpy array or ome tiff file.
 
         description:
-            function returns a dictionary of muspa domains, containg a
-            cell and subs collection with disrcete and continuous labels
-            and all the graph as networks.
-            + https://www.muspan.co.uk
-            + https://docs.muspan.co.uk/latest/Documentation.html
+            function to transform chosen mcds output into an 1[um] spaced
+            czyx (channel, z-axis, y-axis, x-axis) ome tiff file or numpy array,
+            one substrate or cell_type per channel.
+            an ome tiff file is more or less:
+            a numpy array, containing the image information
+            and a xml, containing the microscopy metadata information,
+            like the channel labels.
+            the ome tiff file format can for example be read by the napari
+            or fiji (imagej) software.
+
+            https://napari.org/stable/
+            https://fiji.sc/
         """
-        # check if muspan library is installed
-        if (ms is None) or (ms.__file__ is None):
-            sys.exit(f'Error @ TimeStep.get_muspa : the muspan Multi Spatial Analysis python3 library is not installed!\nfor instructions check out : https://www.muspan.co.uk/')
+        # load optional dependencies
+        if file:
+            OmeTiffWriter = optional_import('bioio.writers', s_attr='OmeTiffWriter', s_pip='bioio', s_caller='TimeStep.make_ome_tiff')
+            bioio_base = optional_import('bioio_base', s_pip='bioio', s_caller='TimeStep.make_ome_tiff')
 
-        # load optional dependency
-        nx = optional_import('networkx', s_caller='TimeStep.get_muspan')
+        # handle channels
+        ls_substrate = self.get_substrate_list()
+        ls_celltype = self.get_celltype_list()
 
-        # get conc and cell dataframe
-        df_conc = self.get_conc_df(values=values, drop=drop, keep=keep)
-        df_cell = self.get_cell_df(values=values, drop=drop, keep=keep)
-        i_kmax = df_conc.voxel_k.max()
-        i_kdigit = len(str(i_kmax))
-        if (z_slice is None):
-            li_klayer = sorted(df_conc.voxel_k.unique())
-        else:
-            li_klayer = [self.get_voxel_ijk(x=0,y=0, z=z_slice)[2]]
+        if not (focus is None):
+            ls_substrate = [s_substrate for s_substrate in ls_substrate if s_substrate in set(focus)]
+            ls_celltype = [s_celltype for s_celltype in ls_celltype if s_celltype in set(focus)]
+            if (set(focus) != set(ls_substrate).union(set(ls_celltype))):
+                sys.exit(f'Error : {focus} not found in {ls_substrate} {ls_celltype}')
 
-        # for each z layer generate a muspa domain
-        do_domain = {}
-        for i_klayer in li_klayer:
+        # const
+        ls_coor_mnp = ['mesh_center_m', 'mesh_center_n', 'mesh_center_p'] # xyz
+        ls_coor_xyz = ['position_x', 'position_y', 'position_z'] # xyz
+        ls_coor = ['voxel_x', 'voxel_y', 'voxel_z']
 
-            # processing
-            if self.verbose:
-                print(f'processing: {self.xmlfile} mcds {i_klayer + 1}/{i_kmax + 1} z-stack layer to muspan obj.')
+        # time step tensor
+        i_time = int(self.get_time())
 
-            ## generate muspan domain
-            s_domain = f"{self.xmlfile.replace('.xml','')}_z{str(i_klayer).zfill(i_kdigit)}"
-            o_domain = ms.domain(
-                name = s_domain,
-                unit_of_length = 'um',
-            )
+        # get xy coordinate dataframe
+        lr_axis_z  = list(self.get_mesh_mnp_axis()[2] - self.get_voxel_spacing()[2] / 2)
+        lr_axis_z.append(self.get_mesh_mnp_axis()[2][-1] + self.get_voxel_spacing()[2] / 2)
+        lll_coor = []
+        for i_x in range(int(round(self.get_voxel_ijk_range()[0][1] * self.get_voxel_spacing()[0]))):
+            for i_y in range(int(round(self.get_voxel_ijk_range()[1][1] * self.get_voxel_spacing()[1]))):
+                lll_coor.append([i_x, i_y])
+        df_coor = pd.DataFrame(lll_coor, columns=ls_coor[:2])
+        lr_axis_z[-1] += 1
 
-            ## handle subs collection
-            df_zconc = df_conc.loc[df_conc.voxel_k == i_klayer,:]
-            o_domain.add_points(
-                points = df_zconc.loc[:,['mesh_center_m','mesh_center_n']].values,
-                collection_name = 'subs'
-            )
-            # drop this data
-            es_drop = set(df_zconc.columns).intersection({
-                'voxel_i', 'voxel_j', 'voxel_k',
-                'mesh_center_m', 'mesh_center_n', 'mesh_center_p',
-                'time', 'runtime', 'xmlfile',
+        # extract voxel radius
+        di_grow = {}
+        for s_substarte in ls_substrate:
+            di_grow.update({
+                s_substarte : int(np.round(np.mean(self.get_voxel_spacing()[:2])) - 1)
             })
-            df_zconc = df_zconc.drop(es_drop, axis=1)
-            # add numerical data (no scaling)
-            for s_num in sorted(df_zconc.columns):
-                o_domain.add_labels(
-                    label_name = s_num,
-                    labels = df_zconc.loc[:,s_num],
-                    add_labels_to = 'subs',
-                    label_type = 'continuous',
-                )
 
-            ## handle cell collection
-            df_zcell = df_cell.loc[df_cell.voxel_k == i_klayer,:]
-            o_domain.add_points(
-                points = df_zcell.loc[:,['position_x','position_y']].values,
-                collection_name = 'cell'
-            )
-            # get a physicell cell_id to muspan object id mapping
-            df_coor = df_zcell.loc[:,['position_x', 'position_y','position_z']]
-            df_coor['muspan_id'] = o_domain.collections['cell']['objects']
-            di_cellid = df_coor['muspan_id'].to_dict()
-            # drop this data
-            es_drop = set(df_zcell.columns).intersection({
-                'voxel_i', 'voxel_j', 'voxel_k',
-                'mesh_center_m', 'mesh_center_n', 'mesh_center_p',
-                'position_x', 'position_y','position_z',
-                'time', 'runtime', 'xmlfile',
-            })
-            df_zcell = df_zcell.drop(es_drop, axis=1)
-            # dectect variable types
-            des_type = {'float': set(), 'int': set(), 'bool': set(), 'str': set()}
-            for _, se_zcell in df_zcell.items():
-                if str(se_zcell.dtype).startswith('float'):
-                    des_type['float'].add(se_zcell.name)
-                elif str(se_zcell.dtype).startswith('int'):
-                    des_type['int'].add(se_zcell.name)
-                elif str(se_zcell.dtype).startswith('bool'):
-                    des_type['bool'].add(se_zcell.name)
-                elif str(se_zcell.dtype).startswith('object') in str(se_zcell.dtype).startswith('str'):
-                    des_type['str'].add(se_zcell.name)
-                else:
-                    sys.exit(f'Error @ TimeStep.get_muspa : column {se_zcell.name} detected with unknown dtype {str(se_zcell.dtype)}.')
-            # add categorical data
-            for s_cat in sorted(des_type['str'].union(des_type['bool'])):
-                o_domain.add_labels(
-                    label_name = s_cat,
-                    labels = df_zcell.loc[:,s_cat],
-                    add_labels_to = 'cell',
-                    label_type = 'categorical',
-                )
-            # add numerical data (no scaling)
-            for s_num in sorted(des_type['float'].union(des_type['int'])):
-                o_domain.add_labels(
-                    label_name = s_num,
-                    labels = df_zcell.loc[:,s_num],
-                    add_labels_to = 'cell',
-                    label_type = 'continuous',
-                )
-            ## add graphs
-            ei_pccellid = set(df_zcell.index)
-            for s_graph, dei_graph in [
-                    ('neighbor', self.get_neighbor_graph_dict()),
-                    ('attached', self.get_attached_graph_dict()),
-                    ('spring', self.get_spring_graph_dict()),
-                ]:
-                # transform graph dict into weighted edge list
-                lt_wedge = []
-                for i_src, ei_dst in sorted(dei_graph.items()):
-                    for i_dst in ei_dst:
-                        if (i_src in ei_pccellid) and (i_dst in ei_pccellid):
-                            r_distance = ((df_coor.loc[i_src, ['position_x','position_y','position_z']].values -  df_coor.loc[i_dst, ['position_x','position_y','position_z']].values)**2).sum()**(1/2)
-                            lt_wedge.append((di_cellid[i_src], di_cellid[i_dst], r_distance))
-                # generate graph
-                G = nx.Graph()
-                # dump the edges into the network
-                G.add_weighted_edges_from(lt_wedge, weight='Distance')
-                G.add_weighted_edges_from(lt_wedge, weight='Inverse Distance')
-                # add the network to the dictionary of networks
-                o_domain.networks[s_graph] = G
-            # clean up the domain
-            ms.helpers.clean_up(o_domain)
+        # get and shift substrate xy data
+        df_conc = self.get_conc_df()
+        df_conc = df_conc.loc[:, ls_coor_mnp + ls_substrate]
+        df_conc.loc[:, 'mesh_center_m'] = (df_conc.loc[:, 'mesh_center_m'] - self.get_xyz_range()[0][0]).round()
+        df_conc.loc[:, 'mesh_center_n'] = (df_conc.loc[:, 'mesh_center_n'] - self.get_xyz_range()[1][0]).round()
+        df_conc.rename({'mesh_center_m':'voxel_x', 'mesh_center_n':'voxel_y', 'mesh_center_p':'voxel_z'}, axis=1, inplace=True)
+        df_conc = df_conc.astype({'voxel_x': int, 'voxel_y': int, 'voxel_z': float})
+        # level the cake
+        for s_channel in conc_cutoff.keys():
+            try:
+                df_conc.loc[:, s_channel] = df_conc.loc[:, s_channel] - conc_cutoff[s_channel]  + 1  # positive values starting at > 0
+                df_conc.loc[(df_conc.loc[:, s_channel] <= conc_cutoff[s_channel]), s_channel] = 0
+            except KeyError:
+                pass
 
-            ## set domain boundary (have to be done last!)
-            o_domain.estimate_boundary(
-                method='specify',
-                specify_boundary_coords=(
-                    (self.get_xyz_range()[0][0], self.get_xyz_range()[1][0]),
-                    (self.get_xyz_range()[0][0], self.get_xyz_range()[1][1]),
-                    (self.get_xyz_range()[0][1], self.get_xyz_range()[1][1]),
-                    (self.get_xyz_range()[0][1], self.get_xyz_range()[1][0])
-                )
-            )
+        # get cell data
+        df_cell = self.get_cell_df().reset_index()
 
-            # update output
-            do_domain.update({s_domain : o_domain})
+        # extract cell radius
+        for s_celltype in ls_celltype:
+            try:
+                i_cell_grow = int(round(df_cell.loc[(df_cell.cell_type == s_celltype), 'radius'].mean()) - 1)
+            except:
+                i_cell_grow = 0
+            di_grow.update({s_celltype : i_cell_grow})
+
+        # filter and shift
+        df_cell = df_cell.loc[:, ls_coor_xyz + ['cell_type', cell_attribute]]
+        if (cell_attribute == 'cell_type'):
+            sys.exit(f'Error @ TimeStep.make_ome_tiff : cell_attribute cannot be cell_type.')
+        elif (df_cell.loc[:, cell_attribute].dtype == str) or (df_cell.loc[:, cell_attribute].dtype == np.object_):  # in {str, np.str_, np.object_}):
+            sys.exit(f'Error @ TimeStep.make_ome_tiff : {cell_attribute} {df_cell.loc[:, cell_attribute].dtype} cell_attribute cannot be string or object. cell_attribute has to be boolean, integer, or float.')
+        elif (df_cell.loc[:, cell_attribute].dtype == bool): # in {bool, np.bool_, np.bool}):
+            df_cell = df_cell.astype({cell_attribute: int})
+        df_cell.loc[:, 'position_x'] = (df_cell.loc[:, 'position_x'] - self.get_xyz_range()[0][0]).round()
+        df_cell.loc[:, 'position_y'] = (df_cell.loc[:, 'position_y'] - self.get_xyz_range()[1][0]).round()
+        df_cell.rename({'position_x':'voxel_x', 'position_y':'voxel_y', 'position_z':'voxel_z'}, axis=1, inplace=True)
+        df_cell = df_cell.astype({'voxel_x': int, 'voxel_y': int, 'voxel_z': float})
+        # level the cake
+        df_cell.loc[:, cell_attribute] = df_cell.loc[:, cell_attribute] -  df_cell.loc[:, cell_attribute].min()  + 1  # positive values starting at > 0
+
+        # check for duplicates: two cell at exactelly the same xyz position.
+        #if self.verbose and df_cell.loc[:,['voxel_x', 'voxel_y', 'voxel_z']].duplicated().any():
+        #    df_duplicate = df_cell.loc[(df_cell.loc[:, ['voxel_x', 'voxel_y', 'voxel_z']].duplicated()), :]
+        #    sys.exit(f"Error @ TimeStep.make_ome_tiff : {df_duplicate} cells at exactely the same xyz voxel position detected. cannot pivot!")
+
+        # pivot cell_type
+        df_cell = df_cell.pivot_table(index=ls_coor, columns='cell_type', values=cell_attribute, aggfunc='sum').reset_index()  # fill_value is na
+        for s_celltype in ls_celltype:
+            if not s_celltype in set(df_cell.columns):
+               df_cell[s_celltype] = 0
+
+        # each C channel - time step tensors
+        la_czyx_img = []
+        ls_channel = ls_substrate + ls_celltype
+        for s_channel in ls_channel:
+
+            # get channel dataframe
+            if s_channel in set(ls_substrate):
+                df_channel = df_conc.loc[:, ls_coor + [s_channel]]
+            elif s_channel in set(ls_celltype):
+                df_channel = df_cell.loc[:, ls_coor + [s_channel]]
+            else:
+                sys.exit(f'Error @ TimeStep.make_ome_tiff : {s_channel} unknown channel detected. not in substrate and cell type list {ls_substrate} {ls_celltype}!')
+
+            # each z axis
+            la_zyx_img = []
+            for i_zaxis in range(len(lr_axis_z)):
+                if (i_zaxis < (len(lr_axis_z) - 1)):
+                    print(f'processing: {i_time} [min]  {s_channel} [channel]  {i_zaxis} [z_axis] ...')
+                    # extract z layer
+                    df_yxchannel = df_channel.loc[
+                        ((df_channel.loc[:, ls_coor[2]] >= lr_axis_z[i_zaxis]) & (df_channel.loc[:, ls_coor[2]] < lr_axis_z[i_zaxis + 1])),
+                        ls_coor[:2] + [s_channel]
+                    ]
+
+                    # drop row with na and duplicate entries
+                    df_yxchannel = df_yxchannel.dropna(axis=0)
+                    df_yxchannel = df_yxchannel.drop_duplicates()
+
+                    # merge with coooridnates and get image
+                    # bue 20240811: df_coor left side merge will cut off reset cell that are out of the xyz domain range, which is what we want.
+                    df_yxchannel = pd.merge(df_coor, df_yxchannel, on=ls_coor[:2], how='left').replace({np.nan: 0})
+                    try:
+                        df_yxchannel = df_yxchannel.pivot(columns=ls_coor[0], index=ls_coor[1], values=s_channel)
+                    except ValueError:  # two cells from the same cell type very close to each other detetced.
+                        if self.verbose:
+                            df_duplicate = df_cell.loc[(df_yxchannel.loc[:, ['voxel_x', 'voxel_y']].duplicated()), :]
+                            print(f'Warning: {s_channel} {df_duplicate} cells within 1[um] distance form each detected. cannot pivot. erase cell type from this timestep.')
+                        df_yxchannel.loc[:,s_channel] = 0  # erase cells
+                        df_yxchannel = df_yxchannel.drop_duplicates()
+                        df_yxchannel = df_yxchannel.pivot(columns=ls_coor[0], index=ls_coor[1], values=s_channel)
+                    a_yx_img = df_yxchannel.values
+
+                    # grow
+                    a_yx_img = imagine.grow_seed(a_yx_img, i_step=di_grow[s_channel], b_verbose=False)
+
+                    # update output
+                    la_zyx_img.append(a_yx_img)
+            a_zyx_img = np.array(la_zyx_img, np.float32)
+            la_czyx_img.append(np.array(a_zyx_img, np.float32))
 
         # output
-        return do_domain
+        a_czyx_img = np.array(la_czyx_img, dtype=np.float32)
+
+        # numpy array
+        if not file:
+            return a_czyx_img
+
+        # write to file
+        else:
+            if self.verbose:
+                print('a_czyx_img shape:', a_czyx_img.shape)
+            # generate filename
+            s_channel = ''
+            for s_substrate in ls_substrate:
+                try:
+                    r_value = conc_cutoff[s_substrate]
+                    s_channel += f'_{s_substrate}{r_value}'
+                except KeyError:
+                    s_channel += f'_{s_substrate}'
+            for s_celltype in ls_celltype:
+                s_channel += f'_{s_celltype}'
+            if len(ls_celltype) > 0:
+                s_channel += f'_{cell_attribute}'
+            s_tifffile = self.xmlfile.replace('.xml', f'{s_channel}.ome.tiff')
+            s_tifffile = s_tifffile.replace(' ','_')
+            if (len(s_tifffile) > 255):
+                print(f"Warning: filename {len(s_tifffile)} > 255 character.")
+                s_tifffile = self.xmlfile.replace('.xml', f'_channels.ome.tiff')
+                print(f"file name adjusted to {s_tifffile}.")
+            s_tiffpathfile = self.path + '/' + s_tifffile
+
+            # save to file
+            OmeTiffWriter.save(
+                a_czyx_img,
+                s_tiffpathfile,
+                dim_order = 'CZYX',
+                #ome_xml=x_img,
+                channel_names = ls_channel,
+                image_names = [s_tifffile.replace('.ome.tiff','')],
+                physical_pixel_sizes = bioio_base.types.PhysicalPixelSizes(self.get_voxel_spacing()[2], 1.0, 1.0),  # z,y,x [um]
+                #channel_colors=,
+                #fs_kwargs={},
+            )
+            return s_tiffpathfile
 
 
     ## LOAD DATA  ##

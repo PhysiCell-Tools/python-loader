@@ -229,18 +229,19 @@
         <param argument="--ext" label="file extension" type="select" display="radio" help="Output image format. Possible formats are jpeg, png, and tiff.">
             <option value="jpeg" selected="true">jpeg</option>
             <!--
-        <option value="png">png</option>
-        <option value="tiff">tiff</option>
-        -->
+            <option value="png">png</option>
+            <option value="tiff">tiff</option>
+            <option value="csv">csv</option>
+            -->
         </param>
     </xml>
     <xml name="ext_vtkcell">
-        <param argument="--ext" label="file extension" name="extvtp" type="text" value="_cell.vtp" optional="false" help="File extension for the vtk polydata file.">
+        <param name="extvtp" argument="--ext" label="file extension" type="text" value="_cell.vtp" optional="false" help="File extension for the vtk polydata file.">
             <validator type="regex" message="Characters allowed are alphanumeric, underscore, dash, and dot. The extension has to end with .vtp">^[a-zA-Z0-9_\-.]*\.vtp$</validator>
         </param>
     </xml>
     <xml name="ext_vtkconc">
-        <param argument="--ext" label="file extension" name="extvtr" type="text" value="_conc.vtr" optional="false" help="File extension for the vtk rectilinear grid file.">
+        <param  name="extvtr" argument="--ext" label="file extension" type="text" value="_conc.vtr" optional="false" help="File extension for the vtk rectilinear grid file.">
             <validator type="regex" message="Characters allowed are alphanumeric, underscore, dash, and dot. The extension has to end with .vtr">^[a-zA-Z0-9_\-.]*\.vtr$</validator>
         </param>
     </xml>

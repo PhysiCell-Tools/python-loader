@@ -7,7 +7,7 @@ run-name: ${{ github.actor }}::pytest pcdl library on mac os x; the latest pytho
 
 on:
   push:
-    branches: ["utest", "master"]  # ["v3", "v4"]
+    branches: ["master"]
   pull_request:
     branches: ["development", "master"]
 
@@ -22,7 +22,7 @@ jobs:
 
     env:
       MPLBACKEND: Agg  # https://github.com/orgs/community/discussions/26434
-      PYTHONPATH: /Users/runner/work/physicelldataloader/physicelldataloader
+      PYTHONPATH: ${{ github.workspace }}
 
     steps:
     - uses: actions/checkout@main
@@ -34,8 +34,8 @@ jobs:
       run: |
         brew install ffmpeg imagemagick
         python -m pip install --upgrade pip
-        python -m pip install flake8 pytest anndata bioio bioio-ome-tiff geopandas matplotlib networkx neuroglancer numpy pandas requests scikit-image scipy shapely spatialdata vtk
-        python -m pip install /Users/runner/work/physicelldataloader/physicelldataloader -v
+        python -m pip install flake8 pytest anndata bioio bioio-ome-tiff geopandas matplotlib networkx neuroglancer numpy pandas requests scikit-image scipy shapely simulariumio spatialdata vtk
+        python -m pip install . -v
         #if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: lint with flake8
       run: |

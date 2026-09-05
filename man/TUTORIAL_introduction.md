@@ -3,9 +3,8 @@
 If you have not already done so, please install the latest version of physicell data loader (pcdl),
 as described in the [HowTo](https://github.com/elmbeech/physicelldataloader/blob/master/man/HOWTO.md) section.\
 The current development happens in branch v4.
-Branch v3 and v4 are maintained and [pip](https://pypi.org/project/pcdl/) installable.
-Branch v3 is also installable through [bioconada](https://bioconda.github.io/).
-Branch v1, v2 exists, if ever needed, for reproducibility of old results.
+Branch v4 is maintained and [pip](https://pypi.org/project/pcdl/) and [bioconada](https://bioconda.github.io/) installable.
+Branch v1, v2, v3 exists, if ever needed, for reproducibility of old results.
 
 
 ## Tutorial - branch v1 and v2
@@ -13,26 +12,27 @@ The original python-loader tutorial can be found here.
 + http://www.mathcancer.org/blog/python-loader/
 
 
-## Tutorial - branch v3 and v4
+## Tutorial - branch v4
 
 
 ### History
 
 In the very early days, [PhysiCell](https://github.com/MathCancer/PhysiCell) output was with the help of a MATLAB script loaded into MATLAB for analysis.\
 In 2019, a similar loader script was written for python3.
-The name of this script filed was pyMCDS.py and basically defined one class named pyMCDS.
+The name of this script file was pyMCDS.py and basically defined one class named pyMCDS.
 
 In autumn 2022, an endeavor was undertaken to pack the original pyMCDS.py script into a pip installable python3 library and develop it further, but always in such a way that, if necessary, the code could still be run like in the early days.\
 The result is the pcdl physicell data loader library branch v2, v3.
 In spring 2025, the code was stripped of some relics (mainly in the back end) from the early days to make the code more python3 than C++ like, which resulted in branch v4.
+In summer 2026, branch v4 became throug a core and optional dependency installation feature bioconda compatible and, as such, made branch v3 superfluous.
 
-The result from all of this is the pcdl physicell data loader library here.\
+The result from all of this development is the pcdl physicell data loader library here.\
 In the big picture, the pyMCDS class evolved into the TimeStep class, which is slightly heavier but much more powerful for downstream data analysis than the original pyMCDS class.
 Additionally, a TimeSeries class was added.
 
 If you inspect branch v3 pcdl source code, you will see that the [pyMCDS.py](https://github.com/elmbeech/physicelldataloader/blob/v3/pcdl/pyMCDS.py) file still exists.
 And if you feel so, it is still possible to [load and process PhysiCell output the ancient way](https://github.com/elmbeech/physicelldataloader/blob/master/man/HOWTO.md#how-to-run-physicelldataloader-like-in-the-early-days-before-autumn-2022)!\
-Naturally, the full-fledged pcdl library with the TimeSteps and TimeSeries class is much more powerful than pyMCDS.py only.
+Naturally, the full-fledged branch v4 pcdl library with the TimeSteps and TimeSeries class is much more powerful than pyMCDS.py only.
 
 
 ### Concept

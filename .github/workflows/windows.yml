@@ -7,7 +7,7 @@ run-name: ${{ github.actor }}::pytest pcdl library on windows os; the latest pyt
 
 on:
   push:
-    branches: ["utest", "master"]  # ["v3", "v4"]
+    branches: ["master"]
   pull_request:
     branches: ["development", "master"]
 
@@ -22,7 +22,7 @@ jobs:
 
     env:
       MPLBACKEND: Agg  # https://github.com/orgs/community/discussions/26434
-      PYTHONPATH: D:\a\physicelldataloader\physicelldataloader
+      PYTHONPATH: ${{ github.workspace }}
 
     steps:
     - uses: actions/checkout@main
@@ -34,8 +34,8 @@ jobs:
       run: |
         choco install ffmpeg imagemagick
         python -m pip install --upgrade pip
-        python -m pip install flake8 pytest anndata bioio bioio-ome-tiff geopandas matplotlib networkx neuroglancer numpy pandas requests scikit-image scipy shapely spatialdata vtk
-        python -m pip install D:\a\physicelldataloader\physicelldataloader -v
+        python -m pip install flake8 pytest anndata bioio bioio-ome-tiff geopandas matplotlib networkx neuroglancer numpy pandas requests scikit-image scipy shapely simulariumio spatialdata vtk
+        python -m pip install . -v
         #echo 'set PYTHONPATH=D:\a\physicelldataloader\physicelldataloader' >> $GITHUB_ENV
         #if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: lint with flake8

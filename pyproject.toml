@@ -117,39 +117,42 @@ full = [
     "neuroglancer",
     "scikit-image>=0.24.0",
     "shapely>=2.0.1",  # spatialdata 0.7.3 compatible
+    "simulariumio",
     "spatialdata>=0.7.3",
 ]
 
 
 [project.scripts]
 # special thanks to Miguel Ponce-de-Leon who introduced me to entry point scripts!
+# initialize
 # metadata
 pcdl_get_version = "pcdl.commandline:get_version"
 pcdl_get_unit_dict = "pcdl.commandline:get_unit_dict"
 # substrate
 pcdl_get_substrate_list = "pcdl.commandline:get_substrate_list"
-pcdl_get_conc_attribute = "pcdl.commandline:get_conc_attribute"
 pcdl_get_conc_df = "pcdl.commandline:get_conc_df"
+pcdl_get_conc_attribute = "pcdl.commandline:get_conc_attribute"
 pcdl_plot_contour = "pcdl.commandline:plot_contour"
 pcdl_make_conc_vtk = "pcdl.commandline:make_conc_vtk"
 # cell agent
 pcdl_get_celltype_list = "pcdl.commandline:get_celltype_list"
-pcdl_get_cell_attribute_list = "pcdl.commandline:get_cell_attribute_list"
-pcdl_get_cell_attribute = "pcdl.commandline:get_cell_attribute"
 pcdl_get_cell_df = "pcdl.commandline:get_cell_df"
+pcdl_get_cell_attribute = "pcdl.commandline:get_cell_attribute"
+pcdl_get_cell_attribute_list = "pcdl.commandline:get_cell_attribute_list"
 pcdl_get_anndata = "pcdl.commandline:get_anndata"
-pcdl_make_graph_gml = "pcdl.commandline:make_graph_gml"
 pcdl_plot_scatter = "pcdl.commandline:plot_scatter"
 pcdl_make_cell_vtk = "pcdl.commandline:make_cell_vtk"
+pcdl_make_graph_gml = "pcdl.commandline:make_graph_gml"
+pcdl_make_simularium = "pcdl.commandline:make_simularium"
 # substrate and cell agent
 pcdl_get_muspan = "pcdl.commandline:get_muspan"
 pcdl_get_spatialdata = "pcdl.commandline:get_spatialdata"
 pcdl_plot_timeseries = "pcdl.commandline:plot_timeseries"
 pcdl_make_ome_tiff = "pcdl.commandline:make_ome_tiff"
-pcdl_render_neuroglancer = "pcdl.commandline:render_neuroglancer"
 # making movies
 pcdl_make_gif = "pcdl.commandline:make_gif"
 pcdl_make_movie = "pcdl.commandline:make_movie"
+pcdl_render_neuroglancer = "pcdl.commandline:render_neuroglancer"
 
 
 [project.urls]

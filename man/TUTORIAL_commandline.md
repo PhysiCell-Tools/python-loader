@@ -77,30 +77,6 @@ pcdl_get_substrate_list output/output00000000.xml
 pcdl_get_substrate_list -h
 ```
 
-### &#x2728; pcdl\_get\_conc\_attribute
-
-Generate a [json](https://en.wikipedia.org/wiki/JSON) file, that lists all substrate attributes.
-For each such attribute the min and the max value are listed.
-
-In the example below:
-+ all substrates attributes are listed, that over the whole time series have at least 2 diffrent values.
-+ all substrates attributes are listed, that in this particular time step have at least 2 different values.
-
-```bash
-pcdl_get_conc_attribute output 2
-```
-```bash
-pcdl_get_conc_attribute output/output00000000.xml 2
-```
-```bash
-pcdl_get_conc_attribute -h
-```
-
-Further readings:
-+ [TUTORIAL_python3_json.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_json.md)
-+ [TUTORIAL_r.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_r.md)
-+ [TUTORIAL_julia.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_julia.md)
-
 ### &#x2728; pcdl\_get\_conc\_df
 
 Generate a dataframe [csv](https://en.wikipedia.org/wiki/Comma-separated_values) file that lists one voxel per row,
@@ -122,6 +98,30 @@ pcdl_get_conc_df -h
 
 Further readings:
 + [TUTORIAL_python3_pandas.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_pandas.md)
++ [TUTORIAL_r.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_r.md)
++ [TUTORIAL_julia.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_julia.md)
+
+### &#x2728; pcdl\_get\_conc\_attribute
+
+Generate a [json](https://en.wikipedia.org/wiki/JSON) file, that lists all substrate attributes.
+For each such attribute the min and the max value are listed.
+
+In the example below:
++ all substrates attributes are listed, that over the whole time series have at least 2 diffrent values.
++ all substrates attributes are listed, that in this particular time step have at least 2 different values.
+
+```bash
+pcdl_get_conc_attribute output 2
+```
+```bash
+pcdl_get_conc_attribute output/output00000000.xml 2
+```
+```bash
+pcdl_get_conc_attribute -h
+```
+
+Further readings:
++ [TUTORIAL_python3_json.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_json.md)
 + [TUTORIAL_r.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_r.md)
 + [TUTORIAL_julia.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_julia.md)
 
@@ -183,19 +183,29 @@ pcdl_get_celltype_list output/output00000000.xml
 pcdl_get_celltype_list -h
 ```
 
-### &#x2728; pcdl\_get\_cell\_attrribute\_list
+### &#x2728; pcdl\_get\_cell\_df
 
-Output all recorded cell attributes.
+Generate a dataframe [csv](https://en.wikipedia.org/wiki/Comma-separated_values) file that lists one cell per row,
+all attributes.
+
+In the example below, the generated csv contains:
++ all cell attributes, that over the whole time series have more than 2 different values.
++ from that particular time step all cell attributes available.
 
 ```bash
-pcdl_get_cell_attribute_list output
+pcdl_get_cell_df output 2
 ```
 ```bash
-pcdl_get_cell_attribute_list output/output00000000.xml
+pcdl_get_cell_df output/output00000000.xml
 ```
 ```bash
-pcdl_get_cell_attribute_list -h
+pcdl_get_cell_df -h
 ```
+
+Further readings:
++ [TUTORIAL_python3_pandas.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_pandas.md)
++ [TUTORIAL_r.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_r.md)
++ [TUTORIAL_julia.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_julia.md)
 
 ### &#x2728; pcdl\_get\_cell\_attribute
 
@@ -221,29 +231,19 @@ Further readings:
 + [TUTORIAL_r.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_r.md)
 + [TUTORIAL_julia.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_julia.md)
 
-### &#x2728; pcdl\_get\_cell\_df
+### &#x2728; pcdl\_get\_cell\_attrribute\_list
 
-Generate a dataframe [csv](https://en.wikipedia.org/wiki/Comma-separated_values) file that lists one cell per row,
-all attributes.
-
-In the example below, the generated csv contains:
-+ all cell attributes, that over the whole time series have more than 2 different values.
-+ from that particular time step all cell attributes available.
+Output all recorded cell attributes.
 
 ```bash
-pcdl_get_cell_df output 2
+pcdl_get_cell_attribute_list output
 ```
 ```bash
-pcdl_get_cell_df output/output00000000.xml
+pcdl_get_cell_attribute_list output/output00000000.xml
 ```
 ```bash
-pcdl_get_cell_df -h
+pcdl_get_cell_attribute_list -h
 ```
-
-Further readings:
-+ [TUTORIAL_python3_pandas.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_pandas.md)
-+ [TUTORIAL_r.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_r.md)
-+ [TUTORIAL_julia.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_julia.md)
 
 ### &#x2728; pcdl\_get\_anndata
 
@@ -264,28 +264,6 @@ pcdl_get_anndata -h
 
 Further readings:
 + [TUTORIAL_python3_scverse.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_scverse.md)
-+ [TUTORIAL_r.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_r.md)
-+ [TUTORIAL_julia.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_julia.md)
-
-### &#x2728; pcdl\_make\_graph\_gml
-
-Generate [gml](https://github.com/elmbeech/physicelldataloader/blob/master/man/publication/himsolt1996gml_a_portable_graph_file_format.pdf) files.
-One gml file per time step.
-
-Gml files can be read by graph analysis libraries like [networkx](https://networkx.org/) and [igraph](https://igraph.org/).
-
-```bash
-pcdl_make_graph_gml output/output00000000.xml --node_attribute cell_type dead oxygen pressure
-```
-```bash
-pcdl_make_graph_gml output
-```
-```bash
-pcdl_make_graph_gml -h
-```
-
-Further readings:
-+ [TUTORIAL_python3_graph.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_graph.md)
 + [TUTORIAL_r.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_r.md)
 + [TUTORIAL_julia.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_julia.md)
 
@@ -333,6 +311,51 @@ Further readings:
 + [TUTORIAL_paraview.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_paraview.md)
 + [TUTORIAL_python3_vtk.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_vtk.md)
 + [TUTORIAL_julia.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_julia.md)
+
+### &#x2728; pcdl\_make\_graph\_gml
+
+Generate [gml](https://github.com/elmbeech/physicelldataloader/blob/master/man/publication/himsolt1996gml_a_portable_graph_file_format.pdf) files.
+One gml file per time step.
+
+Gml files can be read by graph analysis libraries like [networkx](https://networkx.org/) and [igraph](https://igraph.org/).
+
+```bash
+pcdl_make_graph_gml output/output00000000.xml --node_attribute cell_type dead oxygen pressure
+```
+```bash
+pcdl_make_graph_gml output
+```
+```bash
+pcdl_make_graph_gml -h
+```
+
+Further readings:
++ [TUTORIAL_python3_graph.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_graph.md)
++ [TUTORIAL_r.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_r.md)
++ [TUTORIAL_julia.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_julia.md)
+
+### &#x2728; pcdl\_make\_simularium
+
+Generate [simularium](https://simularium.allencell.org/) trajectory viewer files from time series,
+with categorical information from up to two attributes for the attributes listed.
+The default attributes listed is cell\_type and current\_phase.
+
+These simularium files can be analyzed with the online simularium viewer
+as described in the extra tutorials.
++ https://simularium.allencell.org/
+
+```bash
+pcdl_make_simularium output
+```
+```bash
+pcdl_make_simularium output cell_type dead --tt helloworld
+```
+```bash
+pcdl_make_simularium -h
+```
+
+Further readings:
++ [TUTORIAL_simularium.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_simularium.md)
 
 
 ## Microenvironment and cell agent related commands

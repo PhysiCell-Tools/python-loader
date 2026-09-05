@@ -38,9 +38,50 @@ if not os.path.exists(s_path_2d):
     pcdl.install_data()
 
 
+## neuroglancer rendering realted function
+
+class TestTimeStep2dNeuroglancer(object):
+    ''' tests for loading a pcdl.TimeStep data set. '''
+    mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
+
+    ## make_gif and magick ommand ##
+    def test_mcds_render_neuroglancer_default(self, mcds=mcds):
+        s_tiffpathfile = mcds.make_ome_tiff()
+        o_viewer = mcds.render_neuroglancer(
+            tiffpathfile = s_tiffpathfile,
+            #timestep = 0,
+            #intensity_cmap='gray',
+        )
+        assert(str(type(o_viewer)) == "<class 'neuroglancer.viewer.Viewer'>") and \
+              (str(o_viewer).startswith('http://127.0.0.1:'))
+        os.remove(s_tiffpathfile)
+
+    def test_mcds_render_neuroglancer_timestep(self, mcds=mcds):
+        s_tiffpathfile = mcds.make_ome_tiff()
+        o_viewer = mcds.render_neuroglancer(
+            tiffpathfile = s_tiffpathfile,
+            timestep = -1,
+            intensity_cmap='gray',
+        )
+        assert(str(type(o_viewer)) == "<class 'neuroglancer.viewer.Viewer'>") and \
+              (str(o_viewer).startswith('http://127.0.0.1:'))
+        os.remove(s_tiffpathfile)
+
+    def test_mcds_render_neuroglancer_cmap(self, mcds=mcds):
+        s_tiffpathfile = mcds.make_ome_tiff()
+        o_viewer = mcds.render_neuroglancer(
+            tiffpathfile = s_tiffpathfile,
+            timestep = 0,
+            intensity_cmap='magma',
+        )
+        assert(str(type(o_viewer)) == "<class 'neuroglancer.viewer.Viewer'>") and \
+              (str(o_viewer).startswith('http://127.0.0.1:'))
+        os.remove(s_tiffpathfile)
+
+
 ## data loading related functions ##
 
-class TestTimeStepInit(object):
+class TestTimeStep2dInit(object):
     ''' tests for loading a pcdl.TimeStep data set. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
     df_cell = mcds.get_cell_df()
@@ -69,7 +110,17 @@ class TestTimeStepInit(object):
               (df_cell.shape[1] == 122)
 
 
-class TestTimeStepInitMicroenvFalse(object):
+class TestTimeStep2dInitCustomdataastype(object):
+    ''' tests for loading a pcdl.TimeStep data and run custom_data_astype function. '''
+    mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
+
+    def test_mcds_custom_data_astype(self, mcds=mcds):
+        mcds.custom_data_astype({'sample': bool})
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+              (mcds.data['cell']['df_cell']['sample'].dtype == bool)
+
+
+class TestTimeStep2dInitMicroenvFalse(object):
     ''' tests for loading a pcdl.TimeStep data set with microenv false. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=False, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
     df_cell = mcds.get_cell_df()
@@ -98,7 +149,7 @@ class TestTimeStepInitMicroenvFalse(object):
               (df_cell.shape[1] == 116)
 
 
-class TestTimeStepInitGraphFalse(object):
+class TestTimeStep2dInitGraphFalse(object):
     ''' tests for loading a pcdl.TimeStep data set with graph false. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=False, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
     df_cell = mcds.get_cell_df()
@@ -127,7 +178,7 @@ class TestTimeStepInitGraphFalse(object):
               (df_cell.shape[1] == 122)
 
 
-class TestTimeStepInitPhysibossFalse(object):
+class TestTimeStep2dInitPhysibossFalse(object):
     ''' tests for loading a pcdl.TimeStep data set with physiboss false. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=False, settingxml='PhysiCell_settings.xml', verbose=True)
     df_cell = mcds.get_cell_df()
@@ -156,7 +207,7 @@ class TestTimeStepInitPhysibossFalse(object):
               (df_cell.shape[1] == 122)
 
 
-class TestTimeStepInitSettingxmlFalse(object):
+class TestTimeStep2dInitSettingxmlFalse(object):
     ''' tests for loading a pcdl.TimeStep data set with settingxml false. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml=False, verbose=True)
     df_cell = mcds.get_cell_df()
@@ -185,7 +236,7 @@ class TestTimeStepInitSettingxmlFalse(object):
               (df_cell.shape[1] == 122)
 
 
-class TestTimeStepInitSettingxmlNone(object):
+class TestTimeStep2dInitSettingxmlNone(object):
     ''' tests for loading a pcdl.TimeStep data set with settingxml none. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml=None, verbose=True)
     df_cell = mcds.get_cell_df()
@@ -214,17 +265,7 @@ class TestTimeStepInitSettingxmlNone(object):
               (df_cell.shape[1] == 122)
 
 
-class TestTimeStepInitCustomdataastype(object):
-    ''' tests for loading a pcdl.TimeStep data and run custom_data_astype function. '''
-    mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
-
-    def test_mcds_custom_data_astype(self, mcds=mcds):
-        mcds.custom_data_astype({'sample': bool})
-        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (mcds.data['cell']['df_cell']['sample'].dtype == bool)
-
-
-class TestTimeStepInitVerboseTrue(object):
+class TestTimeStep2dInitVerboseTrue(object):
     ''' tests for loading a pcdl.TimeStep data set and set_verbose_false function. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
@@ -238,7 +279,7 @@ class TestTimeStepInitVerboseTrue(object):
               (not mcds.verbose)
 
 
-class TestTimeStepInitVerboseFalse(object):
+class TestTimeStep2dInitVerboseFalse(object):
     ''' tests for loading a pcdl.TimeStep data set and set_verbose_true function. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=False)
 
@@ -254,7 +295,7 @@ class TestTimeStepInitVerboseFalse(object):
 
 ## metadata related functions ##
 
-class TestTimeStepMetadata(object):
+class TestTimeStep2dMetadata(object):
     ''' tests for pcdl.TimeStep metadata related functions. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
@@ -295,9 +336,9 @@ class TestTimeStepMetadata(object):
               (r_runtime == 1.952156)
 
 
-## setting related functions ##
+## parameter setting related functions ##
 
-class TestTimeStepSetting(object):
+class TestTimeStep2dUnitdict(object):
     ''' tests for pcdl.TimeStep setting related functions. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
@@ -311,7 +352,7 @@ class TestTimeStepSetting(object):
 
 ## mesh related functions ##
 
-class TestTimeStepMesh(object):
+class TestTimeStep2dMesh(object):
     ''' tests for pcdl.TimeStep mesh related functions. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
@@ -399,12 +440,6 @@ class TestTimeStepMesh(object):
               (set(aar_voxel[1]) == er_n_cube) and \
               (set(aar_voxel[2]) == er_p_cube)
 
-    def test_mcds_get_voxel_volume(self, mcds=mcds):
-        r_volume = mcds.get_voxel_volume()
-        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(r_volume)) == "<class 'numpy.float64'>") and \
-              (r_volume == 6000.0)
-
     # bue: check else in 3D
     def test_mcds_get_mesh_spacing(self, mcds=mcds):
         lr_spacing = mcds.get_mesh_spacing()
@@ -412,14 +447,6 @@ class TestTimeStepMesh(object):
               (str(type(lr_spacing)) == "<class 'list'>") and \
               (str(type(lr_spacing[0])) == "<class 'numpy.float64'>") and \
               (str(type(lr_spacing[1])) == "<class 'numpy.float64'>") and \
-              (str(type(lr_spacing[-1])) == "<class 'numpy.float64'>") and \
-              (lr_spacing == [30.0, 20.0, 10.0])
-
-    def test_mcds_get_voxel_spacing(self, mcds=mcds):
-        lr_spacing = mcds.get_voxel_spacing()
-        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(lr_spacing)) == "<class 'list'>") and \
-              (str(type(lr_spacing[0])) == "<class 'numpy.float64'>") and \
               (str(type(lr_spacing[-1])) == "<class 'numpy.float64'>") and \
               (lr_spacing == [30.0, 20.0, 10.0])
 
@@ -443,6 +470,20 @@ class TestTimeStepMesh(object):
               (li_mesh_2 == [15.0, 10.0, 0.0]) and \
               (li_mesh_none is None)
 
+    def test_mcds_get_voxel_spacing(self, mcds=mcds):
+        lr_spacing = mcds.get_voxel_spacing()
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+              (str(type(lr_spacing)) == "<class 'list'>") and \
+              (str(type(lr_spacing[0])) == "<class 'numpy.float64'>") and \
+              (str(type(lr_spacing[-1])) == "<class 'numpy.float64'>") and \
+              (lr_spacing == [30.0, 20.0, 10.0])
+
+    def test_mcds_get_voxel_volume(self, mcds=mcds):
+        r_volume = mcds.get_voxel_volume()
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+              (str(type(r_volume)) == "<class 'numpy.float64'>") and \
+              (r_volume == 6000.0)
+
     def test_mcds_get_voxel_ijk(self, mcds=mcds):
         li_voxel_0 = mcds.get_voxel_ijk(x=0, y=0, z=0, is_in_mesh=True) # if b_calc
         li_voxel_1 = mcds.get_voxel_ijk(x=15, y=10, z=0, is_in_mesh=True) # if b_calc
@@ -459,11 +500,11 @@ class TestTimeStepMesh(object):
 
 ## micro environment related functions ##
 
-class TestTimeStepMicroenv(object):
+class TestTimeStep2dMicroenv(object):
     ''' tests for pcdl.TimeStep micro environment related functions. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
-    def test_mcds_get_substrate_name(self, mcds=mcds):
+    def test_mcds_get_substrate_list(self, mcds=mcds):
         ls_substrate = mcds.get_substrate_list()
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (str(type(ls_substrate)) == "<class 'list'>") and \
@@ -580,18 +621,12 @@ class TestTimeStepMicroenv(object):
               (os.path.getsize(s_pathfile) > 2**10)
         os.remove(s_pathfile)
 
+
 ## cell related functions ##
 
-class TestTimeStepCell(object):
+class TestTimeStep2dCell(object):
     ''' tests for pcdl.TimeStep cell related functions. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
-
-    def test_mcds_get_cell_attribute_list(self, mcds=mcds):
-        ls_cellattr = mcds.get_cell_attribute_list()
-        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(ls_cellattr)) == "<class 'list'>") and \
-              (str(type(ls_cellattr[0])) == "<class 'str'>") and \
-              (len(ls_cellattr) == 110)
 
     def test_mcds_get_celltype_list(self, mcds=mcds):
         ls_celltype = mcds.get_celltype_list()
@@ -634,6 +669,13 @@ class TestTimeStepCell(object):
               (str(type(df_cell)) == "<class 'pandas.DataFrame'>") and \
               (df_cell.shape[0] > 9) and \
               (df_cell.shape[1] == 13)
+
+    def test_mcds_get_cell_attribute_list(self, mcds=mcds):
+        ls_cellattr = mcds.get_cell_attribute_list()
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+              (str(type(ls_cellattr)) == "<class 'list'>") and \
+              (str(type(ls_cellattr[0])) == "<class 'str'>") and \
+              (len(ls_cellattr) == 110)
 
     # scatter categorical
     def test_mcds_plot_scatter_cat_if(self, mcds=mcds):
@@ -806,9 +848,63 @@ class TestTimeStepCell(object):
         os.remove(s_pathfile)
 
 
+## anndata time step related functions ##
+
+class TestTimeStep2dAnnData(object):
+    ''' test for pcdl.TimeStep class. '''
+
+    ## get_anndata command ##
+    def test_mcds_get_anndata(self):
+        mcds = pcdl.TimeStep(s_pathfile_2d, verbose=False)
+        ann = mcds.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs')
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+              (str(type(ann)) == "<class 'anndata.AnnData'>") and \
+              (ann.X.shape[0] > 9) and \
+              (ann.X.shape[1] == 105) and \
+              (ann.obs.shape[0] > 9) and \
+              (ann.obs.shape[1] == 8) and \
+              (ann.obsm['spatial'].shape[0] > 9) and \
+              (ann.obsm['spatial'].shape[1] == 2) and \
+              (len(ann.obsp) == 4) and \
+              (ann.var.shape == (105, 0)) and \
+              (len(ann.uns) == 2)
+
+
+class TestTimeStep2dScaler(object):
+    ''' test for pcdl.scaler function '''
+    a_x = np.array([[ 1.,-1., 2., 0.],[ 2., 0., 0.,0.],[ 0., 1.,-1.,0.]])
+    df_x = pd.DataFrame(a_x, columns=['a','b','c','d'])
+
+    def test_scaler_none(self, df_x=df_x):
+        df_scaled = pcdl.timestep.scaler(df_x=df_x, scale=None)
+        assert(str(type(df_scaled)) == "<class 'pandas.DataFrame'>") and \
+              (all(df_scaled == df_x))
+
+    def test_scaler_minabs(self, df_x=df_x):
+        df_scaled = pcdl.timestep.scaler(df_x=df_x, scale='maxabs')
+        assert(str(type(df_scaled)) == "<class 'pandas.DataFrame'>") and \
+              (df_scaled.values.sum().round(3) == 2.0) and \
+              (df_scaled.values.min().round(3) == -1.0) and \
+              (df_scaled.values.max().round(3) == 1.0)
+
+    def test_scaler_minmax(self, df_x=df_x):
+        df_scaled = pcdl.timestep.scaler(df_x=df_x, scale='minmax')
+        assert(str(type(df_scaled)) == "<class 'pandas.DataFrame'>") and \
+              (df_scaled.values.sum().round(3) == 4.333) and \
+              (df_scaled.values.min().round(3) == 0.0) and \
+              (df_scaled.values.max().round(3) == 1.0)
+
+    def test_scaler_std(self, df_x=df_x):
+        df_scaled = pcdl.timestep.scaler(df_x=df_x, scale='std')
+        assert(str(type(df_scaled)) == "<class 'pandas.DataFrame'>") and \
+              (df_scaled.values.sum().round(3) == 0.0) and \
+              (df_scaled.values.min().round(3) == -1.0) and \
+              (df_scaled.values.max().round(3) == 1.091)
+
+
 ## graph related functions ##
 
-class TestTimeStepGraph(object):
+class TestTimeStep2dGraph(object):
     ''' tests for pcdl.TimeStep graph related functions. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
@@ -933,9 +1029,123 @@ class TestTimeStepGraph(object):
         os.remove(s_pathfile)
 
 
+## muspan time step related functions ##
+
+class TestTimeStep2dMuspan(object):
+    ''' test for pcdl.TimeStep class. '''
+
+    ## get_muspan command ##
+    def test_mcds_get_muspan_default(self):
+        try:
+            import muspan as ms
+            mcds = pcdl.TimeStep(s_pathfile_2d, verbose=False)
+            do_domain = mcds.get_muspan(z_slice=None, values=1, drop=set(), keep=set())
+            s_key = sorted(do_domain.keys())[-1]
+            assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+                  (type(do_domain) == dict) and \
+                  (len(do_domain) == 1) and \
+                  (str(type(do_domain[s_key])) == "<class 'muspan.domain.domain'>") and \
+                  (len(do_domain[s_key].collections) == 2) and \
+                  (len(do_domain[s_key].networks) == 3) and \
+                  (len(do_domain[s_key].objects) > 9)
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestTimeStep2dMuspan : muspan module not installed.')
+            assert True
+        except SystemExit:
+            print('Warning @ pytest TestTimeStep2dMuspan : muspan module not installed.')
+            assert True
+
+    def test_mcds_get_muspan_zslice(self):
+        try:
+            import muspan as ms
+            mcds = pcdl.TimeStep(s_pathfile_2d, verbose=False)
+            do_domain = mcds.get_muspan(z_slice=0.0, values=1, drop=set(), keep=set())
+            s_key = sorted(do_domain.keys())[-1]
+            assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+                  (type(do_domain) == dict) and \
+                  (len(do_domain) == 1) and \
+                  (str(type(do_domain[s_key])) == "<class 'muspan.domain.domain'>") and \
+                  (len(do_domain[s_key].collections) == 2) and \
+                  (len(do_domain[s_key].networks) == 3) and \
+                  (len(do_domain[s_key].objects) > 9)
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestTimeStep2dMuspan : muspan module not installed.')
+            assert True
+        except SystemExit:
+            print('Warning @ pytest TestTimeStep2dMuspan : muspan module not installed.')
+            assert True
+
+
+## spatialdata time step related functions ##
+
+class TestTimeStep2dSpatialData(object):
+    ''' test for pcdl.TimeStep class. '''
+
+    ## get_spatialdata command ##
+    def test_mcds_get_spatialdata_default(self):
+        mcds = pcdl.TimeStep(s_pathfile_2d, verbose=False)
+        sdata = mcds.get_spatialdata(images={'subs'}, labels=set(), points={'subs'}, shapes={'cell'}, values=1, drop=set(), keep=set(), scale='maxabs')
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+              (str(type(sdata)) == "<class 'spatialdata._core.spatialdata.SpatialData'>") and \
+              (str(type(sdata['subs_image'])) == "<class 'xarray.core.dataarray.DataArray'>") and \
+              (sdata['subs_image'].shape == (2, 200, 300)) and \
+              (str(type(sdata['subs_point'])) == "<class 'dask.dataframe.dask_expr._collection.DataFrame'>") and \
+              (sdata['subs_point'].compute().shape[0] > 9) and \
+              (sdata['subs_point'].compute().shape[1] == 2) and \
+              (str(type(sdata['cell_shape'])) == "<class 'geopandas.geodataframe.GeoDataFrame'>") and \
+              (sdata['cell_shape'].shape[0] > 9) and \
+              (sdata['cell_shape'].shape[1] == 2) and \
+              (str(type(sdata['cell_table'])) == "<class 'anndata.AnnData'>") and \
+              (sdata['cell_table'].shape[0] > 9) and \
+              (sdata['cell_table'].shape[1] > 9) and \
+              (str(type(sdata['subs_table'])) == "<class 'anndata.AnnData'>") and \
+              (sdata['subs_table'].shape[0] > 9) and \
+              (sdata['subs_table'].shape[1] == 2) and \
+              (sdata['subs_table'].obs.shape[0] > 9) and \
+              (sdata['subs_table'].obs.shape[1] == 11) and \
+              (len(sdata['subs_table'].uns) == 1)
+
+    def test_mcds_get_spatialdata_points(self):
+        mcds = pcdl.TimeStep(s_pathfile_2d, verbose=False)
+        sdata = mcds.get_spatialdata(images={'subs'}, labels={}, points={'subs','cell'}, shapes=set(), values=1, drop=set(), keep=set(), scale='maxabs')
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+              (str(type(sdata)) == "<class 'spatialdata._core.spatialdata.SpatialData'>") and \
+              (str(type(sdata['subs_image'])) == "<class 'xarray.core.dataarray.DataArray'>") and \
+              (sdata['subs_image'].shape == (2, 200, 300)) and \
+              (str(type(sdata['subs_point'])) == "<class 'dask.dataframe.dask_expr._collection.DataFrame'>") and \
+              (sdata['subs_point'].compute().shape[0] > 9) and \
+              (sdata['subs_point'].compute().shape[1] == 2) and \
+              (str(type(sdata['cell_point'])) == "<class 'dask.dataframe.dask_expr._collection.DataFrame'>") and \
+              (sdata['cell_point'].compute().shape[0] > 9) and \
+              (sdata['cell_point'].compute().shape[1] == 2) and \
+              (str(type(sdata['cell_table'])) == "<class 'anndata.AnnData'>") and \
+              (sdata['cell_table'].shape[0] > 9) and \
+              (sdata['cell_table'].shape[1] > 9) and \
+              (str(type(sdata['subs_table'])) == "<class 'anndata.AnnData'>") and \
+              (sdata['subs_table'].shape[0] > 9) and \
+              (sdata['subs_table'].shape[1] == 2) and \
+              (sdata['subs_table'].obs.shape[0] > 9) and \
+              (sdata['subs_table'].obs.shape[1] == 11) and \
+              (len(sdata['subs_table'].uns) == 1)
+
+    def test_mcds_get_spatialdata_none(self):
+        mcds = pcdl.TimeStep(s_pathfile_2d, verbose=False)
+        sdata = mcds.get_spatialdata(images=set(), labels=set(), points=set(), shapes=set(), values=1, drop=set(), keep=set(), scale='maxabs')
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+              (str(type(sdata)) == "<class 'spatialdata._core.spatialdata.SpatialData'>") and \
+              (str(type(sdata['cell_table'])) == "<class 'anndata.AnnData'>") and \
+              (sdata['cell_table'].shape[0] > 9) and \
+              (sdata['cell_table'].shape[1] > 9) and \
+              (str(type(sdata['subs_table'])) == "<class 'anndata.AnnData'>") and \
+              (sdata['subs_table'].shape[0] > 9) and \
+              (sdata['subs_table'].shape[1] ==2) and \
+              (sdata['subs_table'].obs.shape[0] > 9) and \
+              (sdata['subs_table'].obs.shape[1] == 11)
+
+
 ## ome tiff related functions ##
 
-class TestTimeStepOmeTiff(object):
+class TestTimeStep2dOmeTiff(object):
     ''' tests for pcdl.TimeStep graph related functions. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
@@ -1008,208 +1218,3 @@ class TestTimeStepOmeTiff(object):
               (a_ometiff.shape == (1, 1, 200, 300)) and \
               (a_ometiff[0].min() == 0.0) and \
               (a_ometiff[0].max() >= 1.0)
-
-
-class TestTimeStepNeuroglancer(object):
-    ''' tests for loading a pcdl.TimeStep data set. '''
-    mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
-
-    ## make_gif and magick ommand ##
-    def test_mcds_render_neuroglancer_default(self, mcds=mcds):
-        s_tiffpathfile = mcds.make_ome_tiff()
-        o_viewer = mcds.render_neuroglancer(
-            tiffpathfile = s_tiffpathfile,
-            #timestep = 0,
-            #intensity_cmap='gray',
-        )
-        assert(str(type(o_viewer)) == "<class 'neuroglancer.viewer.Viewer'>") and \
-              (str(o_viewer).startswith('http://127.0.0.1:'))
-        os.remove(s_tiffpathfile)
-
-    def test_mcds_render_neuroglancer_timestep(self, mcds=mcds):
-        s_tiffpathfile = mcds.make_ome_tiff()
-        o_viewer = mcds.render_neuroglancer(
-            tiffpathfile = s_tiffpathfile,
-            timestep = -1,
-            intensity_cmap='gray',
-        )
-        assert(str(type(o_viewer)) == "<class 'neuroglancer.viewer.Viewer'>") and \
-              (str(o_viewer).startswith('http://127.0.0.1:'))
-        os.remove(s_tiffpathfile)
-
-    def test_mcds_render_neuroglancer_cmap(self, mcds=mcds):
-        s_tiffpathfile = mcds.make_ome_tiff()
-        o_viewer = mcds.render_neuroglancer(
-            tiffpathfile = s_tiffpathfile,
-            timestep = 0,
-            intensity_cmap='magma',
-        )
-        assert(str(type(o_viewer)) == "<class 'neuroglancer.viewer.Viewer'>") and \
-              (str(o_viewer).startswith('http://127.0.0.1:'))
-        os.remove(s_tiffpathfile)
-
-
-## anndata helper function ##
-class TestTimeStepScaler(object):
-    ''' test for pcdl.scaler function '''
-    a_x = np.array([[ 1.,-1., 2., 0.],[ 2., 0., 0.,0.],[ 0., 1.,-1.,0.]])
-    df_x = pd.DataFrame(a_x, columns=['a','b','c','d'])
-
-    def test_scaler_none(self, df_x=df_x):
-        df_scaled = pcdl.timestep.scaler(df_x=df_x, scale=None)
-        assert(str(type(df_scaled)) == "<class 'pandas.DataFrame'>") and \
-              (all(df_scaled == df_x))
-
-    def test_scaler_minabs(self, df_x=df_x):
-        df_scaled = pcdl.timestep.scaler(df_x=df_x, scale='maxabs')
-        assert(str(type(df_scaled)) == "<class 'pandas.DataFrame'>") and \
-              (df_scaled.values.sum().round(3) == 2.0) and \
-              (df_scaled.values.min().round(3) == -1.0) and \
-              (df_scaled.values.max().round(3) == 1.0)
-
-    def test_scaler_minmax(self, df_x=df_x):
-        df_scaled = pcdl.timestep.scaler(df_x=df_x, scale='minmax')
-        assert(str(type(df_scaled)) == "<class 'pandas.DataFrame'>") and \
-              (df_scaled.values.sum().round(3) == 4.333) and \
-              (df_scaled.values.min().round(3) == 0.0) and \
-              (df_scaled.values.max().round(3) == 1.0)
-
-    def test_scaler_std(self, df_x=df_x):
-        df_scaled = pcdl.timestep.scaler(df_x=df_x, scale='std')
-        assert(str(type(df_scaled)) == "<class 'pandas.DataFrame'>") and \
-              (df_scaled.values.sum().round(3) == 0.0) and \
-              (df_scaled.values.min().round(3) == -1.0) and \
-              (df_scaled.values.max().round(3) == 1.091)
-
-
-## anndata time step related functions ##
-class TestTimeStepAnnData(object):
-    ''' test for pcdl.TimeStep class. '''
-
-    ## get_anndata command ##
-    def test_mcds_get_anndata(self):
-        mcds = pcdl.TimeStep(s_pathfile_2d, verbose=False)
-        ann = mcds.get_anndata(values=1, drop=set(), keep=set(), scale='maxabs')
-        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(ann)) == "<class 'anndata.AnnData'>") and \
-              (ann.X.shape[0] > 9) and \
-              (ann.X.shape[1] == 105) and \
-              (ann.obs.shape[0] > 9) and \
-              (ann.obs.shape[1] == 8) and \
-              (ann.obsm['spatial'].shape[0] > 9) and \
-              (ann.obsm['spatial'].shape[1] == 2) and \
-              (len(ann.obsp) == 4) and \
-              (ann.var.shape == (105, 0)) and \
-              (len(ann.uns) == 2)
-
-
-## muspan time step related functions ##
-class TestTimeStepMuspan(object):
-    ''' test for pcdl.TimeStep class. '''
-
-    ## get_muspan command ##
-    def test_mcds_get_muspan_default(self):
-        try:
-            import muspan as ms
-            mcds = pcdl.TimeStep(s_pathfile_2d, verbose=False)
-            do_domain = mcds.get_muspan(z_slice=None, values=1, drop=set(), keep=set())
-            s_key = sorted(do_domain.keys())[-1]
-            assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-                  (type(do_domain) == dict) and \
-                  (len(do_domain) == 1) and \
-                  (str(type(do_domain[s_key])) == "<class 'muspan.domain.domain'>") and \
-                  (len(do_domain[s_key].collections) == 2) and \
-                  (len(do_domain[s_key].networks) == 3) and \
-                  (len(do_domain[s_key].objects) > 9)
-        except ModuleNotFoundError:
-            print('Warning @ pytest TestTimeStepMuspan : muspan module not installed.')
-            assert True
-        except SystemExit:
-            print('Warning @ pytest TestTimeStepMuspan : muspan module not installed.')
-            assert True
-
-    def test_mcds_get_muspan_zslice(self):
-        try:
-            import muspan as ms
-            mcds = pcdl.TimeStep(s_pathfile_2d, verbose=False)
-            do_domain = mcds.get_muspan(z_slice=0.0, values=1, drop=set(), keep=set())
-            s_key = sorted(do_domain.keys())[-1]
-            assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-                  (type(do_domain) == dict) and \
-                  (len(do_domain) == 1) and \
-                  (str(type(do_domain[s_key])) == "<class 'muspan.domain.domain'>") and \
-                  (len(do_domain[s_key].collections) == 2) and \
-                  (len(do_domain[s_key].networks) == 3) and \
-                  (len(do_domain[s_key].objects) > 9)
-        except ModuleNotFoundError:
-            print('Warning @ pytest TestTimeStepMuspan : muspan module not installed.')
-            assert True
-        except SystemExit:
-            print('Warning @ pytest TestTimeStepMuspan : muspan module not installed.')
-            assert True
-
-
-## spatialdata time step related functions ##
-class TestTimeStepSpatialData(object):
-    ''' test for pcdl.TimeStep class. '''
-
-    ## get_spatialdata command ##
-    def test_mcds_get_spatialdata_default(self):
-        mcds = pcdl.TimeStep(s_pathfile_2d, verbose=False)
-        sdata = mcds.get_spatialdata(images={'subs'}, labels=set(), points={'subs'}, shapes={'cell'}, values=1, drop=set(), keep=set(), scale='maxabs')
-        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(sdata)) == "<class 'spatialdata._core.spatialdata.SpatialData'>") and \
-              (str(type(sdata['subs_image'])) == "<class 'xarray.core.dataarray.DataArray'>") and \
-              (sdata['subs_image'].shape == (2, 200, 300)) and \
-              (str(type(sdata['subs_point'])) == "<class 'dask.dataframe.dask_expr._collection.DataFrame'>") and \
-              (sdata['subs_point'].compute().shape[0] > 9) and \
-              (sdata['subs_point'].compute().shape[1] == 2) and \
-              (str(type(sdata['cell_shape'])) == "<class 'geopandas.geodataframe.GeoDataFrame'>") and \
-              (sdata['cell_shape'].shape[0] > 9) and \
-              (sdata['cell_shape'].shape[1] == 2) and \
-              (str(type(sdata['cell_table'])) == "<class 'anndata.AnnData'>") and \
-              (sdata['cell_table'].shape[0] > 9) and \
-              (sdata['cell_table'].shape[1] > 9) and \
-              (str(type(sdata['subs_table'])) == "<class 'anndata.AnnData'>") and \
-              (sdata['subs_table'].shape[0] > 9) and \
-              (sdata['subs_table'].shape[1] == 2) and \
-              (sdata['subs_table'].obs.shape[0] > 9) and \
-              (sdata['subs_table'].obs.shape[1] == 11) and \
-              (len(sdata['subs_table'].uns) == 1)
-
-    def test_mcds_get_spatialdata_points(self):
-        mcds = pcdl.TimeStep(s_pathfile_2d, verbose=False)
-        sdata = mcds.get_spatialdata(images={'subs'}, labels={}, points={'subs','cell'}, shapes=set(), values=1, drop=set(), keep=set(), scale='maxabs')
-        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(sdata)) == "<class 'spatialdata._core.spatialdata.SpatialData'>") and \
-              (str(type(sdata['subs_image'])) == "<class 'xarray.core.dataarray.DataArray'>") and \
-              (sdata['subs_image'].shape == (2, 200, 300)) and \
-              (str(type(sdata['subs_point'])) == "<class 'dask.dataframe.dask_expr._collection.DataFrame'>") and \
-              (sdata['subs_point'].compute().shape[0] > 9) and \
-              (sdata['subs_point'].compute().shape[1] == 2) and \
-              (str(type(sdata['cell_point'])) == "<class 'dask.dataframe.dask_expr._collection.DataFrame'>") and \
-              (sdata['cell_point'].compute().shape[0] > 9) and \
-              (sdata['cell_point'].compute().shape[1] == 2) and \
-              (str(type(sdata['cell_table'])) == "<class 'anndata.AnnData'>") and \
-              (sdata['cell_table'].shape[0] > 9) and \
-              (sdata['cell_table'].shape[1] > 9) and \
-              (str(type(sdata['subs_table'])) == "<class 'anndata.AnnData'>") and \
-              (sdata['subs_table'].shape[0] > 9) and \
-              (sdata['subs_table'].shape[1] == 2) and \
-              (sdata['subs_table'].obs.shape[0] > 9) and \
-              (sdata['subs_table'].obs.shape[1] == 11) and \
-              (len(sdata['subs_table'].uns) == 1)
-
-    def test_mcds_get_spatialdata_none(self):
-        mcds = pcdl.TimeStep(s_pathfile_2d, verbose=False)
-        sdata = mcds.get_spatialdata(images=set(), labels=set(), points=set(), shapes=set(), values=1, drop=set(), keep=set(), scale='maxabs')
-        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (str(type(sdata)) == "<class 'spatialdata._core.spatialdata.SpatialData'>") and \
-              (str(type(sdata['cell_table'])) == "<class 'anndata.AnnData'>") and \
-              (sdata['cell_table'].shape[0] > 9) and \
-              (sdata['cell_table'].shape[1] > 9) and \
-              (str(type(sdata['subs_table'])) == "<class 'anndata.AnnData'>") and \
-              (sdata['subs_table'].shape[0] > 9) and \
-              (sdata['subs_table'].shape[1] ==2) and \
-              (sdata['subs_table'].obs.shape[0] > 9) and \
-              (sdata['subs_table'].obs.shape[1] == 11)
